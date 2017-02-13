@@ -1,26 +1,22 @@
 # -*- coding: utf-8 -*-
 
-'''
-***************************************************************************
-    dbfunc.py
-    
-    Datenbankmanagement
+'''  
 
-    Definition einer Klasse mit Methoden fuer den Zugriff auf 
-    eine SpatiaLite-Datenbank.
+  Datenbankmanagement
+  ===================
 
-    ---------------------
-    Date                 : September 2016
-    Copyright            : (C) 2016 by Joerg Hoettges
-    Email                : hoettges@fh-aachen.de
-***************************************************************************
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   (at your option) any later version.                                   *
-*                                                                         *
-***************************************************************************
+  Definition einer Klasse mit Methoden fuer den Zugriff auf 
+  eine SpatiaLite-Datenbank.
+
+  | Dateiname            : dbfunc.py
+  | Date                 : September 2016
+  | Copyright            : (C) 2016 by Joerg Hoettges
+  | Email                : hoettges@fh-aachen.de
+
+  This program is free software; you can redistribute it and/or modify  
+  it under the terms of the GNU General Public License as published by  
+  the Free Software Foundation; either version 2 of the License, or     
+  (at your option) any later version.                                   
 
 '''
 
@@ -111,7 +107,7 @@ class DBConnection:
                     self.consl = splite.connect(database = dbname)
                     self.cursl = self.consl.cursor()
                 except:
-                    iface.messageBar().pushMessage("Fehler", 'Fehler beim Oeffnen der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(dbname), level=QgsMessageBar.CRITICAL)
+                    iface.messageBar().pushMessage("Fehler", 'Fehler beim Öffnen der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(dbname), level=QgsMessageBar.CRITICAL)
                     self.consl = None
         else:
             iface.messageBar().pushMessage("Fehler", 'Fehler beim Anbinden der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(dbname), level=QgsMessageBar.CRITICAL)
