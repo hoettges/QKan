@@ -1,25 +1,24 @@
-# -*- coding: iso-8859-1 -*-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """
-/***************************************************************************
- ImportFromHE
-                                 A QGIS plugin
- Importiert Kanaldaten aus Hystem-Extran
-                              -------------------
-        begin                : 2016-10-06
-        git sha              : $Format:%H$
-        copyright            : (C) 2016 by Jörg Höttges/FH Aachen
-        email                : hoettges@fh-aachen.de
- ***************************************************************************/
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+  QGis-Plugin
+  ===========
+
+  Definition der Formularklasse
+
+  | Dateiname            : k_he2qk.py
+  | Date                 : October 2016
+  | Copyright            : (C) 2016 by Joerg Hoettges
+  | Email                : hoettges@fh-aachen.de
+  | git sha              : $Format:%H$
+
+  This program is free software; you can redistribute it and/or modify  
+  it under the terms of the GNU General Public License as published by  
+  the Free Software Foundation; either version 2 of the License, or     
+  (at your option) any later version.                                  
+
 """
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt4.QtGui import QAction, QIcon, QFileDialog                      # (jh, 20.09.2016)
@@ -30,11 +29,13 @@ from k_he2qk_dialog import ImportFromHEDialog
 import os.path
 
 # Ergaenzt (jh, 09.10.2016) -------------------------------------------------
+import os, json, site
+
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from import_from_he import importKanaldaten
-import os, json, site
 import codecs
+
 
 
 class ImportFromHE:
@@ -95,13 +96,9 @@ class ImportFromHE:
                 self.config = json.loads(fileconfig.read().replace('\\','/'))
         else:
             self.config = {'epsg': '31467'}                # Projektionssystem
-                                                            # Default in den naechsten beiden Zeilen nur zum Test
             self.config['database_Qkan'] = ''
-                #'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/test1.sqlite'
             self.config['database_HE'] = ''
-            #'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.idbf'
             self.config['projectfile'] = ''
-            #'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/lageplan.qgs'
             with codecs.open(self.configfil,'w','iso-8859-1') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
@@ -239,7 +236,9 @@ class ImportFromHE:
         """Datenbankverbindung zur HE-Datenbank (Firebird) auswaehlen und gegebenenfalls die Zieldatenbank
            erstellen, aber noch nicht verbinden."""
 
-        filename = QFileDialog.getOpenFileName(self.dlg, "Dateinamen der Datenbank eingeben","","*.idbf")
+        filename = QFileDialog.getOpenFileName(self.dlg, "Dateinamen der zu lesenden HE-Datenbank eingeben","","*.idbf")
+        if os.path.dirname(filename) != '':
+            os.chdir(os.path.dirname(filename))
         self.dlg.tf_heDB.setText(filename)
 
 
@@ -247,14 +246,18 @@ class ImportFromHE:
         """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen, aber noch nicht verbinden.
            Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt. """
 
-        filename = QFileDialog.getSaveFileName(self.dlg, "Dateinamen der Datenbank eingeben","","*.sqlite")
+        filename = QFileDialog.getSaveFileName(self.dlg, "Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben","","*.sqlite")
+        if os.path.dirname(filename) != '':
+            os.chdir(os.path.dirname(filename))
         self.dlg.tf_qkanDB.setText(filename)
 
 
     def selectProjectFile(self):
-        """Zu erzeugende Projektdatei festlegen, falls ausgewählt."""
+        """Zu erzeugende Projektdatei festlegen, falls ausgewÃ¤hlt."""
 
-        filename = QFileDialog.getSaveFileName(self.dlg, "Dateinamen der Projektdatei eingeben","","*.qgs")
+        filename = QFileDialog.getSaveFileName(self.dlg, "Dateinamen der zu erstellenden Projektdatei eingeben","","*.qgs")
+        if os.path.dirname(filename) != '':
+            os.chdir(os.path.dirname(filename))
         self.dlg.tf_projectFile.setText(filename)
 
 
