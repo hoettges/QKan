@@ -123,6 +123,7 @@ def createdbtables(consl,cursl):
     ueberstauflaeche REAL,
     entwart TEXT,
     strasse TEXT,
+    teilgebiet TEXT,
     knotentyp TEXT,
     auslasstyp TEXT,
     schachttyp TEXT, 
@@ -435,6 +436,40 @@ def createdbtables(consl,cursl):
             'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
         return False
     consl.commit()
+
+
+    # Teilgebiete ------------------------------------------------------------------
+    # Entsprechen in HYSTEM-EXTRAN 7.x den Siedlungstypen
+    # [flaeche] wird nur für den Import benötigt, wenn keine Flächenobjekte vorhanden sind
+
+    sql = '''CREATE TABLE teilgebiete (
+        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        ewdichte REAL,
+        wverbrauch REAL,
+        stdmittel REAL,
+        fremdwas REAL,
+        flaeche REAL,
+        kommentar TEXT,
+        createdat TEXT DEFAULT CURRENT_DATE)'''
+
+    try:
+        cursl.execute(sql)
+    except:
+        iface.messageBar().pushMessage("Fehler", 'Tabelle "Teilgebiete" konnte nicht erstellt werden!\nAbbruch!',
+            level=QgsMessageBar.CRITICAL)
+        return False
+
+    sql = "SELECT AddGeometryColumn('teilgebiete','geom',{:s},'MULTIPOLYGON',2)".format(epsg)
+    try:
+        cursl.execute(sql)
+    except:
+        iface.messageBar().pushMessage("Fehler", 'In der Tabelle "Teilgebiete" konnte das Attribut "geom" ' + 
+            'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+        return False
+    consl.commit()
+
+
 
 
     # Simulationsstatus/Planungsstatus -----------------------------------------
