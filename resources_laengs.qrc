@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/QKan_Laengsschnitt" >
+        <file>icon_laengs.png</file>
+    </qresource>
+</RCC>

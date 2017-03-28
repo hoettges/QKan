@@ -1,0 +1,1 @@
+pyuic4 -o ganglinie_dialog_base.py ganglinie_dialog_base.ui

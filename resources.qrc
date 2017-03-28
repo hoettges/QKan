@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/Gangliniengrafik" >
-        <file>icon.png</file>
-    </qresource>
-</RCC>

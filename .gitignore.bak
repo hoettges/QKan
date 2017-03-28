@@ -93,6 +93,3 @@ ENV/
 
 # sicher
 sicher/
-
-# PyCharm
-.idea/
