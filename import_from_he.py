@@ -32,11 +32,10 @@ __copyright__ = '(C) 2016, Joerg Hoettges'
 __revision__ = ':%H$'
 
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__),'..\QKan_Database'))
+import os
 
-from fbfunc import FBConnection
-from dbfunc import DBConnection
+from QKan_Database.fbfunc import FBConnection
+from QKan_Database.dbfunc import DBConnection
 
 import tempfile
 
@@ -103,7 +102,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
             database_HE), level=QgsMessageBar.CRITICAL)
         return None
 
-    dbQK = DBConnection(database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
+    dbQK = DBConnection(dbname=database_QKan, epsg=epsg)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
     if dbQK is None:
         iface.messageBar().pushMessage("Fehler", 'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
@@ -261,9 +260,9 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         # Geo-Objekt erzeugen
 
         if dbtyp == 'SpatiaLite':
-            geom = 'MakeLine(MakePoint({0:},{1:},{4:s}),MakePoint({2:},{3:},{4:s}))'.format(xob, yob, xun, yun, epsg)
+            geom = 'MakeLine(MakePoint({0:},{1:},{4:s}),MakePoint({2:},{3:},{4:}))'.format(xob, yob, xun, yun, epsg)
         elif dbtyp == 'postgis':
-            geom = 'ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:s}),ST_SetSRID(ST_MakePoint({2:},{3:}),{4:s}))'.format(xob, yob, xun, yun, epsg)
+            geom = 'ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:s}),ST_SetSRID(ST_MakePoint({2:},{3:}),{4:}))'.format(xob, yob, xun, yun, epsg)
         else:
             raise RuntimeError('Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
 
@@ -284,7 +283,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                     createdat=createdat)
         except BaseException as e:
             protokoll += '\n\n' + str(e)
-            protokoll += "\nFehler in sql INSERT INTO haltungen: \n" + str((geom, haltnam, schoben, schunten, 
+            protokoll += u"\nFehler in sql INSERT INTO haltungen: \n" + str((geom, haltnam, schoben, schunten, 
                 hoehe, breite, laenge, sohleoben, sohleunten, 
                 deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus)) + '\n\n'
 
@@ -292,7 +291,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
             dbQK.sql(sql)
         except BaseException as e:
             protokoll += '\n\n' + str(e)
-            protokoll += "\nFehler in sql: \n" + sql + '\n\n'
+            protokoll += u"\nFehler in sql: \n" + sql + '\n\n'
 
     dbQK.commit()
 
@@ -358,10 +357,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         # Geo-Objekte erzeugen
 
         if dbtyp == 'SpatiaLite':
-            geop = 'MakePoint({0:},{1:},{2:s})'.format(xsch,ysch,epsg)
-            geom = 'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:s})))'.format(xsch,ysch,durchm/1000.,epsg)
+            geop = 'MakePoint({0:},{1:},{2:})'.format(xsch,ysch,epsg)
+            geom = 'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))'.format(xsch,ysch,durchm/1000.,epsg)
         elif dbtyp == 'postgis':
-            geop = 'ST_SetSRID(ST_MakePoint(avg(xsch),avg(ysch)),{0:s})'.format(xsch,ysch,epsg)
+            geop = 'ST_SetSRID(ST_MakePoint({0:},),{2:})'.format(xsch,ysch,epsg)
         else:
             raise RuntimeError('Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,
             dbdatabase[-7:].lower()))
@@ -380,8 +379,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                      kommentar=kommentar, createdat=createdat, geop=geop, geom=geom)
             dbQK.sql(sql)
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
-            protokoll += "\nSchächte: in sql: \n" + sql + '\n\n'
+            protokoll += u'\n\n' + str(e)
+            protokoll += u"\nSchächte: in sql: \n" + sql + '\n\n'
 
     dbQK.commit()
 
@@ -433,10 +432,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         # Geo-Objekte erzeugen
 
         if dbtyp == 'SpatiaLite':
-            geop = 'MakePoint({0:},{1:},{2:s})'.format(xsch,ysch,epsg)
-            geom = 'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:s})))'.format(xsch,ysch,durchm/1000.,epsg)
+            geop = 'MakePoint({0:},{1:},{2:})'.format(xsch,ysch,epsg)
+            geom = 'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))'.format(xsch,ysch,durchm/1000.,epsg)
         elif dbtyp == 'postgis':
-            geop = 'ST_SetSRID(ST_MakePoint(avg(xsch),avg(ysch)),{0:s})'.format(xsch,ysch,epsg)
+            geop = 'ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})'.format(xsch,ysch,epsg)
         else:
             raise RuntimeError('Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
 
@@ -455,7 +454,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
             dbQK.sql(sql)
         except BaseException as e:
             protokoll += '\n\n' + str(e)
-            protokoll += "\nSpeicherschachtdaten in sql: \n" + sql + '\n\n'
+            protokoll += u"\nSpeicherschachtdaten in sql: \n" + sql + '\n\n'
 
     dbQK.commit()
 
@@ -518,10 +517,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         # Geo-Objekte erzeugen
 
         if dbtyp == 'SpatiaLite':
-            geop = 'MakePoint({0:},{1:},{2:s})'.format(xsch,ysch,epsg)
-            geom = 'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:s})))'.format(xsch,ysch,1.,epsg)
+            geop = 'MakePoint({0:},{1:},{2:})'.format(xsch,ysch,epsg)
+            geom = 'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))'.format(xsch,ysch,1.,epsg)
         elif dbtyp == 'postgis':
-            geop = 'ST_SetSRID(ST_MakePoint(avg(xsch),avg(ysch)),{0:s})'.format(xsch,ysch,epsg)
+            geop = 'ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})'.format(xsch,ysch,epsg)
         else:
             raise RuntimeError('Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
 
@@ -540,7 +539,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
             dbQK.sql(sql)
         except BaseException as e:
             protokoll += '\n\n' + str(e)
-            protokoll += "\nAuslässe: in sql: \n" + sql + '\n\n'
+            protokoll += u"\nAuslässe: in sql: \n" + sql + '\n\n'
 
     dbQK.commit()
 
@@ -619,10 +618,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
             yun = '{:.3f}'.format(float(yob) + 10.)
 
         if dbtyp == 'SpatiaLite':
-            geom = 'MakeLine(MakePoint({0:},{1:},{4:s}),MakePoint({2:},{3:},{4:s}))'.format(xob, yob, xun, yun, epsg)
+            geom = 'MakeLine(MakePoint({0:},{1:},{4:s}),MakePoint({2:},{3:},{4:}))'.format(xob, yob, xun, yun, epsg)
         elif dbtyp == 'postgis':
-            geom = '''ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:s}),
-                      ST_SetSRID(ST_MakePoint({2:},{3:}),{4:s}))'''.format(xob, yob, xun, yun, epsg)
+            geom = '''ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:}),
+                      ST_SetSRID(ST_MakePoint({2:},{3:}),{4:}))'''.format(xob, yob, xun, yun, epsg)
         else:
             raise RuntimeError('Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,
             dbdatabase[-7:].lower()))
@@ -639,17 +638,17 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                     einschalthoehe=einschalthoehe, ausschalthoehe=ausschalthoehe, simstatus=simstatus, 
                     kommentar=kommentar, createdat=createdat, geom=geom)
             # Nur zum Test
-            # protokoll += "Info zur sql-Abfrage pumpen: \n" + sql + '\n\n'
+            # protokoll += u"Info zur sql-Abfrage pumpen: \n" + sql + '\n\n'
         except BaseException as e:
             protokoll += '\n\n' + str(e)
-            protokoll += "\nFehler in sql INSERT INTO pumpen: \n" + str((pname, schoben, \
+            protokoll += u"\nFehler in sql INSERT INTO pumpen: \n" + str((pname, schoben, \
                 schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, geom)) + '\n\n'
 
         try:
             dbQK.sql(sql)
         except BaseException as e:
             protokoll += '\n\n' + str(e)
-            protokoll += "\nPumpen: in sql: \n" + sql + '\n\n'
+            protokoll += u"\nPumpen: in sql: \n" + sql + '\n\n'
     dbQK.commit()
 
 
@@ -717,9 +716,9 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
             yun = '{:.3f}'.format(float(yob) + 10.)
 
         if dbtyp == 'SpatiaLite':
-            geom = 'MakeLine(MakePoint({0:},{1:},{4:s}),MakePoint({2:},{3:},{4:s}))'.format(xob, yob, xun, yun, epsg)
+            geom = 'MakeLine(MakePoint({0:},{1:},{4:}),MakePoint({2:},{3:},{4:}))'.format(xob, yob, xun, yun, epsg)
         elif dbtyp == 'postgis':
-            geom = 'ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:s}),ST_SetSRID(ST_MakePoint({2:},{3:}),{4:s}))'.format(xob, yob, xun, yun, epsg)
+            geom = 'ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:}),ST_SetSRID(ST_MakePoint({2:},{3:}),{4:}))'.format(xob, yob, xun, yun, epsg)
         else:
             raise RuntimeError('Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
 
@@ -738,7 +737,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         except BaseException as e:
             protokoll += '\n\n' + str(e)
             ok = False
-            protokoll += "\nFehler in sql INSERT INTO wehre: \n" + str((wname, schoben, schunten, 
+            protokoll += u"\nFehler in sql INSERT INTO wehre: \n" + str((wname, schoben, schunten, 
             schwellenhoehe, kammerhoehe, laenge, uebeiwert, geom)) + '\n\n'
 
         if ok:
@@ -749,6 +748,65 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                 protokoll += u"\nWehre: Fehler in sql: \n" + sql + u'\n\n'
     dbQK.commit()
 
+
+# ------------------------------------------------------------------------------
+# Wehre
+
+    # Tabelle in QKan-Datenbank bleibt bestehen, damit gegebenenfalls erstellte 
+    # Teileinzugsgebiete, deren Geo-Objekte ja in HYSTEM-EXTRAN nicht verwaltet
+    # werden können, erhalten bleiben. Deshalb wird beim Import geprüft, ob das
+    # jeweilige Objekt schon vorhanden ist.
+    # sql = 'DELETE FROM teilgebiete'
+    # dbQK.sql(sql)
+
+    # Daten aUS ITWH-Datenbank abfragen
+    sql = '''
+    SELECT 
+        NAME AS name,
+        EINWOHNERDICHTE AS ewdichte,
+        WASSERVERBRAUCH AS wverbrauch,
+        STUNDENMITTEL AS stdmittel,
+        FREMDWASSERANTEIL AS fremdwas,
+        FLAECHE AS flaeche,
+        KOMMENTAR AS kommentar,
+        LASTMODIFIED AS createdat
+    FROM
+        teileinzugsgebiet'''
+
+    dbHE.sql(sql)
+    daten = dbHE.fetchall()
+
+    # Teileinzugsgebietsdaten in die QKan-DB schreiben
+
+    for attr in daten:
+        (name_ansi, ewdichte, wverbrauch, stdmittel, fremdwas, flaeche, kommentar_ansi, createdat) = ['NULL' if el is None else el for el in attr]
+
+        (name, kommentar) = [tt.decode('iso-8859-1') for tt in (name_ansi, kommentar_ansi)]
+
+        # Datensatz aufbereiten und in die QKan-DB schreiben
+
+        try:
+            sql = u"""
+              INSERT INTO teileinzugsgebiet (name, ewdichte, wverbrauch, stdmittel,
+                fremdwas, flaeche, kommentar, createdat) 
+              VALUES ('{name}', {ewdichte}, {wverbrauch}, {stdmittel}, {fremdwas},
+                {flaeche}, '{kommentar}', '{createdat}')
+              WHERE '{name}' NOT IN (SELECT name FROM teileinzugsgebiet)
+                 """.format(name=name, ewdichte=ewdichte, wverbrauch=wverbrauch, stdmittel=stdmittel, fremdwas=fremdwas, flaeche=flaeche, kommentar=kommentar, createdat=createdat)
+            ok = True
+        except BaseException as e:
+            protokoll += '\n\n' + str(e)
+            ok = False
+            protokoll += u"\nFehler in sql INSERT INTO Teilgebiete: \n" + str((name, ewdichte, wverbrauch, stdmittel,
+                fremdwas, flaeche, kommentar, createdat)) + '\n\n'
+
+        if ok:
+            try:
+                dbQK.sql(sql)
+            except BaseException as e:
+                protokoll += '\n\n' + str(e)
+                protokoll += u"\nTeilgebiete: Fehler in sql: \n" + sql + u'\n\n'
+    dbQK.commit()
 
 # ------------------------------------------------------------------------------
 # Speicherkennlinie
@@ -916,37 +974,37 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         dbQK.sql(sql_typAnf)
     except BaseException as e:
         protokoll += '\n\n' + str(e)
-        protokoll += "\nFehler in sql_typAnf: \n" + sql_typAnf + '\n\n'
+        protokoll += u"\nFehler in sql_typAnf: \n" + sql_typAnf + '\n\n'
 
     try:
         dbQK.sql(sql_typEnd)
     except BaseException as e:
         protokoll += '\n\n' + str(e)
-        protokoll += "\nFehler in sql_typEnd: \n" + sql_typEnd + '\n\n'
+        protokoll += u"\nFehler in sql_typEnd: \n" + sql_typEnd + '\n\n'
 
     try:
         dbQK.sql(sql_typHoch)
     except BaseException as e:
         protokoll += '\n\n' + str(e)
-        protokoll += "\nFehler in sql_typHoch: \n" + sql_typHoch + '\n\n'
+        protokoll += u"\nFehler in sql_typHoch: \n" + sql_typHoch + '\n\n'
 
     try:
         dbQK.sql(sql_typTief)
     except BaseException as e:
         protokoll += '\n\n' + str(e)
-        protokoll += "\nFehler in sql_typTief: \n" + sql_typTief + '\n\n'
+        protokoll += u"\nFehler in sql_typTief: \n" + sql_typTief + '\n\n'
 
     try:
         dbQK.sql(sql_typZweig)
     except BaseException as e:
         protokoll += '\n\n' + str(e)
-        protokoll += "\nFehler in sql_typZweig: \n" + sql_typZweig + '\n\n'
+        protokoll += u"\nFehler in sql_typZweig: \n" + sql_typZweig + '\n\n'
 
     try:
         dbQK.sql(sql_typEinzel)
     except BaseException as e:
         protokoll += '\n\n' + str(e)
-        protokoll += "\nFehler in sql_typEinzel: \n" + sql_typEinzel + '\n\n'
+        protokoll += u"\nFehler in sql_typEinzel: \n" + sql_typEinzel + '\n\n'
 
     dbQK.commit()
     
@@ -963,14 +1021,14 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     except BaseException as e:
         iface.messageBar().pushMessage("Fehler in sql-Abfrage", sql, level=QgsMessageBar.CRITICAL)
         protokoll += '\n\n' + str(e)
-        protokoll += "\nFehler in sql_zoom: \n" + sql + '\n\n'
+        protokoll += u"\nFehler in sql_zoom: \n" + sql + '\n\n'
 
     daten = dbHE.fetchone()
     try:
         zoomxmin, zoomxmax, zoomymin, zoomymax = daten
     except BaseException as e:
         protokoll += '\n' + str(e)
-        protokoll += "\nFehler in sql_zoom; daten= " + str(daten) + '\n'
+        protokoll += u"\nFehler in sql_zoom; daten= " + str(daten) + '\n'
 
     # --------------------------------------------------------------------------
     # Projektionssystem für die Projektdatei vorbereiten
@@ -983,7 +1041,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     except BaseException as e:
         iface.messageBar().pushMessage("Fehler in sql-Abfrage", sql, level=QgsMessageBar.CRITICAL)
         protokoll += '\n\n' + str(e)
-        protokoll += "\nFehler in sql_coordsys: \n" + sql + '\n\n'
+        protokoll += u"\nFehler in sql_coordsys: \n" + sql + '\n\n'
 
     daten = dbQK.fetchone()
     try:
@@ -998,7 +1056,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         iface.messageBar().pushMessage("Fehler in 'daten'", str(daten), level=QgsMessageBar.CRITICAL)
         protokoll += '\n\n' + str(e)
         # print(daten)
-        protokoll += "\nFehler bei der Ermittlung der srid: \n" + str(daten) + '\n\n'
+        protokoll += u"\nFehler bei der Ermittlung der srid: \n" + str(daten) + '\n\n'
 
 
     # --------------------------------------------------------------------------

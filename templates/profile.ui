@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>387</width>
+    <height>190</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,7 +83,7 @@
    </widget>
    <widget class="QLineEdit" name="he_nr">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>

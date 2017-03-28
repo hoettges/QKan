@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>369</width>
+    <height>121</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -49,6 +49,19 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
+   <widget class="QLineEdit" name="bezeichnung">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>50</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
    <widget class="QLineEdit" name="he_nr">
     <property name="enabled">
      <bool>false</bool>
@@ -57,7 +70,7 @@
      <rect>
       <x>150</x>
       <y>20</y>
-      <width>111</width>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -72,19 +85,6 @@
     </property>
     <property name="frame">
      <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="bezeichnung">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>50</y>
-      <width>171</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
     </property>
    </widget>
   </widget>

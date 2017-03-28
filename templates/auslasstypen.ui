@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>300</height>
+    <width>365</width>
+    <height>180</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -81,31 +81,6 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="he_nr">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>20</y>
-      <width>111</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::RightToLeft</enum>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="frame">
-     <bool>true</bool>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="mu_nr">
     <property name="enabled">
      <bool>true</bool>
@@ -114,7 +89,7 @@
      <rect>
       <x>150</x>
       <y>50</y>
-      <width>111</width>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -136,7 +111,7 @@
      <rect>
       <x>150</x>
       <y>80</y>
-      <width>111</width>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -149,12 +124,37 @@
      <rect>
       <x>150</x>
       <y>110</y>
-      <width>171</width>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="he_nr">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>20</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::RightToLeft</enum>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="frame">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>

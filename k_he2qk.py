@@ -31,7 +31,7 @@ import os.path
 # Ergaenzt (jh, 09.10.2016) -------------------------------------------------
 import os, json, site
 
-from qgis.gui import QgsMessageBar
+from qgis.gui import QgsMessageBar, QgsGenericProjectionSelector
 from qgis.utils import iface
 from import_from_he import importKanaldaten
 import codecs
@@ -95,7 +95,7 @@ class ImportFromHE:
             with codecs.open(self.configfil,'r','iso-8859-1') as fileconfig:
                 self.config = json.loads(fileconfig.read().replace('\\','/'))
         else:
-            self.config = {'epsg': '31467'}                # Projektionssystem
+            self.config = {'epsg': '25832'}                # Projektionssystem
             self.config['database_Qkan'] = ''
             self.config['database_HE'] = ''
             self.config['projectfile'] = ''
@@ -110,10 +110,12 @@ class ImportFromHE:
         self.dlg.tf_heDB.setText(database_HE)
         self.dlg.tf_qkanDB.setText(database_Qkan)
         self.dlg.tf_projectFile.setText(projectfile)
+        self.dlg.tf_epsg.setText(self.epsg)
 
         self.dlg.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
         self.dlg.pb_selectQkanDB.clicked.connect(self.selectFile_QkanDB)
         self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
+        self.dlg.pb_selectKBS.clicked.connect(self.selectKBS)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -261,6 +263,19 @@ class ImportFromHE:
         self.dlg.tf_projectFile.setText(filename)
 
 
+    def selectKBS(self):
+        """KBS auswählen. Setzt das KBS für die weiteren Funktionen
+
+        :returns: void
+        """
+        projSelector = QgsGenericProjectionSelector()
+        projSelector.exec_()
+        erg = projSelector.selectedAuthId()
+        if len(erg.split(':')) == 2:
+            self.dlg.tf_epsg.setText(erg.split(':')[1])
+        else:
+            self.dlg.tf_epsg.setText(erg)
+
     # Ende Eigene Funktionen ---------------------------------------------------
 
 
@@ -283,6 +298,7 @@ class ImportFromHE:
             database_HE = self.dlg.tf_heDB.text()
             database_Qkan = self.dlg.tf_qkanDB.text()
             projectfile = self.dlg.tf_projectFile.text()
+            self.epsg = self.dlg.tf_epsg.text()
 
 
             # Konfigurationsdaten schreiben
