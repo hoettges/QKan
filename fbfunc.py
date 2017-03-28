@@ -52,10 +52,10 @@ class FBConnection:
         self.confb = firebirdsql.connect(database = dbname, user = 'SYSDBA', password = 'masterke')
         self.curfb = self.confb.cursor()
       except:
-        iface.messageBar().pushMessage("Fehler", 'Fehler beim Anbinden der ITWH-Datenbank {:s}!\nAbbruch!'.format(dbname), level=QgsMessageBar.CRITICAL)
+        iface.messageBar().pushMessage("Fehler", u'Fehler beim Anbinden der ITWH-Datenbank {:s}!\nAbbruch!'.format(dbname), level=QgsMessageBar.CRITICAL)
         self.confb = None
     else:
-      iface.messageBar().pushMessage("Fehler", 'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(dbname), level=QgsMessageBar.CRITICAL)
+      iface.messageBar().pushMessage("Fehler", u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(dbname), level=QgsMessageBar.CRITICAL)
       self.confb = None
 
   def __del__(self):
@@ -75,7 +75,7 @@ class FBConnection:
   def attrlist(self, tablenam):
     '''Gibt Spaltenliste zurueck.'''
 
-    sql = 'PRAGMA table_info("{0:s}")'.format(tablenam)
+    sql = u'PRAGMA table_info("{0:s}")'.format(tablenam)
     self.curfb.execute(sql)
     daten = self.curfb.fetchall()
     # lattr = [el[1] for el in daten if el[2]  == u'TEXT']

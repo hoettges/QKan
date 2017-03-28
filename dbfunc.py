@@ -60,7 +60,7 @@ def checknames(text):
 class DBConnection:
     """SpatiaLite Datenbankobjekt"""
 
-    def __init__(self, dbname=None, tabObject=None):
+    def __init__(self, dbname=None, tabObject=None, epsg=25832):
         """Constructor.
 
         :param dbname: Pfad zur SpatiaLite-Datenbankdatei. Falls nicht vorhanden, 
@@ -89,7 +89,7 @@ class DBConnection:
                 self.cursl.execute(sql)
 
                 iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank ist erstellt!", level=QgsMessageBar.INFO)
-                if not createdbtables(self.consl,self.cursl):
+                if not createdbtables(self.consl, self.cursl, epsg):
                     iface.messageBar().pushMessage("Fehler", "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden", level=QgsMessageBar.CRITICAL)
         elif tabObject is not None:
             tabconnect = tabObject.publicSource()

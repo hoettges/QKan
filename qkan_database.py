@@ -33,9 +33,7 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
-epsg = '31467'
-
-def createdbtables(consl,cursl):
+def createdbtables(consl,cursl,epsg=25832):
     ''' Erstellt fuer eine neue QKan-Datenbank die zum Import aus Hystem-Extran
         benötigten Referenztabellen.
 
@@ -97,7 +95,7 @@ def createdbtables(consl,cursl):
             level=QgsMessageBar.CRITICAL)
         return False
 
-    sql = "SELECT AddGeometryColumn('haltungen','geom',{:s},'LINESTRING',2)".format(epsg)
+    sql = "SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg)
     try:
         cursl.execute(sql)
     except:
@@ -140,8 +138,8 @@ def createdbtables(consl,cursl):
             level=QgsMessageBar.CRITICAL)
         return False
 
-    sql1 = """SELECT AddGeometryColumn('schaechte','geop',{0:s},'POINT',2);""".format(epsg)
-    sql2 = """SELECT AddGeometryColumn('schaechte','geom',{0:s},'MULTIPOLYGON',2);""".format(epsg)
+    sql1 = """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg)
+    sql2 = """SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg)
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
@@ -174,8 +172,8 @@ def createdbtables(consl,cursl):
         #     level=QgsMessageBar.CRITICAL)
         # return False
 
-    # sql1 = """SELECT AddGeometryColumn('auslaesse','geop',{0:s},'POINT',2);""".format(epsg)
-    # sql2 = """SELECT AddGeometryColumn('auslaesse','geom',{0:s},'MULTIPOLYGON',2);""".format(epsg)
+    # sql1 = """SELECT AddGeometryColumn('auslaesse','geop',{},'POINT',2);""".format(epsg)
+    # sql2 = """SELECT AddGeometryColumn('auslaesse','geom',{},'MULTIPOLYGON',2);""".format(epsg)
     # try:
         # cursl.execute(sql1)
         # cursl.execute(sql2)
@@ -212,8 +210,8 @@ def createdbtables(consl,cursl):
         #     level=QgsMessageBar.CRITICAL)
         # return False
 
-    # sql1 = """SELECT AddGeometryColumn('speicherschaechte','geop',{0:s},'POINT',2);""".format(epsg)
-    # sql2 = """SELECT AddGeometryColumn('speicherschaechte','geom',{0:s},'MULTIPOLYGON',2);""".format(epsg)
+    # sql1 = """SELECT AddGeometryColumn('speicherschaechte','geop',{},'POINT',2);""".format(epsg)
+    # sql2 = """SELECT AddGeometryColumn('speicherschaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg)
     # try:
         # cursl.execute(sql1)
         # cursl.execute(sql2)
@@ -393,7 +391,7 @@ def createdbtables(consl,cursl):
             level=QgsMessageBar.CRITICAL)
         return False
 
-    sql = "SELECT AddGeometryColumn('pumpen','geom',{:s},'LINESTRING',2)".format(epsg)
+    sql = "SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg)
     try:
         cursl.execute(sql)
     except:
@@ -428,7 +426,7 @@ def createdbtables(consl,cursl):
             level=QgsMessageBar.CRITICAL)
         return False
 
-    sql = "SELECT AddGeometryColumn('wehre','geom',{:s},'LINESTRING',2)".format(epsg)
+    sql = "SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg)
     try:
         cursl.execute(sql)
     except:
@@ -460,7 +458,7 @@ def createdbtables(consl,cursl):
             level=QgsMessageBar.CRITICAL)
         return False
 
-    sql = "SELECT AddGeometryColumn('teilgebiete','geom',{:s},'MULTIPOLYGON',2)".format(epsg)
+    sql = "SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
     try:
         cursl.execute(sql)
     except:
