@@ -263,7 +263,6 @@ class Laengsschnitt:
         :param activate: Zustand der Checkbox, nach dem anklicken.
         :type activate: int
         """
-        print(type(activate))
         if self.maximizer is None or self.maximizer.id != self.id:
             self.maximizer = plotter.Maximizer(self.id, copy.deepcopy(self.route), self.dbname)
             self.maximizer.draw()

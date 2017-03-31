@@ -394,10 +394,7 @@ class Animator:
             self.slider.setValue(index)
 
         self.animation = animation.FuncAnimation(self.fig, animate, frames=self.max_value, interval=10)
-        try:
-            self.fig.canvas.draw()
-        except BaseException as e:
-            logger.error(u"Fehler in fig.canvas.draw(): {}".format(e))
+        self.fig.canvas.draw()
         self.pause()
 
     def update_timestamp(self, value):

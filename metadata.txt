@@ -7,17 +7,17 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=Gangliniengrafik
+name=Laengsschnitt
 qgisMinimumVersion=2.0
-description=Dieses Plugin erzeugt Ganglininen von Kanalnetzen
+description=Plugin für einen animierten Laengsschnitt
 version=0.1
-author=Michael Gesenhues
-email=Gesenhues@fh-aachen.de
+author=Leon Ochsenfeld
+email=Ochsenfeld@fh-aachen.de
 
-about=Das Programm erzeugt eine Gangliniengrafik zu markierten Objekten. Ausschließlich für Haltungen und Schächte möglich und auch nur dann wenn entsprechende Datenbank(.idbf) mit Messwerten vorhanden ist.
+about=Zuerst wählen Sie den gewünschten Anfangs- und Endpunkt an, dann starten Sie das Plugin.
 
-tracker=github.com
-repository=github.com
+tracker=Random
+repository=Random
 # End of mandatory metadata
 
 # Recommended items:
@@ -29,10 +29,10 @@ repository=github.com
 tags=
 
 homepage=
-category=Vector
+category=Plugins
 icon=icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
