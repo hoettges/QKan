@@ -314,7 +314,24 @@ class Laengsschnitt:
         :type value: int
         :return: Returned wenn der Speed-Controller auf "Pause" steht
         """
-        self.speed_label.setText("Geschwindigkeit: {}x".format(value))
+        if self.speed_controller.mode == SliderMode.Pause:
+            if self.speed_controller.last_mode == SliderMode.Forward:
+                self.speed_label.setText("Geschwindigkeit: {}x".format(value))
+                self.speed_label.setStyleSheet(
+                    "QLabel {color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #050DFF, stop:1 #757AFF);}")
+            else:
+                self.speed_label.setText("Geschwindigkeit: -{}x".format(value))
+                self.speed_label.setStyleSheet(
+                    "QLabel {color:qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #000000, stop:1 #8f8f8f);}")
+        elif self.speed_controller.mode == SliderMode.Forward:
+            self.speed_label.setText("Geschwindigkeit: {}x".format(value))
+            self.speed_label.setStyleSheet(
+                "QLabel {color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #050DFF, stop:1 #757AFF);}")
+        else:
+            self.speed_label.setText("Geschwindigkeit: -{}x".format(value))
+            self.speed_label.setStyleSheet(
+                "QLabel {color:qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #000000, stop:1 #8f8f8f);}")
+
         if self.speed_controller.mode == SliderMode.Pause:
             self.animator.pause()
             return
@@ -402,6 +419,8 @@ class Laengsschnitt:
             self.speed_controller.setMinimumWidth(300)
             layout.addWidget(self.speed_controller, 0, 0, 1, 1, Qt.AlignRight)
             self.speed_label = QLabel("Geschwindigkeit: 0x")
+            self.speed_label.setStyleSheet(
+                "QLabel {color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #050DFF, stop:1 #757AFF);}")
             self.speed_controller.setToolTip(
                 "Links: Geschwindigkeit einstellen\nRechts: Pause/Start\nStrg+Rechts: Geschwindigkeit umkehren")
             layout.addWidget(self.speed_label, 1, 0, 1, 1, Qt.AlignCenter)
