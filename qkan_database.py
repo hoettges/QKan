@@ -304,9 +304,9 @@ def createdbtables(consl,cursl,epsg=25832):
     sql = '''
     CREATE TABLE entwaesserungsart (
     pk INTEGER PRIMARY KEY, 
-    kuerzel TEXT , 
-    bezeichnung TEXT , 
-    bemerkung TEXT , 
+    kuerzel TEXT, 
+    bezeichnung TEXT, 
+    bemerkung TEXT, 
     he_nr INTEGER)'''
 
     try:
@@ -337,7 +337,7 @@ def createdbtables(consl,cursl,epsg=25832):
     sql = '''
     CREATE TABLE pumpentypen (
     pk INTEGER PRIMARY KEY, 
-    bezeichnung TEXT , 
+    bezeichnung TEXT, 
     he_nr INTEGER)'''
 
     try:
@@ -370,7 +370,7 @@ def createdbtables(consl,cursl,epsg=25832):
     sql = '''
     CREATE TABLE pumpen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
-    pname TEXT,
+    pnam TEXT,
     schoben TEXT,
     schunten TEXT,
     pumpentyp TEXT,
@@ -405,7 +405,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = '''CREATE TABLE wehre (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
-    wname TEXT,
+    wnam TEXT,
     schoben TEXT,
     schunten TEXT,
     wehrtyp TEXT,
@@ -442,7 +442,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = '''CREATE TABLE teilgebiete (
         pk INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
+        tgnam TEXT,
         ewdichte REAL,
         wverbrauch REAL,
         stdmittel REAL,
@@ -468,6 +468,66 @@ def createdbtables(consl,cursl,epsg=25832):
     consl.commit()
 
 
+    # Befestigte und unbefestigte Flächen ------------------------------------------------------
+
+    sql = '''CREATE TABLE flaechen (
+        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+        flnam TEXT,
+        haltnam TEXT,
+        neigkl INTEGER,
+        teilgebiet TEXT,
+        regenschreiber TEXT,
+        abflussparameter TEXT,
+        kommentar TEXT,
+        createdat TEXT DEFAULT CURRENT_DATE)'''
+
+    try:
+        cursl.execute(sql)
+    except:
+        iface.messageBar().pushMessage("Fehler", 'Tabelle "flaechen" konnte nicht erstellt werden!\nAbbruch!',
+            level=QgsMessageBar.CRITICAL)
+        return False
+
+    sql = "SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    try:
+        cursl.execute(sql)
+    except:
+        iface.messageBar().pushMessage("Fehler", 'In der Tabelle "flaechen" konnte das Attribut "geom" ' + 
+            'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+        return False
+    consl.commit()
+
+
+    # Teileinzugsgebiete ------------------------------------------------------------------
+    # Bei aktivierte Option "check_difftezg" wird je Teileinzugsgebiet eine unbefestigte 
+    # Fläche als Differenz zu den innerhalb liegenden Flächen (befestigte und unbefestigte!)
+    # gebildet
+
+    sql = '''CREATE TABLE tezg (
+        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+        flnam TEXT,
+        haltnam TEXT,
+        neigkl INTEGER,
+        regenschreiber TEXT,
+        abflussparameter TEXT,
+        kommentar TEXT,
+        createdat TEXT DEFAULT CURRENT_DATE)'''
+
+    try:
+        cursl.execute(sql)
+    except:
+        iface.messageBar().pushMessage("Fehler", 'Tabelle "tezg" konnte nicht erstellt werden!\nAbbruch!',
+            level=QgsMessageBar.CRITICAL)
+        return False
+
+    sql = "SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    try:
+        cursl.execute(sql)
+    except:
+        iface.messageBar().pushMessage("Fehler", 'In der Tabelle "tezg" konnte das Attribut "geom" ' + 
+            'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+        return False
+    consl.commit()
 
 
     # Simulationsstatus/Planungsstatus -----------------------------------------
@@ -548,16 +608,16 @@ def createdbtables(consl,cursl,epsg=25832):
     sql = '''
     CREATE TABLE abflussparameter (
     pk INTEGER PRIMARY KEY, 
-    name TEXT , 
-    kommentar TEXT , 
-    anfangsabflussbeiwert REAL , 
-    endabflussbeiwert REAL , 
-    benetzungsverlust REAL , 
-    muldenverlust REAL , 
-    benetzung_startwert REAL , 
-    mulden_startwert REAL , 
-    bodenklasse TEXT , 
-    interz_jahresganglinie TEXT , 
+    apnam TEXT, 
+    kommentar TEXT, 
+    anfangsabflussbeiwert REAL, 
+    endabflussbeiwert REAL, 
+    benetzungsverlust REAL, 
+    muldenverlust REAL, 
+    benetzung_startwert REAL, 
+    mulden_startwert REAL, 
+    bodenklasse TEXT, 
+    interz_jahresganglinie TEXT, 
     createdat TEXT DEFAULT CURRENT_DATE)'''
 
     try:
