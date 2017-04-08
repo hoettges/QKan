@@ -26,14 +26,14 @@ import logging, site, os.path
 from datetime import datetime as dt
 
 # Aufsetzen des Logging-Systems
-logger = logging.getLogger('QKan_Laengsschnitt')
+logger = logging.getLogger('QKan')
 formatter = logging.Formatter('%(asctime)s %(name)s-%(levelname)s: %(message)s')
 ch = logging.StreamHandler()
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 dnam = dt.today().strftime("%Y%m%d")
-fnam = os.path.join(site.getuserbase(),'QKan_Laengsschnitt{}.log'.format(dnam))
+fnam = os.path.join(tempfile.gettempdir(),'QKan{}.log'.format(dnam))
 fh = logging.FileHandler(fnam)
 fh.setFormatter(formatter)
 logger.addHandler(fh)
