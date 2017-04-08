@@ -80,7 +80,8 @@ class DBConnection:
             else:
                 iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank wird erstellt. Bitte waren...", level=QgsMessageBar.INFO)
 
-                time.sleep(1)
+                datenbank_QKan_Template = os.path.join(os.path.dirname(__file__), "templates","qkan.sqlite")
+                shutil.copyfile(datenbank_QKan_Template, dbname)
 
                 self.consl = splite.connect(database = dbname)
                 self.cursl = self.consl.cursor()
