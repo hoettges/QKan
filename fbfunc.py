@@ -49,7 +49,7 @@ class FBConnection:
             # Verbindung zur Datenbank herstellen
     if os.path.exists(dbname):
       try:
-        self.confb = firebirdsql.connect(database = dbname, user = 'SYSDBA', password = 'masterke')
+        self.confb = firebirdsql.connect(database = dbname, user = 'SYSDBA', password = 'masterke', charset = 'latin1')
         self.curfb = self.confb.cursor()
       except:
         iface.messageBar().pushMessage("Fehler", u'Fehler beim Anbinden der ITWH-Datenbank {:s}!\nAbbruch!'.format(dbname), level=QgsMessageBar.CRITICAL)
