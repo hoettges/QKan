@@ -52,7 +52,19 @@ import codecs
 import pyspatialite.dbapi2 as splite
 from xml.dom.minidom import parse as xmlparse
 # import sqlite3
+import logging
 
+LOGGER = logging.getLogger('QKan')
+
+# Fortschritts- und Fehlermeldungen
+
+def fortschritt(text,prozent):
+    LOGGER.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100))
+    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100), 'Export: ', QgsMessageLog.INFO)
+
+def fehlermeldung(title, text):
+    LOGGER.debug(u'{:s} {:s}'.format(title,text))
+    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 # ------------------------------------------------------------------------------
 # Hauptprogramm
@@ -93,19 +105,19 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     # ------------------------------------------------------------------------------
     # Start
 
-    protokoll = u""
-
     dbHE = FBConnection(database_HE)        # Datenbankobjekt der HE-Datenbank zum Lesen
 
     if dbHE is None:
-        iface.messageBar().pushMessage("Fehler", 'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+        fehlermeldung("Fehler",u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_HE))
+        iface.messageBar().pushMessage("Fehler", u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
             database_HE), level=QgsMessageBar.CRITICAL)
         return None
 
     dbQK = DBConnection(dbname=database_QKan, epsg=epsg)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
     if dbQK is None:
-        iface.messageBar().pushMessage("Fehler", 'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+        fehlermeldung("Fehler", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+        iface.messageBar().pushMessage("Fehler", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
             database_QKan), level=QgsMessageBar.CRITICAL)
         return None
     
@@ -282,16 +294,16 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                     profilnam=profilnam, entwart=entwart, ks=ks, simstatus=simstatus, kommentar=kommentar, 
                     createdat=createdat)
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
-            protokoll += u"\nFehler in sql INSERT INTO haltungen: \n" + str((geom, haltnam, schoben, schunten, 
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO haltungen: \n" + str((geom, haltnam, schoben, schunten, 
                 hoehe, breite, laenge, sohleoben, sohleunten, 
-                deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus)) + '\n\n'
+                deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus)) + '\n\n')
 
         try:
             dbQK.sql(sql)
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
-            protokoll += u"\nFehler in sql: \n" + sql + '\n\n'
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler", u"\nFehler in sql: \n" + sql + '\n\n')
 
     dbQK.commit()
 
@@ -379,8 +391,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                      kommentar=kommentar, createdat=createdat, geop=geop, geom=geom)
             dbQK.sql(sql)
         except BaseException as e:
-            protokoll += u'\n\n' + str(e)
-            protokoll += u"\nSchächte: in sql: \n" + sql + '\n\n'
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler", u"\nSchächte: in sql: \n" + sql + '\n\n')
 
     dbQK.commit()
 
@@ -453,8 +465,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         try:
             dbQK.sql(sql)
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
-            protokoll += u"\nSpeicherschachtdaten in sql: \n" + sql + '\n\n'
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler", u"\nSpeicherschachtdaten in sql: \n" + sql + '\n\n')
 
     dbQK.commit()
 
@@ -534,12 +546,11 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                     sohlhoehe=sohlhoehe, deckelhoehe=deckelhoehe, auslasstyp=auslasstyp, 
                     schachttyp = 'Auslass', simstatus=simstatus, 
                     kommentar=kommentar, createdat=createdat, geop=geop, geom=geom)
-        # protokoll += '\n' + sql
         try:
             dbQK.sql(sql)
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
-            protokoll += u"\nAuslässe: in sql: \n" + sql + '\n\n'
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler", u"\nAuslässe: in sql: \n" + sql + '\n\n')
 
     dbQK.commit()
 
@@ -637,18 +648,17 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                     pname=pname, schoben=schoben, schunten=schunten, pumpentyp=pumpentyp, steuersch=steuersch, 
                     einschalthoehe=einschalthoehe, ausschalthoehe=ausschalthoehe, simstatus=simstatus, 
                     kommentar=kommentar, createdat=createdat, geom=geom)
-            # Nur zum Test
-            # protokoll += u"Info zur sql-Abfrage pumpen: \n" + sql + '\n\n'
+
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
-            protokoll += u"\nFehler in sql INSERT INTO pumpen: \n" + str((pname, schoben, \
-                schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, geom)) + '\n\n'
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO pumpen: \n" + str((pname, schoben, \
+                schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, geom)) + '\n\n')
 
         try:
             dbQK.sql(sql)
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
-            protokoll += u"\nPumpen: in sql: \n" + sql + '\n\n'
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler", u"\nPumpen: in sql: \n" + sql + '\n\n')
     dbQK.commit()
 
 
@@ -735,17 +745,17 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                     kommentar=kommentar, createdat=createdat, geom=geom)
             ok = True
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
+            fehlermeldung('Fehler', str(e))
             ok = False
-            protokoll += u"\nFehler in sql INSERT INTO wehre: \n" + str((wname, schoben, schunten, 
-            schwellenhoehe, kammerhoehe, laenge, uebeiwert, geom)) + '\n\n'
+            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO wehre: \n" + str((wname, schoben, schunten, 
+                          schwellenhoehe, kammerhoehe, laenge, uebeiwert, geom)) + '\n\n')
 
         if ok:
             try:
                 dbQK.sql(sql)
             except BaseException as e:
-                protokoll += '\n\n' + str(e)
-                protokoll += u"\nWehre: Fehler in sql: \n" + sql + u'\n\n'
+                fehlermeldung('Fehler', str(e))
+                fehlermeldung("Fehler", u"\nWehre: Fehler in sql: \n" + sql + u'\n\n')
     dbQK.commit()
 
 
@@ -762,7 +772,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
     SELECT 
-        NAME AS name,
+        NAME AS tgnam,
         EINWOHNERDICHTE AS ewdichte,
         WASSERVERBRAUCH AS wverbrauch,
         STUNDENMITTEL AS stdmittel,
@@ -779,33 +789,33 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     # Teileinzugsgebietsdaten in die QKan-DB schreiben
 
     for attr in daten:
-        (name_ansi, ewdichte, wverbrauch, stdmittel, fremdwas, flaeche, kommentar_ansi, createdat) = ['NULL' if el is None else el for el in attr]
+        (tgnam_ansi, ewdichte, wverbrauch, stdmittel, fremdwas, flaeche, kommentar_ansi, createdat) = ['NULL' if el is None else el for el in attr]
 
-        (name, kommentar) = [tt.decode('iso-8859-1') for tt in (name_ansi, kommentar_ansi)]
+        (tgnam, kommentar) = [tt.decode('iso-8859-1') for tt in (tgnam_ansi, kommentar_ansi)]
 
         # Datensatz aufbereiten und in die QKan-DB schreiben
 
         try:
             sql = u"""
-              INSERT INTO teileinzugsgebiet (name, ewdichte, wverbrauch, stdmittel,
+              INSERT INTO teilgebiete (tgnam, ewdichte, wverbrauch, stdmittel,
                 fremdwas, flaeche, kommentar, createdat) 
-              VALUES ('{name}', {ewdichte}, {wverbrauch}, {stdmittel}, {fremdwas},
+              VALUES ('{tgnam}', {ewdichte}, {wverbrauch}, {stdmittel}, {fremdwas},
                 {flaeche}, '{kommentar}', '{createdat}')
-              WHERE '{name}' NOT IN (SELECT name FROM teileinzugsgebiet)
+              WHERE '{tgnam}' NOT IN (SELECT tgnam FROM teilgebiete)
                  """.format(name=name, ewdichte=ewdichte, wverbrauch=wverbrauch, stdmittel=stdmittel, fremdwas=fremdwas, flaeche=flaeche, kommentar=kommentar, createdat=createdat)
             ok = True
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO Teilgebiete: \n" + str((tgnam, ewdichte, wverbrauch, stdmittel,
+                fremdwas, flaeche, kommentar, createdat)) + '\n\n')
             ok = False
-            protokoll += u"\nFehler in sql INSERT INTO Teilgebiete: \n" + str((name, ewdichte, wverbrauch, stdmittel,
-                fremdwas, flaeche, kommentar, createdat)) + '\n\n'
 
         if ok:
             try:
                 dbQK.sql(sql)
             except BaseException as e:
-                protokoll += '\n\n' + str(e)
-                protokoll += u"\nTeilgebiete: Fehler in sql: \n" + sql + u'\n\n'
+                fehlermeldung('SQL-Fehler', str(e))
+                fehlermeldung("Fehler", u"\nTeilgebiete: Fehler in sql: \n" + sql + u'\n\n')
     dbQK.commit()
 
 # ------------------------------------------------------------------------------
@@ -845,8 +855,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         try:
             dbQK.sql(sql)
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
-            protokoll += u"\nSpeicherkennlinie:Fehler in sql: \n" + sql + u'\n\n'
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler", u"\nSpeicherkennlinie:Fehler in sql: \n" + sql + u'\n\n')
     dbQK.commit()
 
 
@@ -887,8 +897,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         try:
             dbQK.sql(sql)
         except BaseException as e:
-            protokoll += '\n\n' + str(e)
-            protokoll += u"\nSonderprofildaten: Fehler in sql: \n" + sql + u'\n\n'
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler", u"\nSonderprofildaten: Fehler in sql: \n" + sql + u'\n\n')
     dbQK.commit()
 
         
@@ -973,38 +983,38 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     try:
         dbQK.sql(sql_typAnf)
     except BaseException as e:
-        protokoll += '\n\n' + str(e)
-        protokoll += u"\nFehler in sql_typAnf: \n" + sql_typAnf + '\n\n'
+        fehlermeldung('SQL-Fehler', str(e))
+        fehlermeldung("Fehler", u"\nFehler in sql_typAnf: \n" + sql_typAnf + '\n\n')
 
     try:
         dbQK.sql(sql_typEnd)
     except BaseException as e:
-        protokoll += '\n\n' + str(e)
-        protokoll += u"\nFehler in sql_typEnd: \n" + sql_typEnd + '\n\n'
+        fehlermeldung('SQL-Fehler', str(e))
+        fehlermeldung("Fehler", u"\nFehler in sql_typEnd: \n" + sql_typEnd + '\n\n')
 
     try:
         dbQK.sql(sql_typHoch)
     except BaseException as e:
-        protokoll += '\n\n' + str(e)
-        protokoll += u"\nFehler in sql_typHoch: \n" + sql_typHoch + '\n\n'
+        fehlermeldung('SQL-Fehler', str(e))
+        fehlermeldung("Fehler", u"\nFehler in sql_typHoch: \n" + sql_typHoch + '\n\n')
 
     try:
         dbQK.sql(sql_typTief)
     except BaseException as e:
-        protokoll += '\n\n' + str(e)
-        protokoll += u"\nFehler in sql_typTief: \n" + sql_typTief + '\n\n'
+        fehlermeldung('SQL-Fehler', str(e))
+        fehlermeldung("Fehler", u"\nFehler in sql_typTief: \n" + sql_typTief + '\n\n')
 
     try:
         dbQK.sql(sql_typZweig)
     except BaseException as e:
-        protokoll += '\n\n' + str(e)
-        protokoll += u"\nFehler in sql_typZweig: \n" + sql_typZweig + '\n\n'
+        fehlermeldung('SQL-Fehler', str(e))
+        fehlermeldung("Fehler", u"\nFehler in sql_typZweig: \n" + sql_typZweig + '\n\n')
 
     try:
         dbQK.sql(sql_typEinzel)
     except BaseException as e:
-        protokoll += '\n\n' + str(e)
-        protokoll += u"\nFehler in sql_typEinzel: \n" + sql_typEinzel + '\n\n'
+        fehlermeldung('SQL-Fehler', str(e))
+        fehlermeldung("Fehler", u"\nFehler in sql_typEinzel: \n" + sql_typEinzel + '\n\n')
 
     dbQK.commit()
     
@@ -1019,16 +1029,15 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     try:
         dbHE.sql(sql)
     except BaseException as e:
-        iface.messageBar().pushMessage("Fehler in sql-Abfrage", sql, level=QgsMessageBar.CRITICAL)
-        protokoll += '\n\n' + str(e)
-        protokoll += u"\nFehler in sql_zoom: \n" + sql + '\n\n'
+        fehlermeldung('SQL-Fehler', str(e))
+        fehlermeldung("Fehler", u"\nFehler in sql_zoom: \n" + sql + '\n\n')
 
     daten = dbHE.fetchone()
     try:
         zoomxmin, zoomxmax, zoomymin, zoomymax = daten
     except BaseException as e:
-        protokoll += '\n' + str(e)
-        protokoll += u"\nFehler in sql_zoom; daten= " + str(daten) + '\n'
+        fehlermeldung('SQL-Fehler', str(e))
+        fehlermeldung("Fehler", u"\nFehler in sql_zoom; daten= " + str(daten) + '\n')
 
     # --------------------------------------------------------------------------
     # Projektionssystem für die Projektdatei vorbereiten
@@ -1039,9 +1048,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     try:
         dbQK.sql(sql)
     except BaseException as e:
-        iface.messageBar().pushMessage("Fehler in sql-Abfrage", sql, level=QgsMessageBar.CRITICAL)
-        protokoll += '\n\n' + str(e)
-        protokoll += u"\nFehler in sql_coordsys: \n" + sql + '\n\n'
+        fehlermeldung('SQL-Fehler', str(e))
+        fehlermeldung("Fehler", u"\nFehler in sql_coordsys: \n" + sql + '\n\n')
 
     daten = dbQK.fetchone()
     try:
@@ -1053,10 +1061,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         projectionacronym = 'dummy'
         ellipsoidacronym = 'dummy'
 
-        iface.messageBar().pushMessage("Fehler in 'daten'", str(daten), level=QgsMessageBar.CRITICAL)
-        protokoll += '\n\n' + str(e)
-        # print(daten)
-        protokoll += u"\nFehler bei der Ermittlung der srid: \n" + str(daten) + '\n\n'
+        fehlermeldung('Fehler in "daten"', str(e))
+        fehlermeldung("Fehler", u"\nFehler bei der Ermittlung der srid: \n" + str(daten) + '\n\n')
 
 
     # --------------------------------------------------------------------------
@@ -1135,12 +1141,6 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
 
-    if protokoll != "":
-        fd, tmpfil = tempfile.mkstemp(suffix='.log') 
-        with codecs.open(tmpfil,'w','utf-8') as proto:
-            proto.write(protokoll)
-        QgsMessageLog.logMessage(protokoll, "\nFehler in sql: ", QgsMessageLog.INFO)
-    
     
     
     iface.mainWindow().statusBar().clearMessage()

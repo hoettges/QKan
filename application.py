@@ -8,7 +8,7 @@
 
   Definition der Formularklasse
 
-  | Dateiname            : k_he2qk.py
+  | Dateiname            : application.py
   | Date                 : October 2016
   | Copyright            : (C) 2016 by Joerg Hoettges
   | Email                : hoettges@fh-aachen.de
@@ -25,18 +25,18 @@ from PyQt4.QtGui import QAction, QIcon, QFileDialog                      # (jh, 
 # Initialize Qt resources from file resources.py
 import resources_rc
 # Import the code for the dialog
-from k_he2qk_dialog import ImportFromHEDialog
-import os.path
+from application_dialog import ImportFromHEDialog
 
-# Ergaenzt (jh, 09.10.2016) -------------------------------------------------
 import os, json, site
 
 from qgis.gui import QgsMessageBar, QgsGenericProjectionSelector
 from qgis.utils import iface
 from import_from_he import importKanaldaten
 import codecs
+import logging
 
-
+# Anbindung an Logging-System (Initialisierung in __init__)
+LOGGER = logging.getLogger('QKan')
 
 class ImportFromHE:
     """QGIS Plugin Implementation."""
@@ -92,14 +92,14 @@ class ImportFromHE:
 
         self.configfil = os.path.join(wordir, 'qkan.json')
         if os.path.exists(self.configfil):
-            with codecs.open(self.configfil,'r','iso-8859-1') as fileconfig:
+            with codecs.open(self.configfil,'r','utf-8') as fileconfig:
                 self.config = json.loads(fileconfig.read().replace('\\','/'))
         else:
             self.config = {'epsg': '25832'}                # Projektionssystem
             self.config['database_Qkan'] = ''
             self.config['database_HE'] = ''
             self.config['projectfile'] = ''
-            with codecs.open(self.configfil,'w','iso-8859-1') as fileconfig:
+            with codecs.open(self.configfil,'w','utf-8') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
         self.epsg = self.config['epsg']

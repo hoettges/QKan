@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- ImportFromHE
+ ImportFromHEDialog
                                  A QGIS plugin
  Importiert Kanaldaten aus Hystem-Extran
                              -------------------
         begin                : 2016-10-06
+        git sha              : $Format:%H$
         copyright            : (C) 2016 by Jörg Höttges/FH Aachen
         email                : hoettges@fh-aachen.de
-        git sha              : $Format:%H$
  ***************************************************************************/
 
 /***************************************************************************
@@ -19,17 +19,23 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
- This script initializes the plugin, making it known to QGIS.
 """
 
+import os
 
-# noinspection PyPep8Naming
-def classFactory(iface):  # pylint: disable=invalid-name
-    """Load ImportFromHE class from file ImportFromHE.
+from PyQt4 import QtGui, uic
 
-    :param iface: A QGIS interface instance.
-    :type iface: QgsInterface
-    """
-    #
-    from .k_he2qk import ImportFromHE
-    return ImportFromHE(iface)
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'application_dialog_base.ui'))
+
+
+class ImportFromHEDialog(QtGui.QDialog, FORM_CLASS):
+    def __init__(self, parent=None):
+        """Constructor."""
+        super(ImportFromHEDialog, self).__init__(parent)
+        # Set up the user interface from Designer.
+        # After setupUI you can access any designer object by doing
+        # self.<objectname>, and you can use autoconnect slots - see
+        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
+        # #widgets-and-dialogs-with-auto-connect
+        self.setupUi(self)
