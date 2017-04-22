@@ -43,6 +43,7 @@ logger.setLevel(logging.DEBUG)
 ch.setLevel(logging.ERROR)
 fh.setLevel(logging.DEBUG)
 
+logger.info('Initialisierung logger erfolgreich!')
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name

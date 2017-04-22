@@ -28,7 +28,7 @@ __copyright__ = '(C) 2016, Joerg Hoettges'
 
 __revision__ = ':%H$'
 
-import os, time
+import os, time, shutil
 import sqlite3
 import pyspatialite.dbapi2 as splite
 from qkan_database import createdbtables

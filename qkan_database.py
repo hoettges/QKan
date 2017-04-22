@@ -227,7 +227,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = '''
     CREATE TABLE profile (
-    pk INTEGER Primary Key,
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
     profilnam TEXT,
     he_nr INTEGER,
     mu_nr INTEGER,
@@ -285,7 +285,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = '''
     CREATE TABLE profildaten (
-    pk INTEGER PRIMARY KEY, 
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     profilnam TEXT, 
     wspiegel REAL, 
     wbreite REAL)'''
@@ -303,7 +303,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = '''
     CREATE TABLE entwaesserungsart (
-    pk INTEGER PRIMARY KEY, 
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     kuerzel TEXT, 
     bezeichnung TEXT, 
     bemerkung TEXT, 
@@ -336,7 +336,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = '''
     CREATE TABLE pumpentypen (
-    pk INTEGER PRIMARY KEY, 
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bezeichnung TEXT, 
     he_nr INTEGER)'''
 
@@ -534,7 +534,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = '''
     CREATE TABLE simulationsstatus (
-    pk INTEGER PRIMARY KEY, 
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bezeichnung TEXT,
     he_nr INTEGER,
     mu_nr INTEGER,
@@ -571,7 +571,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = '''
     CREATE TABLE auslasstypen (
-    pk INTEGER PRIMARY KEY, 
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bezeichnung TEXT,
     he_nr INTEGER,
     mu_nr INTEGER,
@@ -607,7 +607,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = '''
     CREATE TABLE abflussparameter (
-    pk INTEGER PRIMARY KEY, 
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     apnam TEXT, 
     kommentar TEXT, 
     anfangsabflussbeiwert REAL, 
@@ -632,7 +632,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = '''
     CREATE TABLE speicherkennlinie (
-    pk INTEGER PRIMARY KEY, 
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     schnam TEXT, 
     wspiegel REAL, 
     oberfl REAL)'''
