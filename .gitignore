@@ -93,6 +93,7 @@ ENV/
 
 # sicher
 sicher/
+*.bak
 
 # PyCharm
 .idea/
