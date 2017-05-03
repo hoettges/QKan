@@ -482,7 +482,7 @@ class Laengsschnitt:
         features = []
         for l in layers:
             features += [f[1] for f in l.selectedFeatures()]
-
+        features = list(set(features))
         if featureCount == 2:
             if layer_type == LayerType.Haltung:
                 res, _route, _reload = self.navigator.calculate_route_haltungen(features[0], features[1])
@@ -550,19 +550,23 @@ class Laengsschnitt:
     def run_ganglinie(self):
         initialized = self.init_application()
         if initialized:
-            layer, layer_name = initialized
+            layers, layer_type = initialized
         else:
             return
-        selected_features = layer.selectedFeatures()
-        if len(selected_features) < 1:
+        featureCount = 0
+        for l in layers:
+            featureCount += l.selectedFeatureCount()
+        if featureCount < 1:
             self.showMessageBox("Fehler",
-                                "Bitte wählen Sie mindestens {} aus!".format(
-                                    "einen Schacht" if layer_name == "schaechte" else "eine Haltung"),
+                                "Bitte wählen Sie mindestens ein Element aus aus!",
                                 Type.Error)
             return
+        features = []
+        for l in layers:
+            features += [f[1] for f in l.selectedFeatures()]
+        features = list(set(features))
         self.route = self.navigator.get_schaechte(
-            [f[1] for f in selected_features]) if layer_name == "schaechte" else self.navigator.get_haltungen(
-            [f[1] for f in selected_features])
+            features) if layer_type == LayerType.Schacht else self.navigator.get_haltungen(features)
         if self.ganglinie.id != self.id:
             self.ganglinie.refresh(_id=self.id, haltungen=self.route.get("haltungen"),
                                    schaechte=self.route.get("schaechte"), dbname=self.result_db)
