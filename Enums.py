@@ -15,3 +15,5 @@ class Type(object):
 class LayerType(object):
     Schacht = 0
     Haltung = 1
+    Wehr = 2
+    Pumpe = 3

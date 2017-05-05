@@ -44,8 +44,8 @@ class Ganglinie:
         _schaechte = {}
         for haltung in haltungen:
             self.db.sql(
-                "SELECT zeitpunkt,auslastung,durchfluss,geschwindigkeit FROM lau_gl_el WHERE kante='{}'".format(
-                    haltung))
+                u'SELECT zeitpunkt,auslastung,durchfluss,geschwindigkeit FROM lau_gl_el WHERE "KANTE"={}'.format(
+                    u"'{}'".format(haltung)))
             res = self.db.fetchall()
             for zeitpunkt, auslastung, durchfluss, geschwindigkeit in res:
                 if _haltungen.get(zeitpunkt) is None:
@@ -53,9 +53,8 @@ class Ganglinie:
                 _haltungen[zeitpunkt][haltung] = {"auslastung": auslastung, "durchfluss": durchfluss,
                                                   "geschwindigkeit": geschwindigkeit}
         for schacht in schaechte:
-            self.db.sql(
-                "SELECT zeitpunkt,zufluss,wasserstand,durchfluss FROM lau_gl_s WHERE knoten='{}'".format(
-                    schacht))
+            self.db.sql(u'SELECT zeitpunkt,zufluss,wasserstand,durchfluss FROM lau_gl_s WHERE "KNOTEN"={}'.format(
+                u"'{}'".format(schacht)))
             res = self.db.fetchall()
             for zeitpunkt, zufluss, wasserstand, durchfluss in res:
                 if _schaechte.get(zeitpunkt) is None:

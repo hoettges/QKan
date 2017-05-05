@@ -111,10 +111,10 @@ class Laengsschnitt:
             deckel_hoehe1 = self.route.get("schachtinfo")[schachtO].get("deckelhoehe")
             deckel_hoehe2 = self.route.get("schachtinfo")[schachtU].get("deckelhoehe")
 
-            if deckel_hoehe2 > deckel_hoehe1:
-                tmp = deckel_hoehe1
-                deckel_hoehe1 = deckel_hoehe2
-                deckel_hoehe2 = tmp
+            # if deckel_hoehe2 > deckel_hoehe1:
+            #     tmp = deckel_hoehe1
+            #     deckel_hoehe1 = deckel_hoehe2
+            #     deckel_hoehe2 = tmp
 
             laenge -= self.schacht_breite
             l = HaltungLine([self.x_pointer, self.x_pointer + laenge], [oben, unten], color='k', label=name)
@@ -169,12 +169,14 @@ class Maximizer:
         haltungen = {}
         schaechte = {}
         for haltung in self.route.get("haltungen"):
-            self.db.sql("SELECT wasserstandoben,wasserstandunten FROM lau_max_el WHERE kante='{}'".format(haltung))
+            statement = u'SELECT wasserstandoben,wasserstandunten FROM lau_max_el WHERE "KANTE"={}'.format(
+                u"'{}'".format(haltung))
+            self.db.sql(statement)
             wasserstandoben, wasserstandunten = self.db.fetchone()
             haltungen[haltung] = {"wasserstandoben": wasserstandoben, "wasserstandunten": wasserstandunten}
 
         for schacht in self.route.get("schaechte"):
-            self.db.sql("SELECT wasserstand FROM lau_max_s WHERE knoten='{}'".format(schacht))
+            self.db.sql(u'SELECT wasserstand FROM lau_max_s WHERE "KNOTEN"={}'.format(u"'{}'".format(schacht)))
             wasserstand, = self.db.fetchone()
             schaechte[schacht] = wasserstand
         return {"haltungen": haltungen, "schaechte": schaechte}
@@ -258,8 +260,8 @@ class Animator:
         haltungen = {}
         schaechte = {}
         for haltung in self.route.get("haltungen"):
-            self.db.sql(
-                "SELECT wasserstandoben,wasserstandunten,zeitpunkt FROM lau_gl_el WHERE kante='{}'".format(haltung))
+            self.db.sql(u'SELECT wasserstandoben,wasserstandunten,zeitpunkt FROM lau_gl_el WHERE "KANTE"={}'.format(
+                u"'{}'".format(haltung)))
             wasserstaende = self.db.fetchall()
             for wasserstandoben, wasserstandunten, zeitpunkt in wasserstaende:
                 if haltungen.get(zeitpunkt) is None:
@@ -268,7 +270,7 @@ class Animator:
                                                  "wasserstandunten": wasserstandunten}
 
         for schacht in self.route.get("schaechte"):
-            self.db.sql("SELECT wasserstand,zeitpunkt FROM lau_gl_s WHERE knoten='{}'".format(schacht))
+            self.db.sql(u'SELECT wasserstand,zeitpunkt FROM lau_gl_s WHERE "KNOTEN"={}'.format(u"'{}'".format(schacht)))
             wasserstaende = self.db.fetchall()
             for wasserstand, zeitpunkt in wasserstaende:
                 if schaechte.get(zeitpunkt) is None:

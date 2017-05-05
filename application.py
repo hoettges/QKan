@@ -33,7 +33,7 @@ from qgis.core import *
 import random
 import os.path
 import slider as s
-from Enums import SliderMode, Type
+from Enums import SliderMode, Type, LayerType
 import copy
 from ganglinie import Ganglinie
 
@@ -73,7 +73,8 @@ class Laengsschnitt:
         self.toolbar = self.iface.addToolBar(u'Laengsschnitt')
         self.toolbar.setObjectName(u'Laengsschnitt')
 
-        self.dbname = ""
+        self.result_db = ""
+        self.spartialite = ""
         self.route = {}
         self.toolbar_widget = None
         self.id = 0
@@ -264,7 +265,7 @@ class Laengsschnitt:
         :type activate: int
         """
         if self.maximizer is None or self.maximizer.id != self.id:
-            self.maximizer = plotter.Maximizer(self.id, copy.deepcopy(self.route), self.dbname)
+            self.maximizer = plotter.Maximizer(self.id, copy.deepcopy(self.route), self.result_db)
             self.maximizer.draw()
         if activate == 2:
             self.maximizer.show()
@@ -362,10 +363,10 @@ class Laengsschnitt:
 
     def sel_dbPath(self):
         self.animator.pause()
-        filename = QFileDialog.getOpenFileName(self.dlg, "Wählen Sie eine Simulations-Datenbank".decode("utf-8"),
-                                               filter="Datenbanken (*.idbf);; Alle Dateien (*.*)")
+        filename = QFileDialog.getOpenFileName(self.dlg, "Wählen Sie eine Ergebnis-Datenbank".decode("utf-8"),
+                                               filter="IDBF (*.idbf);; Alle Dateien (*.*)")
         if filename != "":
-            self.dbname = filename
+            self.result_db = filename
             self.dlg.label_dbname.setText(filename)
             self.run()
 
@@ -378,37 +379,76 @@ class Laengsschnitt:
             self.ganglinie.dialog.close()
         self.dlg.close()
         self.id = random.random()
-        while self.dbname == "":
-            stop = self.showMessageBox("Simulations-Datenbank", "Bitte wählen Sie eine Simulations-Datenbank aus!",
+        while self.result_db == "":
+            stop = self.showMessageBox("Ergebnis-Datenbank",
+                                       "Bitte wählen Sie eine Ergebnis-Datenbank aus!",
                                        Type.Selection)
             if stop:
                 return False
             filename = QFileDialog.getOpenFileName(self.dlg, "Wählen Sie eine Simulations-Datenbank".decode("utf-8"),
-                                                   filter="Datenbanken (*.idbf);; Alle Dateien (*.*)")
-            self.dbname = filename
+                                                   filter="IDBF (*.idbf);; Alle Dateien (*.*)")
+            self.result_db = filename
             self.dlg.label_dbname.setText(filename)
+        while self.spartialite == "":
+            stop = self.showMessageBox("Datenbank",
+                                       "Bitte wählen Sie eine Datenbank aus!",
+                                       Type.Selection)
+            if stop:
+                return False
+            filename = QFileDialog.getOpenFileName(self.dlg,
+                                                   "Wählen Sie eine Datenbank".decode("utf-8"),
+                                                   filter="SQLITE (*.sqlite);; Alle Dateien (*.*)")
+            self.spartialite = filename
 
-        layer = self.iface.activeLayer()
-        if layer is None:
+        layers = self.iface.legendInterface().layers()
+        selectedLayers = []
+        for l in layers:
+            if l.selectedFeatureCount() > 0:
+                selectedLayers.append(l)
+        if len(selectedLayers) == 0:
             self.showMessageBox("Fehler", "Wählen Sie zunächst ein Layer!", Type.Error)
             return False
-        layer_source = layer.source()
-        kvp = layer_source.split(" ")
-        layer_name = ""
-        for kv in kvp:
-            if kv.startswith("table"):
-                layer_name = kv.split("=")[1][1:-1]
-        if layer_name not in ["haltungen", "schaechte"]:
+        layer_types = []
+        for layer in selectedLayers:
+            layer_types.append(self.layer_to_type(layer))
+        layer_types = list(set(layer_types))
+        if len(layer_types) != 1:
+            for l in layer_types:
+                if l not in [LayerType.Haltung, LayerType.Wehr, LayerType.Pumpe]:
+                    self.showMessageBox("Fehler", "Inkompatible Layer-Kombination!", Type.Error)
+                    return False
+            layer_type = LayerType.Haltung
+        else:
+            layer_type = layer_types[0]
+        if layer_type in [LayerType.Wehr, LayerType.Pumpe]:
+            layer_type = LayerType.Haltung
+        if layer_type not in [LayerType.Haltung, LayerType.Schacht]:
             self.showMessageBox("Fehler", "Ausgewählter Layer wird nicht unterstützt!", Type.Error)
             return False
         if self.navigator is None or self.navigator.id != self.id:
-            self.navigator = navigation.Navigator(self.dbname, self.id)
-        return layer, layer_name
+            self.navigator = navigation.Navigator(self.spartialite, self.id)
+        return selectedLayers, layer_type
+
+    @staticmethod
+    def layer_to_type(layer):
+        layer_source = layer.source()
+        kvp = layer_source.split(" ")
+        name = ""
+        for kv in kvp:
+            if kv.startswith("table"):
+                name = kv.split("=")[1][1:-1]
+        types = {
+            "wehre": LayerType.Wehr,
+            "haltungen": LayerType.Haltung,
+            "schaechte": LayerType.Schacht,
+            "pumpen": LayerType.Pumpe
+        }
+        return types[name]
 
     def run(self):
         initialized = self.init_application()
         if initialized:
-            layer, layer_name = initialized
+            layers, layer_type = initialized
         else:
             return
         speed_controller_initialized = self.speed_controller is None
@@ -425,9 +465,10 @@ class Laengsschnitt:
                 "Links: Geschwindigkeit einstellen\nRechts: Pause/Start\nStrg+Rechts: Geschwindigkeit umkehren")
             layout.addWidget(self.speed_label, 1, 0, 1, 1, Qt.AlignCenter)
         self.dlg.widget.setLayout(layout)
-
-        featureCount = layer.selectedFeatureCount()
-        if featureCount < 2 and layer_name == "schaechte":
+        featureCount = 0
+        for l in layers:
+            featureCount += l.selectedFeatureCount()
+        if featureCount < 2 and layer_type == LayerType.Schacht:
             self.showMessageBox("Fehler",
                                 "Bitte wählen Sie mindestens einen Start- und Endpunkt Ihrer gewünschten Route!",
                                 Type.Error)
@@ -438,26 +479,26 @@ class Laengsschnitt:
                                 Type.Error)
             return
         # run application
+        features = []
+        for l in layers:
+            features += [f[1] for f in l.selectedFeatures()]
+        features = list(set(features))
         if featureCount == 2:
-            features = layer.selectedFeatures()
-            if layer_name == "haltungen":
-                if featureCount == 1:
-                    res, _route, reload = self.navigator.calculate_route_haltungen(features[0][1], None)
-                else:
-                    res, _route, reload = self.navigator.calculate_route_haltungen(features[0][1], features[1][1])
+            if layer_type == LayerType.Haltung:
+                res, _route, _reload = self.navigator.calculate_route_haltungen(features[0], features[1])
             else:
-                res, _route, reload = self.navigator.calculate_route_schaechte(features[0][1], features[1][1])
+                res, _route, _reload = self.navigator.calculate_route_schaechte(features[0], features[1])
         else:
-            if layer_name == "haltungen":
-                res, _route, reload = self.navigator.check_route_haltungen([f[1] for f in layer.selectedFeatures()])
+            if layer_type == LayerType.Haltung:
+                res, _route, _reload = self.navigator.check_route_haltungen(features)
             else:
-                res, _route, reload = self.navigator.check_route_schaechte([f[1] for f in layer.selectedFeatures()])
+                res, _route, _reload = self.navigator.check_route_schaechte(features)
         if res:
             self.route = _route
         else:
             self.showMessageBox("Fehler", _route, Type.Error)
-            if reload:
-                self.dbname = ""
+            if _reload:
+                self.result_db = ""
             return
         laengsschnitt = plotter.Laengsschnitt(copy.deepcopy(self.route))
         laengsschnitt.draw()
@@ -474,11 +515,12 @@ class Laengsschnitt:
         self.switch_max_values(2)
         if self.animator is None or self.animator.id != self.id:
             self.animator = plotter.Animator(self.id, copy.deepcopy(self.route),
-                                             self.dbname, self.dlg.slider, self.dlg.btn_forward, self.dlg.btn_backward)
+                                             self.result_db, self.dlg.slider, self.dlg.btn_forward,
+                                             self.dlg.btn_backward)
         plotter.set_legend()
         if self.ganglinie.id != self.id:
             self.ganglinie.refresh(_id=self.id, haltungen=self.route.get("haltungen"),
-                                   schaechte=self.route.get("schaechte"), dbname=self.dbname,
+                                   schaechte=self.route.get("schaechte"), dbname=self.result_db,
                                    laengsschnitt=laengsschnitt)
             self.ganglinie.draw_at(self.animator.timestamps[self.animator.last_index])
         self.animator.ganglinie = self.ganglinie
@@ -508,20 +550,24 @@ class Laengsschnitt:
     def run_ganglinie(self):
         initialized = self.init_application()
         if initialized:
-            layer, layer_name = initialized
+            layers, layer_type = initialized
         else:
             return
-        selected_features = layer.selectedFeatures()
-        if len(selected_features) < 1:
+        featureCount = 0
+        for l in layers:
+            featureCount += l.selectedFeatureCount()
+        if featureCount < 1:
             self.showMessageBox("Fehler",
-                                "Bitte wählen Sie mindestens {} aus!".format(
-                                    "einen Schacht" if layer_name == "schaechte" else "eine Haltung"),
+                                "Bitte wählen Sie mindestens ein Element aus aus!",
                                 Type.Error)
             return
+        features = []
+        for l in layers:
+            features += [f[1] for f in l.selectedFeatures()]
+        features = list(set(features))
         self.route = self.navigator.get_schaechte(
-            [f[1] for f in selected_features]) if layer_name == "schaechte" else self.navigator.get_haltungen(
-            [f[1] for f in selected_features])
+            features) if layer_type == LayerType.Schacht else self.navigator.get_haltungen(features)
         if self.ganglinie.id != self.id:
             self.ganglinie.refresh(_id=self.id, haltungen=self.route.get("haltungen"),
-                                   schaechte=self.route.get("schaechte"), dbname=self.dbname)
+                                   schaechte=self.route.get("schaechte"), dbname=self.result_db)
         self.ganglinie.show()
