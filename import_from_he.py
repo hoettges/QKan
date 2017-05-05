@@ -32,7 +32,7 @@ __copyright__ = '(C) 2016, Joerg Hoettges'
 __revision__ = ':%H$'
 
 
-import os
+import os, time
 
 from QKan_Database.fbfunc import FBConnection
 from QKan_Database.dbfunc import DBConnection
@@ -42,28 +42,28 @@ import tempfile
 # from qgis.core import *
 # from PyQt4.QtCore import *
 # from PyQt4.QtGui import *
-from qgis.core import QgsFeature, QgsGeometry, QgsMessageLog
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from qgis.core import QgsFeature, QgsGeometry, QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem
+from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QFileInfo
 from PyQt4.QtGui import QAction, QIcon
 
 from qgis.utils import iface
-from qgis.gui import QgsMessageBar
+from qgis.gui import QgsMessageBar, QgsMapCanvas, QgsLayerTreeMapCanvasBridge
 import codecs
 import pyspatialite.dbapi2 as splite
-from xml.dom.minidom import parse as xmlparse
+import xml.etree.ElementTree as ET
 # import sqlite3
 import logging
 
-LOGGER = logging.getLogger('QKan')
+logger = logging.getLogger('QKan')
 
 # Fortschritts- und Fehlermeldungen
 
 def fortschritt(text,prozent):
-    LOGGER.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100))
+    logger.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100))
     QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100), 'Export: ', QgsMessageLog.INFO)
 
 def fehlermeldung(title, text):
-    LOGGER.debug(u'{:s} {:s}'.format(title,text))
+    logger.debug(u'{:s} {:s}'.format(title,text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 # ------------------------------------------------------------------------------
@@ -85,25 +85,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     :returns: void
     '''
 
-# ------------------------------------------------------------------------------
-# Datenbankverbindungen
-
     # ------------------------------------------------------------------------------
-    # Interne Funktionen
-
-    def setNodeValue(supnode, tagname, value):
-        # Setzt ein XML-Tag-Wert oder fügt ihn ein, falls nicht vorhanden.
-
-        node = supnode.getElementsByTagName(tagname)[0]
-        if node.hasChildNodes():
-            node.childNodes[0].nodeValue = value
-        else:
-            xnode = qgsxml.createTextNode(value)
-            node.appendChild(xnode)
-
-
-    # ------------------------------------------------------------------------------
-    # Start
+    # Datenbankverbindungen
 
     dbHE = FBConnection(database_HE)        # Datenbankobjekt der HE-Datenbank zum Lesen
 
@@ -565,7 +548,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
     SELECT 
-        PUMPE.NAME AS pname, 
+        PUMPE.NAME AS pnam, 
         PUMPE.SCHACHTOBEN AS schoben, 
         PUMPE.SCHACHTUNTEN AS schunten, 
         PUMPE.TYP as typ_he, 
@@ -592,10 +575,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     # Pumpendaten in die QKan-DB schreiben
 
     for attr in daten:
-        (pname_ansi, schoben_ansi, schunten_ansi, typ_he, steuersch, einschalthoehe, ausschalthoehe, 
+        (pnam_ansi, schoben_ansi, schunten_ansi, typ_he, steuersch, einschalthoehe, ausschalthoehe, 
          xob, yob, xun, yun, simstat_he, kommentar_ansi, createdat) = ['NULL' if el is None else el for el in attr]
 
-        (pname, schoben, schunten, kommentar) = [tt.decode('iso-8859-1') for tt in (pname_ansi, schoben_ansi, 
+        (pnam, schoben, schunten, kommentar) = [tt.decode('iso-8859-1') for tt in (pnam_ansi, schoben_ansi, 
             schunten_ansi, kommentar_ansi)]
 
         # Pumpentyp-Nr aus HE ersetzten
@@ -641,17 +624,17 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
 
         try:
             sql = u"""INSERT INTO pumpen 
-                (pname, schoben, schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, 
+                (pnam, schoben, schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, 
                 simstatus, kommentar, createdat, geom) 
-                VALUES ('{pname}', '{schoben}', '{schunten}', '{pumpentyp}', '{steuersch}', 
+                VALUES ('{pnam}', '{schoben}', '{schunten}', '{pumpentyp}', '{steuersch}', 
                 {einschalthoehe}, {ausschalthoehe}, '{simstatus}', '{kommentar}', '{createdat}', {geom})""".format( \
-                    pname=pname, schoben=schoben, schunten=schunten, pumpentyp=pumpentyp, steuersch=steuersch, 
+                    pnam=pnam, schoben=schoben, schunten=schunten, pumpentyp=pumpentyp, steuersch=steuersch, 
                     einschalthoehe=einschalthoehe, ausschalthoehe=ausschalthoehe, simstatus=simstatus, 
                     kommentar=kommentar, createdat=createdat, geom=geom)
 
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO pumpen: \n" + str((pname, schoben, \
+            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO pumpen: \n" + str((pnam, schoben, \
                 schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, geom)) + '\n\n')
 
         try:
@@ -672,7 +655,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
     SELECT 
-        WEHR.NAME AS wname, 
+        WEHR.NAME AS wnam,
         WEHR.SCHACHTOBEN AS schoben, 
         WEHR.SCHACHTUNTEN AS schunten, 
         WEHR.TYP as typ_he, 
@@ -700,10 +683,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     # Wehrdaten in die QKan-DB schreiben
 
     for attr in daten:
-        (wname_ansi, schoben_ansi, schunten_ansi, typ_he, schwellenhoehe, kammerhoehe, laenge, uebeiwert,
+        (wnam_ansi, schoben_ansi, schunten_ansi, typ_he, schwellenhoehe, kammerhoehe, laenge, uebeiwert,
          xob, yob, xun, yun, simstat_he, kommentar_ansi, createdat) = ['NULL' if el is None else el for el in attr]
 
-        (wname, schoben, schunten, kommentar) = [tt.decode('iso-8859-1') for tt in (wname_ansi, schoben_ansi, 
+        (wnam, schoben, schunten, kommentar) = [tt.decode('iso-8859-1') for tt in (wnam_ansi, schoben_ansi,
             schunten_ansi, kommentar_ansi)]
 
         # Simstatus-Nr aus HE ersetzten
@@ -735,11 +718,11 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         # Datensatz aufbereiten und in die QKan-DB schreiben
 
         try:
-            sql = u"""INSERT INTO wehre (wname, schoben, schunten, schwellenhoehe, kammerhoehe, 
+            sql = u"""INSERT INTO wehre (wnam, schoben, schunten, schwellenhoehe, kammerhoehe,
                  laenge, uebeiwert, simstatus, kommentar, createdat, geom) 
-                 VALUES ('{wname}', '{schoben}', '{schunten}', {schwellenhoehe}, 
+                 VALUES ('{wnam}', '{schoben}', '{schunten}', {schwellenhoehe},
                 {kammerhoehe}, {laenge}, {uebeiwert}, '{simstatus}', '{kommentar}', '{createdat}', 
-                {geom})""".format(wname=wname, 
+                {geom})""".format(wnam=wnam,
                     schoben=schoben, schunten=schunten, schwellenhoehe=schwellenhoehe, 
                     kammerhoehe=kammerhoehe, laenge=laenge, uebeiwert=uebeiwert, simstatus=simstatus, 
                     kommentar=kommentar, createdat=createdat, geom=geom)
@@ -747,7 +730,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         except BaseException as e:
             fehlermeldung('Fehler', str(e))
             ok = False
-            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO wehre: \n" + str((wname, schoben, schunten, 
+            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO wehre: \n" + str((wnam, schoben, schunten,
                           schwellenhoehe, kammerhoehe, laenge, uebeiwert, geom)) + '\n\n')
 
         if ok:
@@ -801,8 +784,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                 fremdwas, flaeche, kommentar, createdat) 
               VALUES ('{tgnam}', {ewdichte}, {wverbrauch}, {stdmittel}, {fremdwas},
                 {flaeche}, '{kommentar}', '{createdat}')
-              WHERE '{tgnam}' NOT IN (SELECT tgnam FROM teilgebiete)
-                 """.format(name=name, ewdichte=ewdichte, wverbrauch=wverbrauch, stdmittel=stdmittel, fremdwas=fremdwas, flaeche=flaeche, kommentar=kommentar, createdat=createdat)
+                 """.format(tgnam=tgnam, ewdichte=ewdichte, wverbrauch=wverbrauch, stdmittel=stdmittel, fremdwas=fremdwas, flaeche=flaeche, kommentar=kommentar, createdat=createdat)
             ok = True
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
@@ -1041,7 +1023,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
 
     # --------------------------------------------------------------------------
     # Projektionssystem für die Projektdatei vorbereiten
-    sql = """SELECT srid, proj4text, ref_sys_name
+    sql = """SELECT srid
             FROM geom_cols_ref_sys
             WHERE Lower(f_table_name) = Lower('schaechte')
             AND Lower(f_geometry_column) = Lower('geom')"""
@@ -1051,18 +1033,20 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         fehlermeldung('SQL-Fehler', str(e))
         fehlermeldung("Fehler", u"\nFehler in sql_coordsys: \n" + sql + '\n\n')
 
-    daten = dbQK.fetchone()
+    srid = dbQK.fetchone()
     try:
-        srid, proj4text, ref_sys_name = daten
-        projectionacronym = proj4text.split()[0].split('=')[1]
-        ellipsoidacronym = proj4text.split()[6].split('=')[1]
+        crs = QgsCoordinateReferenceSystem(4326, QgsCoordinateReferenceSystem.EpsgCrsId)
+        srsid = crs.srsid()
+        proj4text = crs.toProj4()
+        description = crs.description()
+        projectionacronym = crs.projectionAcronym()
+        ellipsoidacronym = crs.ellipsoidacronym()
     except BaseException as e:
-        srid, proj4text, ref_sys_name = ('dummy','dummy','dummy')
-        projectionacronym = 'dummy'
-        ellipsoidacronym = 'dummy'
+        srid, srsid, proj4text, description, projectionacronym, ellipsoidacronym = \
+            'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy'
 
-        fehlermeldung('Fehler in "daten"', str(e))
-        fehlermeldung("Fehler", u"\nFehler bei der Ermittlung der srid: \n" + str(daten) + '\n\n')
+        fehlermeldung('\nFehler in "daten"', str(e))
+        fehlermeldung("Fehler", u"\nFehler bei der Ermittlung der srid: \n" + str(daten))
 
 
     # --------------------------------------------------------------------------
@@ -1081,62 +1065,75 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         else:
             datasource = database_QKan
 
-        qgsxml = xmlparse(qgs_template)
+        # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
+        tabliste = ['schaechte', 'haltungen','pumpen','teilgebiete','wehre','flaechen']
 
-        # ---------------------------------------------------------------------------
-        # extend-Werte xmin, ymin, xmax, ymax ersetzten
-        node_mapcanvas = qgsxml.getElementsByTagName("mapcanvas")[0]
-        node_extent = node_mapcanvas.getElementsByTagName("extent")[0]
-        node_xmin = node_extent.getElementsByTagName("xmin")[0]
-        node_xmin.childNodes[0].nodeValue = zoomxmin
-        node_ymin = node_extent.getElementsByTagName("ymin")[0]
-        node_ymin.childNodes[0].nodeValue = zoomymin
-        node_xmax = node_extent.getElementsByTagName("xmax")[0]
-        node_xmax.childNodes[0].nodeValue = zoomxmax
-        node_ymax = node_extent.getElementsByTagName("ymax")[0]
-        node_ymax.childNodes[0].nodeValue = zoomymax
+        # Lesen der Projektdatei ------------------------------------------------------------------
+        qgsxml = ET.parse(qgs_template)
+        root = qgsxml.getroot()
 
-        # ---------------------------------------------------------------------------
-        # spatialrefsys ersetzten
-        node_destinationsrs = qgsxml.getElementsByTagName("destinationsrs")[0]
-        node_spatialrefsys = node_destinationsrs.getElementsByTagName("spatialrefsys")[0]
+        for tag_maplayer in root.findall(".//projectlayers/maplayer"):
 
-        # node_proj4 = node_spatialrefsys.getElementsByTagName("proj4")[0]
-        # node_proj4.childNodes[0].nodeValue = proj4text
-        setNodeValue(node_spatialrefsys,"proj4",proj4text)
+            # Nur QKan-Tabellen bearbeiten
+            tag_datasource = tag_maplayer.find("./datasource")
+            tex = tag_datasource.text
+            if tex[tex.index('table="')+7:].split('" ')[0] in tabliste:
 
-        # node_srid = node_spatialrefsys.getElementsByTagName("srid")[0]
-        # node_srid.childNodes[0].nodeValue = srid
-        setNodeValue(node_spatialrefsys,"srid",srid)
+                # <extend> löschen
+                for tag_extent in tag_maplayer.findall("./extent"):
+                    tag_maplayer.remove(tag_extent)
 
-        # node_authid = node_spatialrefsys.getElementsByTagName("authid")[0]
-        # node_authid.childNodes[0].nodeValue = 'EPSG: {}'.format(srid)
-        setNodeValue(node_spatialrefsys,"authid", 'EPSG: {}'.format(srid))
+                for tag_spatialrefsys in tag_maplayer.findall("./srs/spatialrefsys"):
+                    tag_spatialrefsys.clear()
 
-        # node_description = node_spatialrefsys.getElementsByTagName("description")[0]
-        # node_description.childNodes[0].nodeValue = ref_sys_name
-        setNodeValue(node_spatialrefsys, "description", ref_sys_name)
+                    elem = ET.SubElement(tag_spatialrefsys,'proj4')
+                    elem.text = proj4text
+                    elem = ET.SubElement(tag_spatialrefsys,'srsid')
+                    elem.text = '{}'.format(srsid)
+                    elem = ET.SubElement(tag_spatialrefsys,'srid')
+                    elem.text = '{}'.format(srid)
+                    elem = ET.SubElement(tag_spatialrefsys,'authid')
+                    elem.text = 'EPSG: {}'.format(srid)
+                    elem = ET.SubElement(tag_spatialrefsys,'description')
+                    elem.text = description
+                    elem = ET.SubElement(tag_spatialrefsys,'projectionacronym')
+                    elem.text = projectionacronym
+                    elem = ET.SubElement(tag_spatialrefsys,'ellipsoidacronym')
+                    elem.text = ellipsoidacronym
 
-        # node_projectionacronym = node_spatialrefsys.getElementsByTagName("projectionacronym")[0]
-        # node_projectionacronym.childNodes[0].nodeValue = projectionacronym
-        setNodeValue(node_spatialrefsys, "projectionacronym", projectionacronym)
+        for tag_extent in root.findall(".//mapcanvas/extent"):
+            elem = tag_extent.find("./xmin")
+            elem.text = '{:.3f}'.format(zoomxmin)
+            elem = tag_extent.find("./ymin")
+            elem.text = '{:.3f}'.format(zoomymin)
+            elem = tag_extent.find("./xmax")
+            elem.text = '{:.3f}'.format(zoomxmax)
+            elem = tag_extent.find("./ymax")
+            elem.text = '{:.3f}'.format(zoomymax)
+            
+        for tag_spatialrefsys in root.findall(".//mapcanvas/destinationsrs/spatialrefsys"):
+            tag_spatialrefsys.clear()
 
-        # node_ellipsoidacronym = node_spatialrefsys.getElementsByTagName("ellipsoidacronym")[0]
-        # node_ellipsoidacronym.childNodes[0].nodeValue = ellipsoidacronym
-        setNodeValue(node_spatialrefsys, "ellipsoidacronym", ellipsoidacronym)
+            elem = ET.SubElement(tag_spatialrefsys,'proj4')
+            elem.text = proj4text
+            elem = ET.SubElement(tag_spatialrefsys,'srid')
+            elem.text = '{}'.format(srid)
+            elem = ET.SubElement(tag_spatialrefsys,'authid')
+            elem.text = 'EPSG: {}'.format(srid)
+            elem = ET.SubElement(tag_spatialrefsys,'description')
+            elem.text = description
+            elem = ET.SubElement(tag_spatialrefsys,'projectionacronym')
+            elem.text = projectionacronym
+            elem = ET.SubElement(tag_spatialrefsys,'ellipsoidacronym')
+            elem.text = ellipsoidacronym
 
-        # ---------------------------------------------------------------------------
-        # datasource ersetzten
-        node_projectlayer = qgsxml.getElementsByTagName("projectlayers")[0]
-        nodes_maplayer = node_projectlayer.getElementsByTagName("maplayer")
-        for node_maplayer in nodes_maplayer:
-            node_datasource = node_maplayer.getElementsByTagName("datasource")[0]
-            node = node_datasource.childNodes[0]
-            text = node.nodeValue
-            node.nodeValue = "dbname='" + datasource + "' " + text[text.find('table='):]
+        for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
+            text = tag_datasource.text
+            tag_datasource.text = "dbname='" + datasource + "' " + text[text.find('table='):]
 
-        with codecs.open(projectfile,'w','utf-8') as xmldatei:
-            qgsxml.writexml(xmldatei)
+        qgsxml.write(projectfile)                           # writing modified project file
+        logger.debug('Projektdatei: {}'.format(projectfile))
+        #logger.debug('encoded string: {}'.format(tex))
 
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
@@ -1146,16 +1143,22 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     iface.mainWindow().statusBar().clearMessage()
     iface.messageBar().pushMessage("Information", "Datenimport ist fertig!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage("\nFertig: Datenimport erfolgreich!", level=QgsMessageLog.INFO)
-    
+
+    # Importiertes Projekt laden
+    project = QgsProject.instance()
+    # project.read(QFileInfo(projectfile))
+    project.read(QFileInfo(projectfile))         # read the new project file
+    logger.debug('Geladene Projektdatei: {}'.format(project.fileName()))
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 # Verzeichnis der Testdaten
-pfad = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh'
+pfad = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng'
 
-database_HE =   os.path.join(pfad,'muster-modelldatenbank.idbf')
-database_QKan = os.path.join(pfad,'test1.sqlite')
-projectfile =   os.path.join(pfad,'lageplan_test1.qgs')
-epsg = '31467'
+database_HE =   os.path.join(pfad,'21.04.2017-2pumpen.idbf')
+database_QKan = os.path.join(pfad,'netz.sqlite')
+projectfile =   os.path.join(pfad,'plan.qgs')
+epsg = '31466'
 
 if __name__ == '__main__':
     importKanaldaten(database_HE, database_QKan, projectfile, epsg)

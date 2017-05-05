@@ -97,3 +97,6 @@ sicher/
 
 #PyCharm
 .idea
+
+#FreeFileSync
+sync.ffs_db
