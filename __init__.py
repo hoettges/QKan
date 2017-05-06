@@ -22,7 +22,7 @@
  This script initializes the plugin, making it known to QGIS.
 """
 
-import logging, site, os.path, tempfile
+import logging, os.path, tempfile
 from datetime import datetime as dt
 
 # Aufsetzen des Logging-Systems
