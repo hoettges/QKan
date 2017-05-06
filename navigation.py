@@ -21,7 +21,7 @@ class Navigator:
                           FROM schaechte) AS SU ON haltungen.schunten = SU.schnam
                        UNION
                        SELECT
-                         wname        AS name,
+                         wnam         AS name,
                          schunten,
                          SU.sohlhoehe AS sohleunten
                        FROM wehre
@@ -32,7 +32,7 @@ class Navigator:
                           FROM schaechte) AS SU ON wehre.schunten = SU.schnam
                        UNION
                        SELECT
-                         pname        AS name,
+                         pnam         AS name,
                          schunten,
                          SU.sohlhoehe AS sohleunten
                        FROM pumpen
@@ -62,11 +62,11 @@ FROM (SELECT
         schoben
       FROM haltungen
       UNION SELECT
-              wname AS name,
+              wnam AS name,
               schoben
             FROM wehre
       UNION SELECT
-              pname AS name,
+              pnam AS name,
               schoben
             FROM pumpen)
 WHERE schoben =
@@ -76,11 +76,11 @@ WHERE schoben =
                schunten
              FROM haltungen
              UNION SELECT
-                     wname AS name,
+                     wnam AS name,
                      schunten
                    FROM wehre
              UNION SELECT
-                     pname AS name,
+                     pnam AS name,
                      schunten
                    FROM pumpen)
        WHERE name = "{}")
@@ -115,11 +115,11 @@ FROM (SELECT
         schoben
       FROM haltungen
       UNION SELECT
-              wname AS name,
+              wnam AS name,
               schoben
             FROM wehre
       UNION SELECT
-              pname AS name,
+              pnam AS name,
               schoben
             FROM pumpen)
 WHERE name = "{}"
@@ -133,11 +133,11 @@ WHERE name = "{}"
                 schunten
               FROM haltungen
               UNION SELECT
-                      wname AS name,
+                      wnam AS name,
                       schunten
                     FROM wehre
               UNION SELECT
-                      pname AS name,
+                      pnam AS name,
                       schunten
                     FROM pumpen)
         WHERE name = "{}"
@@ -159,11 +159,11 @@ WHERE name = "{}"
                 schoben
               FROM haltungen
               UNION SELECT
-                      wname AS name,
+                      wnam AS name,
                       schoben
                     FROM wehre
               UNION SELECT
-                      pname AS name,
+                      pnam AS name,
                       schoben
                     FROM pumpen)
         WHERE schoben =
@@ -173,11 +173,11 @@ WHERE name = "{}"
                        schunten
                      FROM haltungen
                      UNION SELECT
-                             wname AS name,
+                             wnam AS name,
                              schunten
                            FROM wehre
                      UNION SELECT
-                             pname AS name,
+                             pnam AS name,
                              schunten
                            FROM pumpen)
                WHERE name = "{}")
@@ -239,11 +239,11 @@ FROM (SELECT
         schoben
       FROM haltungen
       UNION SELECT
-              wname AS name,
+              wnam AS name,
               schoben
             FROM wehre
       UNION SELECT
-              pname AS name,
+              pnam AS name,
               schoben
             FROM pumpen)
 WHERE schoben ="{}"
@@ -257,11 +257,11 @@ WHERE schoben ="{}"
                 schunten
               FROM haltungen
               UNION SELECT
-                      wname AS name,
+                      wnam AS name,
                       schunten
                     FROM wehre
               UNION SELECT
-                      pname AS name,
+                      pnam AS name,
                       schunten
                     FROM pumpen)
         WHERE schunten ="{}"
@@ -311,7 +311,7 @@ WHERE schoben ="{}"
                   FROM schaechte) AS SU ON haltungen.schunten = SU.schnam
                UNION
                SELECT
-                 wname        AS name,
+                 wnam         AS name,
                  schunten,
                  SU.sohlhoehe AS sohleunten
                FROM wehre
@@ -322,7 +322,7 @@ WHERE schoben ="{}"
                   FROM schaechte) AS SU ON wehre.schunten = SU.schnam
                UNION
                SELECT
-                 pname        AS name,
+                 pnam        AS name,
                  schunten,
                  SU.sohlhoehe AS sohleunten
                FROM pumpen
@@ -422,7 +422,7 @@ WHERE schoben ="{}"
                           FROM schaechte) AS SU ON haltungen.schunten = SU.schnam
                        UNION
                        SELECT
-                         wname        AS name,
+                         wnam         AS name,
                          schoben,
                          schunten,
                          laenge,
@@ -442,7 +442,7 @@ WHERE schoben ="{}"
                           FROM schaechte) AS SU ON wehre.schunten = SU.schnam
                        UNION
                        SELECT
-                         pname        AS name,
+                         pnam        AS name,
                          schoben,
                          schunten,
                          5            AS laenge,
