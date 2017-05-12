@@ -107,7 +107,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     # Referenztabellen laden. 
 
     # Entwässerungssystem. Attribut [kuerzel] enthält die Bezeichnung des Benutzers.
-    sql = 'SELECT he_nr, kuerzel FROM entwaesserungsart'
+    sql = 'SELECT he_nr, kuerzel FROM entwaesserungsarten'
     dbQK.sql(sql)
     daten = dbQK.fetchall()
     ref_entwart = {}
@@ -233,9 +233,9 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         if entwaesserungsart_he in ref_entwart:
             entwart = ref_entwart[entwaesserungsart_he]
         else:
-            # Noch nicht in Tabelle [entwaesserungsart] enthalten, also ergqenzen
+            # Noch nicht in Tabelle [entwaesserungsarten] enthalten, also ergqenzen
             entwart = u'({})'.format(entwaesserungsart_he)
-            sql = u"INSERT INTO entwaesserungsart (kuerzel, he_nr) Values ('{entwart}', {he_nr})".format( \
+            sql = u"INSERT INTO entwaesserungsarten (kuerzel, he_nr) Values ('{entwart}', {he_nr})".format( \
                       entwart=entwart, he_nr=entwaesserungsart_he)
             ref_entwart[entwaesserungsart_he] = entwart
             dbQK.sql(sql)
@@ -333,8 +333,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         if entwaesserungsart_he in ref_entwart:
             entwart = ref_entwart[entwaesserungsart_he]
         else:
-            # Noch nicht in Tabelle [entwaesserungsart] enthalten, also ergänzen
-            sql = u"INSERT INTO entwaesserungsart (kuerzel, he_nr) Values ('({0:})', {0:d})".format(entwaesserungsart_he)
+            # Noch nicht in Tabelle [entwaesserungsarten] enthalten, also ergänzen
+            sql = u"INSERT INTO entwaesserungsarten (kuerzel, he_nr) Values ('({0:})', {0:d})".format(entwaesserungsart_he)
             entwart = '({:})'.format(entwaesserungsart_he)
             dbQK.sql(sql)
 
@@ -801,10 +801,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     dbQK.commit()
 
 # ------------------------------------------------------------------------------
-# Speicherkennlinie
+# Speicherkennlinien
 
     # Tabelle in QKan-Datenbank leeren
-    sql = 'DELETE FROM speicherkennlinie'
+    sql = 'DELETE FROM speicherkennlinien'
     dbQK.sql(sql)
 
     # Daten aUS ITWH-Datenbank abfragen
@@ -830,7 +830,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
 
         # Datensatz aufbereiten und in die QKan-DB schreiben
 
-        sql = u"""INSERT INTO speicherkennlinie (schnam, wspiegel, oberfl) 
+        sql = u"""INSERT INTO speicherkennlinien (schnam, wspiegel, oberfl) 
              VALUES ('{schnam}', {wspiegel}, {oberfl})""".format(schnam=schnam, 
              wspiegel=wspiegel, oberfl=oberfl)
 
@@ -838,7 +838,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
             dbQK.sql(sql)
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nSpeicherkennlinie:Fehler in sql: \n" + sql + u'\n\n')
+            fehlermeldung("Fehler", u"\nSpeicherkennlinien:Fehler in sql: \n" + sql + u'\n\n')
     dbQK.commit()
 
 
