@@ -302,7 +302,7 @@ def createdbtables(consl,cursl,epsg=25832):
     # Entwaesserungssysteme ----------------------------------------------------
 
     sql = '''
-    CREATE TABLE entwaesserungsart (
+    CREATE TABLE entwaesserungsarten (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     kuerzel TEXT, 
     bezeichnung TEXT, 
@@ -312,7 +312,7 @@ def createdbtables(consl,cursl,epsg=25832):
     try:
         cursl.execute(sql)
     except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "entwaesserungsart" konnte nicht erstellt werden!\nAbbruch!',
+        iface.messageBar().pushMessage("Fehler", 'Tabelle "entwaesserungsarten" konnte nicht erstellt werden!\nAbbruch!',
             level=QgsMessageBar.CRITICAL)
         return False
 
@@ -323,10 +323,10 @@ def createdbtables(consl,cursl,epsg=25832):
                  "'SW', 'Schmutzwasser', NULL, 2"]
 
         for ds in daten:
-            cursl.execute('INSERT INTO entwaesserungsart (kuerzel, bezeichnung, bemerkung, he_nr) Values (' + ds + ')')
+            cursl.execute('INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr) Values (' + ds + ')')
         
     except:
-        iface.messageBar().pushMessage("Fehler", 'Tabellendaten "entwaesserungsart" konnten nicht hinzugefuegt ' + 
+        iface.messageBar().pushMessage("Fehler", 'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt ' + 
             'werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
         return False
     consl.commit()
@@ -509,6 +509,7 @@ def createdbtables(consl,cursl,epsg=25832):
         haltnam TEXT,
         neigkl INTEGER,
         regenschreiber TEXT,
+        teilgebiet TEXT,
         abflussparameter TEXT,
         kommentar TEXT,
         createdat TEXT DEFAULT CURRENT_DATE)'''
@@ -593,8 +594,7 @@ def createdbtables(consl,cursl,epsg=25832):
                  "'Zeitreihe', 4, NULL, NULL"]
 
         for ds in daten:
-            cursl.execute('INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) Values (' + 
-                            ds + ')')
+            cursl.execute('INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) Values (' + ds + ')')
         
     except:
         iface.messageBar().pushMessage("Fehler", 'Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden!\nAbbruch!',
@@ -609,7 +609,6 @@ def createdbtables(consl,cursl,epsg=25832):
     CREATE TABLE abflussparameter (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     apnam TEXT, 
-    kommentar TEXT, 
     anfangsabflussbeiwert REAL, 
     endabflussbeiwert REAL, 
     benetzungsverlust REAL, 
@@ -617,7 +616,7 @@ def createdbtables(consl,cursl,epsg=25832):
     benetzung_startwert REAL, 
     mulden_startwert REAL, 
     bodenklasse TEXT, 
-    interz_jahresganglinie TEXT, 
+    kommentar TEXT, 
     createdat TEXT DEFAULT CURRENT_DATE)'''
 
     try:
@@ -627,11 +626,28 @@ def createdbtables(consl,cursl,epsg=25832):
             level=QgsMessageBar.CRITICAL)
         return False
 
+    try:
+        daten = ["'$Default_Bef', 'Exportiert mit qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, 'NULL', '13.01.2011 08:44:50'", 
+                 "'$Default_Unbef', 'Exportiert mit qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
+
+        for ds in daten:
+            sql = """INSERT INTO abflussparameter
+                     ( 'apnam', 'kommentar', 'anfangsabflussbeiwert', 'endabflussbeiwert', 'benetzungsverlust', 
+                       'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
+                       'createdat') Values (' + ds + ')"""
+            cursl.execute(sql)
+        
+    except:
+        iface.messageBar().pushMessage("Fehler", 'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden!\nAbbruch!',
+            level=QgsMessageBar.CRITICAL)
+        return False
+    consl.commit()
+
 
     # Kennlinie Speicherbauwerke -----------------------------------------------
 
     sql = '''
-    CREATE TABLE speicherkennlinie (
+    CREATE TABLE speicherkennlinien (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     schnam TEXT, 
     wspiegel REAL, 
@@ -640,7 +656,7 @@ def createdbtables(consl,cursl,epsg=25832):
     try:
         cursl.execute(sql)
     except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "speicherkennlinie" konnte nicht erstellt werden!\nAbbruch!', 
+        iface.messageBar().pushMessage("Fehler", 'Tabelle "speicherkennlinien" konnte nicht erstellt werden!\nAbbruch!', 
             level=QgsMessageBar.CRITICAL)
         return False
     consl.commit()
