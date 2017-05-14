@@ -7,79 +7,79 @@
     <customproperties/>
     <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="Schächte">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Auslass">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Auslass">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
-        <customproperties/>
-      </layer-tree-layer>
-    </layer-tree-group>
-    <layer-tree-group expanded="1" checked="Qt::Checked" name="Haltungen">
-      <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
-        <customproperties/>
-      </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
-    <layer-tree-group expanded="0" checked="Qt::Checked" name="Sonderbauwerke">
+    <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="Haltungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
-    <layer-tree-group expanded="0" checked="Qt::Checked" name="Flächen">
+    <layer-tree-group expanded="1" checked="Qt::Checked" name="Sonderbauwerke">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="teilgebiete">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20170508223029630" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;tezg&quot; (geom) sql=" name="tezg">
-        <customproperties/>
-      </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="flaechen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
-    <layer-tree-group expanded="0" checked="Qt::Checked" name="Referenztabellen">
+    <layer-tree-group expanded="1" checked="Qt::Checked" name="Flächen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="teilgebiete">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20170504083608994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;tezg&quot; (geom) sql=" name="tezg">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;profile&quot; sql=" name="Profile">
-        <customproperties/>
-      </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
-        <customproperties/>
-      </layer-tree-layer>
-      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="flaechen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
-    <layer-tree-group expanded="0" checked="Qt::Checked" name="Kennlinien">
+    <layer-tree-group expanded="1" checked="Qt::Checked" name="Referenztabellen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsart20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;entwaesserungsart&quot; sql=" name="Entwässerungsart">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;profile&quot; sql=" name="Profile">
+        <customproperties/>
+      </layer-tree-layer>
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
+        <customproperties/>
+      </layer-tree-layer>
+      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
+        <customproperties/>
+      </layer-tree-layer>
+    </layer-tree-group>
+    <layer-tree-group expanded="1" checked="Qt::Checked" name="Kennlinien">
+      <customproperties/>
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinie20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;speicherkennlinie&quot; sql=" name="Speicherkennlinie">
+        <customproperties/>
+      </layer-tree-layer>
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
+        <customproperties/>
+      </layer-tree-layer>
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
@@ -88,17 +88,17 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>3549835.8093461524695158</xmin>
-      <ymin>5799348.16644230857491493</ymin>
-      <xmax>3550903.25934615172445774</xmax>
-      <ymax>5800095.57644230872392654</ymax>
+      <xmin>388293.26407422416377813</xmin>
+      <ymin>5709738.66217818483710289</ymin>
+      <xmax>389625.81807422183919698</xmax>
+      <ymax>5711370.74117818102240562</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
     <destinationsrs>
       <spatialrefsys>
         <proj4>dummy</proj4>
-        <srsid>101407</srsid>
+        <srsid>100010</srsid>
         <srid>0</srid>
         <authid>EPSG: dummy</authid>
         <description>dummy</description>
@@ -109,23 +109,19 @@
     </destinationsrs>
     <rendermaptile>0</rendermaptile>
     <layer_coordinate_transform_info>
-      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20170504083915353"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161204084617148"/>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20170504083915353"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170504083608994"/>
-      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508214302213"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen20161016203756230"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="Speicher_Kopie20161221080207994"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="WebAtlasDE20161016215518099"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161221075653754"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="teilgebiete20170214092005309"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20170504083519678"/>
-      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508214559105"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="auslaesse20161130084229247"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="speicherschaechte20161201095216459"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="teilgebiete20170504084043867"/>
-      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508223029630"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen_Kopie20161016203906444"/>
-      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508214657189"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="wehre20161125174724734"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161220162259105"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161016203756252"/>
@@ -134,7 +130,6 @@
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="pumpen20161017080913064"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170504084131477"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="speicherschaechte20161201095218755"/>
-      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="WebAtlasDE20170514231342582"/>
     </layer_coordinate_transform_info>
   </mapcanvas>
   <layer-tree-canvas>
@@ -145,20 +140,20 @@
       <item>pumpen20161017080913064</item>
       <item>profile20161018090721921</item>
       <item>pumpentypen20161018090730556</item>
-      <item>entwaesserungsarten20161018090806784</item>
+      <item>entwaesserungsart20161018090806784</item>
       <item>wehre20161125174724734</item>
       <item>auslasstypen20161201095045204</item>
       <item>simulationsstatus20161201095050780</item>
       <item>schaechte_Kopie20161204084617148</item>
       <item>abflussparameter20161218110231636</item>
       <item>profildaten20161218110256525</item>
-      <item>speicherkennlinien20161218110320415</item>
+      <item>speicherkennlinie20161218110320415</item>
       <item>schaechte20161220162259105</item>
       <item>schaechte_Kopie20161221075653754</item>
       <item>Speicher_Kopie20161221080207994</item>
       <item>teilgebiete20170214092005309</item>
       <item>flaechen20170504083519678</item>
-      <item>tezg20170508223029630</item>
+      <item>tezg20170504083608994</item>
     </custom-order>
   </layer-tree-canvas>
   <legend updateDrawingOrder="true">
@@ -189,19 +184,19 @@
         </filegroup>
       </legendlayer>
     </legendgroup>
-    <legendgroup open="true" checked="Qt::Checked" name="Haltungen">
+    <legendgroup open="true" checked="Qt::PartiallyChecked" name="Haltungen">
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Haltungen nach Typ" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="haltungen20161016203756230" visible="1"/>
         </filegroup>
       </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Haltungslinien" showFeatureCount="0">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="Haltungslinien" showFeatureCount="0">
         <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="haltungen_Kopie20161016203906444" visible="1"/>
+          <legendlayerfile isInOverview="0" layerid="haltungen_Kopie20161016203906444" visible="0"/>
         </filegroup>
       </legendlayer>
     </legendgroup>
-    <legendgroup open="false" checked="Qt::Checked" name="Sonderbauwerke">
+    <legendgroup open="true" checked="Qt::Checked" name="Sonderbauwerke">
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Wehre" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="wehre20161125174724734" visible="1"/>
@@ -213,7 +208,7 @@
         </filegroup>
       </legendlayer>
     </legendgroup>
-    <legendgroup open="false" checked="Qt::Checked" name="Flächen">
+    <legendgroup open="true" checked="Qt::Checked" name="Flächen">
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="teilgebiete" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="teilgebiete20170214092005309" visible="1"/>
@@ -221,7 +216,7 @@
       </legendlayer>
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="tezg" showFeatureCount="0">
         <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="tezg20170508223029630" visible="1"/>
+          <legendlayerfile isInOverview="0" layerid="tezg20170504083608994" visible="1"/>
         </filegroup>
       </legendlayer>
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="flaechen" showFeatureCount="0">
@@ -230,10 +225,10 @@
         </filegroup>
       </legendlayer>
     </legendgroup>
-    <legendgroup open="false" checked="Qt::Checked" name="Referenztabellen">
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Entwässerungsarten" showFeatureCount="0">
+    <legendgroup open="true" checked="Qt::Checked" name="Referenztabellen">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Entwässerungsart" showFeatureCount="0">
         <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="entwaesserungsarten20161018090806784" visible="1"/>
+          <legendlayerfile isInOverview="0" layerid="entwaesserungsart20161018090806784" visible="1"/>
         </filegroup>
       </legendlayer>
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Pumpentypen" showFeatureCount="0">
@@ -257,10 +252,10 @@
         </filegroup>
       </legendlayer>
     </legendgroup>
-    <legendgroup open="false" checked="Qt::Checked" name="Kennlinien">
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Speicherkennlinien" showFeatureCount="0">
+    <legendgroup open="true" checked="Qt::Checked" name="Kennlinien">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Speicherkennlinie" showFeatureCount="0">
         <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="speicherkennlinien20161218110320415" visible="1"/>
+          <legendlayerfile isInOverview="0" layerid="speicherkennlinie20161218110320415" visible="1"/>
         </filegroup>
       </legendlayer>
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Profildaten" showFeatureCount="0">
@@ -362,10 +357,35 @@
       <customproperties/>
     </Composition>
   </Composer>
+  <mapcanvas>
+    <units>degrees</units>
+    <extent>
+      <xmin>0</xmin>
+      <ymin>0</ymin>
+      <xmax>0</xmax>
+      <ymax>0</ymax>
+    </extent>
+    <rotation>0</rotation>
+    <projections>0</projections>
+    <destinationsrs>
+      <spatialrefsys>
+        <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+        <srsid>3452</srsid>
+        <srid>4326</srid>
+        <authid>EPSG:4326</authid>
+        <description>WGS 84</description>
+        <projectionacronym>longlat</projectionacronym>
+        <ellipsoidacronym>WGS84</ellipsoidacronym>
+        <geographicflag>true</geographicflag>
+      </spatialrefsys>
+    </destinationsrs>
+    <rendermaptile>0</rendermaptile>
+    <layer_coordinate_transform_info/>
+  </mapcanvas>
   <projectlayers>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Speicher_Kopie20161221080207994</id>
-      <datasource>dbname='./muster.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -373,7 +393,7 @@
       <srs>
         <spatialrefsys>
           <proj4>dummy</proj4>
-          <srsid>101408</srsid>
+          <srsid>100000</srsid>
           <srid>0</srid>
           <authid>EPSG: dummy</authid>
           <description>dummy</description>
@@ -418,7 +438,7 @@
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="entwart">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="pk" constraint="" Layer="entwaesserungsarten20161018090806784" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="pk" constraint="" Layer="entwaesserungsart20161018090806784" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="strasse">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -787,7 +807,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>abflussparameter20161218110231636</id>
-      <datasource>dbname='./muster.sqlite' table="abflussparameter" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="abflussparameter" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -801,7 +821,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>false</geographicflag>
+          <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -821,6 +841,9 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="apnam">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="kommentar">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="anfangsabflussbeiwert">
@@ -844,7 +867,7 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="bodenklasse">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="kommentar">
+        <edittype widgetv2type="TextEdit" name="interz_jahresganglinie">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
@@ -855,15 +878,16 @@ def my_form_open(dialog, layer, feature):
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="apnam" index="1" name=""/>
-        <alias field="anfangsabflussbeiwert" index="2" name=""/>
-        <alias field="endabflussbeiwert" index="3" name=""/>
-        <alias field="benetzungsverlust" index="4" name=""/>
-        <alias field="muldenverlust" index="5" name=""/>
-        <alias field="benetzung_startwert" index="6" name=""/>
-        <alias field="mulden_startwert" index="7" name=""/>
-        <alias field="bodenklasse" index="8" name=""/>
-        <alias field="kommentar" index="9" name=""/>
-        <alias field="createdat" index="10" name=""/>
+        <alias field="kommentar" index="2" name=""/>
+        <alias field="anfangsabflussbeiwert" index="3" name=""/>
+        <alias field="endabflussbeiwert" index="4" name=""/>
+        <alias field="benetzungsverlust" index="5" name=""/>
+        <alias field="muldenverlust" index="6" name=""/>
+        <alias field="benetzung_startwert" index="7" name=""/>
+        <alias field="mulden_startwert" index="8" name=""/>
+        <alias field="bodenklasse" index="9" name=""/>
+        <alias field="interz_jahresganglinie" index="10" name=""/>
+        <alias field="createdat" index="11" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -916,6 +940,7 @@ def my_form_open(dialog, layer, feature):
       <defaults>
         <default field="pk" expression=""/>
         <default field="apnam" expression=""/>
+        <default field="kommentar" expression=""/>
         <default field="anfangsabflussbeiwert" expression=""/>
         <default field="endabflussbeiwert" expression=""/>
         <default field="benetzungsverlust" expression=""/>
@@ -923,14 +948,14 @@ def my_form_open(dialog, layer, feature):
         <default field="benetzung_startwert" expression=""/>
         <default field="mulden_startwert" expression=""/>
         <default field="bodenklasse" expression=""/>
-        <default field="kommentar" expression=""/>
+        <default field="interz_jahresganglinie" expression=""/>
         <default field="createdat" expression=""/>
       </defaults>
       <previewExpression>COALESCE("pk", '&lt;NULL>')</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>auslasstypen20161201095045204</id>
-      <datasource>dbname='./muster.sqlite' table="auslasstypen" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="auslasstypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -944,7 +969,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>false</geographicflag>
+          <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1035,12 +1060,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression></previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
-      <id>entwaesserungsarten20161018090806784</id>
-      <datasource>dbname='./muster.sqlite' table="entwaesserungsarten" sql=</datasource>
+      <id>entwaesserungsart20161018090806784</id>
+      <datasource>dbname='./nette.sqlite' table="entwaesserungsart" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>Entwässerungsarten</layername>
+      <layername>Entwässerungsart</layername>
       <srs>
         <spatialrefsys>
           <proj4></proj4>
@@ -1050,7 +1075,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>false</geographicflag>
+          <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1103,7 +1128,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/entwaesserungsarten.ui</editform>
+      <editform>./eingabemasken/entwaesserungsart.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1142,21 +1167,21 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>flaechen20170504083519678</id>
-      <datasource>dbname='./muster.sqlite' table="flaechen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="flaechen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>flaechen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101409</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="System">spatialite</provider>
@@ -1388,7 +1413,6 @@ def my_form_open(dialog, layer, feature):
       <SingleCategoryDiagramRenderer diagramType="Histogram" sizeLegend="0" attributeLegend="1">
         <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" sizeScale="0,0,0,0,0,0" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1e+08" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" lineSizeScale="0,0,0,0,0,0" sizeType="MM" lineSizeType="MM" minScaleDenominator="inf">
           <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
-          <attribute field="" color="#000000" label=""/>
         </DiagramCategory>
         <symbol alpha="1" clip_to_extent="1" type="marker" name="sizeSymbol">
           <layer pass="0" class="SimpleMarker" locked="0">
@@ -1414,7 +1438,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform></annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="flnam" index="1" name=""/>
@@ -1443,10 +1467,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>.</editform>
+      <editform></editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath></editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -1486,7 +1510,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="1" maximumScale="15000" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>haltungen20161016203756230</id>
-      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1494,7 +1518,7 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>dummy</proj4>
-          <srsid>101410</srsid>
+          <srsid>100001</srsid>
           <srid>0</srid>
           <authid>EPSG: dummy</authid>
           <description>dummy</description>
@@ -1554,7 +1578,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="pk" constraint="" Layer="profile20161018090721921" Value="profilnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="entwart">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="pk" constraint="" Layer="entwaesserungsarten20161018090806784" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="pk" constraint="" Layer="entwaesserungsart20161018090806784" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="rohrtyp">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -1613,7 +1637,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="offset_unit" v="MM"/>
               <prop k="use_custom_dash" v="0"/>
               <prop k="width_dd_active" v="1"/>
-              <prop k="width_dd_expression" v="0.4 + &#xd;&#xa;if(breite = 0,hoehe,&#xd;&#xa;if(hoehe=0,breite, sqrt(hoehe*breite)))"/>
+              <prop k="width_dd_expression" v="0.8 + breite"/>
               <prop k="width_dd_field" v=""/>
               <prop k="width_dd_useexpr" v="1"/>
               <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -1634,7 +1658,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="offset_unit" v="MM"/>
               <prop k="use_custom_dash" v="0"/>
               <prop k="width_dd_active" v="1"/>
-              <prop k="width_dd_expression" v="0.4 + &#xd;&#xa;if(breite = 0,hoehe,&#xd;&#xa;if(hoehe=0,breite, sqrt(hoehe*breite)))"/>
+              <prop k="width_dd_expression" v="0.4 + breite"/>
               <prop k="width_dd_field" v=""/>
               <prop k="width_dd_useexpr" v="1"/>
               <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -1692,7 +1716,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="offset_unit" v="MM"/>
               <prop k="use_custom_dash" v="0"/>
               <prop k="width_dd_active" v="1"/>
-              <prop k="width_dd_expression" v="0.4 + &#xd;&#xa;if(breite = 0,hoehe,&#xd;&#xa;if(hoehe=0,breite, sqrt(hoehe*breite)))"/>
+              <prop k="width_dd_expression" v="0.8 + breite"/>
               <prop k="width_dd_field" v=""/>
               <prop k="width_dd_useexpr" v="1"/>
               <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -1713,7 +1737,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="offset_unit" v="MM"/>
               <prop k="use_custom_dash" v="0"/>
               <prop k="width_dd_active" v="1"/>
-              <prop k="width_dd_expression" v="0.4 + &#xd;&#xa;if(breite = 0,hoehe,&#xd;&#xa;if(hoehe=0,breite, sqrt(hoehe*breite)))"/>
+              <prop k="width_dd_expression" v="0.4 + breite"/>
               <prop k="width_dd_field" v=""/>
               <prop k="width_dd_useexpr" v="1"/>
               <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -1771,7 +1795,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="offset_unit" v="MM"/>
               <prop k="use_custom_dash" v="0"/>
               <prop k="width_dd_active" v="1"/>
-              <prop k="width_dd_expression" v="0.4 + &#xd;&#xa;if(breite = 0,hoehe,&#xd;&#xa;if(hoehe=0,breite, sqrt(hoehe*breite)))"/>
+              <prop k="width_dd_expression" v="0.8 + breite"/>
               <prop k="width_dd_field" v=""/>
               <prop k="width_dd_useexpr" v="1"/>
               <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -1792,7 +1816,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="offset_unit" v="MM"/>
               <prop k="use_custom_dash" v="0"/>
               <prop k="width_dd_active" v="1"/>
-              <prop k="width_dd_expression" v="0.4 + &#xd;&#xa;if(breite = 0,hoehe,&#xd;&#xa;if(hoehe=0,breite, sqrt(hoehe*breite)))"/>
+              <prop k="width_dd_expression" v="0.4 + breite"/>
               <prop k="width_dd_field" v=""/>
               <prop k="width_dd_useexpr" v="1"/>
               <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -1850,7 +1874,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="offset_unit" v="MM"/>
               <prop k="use_custom_dash" v="0"/>
               <prop k="width_dd_active" v="1"/>
-              <prop k="width_dd_expression" v="0.8 + &#xd;&#xa;if(breite = 0,hoehe,&#xd;&#xa;if(hoehe=0,breite, sqrt(hoehe*breite)))"/>
+              <prop k="width_dd_expression" v="0.8 + breite"/>
               <prop k="width_dd_field" v=""/>
               <prop k="width_dd_useexpr" v="1"/>
               <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -1871,7 +1895,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="offset_unit" v="MM"/>
               <prop k="use_custom_dash" v="0"/>
               <prop k="width_dd_active" v="1"/>
-              <prop k="width_dd_expression" v="0.4 + &#xd;&#xa;if(breite = 0,hoehe,&#xd;&#xa;if(hoehe=0,breite, sqrt(hoehe*breite)))"/>
+              <prop k="width_dd_expression" v="0.4 + breite"/>
               <prop k="width_dd_field" v=""/>
               <prop k="width_dd_useexpr" v="1"/>
               <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -2289,7 +2313,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="15000" maximumScale="1.5e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>haltungen_Kopie20161016203906444</id>
-      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2297,7 +2321,7 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>dummy</proj4>
-          <srsid>101411</srsid>
+          <srsid>100002</srsid>
           <srid>0</srid>
           <authid>EPSG: dummy</authid>
           <description>dummy</description>
@@ -2736,7 +2760,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profildaten20161218110256525</id>
-      <datasource>dbname='./muster.sqlite' table="profildaten" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="profildaten" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2836,7 +2860,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profile20161018090721921</id>
-      <datasource>dbname='./muster.sqlite' table="profile" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="profile" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2942,7 +2966,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>pumpen20161017080913064</id>
-      <datasource>dbname='./muster.sqlite' table="pumpen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="pumpen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2950,7 +2974,7 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>dummy</proj4>
-          <srsid>101412</srsid>
+          <srsid>100003</srsid>
           <srid>0</srid>
           <authid>EPSG: dummy</authid>
           <description>dummy</description>
@@ -3393,7 +3417,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>pumpentypen20161018090730556</id>
-      <datasource>dbname='./muster.sqlite' table="pumpentypen" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="pumpentypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -3487,7 +3511,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte20161016203756252</id>
-      <datasource>dbname='./muster.sqlite' table="schaechte" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -3495,7 +3519,7 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>dummy</proj4>
-          <srsid>101413</srsid>
+          <srsid>100004</srsid>
           <srid>0</srid>
           <authid>EPSG: dummy</authid>
           <description>dummy</description>
@@ -3898,7 +3922,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte20161220162259105</id>
-      <datasource>dbname='./muster.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -3906,7 +3930,7 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>dummy</proj4>
-          <srsid>101414</srsid>
+          <srsid>100005</srsid>
           <srid>0</srid>
           <authid>EPSG: dummy</authid>
           <description>dummy</description>
@@ -3951,7 +3975,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="entwart">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="pk" constraint="" Layer="entwaesserungsarten20161018090806784" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="pk" constraint="" Layer="entwaesserungsart20161018090806784" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="strasse">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -4320,7 +4344,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte_Kopie20161204084617148</id>
-      <datasource>dbname='./muster.sqlite' table="schaechte" (geop) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4328,7 +4352,7 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>dummy</proj4>
-          <srsid>101415</srsid>
+          <srsid>100006</srsid>
           <srid>0</srid>
           <authid>EPSG: dummy</authid>
           <description>dummy</description>
@@ -4903,7 +4927,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte_Kopie20161221075653754</id>
-      <datasource>dbname='./muster.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4911,7 +4935,7 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>dummy</proj4>
-          <srsid>101416</srsid>
+          <srsid>100007</srsid>
           <srid>0</srid>
           <authid>EPSG: dummy</authid>
           <description>dummy</description>
@@ -4956,7 +4980,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="entwart">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="pk" constraint="" Layer="entwaesserungsarten20161018090806784" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="pk" constraint="" Layer="entwaesserungsart20161018090806784" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="strasse">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -5323,7 +5347,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>simulationsstatus20161201095050780</id>
-      <datasource>dbname='./muster.sqlite' table="simulationsstatus" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="simulationsstatus" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5428,12 +5452,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression></previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
-      <id>speicherkennlinien20161218110320415</id>
-      <datasource>dbname='./muster.sqlite' table="speicherkennlinien" sql=</datasource>
+      <id>speicherkennlinie20161218110320415</id>
+      <datasource>dbname='./nette.sqlite' table="speicherkennlinie" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>Speicherkennlinien</layername>
+      <layername>Speicherkennlinie</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
@@ -5491,7 +5515,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/speicherkennlinien.ui</editform>
+      <editform>./eingabemasken/speicherkennlinie.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5529,7 +5553,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>teilgebiete20170214092005309</id>
-      <datasource>dbname='./muster.sqlite' table="teilgebiete" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="teilgebiete" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5537,7 +5561,7 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>dummy</proj4>
-          <srsid>101417</srsid>
+          <srsid>100008</srsid>
           <srid>0</srid>
           <authid>EPSG: dummy</authid>
           <description>dummy</description>
@@ -5872,8 +5896,8 @@ def my_form_open(dialog, layer, feature):
       <previewExpression></previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <id>tezg20170508223029630</id>
-      <datasource>dbname='./muster.sqlite' table="tezg" (geom) sql=</datasource>
+      <id>tezg20170504083608994</id>
+      <datasource>dbname='./nette.sqlite' table="tezg" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5913,9 +5937,6 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="regenschreiber">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="teilgebiet">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
         <edittype widgetv2type="TextEdit" name="abflussparameter">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
@@ -5931,14 +5952,14 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="fill" name="0">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="147,235,224,255"/>
+              <prop k="color" v="212,127,212,255"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="offset_unit" v="MM"/>
               <prop k="outline_color" v="51,160,44,255"/>
               <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.1"/>
+              <prop k="outline_width" v="0.26"/>
               <prop k="outline_width_unit" v="MM"/>
               <prop k="style" v="no"/>
             </layer>
@@ -6119,7 +6140,6 @@ def my_form_open(dialog, layer, feature):
       <SingleCategoryDiagramRenderer diagramType="Histogram" sizeLegend="0" attributeLegend="1">
         <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" sizeScale="0,0,0,0,0,0" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1e+08" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" lineSizeScale="0,0,0,0,0,0" sizeType="MM" lineSizeType="MM" minScaleDenominator="inf">
           <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
-          <attribute field="" color="#000000" label=""/>
         </DiagramCategory>
         <symbol alpha="1" clip_to_extent="1" type="marker" name="sizeSymbol">
           <layer pass="0" class="SimpleMarker" locked="0">
@@ -6145,17 +6165,16 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform></annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="flnam" index="1" name=""/>
         <alias field="haltnam" index="2" name=""/>
         <alias field="neigkl" index="3" name=""/>
         <alias field="regenschreiber" index="4" name=""/>
-        <alias field="teilgebiet" index="5" name=""/>
-        <alias field="abflussparameter" index="6" name=""/>
-        <alias field="kommentar" index="7" name=""/>
-        <alias field="createdat" index="8" name=""/>
+        <alias field="abflussparameter" index="5" name=""/>
+        <alias field="kommentar" index="6" name=""/>
+        <alias field="createdat" index="7" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -6170,14 +6189,13 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="abflussparameter"/>
           <column width="-1" hidden="0" type="field" name="kommentar"/>
           <column width="-1" hidden="0" type="field" name="createdat"/>
-          <column width="-1" hidden="0" type="field" name="teilgebiet"/>
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>.</editform>
+      <editform></editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath></editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -6208,7 +6226,6 @@ def my_form_open(dialog, layer, feature):
         <default field="haltnam" expression=""/>
         <default field="neigkl" expression=""/>
         <default field="regenschreiber" expression=""/>
-        <default field="teilgebiet" expression=""/>
         <default field="abflussparameter" expression=""/>
         <default field="kommentar" expression=""/>
         <default field="createdat" expression=""/>
@@ -6217,7 +6234,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>wehre20161125174724734</id>
-      <datasource>dbname='./muster.sqlite' table="wehre" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="wehre" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -6225,7 +6242,7 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>dummy</proj4>
-          <srsid>101418</srsid>
+          <srsid>100009</srsid>
           <srid>0</srid>
           <authid>EPSG: dummy</authid>
           <description>dummy</description>
@@ -6758,24 +6775,6 @@ def my_form_open(dialog, layer, feature):
       <Ellipsoid type="QString">bessel</Ellipsoid>
     </Measure>
     <WMSPrecision type="QString">8</WMSPrecision>
-    <DBManager>
-      <savedQueries>
-        <q-1675782903>
-          <query type="QString">UPDATE haltungen&#xd;
-SET geom = &#xd;
-( SELECT MakeLine(MakePoint(schob.xsch,schob.ysch,25832),MakePoint(schun.xsch,schun.ysch,25832))&#xd;
-  FROM &#xd;
-    haltungen AS hal &#xd;
-  INNER JOIN &#xd;
-    schaechte AS schob&#xd;
-  ON haltungen.schoben = schob.schnam&#xd;
-  INNER JOIN &#xd;
-    schaechte AS schun&#xd;
-  ON haltungen.schunten = schun.schnam)</query>
-          <name type="QString">Erzeuge_Haltungslinien</name>
-        </q-1675782903>
-      </savedQueries>
-    </DBManager>
     <WFSTLayers>
       <Insert type="QStringList"/>
       <Update type="QStringList"/>
@@ -6794,7 +6793,6 @@ SET geom = &#xd;
       <DefaultSnapToleranceUnit type="int">2</DefaultSnapToleranceUnit>
       <LayerSnappingList type="QStringList">
         <value>Speicher_Kopie20161221080207994</value>
-        <value>flaechen20170504083519678</value>
         <value>haltungen20161016203756230</value>
         <value>haltungen_Kopie20161016203906444</value>
         <value>pumpen20161017080913064</value>
@@ -6803,38 +6801,39 @@ SET geom = &#xd;
         <value>schaechte_Kopie20161204084617148</value>
         <value>schaechte_Kopie20161221075653754</value>
         <value>teilgebiete20170214092005309</value>
-        <value>tezg20170508223029630</value>
         <value>wehre20161125174724734</value>
+        <value>flaechen20170504083519678</value>
+        <value>tezg20170504083608994</value>
       </LayerSnappingList>
       <LayerSnappingEnabledList type="QStringList">
         <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
         <value>disabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
         <value>disabled</value>
-        <value>enabled</value>
       </LayerSnappingEnabledList>
       <SnappingMode type="QString">current_layer</SnappingMode>
       <AvoidIntersectionsList type="QStringList"/>
       <LayerSnappingToleranceUnitList type="QStringList">
         <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
         <value>2</value>
-        <value>1</value>
-        <value>1</value>
-        <value>1</value>
-        <value>1</value>
-        <value>1</value>
-        <value>1</value>
-        <value>1</value>
-        <value>1</value>
         <value>2</value>
-        <value>1</value>
       </LayerSnappingToleranceUnitList>
       <LayerSnapToList type="QStringList">
         <value>to_vertex_and_segment</value>
@@ -6854,17 +6853,17 @@ SET geom = &#xd;
       <DefaultSnapTolerance type="double">0</DefaultSnapTolerance>
       <LayerSnappingToleranceList type="QStringList">
         <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
         <value>0.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
         <value>0.000000</value>
-        <value>5.000000</value>
       </LayerSnappingToleranceList>
     </Digitizing>
     <Identify>
