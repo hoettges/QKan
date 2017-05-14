@@ -31,7 +31,21 @@ import os
 import pyspatialite.dbapi2 as splite
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
-from qgis.gui import QgsMessageBar
+from qgis.core import QgsMessageLog
+import logging
+
+logger = logging.getLogger('QKan')
+
+# Fortschritts- und Fehlermeldungen
+
+def fortschritt(text,prozent=0.):
+    logger.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100.))
+    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100.), 'Export: ', QgsMessageLog.INFO)
+
+def fehlermeldung(title, text, dauer = 0):
+    logger.debug(u'{:s} {:s}'.format(title,text))
+    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
+    iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL, duration=dauer)
 
 def createdbtables(consl,cursl,epsg=25832):
     ''' Erstellt fuer eine neue QKan-Datenbank die zum Import aus Hystem-Extran
@@ -46,18 +60,6 @@ def createdbtables(consl,cursl,epsg=25832):
         :returns: Testergebnis: True = alles o.k.
         :rtype: logical
     '''
-
-    # Protokoll-Tabelle anlegen
-
-    sql = 'CREATE TABLE protokoll (inhalt TEXT, zeit TEXT CONSTRAINT log_timestamp DEFAULT CURRENT_TIMESTAMP)'
-
-    try:
-        cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "protokoll" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
-        return False
-    consl.commit()
 
     # Haltungen ----------------------------------------------------------------
 
@@ -90,17 +92,15 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "Haltungen" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "Haltungen" konnte nicht erstellt werden', str(err))
         return False
 
     sql = "SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg)
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'In der Tabelle "Haltungen" konnte das Attribut "geom" ' + 
-            'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         return False
     consl.commit()
 
@@ -133,9 +133,8 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "Schaechte" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "Schaechte" konnte nicht erstellt werden', str(err))
         return False
 
     sql1 = """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg)
@@ -143,10 +142,10 @@ def createdbtables(consl,cursl,epsg=25832):
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'In der Tabelle "Schaechte" konnten die Attribute "geop" ' + 
-            'und "geom" nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden', str(err))
         return False
+
     consl.commit()
 
 
@@ -235,9 +234,8 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "Profile" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "Profile" konnte nicht erstellt werden', str(err))
         return False
 
     try:
@@ -273,11 +271,11 @@ def createdbtables(consl,cursl,epsg=25832):
 
         for ds in daten:
             cursl.execute(u'INSERT INTO profile (profilnam, he_nr, mu_nr, kp_nr) Values (' + ds + ')')
-        
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabellendaten "Profile" konnten nicht hinzugefuegt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+
+    except BaseException as err:
+        fehlermeldung('Tabellendaten "Profile" konnten nicht hinzugefuegt werden', str(err))
         return False
+
     consl.commit()
 
 
@@ -292,9 +290,8 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "profildaten" konnte nicht erstellt werden!\nAbbruch!', 
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "profildaten" konnte nicht erstellt werden', str(err))
         return False
     consl.commit()
 
@@ -311,9 +308,8 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "entwaesserungsarten" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "entwaesserungsarten" konnte nicht erstellt werden', str(err))
         return False
 
     try:
@@ -324,10 +320,9 @@ def createdbtables(consl,cursl,epsg=25832):
 
         for ds in daten:
             cursl.execute('INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr) Values (' + ds + ')')
-        
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt ' + 
-            'werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+
+    except BaseException as err:
+        fehlermeldung('Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden', str(err))
         return False
     consl.commit()
 
@@ -342,9 +337,8 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "pumpentypen" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "pumpentypen" konnte nicht erstellt werden', str(err))
         return False
 
     try:
@@ -357,11 +351,11 @@ def createdbtables(consl,cursl,epsg=25832):
 
         for ds in daten:
             cursl.execute('INSERT INTO pumpentypen (bezeichnung, he_nr) Values (' + ds + ')')
-        
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+
+    except BaseException as err:
+        fehlermeldung('Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden', str(err))
         return False
+
     consl.commit()
 
 
@@ -383,21 +377,20 @@ def createdbtables(consl,cursl,epsg=25832):
     simstatus TEXT,
     kommentar TEXT,
     createdat TEXT DEFAULT CURRENT_DATE)'''
-    
+
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "pumpen" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "pumpen" konnte nicht erstellt werden', str(err))
         return False
 
     sql = "SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg)
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'In der Tabelle "pumpen" konnte das Attribut "geom" ' + 
-            'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         return False
+
     consl.commit()
 
 
@@ -421,18 +414,17 @@ def createdbtables(consl,cursl,epsg=25832):
     
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "wehre" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "wehre" konnte nicht erstellt werden', str(err))
         return False
 
     sql = "SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg)
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'In der Tabelle "wehre" konnte das Attribut "geom" ' + 
-            'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         return False
+
     consl.commit()
 
 
@@ -453,17 +445,15 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "Teilgebiete" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "Teilgebiete" konnte nicht erstellt werden', str(err))
         return False
 
     sql = "SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'In der Tabelle "Teilgebiete" konnte das Attribut "geom" ' + 
-            'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         return False
     consl.commit()
 
@@ -483,17 +473,15 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "flaechen" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "flaechen" konnte nicht erstellt werden', str(err))
         return False
 
     sql = "SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)".format(epsg)
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'In der Tabelle "flaechen" konnte das Attribut "geom" ' + 
-            'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         return False
     consl.commit()
 
@@ -516,17 +504,15 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "tezg" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "tezg" konnte nicht erstellt werden', str(err))
         return False
 
     sql = "SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg)
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'In der Tabelle "tezg" konnte das Attribut "geom" ' + 
-            'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         return False
     consl.commit()
 
@@ -543,9 +529,8 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "simulationsstatus" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "simulationsstatus" konnte nicht erstellt werden', str(err))
         return False
 
     try:
@@ -560,10 +545,9 @@ def createdbtables(consl,cursl,epsg=25832):
         for ds in daten:
             cursl.execute('INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) Values (' + 
                             ds + ')')
-        
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabellendaten "simulationsstatus" konnten nicht ' + 
-            'hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
+
+    except BaseException as err:
+        fehlermeldung('Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden', str(err))
         return False
     consl.commit()
 
@@ -580,9 +564,8 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "auslasstypen" konnte nicht erstellt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "auslasstypen" konnten nicht erstellt werden', str(err))
         return False
 
     try:
@@ -595,10 +578,9 @@ def createdbtables(consl,cursl,epsg=25832):
 
         for ds in daten:
             cursl.execute('INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) Values (' + ds + ')')
-        
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+
+    except BaseException as err:
+        fehlermeldung('Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden', str(err))
         return False
     consl.commit()
 
@@ -621,9 +603,8 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "abflussparameter" konnte nicht erstellt werden!\nAbbruch!', 
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabelle "abflussparameter" konnten nicht erstellt werden', str(err))
         return False
 
     try:
@@ -631,20 +612,20 @@ def createdbtables(consl,cursl,epsg=25832):
                  "'$Default_Unbef', 'Exportiert mit qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
 
         for ds in daten:
-            sql = """INSERT INTO abflussparameter
+            sql = u"""INSERT INTO abflussparameter
                      ( 'apnam', 'kommentar', 'anfangsabflussbeiwert', 'endabflussbeiwert', 'benetzungsverlust', 
                        'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
-                       'createdat') Values (' + ds + ')"""
+                       'createdat') Values ({})""".format(ds)
             cursl.execute(sql)
         
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden!\nAbbruch!',
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung('Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden', str(err))
         return False
     consl.commit()
 
 
     # Kennlinie Speicherbauwerke -----------------------------------------------
+    fortschritt('Erstelle Tabelle "Speicherkennlinien',0.)
 
     sql = '''
     CREATE TABLE speicherkennlinien (
@@ -655,9 +636,8 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
         cursl.execute(sql)
-    except:
-        iface.messageBar().pushMessage("Fehler", 'Tabelle "speicherkennlinien" konnte nicht erstellt werden!\nAbbruch!', 
-            level=QgsMessageBar.CRITICAL)
+    except BaseException as err:
+        fehlermeldung(u'Fehler beim Erzeugen der Tabelle "Speicherkennlinien": ', str(err))
         return False
     consl.commit()
 
