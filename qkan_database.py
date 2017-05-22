@@ -624,6 +624,47 @@ def createdbtables(consl,cursl,epsg=25832):
     consl.commit()
 
 
+    # Bodenklasse -------------------------------------------------------------
+
+    sql = '''
+    CREATE TABLE bodenklassen (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    bknam TEXT, 
+    infiltrationsrateanfang REAL,
+    infiltrationsrateende REAL,
+    infiltrationsratestart REAL,
+    rueckgangskonstante REAL,
+    regenerationskonstante REAL,
+    saettigungswassergehalt REAL,
+    kommentar TEXT, 
+    createdat TEXT DEFAULT CURRENT_DATE)'''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('Tabelle "bodenklassen" konnten nicht erstellt werden', str(err))
+        return False
+
+    try:
+        daten = ["'VollDurchlaessig', 10, 9, 10, 144, 1.584, 100, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+                 "'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+                 "'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+                 "'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+                 "'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '13.01.2011 08:44:50', 'Importiert mit qg2he'"]
+
+        for ds in daten:
+            sql = u"""INSERT INTO bodenklassen
+                     ( 'bknam', 'infiltrationsrateanfang', 'infiltrationsrateende', 'infiltrationsratestart', 
+                       'rueckgangskonstante', 'regenerationskonstante', 'saettigungswassergehalt', 
+                       'createdat', 'kommentar') Values ({})""".format(ds)
+            cursl.execute(sql)
+        
+    except BaseException as err:
+        fehlermeldung('Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden', str(err))
+        return False
+    consl.commit()
+
+
     # Kennlinie Speicherbauwerke -----------------------------------------------
     fortschritt('Erstelle Tabelle "Speicherkennlinien',0.)
 
