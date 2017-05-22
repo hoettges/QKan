@@ -364,16 +364,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QComboBox" name="strasse">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>120</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
@@ -420,7 +410,17 @@
      </rect>
     </property>
     <property name="text">
-     <string>m³</string>
+     <string>m²</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="strasse">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>120</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
     </property>
    </widget>
   </widget>

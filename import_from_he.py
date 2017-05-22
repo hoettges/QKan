@@ -106,8 +106,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     
     # Referenztabellen laden. 
 
-    # Entwässerungssystem. Attribut [kuerzel] enthält die Bezeichnung des Benutzers.
-    sql = 'SELECT he_nr, kuerzel FROM entwaesserungsarten'
+    # Entwässerungssystem. Attribut [bezeichnung] enthält die Bezeichnung des Benutzers.
+    sql = 'SELECT he_nr, bezeichnung FROM entwaesserungsarten'
     dbQK.sql(sql)
     daten = dbQK.fetchall()
     ref_entwart = {}
@@ -235,7 +235,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         else:
             # Noch nicht in Tabelle [entwaesserungsarten] enthalten, also ergqenzen
             entwart = u'({})'.format(entwaesserungsart_he)
-            sql = u"INSERT INTO entwaesserungsarten (kuerzel, he_nr) Values ('{entwart}', {he_nr})".format( \
+            sql = u"INSERT INTO entwaesserungsarten (bezeichnung, he_nr) Values ('{entwart}', {he_nr})".format( \
                       entwart=entwart, he_nr=entwaesserungsart_he)
             ref_entwart[entwaesserungsart_he] = entwart
             dbQK.sql(sql)
@@ -334,7 +334,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
             entwart = ref_entwart[entwaesserungsart_he]
         else:
             # Noch nicht in Tabelle [entwaesserungsarten] enthalten, also ergänzen
-            sql = u"INSERT INTO entwaesserungsarten (kuerzel, he_nr) Values ('({0:})', {0:d})".format(entwaesserungsart_he)
+            sql = u"INSERT INTO entwaesserungsarten (bezeichnung, he_nr) Values ('({0:})', {0:d})".format(entwaesserungsart_he)
             entwart = '({:})'.format(entwaesserungsart_he)
             dbQK.sql(sql)
 
@@ -407,6 +407,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
 
     # Speicherschachtdaten aufbereiten und in die QKan-DB schreiben
 
+    logger.debug('simstatus[0]: {}'.format(ref_simulationsstatus[0]))
     for attr in daten:
         (schnam_ansi, deckelhoehe, sohlhoehe, xsch, ysch, ueberstauflaeche, simstat_he, kommentar_ansi, 
          createdat) = ['NULL' if el is None else el for el in attr]
@@ -1033,14 +1034,17 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         fehlermeldung('SQL-Fehler', str(e))
         fehlermeldung("Fehler", u"\nFehler in sql_coordsys: \n" + sql + '\n\n')
 
-    srid = dbQK.fetchone()
+    srid = dbQK.fetchone()[0]
     try:
-        crs = QgsCoordinateReferenceSystem(4326, QgsCoordinateReferenceSystem.EpsgCrsId)
+        crs = QgsCoordinateReferenceSystem(srid, QgsCoordinateReferenceSystem.EpsgCrsId)
         srsid = crs.srsid()
         proj4text = crs.toProj4()
         description = crs.description()
         projectionacronym = crs.projectionAcronym()
-        ellipsoidacronym = crs.ellipsoidacronym()
+        if 'ellipsoidacronym' in dir(crs):
+            ellipsoidacronym = crs.ellipsoidacronym()
+        else:
+            ellipsoidacronym = None
     except BaseException as e:
         srid, srsid, proj4text, description, projectionacronym, ellipsoidacronym = \
             'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy'
@@ -1098,8 +1102,9 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
                     elem.text = description
                     elem = ET.SubElement(tag_spatialrefsys,'projectionacronym')
                     elem.text = projectionacronym
-                    elem = ET.SubElement(tag_spatialrefsys,'ellipsoidacronym')
-                    elem.text = ellipsoidacronym
+                    if ellipsoidacronym is not None:
+                        elem = ET.SubElement(tag_spatialrefsys,'ellipsoidacronym')
+                        elem.text = ellipsoidacronym
 
         for tag_extent in root.findall(".//mapcanvas/extent"):
             elem = tag_extent.find("./xmin")
@@ -1124,8 +1129,9 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
             elem.text = description
             elem = ET.SubElement(tag_spatialrefsys,'projectionacronym')
             elem.text = projectionacronym
-            elem = ET.SubElement(tag_spatialrefsys,'ellipsoidacronym')
-            elem.text = ellipsoidacronym
+            if ellipsoidacronym is not None:
+                elem = ET.SubElement(tag_spatialrefsys,'ellipsoidacronym')
+                elem.text = ellipsoidacronym
 
         for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
             text = tag_datasource.text

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>372</width>
-    <height>129</height>
+    <width>371</width>
+    <height>242</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,13 +51,13 @@
    </widget>
    <widget class="QLineEdit" name="he_nr">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>150</x>
       <y>20</y>
-      <width>141</width>
+      <width>31</width>
       <height>20</height>
      </rect>
     </property>
@@ -74,7 +74,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="bedeutung">
+   <widget class="QLineEdit" name="bezeichnung">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -114,6 +114,32 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>125</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Kommentar :</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="bemerkung">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>150</y>
+      <width>331</width>
+      <height>71</height>
+     </rect>
     </property>
    </widget>
   </widget>

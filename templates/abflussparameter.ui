@@ -203,7 +203,7 @@
      <string>Muldenverlust</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="name">
+   <widget class="QLineEdit" name="apnam">
     <property name="geometry">
      <rect>
       <x>90</x>

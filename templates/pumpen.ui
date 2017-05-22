@@ -209,7 +209,7 @@
      <string>Einschalthöhe</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="pname">
+   <widget class="QLineEdit" name="pnam">
     <property name="geometry">
      <rect>
       <x>90</x>
