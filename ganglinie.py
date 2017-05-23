@@ -11,13 +11,14 @@ from Enums import LayerType
 
 
 class Ganglinie:
-    def __init__(self):
+    def __init__(self, t):
+        self.t = t
         self.dialog = GanglinieDialog()
         self.laengsschnitt = None
         self.db = ""
         self.id = -1
         self.route = None
-        self.fig = plt.figure(2)
+        self.fig = plt.figure(t)
         self.toolbar_widget = None
         self.x = []
         self.axes = []
@@ -99,11 +100,11 @@ class Ganglinie:
                 ax = self.fig.add_subplot(111)
                 ax.set_ylabel(axes[idx][method_idx])
                 self.axes.append(ax)
-                plot, = ax.plot_date(self.x, _y.get(obj),
-                                     color=colors[index % len(colors)], linestyle="-",
-                                     marker=None,
-                                     label=obj)
-                self.plots.append(plot)
+                _plot, = ax.plot_date(self.x, _y.get(obj),
+                                      color=colors[index % len(colors)], linestyle="-",
+                                      marker=None,
+                                      label=obj)
+                self.plots.append(_plot)
 
         if idx == 0:
             y = draw_haltung()
@@ -127,7 +128,7 @@ class Ganglinie:
             plt.gcf().axes[0].grid(True)
         except IndexError:
             pass
-        plt.figure(2)
+        plt.figure(self.t)
         plt.legend(handles=self.plots)
         self.fig.canvas.draw()
 
@@ -139,7 +140,7 @@ class Ganglinie:
         self.x = sorted(self.x)
 
     def get_widget(self):
-        plt.figure(2)
+        plt.figure(self.t)
         qw = QWidget()
         canv = FigureCanvas(self.fig)
         toolbar = NavigationToolbar(canv, qw, True)
