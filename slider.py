@@ -39,22 +39,22 @@ class Slider(QSlider):
         p.drawText(pos, "50x")
         super(self.__class__, self).paintEvent(e)
 
-    def mouseReleaseEvent(self, QMouseEvent):
-        ctrl = QMouseEvent.modifiers() == Qt.ControlModifier
-        if QMouseEvent.button() == Qt.RightButton:
+    def mouseReleaseEvent(self, _QMouseEvent):
+        ctrl = _QMouseEvent.modifiers() == Qt.ControlModifier
+        if _QMouseEvent.button() == Qt.RightButton:
             if ctrl:
                 self.ctrl_click()
             else:
                 self.set_paused()
         else:
-            super(self.__class__, self).mouseReleaseEvent(QMouseEvent)
+            super(self.__class__, self).mouseReleaseEvent(_QMouseEvent)
 
     def ctrl_click(self):
         if self.mode == SliderMode.Pause:
             self.last_mode = SliderMode.Forward if self.last_mode == SliderMode.Backward else SliderMode.Backward
         else:
             self.mode = SliderMode.Forward if self.mode == SliderMode.Backward else SliderMode.Backward
-        self.updateStyle()
+        self.update_style()
         self.valueChanged.emit(self.value())
 
     def set_paused(self):
@@ -63,54 +63,53 @@ class Slider(QSlider):
         else:
             self.last_mode = self.mode
             self.mode = SliderMode.Pause
-        self.updateStyle()
+        self.update_style()
         self.valueChanged.emit(self.value())
 
-    def updateStyle(self):
+    def update_style(self):
         if self.mode == SliderMode.Forward:
             temp = """QSlider::groove:horizontal {
-                                  border: 1px solid #999999;
-                                  height: 20px;
-                                  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #050DFF, stop:1 #757AFF);
-                                  margin: 2px 0;
-                                  }
-                                  QSlider::handle:horizontal {
-                                  background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #000000, stop:1 #8f8f8f);
-                                  border: 1px solid #5c5c5c;
-                                  width: 15px;
-                                  margin: -2px 0px;
-                                  }
-                                  """
+                          border: 1px solid #999999;
+                          height: 20px;
+                          background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #050DFF, stop:1 #757AFF);
+                          margin: 2px 0;
+                      }
+                      QSlider::handle:horizontal {
+                          background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #000000, stop:1 #8f8f8f);
+                          border: 1px solid #5c5c5c;
+                          width: 15px;
+                          margin: -2px 0px;
+                      }"""
         elif self.mode == SliderMode.Backward:
             temp = """QSlider::groove:horizontal {
-                                  border: 1px solid #999999;
-                                  height: 20px;
-                                  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #D10232, stop:1 #FF6B8E);
-                                  margin: 2px 0;
-                                  }
-                                  QSlider::handle:horizontal {
-                                  background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #000000, stop:1 #8f8f8f);
-                                  border: 1px solid #5c5c5c;
-                                  width: 15px;
-                                  margin: -2px 0px;
-                                  } """
+                          border: 1px solid #999999;
+                          height: 20px;
+                          background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #D10232, stop:1 #FF6B8E);
+                          margin: 2px 0;
+                      }
+                      QSlider::handle:horizontal {
+                          background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #000000, stop:1 #8f8f8f);
+                          border: 1px solid #5c5c5c;
+                          width: 15px;
+                          margin: -2px 0px;
+                      } """
         else:
             temp = """QSlider::groove:horizontal {
-                                              border: 1px solid #999999;
-                                              height: 20px;
-                                              background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #969696, stop:1 #595959);
-                                              margin: 2px 0;
-                                              }
-                                              QSlider::handle:horizontal {
-                                              background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #000000, stop:1 #8f8f8f);
-                                              border: 1px solid #5c5c5c;
-                                              width: 15px;
-                                              margin: -2px 0px;
-                                              } """
+                          border: 1px solid #999999;
+                          height: 20px;
+                          background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #969696, stop:1 #595959);
+                          margin: 2px 0;
+                      }
+                      QSlider::handle:horizontal {
+                          background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #000000, stop:1 #8f8f8f);
+                          border: 1px solid #5c5c5c;
+                          width: 15px;
+                          margin: -2px 0px;
+                      } """
         self.setStyleSheet(temp)
 
     def reset(self):
         self.mode = SliderMode.Forward
         self.set_paused()
-        self.updateStyle()
+        self.update_style()
         self.setValue(0)

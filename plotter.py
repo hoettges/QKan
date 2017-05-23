@@ -26,7 +26,7 @@ plots = {
 class Laengsschnitt:
     def __init__(self, _route):
         self.route = _route
-        self.fig = plt.figure(1)
+        self.fig = plt.figure(0)
         self.ax = None
         self.x_pointer = 0
         self.minY = None
@@ -40,7 +40,7 @@ class Laengsschnitt:
         del self.fig
 
     def get_widget(self):
-        plt.figure(1)
+        plt.figure(0)
         qw = QWidget()
         canv = FigureCanvas(self.fig)
         toolbar = NavigationToolbar(canv, qw, True)
@@ -105,16 +105,11 @@ class Laengsschnitt:
             oben = haltung.get("sohlhoeheoben")
             unten = haltung.get("sohlhoeheunten")
             hoehe = haltung.get("querschnitt")
-            schachtO = haltung.get("schachtoben")
-            schachtU = haltung.get("schachtunten")
+            schacht_oben = haltung.get("schachtoben")
+            schacht_unten = haltung.get("schachtunten")
 
-            deckel_hoehe1 = self.route.get("schachtinfo")[schachtO].get("deckelhoehe")
-            deckel_hoehe2 = self.route.get("schachtinfo")[schachtU].get("deckelhoehe")
-
-            # if deckel_hoehe2 > deckel_hoehe1:
-            #     tmp = deckel_hoehe1
-            #     deckel_hoehe1 = deckel_hoehe2
-            #     deckel_hoehe2 = tmp
+            deckel_hoehe1 = self.route.get("schachtinfo")[schacht_oben].get("deckelhoehe")
+            deckel_hoehe2 = self.route.get("schachtinfo")[schacht_unten].get("deckelhoehe")
 
             laenge -= self.schacht_breite
             l = HaltungLine([self.x_pointer, self.x_pointer + laenge], [oben, unten], color='k', label=name)
@@ -153,7 +148,7 @@ class Maximizer:
         self.db = FBConnection(_dbname)
         self.id = _id
         self.route = _route
-        self.fig = plt.figure(1)
+        self.fig = plt.figure(0)
         self.ax = None
         self.x_pointer = 0
         self.schacht_breite = 1
@@ -229,7 +224,7 @@ class Animator:
         self.id = _id
         self.ganglinie = None
         self.route = _route
-        self.fig = plt.figure(1)
+        self.fig = plt.figure(0)
         self.ax = self.fig.add_subplot(111)
         self.x_pointer = 0
         self.schacht_breite = 1
@@ -406,12 +401,12 @@ class Animator:
 
     def update_controls(self):
         value = self.slider.value()
-        min = self.slider.minimum()
-        max = self.slider.maximum()
-        if value == min:
+        _min = self.slider.minimum()
+        _max = self.slider.maximum()
+        if value == _min:
             self.btn_step_forward.setDisabled(False)
             self.btn_step_backward.setDisabled(True)
-        elif value == max:
+        elif value == _max:
             self.btn_step_forward.setDisabled(True)
             self.btn_step_backward.setDisabled(False)
         else:
@@ -420,7 +415,7 @@ class Animator:
 
 
 def set_ax_labels(x, y):
-    plt.figure(1)
+    plt.figure(0)
     plt.xlabel(x)
     plt.ylabel(y)
 
@@ -429,14 +424,14 @@ def set_legend():
     legend_plots = []
     waterlevel = plots.get("water-level")
     surface = plots.get("surface")
-    max = plots.get("max")
+    _max = plots.get("max")
     if waterlevel is not None:
         legend_plots.append(waterlevel)
     if surface is not None:
         legend_plots.append(surface)
-    if max is not None:
-        legend_plots.append(max)
-    plt.figure(1)
+    if _max is not None:
+        legend_plots.append(_max)
+    plt.figure(0)
     plt.legend(handles=legend_plots)
 
 
@@ -445,6 +440,9 @@ def reset_legend():
 
 
 class HaltungLine(lines.Line2D):
+    def remove(self):
+        pass
+
     def __init__(self, *args, **kwargs):
         # we'll update the position when the line data is set
         self.name = ""
@@ -488,6 +486,9 @@ class HaltungLine(lines.Line2D):
 
 
 class SchachtLinie(lines.Line2D):
+    def remove(self):
+        pass
+
     def __init__(self, *args, **kwargs):
         # we'll update the position when the line data is set
         self.text = mtext.Text(0, 0, '')

@@ -42,7 +42,7 @@ class Laengsschnitt:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
-        self.t = 0
+        self.t = 2
         """Constructor.
 
         :param iface: An interface instance that will be passed to this class
@@ -73,7 +73,7 @@ class Laengsschnitt:
         self.menu = self.tr(u'&Laengsschnitt')
         self.toolbar = self.iface.addToolBar(u'Laengsschnitt')
         self.toolbar.setObjectName(u'Laengsschnitt')
-        # self.dlg = None
+        self.dlg = None
         self.result_db = ""
         self.spartialite = ""
         self.route = {}
@@ -85,7 +85,7 @@ class Laengsschnitt:
         self.speed_controller = None
         self.speed_label = None
         self.default_function = None
-        self.ganglinie = Ganglinie(self.t)
+        self.ganglinie = Ganglinie(1)
         self.dlg2 = self.ganglinie.dialog
         self.navigator = None
 
@@ -511,6 +511,7 @@ class Laengsschnitt:
         self.dlg.stackedWidget.insertWidget(0, widget)
         self.dlg.stackedWidget.setCurrentIndex(0)
         # init methods
+        self.dlg.checkbox_maximum.setChecked(True)
         self.switch_max_values(2)
         if self.animator is None or self.animator.id != self.id:
             self.animator = plotter.Animator(self.id, copy.deepcopy(self.route),
@@ -556,7 +557,7 @@ class Laengsschnitt:
         return selected_layers
 
     def run_ganglinie(self):
-        tmp = Ganglinie(self.t + 1)
+        tmp = Ganglinie(self.t)
         self.t += 1
 
         def init_application():

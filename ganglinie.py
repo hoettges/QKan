@@ -33,6 +33,8 @@ class Ganglinie:
         self.dialog.combo_method.currentIndexChanged.connect(self.draw)
 
     def show(self):
+        if self.dialog.isVisible():
+            return
         if self.laengsschnitt is not None:
             self.refresh_colors()
         self.dialog.show()
@@ -68,22 +70,22 @@ class Ganglinie:
         self.reset()
 
         def draw_haltung():
-            y = {}
+            _y = {}
             for haltung in self.route.get("haltungen"):
                 for zeitpunkt in self.x:
-                    if y.get(haltung) is None:
-                        y[haltung] = []
-                    y[haltung].append(self.route.get("haltunginfo").get(zeitpunkt).get(haltung).get(method))
-            return y
+                    if _y.get(haltung) is None:
+                        _y[haltung] = []
+                    _y[haltung].append(self.route.get("haltunginfo").get(zeitpunkt).get(haltung).get(method))
+            return _y
 
         def draw_schacht():
-            y = {}
+            _y = {}
             for schacht in self.route.get("schaechte"):
                 for zeitpunkt in self.x:
-                    if y.get(schacht) is None:
-                        y[schacht] = []
-                    y[schacht].append(self.route.get("schachtinfo").get(zeitpunkt).get(schacht).get(method))
-            return y
+                    if _y.get(schacht) is None:
+                        _y[schacht] = []
+                    _y[schacht].append(self.route.get("schachtinfo").get(zeitpunkt).get(schacht).get(method))
+            return _y
 
         idx = self.dialog.combo_type.currentIndex()
         self.active_layer = LayerType.Haltung if idx == 0 else LayerType.Schacht
@@ -99,6 +101,8 @@ class Ganglinie:
             for index, obj in enumerate(_data):
                 ax = self.fig.add_subplot(111)
                 ax.set_ylabel(axes[idx][method_idx])
+                ax.grid(True)
+                ax.xaxis.set_major_formatter(formatter)
                 self.axes.append(ax)
                 _plot, = ax.plot_date(self.x, _y.get(obj),
                                       color=colors[index % len(colors)], linestyle="-",
@@ -106,6 +110,7 @@ class Ganglinie:
                                       label=obj)
                 self.plots.append(_plot)
 
+        formatter = mdates.DateFormatter('%H:%M')
         if idx == 0:
             y = draw_haltung()
             if len(y) == 0:
@@ -122,12 +127,11 @@ class Ganglinie:
             plot(y, data)
 
         plt.gcf().autofmt_xdate()
-        formatter = mdates.DateFormatter('%H:%M')
-        try:
-            plt.gcf().axes[0].xaxis.set_major_formatter(formatter)
-            plt.gcf().axes[0].grid(True)
-        except IndexError:
-            pass
+        # try:
+        # plt.gcf().axes[0].xaxis.set_major_formatter(formatter)
+        # plt.gcf().axes[0].grid(True)
+        # except IndexError:
+        #     pass
         plt.figure(self.t)
         plt.legend(handles=self.plots)
         self.fig.canvas.draw()

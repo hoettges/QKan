@@ -3,8 +3,8 @@ from QKan_Database.dbfunc import DBConnection
 
 
 class Navigator:
-    def __init__(self, db, id):
-        self.id = id
+    def __init__(self, db, _id):
+        self.id = _id
         self.db = DBConnection(db)
 
     def calculate_route_haltungen(self, startpoint, endpoint=None, additional_points=None):
@@ -56,20 +56,20 @@ class Navigator:
         schaechte = []
         next_haltung = startpoint
         statement = u"""
-SELECT name
-FROM (SELECT
-        haltnam AS name,
-        schoben
-      FROM haltungen
-      UNION SELECT
-              wnam AS name,
-              schoben
-            FROM wehre
-      UNION SELECT
-              pnam AS name,
-              schoben
-            FROM pumpen)
-WHERE schoben =
+    SELECT name
+    FROM (SELECT
+            haltnam AS name,
+            schoben
+          FROM haltungen
+          UNION SELECT
+                  wnam AS name,
+                  schoben
+                FROM wehre
+          UNION SELECT
+                  pnam AS name,
+                  schoben
+                FROM pumpen)
+    WHERE schoben =
       (SELECT schunten
        FROM (SELECT
                haltnam AS name,
@@ -94,18 +94,19 @@ WHERE schoben =
                     break
                 if len(_next_haltungen) > 1:
                     if additional_points is None:
-                        return False, "Zu viele Möglichkeiten. Bitte wählen Sie einen Wegpunkt auf dem kritischen Pfad!", False
+                        return False, "Zu viele Möglichkeiten. Bitte wählen Sie einen Wegpunkt auf dem" \
+                                      " kritischen Pfad!", False
                     solution = self.decide_direction(_next_haltungen, additional_points)
                     if solution:
                         next_haltung = solution
                     else:
-                        return False, "Zu viele Möglichkeiten oder Pfad unerreichbar. Bitte wählen Sie einen Wegpunkt auf dem kritischen Pfad!", False
+                        return False, "Zu viele Möglichkeiten oder Pfad unerreichbar. Bitte wählen Sie einen Wegpunkt" \
+                                      " auf dem kritischen Pfad!", False
                 elif len(_next_haltungen) == 0:
                     return False, "Endpunkt nicht erreichbar!", False
                 else:
                     next_haltung = _next_haltungen[0]
             except TypeError as e:
-                print(e)
                 return False, "Endpunkt nicht erreichbar!", False
         haltungen.append(endpoint)
         statement = u"""
@@ -279,16 +280,17 @@ WHERE schoben ="{}"
         _reload = False
         for start_haltung in start_haltungen:
             for end_haltung in end_haltungen:
-                _res, _route, reload = self.calculate_route_haltungen(start_haltung, end_haltung,
-                                                                      additional_points=nodes)
+                _res, _route, must_reload = self.calculate_route_haltungen(start_haltung, end_haltung,
+                                                                           additional_points=nodes)
                 if _res:
                     possibilities += 1
                     if possibilities > 1:
-                        return False, "Zu viele Möglichkeiten. Bitte wählen Sie einen Wegpunkt auf dem kritischen Pfad!", False
+                        return False, "Zu viele Möglichkeiten. Bitte wählen Sie einen Wegpunkt auf" \
+                                      " dem kritischen Pfad!", False
                     route = _route
                 else:
                     if _reload is not True:
-                        _reload = reload
+                        _reload = must_reload
                     error = _route
         if route is None:
             return False, error, _reload
@@ -338,34 +340,35 @@ WHERE schoben ="{}"
         startpoint = nodes[0]
         endpoint = nodes[0]
         try:
-            minValue, = self.db.fetchone()
+            min_value, = self.db.fetchone()
         except TypeError:
             return False, "Falsche Datenbank übermittelt", True
-        maxValue = minValue
+        max_value = min_value
         for n in nodes:
             self.db.sql(statement.format(n))
             value, = self.db.fetchone()
-            if value < minValue:
-                minValue = value
+            if value < min_value:
+                min_value = value
                 endpoint = n
-            elif value > maxValue:
-                maxValue = value
+            elif value > max_value:
+                max_value = value
                 startpoint = n
         try:
             nodes.remove(startpoint)
             nodes.remove(endpoint)
-        except:
-            pass
+        except Exception as e:
+            print(e)
+            raise  # pass
         if len(nodes) == 0:
             nodes = None
-        res, route, reload = self.calculate_route_haltungen(startpoint, endpoint, additional_points=nodes)
+        res, route, _reload = self.calculate_route_haltungen(startpoint, endpoint, additional_points=nodes)
         if not res:
-            return False, route, reload
+            return False, route, _reload
         if nodes is not None:
             for n in nodes:
                 if n not in route["haltungen"]:
                     return False, "Gegebener Pfad ist fehlerhaft!", False
-        return res, route, reload
+        return res, route, _reload
 
     def check_route_schaechte(self, nodes):
         endpoint = nodes[0]
@@ -374,28 +377,28 @@ WHERE schoben ="{}"
         SELECT sohlhoehe FROM schaechte WHERE schnam="{}"
         """
         self.db.sql(statement.format(nodes[0]))
-        minValue, = self.db.fetchone()
-        maxValue = minValue
+        min_value, = self.db.fetchone()
+        max_value = min_value
         for n in nodes:
             self.db.sql(statement.format(n))
             value, = self.db.fetchone()
-            if value < minValue:
-                minValue = value
+            if value < min_value:
+                min_value = value
                 endpoint = n
-            elif value > maxValue:
-                maxValue = value
+            elif value > max_value:
+                max_value = value
                 startpoint = n
         nodes.remove(startpoint)
         nodes.remove(endpoint)
         if len(nodes) == 0:
             nodes = None
-        res, route, reload = self.calculate_route_schaechte(startpoint, endpoint, additional_points=nodes)
+        res, route, _reload = self.calculate_route_schaechte(startpoint, endpoint, additional_points=nodes)
         if not res:
-            return False, route, reload
+            return False, route, _reload
         for n in nodes:
             if n not in route["schaechte"]:
                 return False, "Gegebener Pfad ist fehlerhaft!", False
-        return res, route, reload
+        return res, route, _reload
 
     def fetch_data(self, route):
         haltung_info = {}
