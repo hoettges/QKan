@@ -25,7 +25,7 @@ from PyQt4.QtGui import *
 # Initialize Qt resources from file resources.py
 import resources_laengs
 import resources_gangl
-import navigation
+from QKan_Navigation.navigation import Navigator
 import plotter
 # Import the code for the dialog
 from application_dialog import LaengsschnittDialog
@@ -442,7 +442,7 @@ class Laengsschnitt:
                 self.show_message_box("Fehler", "Ausgewählter Layer wird nicht unterstützt!", Type.Error)
                 return False
             if self.navigator is None or self.navigator.id != self.id:
-                self.navigator = navigation.Navigator(self.spartialite, self.id)
+                self.navigator = Navigator(self.spartialite, self.id)
             return selected_layers, _layer_type
 
         initialized = init_application()
@@ -511,6 +511,7 @@ class Laengsschnitt:
         self.dlg.stackedWidget.insertWidget(0, widget)
         self.dlg.stackedWidget.setCurrentIndex(0)
         # init methods
+
         self.dlg.checkbox_maximum.setChecked(True)
         self.switch_max_values(2)
         if self.animator is None or self.animator.id != self.id:
@@ -600,7 +601,7 @@ class Laengsschnitt:
                 self.show_message_box("Fehler", "Ausgewählter Layer wird nicht unterstützt!", Type.Error)
                 return False
             if self.navigator is None or self.navigator.id != self.id:
-                self.navigator = navigation.Navigator(self.spartialite, self.id)
+                self.navigator = Navigator(self.spartialite, self.id)
             return selected_layers, _layer_type
 
         def auto_update_changed(state):

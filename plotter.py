@@ -54,9 +54,10 @@ class Laengsschnitt:
         key = "schaechte" if colors.get("layer") == LayerType.Schacht else "haltungen"
         for key2 in self.objects[key]:
             for plot in self.objects[key][key2]:
-                if isinstance(plot, HaltungLine) or isinstance(plot, SchachtLinie):
-                    plot.text.set_color(colors.get("plots").get(key2))
-                plot.set_color(colors.get("plots").get(key2))
+                color = colors.get("plots").get(key2)
+                if isinstance(plot, HaltungLinie) or isinstance(plot, SchachtLinie):
+                    plot.text.set_color(color)
+                plot.set_color(color)
         self.fig.canvas.draw()
 
     def reset_colors(self):
@@ -67,7 +68,7 @@ class Laengsschnitt:
                 plot.set_color("k")
         for haltung in self.objects["haltungen"]:
             for plot in self.objects["haltungen"][haltung]:
-                if isinstance(plot, HaltungLine):
+                if isinstance(plot, HaltungLinie):
                     plot.text.set_color("k")
                 plot.set_color("k")
         self.fig.canvas.draw()
@@ -112,7 +113,7 @@ class Laengsschnitt:
             deckel_hoehe2 = self.route.get("schachtinfo")[schacht_unten].get("deckelhoehe")
 
             laenge -= self.schacht_breite
-            l = HaltungLine([self.x_pointer, self.x_pointer + laenge], [oben, unten], color='k', label=name)
+            l = HaltungLinie([self.x_pointer, self.x_pointer + laenge], [oben, unten], color='k', label=name)
             l.set_name(name)
             self.objects["haltungen"][name] = [l]
             self.ax.add_line(l)
@@ -188,8 +189,7 @@ class Maximizer:
 
         def draw_haltung(name):
             haltung = self.route.get("haltunginfo").get(name)
-            laenge = haltung.get("laenge")
-            laenge -= self.schacht_breite
+            laenge = haltung.get("laenge")-self.schacht_breite
             wasseroben = self.simulation.get("haltungen").get(name).get("wasserstandoben")
             wasserunten = self.simulation.get("haltungen").get(name).get("wasserstandunten")
 
@@ -293,8 +293,7 @@ class Animator:
         def draw_haltung(name):
             haltung = self.route.get("haltunginfo").get(name)
 
-            laenge = haltung.get("laenge")
-            laenge -= self.schacht_breite
+            laenge = haltung.get("laenge")-self.schacht_breite
             wasseroben = self.simulation.get("haltungen").get(timestamp).get(name).get("wasserstandoben")
             wasserunten = self.simulation.get("haltungen").get(timestamp).get(name).get("wasserstandunten")
 
@@ -439,18 +438,14 @@ def reset_legend():
     del plots[:]
 
 
-class HaltungLine(lines.Line2D):
+class ILines(lines.Line2D):
     def remove(self):
         pass
 
     def __init__(self, *args, **kwargs):
-        # we'll update the position when the line data is set
+        self.text = mtext.Text(0, 0, "")
         self.name = ""
-        self.text = mtext.Text(0, 0, '')
         lines.Line2D.__init__(self, *args, **kwargs)
-
-        # we can't access the label attr until *after* the line is
-        # inited
         self.text.set_text(self.get_label())
 
     def set_figure(self, figure):
@@ -466,6 +461,22 @@ class HaltungLine(lines.Line2D):
         texttrans = transform + mtransforms.Affine2D().translate(2, 2)
         self.text.set_transform(texttrans)
         lines.Line2D.set_transform(self, transform)
+
+    def set_name(self, name):
+        self.name = name
+
+    def draw(self, renderer):
+        # draw my label at the end of the line with 2 pixel offset
+        lines.Line2D.draw(self, renderer)
+        self.text.draw(renderer)
+
+    def set_data(self, x, y):
+        pass
+
+
+class HaltungLinie(ILines):
+    def __init__(self, *args, **kwargs):
+        super(HaltungLinie, self).__init__(*args, **kwargs)
 
     def set_data(self, x, y):
         start = x[0]
@@ -473,59 +484,18 @@ class HaltungLine(lines.Line2D):
         text_length = self.text.get_size()
         if len(x):
             self.text.set_position((start + (length / 2.) - (text_length / 2.), y[-1]))
-
         lines.Line2D.set_data(self, x, y)
 
-    def set_name(self, name):
-        self.name = name
 
-    def draw(self, renderer):
-        # draw my label at the end of the line with 2 pixel offset
-        lines.Line2D.draw(self, renderer)
-        self.text.draw(renderer)
-
-
-class SchachtLinie(lines.Line2D):
-    def remove(self):
-        pass
-
+class SchachtLinie(ILines):
     def __init__(self, *args, **kwargs):
-        # we'll update the position when the line data is set
-        self.text = mtext.Text(0, 0, '')
-        self.name = ""
         self.schacht_breite = 1
-        lines.Line2D.__init__(self, *args, **kwargs)
-        # we can't access the label attr until *after* the line is
-        # inited
-        self.text.set_text(self.get_label())
-
-    def set_figure(self, figure):
-        self.text.set_figure(figure)
-        lines.Line2D.set_figure(self, figure)
-
-    def set_axes(self, axes):
-        self.text.set_axes(axes)
-        lines.Line2D.set_axes(self, axes)
-
-    def set_transform(self, transform):
-        # 2 pixel offset
-        texttrans = transform + mtransforms.Affine2D().translate(2, 2)
-        self.text.set_transform(texttrans)
-        lines.Line2D.set_transform(self, transform)
+        super(SchachtLinie, self).__init__(*args, **kwargs)
 
     def set_data(self, x, y):
         if len(x):
             self.text.set_position((x[-1] + (self.schacht_breite / 2.) - (self.text.get_size() / 2.), y[-1]))
-
         lines.Line2D.set_data(self, x, y)
 
     def set_schacht_width(self, width):
         self.schacht_breite = width
-
-    def set_name(self, name):
-        self.name = name
-
-    def draw(self, renderer):
-        # draw my label at the end of the line with 2 pixel offset
-        lines.Line2D.draw(self, renderer)
-        self.text.draw(renderer)
