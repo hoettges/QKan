@@ -30,7 +30,8 @@ from application_dialog import ImportFromHEDialog
 import os, json, site
 
 from qgis.gui import QgsMessageBar, QgsGenericProjectionSelector
-from qgis.utils import iface
+from qgis.core import QgsProject
+# from qgis.utils import iface
 from import_from_he import importKanaldaten
 import codecs
 import logging
@@ -96,26 +97,49 @@ class ImportFromHE:
                 self.config = json.loads(fileconfig.read().replace('\\','/'))
         else:
             self.config = {'epsg': '25832'}                # Projektionssystem
-            self.config['database_Qkan'] = ''
+            self.config['database_QKan'] = ''
             self.config['database_HE'] = ''
             self.config['projectfile'] = ''
             with codecs.open(self.configfil,'w','utf-8') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-        self.epsg = self.config['epsg']
-        database_Qkan = self.config['database_Qkan']
-        database_HE = self.config['database_HE']
-        projectfile = self.config['projectfile']
+        # Standard für Suchverzeichnis festlegen
+        project = QgsProject.instance()
+        self.default_dir = os.path.dirname(project.fileName())
 
+        if 'database_QKan' in self.config:
+            database_QKan = self.config['database_QKan']
+        else:
+            database_QKan = ''
+        self.dlg.tf_qkanDB.setText(database_QKan)
+        self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
+
+        if 'database_HE' in self.config:
+            database_HE = self.config['database_HE']
+        else:
+            database_HE = ''
         self.dlg.tf_heDB.setText(database_HE)
-        self.dlg.tf_qkanDB.setText(database_Qkan)
-        self.dlg.tf_projectFile.setText(projectfile)
-        self.dlg.tf_epsg.setText(self.epsg)
-
         self.dlg.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
-        self.dlg.pb_selectQkanDB.clicked.connect(self.selectFile_QkanDB)
-        self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
+
+        if 'epsg' in self.config:
+            self.epsg = self.config['epsg']
+        else:
+            self.epsg = '25832'
+        self.dlg.tf_epsg.setText(self.epsg)
         self.dlg.pb_selectKBS.clicked.connect(self.selectKBS)
+
+        if 'epsg' in self.config:
+            projectfile = self.config['projectfile']
+        else:
+            projectfile = ''
+        self.dlg.tf_projectFile.setText(projectfile)
+        self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
+
+        if 'check_copy_forms' in self.config:
+            check_copy_forms = (self.config['check_copy_forms'] == u'True')
+        else:
+            check_copy_forms = True
+        self.dlg.cb_copy_forms.setChecked(check_copy_forms)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -238,17 +262,23 @@ class ImportFromHE:
         """Datenbankverbindung zur HE-Datenbank (Firebird) auswaehlen und gegebenenfalls die Zieldatenbank
            erstellen, aber noch nicht verbinden."""
 
-        filename = QFileDialog.getOpenFileName(self.dlg, "Dateinamen der zu lesenden HE-Datenbank eingeben","","*.idbf")
+        filename = QFileDialog.getOpenFileName(self.dlg,
+                                               "Dateinamen der zu lesenden HE-Datenbank eingeben",
+                                               self.default_dir,
+                                               "*.idbf")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
         self.dlg.tf_heDB.setText(filename)
 
 
-    def selectFile_QkanDB(self):
+    def selectFile_qkanDB(self):
         """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen, aber noch nicht verbinden.
            Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt. """
 
-        filename = QFileDialog.getSaveFileName(self.dlg, "Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben","","*.sqlite")
+        filename = QFileDialog.getSaveFileName(self.dlg,
+                                               "Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
+                                               self.default_dir,
+                                               "*.sqlite")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
         self.dlg.tf_qkanDB.setText(filename)
@@ -257,7 +287,10 @@ class ImportFromHE:
     def selectProjectFile(self):
         """Zu erzeugende Projektdatei festlegen, falls ausgewählt."""
 
-        filename = QFileDialog.getSaveFileName(self.dlg, "Dateinamen der zu erstellenden Projektdatei eingeben","","*.qgs")
+        filename = QFileDialog.getSaveFileName(self.dlg,
+                                               "Dateinamen der zu erstellenden Projektdatei eingeben",
+                                               self.default_dir,
+                                               "*.qgs")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
         self.dlg.tf_projectFile.setText(filename)
@@ -296,17 +329,19 @@ class ImportFromHE:
             # Namen der Datenbanken uebernehmen
 
             database_HE = self.dlg.tf_heDB.text()
-            database_Qkan = self.dlg.tf_qkanDB.text()
+            database_QKan = self.dlg.tf_qkanDB.text()
             projectfile = self.dlg.tf_projectFile.text()
             self.epsg = self.dlg.tf_epsg.text()
+            check_copy_forms = self.dlg.cb_copy_forms.isChecked()
 
 
             # Konfigurationsdaten schreiben
 
             self.config['epsg'] = self.epsg
-            self.config['database_Qkan'] = database_Qkan
+            self.config['database_Qkan'] = database_QKan
             self.config['database_HE'] = database_HE
             self.config['projectfile'] = projectfile
+            self.config['check_copy_forms'] = check_copy_forms
 
             with codecs.open(self.configfil,'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
@@ -314,4 +349,4 @@ class ImportFromHE:
 
             # Start der Verarbeitung
 
-            importKanaldaten(database_HE, database_Qkan, projectfile, self.epsg)
+            importKanaldaten(database_HE, database_QKan, projectfile, self.epsg, check_copy_forms)

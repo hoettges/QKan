@@ -37,11 +37,9 @@ import os, time
 from QKan_Database.fbfunc import FBConnection
 from QKan_Database.dbfunc import DBConnection
 
-import tempfile
+# import tempfile
+import glob, shutil
 
-# from qgis.core import *
-# from PyQt4.QtCore import *
-# from PyQt4.QtGui import *
 from qgis.core import QgsFeature, QgsGeometry, QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QFileInfo
 from PyQt4.QtGui import QAction, QIcon
@@ -51,7 +49,6 @@ from qgis.gui import QgsMessageBar, QgsMapCanvas, QgsLayerTreeMapCanvasBridge
 import codecs
 import pyspatialite.dbapi2 as splite
 import xml.etree.ElementTree as ET
-# import sqlite3
 import logging
 
 logger = logging.getLogger('QKan')
@@ -69,7 +66,7 @@ def fehlermeldung(title, text):
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'SpatiaLite'):
+def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_forms, dbtyp = 'SpatiaLite'):
 
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -1063,8 +1060,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
     # Projektdatei schreiben, falls ausgewählt
 
     if projectfile is not None and projectfile != '':
-        qgs_template = os.path.join(os.path.dirname(__file__), "templates","projekt.qgs").replace('\\','/')
-        if os.path.dirname(database_QKan) == os.path.dirname(projectfile):
+        templatepath = os.path.join(os.path.dirname(__file__), "templates")
+        projecttemplate = os.path.join(templatepath,"projekt.qgs")
+        projectpath = os.path.dirname(projectfile)
+        if os.path.dirname(database_QKan) == projectpath:
             datasource = database_QKan.replace(os.path.dirname(database_QKan),'.')
         else:
             datasource = database_QKan
@@ -1073,7 +1072,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         tabliste = ['schaechte', 'haltungen','pumpen','teilgebiete','wehre','flaechen']
 
         # Lesen der Projektdatei ------------------------------------------------------------------
-        qgsxml = ET.parse(qgs_template)
+        qgsxml = ET.parse(projecttemplate)
         root = qgsxml.getroot()
 
         for tag_maplayer in root.findall(".//projectlayers/maplayer"):
@@ -1140,6 +1139,16 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, dbtyp = 'Spa
         qgsxml.write(projectfile)                           # writing modified project file
         logger.debug('Projektdatei: {}'.format(projectfile))
         #logger.debug('encoded string: {}'.format(tex))
+
+        if check_copy_forms:
+            if 'eingabemasken' not in os.listdir(projectpath):
+                os.mkdir(os.path.join(projectpath,'eingabemasken'))
+            formpath = os.path.join(projectpath,'eingabemasken')
+            formlist = os.listdir(formpath)
+            for formfile in glob.iglob(os.path.join(templatepath,'*.ui')):
+                # Wenn Datei im Verzeichnis 'eingabemasken' noch nicht vorhanden ist
+                if formfile not in formlist:
+                    shutil.copy(formfile,formpath)
 
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
