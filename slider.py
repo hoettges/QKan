@@ -20,8 +20,8 @@ class Slider(QSlider):
         self.setPageStep(5)
         self.setTickInterval(1)
         self.setFixedHeight(60)
-        self.mode = SliderMode.Forward
-        self.last_mode = None
+        self.__mode = SliderMode.Forward
+        self.__last_mode = None
         self.set_paused()
 
     def paintEvent(self, e):
@@ -75,33 +75,33 @@ class Slider(QSlider):
         """
         Wird vom MouseReleaseEvent-Listener aufgerufen, falls beim klicken die Strg-Taste gedrückt wurde.
         """
-        if self.mode == SliderMode.Pause:
-            self.last_mode = SliderMode.Forward if self.last_mode == SliderMode.Backward else SliderMode.Backward
+        if self.__mode == SliderMode.Pause:
+            self.__last_mode = SliderMode.Forward if self.__last_mode == SliderMode.Backward else SliderMode.Backward
         else:
-            self.mode = SliderMode.Forward if self.mode == SliderMode.Backward else SliderMode.Backward
-        self.update_style()
+            self.__mode = SliderMode.Forward if self.__mode == SliderMode.Backward else SliderMode.Backward
+        self.__update_style()
         self.valueChanged.emit(self.value())
 
     def set_paused(self):
         """
         Wird aufgerufen, um die Animation zu pausieren bzw. den Slider visuell als pausiert darzustellen.
         """
-        if self.mode == SliderMode.Pause:
-            self.mode = self.last_mode
+        if self.__mode == SliderMode.Pause:
+            self.__mode = self.__last_mode
         else:
-            self.last_mode = self.mode
-            self.mode = SliderMode.Pause
-        self.update_style()
+            self.__last_mode = self.__mode
+            self.__mode = SliderMode.Pause
+        self.__update_style()
         self.valueChanged.emit(self.value())
 
-    def update_style(self):
+    def __update_style(self):
         """
         Je nach Zustand des Sliders wird das Design abgeändert.
         * Pause entspricht einer grauen Hinterlegung
         * Vorwärts entspricht einer blauen Hinterlegung
         * Rückwärts entspricht einer roten Hinterlegung
         """
-        if self.mode == SliderMode.Forward:
+        if self.__mode == SliderMode.Forward:
             temp = """QSlider::groove:horizontal {
                           border: 1px solid #999999;
                           height: 20px;
@@ -114,7 +114,7 @@ class Slider(QSlider):
                           width: 15px;
                           margin: -2px 0px;
                       }"""
-        elif self.mode == SliderMode.Backward:
+        elif self.__mode == SliderMode.Backward:
             temp = """QSlider::groove:horizontal {
                           border: 1px solid #999999;
                           height: 20px;
@@ -146,7 +146,19 @@ class Slider(QSlider):
         """
         Setzt den Slider zurück auf seine Default-Werte.
         """
-        self.mode = SliderMode.Forward
+        self.__mode = SliderMode.Forward
         self.set_paused()
-        self.update_style()
+        self.__update_style()
         self.setValue(0)
+
+    def get_mode(self):
+        """
+        Getter des Modus
+        """
+        return self.__mode
+
+    def get_last_mode(self):
+        """
+        Getter des letzten Modus 
+        """
+        return self.__last_mode
