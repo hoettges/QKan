@@ -25,7 +25,11 @@ from PyQt4.QtGui import *
 # Initialize Qt resources from file resources.py
 import resources_laengs
 import resources_gangl
-from QKan_Navigation.navigation import Navigator
+
+try:
+    from QKan_Navigation.navigation import Navigator
+except ImportError:
+    raise ImportError("Navigations-Modul nicht gefunden!")
 import plotter
 # Import the code for the dialog
 from application_dialog import LaengsschnittDialog
@@ -42,7 +46,6 @@ class Laengsschnitt:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
-        self.t = 2
         """Constructor.
 
         :param iface: An interface instance that will be passed to this class
@@ -50,6 +53,7 @@ class Laengsschnitt:
             application at run time.
         :type iface: QgsInterface
         """
+        self.t = 2
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
@@ -182,10 +186,8 @@ class Laengsschnitt:
 
     def initGui(self):
         """
-            Create the menu entries and toolbar icons inside the QGIS GUI.
-            Längsschnit-Tool wird als Hauptanwendung angezeigt.
-            Ganglinien-Tool wird als Dropdown des Längsschnitt angezeigt.
-            Events werden mit Funktionen verknüpft.
+        Längsschnitt- und Ganglinie-Tool werden als unabhängige Werkzeuge dargestellt.
+        Hier werden die GUI-Elemente mit bestimmten Signalen verbunden.
         """
         icon_path_laengs = ':/plugins/QKan_Laengsschnitt/icon_laengs.png'
         icon_path_gangl = ':/plugins/QKan_Laengsschnitt/icon_gangl.png'
@@ -313,7 +315,6 @@ class Laengsschnitt:
 
         :param value: Geänderte Geschwindigkeit.
         :type value: int
-        :return: Returned wenn der Speed-Controller auf "Pause" steht
         """
         if self.speed_controller.mode == SliderMode.Pause:
             if self.speed_controller.last_mode == SliderMode.Forward:
@@ -343,9 +344,10 @@ class Laengsschnitt:
 
     def slider_click(self, event):
         """
+        Ist der Eventlistener des Sliders bei einem Mausklick. Definiert das Verhalten je nach gedrückter Taste.
 
-        :param event:
-        :type event:
+        :param event: Entspricht dem Mausevent, wenn der Slider angeklickt wird
+        :type event: QMouseEvent
         """
         ctrl = event.modifiers() == Qt.ControlModifier
         if event.button() == Qt.RightButton:
@@ -362,6 +364,9 @@ class Laengsschnitt:
             self.default_function(event)
 
     def select_db(self):
+        """
+        Diese Funktion öffnet einen Datei-Dialog, welcher den User auffordert eine Ergebnis-Datenbank auszuwählen.
+        """
         self.animator.pause()
         filename = QFileDialog.getOpenFileName(self.dlg, "Wählen Sie eine Ergebnis-Datenbank".decode("utf-8"),
                                                filter="IDBF (*.idbf);; Alle Dateien (*.*)")
@@ -372,6 +377,15 @@ class Laengsschnitt:
 
     @staticmethod
     def layer_to_type(layer):
+        """
+        Wandelt layer in einen LayerType um. So wird unabhängig von der User-spezifischen Benennung der richtige Layer
+        gewählt.
+        
+        :param layer: Ist der übergebene Layer, welcher in einen Typen geparst werden soll
+        :type layer: QgsVectorLayer
+        :return: Gibt einen LayerType zurück, der dem übergebenen QgsVectorLayer entspricht
+        :rtype: LayerType
+        """
         layer_source = layer.source()
         kvp = layer_source.split(" ")
         name = ""
@@ -390,7 +404,19 @@ class Laengsschnitt:
             return -1
 
     def run(self):
+        """
+        Wird aufgerufen, wenn der Längsschnitt angeklickt wird. 
+        """
+
         def init_application():
+            """
+            Initialisiert den Längsschnitt und liest die gewählten Layer aus.
+            Prüft außerdem auf Kompatibilität und Anzahl der Layer. 
+            Bricht ggf. die Funktion ab, wenn der Datensatz fehlerhaft ist.
+            
+            :return: Gibt eine Liste der selektierten Layer zurück und einen LayerType
+            :rtype: (list,LayerType)
+            """
             if self.animator is not None:
                 self.animator.pause()
             if self.speed_controller is not None:
@@ -550,6 +576,12 @@ class Laengsschnitt:
         self.speed_controller.reset()
 
     def get_selected_layers(self):
+        """
+        Geht alle selektierten Layer durch und prüft, ob innerhalb dieser, Elemente ausgewählt wurden.
+        
+        :return: Gibt eine Liste der Layer zurück, welche angewählte Elemente beinhalten.
+        :rtype:list 
+        """
         layers = self.iface.legendInterface().layers()
         selected_layers = []
         for l in layers:
@@ -558,10 +590,21 @@ class Laengsschnitt:
         return selected_layers
 
     def run_ganglinie(self):
+        """
+        Wird aufgerufen, wenn das Ganglinien-Tool angeklickt wird.
+        """
         tmp = Ganglinie(self.t)
         self.t += 1
 
         def init_application():
+            """
+            Initialisiert die Ganglinie mit den nötigen Parametern. Fragt unter anderem die Datenbanken ab und 
+            prüft auf Kompatibilität und Anzahl der Layer.
+            Bricht ggf. die Funktion ab, wenn fehlerhafte Daten vorliegen.
+            
+            :return: Gibt eine Liste von den selektierten Layern und dem vorliegenden LayerType zurück.
+            :rtype: (list,LayerType)
+            """
             self.id = random.random()
             while self.result_db == "":
                 stop = self.show_message_box("Ergebnis-Datenbank",
@@ -605,6 +648,12 @@ class Laengsschnitt:
             return selected_layers, _layer_type
 
         def auto_update_changed(state):
+            """
+            Ist der Event-Listener der "Automatische Updates"-Checkbox.
+            
+            :param state: Ist der Zustand der Checkbox, nach dem Klicken 
+            :type state: int
+            """
             if state == 2:
                 subscribe_auto_update()
                 selection_changed([0])
@@ -612,6 +661,13 @@ class Laengsschnitt:
                 subscribe_auto_update(False)
 
         def subscribe_auto_update(subscribing=True):
+            """
+            Fügt die entsprechenden Event-Listener hinzu, falls subscribing True ist. Es werden ausschließlich die 
+            wichtigen Layer subscribed, da nicht alle relevant sind.
+            
+            :param subscribing: Gibt an, ob dem automatischen Updates subscribed/unsubscribed werden soll.
+            :type subscribing: bool
+            """
             _layers = self.iface.legendInterface().layers()
             important_layers = []
             for _l in _layers:
@@ -627,6 +683,12 @@ class Laengsschnitt:
                         pass
 
         def selection_changed(selection):
+            """
+            Wird aufgerufen, wenn ein subscribter Layer eine Veränderung in seinen selektierten Elementen registriert.
+            
+            :param selection: Bekommt die geänderte Auswahl eines Layers übergeben
+            :type selection: list
+            """
             if len(selection) == 0:
                 return
             _layers = self.get_selected_layers()

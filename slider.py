@@ -7,6 +7,13 @@ from Enums import SliderMode
 
 class Slider(QSlider):
     def __init__(self):
+        """
+        Constructor
+        * Initialisiert den Slider mit Werten zwischen 0 und 50.
+        * Setzt die Sprungweite (PageStep) auf 5.
+        * Setzt die höhe auf 60 Pixel.
+        * Pausiert den Slider zu beginn und definiert die Vorwärts-Bewegung als letzten Modus.
+        """
         super(self.__class__, self).__init__(Qt.Horizontal)
         self.setRange(0, 50)
         self.setSingleStep(1)
@@ -18,6 +25,14 @@ class Slider(QSlider):
         self.set_paused()
 
     def paintEvent(self, e):
+        """
+        * Wird bei jedem rendern aufgerufen. Ist der Event-Listener des Sliders.
+        * Ist zuständig für das korrekte Zeichnen des Sliders, da dieser custom-generiert wird.
+        * Setzt die nötigen Beschriftungen des Sliders.
+
+        :param e: Entspricht dem Paint-Event beim Aufruf.
+        :type e: QPaintEvent
+        """
         st = self.style()
         p = QPainter(self)
         v = 0
@@ -40,6 +55,13 @@ class Slider(QSlider):
         super(self.__class__, self).paintEvent(e)
 
     def mouseReleaseEvent(self, _QMouseEvent):
+        """
+        * Event-Listener, der auf MouseRealse hört.
+        * Führt je nach Ausführung des Klicks unterschiedliche Aktionen aus.
+
+        :param _QMouseEvent: Entspricht dem MouseRelease-Event beim Aufruf
+        :type _QMouseEvent: QMouseEvent
+        """
         ctrl = _QMouseEvent.modifiers() == Qt.ControlModifier
         if _QMouseEvent.button() == Qt.RightButton:
             if ctrl:
@@ -50,6 +72,9 @@ class Slider(QSlider):
             super(self.__class__, self).mouseReleaseEvent(_QMouseEvent)
 
     def ctrl_click(self):
+        """
+        Wird vom MouseReleaseEvent-Listener aufgerufen, falls beim klicken die Strg-Taste gedrückt wurde.
+        """
         if self.mode == SliderMode.Pause:
             self.last_mode = SliderMode.Forward if self.last_mode == SliderMode.Backward else SliderMode.Backward
         else:
@@ -58,6 +83,9 @@ class Slider(QSlider):
         self.valueChanged.emit(self.value())
 
     def set_paused(self):
+        """
+        Wird aufgerufen, um die Animation zu pausieren bzw. den Slider visuell als pausiert darzustellen.
+        """
         if self.mode == SliderMode.Pause:
             self.mode = self.last_mode
         else:
@@ -67,6 +95,12 @@ class Slider(QSlider):
         self.valueChanged.emit(self.value())
 
     def update_style(self):
+        """
+        Je nach Zustand des Sliders wird das Design abgeändert.
+        * Pause entspricht einer grauen Hinterlegung
+        * Vorwärts entspricht einer blauen Hinterlegung
+        * Rückwärts entspricht einer roten Hinterlegung
+        """
         if self.mode == SliderMode.Forward:
             temp = """QSlider::groove:horizontal {
                           border: 1px solid #999999;
@@ -109,6 +143,9 @@ class Slider(QSlider):
         self.setStyleSheet(temp)
 
     def reset(self):
+        """
+        Setzt den Slider zurück auf seine Default-Werte.
+        """
         self.mode = SliderMode.Forward
         self.set_paused()
         self.update_style()

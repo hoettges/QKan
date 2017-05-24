@@ -25,6 +25,13 @@ plots = {
 
 class Laengsschnitt:
     def __init__(self, _route):
+        """
+        Constructor
+
+        :param _route: Entspricht einem Dictionary, das bereits mit allen nötigen Informationen über alle
+        selektierten Elemente verfügt.
+        :type _route: dict
+        """
         self.route = _route
         self.fig = plt.figure(0)
         self.ax = None
@@ -37,9 +44,20 @@ class Laengsschnitt:
         plt.gcf().clear()
 
     def __del__(self):
+        """
+        Destruktor
+        """
         del self.fig
 
     def get_widget(self):
+        """
+        Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
+        Gibt dabei auch das Navigations-Widget zurück, damit dieses nur einmal existiert und nicht bei 
+        jedem Aufruf erzeugt wird.
+        
+        :return Gibt ein das Figure-Element und das Navigations-Widget zurück
+        :rtype (FigureCanvasQTAgg,NavigationToolbar2QT)
+        """
         plt.figure(0)
         qw = QWidget()
         canv = FigureCanvas(self.fig)
@@ -50,6 +68,13 @@ class Laengsschnitt:
         return canv, toolbar
 
     def set_colors(self, colors):
+        """
+        Färbt die Plots des Längsschnitts in der selben Farbe ein, wie innerhalb der Ganglinie vorgegeben ist.
+
+        :param colors: Gibt ein Dictionary zurück mit den Haltungs-/Schacht-Namen als Key, und einer Farbe in Hex-
+        Schreibweise als Value
+        :type colors: dict
+        """
         self.reset_colors()
         key = "schaechte" if colors.get("layer") == LayerType.Schacht else "haltungen"
         for key2 in self.objects[key]:
@@ -61,6 +86,9 @@ class Laengsschnitt:
         self.fig.canvas.draw()
 
     def reset_colors(self):
+        """
+        Setzt alle Plots des Längsschnitts zurück auf Default (Schwarz).
+        """
         for schacht in self.objects["schaechte"]:
             for plot in self.objects["schaechte"][schacht]:
                 if isinstance(plot, SchachtLinie):
@@ -74,10 +102,20 @@ class Laengsschnitt:
         self.fig.canvas.draw()
 
     def draw(self):
+        """
+        Zeichnet die Plots des Längsschnitts
+        """
         self.ax = self.fig.add_subplot(111)
         switch = True
 
         def draw_schacht(name):
+            """
+            Zeichnet den Schacht in die Figure und geht dabei von einer Fixen Schachtbreite aus, welche in den 
+            Attributen steht.
+
+            :param name: Entspricht dem Namen des Schachts
+            :type name:str 
+            """
             schacht = self.route.get("schachtinfo").get(name)
             boden = schacht.get("sohlhoehe")
             decke = schacht.get("deckelhoehe")
@@ -101,6 +139,12 @@ class Laengsschnitt:
                 self.maxY = decke if decke > self.maxY else self.maxY
 
         def draw_haltung(name):
+            """
+            Zeichnet die Haltung und zusätzlich die Oberfläche in die Figure ein.
+
+            :param name: Entspricht dem Namen der Haltung.
+            :type name:str 
+            """
             haltung = self.route.get("haltunginfo").get(name)
             laenge = haltung.get("laenge")
             oben = haltung.get("sohlhoeheoben")
@@ -146,6 +190,17 @@ class Laengsschnitt:
 
 class Maximizer:
     def __init__(self, _id, _route, _dbname):
+        """
+        Constructor
+
+        :param _id: Entspricht einer ID, welche pro Instanz unique ist.
+        :type _id: float
+        :param _route: Entspricht einem Dictionary, das bereits mit allen nötigen Informationen über alle
+        selektierten Elemente verfügt.
+        :type _route: dict
+        :param _dbname: Entspricht dem Datenbank-Pfad der Ereignis-Datenbank
+        :type _dbname: str
+        """
         self.db = FBConnection(_dbname)
         self.id = _id
         self.route = _route
@@ -159,9 +214,19 @@ class Maximizer:
         self.simulation = self.fetch_max_simulation_data()
 
     def __del__(self):
+        """
+        Destruktor
+        """
         del self.fig
 
     def fetch_max_simulation_data(self):
+        """
+        Berechnet die maximalen Wasserstände über den gesamten Zeitraum einer Simulation und gibt diese zurück.
+
+        :return: Gibt ein Dictionary zurück, welche alle Haltungen und Schächte und deren maximale Wasserstände 
+        beinhaltet.
+        :rtype: dict
+        """
         haltungen = {}
         schaechte = {}
         for haltung in self.route.get("haltungen"):
@@ -178,18 +243,33 @@ class Maximizer:
         return {"haltungen": haltungen, "schaechte": schaechte}
 
     def draw(self):
+        """
+        Zeichnet den Plot für den maximalen Wasserstand.
+        """
         self.ax = self.fig.add_subplot(111)
         switch = True
 
         def draw_schacht(name):
+            """
+            Zeichnet den maximalen Wasserstand des Schachts ein und geht dabei von einer festen Schachtbreite aus.
+
+            :param name: Entspricht dem Namen des Schachts.
+            :type name: str
+            """
             wasserstand = self.simulation.get("schaechte").get(name)
             self.x += [self.x_pointer, self.x_pointer + self.schacht_breite]
             self.y += [wasserstand, wasserstand]
             self.x_pointer += self.schacht_breite
 
         def draw_haltung(name):
+            """
+            Zeichnet den maximalen Wasserstand der Haltung ein.
+
+            :param name: Entspricht dem Namen der Haltung. 
+            :type name:str 
+            """
             haltung = self.route.get("haltunginfo").get(name)
-            laenge = haltung.get("laenge")-self.schacht_breite
+            laenge = haltung.get("laenge") - self.schacht_breite
             wasseroben = self.simulation.get("haltungen").get(name).get("wasserstandoben")
             wasserunten = self.simulation.get("haltungen").get(name).get("wasserstandunten")
 
@@ -210,16 +290,39 @@ class Maximizer:
             plots["max"] = self.plot
 
     def hide(self):
+        """
+        Versteckt den maximalen Wasserstand, indem der Alpha-Wert auf 0 gesetzt wird.
+        """
         self.plot.set_alpha(0)
         self.fig.canvas.draw()
 
     def show(self):
+        """
+        Zeigt den maximalen Wasserstand. Der Alpha-Wert wird hierbei auf 0.6 gesetzt.
+        """
         self.plot.set_alpha(0.6)
         self.fig.canvas.draw()
 
 
 class Animator:
     def __init__(self, _id, _route, _dbname, slider, _forward, _backward):
+        """
+        Constructor
+
+        :param _id: Entspricht einer ID pro Animator-Instanz. Sollte unique sein.
+        :type _id: float
+        :param _route: Entspricht einem Dictionary über alle Schächte und Haltungen
+        :type _route: dict
+        :param _dbname: Entspricht dem Datei-Pfad zur Ergebnis-Datenbank.
+        :type _dbname: str
+        :param slider: Entspricht einer Referenz auf den Slider innerhalb der GUI, welcher für die Animations-
+        Geschwindigkeit zuständig ist.
+        :type slider: Slider
+        :param _forward: Entspricht einer Referenz auf den "Vorwärts"-Button innerhalb der GUI.
+        :type _forward: QPushButton
+        :param _backward: Entspricht einer Referenz auf den "Zurück"-Button innerhalb der GUI.
+        :type _backward: QPushButton
+        """
         self.db = FBConnection(_dbname)
         self.id = _id
         self.ganglinie = None
@@ -249,9 +352,19 @@ class Animator:
         self.update_controls()
 
     def __del__(self):
+        """
+        Destruktor
+        """
         del self.fig
 
     def fetch_simulation_data(self):
+        """
+        Liest die Datenbank aus, um alle nötigen Datensätze für die Animation zu erhalten.
+
+        :return: Gibt die Anzahl an zuzeichnenden Elementen, ein Dictionary, das die Wasserstände zu jedem Zeitpunkt 
+        aller Haltungen und Schächte beinhaltet und alle Schacht-Namen in der richtigen Reihenfolge zurück.
+        :rtype: (int,dict,list)
+        """
         haltungen = {}
         schaechte = {}
         for haltung in self.route.get("haltungen"):
@@ -274,6 +387,12 @@ class Animator:
         return len(schaechte.keys()) - 1, {"haltungen": haltungen, "schaechte": schaechte}, sorted(schaechte.keys())
 
     def draw(self, timestamp):
+        """
+        Zeichnet den Wasserstand zu einem bestimmten Zeitpunkt
+
+        :param timestamp: Entspricht dem zu zeichnenden Zeitpunkt.
+        :type timestamp: datetime
+        """
         self.x_pointer = 0
         self.x = []
         self.y = []
@@ -282,8 +401,14 @@ class Animator:
         schaechte = list(self.route.get("schaechte"))
 
         def draw_schacht(name):
-            if name == "Auslass":  # todo
-                return
+            # if name == "Auslass":  # todo
+            #     return
+            """
+            Zeichnet den Wasserstand eines bestimmten Schachts.
+            
+            :param name: Entspricht dem Namen des Schachts. 
+            :type name: str
+            """
             wasserstand = self.simulation.get("schaechte").get(timestamp).get(name)
 
             self.x += [self.x_pointer, self.x_pointer + self.schacht_breite]
@@ -291,9 +416,15 @@ class Animator:
             self.x_pointer += self.schacht_breite
 
         def draw_haltung(name):
+            """
+            Zeichnet den Wasserstand einer bestimmten Haltung.
+
+            :param name: Entspricht dem Namen der Haltung
+            :type name: str
+            """
             haltung = self.route.get("haltunginfo").get(name)
 
-            laenge = haltung.get("laenge")-self.schacht_breite
+            laenge = haltung.get("laenge") - self.schacht_breite
             wasseroben = self.simulation.get("haltungen").get(timestamp).get(name).get("wasserstandoben")
             wasserunten = self.simulation.get("haltungen").get(timestamp).get(name).get("wasserstandunten")
 
@@ -311,11 +442,23 @@ class Animator:
             switch = not switch
 
     def update_coordinates(self, value):
+        """
+        Zeichnet einen bestimmten Zeitpunkt, welcher im GUI gewählt wurde, in das Ganglinien-Tool.
+
+        :param value: Enspricht dem Index des Zeitpunkts an dem gezeichnet werden soll
+        :type value: int
+        """
         if self.ganglinie is not None:
             self.ganglinie.draw_at(self.timestamps[value])
         self.draw(self.timestamps[value])
 
     def go_step(self, value):
+        """
+        Zeichnet den Zustand zu einem übergebenen Zeitpunkt
+
+        :param value: Entspricht dem Index des Zeitpunkts, der gezeichnet werden soll
+        :type value:int 
+        """
         self.update_controls()
         if self.last_index == value:
             return
@@ -326,6 +469,14 @@ class Animator:
         self.fig.canvas.draw()
 
     def play(self, value, mode):
+        """
+        Startet die Animation in einer übergebenen Geschwindigkeit und Richtung.
+        
+        :param value: Entspricht der Geschwindigkeit von 0 bis 50
+        :type value: int
+        :param mode: Entspricht dem aktuellen Modus. Forwärts oder Rückwärts
+        :type mode: SliderMode
+        """
         speed = self.get_speed(value)
         self.speed = speed
         self.mode = mode
@@ -333,18 +484,39 @@ class Animator:
         self.animation.event_source.start()
 
     def get_speed(self, x):
-        # 1sec => 50sec & 1x == 1sec
-        # speed = 9.183048666 * pow(10, -2) * pow(x, 2) + 8.166482413 * pow(10, -1) * x + 3.030302998 * pow(10, -2)
+        """
+        Rechnet die übergebene Geschwindigkeit in eine Simulationsgeschwindigkeit um
+
+        :param x: Entspricht der übergebenen Geschwindigkeit.
+        :type x: int
+        :return: Tatsächliche Geschwindigkeit der Simulation.
+        :rtype: int
+        """
         speed = x * self.simulation_second * 0.01
         return speed
 
     def pause(self):
+        """
+        Stoppt die Simulation.
+        """
         try:
             self.animation.event_source.stop()
         except AttributeError:
             pass
 
     def get_next_timestamp(self, index, speed, mode):
+        """
+        Berechnet, welcher Zeitpunkt als nächstes auszugeben ist anhand der Simulationsgeschwindigkeit.
+
+        :param index: Entspricht dem aktuellen Index
+        :type index: int
+        :param speed: Entspricht der tatsächlichen Simulationsgeschwindigkeit.  
+        :type speed: int
+        :param mode: Entspricht dem Modus. Forwärts oder Rückwärts.
+        :type mode: SliderMode
+        :return: Gibt den Index des Zeitpunkts zurück, welcher als nächstes auszugeben ist.
+        :rtype: int
+        """
         if self.last_index == -1:
             self.last_index = index
             return index
@@ -377,6 +549,9 @@ class Animator:
             return self.last_index
 
     def init_animation(self):
+        """
+        Initialisiert die Animation mit den nötigen Daten.
+        """
         self.pause()
         self.last_time = datetime.datetime.today()
 
@@ -394,11 +569,20 @@ class Animator:
         self.pause()
 
     def update_timestamp(self, value):
+        """
+        Updatet die Überschrift des Längsschnitts und setzt diese auf den aktuellen Zeitpunkt.
+
+        :param value: Entspricht dem Index des aktuellen Zeitpunkts. 
+        :type value: int
+        """
         timestamp = self.timestamps[value]
         time = timestamp.strftime("%d.%m.%Y %H:%M:%S")[:-3]
         self.fig.suptitle("Zeitpunkt: {}".format(time), fontsize=20)
 
     def update_controls(self):
+        """
+        Disabled ggf. die jeweiligen Buttons, wenn das Ende oder der Anfang der Simulation erreicht wurde.
+        """
         value = self.slider.value()
         _min = self.slider.minimum()
         _max = self.slider.maximum()
@@ -414,12 +598,23 @@ class Animator:
 
 
 def set_ax_labels(x, y):
+    """
+    Setzt die Achsenbeschriftung.
+
+    :param x: Entspricht der X-Achsen-Beschriftung
+    :type x: str
+    :param y: Entspricht der Y-Achsen-Beschriftung 
+    :type y: str
+    """
     plt.figure(0)
     plt.xlabel(x)
     plt.ylabel(y)
 
 
 def set_legend():
+    """
+    Setzt die Legende des Längsschnitts. Die Oberfläche wird nur einmal definiert.
+    """
     legend_plots = []
     waterlevel = plots.get("water-level")
     surface = plots.get("surface")
@@ -435,6 +630,9 @@ def set_legend():
 
 
 def reset_legend():
+    """
+    Löscht alle Plots aus der Figure des Längsschnitts
+    """
     del plots[:]
 
 
@@ -443,42 +641,103 @@ class ILines(lines.Line2D):
         pass
 
     def __init__(self, *args, **kwargs):
+        """
+        Constructor
+
+        :param args: Beinhaltet den Start- und Endwert in X- und Y-Punkte
+        :type args: (list,list)
+        :param kwargs: Beinhaltet Name und Farbe der Linie
+        :type kwargs: dict
+        """
         self.text = mtext.Text(0, 0, "")
         self.name = ""
         lines.Line2D.__init__(self, *args, **kwargs)
         self.text.set_text(self.get_label())
 
     def set_figure(self, figure):
+        """
+        Fügt den Text in die Figure ein.
+
+        :param figure: Enthält die entsprechende Figure.
+        :type figure: Figure
+        """
         self.text.set_figure(figure)
         lines.Line2D.set_figure(self, figure)
 
     def set_axes(self, axes):
+        """
+        Setzt die übergebenen Achsen.
+
+        :param axes: Enthält die zu setzenden Achsen.
+        :type axes: Axes
+        """
         self.text.set_axes(axes)
         lines.Line2D.set_axes(self, axes)
 
     def set_transform(self, transform):
-        # 2 pixel offset
+        """
+        Transformiert die Beschriftung der Linien
+        
+        :param transform: Entspricht der übergebenen Transformation.
+        :type transform: CompositeGenericTransform
+        """
         texttrans = transform + mtransforms.Affine2D().translate(2, 2)
         self.text.set_transform(texttrans)
         lines.Line2D.set_transform(self, transform)
 
     def set_name(self, name):
+        """
+        Setter von Name
+
+        :param name: Der Name der Haltung bzw. des Schachts.
+        :type name: str
+        """
         self.name = name
 
     def draw(self, renderer):
-        # draw my label at the end of the line with 2 pixel offset
+        """
+        Plotted die Linie.
+
+        :param renderer: Entspricht einem Reder-Objekt.
+        :type renderer: RenderAgg
+        """
         lines.Line2D.draw(self, renderer)
         self.text.draw(renderer)
 
     def set_data(self, x, y):
+        """
+        Wird von der erbenden Klasse überschrieben und setzt den Start und Endpunkt der Linie.
+
+        :param x: Entspricht den X-Werten des Start- und Endpunkts.
+        :type x: list
+        :param y: Entspricht den Y-Werten des Start- und Endpunkts.
+        :type y: list
+        """
         pass
 
 
 class HaltungLinie(ILines):
     def __init__(self, *args, **kwargs):
+        """
+        Constructor
+
+        :param args: Beinhaltet den Start- und Endwert in X- und Y-Punkte
+        :type args: (list,list)
+        :param kwargs: Beinhaltet Name und Farbe der Linie
+        :type kwargs: dict
+        """
         super(HaltungLinie, self).__init__(*args, **kwargs)
 
     def set_data(self, x, y):
+        """
+        Wird von der Basis-Klasse überschrieben und setzt den Start und Endpunkt der Linie. Als auch die Position des 
+        Textes.
+
+        :param x: Entspricht den X-Werten des Start- und Endpunkts.
+        :type x: list
+        :param y: Entspricht den Y-Werten des Start- und Endpunkts.
+        :type y: list
+        """
         start = x[0]
         length = x[1] - x[0]
         text_length = self.text.get_size()
@@ -489,13 +748,36 @@ class HaltungLinie(ILines):
 
 class SchachtLinie(ILines):
     def __init__(self, *args, **kwargs):
+        """
+        Constructor
+
+        :param args: Beinhaltet den Start- und Endwert in X- und Y-Punkte
+        :type args: (list,list)
+        :param kwargs: Beinhaltet Name und Farbe der Linie
+        :type kwargs: dict
+        """
         self.schacht_breite = 1
         super(SchachtLinie, self).__init__(*args, **kwargs)
 
     def set_data(self, x, y):
+        """
+        Wird von der Basis-Klasse überschrieben und setzt den Start und Endpunkt der Linie. Als auch die Position des 
+        Textes.
+
+        :param x: Entspricht den X-Werten des Start- und Endpunkts.
+        :type x: list
+        :param y: Entspricht den Y-Werten des Start- und Endpunkts.
+        :type y: list
+        """
         if len(x):
             self.text.set_position((x[-1] + (self.schacht_breite / 2.) - (self.text.get_size() / 2.), y[-1]))
         lines.Line2D.set_data(self, x, y)
 
     def set_schacht_width(self, width):
+        """
+        Setter der Schacht-Breite
+
+        :param width: Entspricht der fixen Schacht-Breite.
+        :type width: str
+        """
         self.schacht_breite = width
