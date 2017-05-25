@@ -26,10 +26,7 @@ from PyQt4.QtGui import *
 import resources_laengs
 import resources_gangl
 
-try:
-    from QKan_Navigation.navigation import Navigator
-except ImportError:
-    raise ImportError("Navigations-Modul nicht gefunden!")
+from QKan_Database.navigation import Navigator
 import plotter
 from application_dialog import LaengsschnittDialog
 from qgis.core import *
