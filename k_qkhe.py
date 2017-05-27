@@ -212,8 +212,13 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, auswahl_T
 
     # --------------------------------------------------------------------------------------------
     # Export der Speicherbauwerke
+    #
+    # Beim Export werden die IDs mitgeschrieben, um bei den Speicherkennlinien
+    # wiederverwertet zu werden.
 
     if check_tabinit:
+        # Zuerst Daten aus Detailtabelle mit Speicherkennlinie löschen
+        dbHE.sql("DELETE FROM TABELLENINHALTE WHERE ID IN (SELECT ID FROM SPEICHERSCHACHT)")
         dbHE.sql("DELETE FROM SPEICHERSCHACHT")
 
     # Nur Daten fuer ausgewaehlte Teilgebiete
@@ -244,6 +249,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, auswahl_T
 
 
     nr0 = nextid
+    refid_speicher = {}
 
     createdat = time.strftime('%d.%m.%Y %H:%M:%S',time.localtime())
     for attr in dbQK.fetchall():
@@ -257,6 +263,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, auswahl_T
         (deckelhoehe, sohlhoehe, xsch, ysch) = \
             ('NULL' if tt == 'NULL' else '{:.3f}'.format(float(tt)) \
                 for tt in (deckelhoehe_t, sohlhoehe_t, xsch_t, ysch_t))
+
+        # Speichern der aktuellen ID zum Speicherbauwerk
+        refid_speicher[schnam] = nextid
 
         # Einfuegen in die Datenbank
 
@@ -297,6 +306,57 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, auswahl_T
     fortschritt('{} Speicher eingefuegt'.format(nextid-nr0), 0.40)
 
     # --------------------------------------------------------------------------------------------
+    # Export der Kennlinien der Speicherbauwerke
+
+    sql = u'''SELECT sl.schnam, sl.wspiegel - sc.sohlhoehe AS wtiefe, sl.oberfl
+              FROM speicherkennlinien AS sl
+              JOIN schaechte AS sc ON sl.schnam = sc.schnam
+              ORDER BY sc.schnam, sl.wspiegel'''
+
+    try:
+        dbQK.sql(sql)
+    except:
+        fehlermeldung(u"(32) SQL-Fehler in QKan-DB: \n", sql)
+        del dbQK
+        del dbHE
+        return False
+
+    spnam = None               # Zähler für Speicherkennlinien
+
+    for attr in dbQK.fetchall():
+
+        # In allen Feldern None durch NULL ersetzen
+        (schnam, wtiefe, oberfl) = ('NULL' if el is None else el for el in attr)
+
+        # Einfuegen in die Datenbank
+
+        if schnam in refid_speicher:
+            if spnam is None or schnam != spnam:
+                spnam = schnam
+                reihenfolge = 1
+            else:
+                schnam = spnam
+                reihenfolge += 1
+
+            sql = u"""
+                INSERT INTO TABELLENINHALTE
+                ( KEYWERT, WERT, REIHENFOLGE, ID) VALUES
+                ( {wtiefe}, {oberfl}, {reihenfolge}, {id});
+            """.format(wtiefe = wtiefe, oberfl = oberfl, reihenfolge = reihenfolge, id = refid_speicher[schnam])
+            # print(sql)
+            try:
+                dbHE.sql(sql)
+            except:
+                fehlermeldung(u"(4) SQL-Fehler in Firebird: \n", sql)
+                del dbQK
+                del dbHE
+                return False
+
+    dbHE.commit()
+
+    fortschritt('{} Speicher eingefuegt'.format(nextid-nr0), 0.40)
+
+    # --------------------------------------------------------------------------------------------
     # Export der Auslaesse
 
     if check_tabinit:
@@ -332,7 +392,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, auswahl_T
 
     createdat = time.strftime('%d.%m.%Y %H:%M:%S',time.localtime())
 
-    fortschritt(u'Export Auslässe...', 0.15)
+    fortschritt(u'Export Auslässe...', 0.20)
 
     for attr in dbQK.fetchall():
 
@@ -412,8 +472,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, auswahl_T
           (haltungen JOIN schaechte AS n1 ON haltungen.schoben = n1.schnam)
           JOIN schaechte AS n2 ON haltungen.schunten = n2.schnam
           LEFT JOIN profile ON haltungen.profilnam = profile.profilnam
-          LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.kuerzel
-          LEFT JOIN tezg ON haltungen.haltnam = tezg.haltnam
+          LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.bezeichnung
           LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
           WHERE (st.he_nr = '0' or st.he_nr IS NULL){:}
     """.format(auswahl)
@@ -597,6 +656,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, auswahl_T
 
         if bodenklasse == 'NULL':
             typ = 0                 # undurchlössig
+            bodenklasse = ''
         else:
             typ = 1                 # durchlässig
 
@@ -1035,8 +1095,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, auswahl_T
              diese tezg-Flächen aufgelistet.
     """
 
-    if check_tabinit:
-        dbHE.sql("DELETE FROM TEILEINZUGSGEBIET")
+#    if check_tabinit:
+#        dbHE.sql("DELETE FROM TEILEINZUGSGEBIET")
 
     sql = 'SELECT count(*) AS anz FROM teilgebiete'
     dbQK.sql(sql)
@@ -1208,7 +1268,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, auswahl_T
       tezg.haltnam AS haltnam,
       teilgebiete.ewdichte*area(tezg.geom)/10000. AS ew,
       teilgebiete.stdmittel AS stdmittel,
-      teilgebiete.fremdwas AS fremdwas
+      teilgebiete.fremdwas AS fremdwas,
+      teilgebiete.tgnam AS tgnam
     FROM tezg INNER JOIN teilgebiete ON tezg.teilgebiet = teilgebiete.tgnam
     """.format(auswahl)
 
@@ -1226,23 +1287,29 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, auswahl_T
     for b in dbQK.fetchall():
 
         # In allen Feldern None durch NULL ersetzen
-        flnam, xfl, yfl, haltnam, ew, stdmittel, fremdwas = ('NULL' if el is None else el for el in b)
+        flnam, xfl, yfl, haltnam, ew, stdmittel, fremdwas, tgnam = \
+            ('NULL' if el is None else el for el in b)
 
         # Einfuegen in die Datenbank
         sql = u"""
           INSERT INTO EINZELEINLEITER
           ( XKOORDINATE, YKOORDINATE, ZUORDNUNGGESPERRT, ZUORDNUNABHEZG, ROHR, 
             ABWASSERART, EINWOHNER, WASSERVERBRAUCH, HERKUNFT,
-            STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE, TEILEINZUGSGEBIET, ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME, LASTMODIFIED, ID) VALUES 
+            STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE, TEILEINZUGSGEBIET,
+            ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME,
+            ABRECHNUNGSZEITRAUM, ABZUG,
+            LASTMODIFIED, ID) VALUES
           ( {xfl}, {yfl}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
             {abwasserart}, {ew}, {wverbrauch}, {herkunft},
             {stdmittel}, {fremdwas}, {faktor}, {flaeche}, '{teilgebiet}',
             {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{flnam}_SW_TEZG',
+            {abrechnungszeitraum}, {abzug},
             '{createdat}', {nextid});
           """.format(xfl = xfl, yfl = yfl, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,   
                      abwasserart = 0, ew = ew, wverbrauch = 0, herkunft = 3,
-                     stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, teilgebiet = 'NULL',
+                     stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, teilgebiet = tgnam,
                      zuflussmodell = 0, zuflussdirekt = 0, zufluss = 0, planungsstatus = 0, flnam = flnam,
+                     abrechnungszeitraum = 365, abzug = 0,
                      createdat = createdat, nextid = nextid)
         try:
             dbHE.sql(sql)

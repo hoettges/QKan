@@ -277,7 +277,7 @@ class ExportToHE:
     # (jh, 08.02.2017)
 
 
-    def selectFile_HeDB_dest(self, default_dir):
+    def selectFile_HeDB_dest(self):
         """Datenbankverbindung zur HE-Datenbank (Firebird) auswaehlen und gegebenenfalls die Zieldatenbank
            erstellen, aber noch nicht verbinden."""
 
