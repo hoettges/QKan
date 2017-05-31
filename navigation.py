@@ -167,6 +167,16 @@ WHERE name = "{}"
         return True, route, False
 
     def __get_possibilities(self, options, additional_points):
+        """
+        Gibt eine Liste zurück mit allen möglichen Routen die zu einem der additional_points führen zurück
+
+        :param options: Entspricht den möglichen Haltungen die von einem Schacht abgehen
+        :type options:list
+        :param additional_points: Entspricht den übergebenen Haltungen, die in der Route vorkommen sollen
+        :type additional_points:list
+        :return: Gibt eine Liste von Listen zurück, die alle möglichen nächsten Routen beinhalten
+        :rtype: list
+        """
         statement = u"""
         SELECT name
         FROM (SELECT
@@ -323,6 +333,22 @@ WHERE schoben ="{}"
         return True, route, False
 
     def __decide_direction(self, options, additional_points):
+        """
+        Entscheidet, welche Richtung die Navigation einschlagen soll
+        Es werden alle möglichen Routen geprüft und folgendermaßen entschieden:
+        * Liegt überhaupt eine additional_point in der möglichen Route vor, mit Ausnahme des Endpunkts?
+        - Falls nein, wird diese Route übersprungen
+        * Gibt es zwei Routen, mit dem gleichen ersten Schnittpunkt mit den additional_points?
+        - Falls ja, wird abgebrochen
+        * Ansonsten gilt: Welche mögliche Route erreicht als erstes einen additional_point
+
+        :param options: Entspricht den möglichen Haltungen die von einem Schacht abgehen
+        :type options:list
+        :param additional_points: Entspricht den übergebenen Haltungen, die in der Route vorkommen sollen
+        :type additional_points:list
+        :return: Gibt entweder den nächsten Haltungsnamen zurück, oder False, wenn keine Route zielgührend ist
+        :rtype: bool | str
+        """
         possibilities = self.__get_possibilities(options, additional_points)
         possible_runs = []
         for run in possibilities:
@@ -334,21 +360,20 @@ WHERE schoben ="{}"
             first_p = ""
             _run = None
             for run in possible_runs:
-                for i, p in enumerate(run):
+                for p in run:
                     if p in additional_points:
                         if first_p == "":
                             first_p = p
-                            pos = i
+                            pos = additional_points.index(p)
                             _run = run
                             break
                         elif first_p == p:
                             return False
                         else:
-                            if i < pos:
+                            if additional_points.index(p) < pos:
                                 _run = run
             if _run is not None:
                 return _run[0]
-
         return False
 
     def check_route_haltungen(self, nodes):
