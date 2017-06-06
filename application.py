@@ -29,7 +29,6 @@ import resources_gangl
 from QKan_Database.navigation import Navigator
 import plotter
 from application_dialog import LaengsschnittDialog
-from qgis.core import *
 import random
 import os.path
 import slider as s
@@ -60,7 +59,7 @@ class Laengsschnitt:
         self.__toolbar.setObjectName(u'Laengsschnitt')
         self.__dlg = None
         self.__result_db = ""
-        self.__spartialite = ""
+        self.__spatialite = ""
         self.__route = {}
         self.__toolbar_widget = None
         self.__id = 0
@@ -73,6 +72,7 @@ class Laengsschnitt:
         self.__ganglinie = Ganglinie(1)
         self.__dlg2 = self.__ganglinie.get_dialog()
         self.__navigator = None
+        self.__workspace = ""
 
     def __add_action(
             self,
@@ -160,12 +160,12 @@ class Laengsschnitt:
 
         self.__add_action(
             icon_path_laengs,
-            text='Längsschnitt-Tool'.decode("utf-8"),
+            text=u'Längsschnitt-Tool',
             callback=self.__run
         )
         self.__add_action(
             icon_path_gangl,
-            text='Ganglinien-Tool'.decode("utf-8"),
+            text=u'Ganglinien-Tool',
             callback=self.__run_ganglinie
         )
 
@@ -257,6 +257,7 @@ class Laengsschnitt:
         :rtype: bool
         """
         if _type == Type.Error:
+
             standard_buttons = QMessageBox.Ok
             default_button = QMessageBox.Ok
         else:
@@ -276,7 +277,8 @@ class Laengsschnitt:
 
     def __speed_control(self, value):
         """
-        Übergibt der Animation die neue Geschwindigkeit.
+        * Übergibt der Animation die neue Geschwindigkeit.
+        * Updatet den Stil des Sliders
         Ist die Geschwindigkeit 0, wird die Animation pausiert.
 
         :param value: Geänderte Geschwindigkeit.
@@ -310,7 +312,8 @@ class Laengsschnitt:
 
     def __slider_click(self, event):
         """
-        Ist der Eventlistener des Sliders bei einem Mausklick. Definiert das Verhalten je nach gedrückter Taste.
+        * Ist der Eventlistener des Zeitstrahl-Sliders bei einem Mausklick.
+        * Definiert das Verhalten je nach gedrückter Taste.
 
         :param event: Entspricht dem Mausevent, wenn der Slider angeklickt wird
         :type event: QMouseEvent
@@ -334,15 +337,14 @@ class Laengsschnitt:
         Diese Funktion öffnet einen Datei-Dialog, welcher den User auffordert eine Ergebnis-Datenbank auszuwählen.
         """
         self.__animator.pause()
-        filename = QFileDialog.getOpenFileName(self.__dlg, "Wählen Sie eine Ergebnis-Datenbank".decode("utf-8"),
+        filename = QFileDialog.getOpenFileName(self.__dlg, u"Wählen Sie eine Ergebnis-Datenbank",
                                                filter="IDBF (*.idbf);; Alle Dateien (*.*)")
         if filename != "":
             self.__result_db = filename
             self.__dlg.label_dbname.setText(filename)
             self.__run()
 
-    @staticmethod
-    def __layer_to_type(layer):
+    def __layer_to_type(self, layer):
         """
         Wandelt layer in einen LayerType um. So wird unabhängig von der User-spezifischen Benennung der richtige Layer
         gewählt.
@@ -358,6 +360,9 @@ class Laengsschnitt:
         for kv in kvp:
             if kv.startswith("table"):
                 name = kv.split("=")[1][1:-1]
+            elif kv.startswith("dbname") and self.__spatialite == "":
+                self.__spatialite = kv.split("=")[1][1:-1]
+                self.__workspace = os.path.dirname(self.__spatialite)
         types = {
             "wehre": LayerType.Wehr,
             "haltungen": LayerType.Haltung,
@@ -391,30 +396,9 @@ class Laengsschnitt:
                 self.__dlg2.close()
             self.__dlg.close()
             self.__id = random.random()
-            while self.__result_db == "":
-                stop = self.__show_message_box("Ergebnis-Datenbank",
-                                               "Bitte wählen Sie eine Ergebnis-Datenbank aus!",
-                                               Type.Selection)
-                if stop:
-                    return False
-                filename = QFileDialog.getOpenFileName(self.__dlg,
-                                                       "Wählen Sie eine Simulations-Datenbank".decode("utf-8"),
-                                                       filter="IDBF (*.idbf);; Alle Dateien (*.*)")
-                self.__result_db = filename
-                self.__dlg.label_dbname.setText(filename)
-            while self.__spartialite == "":
-                stop = self.__show_message_box("Datenbank",
-                                               "Bitte wählen Sie eine Datenbank aus!",
-                                               Type.Selection)
-                if stop:
-                    return False
-                filename = QFileDialog.getOpenFileName(self.__dlg,
-                                                       "Wählen Sie eine Datenbank".decode("utf-8"),
-                                                       filter="SQLITE (*.sqlite);; Alle Dateien (*.*)")
-                self.__spartialite = filename
             selected_layers = self.__get_selected_layers()
             if len(selected_layers) == 0:
-                self.__show_message_box("Fehler", "Wählen Sie zunächst ein Layer!", Type.Error)
+                self.__iface.messageBar().pushCritical("Fehler", u"Wählen Sie zunächst ein Layer!")
                 return False
             layer_types = []
             for layer in selected_layers:
@@ -423,7 +407,7 @@ class Laengsschnitt:
             if len(layer_types) != 1:
                 for _l in layer_types:
                     if _l not in [LayerType.Haltung, LayerType.Wehr, LayerType.Pumpe]:
-                        self.__show_message_box("Fehler", "Inkompatible Layer-Kombination!", Type.Error)
+                        self.__iface.messageBar().pushCritical("Fehler", "Inkompatible Layer-Kombination!")
                         return False
                 _layer_type = LayerType.Haltung
             else:
@@ -431,10 +415,23 @@ class Laengsschnitt:
             if _layer_type in [LayerType.Wehr, LayerType.Pumpe]:
                 _layer_type = LayerType.Haltung
             if _layer_type not in [LayerType.Haltung, LayerType.Schacht]:
-                self.__show_message_box("Fehler", "Ausgewählter Layer wird nicht unterstützt!", Type.Error)
+                self.__iface.messageBar().pushCritical("Fehler", u"Ausgewählter Layer wird nicht unterstützt!")
                 return False
+            while self.__result_db == "":
+                stop = self.__show_message_box("Ergebnis-Datenbank",
+                                               "Bitte wählen Sie eine Ergebnis-Datenbank aus!",
+                                               Type.Selection)
+                if stop:
+                    self.__log.info("Ergebnis-Datenbank-Auswahl wurde abgebrochen.")
+                    return False
+                self.__result_db = QFileDialog.getOpenFileName(self.__dlg,
+                                                               u"Wählen Sie eine Simulations-Datenbank",
+                                                               self.__workspace,
+                                                               filter="IDBF (*.idbf);; Alle Dateien (*.*)")
+            self.__dlg.label_dbname.setText(self.__result_db)
+
             if self.__navigator is None or self.__navigator.get_id() != self.__id:
-                self.__navigator = Navigator(self.__spartialite, self.__id)
+                self.__navigator = Navigator(self.__spatialite, self.__id)
             return selected_layers, _layer_type
 
         initialized = init_application()
@@ -460,36 +457,32 @@ class Laengsschnitt:
         for l in layers:
             feature_count += l.selectedFeatureCount()
         if feature_count < 2 and layer_type == LayerType.Schacht:
-            self.__show_message_box("Fehler",
-                                    "Bitte wählen Sie mindestens einen Start- und Endpunkt Ihrer gewünschten Route!",
-                                    Type.Error)
+            self.__iface.messageBar().pushCritical("Fehler",
+                                                   u"Bitte wählen Sie mindestens einen Start- und"
+                                                   u" Endpunkt Ihrer gewünschten Route!")
             return
         elif feature_count < 1:
-            self.__show_message_box("Fehler",
-                                    "Bitte wählen Sie mindestens einen Start- und Endpunkt Ihrer gewünschten Route!",
-                                    Type.Error)
+            self.__iface.messageBar().pushCritical("Fehler",
+                                                   u"Bitte wählen Sie mindestens einen Start- und Endpunkt"
+                                                   u" Ihrer gewünschten Route!")
             return
         # run application
         features = []
         for l in layers:
             features += [f[1] for f in l.selectedFeatures()]
         features = list(set(features))
-        if feature_count == 2:
-            if layer_type == LayerType.Haltung:
-                res, _route, _reload = self.__navigator.calculate_route_haltungen(features[0], features[1])
-            else:
-                res, _route, _reload = self.__navigator.calculate_route_schaechte(features[0], features[1])
+        self.__iface.messageBar().pushMessage("Navigation", "Route wird berechnet...", self.__iface.messageBar().INFO,
+                                              60)
+        if layer_type == LayerType.Haltung:
+            _route = self.__navigator.calculate_route_haltung(features)
         else:
-            if layer_type == LayerType.Haltung:
-                res, _route, _reload = self.__navigator.check_route_haltungen(features)
-            else:
-                res, _route, _reload = self.__navigator.check_route_schaechte(features)
-        if res:
+            _route = self.__navigator.calculate_route_schacht(features)
+        self.__iface.messageBar().clearWidgets()
+        if _route:
             self.__route = _route
         else:
-            self.__show_message_box("Fehler", _route, Type.Error)
-            if _reload:
-                self.__result_db = ""
+            error_msg = self.__navigator.get_error_msg()
+            self.__iface.messageBar().pushCritical("Fehler", error_msg)
             return
         laengsschnitt = plotter.Laengsschnitt(copy.deepcopy(self.__route))
         laengsschnitt.draw()
@@ -526,6 +519,11 @@ class Laengsschnitt:
             self.__default_function = self.__dlg.slider.mousePressEvent
         self.__dlg.slider.mousePressEvent = lambda event: self.__slider_click(event)
         self.__dlg.show()
+
+        # Längsschnitt starten
+        self.__speed_controller.setValue(5)
+        self.__animator.play(5, SliderMode.Forward)
+        self.__speed_controller.set_paused()
 
         # Run the dialog event loop
         result = self.__dlg.exec_()
@@ -577,23 +575,12 @@ class Laengsschnitt:
                                                Type.Selection)
                 if stop:
                     return False
-                filename = QFileDialog.getOpenFileName(self.__dlg,
-                                                       "Wählen Sie eine Simulations-Datenbank".decode("utf-8"),
-                                                       filter="IDBF (*.idbf);; Alle Dateien (*.*)")
-                self.__result_db = filename
-            while self.__spartialite == "":
-                stop = self.__show_message_box("Datenbank",
-                                               "Bitte wählen Sie eine Datenbank aus!",
-                                               Type.Selection)
-                if stop:
-                    return False
-                filename = QFileDialog.getOpenFileName(self.__dlg,
-                                                       "Wählen Sie eine Datenbank".decode("utf-8"),
-                                                       filter="SQLITE (*.sqlite);; Alle Dateien (*.*)")
-                self.__spartialite = filename
+                self.__result_db = QFileDialog.getOpenFileName(self.__dlg,
+                                                               u"Wählen Sie eine Simulations-Datenbank",
+                                                               filter="IDBF (*.idbf);; Alle Dateien (*.*)")
             selected_layers = self.__get_selected_layers()
             if len(selected_layers) == 0:
-                self.__show_message_box("Fehler", "Wählen Sie zunächst ein Layer!", Type.Error)
+                self.__iface.messageBar().pushCritical("Fehler", u"Wählen Sie zunächst ein Layer")
                 return False
             layer_types = []
             for layer in selected_layers:
@@ -606,10 +593,8 @@ class Laengsschnitt:
             if _layer_type in [LayerType.Wehr, LayerType.Pumpe]:
                 _layer_type = LayerType.Haltung
             if _layer_type not in [LayerType.Haltung, LayerType.Schacht]:
-                self.__show_message_box("Fehler", "Ausgewählter Layer wird nicht unterstützt!", Type.Error)
+                self.__iface.messageBar().pushCritical("Fehler", u"Ausgewählter Layer wird nicht unterstützt")
                 return False
-            if self.__navigator is None or self.__navigator.get_id() != self.__id:
-                self.__navigator = Navigator(self.__spartialite, self.__id)
             return selected_layers, _layer_type
 
         def auto_update_changed(state):
@@ -644,7 +629,7 @@ class Laengsschnitt:
                 else:
                     try:
                         layer.selectionChanged.disconnect(selection_changed)
-                    except TypeError:
+                    except TypeError as e:
                         pass
 
         def selection_changed(selection):
@@ -665,8 +650,8 @@ class Laengsschnitt:
                     _schaechte += [_f[1] for _f in _l.selectedFeatures()]
                 elif _layer_type in [LayerType.Haltung, LayerType.Pumpe, LayerType.Wehr]:
                     _haltungen += [_f[1] for _f in _l.selectedFeatures()]
-            _schaechte = list(set(self.__navigator.get_schaechte(_schaechte).get("schaechte")))
-            _haltungen = list(set(self.__navigator.get_haltungen(_haltungen).get("haltungen")))
+            _schaechte = list(set(_schaechte))
+            _haltungen = list(set(_haltungen))
             _route = {"haltungen": _haltungen, "schaechte": _schaechte}
             tmp.refresh(_id=self.__id, haltungen=_route.get("haltungen"),
                         schaechte=_route.get("schaechte"), dbname=self.__result_db)
@@ -681,9 +666,7 @@ class Laengsschnitt:
         for l in layers:
             feature_count += l.selectedFeatureCount()
         if feature_count < 1:
-            self.__show_message_box("Fehler",
-                                    "Bitte wählen Sie mindestens ein Element aus aus!",
-                                    Type.Error)
+            self.__iface.messageBar().pushCritical("Fehler", u"Bitte wählen Sie mindestens ein Element aus!")
             return
 
         layers = self.__get_selected_layers()
@@ -695,8 +678,8 @@ class Laengsschnitt:
                 schaechte += [f[1] for f in l.selectedFeatures()]
             elif layer_type in [LayerType.Haltung, LayerType.Pumpe, LayerType.Wehr]:
                 haltungen += [f[1] for f in l.selectedFeatures()]
-        schaechte = list(set(self.__navigator.get_schaechte(schaechte).get("schaechte")))
-        haltungen = list(set(self.__navigator.get_haltungen(haltungen).get("haltungen")))
+        schaechte = list(set(schaechte))
+        haltungen = list(set(haltungen))
         route = {"haltungen": haltungen, "schaechte": schaechte}
         tmp.get_dialog().auto_update.show()
         subscribe_auto_update()
