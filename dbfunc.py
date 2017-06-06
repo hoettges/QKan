@@ -75,7 +75,7 @@ class DBConnection:
         if dbname is not None:
             # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
             if os.path.exists(dbname):
-                self.consl = splite.connect(database = dbname)
+                self.consl = splite.connect(database = dbname, check_same_thread=False)
                 self.cursl = self.consl.cursor()
             else:
                 iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank wird erstellt. Bitte waren...", level=QgsMessageBar.INFO)
