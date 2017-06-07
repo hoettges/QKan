@@ -2,11 +2,13 @@
 from QKan_Database.dbfunc import DBConnection
 from PyQt4 import QtCore
 import logging
+import os.path
 
 main_logger = logging.getLogger("QKan_Database")
-main_logger.setLevel(logging.CRITICAL)
-ch = logging.StreamHandler()
-ch.setLevel(logging.CRITICAL)
+main_logger.setLevel(logging.INFO)
+logging_file = os.path.join(os.path.dirname(__file__), "log_navigation.txt")
+ch = logging.FileHandler(filename=logging_file, mode="a", encoding="utf8")
+ch.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
 ch.setFormatter(formatter)
 main_logger.addHandler(ch)
@@ -50,6 +52,7 @@ class Navigator:
         :return: Gibt ein Routen-Objekt zurück mit allen Haltungen und Schächten
         :rtype: list
         """
+        self.__log.debug(u"Übergebene Schächte:\t{}".format(nodes))
         endpoint = nodes[0]
         startpoint = nodes[0]
         statement = u"""
@@ -67,10 +70,13 @@ class Navigator:
             elif value > max_value:
                 max_value = value
                 startpoint = n
+        self.__log.info(u"Start- und Endpunkt wurden gesetzt")
+        self.__log.debug(u"Startpunkt:\t{}\nEndpunkt:\t{}".format(startpoint, endpoint))
         nodes.remove(startpoint)
         nodes.remove(endpoint)
         if len(nodes) == 0:
             nodes = None
+        self.__log.debug(u"Zusätzliche Punkte:\t{}".format(nodes))
         return self.__calculate_route_schacht(startpoint, endpoint, additional_points=nodes)
 
     def __calculate_route_schacht(self, startpoint, endpoint, additional_points):
@@ -88,17 +94,17 @@ class Navigator:
         :return: Gibt ein Routen-Objekt zurück, bestehend aus allen Haltungen und Schächten
         :rtype: dict
         """
-        statement = u"""
-            SELECT sohlhoehe FROM schaechte WHERE schnam="{}"
-        """
-        self.__db.sql(statement.format(startpoint))
-        start_hoehe, = self.__db.fetchone()
-        self.__db.sql(statement.format(endpoint))
-        end_hoehe, = self.__db.fetchone()
-        if start_hoehe < end_hoehe:
-            tmp = startpoint
-            startpoint = endpoint
-            endpoint = tmp
+        # statement = u"""
+        #     SELECT sohlhoehe FROM schaechte WHERE schnam="{}"
+        # """
+        # self.__db.sql(statement.format(startpoint))
+        # start_hoehe, = self.__db.fetchone()
+        # self.__db.sql(statement.format(endpoint))
+        # end_hoehe, = self.__db.fetchone()
+        # if start_hoehe < end_hoehe:
+        #     tmp = startpoint
+        #     startpoint = endpoint
+        #     endpoint = tmp
         statement = u"""
         SELECT name
         FROM (SELECT
@@ -117,6 +123,7 @@ class Navigator:
                 """
         self.__db.sql(statement.format(startpoint))
         start_haltungen = [h[0] for h in self.__db.fetchall()]
+        self.__log.debug(u"Start-Haltungen:\t{}".format(start_haltungen))
         statement_2 = u"""
                 SELECT name
                 FROM (SELECT
@@ -135,22 +142,27 @@ class Navigator:
                         """
         self.__db.sql(statement_2.format(endpoint))
         end_haltungen = [h[0] for h in self.__db.fetchall()]
+        self.__log.debug(u"End-Haltungen:\t{}".format(end_haltungen))
         nodes = []
         if additional_points is not None:
             for p in additional_points:
                 self.__db.sql(statement.format(p))
                 nodes += [h[0] for h in self.__db.fetchall()]
-
         possibilities = 0
         nodes = list(set(nodes))
         route = None
+        self.__log.debug(u"Zusätzliche Haltungen:\t{}".format(nodes))
+        self.__log.info(u"Alle nötigen Haltungen gesetzt")
         for start_haltung in start_haltungen:
             for end_haltung in end_haltungen:
                 _nodes = list(set([start_haltung, end_haltung] + nodes))
+                self.__log.debug(u"Aktuelle Haltungen:\t{}".format(_nodes))
                 _route = self.calculate_route_haltung(_nodes)
                 if _route:
+                    self.__log.info(u"Aktuelle Route ist valide")
                     possibilities += 1
                     if possibilities > 1:
+                        self.__log.error(u"Zu viele Möglichkeiten zwischen Start- und End-Haltung.")
                         self.__error_msg = u"Zu viele Möglichkeiten. Bitte wählen Sie einen Wegpunkt auf" \
                                            u" dem kritischen Pfad!"
                         return None
@@ -167,7 +179,9 @@ class Navigator:
         :rtype: dict
         """
         tasks = Tasks(self.__dbname, nodes)
+        self.__log.info(u"Tasks wurden initialisiert")
         routes = tasks.start()
+        self.__log.info(u"Alle möglichen Routen ({}) berechnet".format(len(routes)))
         counter = 0
         result = None
         for route in routes:
@@ -175,17 +189,37 @@ class Navigator:
                 counter += 1
                 result = route
         if counter == 1:
+            self.__log.info(u"Eine einzige mögliche Route gefunden")
             return self.__fetch_data(result)
         elif counter == 0:
+            self.__log.error(u"Keine Route gefunden. Pfad ist fehlerhaft!")
             self.__error_msg = u"Übergebener Pfad ist fehlerhaft."
             return None
         else:
-            self.__error_msg = u"Mehrere Möglichkeiten den Endpunkt zu erreichen. Bitte spezifizieren Sie die Route."
+            self.__log.error(u"Es gibt {} mögliche Routen. Der Pfad muss spezifiziert werden".format(counter))
+            self.__error_msg = u"Mehrere Möglichkeiten ({}) den Endpunkt zu erreichen. Bitte spezifizieren Sie die Route.".format(
+                counter)
             return None
 
     def __fetch_data(self, haltungen):
         """
         Fragt die Datenbank nach den benötigten Attributen ab und speichert sie in einem Dictionary.
+        Das Dictionary hat folgende Struktur:
+        *{haltungen:[haltungsnamen],
+        schaechte:[schachtnamen],
+        schachtinfo:{schachtname:
+            {sohlhoehe:float,
+            deckelhoehe:float}
+            },
+        haltunginfo:{haltungsname:
+            {schachtoben: schachtname,
+            schachtunten: schachtname,
+            laenge: float,
+            sohlhoeheoben: float,
+            sohlhoeheunten: float,
+            querschnitt: float}
+            }
+        }
 
         :param haltungen: Liste aller Haltungs-Namen aus QGis
         :type haltungen: list
@@ -209,6 +243,7 @@ class Navigator:
          WHERE name = "{}"
                  """
         schaechte = []
+        self.__log.debug(u"Haltungen:\t{}".format(haltungen))
         self.__db.sql(statement.format(haltungen[0]))
         schaechte.append(self.__db.fetchone()[0])
         statement = u"""
@@ -230,10 +265,11 @@ class Navigator:
         for h in haltungen:
             self.__db.sql(statement.format(h))
             schaechte.append(self.__db.fetchone()[0])
-        route = {"haltungen": haltungen, "schaechte": schaechte}
-        schacht_info, haltung_info = self.__get_info(route)
-        route["schachtinfo"] = schacht_info
-        route["haltunginfo"] = haltung_info
+        self.__log.debug(u"Schächte:\t{}".format(schaechte))
+        route = dict(haltungen=haltungen, schaechte=schaechte)
+
+        route["schachtinfo"], route["haltunginfo"] = self.__get_info(route)
+        self.__log.info(u"Route wurde erfolgreich erstellt!")
         return route
 
     def __get_info(self, route):
@@ -326,24 +362,19 @@ class Navigator:
         for haltung in route.get("haltungen"):
             self.__db.sql(statement.format(haltung))
             name, schachtoben, schachtunten, laenge, sohlhoeheoben, sohlhoeheunten, querschnitt = self.__db.fetchone()
-            haltung_info[haltung] = {
-                "schachtoben": schachtoben,
-                "schachtunten": schachtunten,
-                "laenge": laenge,
-                "sohlhoeheoben": sohlhoeheoben,
-                "sohlhoeheunten": sohlhoeheunten,
-                "querschnitt": querschnitt
-            }
+            haltung_info[haltung] = dict(schachtoben=schachtoben, schachtunten=schachtunten, laenge=laenge,
+                                         sohlhoeheoben=sohlhoeheoben, sohlhoeheunten=sohlhoeheunten,
+                                         querschnitt=querschnitt)
+        self.__log.info(u"Haltunginfo wurde erstellt")
         statement = u"""
         SELECT sohlhoehe,deckelhoehe FROM schaechte WHERE schnam="{}"
         """
         for schacht in route.get("schaechte"):
             self.__db.sql(statement.format(schacht))
             res = self.__db.fetchone()
-            schacht_info[schacht] = {
-                "deckelhoehe": res[1],
-                "sohlhoehe": res[0]
-            }
+            schacht_info[schacht] = dict(deckelhoehe=res[1], sohlhoehe=res[0])
+
+        self.__log.info(u"Schachtinfo wurde erstellt")
         return schacht_info, haltung_info
 
     def get_error_msg(self):
