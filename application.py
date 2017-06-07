@@ -35,6 +35,17 @@ import slider as s
 from Enums import SliderMode, Type, LayerType
 import copy
 from ganglinie import Ganglinie
+import logging
+
+main_logger = logging.getLogger("QKan_Laengsschnitt")
+main_logger.setLevel(logging.INFO)
+logging_file = os.path.join(os.path.dirname(__file__),"log_laengsschnitt.txt")
+ch = logging.FileHandler(filename=logging_file, mode="a", encoding="utf8")
+ch.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+main_logger.addHandler(ch)
+main_logger.info("Application started")
 
 
 class Laengsschnitt:
@@ -48,6 +59,7 @@ class Laengsschnitt:
             application at run time.
         :type iface: QgsInterface
         """
+        self.__log = logging.getLogger("QKan_Laengsschnitt.application.Laengsschnitt")
         self.__t = 2
         # Save reference to the QGIS interface
         self.__iface = iface
@@ -185,6 +197,7 @@ class Laengsschnitt:
         """
         Schließt den Ganglinien-Dialog, falls geöffnet
         """
+        self.__log.info("Ganglinien-Dialog wird geschlossen")
         self.__dlg2.close()
 
     def unload(self):
@@ -203,11 +216,14 @@ class Laengsschnitt:
         Pausiert die Animation, falls diese läuft.
         """
         if self.__speed_controller.get_mode() != SliderMode.Pause:
+            self.__log.info("Animation ist noch nicht pausiert")
             self.__speed_controller.set_paused()
             self.__animator.pause()
         value = self.__dlg.slider.value()
         maximum = self.__dlg.slider.maximum()
         if value < maximum:
+            self.__log.info("Zeitstrahl-Slider wird ein Schritt weiter gesetzt")
+            self.__log.debug("Zeitstrahl-Slider hat jetzt den Wert {}".format(value + 1))
             self.__dlg.slider.setValue(value + 1)
 
     def __step_backward(self):
@@ -216,11 +232,14 @@ class Laengsschnitt:
         Pausiert die Animation, falls diese läuft.
         """
         if self.__speed_controller.get_mode() != SliderMode.Pause:
+            self.__log.info("Animation ist noch nicht pausiert")
             self.__speed_controller.set_paused()
             self.__animator.pause()
         value = self.__dlg.slider.value()
         minimum = self.__dlg.slider.minimum()
         if value > minimum:
+            self.__log.info("Zeitstrahl-Slider wird ein Schritt zurueck gesetzt")
+            self.__log.debug("Zeitstrahl-Slider hat jetzt den Wert {}".format(value - 1))
             self.__dlg.slider.setValue(value - 1)
 
     def __switch_max_values(self, activate):
@@ -303,11 +322,14 @@ class Laengsschnitt:
                 "QLabel {color:qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #000000, stop:1 #8f8f8f);}")
 
         if self.__speed_controller.get_mode() == SliderMode.Pause:
+            self.__log.info("Speed-Controller ist pausiert")
             self.__animator.pause()
             return
         if value == 0:
+            self.__log.info("Neue Geschwindigkeit ist 0")
             self.__animator.pause()
         else:
+            self.__log.info(u"Animation wird in gewünschte Konfiguration abgespielt")
             self.__animator.play(value, self.__speed_controller.get_mode())
 
     def __slider_click(self, event):
@@ -318,18 +340,24 @@ class Laengsschnitt:
         :param event: Entspricht dem Mausevent, wenn der Slider angeklickt wird
         :type event: QMouseEvent
         """
+        self.__log.info("Der Zeitstrahl-Slider wurde angeklickt")
         ctrl = event.modifiers() == Qt.ControlModifier
         if event.button() == Qt.RightButton:
             if ctrl:
+                self.__log.debug(u"STRG+RMT wurde gedrückt")
                 self.__speed_controller.ctrl_click()
             else:
+                self.__log.debug(u"RMT wurde gedrückt")
                 self.__speed_controller.set_paused()
                 if self.__speed_controller.get_mode() == SliderMode.Pause:
                     self.__animator.pause()
+                else:
+                    self.__log.info("Animation wird fortgesetzt")
         else:
             if self.__speed_controller.get_mode() != SliderMode.Pause:
                 self.__speed_controller.set_paused()
                 self.__animator.pause()
+            self.__log.info("Zeitstrahl-Slider bekommt seinen Default-EventListener zugewiesen")
             self.__default_function(event)
 
     def __select_db(self):
@@ -362,13 +390,12 @@ class Laengsschnitt:
                 name = kv.split("=")[1][1:-1]
             elif kv.startswith("dbname") and self.__spatialite == "":
                 self.__spatialite = kv.split("=")[1][1:-1]
+                self.__log.info("SpatiaLite-Datenbank wurde gesetzt")
+                self.__log.debug(u"SpatiaLite-Datenbank liegt in \"{}\"".format(self.__spatialite))
                 self.__workspace = os.path.dirname(self.__spatialite)
-        types = {
-            "wehre": LayerType.Wehr,
-            "haltungen": LayerType.Haltung,
-            "schaechte": LayerType.Schacht,
-            "pumpen": LayerType.Pumpe
-        }
+                self.__log.debug(u"Workspace wurde auf \"{}\" gesetzt".format(self.__workspace))
+        types = dict(wehre=LayerType.Wehr, haltungen=LayerType.Haltung, schaechte=LayerType.Schacht,
+                     pumpen=LayerType.Pumpe)
         try:
             return types[name]
         except KeyError:
@@ -378,6 +405,7 @@ class Laengsschnitt:
         """
         Wird aufgerufen, wenn der Längsschnitt angeklickt wird. 
         """
+        self.__log.info(u"Längsschnitt-Tool gestartet!")
 
         def init_application():
             """
@@ -389,15 +417,21 @@ class Laengsschnitt:
             :rtype: (list,LayerType)
             """
             if self.__animator is not None:
+                self.__log.info("Animator bereits vorhanden!")
                 self.__animator.pause()
             if self.__speed_controller is not None:
+                self.__log.info("Speed-Controller bereits vorhanden!")
                 self.__speed_controller.reset()
             if self.__ganglinie is not None:
                 self.__dlg2.close()
+                self.__log.info("Ganglinie wurde geschlossen.")
             self.__dlg.close()
             self.__id = random.random()
+            self.__log.info("Neue ID wurde generiert")
+            self.__log.debug("ID:\t{}".format(self.__id))
             selected_layers = self.__get_selected_layers()
             if len(selected_layers) == 0:
+                self.__log.critical(u"Es wurde kein Layer ausgewählt!")
                 self.__iface.messageBar().pushCritical("Fehler", u"Wählen Sie zunächst ein Layer!")
                 return False
             layer_types = []
@@ -407,6 +441,7 @@ class Laengsschnitt:
             if len(layer_types) != 1:
                 for _l in layer_types:
                     if _l not in [LayerType.Haltung, LayerType.Wehr, LayerType.Pumpe]:
+                        self.__log.critical(u"Gewählte Layer sind inkompatibel zueinander!")
                         self.__iface.messageBar().pushCritical("Fehler", "Inkompatible Layer-Kombination!")
                         return False
                 _layer_type = LayerType.Haltung
@@ -415,8 +450,12 @@ class Laengsschnitt:
             if _layer_type in [LayerType.Wehr, LayerType.Pumpe]:
                 _layer_type = LayerType.Haltung
             if _layer_type not in [LayerType.Haltung, LayerType.Schacht]:
+                self.__log.critical(u"Ausgewählter Layer wird nicht unterstützt.")
                 self.__iface.messageBar().pushCritical("Fehler", u"Ausgewählter Layer wird nicht unterstützt!")
                 return False
+            self.__log.info(u"Layer wurde ausgewählt")
+            self.__log.debug(
+                u"Gewählter Layer ist {}".format("Schacht" if _layer_type == LayerType.Schacht else "Haltung"))
             while self.__result_db == "":
                 stop = self.__show_message_box("Ergebnis-Datenbank",
                                                "Bitte wählen Sie eine Ergebnis-Datenbank aus!",
@@ -429,15 +468,20 @@ class Laengsschnitt:
                                                                self.__workspace,
                                                                filter="IDBF (*.idbf);; Alle Dateien (*.*)")
             self.__dlg.label_dbname.setText(self.__result_db)
+            self.__log.info(u"Ergebnis-Datenbank wurde ausgewählt")
+            self.__log.debug("Ergebnis-Datenbank liegt in {}".format(self.__result_db))
 
             if self.__navigator is None or self.__navigator.get_id() != self.__id:
                 self.__navigator = Navigator(self.__spatialite, self.__id)
+            self.__log.info("Navigator wurde initiiert.")
             return selected_layers, _layer_type
 
         initialized = init_application()
         if initialized:
+            self.__log.info(u"Längsschnitt wurde erfolgreich initiiert!")
             layers, layer_type = initialized
         else:
+            self.__log.warning(u"Initiierung abgebrochen. Längsschnitt-Tool wird beendet.")
             return
         speed_controller_initialized = self.__speed_controller is None
         layout = QGridLayout()
@@ -453,15 +497,19 @@ class Laengsschnitt:
                 "Links: Geschwindigkeit einstellen\nRechts: Pause/Start\nStrg+Rechts: Geschwindigkeit umkehren")
             layout.addWidget(self.__speed_label, 1, 0, 1, 1, Qt.AlignCenter)
         self.__dlg.widget.setLayout(layout)
+        self.__log.info("Speed-Controller wurde erfolgreich initiiert und in den Dialog eingebettet.")
         feature_count = 0
         for l in layers:
             feature_count += l.selectedFeatureCount()
+        self.__log.debug("Es wurden {} Elemente selektiert.".format(feature_count))
         if feature_count < 2 and layer_type == LayerType.Schacht:
+            self.__log.critical("Es wurde eine unzureichende Menge an Elementen selektiert!")
             self.__iface.messageBar().pushCritical("Fehler",
                                                    u"Bitte wählen Sie mindestens einen Start- und"
                                                    u" Endpunkt Ihrer gewünschten Route!")
             return
         elif feature_count < 1:
+            self.__log.critical("Es wurde kein Element selektiert!")
             self.__iface.messageBar().pushCritical("Fehler",
                                                    u"Bitte wählen Sie mindestens einen Start- und Endpunkt"
                                                    u" Ihrer gewünschten Route!")
@@ -471,6 +519,7 @@ class Laengsschnitt:
         for l in layers:
             features += [f[1] for f in l.selectedFeatures()]
         features = list(set(features))
+        self.__log.debug(u"{} wurde ausgewählt.".format(features))
         self.__iface.messageBar().pushMessage("Navigation", "Route wird berechnet...", self.__iface.messageBar().INFO,
                                               60)
         if layer_type == LayerType.Haltung:
@@ -479,9 +528,12 @@ class Laengsschnitt:
             _route = self.__navigator.calculate_route_schacht(features)
         self.__iface.messageBar().clearWidgets()
         if _route:
+            self.__log.info(u"Navigation wurde erfolgreich durchgeführt!")
             self.__route = _route
+            self.__log.debug("Route:\t{}".format(self.__route))
         else:
             error_msg = self.__navigator.get_error_msg()
+            self.__log.critical(u"Es trat ein Fehler in der Navigation auf:\t\"{}\"".format(error_msg))
             self.__iface.messageBar().pushCritical("Fehler", error_msg)
             return
         laengsschnitt = plotter.Laengsschnitt(copy.deepcopy(self.__route))
@@ -495,6 +547,7 @@ class Laengsschnitt:
         self.__dlg.verticalLayout.addWidget(self.__toolbar_widget)
         self.__dlg.stackedWidget.insertWidget(0, widget)
         self.__dlg.stackedWidget.setCurrentIndex(0)
+        self.__log.info("Toolbar wurde eingebettet.")
         # init methods
 
         self.__dlg.checkbox_maximum.setChecked(True)
@@ -511,14 +564,17 @@ class Laengsschnitt:
             self.__ganglinie.draw_at(self.__animator.get_timestamps()[self.__animator.get_last_index()])
         self.__animator.set_ganglinie(self.__ganglinie)
         self.__dlg2.auto_update.hide()
+        self.__log.info("Auto-Update-Checkbox wurde versteckt")
         self.__speed_controller.valueChanged.connect(self.__speed_control)
         self.__dlg.slider.valueChanged.connect(self.__animator.go_step)
         self.__dlg.slider.setToolTip(
             "Links: Zeitpunkt einstellen\nRechts: Pause/Start\nStrg+Rechts: Geschwindigkeit umkehren")
         if self.__default_function is None:
             self.__default_function = self.__dlg.slider.mousePressEvent
+            self.__log.info("MousePressEvent des Sliders wurde gespeichert")
         self.__dlg.slider.mousePressEvent = lambda event: self.__slider_click(event)
         self.__dlg.show()
+        self.__log.info("Dialog wird angezeigt")
 
         # Längsschnitt starten
         self.__speed_controller.setValue(5)
@@ -537,6 +593,7 @@ class Laengsschnitt:
             # beenden
         self.__animator.pause()
         self.__speed_controller.reset()
+        self.__log.info(u"Längsschnitt wurde geschlossen!")
 
     def __get_selected_layers(self):
         """
@@ -547,9 +604,11 @@ class Laengsschnitt:
         """
         layers = self.__iface.legendInterface().layers()
         selected_layers = []
+        self.__log.debug(u"Verfügbare Layer:\t{}".format(layers))
         for l in layers:
             if l.selectedFeatureCount() > 0:
                 selected_layers.append(l)
+        self.__log.debug("Selektierte Layer:\t{}".format(selected_layers))
         return selected_layers
 
     def __run_ganglinie(self):
@@ -558,6 +617,7 @@ class Laengsschnitt:
         """
         tmp = Ganglinie(self.__t)
         self.__t += 1
+        self.__log.info(u"Ganglinie hinzugefügt")
 
         def init_application():
             """
@@ -568,18 +628,26 @@ class Laengsschnitt:
             :return: Gibt eine Liste von den selektierten Layern und dem vorliegenden LayerType zurück.
             :rtype: (list,LayerType)
             """
+            self.__log.info("Ganglinien-Tool wurde gestartet!")
+
             self.__id = random.random()
+            self.__log.info("Neue ID wurde generiert")
+            self.__log.debug("ID:\t{}".format(self.__id))
             while self.__result_db == "":
                 stop = self.__show_message_box("Ergebnis-Datenbank",
                                                "Bitte wählen Sie eine Ergebnis-Datenbank aus!",
                                                Type.Selection)
                 if stop:
+                    self.__log.info("Ergebnis-Datenbank-Auswahl wurde abgebrochen.")
                     return False
                 self.__result_db = QFileDialog.getOpenFileName(self.__dlg,
                                                                u"Wählen Sie eine Simulations-Datenbank",
                                                                filter="IDBF (*.idbf);; Alle Dateien (*.*)")
+            self.__log.info(u"Ergebnis-Datenbank wurde ausgewählt")
+            self.__log.debug(u"Ergebnis-Datenbank liegt in {}".format(self.__result_db))
             selected_layers = self.__get_selected_layers()
             if len(selected_layers) == 0:
+                self.__log.critical(u"Es wurde kein Layer ausgewählt!")
                 self.__iface.messageBar().pushCritical("Fehler", u"Wählen Sie zunächst ein Layer")
                 return False
             layer_types = []
@@ -593,8 +661,12 @@ class Laengsschnitt:
             if _layer_type in [LayerType.Wehr, LayerType.Pumpe]:
                 _layer_type = LayerType.Haltung
             if _layer_type not in [LayerType.Haltung, LayerType.Schacht]:
+                self.__log.critical(u"Ausgewählter Layer wird nicht unterstützt.")
                 self.__iface.messageBar().pushCritical("Fehler", u"Ausgewählter Layer wird nicht unterstützt")
                 return False
+            self.__log.info(u"Layer wurde ausgewählt")
+            self.__log.debug(
+                u"Gewählter Layer ist {}".format("Schacht" if _layer_type == LayerType.Schacht else "Haltung"))
             return selected_layers, _layer_type
 
         def auto_update_changed(state):
@@ -604,6 +676,7 @@ class Laengsschnitt:
             :param state: Ist der Zustand der Checkbox, nach dem Klicken 
             :type state: int
             """
+            self.__log.info("Auto-Update wurde {}.".format("aktiviert" if state == 2 else "deaktiviert"))
             if state == 2:
                 subscribe_auto_update()
                 selection_changed([0])
@@ -626,10 +699,13 @@ class Laengsschnitt:
             for layer in important_layers:
                 if subscribing:
                     layer.selectionChanged.connect(selection_changed)
+                    self.__log.info("Event-Listener gesetzt")
                 else:
                     try:
                         layer.selectionChanged.disconnect(selection_changed)
+                        self.__log.info("Event-Listener entfernt")
                     except TypeError as e:
+                        self.__log.warning(u"Beim Entfernen eines Layers trat folgender Fehler auf: {}".format(e))
                         pass
 
         def selection_changed(selection):
@@ -652,20 +728,26 @@ class Laengsschnitt:
                     _haltungen += [_f[1] for _f in _l.selectedFeatures()]
             _schaechte = list(set(_schaechte))
             _haltungen = list(set(_haltungen))
-            _route = {"haltungen": _haltungen, "schaechte": _schaechte}
+            _route = dict(haltungen=_haltungen, schaechte=_schaechte)
+            self.__log.info(u"Selektierung wurde geändert")
+            self.__log.debug(u"Selektierung:\t{}".format(_route))
             tmp.refresh(_id=self.__id, haltungen=_route.get("haltungen"),
                         schaechte=_route.get("schaechte"), dbname=self.__result_db)
             tmp.show()
 
         initialized = init_application()
         if initialized:
+            self.__log.info("Ganglinien-Tool wurde erfolgreich initiiert!")
             layers, layer_type = initialized
         else:
+            self.__log.warning("Initiierung abgebrochen. Ganglinien-Tool wird beendet.")
             return
         feature_count = 0
         for l in layers:
             feature_count += l.selectedFeatureCount()
+        self.__log.debug("Es wurden {} Elemente selektiert.".format(feature_count))
         if feature_count < 1:
+            self.__log.critical("Es wurde kein Element selektiert!")
             self.__iface.messageBar().pushCritical("Fehler", u"Bitte wählen Sie mindestens ein Element aus!")
             return
 
@@ -680,12 +762,17 @@ class Laengsschnitt:
                 haltungen += [f[1] for f in l.selectedFeatures()]
         schaechte = list(set(schaechte))
         haltungen = list(set(haltungen))
-        route = {"haltungen": haltungen, "schaechte": schaechte}
+        route = dict(haltungen=haltungen, schaechte=schaechte)
+        self.__log.info("Route wurde erstellt")
+        self.__log.debug(u"Route:\t{}".format(route))
         tmp.get_dialog().auto_update.show()
+        self.__log.info("Auto-Update-Checkbox wird jetzt angezeigt.")
         subscribe_auto_update()
         tmp.get_dialog().auto_update.stateChanged.connect(auto_update_changed)
         tmp.refresh(_id=self.__id, haltungen=route.get("haltungen"),
                     schaechte=route.get("schaechte"), dbname=self.__result_db)
         tmp.draw()
         tmp.show()
+        self.__log.info("Ganglinie wurde initiiert und geplottet.")
         subscribe_auto_update(False)
+        self.__log.info("Event-Listener auf Layer wurden entfernt.")

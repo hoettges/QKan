@@ -8,6 +8,16 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.dates as mdates
 from Enums import LayerType
+import logging
+
+main_logger = logging.getLogger("QKan_Laengsschnitt")
+# main_logger.setLevel(logging.INFO)
+# ch = logging.FileHandler(filename="log_laengsschnitt.txt", mode="w", encoding="utf8")
+# ch.setLevel(logging.INFO)
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
+# ch.setFormatter(formatter)
+# main_logger.addHandler(ch)
+main_logger.info("Ganglinien-Modul gestartet")
 
 
 class Ganglinie:
@@ -19,6 +29,7 @@ class Ganglinie:
          Ganglinien haben.
         :type t: int
         """
+        self.__log = logging.getLogger("QKan_Laengsschnitt.ganglinie.Ganglinie")
         self.__t = t
         self.__dialog = GanglinieDialog()
         self.__laengsschnitt = None
@@ -57,12 +68,15 @@ class Ganglinie:
         Öffnet den Ganglinien-Dialog.
         """
         if self.__dialog.isVisible():
+            self.__log.info(u"Ganglinie wird bereits angezeigt")
             return
         if self.__laengsschnitt is not None:
             self.__refresh_colors()
         self.__dialog.show()
+        self.__log.info(u"Ganglinie wird angezeigt")
         self.__dialog.exec_()
         if self.__laengsschnitt is not None:
+            self.__log.info(u"Ganglinie wird geschlossen und Farben des Längsschnitts zurückgesetzt")
             self.__laengsschnitt.reset_colors()
 
     def __get_route(self, haltungen, schaechte):
@@ -87,8 +101,9 @@ class Ganglinie:
             for zeitpunkt, auslastung, durchfluss, geschwindigkeit in res:
                 if _haltungen.get(zeitpunkt) is None:
                     _haltungen[zeitpunkt] = {}
-                _haltungen[zeitpunkt][haltung] = {"auslastung": auslastung, "durchfluss": durchfluss,
-                                                  "geschwindigkeit": geschwindigkeit}
+                _haltungen[zeitpunkt][haltung] = dict(auslastung=auslastung, durchfluss=durchfluss,
+                                                      geschwindigkeit=geschwindigkeit)
+        self.__log.info(u"Messdaten der Haltungen wurden abgefragt")
         for schacht in schaechte:
             self.__db.sql(u'SELECT zeitpunkt,zufluss,wasserstand,durchfluss FROM lau_gl_s WHERE "KNOTEN"={}'.format(
                 u"'{}'".format(schacht)))
@@ -96,9 +111,10 @@ class Ganglinie:
             for zeitpunkt, zufluss, wasserstand, durchfluss in res:
                 if _schaechte.get(zeitpunkt) is None:
                     _schaechte[zeitpunkt] = {}
-                _schaechte[zeitpunkt][schacht] = {"zufluss": zufluss, "durchfluss": durchfluss,
-                                                  "wasserstand": wasserstand}
-        return {"schaechte": schaechte, "haltungen": haltungen, "haltunginfo": _haltungen, "schachtinfo": _schaechte}
+                _schaechte[zeitpunkt][schacht] = dict(zufluss=zufluss, durchfluss=durchfluss, wasserstand=wasserstand)
+
+        self.__log.info(u"Messdaten der Schächte wurden abgefragt")
+        return dict(schaechte=schaechte, haltungen=haltungen, haltunginfo=_haltungen, schachtinfo=_schaechte)
 
     def draw(self):
         """
@@ -119,6 +135,7 @@ class Ganglinie:
                     if _y.get(haltung) is None:
                         _y[haltung] = []
                     _y[haltung].append(self.__route.get("haltunginfo").get(zeitpunkt).get(haltung).get(method))
+            self.__log.info(u"Y-Werte der Haltungen wurden zusammengefasst")
             return _y
 
         def draw_schacht():
@@ -134,11 +151,14 @@ class Ganglinie:
                     if _y.get(schacht) is None:
                         _y[schacht] = []
                     _y[schacht].append(self.__route.get("schachtinfo").get(zeitpunkt).get(schacht).get(method))
+            self.__log.info(u"Y-Werte der Schächte wurden zusammengefasst")
             return _y
 
         idx = self.__dialog.combo_type.currentIndex()
+        self.__log.debug(u"Aktueller Index der Layer-Combobox:\t{}".format(idx))
         self.__active_layer = LayerType.Haltung if idx == 0 else LayerType.Schacht
         method_idx = self.__dialog.combo_method.currentIndex()
+        self.__log.debug(u"Aktueller Index der Methoden-Combobox:\t{}".format(method_idx))
         methods = [["durchfluss", "geschwindigkeit", "auslastung"], ["zufluss", "wasserstand", "durchfluss"]]
         method = methods[idx][method_idx]
         axes = [["cbm/s", "m/s", "%"], ["cbm/s", "m NN", "cbm/s"]]
@@ -175,6 +195,7 @@ class Ganglinie:
                 return
             data = self.__route.get("haltungen")
             plot(y, data)
+            self.__log.info(u"Haltungen wurden geplottet")
         else:
             y = draw_schacht()
             if len(y) == 0:
@@ -182,6 +203,7 @@ class Ganglinie:
                 return
             data = self.__route.get("schaechte")
             plot(y, data)
+            self.__log.info(u"Schächte wurden geplottet")
 
         plt.gcf().autofmt_xdate()
         plt.figure(self.__t)
@@ -197,6 +219,7 @@ class Ganglinie:
                     "schachtinfo")):
             self.__x.append(zeitpunkt)
         self.__x = sorted(self.__x)
+        self.__log.debug(u"Alle möglichen Zeitpunkte:\t{}".format(self.__x))
 
     def __get_widget(self):
         """
@@ -208,10 +231,12 @@ class Ganglinie:
         toolbar = NavigationToolbar(canv, qw, True)
         for i in reversed(range(self.__dialog.verticalLayout_2.count())):
             self.__dialog.verticalLayout_2.itemAt(i).widget().setParent(None)
+        self.__log.info(u"Toolbars wurden entfernt")
         self.__toolbar_widget = toolbar
         self.__dialog.verticalLayout_2.addWidget(self.__toolbar_widget)
         self.__dialog.stackedWidget.insertWidget(0, canv)
         self.__dialog.stackedWidget.setCurrentIndex(0)
+        self.__log.info(u"Toolbar und Matplotlib-Widget wurden eingefügt")
 
     def __type_changed(self, index):
         """
@@ -220,9 +245,11 @@ class Ganglinie:
         :param index: Entspricht dem aktuell ausgewählten Typen.
         :type index: int
         """
+        self.__log.info(u"Layer-Combobox wurde umgeschaltet")
         methods = [["Durchfluss", "Geschwindigkeit", "Auslastung"], ["Zufluss", "Wasserstand", "Durchfluss"]]
         for i in range(self.__dialog.combo_method.count()):
             self.__dialog.combo_method.setItemText(i, methods[index][i])
+        self.__log.info(u"Methoden-Combobox wurde mit Items gefüllt")
         self.draw()
         self.__init_colors()
         if self.__laengsschnitt is not None:
@@ -280,24 +307,28 @@ class Ganglinie:
         """
         Speicher die Farbwerte der Ganglinien-Plots in einem Dictionary, um diese auch im Längsschnitt einzufärben.
         """
-        tmp_colors = {"layer": self.__active_layer, "plots": {}}
+        tmp_colors = dict(layer=self.__active_layer, plots={})
         for plot in self.__plots:
             tmp_colors["plots"][plot.get_label()] = plot.get_color()
         self.__colors = tmp_colors
+        self.__log.info(u"Farbwerte der Plots wurden abgespeichert")
+        self.__log.debug(u"Farbwerte:\t{}".format(tmp_colors))
 
     def reset(self):
         """
-        Wird aufgerufen, um die Ganglinie zurückzusetzen. Hier werden alle Plots auf der Figure entfernt.
+        Wird aufgerufen, um die Ganglinie zurückzusetzen. Hier werden alle Plots aus der Figure entfernt.
         """
         for plot in self.__axes:
             try:
                 self.__fig.delaxes(plot)
             except KeyError:
                 pass
+        self.__log.info(u"Plots wurden entfernt")
         self.__plots = []
         if self.__time_plot is not None:
             self.__time_plot = None
             self.__time_axes = None
+            self.__log.info(u"Vertikale Linie wurde zurückgesetzt")
 
     def __refresh_colors(self):
         """
@@ -305,3 +336,4 @@ class Ganglinie:
         """
         self.__colors["layer"] = self.__active_layer
         self.__laengsschnitt.set_colors(self.__colors)
+        self.__log.info(u"Farben des Längsschnitts wurden angepasst")

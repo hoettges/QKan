@@ -3,6 +3,15 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from Enums import SliderMode
+import logging
+
+main_logger = logging.getLogger("QKan_Laengsschnitt")
+# main_logger.setLevel(logging.INFO)
+# ch = logging.FileHandler(filename="log_laengsschnitt.txt", mode="w", encoding="utf8")
+# ch.setLevel(logging.INFO)
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
+# ch.setFormatter(formatter)
+# main_logger.addHandler(ch)
 
 
 class Slider(QSlider):
@@ -15,6 +24,7 @@ class Slider(QSlider):
         * Pausiert den Slider zu beginn und definiert die Vorwärts-Bewegung als letzten Modus.
         """
         super(self.__class__, self).__init__(Qt.Horizontal)
+        self.__log = logging.getLogger("QKan_Laengsschnitt.slider.Slider")
         self.setRange(0, 50)
         self.setSingleStep(1)
         self.setPageStep(5)
@@ -87,10 +97,12 @@ class Slider(QSlider):
         Wird aufgerufen, um die Animation zu pausieren bzw. den Slider visuell als pausiert darzustellen.
         """
         if self.__mode == SliderMode.Pause:
+            self.__log.info(u"Slider ist bereits pausiert und wird unpaused")
             self.__mode = self.__last_mode
         else:
             self.__last_mode = self.__mode
             self.__mode = SliderMode.Pause
+            self.__log.info(u"Slider wurde pausiert")
         self.__update_style()
         self.valueChanged.emit(self.value())
 
@@ -141,6 +153,7 @@ class Slider(QSlider):
                           margin: -2px 0px;
                       } """
         self.setStyleSheet(temp)
+        self.__log.info(u"Slider-Style wurde angepasst")
 
     def reset(self):
         """
@@ -150,6 +163,8 @@ class Slider(QSlider):
         self.set_paused()
         self.__update_style()
         self.setValue(0)
+        self.__log.info(u"Slider wurde zurückgesetzt und pausiert")
+        self.__log.debug(u"Slider-Modus auf Forwärts gesetzt. Value auf 0 gesetzt.")
 
     def get_mode(self):
         """
