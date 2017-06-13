@@ -39,7 +39,7 @@ import logging
 
 main_logger = logging.getLogger("QKan_Laengsschnitt")
 main_logger.setLevel(logging.INFO)
-logging_file = os.path.join(os.path.dirname(__file__),"log_laengsschnitt.txt")
+logging_file = os.path.join(os.path.dirname(__file__), "log_laengsschnitt.txt")
 ch = logging.FileHandler(filename=logging_file, mode="a", encoding="utf8")
 ch.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -472,7 +472,7 @@ class Laengsschnitt:
             self.__log.debug("Ergebnis-Datenbank liegt in {}".format(self.__result_db))
 
             if self.__navigator is None or self.__navigator.get_id() != self.__id:
-                self.__navigator = Navigator(self.__spatialite, self.__id)
+                self.__navigator = MyNavigator(self.__spatialite, self.__id)
             self.__log.info("Navigator wurde initiiert.")
             return selected_layers, _layer_type
 
@@ -776,3 +776,110 @@ class Laengsschnitt:
         self.__log.info("Ganglinie wurde initiiert und geplottet.")
         subscribe_auto_update(False)
         self.__log.info("Event-Listener auf Layer wurden entfernt.")
+
+
+class MyNavigator(Navigator):
+    def get_info(self, route):
+        """
+                * Erstellt Dictionarys, welche folgende Informationen beinhalten.
+                * Es wird je ein Dictionary für die Schächte und die Haltungen gemacht.
+                * Schacht- bzw. Haltungs-Name entspricht dem Key.
+                - Schacht:
+                    +sohlhoehe:float
+                    +deckelhoehe:float
+                - Haltung:
+                    +laenge:float
+                    +schachtoben:str (Schacht-Name aus QGis)
+                    +schachtunten:str (Schacht-Name aus QGis)
+                    +sohlhoeheunten:float
+                    +sohlhoeheoben:float
+                    +querschnitt:float
+
+                :param route: Beinhaltet getrennt von einander die Haltungs- und Schacht-Namen aus QGis.
+                :type route: dict
+                :return: Gibt ein Dictionary zurück mit allen Haltungs- und Schacht-Namen und den nötigen Informationen zu
+                        diesen
+                :rtype: dict
+                """
+        haltung_info = {}
+        schacht_info = {}
+        statement = u"""
+                        SELECT * FROM (SELECT
+                                 haltnam                            AS name,
+                                 schoben,
+                                 schunten,
+                                 laenge,
+                                 COALESCE(sohleoben, SO.sohlhoehe)  AS sohleoben,
+                                 COALESCE(sohleunten, SU.sohlhoehe) AS sohleunten,
+                                 hoehe
+                               FROM haltungen
+                                 LEFT JOIN
+                                 (SELECT
+                                    sohlhoehe,
+                                    schnam
+                                  FROM schaechte) AS SO ON haltungen.schoben = SO.schnam
+                                 LEFT JOIN
+                                 (SELECT
+                                    sohlhoehe,
+                                    schnam
+                                  FROM schaechte) AS SU ON haltungen.schunten = SU.schnam
+                               UNION
+                               SELECT
+                                 wnam         AS name,
+                                 schoben,
+                                 schunten,
+                                 laenge,
+                                 SO.sohlhoehe AS sohleoben,
+                                 SU.sohlhoehe AS sohleunten,
+                                 0.5          AS hoehe
+                               FROM wehre
+                                 LEFT JOIN
+                                 (SELECT
+                                    sohlhoehe,
+                                    schnam
+                                  FROM schaechte) AS SO ON wehre.schoben = SO.schnam
+                                 LEFT JOIN
+                                 (SELECT
+                                    sohlhoehe,
+                                    schnam
+                                  FROM schaechte) AS SU ON wehre.schunten = SU.schnam
+                               UNION
+                               SELECT
+                                 pnam        AS name,
+                                 schoben,
+                                 schunten,
+                                 5            AS laenge,
+                                 SO.sohlhoehe AS sohleoben,
+                                 SU.sohlhoehe AS sohleunten,
+                                 0.5          AS hoehe
+                               FROM pumpen
+                                 LEFT JOIN
+                                 (SELECT
+                                    sohlhoehe,
+                                    schnam
+                                  FROM schaechte) AS SO ON pumpen.schoben = SO.schnam
+                                 LEFT JOIN
+                                 (SELECT
+                                    sohlhoehe,
+                                    schnam
+                                  FROM schaechte) AS SU ON pumpen.schunten = SU.schnam
+                              )
+                        WHERE name="{}"
+                        """
+        for haltung in route.get("haltungen"):
+            self.db.sql(statement.format(haltung))
+            name, schachtoben, schachtunten, laenge, sohlhoeheoben, sohlhoeheunten, querschnitt = self.db.fetchone()
+            haltung_info[haltung] = dict(schachtoben=schachtoben, schachtunten=schachtunten, laenge=laenge,
+                                         sohlhoeheoben=sohlhoeheoben, sohlhoeheunten=sohlhoeheunten,
+                                         querschnitt=querschnitt)
+        self.log.info(u"Haltunginfo wurde erstellt")
+        statement = u"""
+                SELECT sohlhoehe,deckelhoehe FROM schaechte WHERE schnam="{}"
+                """
+        for schacht in route.get("schaechte"):
+            self.db.sql(statement.format(schacht))
+            res = self.db.fetchone()
+            schacht_info[schacht] = dict(deckelhoehe=res[1], sohlhoehe=res[0])
+
+        self.log.info(u"Schachtinfo wurde erstellt")
+        return schacht_info, haltung_info
