@@ -43,6 +43,7 @@ class Slider(QSlider):
         :param e: Entspricht dem Paint-Event beim Aufruf.
         :type e: QPaintEvent
         """
+        super(self.__class__, self).paintEvent(e)
         st = self.style()
         p = QPainter(self)
         v = 0
@@ -59,10 +60,11 @@ class Slider(QSlider):
         p.drawText(pos, "0x")
         v = self.maximum()
         l = metrics.width("50x")
-        slider_pos = st.sliderPositionFromValue(self.minimum(), self.maximum(), v, available) + length - l
-        pos = QPoint(slider_pos, self.rect().bottom())
+        # slider_pos = st.sliderPositionFromValue(self.minimum(), self.maximum(), v, available) + length - l
+        # pos = QPoint(slider_pos, self.rect().bottom())
+        pos = QPoint(self.rect().width()-l, self.rect().bottom())
         p.drawText(pos, "50x")
-        super(self.__class__, self).paintEvent(e)
+
 
     def mouseReleaseEvent(self, _QMouseEvent):
         """

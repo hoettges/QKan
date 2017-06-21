@@ -180,6 +180,8 @@ class Laengsschnitt:
             text=u'Ganglinien-Tool',
             callback=self.__run_ganglinie
         )
+        self.__dlg.setWindowFlags(Qt.Window)
+        self.__dlg2.setWindowFlags(Qt.Window)
 
         workspace = os.path.dirname(__file__)
         self.__dlg.btn_forward.setText("")
@@ -769,6 +771,7 @@ class Laengsschnitt:
         self.__log.info("Auto-Update-Checkbox wird jetzt angezeigt.")
         subscribe_auto_update()
         tmp.get_dialog().auto_update.stateChanged.connect(auto_update_changed)
+        tmp.get_dialog().setWindowFlags(Qt.Window)
         tmp.refresh(_id=self.__id, haltungen=route.get("haltungen"),
                     schaechte=route.get("schaechte"), dbname=self.__result_db)
         tmp.draw()

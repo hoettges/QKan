@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>Form</class>
  <widget class="QWidget" name="Form">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Ganglinien-Tool</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="1" column="0">
@@ -162,6 +165,12 @@
      </item>
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
+       <property name="minimumSize">
+        <size>
+         <width>300</width>
+         <height>300</height>
+        </size>
+       </property>
        <widget class="QWidget" name="page"/>
        <widget class="QWidget" name="page_2"/>
       </widget>
