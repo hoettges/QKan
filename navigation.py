@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from QKan_Database.dbfunc import DBConnection
-from PyQt4 import QtCore
+import itertools
 import logging
 import os.path
+
+from PyQt4 import QtCore
+from QKan_Database.dbfunc import DBConnection
 
 main_logger = logging.getLogger("QKan_Database")
 main_logger.setLevel(logging.INFO)
@@ -94,17 +96,6 @@ class Navigator:
         :return: Gibt ein Routen-Objekt zurück, bestehend aus allen Haltungen und Schächten
         :rtype: dict
         """
-        # statement = u"""
-        #     SELECT sohlhoehe FROM schaechte WHERE schnam="{}"
-        # """
-        # self.__db.sql(statement.format(startpoint))
-        # start_hoehe, = self.__db.fetchone()
-        # self.__db.sql(statement.format(endpoint))
-        # end_hoehe, = self.__db.fetchone()
-        # if start_hoehe < end_hoehe:
-        #     tmp = startpoint
-        #     startpoint = endpoint
-        #     endpoint = tmp
         statement = u"""
         SELECT name
         FROM (SELECT
@@ -147,26 +138,28 @@ class Navigator:
         if additional_points is not None:
             for p in additional_points:
                 self.db.sql(statement.format(p))
-                nodes += [h[0] for h in self.db.fetchall()]
+                nodes.append([h[0] for h in self.db.fetchall()])
+        permutations = itertools.product(*nodes)
+        permutations = [list(p) for p in permutations]
         possibilities = 0
-        nodes = list(set(nodes))
         route = None
         self.log.debug(u"Zusätzliche Haltungen:\t{}".format(nodes))
         self.log.info(u"Alle nötigen Haltungen gesetzt")
         for start_haltung in start_haltungen:
             for end_haltung in end_haltungen:
-                _nodes = list(set([start_haltung, end_haltung] + nodes))
-                self.log.debug(u"Aktuelle Haltungen:\t{}".format(_nodes))
-                _route = self.calculate_route_haltung(_nodes)
-                if _route:
-                    self.log.info(u"Aktuelle Route ist valide")
-                    possibilities += 1
-                    if possibilities > 1:
-                        self.log.error(u"Zu viele Möglichkeiten zwischen Start- und End-Haltung.")
-                        self.__error_msg = u"Zu viele Möglichkeiten. Bitte wählen Sie einen Wegpunkt auf" \
-                                           u" dem kritischen Pfad!"
-                        return None
-                    route = _route
+                for permutation in permutations:
+                    _nodes = list(set([start_haltung, end_haltung] + list(permutation)))
+                    self.log.debug(u"Aktuelle Haltungen:\t{}".format(_nodes))
+                    _route = self.calculate_route_haltung(_nodes)
+                    if _route:
+                        self.log.info(u"Aktuelle Route ist valide")
+                        possibilities += 1
+                        if possibilities > 1:
+                            self.log.error(u"Zu viele Möglichkeiten zwischen Start- und End-Haltung.")
+                            self.__error_msg = u"Zu viele Möglichkeiten. Bitte wählen Sie einen Wegpunkt auf" \
+                                               u" dem kritischen Pfad!"
+                            return None
+                        route = _route
         return route
 
     def calculate_route_haltung(self, nodes):
@@ -178,27 +171,24 @@ class Navigator:
         :return: Gibt eine Routen-Objekt mit allen Haltungen und Schächten zurück
         :rtype: dict
         """
-        tasks = Tasks(self.__dbname, nodes)
-        self.log.info(u"Tasks wurden initialisiert")
-        routes = tasks.start()
-        self.log.info(u"Alle möglichen Routen ({}) berechnet".format(len(routes)))
-        counter = 0
-        result = None
-        for route in routes:
-            if set(route).issuperset(nodes):
-                counter += 1
-                result = route
-        if counter == 1:
+        if len(nodes) == 1:
+            routes = [nodes]
+        else:
+            tasks = Tasks(self.__dbname, nodes)
+            self.log.info(u"Tasks wurden initialisiert")
+            routes = tasks.start()
+            self.log.info(u"Alle möglichen Routen ({}) berechnet".format(len(routes)))
+        if len(routes) == 1:
             self.log.info(u"Eine einzige mögliche Route gefunden")
-            return self.__fetch_data(result)
-        elif counter == 0:
+            return self.__fetch_data(routes[0])
+        elif len(routes) == 0:
             self.log.error(u"Keine Route gefunden. Pfad ist fehlerhaft!")
             self.__error_msg = u"Übergebener Pfad ist fehlerhaft."
             return None
         else:
-            self.log.error(u"Es gibt {} mögliche Routen. Der Pfad muss spezifiziert werden".format(counter))
+            self.log.error(u"Es gibt {} mögliche Routen. Der Pfad muss spezifiziert werden".format(len(routes)))
             self.__error_msg = u"Mehrere Möglichkeiten ({}) den Endpunkt zu erreichen. Bitte spezifizieren Sie die Route.".format(
-                counter)
+                len(routes))
             return None
 
     def __fetch_data(self, haltungen):
@@ -275,7 +265,6 @@ class Navigator:
     def get_info(self, route):
         pass
 
-
     def get_error_msg(self):
         """
         Getter der Error-Message.
@@ -324,6 +313,13 @@ class Worker(QtCore.QRunnable):
         :return: Gibt eine Liste von allen möglichen Routen zurück
         :rtype: list
         """
+        results = []
+        self.__get_routes_recursive([startpoint], results)
+        return results
+
+    def __get_routes_recursive(self, haltungen, results):
+        if set(haltungen).issuperset(set(self.__nodes)):
+            return haltungen
         statement = u"""SELECT name
         FROM (SELECT
                 haltnam AS name,
@@ -353,27 +349,16 @@ class Worker(QtCore.QRunnable):
                        FROM pumpen)
            WHERE name = "{}")
             """
-        next_haltung = startpoint
-        routes = []
-        haltungen = [next_haltung]
-        next_haltungen = []
-        while not set(haltungen).issuperset(set(self.__nodes)):
-            self.__db.sql(statement.format(next_haltung))
-            next_haltungen = self.__db.fetchall()
-            if len(next_haltungen) == 0:
-                break
-            elif len(next_haltungen) == 1:
-                next_haltung, = next_haltungen[0]
-                haltungen.append(next_haltung)
-            else:
-                break
-        if len(next_haltungen) > 1:
-            for option, in next_haltungen:
-                for route in self.__get_routes(option):
-                    routes.append(haltungen + route)
-        else:
-            routes.append(haltungen)
-        return routes
+        self.__db.sql(statement.format(haltungen[-1]))
+        next_haltungen = self.__db.fetchall()
+        if len(next_haltungen) == 0:
+            return
+        for option, in next_haltungen:
+            hCopy = list(haltungen)
+            hCopy.append(option)
+            res = self.__get_routes_recursive(hCopy, results)
+            if res is not None:
+                results.append(res)
 
 
 class Tasks(QtCore.QObject):
