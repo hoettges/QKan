@@ -111,7 +111,7 @@ def createUnbefFlaechen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
     del dbQK
 
     iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage(u"Information", u"Restflächen sind erstellt!", level=QgsMessageBar.INFO)
+    iface.messageBar().pushMessage(u"Information", u"Restflächen sind erstellt! Bitte QGIS-Fenster aktualisieren!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
 
 
