@@ -66,7 +66,7 @@ def fehlermeldung(title, text):
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_forms, dbtyp = 'SpatiaLite'):
+def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_forms, check_tabinit, dbtyp = 'SpatiaLite'):
 
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -88,16 +88,16 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
     dbHE = FBConnection(database_HE)        # Datenbankobjekt der HE-Datenbank zum Lesen
 
     if dbHE is None:
-        fehlermeldung("Fehler",u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_HE))
-        iface.messageBar().pushMessage("Fehler", u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+        fehlermeldung("Fehler in QKan_Import_from_HE",u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_HE))
+        iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE", u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
             database_HE), level=QgsMessageBar.CRITICAL)
         return None
 
     dbQK = DBConnection(dbname=database_QKan, epsg=epsg)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
     if dbQK is None:
-        fehlermeldung("Fehler", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-        iface.messageBar().pushMessage("Fehler", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+        fehlermeldung("Fehler in QKan_Import_from_HE", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+        iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
             database_QKan), level=QgsMessageBar.CRITICAL)
         return None
     
@@ -143,20 +143,21 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
     for el in daten:
         ref_simulationsstatus[el[0]] = el[1]
 
-# ------------------------------------------------------------------------------
-# Daten aus den Referenztabellen der HE-Datenbank übernehmen
+    # ------------------------------------------------------------------------------
+    # Daten aus den Referenztabellen der HE-Datenbank übernehmen
 
-#    todo...
+    #    todo...
 
 
-# ------------------------------------------------------------------------------
-# Haltungsdaten
-# Feld [abflussart] entspricht dem Eingabefeld "System", das in einem Nachschlagefeld die 
-# Werte 'Freispiegel', 'Druckabfluss', 'Abfluss im offenen Profil' anbietet
+    # ------------------------------------------------------------------------------
+    # Haltungsdaten
+    # Feld [abflussart] entspricht dem Eingabefeld "System", das in einem Nachschlagefeld die 
+    # Werte 'Freispiegel', 'Druckabfluss', 'Abfluss im offenen Profil' anbietet
 
     # Tabelle in QKan-Datenbank leeren
-    sql = 'DELETE FROM haltungen'
-    dbQK.sql(sql)
+    if check_tabinit:
+        sql = 'DELETE FROM haltungen'
+        dbQK.sql(sql)
 
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
@@ -275,7 +276,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                     createdat=createdat)
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO haltungen: \n" + str((geom, haltnam, schoben, schunten, 
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql INSERT INTO haltungen: \n" + \
+                str((geom, haltnam, schoben, schunten, 
                 hoehe, breite, laenge, sohleoben, sohleunten, 
                 deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus)) + '\n\n')
 
@@ -283,21 +285,22 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             dbQK.sql(sql)
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nFehler in sql: \n" + sql + '\n\n')
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql: \n" + sql + '\n\n')
 
     dbQK.commit()
 
 
-# ------------------------------------------------------------------------------
-# Schachtdaten
-# Das Feld [KANALART] enthält das Entwasserungssystem (Schmutz-, Regen- oder Mischwasser)
-# Das Feld [ART] enthält die Information, ob es sich um einen Startknoten oder einen Inneren Knoten handelt.
-# oder: um was für eine #Verzweigung es sich handelt (Wunsch von Herrn Wippermann)...???
+    # ------------------------------------------------------------------------------
+    # Schachtdaten
+    # Das Feld [KANALART] enthält das Entwasserungssystem (Schmutz-, Regen- oder Mischwasser)
+    # Das Feld [ART] enthält die Information, ob es sich um einen Startknoten oder einen Inneren Knoten handelt.
+    # oder: um was für eine #Verzweigung es sich handelt (Wunsch von Herrn Wippermann)...???
 
 
     # Tabelle in QKan-Datenbank leeren
-    sql = 'DELETE FROM schaechte'
-    dbQK.sql(sql)
+    if check_tabinit:
+        sql = 'DELETE FROM schaechte'
+        dbQK.sql(sql)
 
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
@@ -372,19 +375,20 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             dbQK.sql(sql)
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nSchächte: in sql: \n" + sql + '\n\n')
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nSchächte: in sql: \n" + sql + '\n\n')
 
     dbQK.commit()
 
 
 
-# ------------------------------------------------------------------------------
-# Speicherschachtdaten
+    # ------------------------------------------------------------------------------
+    # Speicherschachtdaten
 
 
     # Tabelle in QKan-Datenbank leeren
-    # sql = 'DELETE FROM speicherschaechte'
-    # dbQK.sql(sql)
+    if check_tabinit:
+        sql = 'DELETE FROM speicherschaechte'
+        dbQK.sql(sql)
 
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
@@ -447,19 +451,20 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             dbQK.sql(sql)
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nSpeicherschachtdaten in sql: \n" + sql + '\n\n')
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nSpeicherschachtdaten in sql: \n" + sql + '\n\n')
 
     dbQK.commit()
 
 
-# ------------------------------------------------------------------------------
-# Auslässe
-# Das Feld [TYP] enthält den Auslasstyp (0=Frei, 1=Normal, 2= Konstant, 3=Tide, 4=Zeitreihe)
+    # ------------------------------------------------------------------------------
+    # Auslässe
+    # Das Feld [TYP] enthält den Auslasstyp (0=Frei, 1=Normal, 2= Konstant, 3=Tide, 4=Zeitreihe)
 
 
     # Tabelle in QKan-Datenbank leeren
-    # sql = 'DELETE FROM auslaesse'
-    # dbQK.sql(sql)
+    if check_tabinit:
+        sql = 'DELETE FROM auslaesse'
+        dbQK.sql(sql)
 
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
@@ -531,17 +536,18 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             dbQK.sql(sql)
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nAuslässe: in sql: \n" + sql + '\n\n')
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nAuslässe: in sql: \n" + sql + '\n\n')
 
     dbQK.commit()
 
 
-# ------------------------------------------------------------------------------
-# Pumpen
+    # ------------------------------------------------------------------------------
+    # Pumpen
 
     # Tabelle in QKan-Datenbank leeren
-    sql = 'DELETE FROM pumpen'
-    dbQK.sql(sql)
+    if check_tabinit:
+        sql = 'DELETE FROM pumpen'
+        dbQK.sql(sql)
 
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
@@ -632,23 +638,24 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
 
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO pumpen: \n" + str((pnam, schoben, \
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql INSERT INTO pumpen: \n" + str((pnam, schoben, \
                 schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, geom)) + '\n\n')
 
         try:
             dbQK.sql(sql)
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nPumpen: in sql: \n" + sql + '\n\n')
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nPumpen: in sql: \n" + sql + '\n\n')
     dbQK.commit()
 
 
-# ------------------------------------------------------------------------------
-# Wehre
+    # ------------------------------------------------------------------------------
+    # Wehre
 
     # Tabelle in QKan-Datenbank leeren
-    sql = 'DELETE FROM wehre'
-    dbQK.sql(sql)
+    if check_tabinit:
+        sql = 'DELETE FROM wehre'
+        dbQK.sql(sql)
 
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
@@ -728,7 +735,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         except BaseException as e:
             fehlermeldung('Fehler', str(e))
             ok = False
-            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO wehre: \n" + str((wnam, schoben, schunten,
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql INSERT INTO wehre: \n" + str((wnam, schoben, schunten,
                           schwellenhoehe, kammerhoehe, laenge, uebeiwert, geom)) + '\n\n')
 
         if ok:
@@ -736,12 +743,12 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                 dbQK.sql(sql)
             except BaseException as e:
                 fehlermeldung('Fehler', str(e))
-                fehlermeldung("Fehler", u"\nWehre: Fehler in sql: \n" + sql + u'\n\n')
+                fehlermeldung("Fehler in QKan_Import_from_HE", u"\nWehre: Fehler in sql: \n" + sql + u'\n\n')
     dbQK.commit()
 
 
-# ------------------------------------------------------------------------------
-# Wehre
+    # ------------------------------------------------------------------------------
+    # Teinleinzugsgebiete
 
     # Tabelle in QKan-Datenbank bleibt bestehen, damit gegebenenfalls erstellte 
     # Teileinzugsgebiete, deren Geo-Objekte ja in HYSTEM-EXTRAN nicht verwaltet
@@ -786,7 +793,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             ok = True
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nFehler in sql INSERT INTO Teilgebiete: \n" + str((tgnam, ewdichte, wverbrauch, stdmittel,
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql INSERT INTO Teilgebiete: \n" + \
+                str((tgnam, ewdichte, wverbrauch, stdmittel,
                 fremdwas, flaeche, kommentar, createdat)) + '\n\n')
             ok = False
 
@@ -795,15 +803,16 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                 dbQK.sql(sql)
             except BaseException as e:
                 fehlermeldung('SQL-Fehler', str(e))
-                fehlermeldung("Fehler", u"\nTeilgebiete: Fehler in sql: \n" + sql + u'\n\n')
+                fehlermeldung("Fehler in QKan_Import_from_HE", u"\nTeilgebiete: Fehler in sql: \n" + sql + u'\n\n')
     dbQK.commit()
 
-# ------------------------------------------------------------------------------
-# Speicherkennlinien
+    # ------------------------------------------------------------------------------
+    # Speicherkennlinien
 
     # Tabelle in QKan-Datenbank leeren
-    sql = 'DELETE FROM speicherkennlinien'
-    dbQK.sql(sql)
+    if check_tabinit:
+        sql = 'DELETE FROM speicherkennlinien'
+        dbQK.sql(sql)
 
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
@@ -836,16 +845,17 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             dbQK.sql(sql)
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nSpeicherkennlinien:Fehler in sql: \n" + sql + u'\n\n')
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nSpeicherkennlinien:Fehler in sql: \n" + sql + u'\n\n')
     dbQK.commit()
 
 
-# ------------------------------------------------------------------------------
-# Sonderprofildaten
+    # ------------------------------------------------------------------------------
+    # Sonderprofildaten
 
     # Tabelle in QKan-Datenbank leeren
-    sql = 'DELETE FROM profildaten'
-    dbQK.sql(sql)
+    if check_tabinit:
+        sql = 'DELETE FROM profildaten'
+        dbQK.sql(sql)
 
     # Daten aUS ITWH-Datenbank abfragen
     sql = '''
@@ -878,10 +888,82 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             dbQK.sql(sql)
         except BaseException as e:
             fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler", u"\nSonderprofildaten: Fehler in sql: \n" + sql + u'\n\n')
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nSonderprofildaten: Fehler in sql: \n" + sql + u'\n\n')
     dbQK.commit()
 
-        
+    # ------------------------------------------------------------------------------
+    # Abflussparameter
+
+    # Tabelle in QKan-Datenbank leeren
+    if check_tabinit:
+        sql = 'DELETE FROM abflussparameter'
+        dbQK.sql(sql)
+
+    # Daten aUS ITWH-Datenbank abfragen
+    sql = u'''
+        SELECT 
+            NAME AS apnam_ansi,
+            ABFLUSSBEIWERTANFANG AS anfangsabflussbeiwert,
+            ABFLUSSBEIWERTENDE AS endabflussbeiwert,
+            MULDENVERLUST AS muldenverlust,
+            BENETZUNGSVERLUST AS benetzungsverlust,
+            BENETZUNGSPEICHERSTART AS benetzung_startwert,
+            MULDENAUFFUELLGRADSTART AS mulden_startwert,
+            TYP AS aptyp,
+            BODENKLASSE AS bodenklasse_ansi,
+            LASTMODIFIED AS createdat,
+            KOMMENTAR AS kommentar_ansi
+        FROM ABFLUSSPARAMETER'''
+
+    dbHE.sql(sql)
+    daten = dbHE.fetchall()
+
+    # Abflussparameter in die QKan-DB schreiben
+
+    # Zuerst sicherstellen, dass die Datensätze nicht schon vorhanden sind. Falls doch, werden sie überschrieben
+    sql = u'SELECT apnam FROM abflussparameter'
+    dbQK.sql(sql)
+    datqk = [el[0] for el in dbQK.fetchall()]
+
+    for attr in daten:
+        ( apnam_ansi, anfangsabflussbeiwert, endabflussbeiwert, muldenverlust, benetzungsverlust,
+          benetzung_startwert, mulden_startwert, aptyp, bodenklasse_ansi, createdat, kommentar_ansi) = \
+          ['NULL' if el is None else el for el in attr]
+
+        (apnam, bodenklasse, kommentar) = [tt.decode('iso-8859-1') for tt in (apnam_ansi, bodenklasse_ansi, kommentar_ansi)]
+
+        if aptyp == 0:
+            bodenklasse = u'Undurchlaessig'          # in QKan default für befestigte Flächen
+
+        # Datensatz in die QKan-DB schreiben
+
+        # Falls Datensatz bereits vorhanden: löschen
+        if apnam in datqk:
+            sql = u"DELETE FROM abflussparameter WHERE apnam = '{}'".format(apnam)
+            dbQK.sql(sql)
+
+        sql = u"""INSERT INTO abflussparameter
+              ( apnam, anfangsabflussbeiwert, endabflussbeiwert, 
+                benetzungsverlust, muldenverlust, 
+                benetzung_startwert, mulden_startwert, 
+                bodenklasse, kommentar, createdat) 
+              VALUES 
+              ( '{apnam}', {anfangsabflussbeiwert}, {endabflussbeiwert}, 
+                {benetzungsverlust}, {muldenverlust}, 
+                {benetzung_startwert}, {mulden_startwert}, 
+                '{bodenklasse}', '{kommentar}', '{createdat}')""".format(apnam=apnam, 
+                anfangsabflussbeiwert=anfangsabflussbeiwert, endabflussbeiwert=endabflussbeiwert,
+                benetzungsverlust=benetzungsverlust, muldenverlust=muldenverlust,
+                benetzung_startwert=benetzung_startwert, mulden_startwert=mulden_startwert,
+                bodenklasse=bodenklasse, kommentar=kommentar, createdat=createdat)
+
+        try:
+            dbQK.sql(sql)
+        except BaseException as e:
+            fehlermeldung('SQL-Fehler', str(e))
+            fehlermeldung("Fehler in QKan_Import_from_HE", u"\nAbflussparameter: Fehler in sql: \n" + sql + u'\n\n')
+    dbQK.commit()
+
     # ------------------------------------------------------------------------------
     # Schachttypen auswerten. Dies geschieht ausschließlich mit SQL-Abfragen
 
@@ -964,37 +1046,37 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         dbQK.sql(sql_typAnf)
     except BaseException as e:
         fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler", u"\nFehler in sql_typAnf: \n" + sql_typAnf + '\n\n')
+        fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql_typAnf: \n" + sql_typAnf + '\n\n')
 
     try:
         dbQK.sql(sql_typEnd)
     except BaseException as e:
         fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler", u"\nFehler in sql_typEnd: \n" + sql_typEnd + '\n\n')
+        fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql_typEnd: \n" + sql_typEnd + '\n\n')
 
     try:
         dbQK.sql(sql_typHoch)
     except BaseException as e:
         fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler", u"\nFehler in sql_typHoch: \n" + sql_typHoch + '\n\n')
+        fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql_typHoch: \n" + sql_typHoch + '\n\n')
 
     try:
         dbQK.sql(sql_typTief)
     except BaseException as e:
         fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler", u"\nFehler in sql_typTief: \n" + sql_typTief + '\n\n')
+        fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql_typTief: \n" + sql_typTief + '\n\n')
 
     try:
         dbQK.sql(sql_typZweig)
     except BaseException as e:
         fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler", u"\nFehler in sql_typZweig: \n" + sql_typZweig + '\n\n')
+        fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql_typZweig: \n" + sql_typZweig + '\n\n')
 
     try:
         dbQK.sql(sql_typEinzel)
     except BaseException as e:
         fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler", u"\nFehler in sql_typEinzel: \n" + sql_typEinzel + '\n\n')
+        fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql_typEinzel: \n" + sql_typEinzel + '\n\n')
 
     dbQK.commit()
     
@@ -1010,14 +1092,14 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         dbHE.sql(sql)
     except BaseException as e:
         fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler", u"\nFehler in sql_zoom: \n" + sql + '\n\n')
+        fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql_zoom: \n" + sql + '\n\n')
 
     daten = dbHE.fetchone()
     try:
         zoomxmin, zoomxmax, zoomymin, zoomymax = daten
     except BaseException as e:
         fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler", u"\nFehler in sql_zoom; daten= " + str(daten) + '\n')
+        fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql_zoom; daten= " + str(daten) + '\n')
 
     # --------------------------------------------------------------------------
     # Projektionssystem für die Projektdatei vorbereiten
@@ -1029,7 +1111,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         dbQK.sql(sql)
     except BaseException as e:
         fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler", u"\nFehler in sql_coordsys: \n" + sql + '\n\n')
+        fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler in sql_coordsys: \n" + sql + '\n\n')
 
     srid = dbQK.fetchone()[0]
     try:
@@ -1047,7 +1129,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy'
 
         fehlermeldung('\nFehler in "daten"', str(e))
-        fehlermeldung("Fehler", u"\nFehler bei der Ermittlung der srid: \n" + str(daten))
+        fehlermeldung("Fehler in QKan_Import_from_HE", u"\nFehler bei der Ermittlung der srid: \n" + str(daten))
 
 
     # --------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="" version="2.18.5">
+<qgis projectname="" version="2.18.9">
   <title></title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
@@ -7,82 +7,82 @@
     <customproperties/>
     <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="Schächte">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Auslässe">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Auslässe">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Haltungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Sonderbauwerke">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Flächen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="teilgebiete">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="teilgebiete">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20170508223029630" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;tezg&quot; (geom) sql=" name="tezg">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20170508223029630" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;tezg&quot; (geom) sql=" name="tezg">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="flaechen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="flaechen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Referenztabellen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;profile&quot; sql=" name="Profile">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;profile&quot; sql=" name="Profile">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
+      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Kennlinien">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh/muster-modelldatenbank.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/itwh/muster-modelldatenbank.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
@@ -91,23 +91,23 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>3550172.24380212230607867</xmin>
-      <ymin>5799560.95046504493802786</ymin>
-      <xmax>3550705.96880212193354964</xmax>
-      <ymax>5799934.65546504314988852</ymax>
+      <xmin>3550101.47431177273392677</xmin>
+      <ymin>5799534.95797712448984385</ymin>
+      <xmax>3550404.72763889655470848</xmax>
+      <ymax>5799747.29070388618856668</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
     <destinationsrs>
       <spatialrefsys>
-        <proj4>dummy</proj4>
-        <srsid>101623</srsid>
-        <srid>0</srid>
-        <authid>EPSG: dummy</authid>
-        <description>dummy</description>
-        <projectionacronym>dummy</projectionacronym>
-        <ellipsoidacronym>dummy</ellipsoidacronym>
-        <geographicflag>true</geographicflag>
+        <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+        <srsid>2647</srsid>
+        <srid>31467</srid>
+        <authid>EPSG:31467</authid>
+        <description>DHDN / Gauss-Kruger zone 3</description>
+        <projectionacronym>tmerc</projectionacronym>
+        <ellipsoidacronym>bessel</ellipsoidacronym>
+        <geographicflag>false</geographicflag>
       </spatialrefsys>
     </destinationsrs>
     <rendermaptile>0</rendermaptile>
@@ -121,6 +121,7 @@
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="WebAtlasDE20161016215518099"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161221075653754"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="teilgebiete20170214092005309"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="muster_modelldatenbank_geo20170611082328472"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20170504083519678"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508214559105"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="auslaesse20161130084229247"/>
@@ -284,6 +285,59 @@
       </legendlayer>
     </legendgroup>
   </legend>
+  <mapcanvas>
+    <units>meters</units>
+    <extent>
+      <xmin>3550101.47431177273392677</xmin>
+      <ymin>5799534.95797712448984385</ymin>
+      <xmax>3550404.72763889655470848</xmax>
+      <ymax>5799747.29070388618856668</ymax>
+    </extent>
+    <rotation>0</rotation>
+    <projections>1</projections>
+    <destinationsrs>
+      <spatialrefsys>
+        <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+        <srsid>2647</srsid>
+        <srid>31467</srid>
+        <authid>EPSG:31467</authid>
+        <description>DHDN / Gauss-Kruger zone 3</description>
+        <projectionacronym>tmerc</projectionacronym>
+        <ellipsoidacronym>bessel</ellipsoidacronym>
+        <geographicflag>false</geographicflag>
+      </spatialrefsys>
+    </destinationsrs>
+    <rendermaptile>0</rendermaptile>
+    <layer_coordinate_transform_info>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20170504083915353"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161204084617148"/>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170504083608994"/>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508214302213"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen20161016203756230"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="Speicher_Kopie20161221080207994"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="WebAtlasDE20161016215518099"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161221075653754"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="teilgebiete20170214092005309"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="muster_modelldatenbank_geo20170611082328472"/>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20170504083519678"/>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508214559105"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="auslaesse20161130084229247"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="speicherschaechte20161201095216459"/>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="teilgebiete20170504084043867"/>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508223029630"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen_Kopie20161016203906444"/>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508214657189"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="wehre20161125174724734"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161220162259105"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161016203756252"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="auslaesse20161130084226998"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161016203756255"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="pumpen20161017080913064"/>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170504084131477"/>
+      <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="speicherschaechte20161201095218755"/>
+      <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="WebAtlasDE20170514231342582"/>
+    </layer_coordinate_transform_info>
+  </mapcanvas>
   <Composer title="test1" visible="0">
     <Composition resizeToContentsMarginLeft="0" snapping="0" showPages="1" guidesVisible="1" resizeToContentsMarginTop="0" worldFileMap="" alignmentSnap="1" printResolution="300" paperWidth="297" gridVisible="0" snapGridOffsetX="0" smartGuides="1" snapGridOffsetY="0" resizeToContentsMarginRight="0" snapTolerancePixels="5" printAsRaster="0" generateWorldFile="0" paperHeight="210" numPages="1" snapGridResolution="10" resizeToContentsMarginBottom="0">
       <symbol alpha="1" clip_to_extent="1" type="fill" name="">
@@ -381,14 +435,14 @@
       <layername>Auslässe</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101624</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="System">spatialite</provider>
@@ -811,7 +865,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -878,7 +932,7 @@ def my_form_open(dialog, layer, feature):
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="65540">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="pk"/>
           <column width="-1" hidden="0" type="field" name="kommentar"/>
@@ -953,7 +1007,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -996,7 +1050,7 @@ def my_form_open(dialog, layer, feature):
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="2">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="pk"/>
           <column width="-1" hidden="0" type="field" name="bezeichnung"/>
@@ -1122,7 +1176,7 @@ def my_form_open(dialog, layer, feature):
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="-1207517405">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="pk"/>
           <column width="-1" hidden="0" type="field" name="bknam"/>
@@ -1205,7 +1259,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1304,14 +1358,14 @@ def my_form_open(dialog, layer, feature):
       <layername>flaechen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101625</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="System">spatialite</provider>
@@ -1347,6 +1401,25 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="createdat">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueMap" name="he_typ">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Direktabfluss" value="0"/>
+            <value key="Fließzeiten" value="1"/>
+            <value key="Schwerpunktfließzeit" value="2"/>
+          </widgetv2config>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="speicherzahl">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="speicherkonst">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="fliesszeit">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="fliesszeitkanal">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
@@ -1580,6 +1653,11 @@ def my_form_open(dialog, layer, feature):
         <alias field="abflussparameter" index="6" name=""/>
         <alias field="kommentar" index="7" name=""/>
         <alias field="createdat" index="8" name=""/>
+        <alias field="he_typ" index="9" name=""/>
+        <alias field="speicherzahl" index="10" name=""/>
+        <alias field="speicherkonst" index="11" name=""/>
+        <alias field="fliesszeit" index="12" name=""/>
+        <alias field="fliesszeitkanal" index="13" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -1596,6 +1674,11 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="kommentar"/>
           <column width="-1" hidden="0" type="field" name="createdat"/>
           <column width="-1" hidden="1" type="actions"/>
+          <column width="-1" hidden="0" type="field" name="he_typ"/>
+          <column width="-1" hidden="0" type="field" name="speicherzahl"/>
+          <column width="-1" hidden="0" type="field" name="speicherkonst"/>
+          <column width="-1" hidden="0" type="field" name="fliesszeitkanal"/>
+          <column width="-1" hidden="0" type="field" name="fliesszeit"/>
         </columns>
       </attributetableconfig>
       <editform>./eingabemasken/flaechen.ui</editform>
@@ -1636,6 +1719,11 @@ def my_form_open(dialog, layer, feature):
         <default field="abflussparameter" expression=""/>
         <default field="kommentar" expression=""/>
         <default field="createdat" expression=""/>
+        <default field="he_typ" expression=""/>
+        <default field="speicherzahl" expression=""/>
+        <default field="speicherkonst" expression=""/>
+        <default field="fliesszeit" expression=""/>
+        <default field="fliesszeitkanal" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "flnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
@@ -1648,14 +1736,14 @@ def my_form_open(dialog, layer, feature):
       <layername>Haltungen nach Typ</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101626</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="UTF-8">spatialite</provider>
@@ -2121,7 +2209,7 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/bufferColorB" value="255"/>
         <property key="labeling/bufferColorG" value="255"/>
         <property key="labeling/bufferColorR" value="255"/>
-        <property key="labeling/bufferDraw" value="false"/>
+        <property key="labeling/bufferDraw" value="true"/>
         <property key="labeling/bufferJoinStyle" value="64"/>
         <property key="labeling/bufferNoFill" value="false"/>
         <property key="labeling/bufferSize" value="1"/>
@@ -2134,14 +2222,14 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/centroidWhole" value="false"/>
         <property key="labeling/decimals" value="3"/>
         <property key="labeling/displayAll" value="false"/>
-        <property key="labeling/dist" value="0"/>
+        <property key="labeling/dist" value="2"/>
         <property key="labeling/distInMapUnits" value="false"/>
         <property key="labeling/distMapUnitMaxScale" value="0"/>
         <property key="labeling/distMapUnitMinScale" value="0"/>
         <property key="labeling/distMapUnitScale" value="0,0,0,0,0,0"/>
         <property key="labeling/drawLabels" value="true"/>
         <property key="labeling/enabled" value="true"/>
-        <property key="labeling/fieldName" value=""/>
+        <property key="labeling/fieldName" value="haltnam"/>
         <property key="labeling/fitInPolygonOnly" value="false"/>
         <property key="labeling/fontCapitals" value="0"/>
         <property key="labeling/fontFamily" value="MS Shell Dlg 2"/>
@@ -2150,7 +2238,7 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/fontLimitPixelSize" value="false"/>
         <property key="labeling/fontMaxPixelSize" value="10000"/>
         <property key="labeling/fontMinPixelSize" value="3"/>
-        <property key="labeling/fontSize" value="8.25"/>
+        <property key="labeling/fontSize" value="9"/>
         <property key="labeling/fontSizeInMapUnits" value="false"/>
         <property key="labeling/fontSizeMapUnitMaxScale" value="0"/>
         <property key="labeling/fontSizeMapUnitMinScale" value="0"/>
@@ -2160,7 +2248,7 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/fontWeight" value="50"/>
         <property key="labeling/fontWordSpacing" value="0"/>
         <property key="labeling/formatNumbers" value="false"/>
-        <property key="labeling/isExpression" value="true"/>
+        <property key="labeling/isExpression" value="false"/>
         <property key="labeling/labelOffsetInMapUnits" value="true"/>
         <property key="labeling/labelOffsetMapUnitMaxScale" value="0"/>
         <property key="labeling/labelOffsetMapUnitMinScale" value="0"/>
@@ -2196,9 +2284,9 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/repeatDistanceUnit" value="1"/>
         <property key="labeling/reverseDirectionSymbol" value="false"/>
         <property key="labeling/rightDirectionSymbol" value=">"/>
-        <property key="labeling/scaleMax" value="10000000"/>
+        <property key="labeling/scaleMax" value="5000"/>
         <property key="labeling/scaleMin" value="1"/>
-        <property key="labeling/scaleVisibility" value="false"/>
+        <property key="labeling/scaleVisibility" value="true"/>
         <property key="labeling/shadowBlendMode" value="6"/>
         <property key="labeling/shadowColorB" value="0"/>
         <property key="labeling/shadowColorG" value="0"/>
@@ -2262,9 +2350,9 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/shapeType" value="0"/>
         <property key="labeling/substitutions" value="&lt;substitutions/>"/>
         <property key="labeling/textColorA" value="255"/>
-        <property key="labeling/textColorB" value="0"/>
-        <property key="labeling/textColorG" value="0"/>
-        <property key="labeling/textColorR" value="0"/>
+        <property key="labeling/textColorB" value="165"/>
+        <property key="labeling/textColorG" value="79"/>
+        <property key="labeling/textColorR" value="108"/>
         <property key="labeling/textTransp" value="0"/>
         <property key="labeling/upsidedownLabels" value="0"/>
         <property key="labeling/useSubstitutions" value="false"/>
@@ -2451,14 +2539,14 @@ def my_form_open(dialog, layer, feature):
       <layername>Haltungslinien</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101627</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="UTF-8">spatialite</provider>
@@ -3133,14 +3221,14 @@ def my_form_open(dialog, layer, feature):
       <layername>Pumpen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101628</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="UTF-8">spatialite</provider>
@@ -3678,14 +3766,14 @@ def my_form_open(dialog, layer, feature):
       <layername>Knotenpunkte</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101629</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="UTF-8">spatialite</provider>
@@ -3858,7 +3946,7 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/repeatDistanceUnit" value="1"/>
         <property key="labeling/reverseDirectionSymbol" value="false"/>
         <property key="labeling/rightDirectionSymbol" value=">"/>
-        <property key="labeling/scaleMax" value="2000"/>
+        <property key="labeling/scaleMax" value="250"/>
         <property key="labeling/scaleMin" value="1"/>
         <property key="labeling/scaleVisibility" value="true"/>
         <property key="labeling/shadowBlendMode" value="6"/>
@@ -3912,9 +4000,9 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/shapeType" value="0"/>
         <property key="labeling/substitutions" value="&lt;substitutions/>"/>
         <property key="labeling/textColorA" value="255"/>
-        <property key="labeling/textColorB" value="0"/>
-        <property key="labeling/textColorG" value="0"/>
-        <property key="labeling/textColorR" value="0"/>
+        <property key="labeling/textColorB" value="44"/>
+        <property key="labeling/textColorG" value="160"/>
+        <property key="labeling/textColorR" value="51"/>
         <property key="labeling/textTransp" value="0"/>
         <property key="labeling/upsidedownLabels" value="0"/>
         <property key="labeling/useSubstitutions" value="false"/>
@@ -4092,14 +4180,14 @@ def my_form_open(dialog, layer, feature):
       <layername>Schächte</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101630</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="System">spatialite</provider>
@@ -4214,7 +4302,7 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/bufferColorB" value="255"/>
         <property key="labeling/bufferColorG" value="255"/>
         <property key="labeling/bufferColorR" value="255"/>
-        <property key="labeling/bufferDraw" value="false"/>
+        <property key="labeling/bufferDraw" value="true"/>
         <property key="labeling/bufferJoinStyle" value="128"/>
         <property key="labeling/bufferNoFill" value="false"/>
         <property key="labeling/bufferSize" value="1"/>
@@ -4279,7 +4367,7 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/repeatDistanceUnit" value="1"/>
         <property key="labeling/reverseDirectionSymbol" value="false"/>
         <property key="labeling/rightDirectionSymbol" value=">"/>
-        <property key="labeling/scaleMax" value="2000"/>
+        <property key="labeling/scaleMax" value="250"/>
         <property key="labeling/scaleMin" value="1"/>
         <property key="labeling/scaleVisibility" value="true"/>
         <property key="labeling/shadowBlendMode" value="6"/>
@@ -4515,14 +4603,14 @@ def my_form_open(dialog, layer, feature):
       <layername>Knotentyp</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101631</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="UTF-8">spatialite</provider>
@@ -4816,8 +4904,8 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/dist" value="0"/>
         <property key="labeling/distInMapUnits" value="false"/>
         <property key="labeling/distMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/drawLabels" value="true"/>
-        <property key="labeling/enabled" value="true"/>
+        <property key="labeling/drawLabels" value="false"/>
+        <property key="labeling/enabled" value="false"/>
         <property key="labeling/fieldName" value="schnam"/>
         <property key="labeling/fitInPolygonOnly" value="false"/>
         <property key="labeling/fontCapitals" value="0"/>
@@ -4867,9 +4955,9 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/repeatDistanceUnit" value="1"/>
         <property key="labeling/reverseDirectionSymbol" value="false"/>
         <property key="labeling/rightDirectionSymbol" value=">"/>
-        <property key="labeling/scaleMax" value="10000000"/>
+        <property key="labeling/scaleMax" value="250"/>
         <property key="labeling/scaleMin" value="1"/>
-        <property key="labeling/scaleVisibility" value="false"/>
+        <property key="labeling/scaleVisibility" value="true"/>
         <property key="labeling/shadowBlendMode" value="6"/>
         <property key="labeling/shadowColorB" value="0"/>
         <property key="labeling/shadowColorG" value="0"/>
@@ -5101,14 +5189,14 @@ def my_form_open(dialog, layer, feature):
       <layername>Speicher</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101632</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="System">spatialite</provider>
@@ -5574,7 +5662,7 @@ def my_form_open(dialog, layer, feature):
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="65540">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="pk"/>
           <column width="-1" hidden="0" type="field" name="bezeichnung"/>
@@ -5676,7 +5764,7 @@ def my_form_open(dialog, layer, feature):
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="-624870629">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="pk"/>
           <column width="-1" hidden="0" type="field" name="schnam"/>
@@ -5730,14 +5818,14 @@ def my_form_open(dialog, layer, feature):
       <layername>teilgebiete</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101633</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="UTF-8">spatialite</provider>
@@ -6418,14 +6506,14 @@ def my_form_open(dialog, layer, feature):
       <layername>Wehre</layername>
       <srs>
         <spatialrefsys>
-          <proj4>dummy</proj4>
-          <srsid>101634</srsid>
-          <srid>0</srid>
-          <authid>EPSG: dummy</authid>
-          <description>dummy</description>
-          <projectionacronym>dummy</projectionacronym>
-          <ellipsoidacronym>dummy</ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <provider encoding="System">spatialite</provider>
@@ -6985,7 +7073,7 @@ SET geom = &#xd;
       <CanvasColorBluePart type="int">255</CanvasColorBluePart>
     </Gui>
     <Digitizing>
-      <DefaultSnapToleranceUnit type="int">2</DefaultSnapToleranceUnit>
+      <DefaultSnapToleranceUnit type="int">1</DefaultSnapToleranceUnit>
       <LayerSnappingList type="QStringList">
         <value>Speicher_Kopie20161221080207994</value>
         <value>flaechen20170504083519678</value>
@@ -7014,8 +7102,9 @@ SET geom = &#xd;
         <value>disabled</value>
         <value>enabled</value>
       </LayerSnappingEnabledList>
-      <SnappingMode type="QString">current_layer</SnappingMode>
+      <SnappingMode type="QString">all_layers</SnappingMode>
       <AvoidIntersectionsList type="QStringList"/>
+      <IntersectionSnapping type="bool">true</IntersectionSnapping>
       <LayerSnappingToleranceUnitList type="QStringList">
         <value>1</value>
         <value>2</value>
@@ -7044,8 +7133,8 @@ SET geom = &#xd;
         <value>to_vertex_and_segment</value>
         <value>to_vertex_and_segment</value>
       </LayerSnapToList>
-      <DefaultSnapType type="QString">off</DefaultSnapType>
-      <DefaultSnapTolerance type="double">0</DefaultSnapTolerance>
+      <DefaultSnapType type="QString">to vertex</DefaultSnapType>
+      <DefaultSnapTolerance type="double">5</DefaultSnapTolerance>
       <LayerSnappingToleranceList type="QStringList">
         <value>5.000000</value>
         <value>0.000000</value>

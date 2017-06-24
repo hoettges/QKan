@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>647</width>
-    <height>312</height>
+    <height>354</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,8 +20,8 @@
    <widget class="QLabel" name="label_20">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>60</y>
+      <x>20</x>
+      <y>50</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -43,24 +43,11 @@
      <string>Name</string>
     </property>
    </widget>
-   <widget class="Line" name="line">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>30</y>
-      <width>631</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>180</y>
+      <y>220</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -85,8 +72,8 @@
    <widget class="QLabel" name="label_70">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>120</y>
+      <x>330</x>
+      <y>90</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -95,50 +82,11 @@
      <string>Erstelldatum</string>
     </property>
    </widget>
-   <widget class="Line" name="line_2">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>150</y>
-      <width>631</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>60</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Neigunsklasse</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_21">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>90</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Abflussparameter</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>120</y>
+      <x>320</x>
+      <y>50</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -157,16 +105,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="neigkl">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>60</y>
-      <width>141</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="regenschreiber">
     <property name="geometry">
      <rect>
@@ -180,8 +118,8 @@
    <widget class="QDateEdit" name="createdat">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>120</y>
+      <x>420</x>
+      <y>90</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -190,18 +128,8 @@
    <widget class="QComboBox" name="haltnam">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>60</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="abflussparameter">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>90</y>
+      <x>110</x>
+      <y>50</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -210,8 +138,8 @@
    <widget class="QComboBox" name="teilgebiet">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>120</y>
+      <x>420</x>
+      <y>50</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -221,11 +149,88 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>200</y>
+      <y>240</y>
       <width>581</width>
       <height>71</height>
      </rect>
     </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>130</y>
+      <width>581</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="title">
+     <string>Standardparameter für unbefestigte Flächenanteile</string>
+    </property>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>81</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Neigunsklasse</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="neigkl">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>30</y>
+       <width>141</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="abflussparameter">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>30</y>
+       <width>141</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_21">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>30</y>
+       <width>111</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Abflussparameter</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

@@ -128,7 +128,7 @@ class ImportFromHE:
         self.dlg.tf_epsg.setText(self.epsg)
         self.dlg.pb_selectKBS.clicked.connect(self.selectKBS)
 
-        if 'epsg' in self.config:
+        if 'projectfile' in self.config:
             projectfile = self.config['projectfile']
         else:
             projectfile = ''
@@ -140,6 +140,12 @@ class ImportFromHE:
         else:
             check_copy_forms = True
         self.dlg.cb_copy_forms.setChecked(check_copy_forms)
+
+        if 'check_inittab' in self.config:
+            check_inittab = (self.config['check_inittab'] == u'True')
+        else:
+            check_inittab = True
+        self.dlg.cb_import_tabinit.setChecked(check_inittab)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -333,15 +339,17 @@ class ImportFromHE:
             projectfile = self.dlg.tf_projectFile.text()
             self.epsg = self.dlg.tf_epsg.text()
             check_copy_forms = self.dlg.cb_copy_forms.isChecked()
+            check_inittab = self.dlg.cb_import_tabinit.isChecked()
 
 
             # Konfigurationsdaten schreiben
 
             self.config['epsg'] = self.epsg
-            self.config['database_Qkan'] = database_QKan
+            self.config['database_QKan'] = database_QKan
             self.config['database_HE'] = database_HE
             self.config['projectfile'] = projectfile
             self.config['check_copy_forms'] = check_copy_forms
+            self.config['check_inittab'] = check_inittab
 
             with codecs.open(self.configfil,'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
@@ -349,4 +357,4 @@ class ImportFromHE:
 
             # Start der Verarbeitung
 
-            importKanaldaten(database_HE, database_QKan, projectfile, self.epsg, check_copy_forms)
+            importKanaldaten(database_HE, database_QKan, projectfile, self.epsg, check_copy_forms, check_inittab)
