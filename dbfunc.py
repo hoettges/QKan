@@ -35,6 +35,9 @@ from qkan_database import createdbtables
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 from PyQt4.QtGui import QProgressBar
+import logging
+
+logger = logging.getLogger('QKan')
 
 
 # Funktionen -------------------------------------------------------------------
@@ -134,7 +137,11 @@ class DBConnection:
     def sql(self, sql):
         """Fuehrt eine SQL-Abfrage aus."""
 
-        self.cursl.execute(sql)
+        try:
+            self.cursl.execute(sql)
+        except BaseException as err:
+            logger.error(u"(1) Fehler in SQL: {}".format(sql))
+            logger.error(err)
 
     def fetchall(self):
         """Gibt alle Daten aus der vorher ausgeführten SQL-Abfrage zurueck"""
