@@ -132,33 +132,120 @@ class ExportToHE:
         self.dlg.tf_heDB_template.setText(dbtemplate_HE)
         self.dlg.pb_selectHeDB_template.clicked.connect(self.selectFile_HeDB_template)
 
+        if 'datenbanktyp' in self.config:
+            datenbanktyp = self.config['datenbanktyp']
+        else:
+            datenbanktyp = 'spatialite'
+            pass                                    # Es gibt noch keine Wahlmöglichkeit
+
         if 'auswahl_teilgebiete' in self.config:
             auswahl_teilgebiete = self.config['auswahl_teilgebiete']
         else:
             auswahl_teilgebiete = ''
         self.dlg.tf_auswahlTeilgebiete.setText(auswahl_teilgebiete)
 
-        if 'check_tabinit' in self.config:
-            check_tabinit = (self.config['check_tabinit'] == u'True')
+        # Auswahl der zu exportierenden Tabellen ----------------------------------------------
+        if 'export_tabinit' in self.config:
+            export_tabinit = (self.config['export_tabinit'])
         else:
-            check_tabinit = True
-        self.dlg.cb_tabinit.setChecked(check_tabinit)
+            export_tabinit = True
+        self.dlg.cb_export_tabinit.setChecked(export_tabinit)
 
-        # if check_tabinit:
-        #     self.dlg.cb_tabinit.setChecked(QFileDialog.Qt.Checked)
-        # else:
-        #     self.dlg.cb_tabinit.setChecked(QFileDialog.Qt.Unchecked)
-
-        if 'check_difftezg' in self.config:
-            check_difftezg = (self.config['check_difftezg'] == u'True')
+        if 'export_haltungen' in self.config:
+            export_haltungen = (self.config['export_haltungen'])
         else:
-            check_difftezg = True
-        self.dlg.cb_difftezg.setChecked(check_difftezg)
+            export_haltungen = True
+        self.dlg.cb_export_haltungen.setChecked(export_haltungen)
 
-        # if check_difftezg:
-        #     self.dlg.cb_difftezg.setChecked(QFileDialog.Qt.Checked)
-        # else:
-        #     self.dlg.cb_difftezg.setChecked(QFileDialog.Qt.Unchecked)
+        if 'export_schaechte' in self.config:
+            export_schaechte = (self.config['export_schaechte'])
+        else:
+            export_schaechte = True
+        self.dlg.cb_export_schaechte.setChecked(export_schaechte)
+
+        if 'export_pumpen' in self.config:
+            export_pumpen = (self.config['export_pumpen'])
+        else:
+            export_pumpen = False
+        self.dlg.cb_export_pumpen.setChecked(export_pumpen)
+
+        if 'export_auslaesse' in self.config:
+            export_auslaesse = (self.config['export_auslaesse'])
+        else:
+            export_auslaesse = True
+        self.dlg.cb_export_auslaesse.setChecked(export_auslaesse)
+
+        if 'export_wehre' in self.config:
+            export_wehre = (self.config['export_wehre'])
+        else:
+            export_wehre = False
+        self.dlg.cb_export_wehre.setChecked(export_wehre)
+
+        if 'export_speicher' in self.config:
+            export_speicher = (self.config['export_speicher'])
+        else:
+            export_speicher = False
+        self.dlg.cb_export_speicher.setChecked(export_speicher)
+
+        if 'export_flaechen_und' in self.config:
+            export_flaechen_und = (self.config['export_flaechen_und'])
+        else:
+            export_flaechen_und = True
+        self.dlg.cb_export_flaechen_und.setChecked(export_flaechen_und)
+
+        if 'export_verschneidung' in self.config:
+            export_verschneidung = (self.config['export_verschneidung'])
+        else:
+            export_verschneidung = False
+        self.dlg.cb_export_verschneidung.setChecked(export_verschneidung)
+
+        if 'export_flaechen_einzeleinleiter' in self.config:
+            export_flaechen_einzeleinleiter = (self.config['export_flaechen_einzeleinleiter'])
+        else:
+            export_flaechen_einzeleinleiter = True
+        self.dlg.cb_export_flaechen_einzeleinleiter.setChecked(export_flaechen_einzeleinleiter)
+
+        if 'export_difftezg' in self.config:
+            export_difftezg = (self.config['export_difftezg'])
+        else:
+            export_difftezg = True
+        self.dlg.cb_export_difftezg.setChecked(export_difftezg)
+
+        if 'export_rohrprofile' in self.config:
+            export_rohrprofile = (self.config['export_rohrprofile'])
+        else:
+            export_rohrprofile = False
+        self.dlg.cb_export_rohrprofile.setChecked(export_rohrprofile)
+
+        if 'export_profildaten' in self.config:
+            export_profildaten = (self.config['export_profildaten'])
+        else:
+            export_profildaten = False
+        self.dlg.cb_export_profildaten.setChecked(export_profildaten)
+
+        if 'export_speicherkennlinien' in self.config:
+            export_speicherkennlinien = (self.config['export_speicherkennlinien'])
+        else:
+            export_speicherkennlinien = False
+        self.dlg.cb_export_speicherkennlinien.setChecked(export_speicherkennlinien)
+
+        if 'export_abflussparameter' in self.config:
+            export_abflussparameter = (self.config['export_abflussparameter'])
+        else:
+            export_abflussparameter = False
+        self.dlg.cb_export_abflussparameter.setChecked(export_abflussparameter)
+
+        if 'export_regenschreiber' in self.config:
+            export_regenschreiber = (self.config['export_regenschreiber'])
+        else:
+            export_regenschreiber = False
+        self.dlg.cb_export_regenschreiber.setChecked(export_regenschreiber)
+
+        if 'export_bodenklassen' in self.config:
+            export_bodenklassen = (self.config['export_bodenklassen'])
+        else:
+            export_bodenklassen = False
+        self.dlg.cb_export_bodenklassen.setChecked(export_bodenklassen)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -323,11 +410,11 @@ class ExportToHE:
         database_QKan = ''
 
         # Layerliste erstellen
-        self.layers = self.iface.legendInterface().layers()
+        layers = self.iface.legendInterface().layers()
         # logger.debug('Layerliste erstellt')
-        if len(self.layers) == 0:
+        if len(layers) == 0:
             logger.warning('Keine Layer vorhanden...')
-        for lay in self.layers:
+        for lay in layers:
             # logger.debug('Verbindungsstring: {}'.format(lay.source()))
             lyattr = {}
             for le in lay.source().split(' '):
@@ -359,22 +446,40 @@ class ExportToHE:
             # substitute with your code.
             # pass
 
-            # (jh, 08.02.2017)
-
-            # Namen der Datenbanken uebernehmen
+            # Eingaben aus Formular übernehmen
             database_Qkan = self.dlg.tf_QKanDB.text()
             database_HE = self.dlg.tf_heDB_dest.text()
             dbtemplate_HE = self.dlg.tf_heDB_template.text()
-            # logger.debug(u"Kontrolle: database_HE = {}",database_HE)
             auswahl_teilgebiete = self.dlg.tf_auswahlTeilgebiete.text()
-            check_tabinit = self.dlg.cb_tabinit.isChecked()
-            check_difftezg = self.dlg.cb_difftezg.isChecked()
+            datenbanktyp = 'spatialite'
+
+            check_export = {}
+            check_export['export_tabinit'] = self.dlg.cb_export_tabinit.isChecked()
+            check_export['export_schaechte'] = self.dlg.cb_export_schaechte.isChecked()
+            check_export['export_haltungen'] = self.dlg.cb_export_haltungen.isChecked()
+            check_export['export_pumpen'] = self.dlg.cb_export_pumpen.isChecked()
+            check_export['export_auslaesse'] = self.dlg.cb_export_auslaesse.isChecked()
+            check_export['export_wehre'] = self.dlg.cb_export_wehre.isChecked()
+            check_export['export_speicher'] = self.dlg.cb_export_speicher.isChecked()
+            check_export['export_flaechen_und'] = self.dlg.cb_export_flaechen_und.isChecked()
+            check_export['export_verschneidung'] = self.dlg.cb_export_verschneidung.isChecked()
+            check_export['export_flaechen_einzeleinleiter'] = self.dlg.cb_export_flaechen_einzeleinleiter.isChecked()
+            check_export['export_difftezg'] = self.dlg.cb_export_difftezg.isChecked()
+            check_export['export_rohrprofile'] = self.dlg.cb_export_rohrprofile.isChecked()
+            check_export['export_profildaten'] = self.dlg.cb_export_profildaten.isChecked()
+            check_export['export_speicherkennlinien'] = self.dlg.cb_export_speicherkennlinien.isChecked()
+            check_export['export_abflussparameter'] = self.dlg.cb_export_abflussparameter.isChecked()
+            check_export['export_regenschreiber'] = self.dlg.cb_export_regenschreiber.isChecked()
+            check_export['export_bodenklassen'] = self.dlg.cb_export_bodenklassen.isChecked()
 
             # Konfigurationsdaten schreiben
             self.config['database_HE'] = database_HE
             self.config['dbtemplate_HE'] = dbtemplate_HE
             self.config['database_Qkan'] = database_Qkan
             self.config['auswahl_TG'] = auswahl_teilgebiete
+            self.config['datenbanktyp'] = datenbanktyp
+            for el in check_export:
+                self.config[el] = check_export[el]
 
             with codecs.open(self.configfil,'w') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
@@ -383,5 +488,5 @@ class ExportToHE:
 
             # Start der Verarbeitung
 
-            exportKanaldaten(iface, database_HE, dbtemplate_HE, database_Qkan,
-                             auswahl_teilgebiete, check_tabinit, check_difftezg)
+            exportKanaldaten(iface, database_HE, dbtemplate_HE, database_Qkan, datenbanktyp,
+                             auswahl_teilgebiete, check_export)

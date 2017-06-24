@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>904</width>
-    <height>491</height>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>190</y>
+     <y>30</y>
      <width>491</width>
      <height>81</height>
     </rect>
@@ -186,7 +186,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_tabinit">
+   <widget class="QCheckBox" name="cb_export_tabinit">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -216,7 +216,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
+     <y>130</y>
      <width>491</width>
      <height>141</height>
     </rect>
@@ -550,7 +550,7 @@
      <string>Wehre</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_export_flaechen_sweinzel">
+   <widget class="QCheckBox" name="cb_export_flaechen_einzeleinleiter">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -572,7 +572,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string>Einzeleinleite</string>
+     <string>Einzeleinleiter</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_export_rohrprofile">
@@ -700,7 +700,7 @@
      <string>Abflussparameter</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_difftezg">
+   <widget class="QCheckBox" name="cb_export_difftezg">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -725,7 +725,7 @@
      <string>Unbefestigte Flächen aus Differenz zu TEZG erzeugen</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_check_verschneidung">
+   <widget class="QCheckBox" name="cb_export_verschneidung">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -803,6 +803,25 @@
      <string>Bodenklassen</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>460</y>
+     <width>91</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Version QKan Import</string>
+   </property>
+   <property name="text">
+    <string>Version 1.1.6</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
   </widget>
  </widget>
  <resources/>
