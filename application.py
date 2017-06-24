@@ -471,7 +471,7 @@ class Laengsschnitt:
                                                                filter="IDBF (*.idbf);; Alle Dateien (*.*)")
             self.__dlg.label_dbname.setText(self.__result_db)
             self.__log.info(u"Ergebnis-Datenbank wurde ausgewählt")
-            self.__log.debug("Ergebnis-Datenbank liegt in {}".format(self.__result_db))
+            self.__log.debug(u"Ergebnis-Datenbank liegt in {}".format(self.__result_db))
 
             if self.__navigator is None or self.__navigator.get_id() != self.__id:
                 self.__navigator = MyNavigator(self.__spatialite, self.__id)
