@@ -378,7 +378,7 @@ class ExportToHE:
     def selectFile_HeDB_template(self):
         """Vorlage-HE-Datenbank (Firebird) auswaehlen."""
 
-        filename = QFileDialog.getOpenFileName(self.dlg, "Dateinamen der Vorlage-HE-Datenbank eingeben",
+        filename = QFileDialog.getOpenFileName(self.dlg, u"Dateinamen der Vorlage-HE-Datenbank eingeben",
                                                self.default_dir,"*.idbf")
         # if os.path.dirname(filename) != '':
             # os.chdir(os.path.dirname(filename))
@@ -388,7 +388,7 @@ class ExportToHE:
     def selectFile_QKanDB(self):
         """Datenbankverbindung zur QKan-Datenbank (SpatiLite) auswaehlen."""
 
-        filename = QFileDialog.getOpenFileName(self.dlg, "QKan-Datenbank auswählen",
+        filename = QFileDialog.getOpenFileName(self.dlg, u"QKan-Datenbank auswählen",
                                                self.default_dir,"*.sqlite")
         # if os.path.dirname(filename) != '':
             # os.chdir(os.path.dirname(filename))
