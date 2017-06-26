@@ -27,6 +27,7 @@ import resources_laengs
 import resources_gangl
 
 from QKan_Database.navigation import Navigator
+from QKan_Database.fbfunc import FBConnection
 import plotter
 from application_dialog import LaengsschnittDialog
 import random
@@ -362,17 +363,23 @@ class Laengsschnitt:
             self.__log.info("Zeitstrahl-Slider bekommt seinen Default-EventListener zugewiesen")
             self.__default_function(event)
 
-    def __select_db(self):
+    def __select_db(self,ganglinie=False):
         """
         Diese Funktion öffnet einen Datei-Dialog, welcher den User auffordert eine Ergebnis-Datenbank auszuwählen.
         """
-        self.__animator.pause()
+        try:
+            self.__animator.pause()
+        except AttributeError:
+            pass
         filename = QFileDialog.getOpenFileName(self.__dlg, u"Wählen Sie eine Ergebnis-Datenbank",
                                                filter="IDBF (*.idbf);; Alle Dateien (*.*)")
         if filename != "":
             self.__result_db = filename
             self.__dlg.label_dbname.setText(filename)
-            self.__run()
+            if ganglinie:
+                self.__run_ganglinie()
+            else:
+                self.__run()
 
     def __layer_to_type(self, layer):
         """
@@ -402,6 +409,22 @@ class Laengsschnitt:
             return types[name]
         except KeyError:
             return -1
+
+    def __check_resultDB(self, route):
+        haltungen = route.get("haltungen", [])
+        schaechte = route.get("schaechte", [])
+        db = FBConnection(self.__result_db)
+        statement = u'SELECT kante FROM lau_max_el WHERE "KANTE"={}'
+        for haltung in haltungen:
+            db.sql(statement.format(u"'{}'".format(haltung)))
+            if db.fetchone() is None:
+                return False
+        statement = u'SELECT knoten FROM lau_max_s WHERE "KNOTEN"={}'
+        for schacht in schaechte:
+            db.sql(statement.format(u"'{}'".format(schacht)))
+            if db.fetchone() is None:
+                return False
+        return True
 
     def __run(self):
         """
@@ -531,6 +554,12 @@ class Laengsschnitt:
         self.__iface.messageBar().clearWidgets()
         if _route:
             self.__log.info(u"Navigation wurde erfolgreich durchgeführt!")
+            valid_db = self.__check_resultDB(_route)
+            if not valid_db:
+                self.__log.critical(u"Die übergebene Ergebnisdatenbank ist nicht vollständig.")
+                self.__iface.messageBar().pushCritical("Fehler", u"Unvollständige oder fehlerhafte Ergebnisdatenbank übergeben!")
+                self.__select_db()
+                return
             self.__route = _route
             self.__log.debug("Route:\t{}".format(self.__route))
         else:
@@ -747,6 +776,13 @@ class Laengsschnitt:
         route = dict(haltungen=haltungen, schaechte=schaechte)
         self.__log.info("Route wurde erstellt")
         self.__log.debug(u"Route:\t{}".format(route))
+        valid_db = self.__check_resultDB(route)
+        if not valid_db:
+            self.__log.critical(u"Die übergebene Ergebnisdatenbank ist nicht vollständig.")
+            self.__iface.messageBar().pushCritical("Fehler",
+                                                   u"Unvollständige oder fehlerhafte Ergebnisdatenbank übergeben!")
+            self.__select_db(ganglinie=True)
+            return
         tmp.get_dialog().auto_update.show()
         self.__log.info("Auto-Update-Checkbox wird jetzt angezeigt.")
         subscribe_auto_update()
