@@ -431,7 +431,7 @@ class Laengsschnitt:
             self.__id = random.random()
             self.__log.info("Neue ID wurde generiert")
             self.__log.debug("ID:\t{}".format(self.__id))
-            selected_layers = self.__get_selected_layers()
+            selected_layers = self.__iface.legendInterface().selectedLayers()
             if len(selected_layers) == 0:
                 self.__log.critical(u"Es wurde kein Layer ausgewählt!")
                 self.__iface.messageBar().pushCritical("Fehler", u"Wählen Sie zunächst ein Layer!")
@@ -597,22 +597,6 @@ class Laengsschnitt:
         self.__speed_controller.reset()
         self.__log.info(u"Längsschnitt wurde geschlossen!")
 
-    def __get_selected_layers(self):
-        """
-        Geht alle selektierten Layer durch und prüft, ob innerhalb dieser, Elemente ausgewählt wurden.
-        
-        :return: Gibt eine Liste der Layer zurück, welche angewählte Elemente beinhalten.
-        :rtype:list 
-        """
-        layers = self.__iface.legendInterface().layers()
-        selected_layers = []
-        self.__log.debug(u"Verfügbare Layer:\t{}".format(layers))
-        for l in layers:
-            if l.selectedFeatureCount() > 0:
-                selected_layers.append(l)
-        self.__log.debug("Selektierte Layer:\t{}".format(selected_layers))
-        return selected_layers
-
     def __run_ganglinie(self):
         """
         Wird aufgerufen, wenn das Ganglinien-Tool angeklickt wird.
@@ -647,7 +631,7 @@ class Laengsschnitt:
                                                                filter="IDBF (*.idbf);; Alle Dateien (*.*)")
             self.__log.info(u"Ergebnis-Datenbank wurde ausgewählt")
             self.__log.debug(u"Ergebnis-Datenbank liegt in {}".format(self.__result_db))
-            selected_layers = self.__get_selected_layers()
+            selected_layers = self.__iface.legendInterface().selectedLayers()
             if len(selected_layers) == 0:
                 self.__log.critical(u"Es wurde kein Layer ausgewählt!")
                 self.__iface.messageBar().pushCritical("Fehler", u"Wählen Sie zunächst ein Layer")
@@ -669,7 +653,7 @@ class Laengsschnitt:
             self.__log.info(u"Layer wurde ausgewählt")
             self.__log.debug(
                 u"Gewählter Layer ist {}".format("Schacht" if _layer_type == LayerType.Schacht else "Haltung"))
-            return selected_layers, _layer_type
+            return True
 
         def auto_update_changed(state):
             """
@@ -693,11 +677,6 @@ class Laengsschnitt:
             :param subscribing: Gibt an, ob dem automatischen Updates subscribed/unsubscribed werden soll.
             :type subscribing: bool
             """
-            _layers = self.__iface.legendInterface().layers()
-            important_layers = []
-            for _l in _layers:
-                if self.__layer_to_type(_l) != -1:
-                    important_layers.append(_l)
             for layer in important_layers:
                 if subscribing:
                     layer.selectionChanged.connect(selection_changed)
@@ -719,10 +698,9 @@ class Laengsschnitt:
             """
             if len(selection) == 0:
                 return
-            _layers = self.__get_selected_layers()
             _schaechte = []
             _haltungen = []
-            for _l in _layers:
+            for _l in important_layers:
                 _layer_type = self.__layer_to_type(_l)
                 if _layer_type == LayerType.Schacht:
                     _schaechte += [_f[1] for _f in _l.selectedFeatures()]
@@ -740,23 +718,25 @@ class Laengsschnitt:
         initialized = init_application()
         if initialized:
             self.__log.info("Ganglinien-Tool wurde erfolgreich initiiert!")
-            layers, layer_type = initialized
         else:
             self.__log.warning("Initiierung abgebrochen. Ganglinien-Tool wird beendet.")
             return
+        _layers = self.__iface.legendInterface().layers()
+        important_layers = []
+        for l in _layers:
+            if self.__layer_to_type(l) != -1:
+                important_layers.append(l)
         feature_count = 0
-        for l in layers:
+        for l in important_layers:
             feature_count += l.selectedFeatureCount()
         self.__log.debug("Es wurden {} Elemente selektiert.".format(feature_count))
         if feature_count < 1:
             self.__log.critical("Es wurde kein Element selektiert!")
             self.__iface.messageBar().pushCritical("Fehler", u"Bitte wählen Sie mindestens ein Element aus!")
             return
-
-        layers = self.__get_selected_layers()
         schaechte = []
         haltungen = []
-        for l in layers:
+        for l in important_layers:
             layer_type = self.__layer_to_type(l)
             if layer_type == LayerType.Schacht:
                 schaechte += [f[1] for f in l.selectedFeatures()]

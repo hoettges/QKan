@@ -104,7 +104,7 @@ class Laengsschnitt:
                 if isinstance(plot, HaltungLinie):
                     plot._text.set_color("k")
                 plot.set_color("k")
-        self.__log.info(u"Schächte und Haltungen wurden schwarzt eingefärbt")
+        self.__log.info(u"Schächte und Haltungen wurden schwarz eingefärbt")
         self.__fig.canvas.draw()
 
     def draw(self):
