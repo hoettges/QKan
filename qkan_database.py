@@ -22,6 +22,7 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
+__version__ = '1.1.5'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -465,6 +466,11 @@ def createdbtables(consl,cursl,epsg=25832):
         flnam TEXT,
         haltnam TEXT,
         neigkl INTEGER,
+        he_typ INTEGER,
+        speicherzahl INTEGER,
+        speicherkonst REAL,
+        fliesszeit REAL,
+        fliesszeitkanal REAL,
         teilgebiet TEXT,
         regenschreiber TEXT,
         abflussparameter TEXT,
@@ -650,7 +656,8 @@ def createdbtables(consl,cursl,epsg=25832):
                  "'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
                  "'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
                  "'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-                 "'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '13.01.2011 08:44:50', 'Importiert mit qg2he'"]
+                 "'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+                 "'Undurchlaessig', 0, 0, 0, 100, 1, 0, '13.01.2011 08:44:50', 'Importiert mit qg2he'"]
 
         for ds in daten:
             sql = u"""INSERT INTO bodenklassen
@@ -666,7 +673,6 @@ def createdbtables(consl,cursl,epsg=25832):
 
 
     # Kennlinie Speicherbauwerke -----------------------------------------------
-    fortschritt('Erstelle Tabelle "Speicherkennlinien',0.)
 
     sql = '''
     CREATE TABLE speicherkennlinien (
@@ -683,6 +689,25 @@ def createdbtables(consl,cursl,epsg=25832):
     consl.commit()
 
 
+    # Allgemeiner Informationen -----------------------------------------------
+
+    sql = '''
+    CREATE TABLE info (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    subject TEXT, 
+    value TEXT,
+    createdat TEXT DEFAULT CURRENT_DATE)'''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'Fehler beim Erzeugen der Tabelle "Info": ', str(err))
+        return False
+    consl.commit()
+
+    sql = "INSERT INTO info (subject, value) VALUES ('Version', '{}'); \n".format(__version__)
+
+    fortschritt('Tabellen erstellt...',0.01)
 
 # ----------------------------------------------------------------------------------------------------------------------
     # Alles prima gelaufen...
