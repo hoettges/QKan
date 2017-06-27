@@ -49,7 +49,7 @@ main_logger.addHandler(ch)
 main_logger.info("Application started")
 
 
-class Laengsschnitt:
+class Application:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -562,7 +562,6 @@ class Laengsschnitt:
             self.__iface.messageBar().pushCritical("Fehler", error_msg)
             return
         laengsschnitt = plotter.Laengsschnitt(copy.deepcopy(route))
-        laengsschnitt.draw()
         plotter.set_ax_labels("m", "m")
         widget, _toolbar = laengsschnitt.get_widget()
         for i in reversed(range(self.__dlg.verticalLayout.count())):
@@ -584,7 +583,6 @@ class Laengsschnitt:
         self.__ganglinie.draw_at(self.__animator.get_timestamps()[self.__animator.get_last_index()])
         self.__maximizer = None
         self.__maximizer = plotter.Maximizer(copy.deepcopy(route), self.__result_db)
-        self.__maximizer.draw()
         self.__switch_max_values(2)
         self.__animator.set_ganglinie(self.__ganglinie)
         self.__dlg2.auto_update.hide()

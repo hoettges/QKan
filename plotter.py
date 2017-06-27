@@ -45,6 +45,7 @@ class Laengsschnitt:
         self.__maxY = None
         self.__schacht_breite = 1
         self.__objects = {"haltungen": {}, "schaechte": {}}
+        self.__draw()
 
         plt.gcf().clear()
 
@@ -109,7 +110,7 @@ class Laengsschnitt:
         self.__log.info(u"Schächte und Haltungen wurden schwarz eingefärbt")
         self.__fig.canvas.draw()
 
-    def draw(self):
+    def __draw(self):
         """
         Zeichnet die Plots des Längsschnitts
         """
@@ -224,6 +225,7 @@ class Maximizer:
         self.__y = []
         self.__plot = None
         self.__simulation = self.__fetch_max_simulation_data()
+        self.__draw()
 
     def __del__(self):
         """
@@ -257,7 +259,7 @@ class Maximizer:
         self.__log.info(u"Maximalwerte der Schächte wurden abgefragt")
         return dict(haltungen=haltungen, schaechte=schaechte)
 
-    def draw(self):
+    def __draw(self):
         """
         Zeichnet den Plot für den maximalen Wasserstand.
         """
