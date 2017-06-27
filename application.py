@@ -73,18 +73,13 @@ class Laengsschnitt:
         self.__dlg = None
         self.__result_db = ""
         self.__spatialite = ""
-        self.__route = {}
-        self.__toolbar_widget = None
-        self.__id = 0
         self.__maximizer = None
-        self.__auto_update = False
         self.__animator = None
         self.__speed_controller = None
         self.__speed_label = None
         self.__default_function = None
         self.__ganglinie = Ganglinie(1)
         self.__dlg2 = self.__ganglinie.get_dialog()
-        self.__navigator = None
         self.__workspace = ""
 
     def __add_action(
@@ -253,9 +248,6 @@ class Laengsschnitt:
         :param activate: Zustand der Checkbox, nach dem anklicken.
         :type activate: int
         """
-        if self.__maximizer is None or self.__maximizer.get_id() != self.__id:
-            self.__maximizer = plotter.Maximizer(self.__id, copy.deepcopy(self.__route), self.__result_db)
-            self.__maximizer.draw()
         if activate == 2:
             self.__maximizer.show()
         else:
@@ -411,6 +403,14 @@ class Laengsschnitt:
             return -1
 
     def __check_resultDB(self, route):
+        """
+        Prüft, ob alle übergebenen Elemente in der Ergebnisdatenbank liegen.
+
+        :param route: Routen-Objekt
+        :type route: dict
+        :return: Gibt zurück, ob alle übergebenen Elemente in der Ergebnisdatenbank liegen
+        :rtype: bool
+        """
         haltungen = route.get("haltungen", [])
         schaechte = route.get("schaechte", [])
         db = FBConnection(self.__result_db)
@@ -451,9 +451,6 @@ class Laengsschnitt:
                 self.__dlg2.close()
                 self.__log.info("Ganglinie wurde geschlossen.")
             self.__dlg.close()
-            self.__id = random.random()
-            self.__log.info("Neue ID wurde generiert")
-            self.__log.debug("ID:\t{}".format(self.__id))
             selected_layers = self.__iface.legendInterface().selectedLayers()
             if len(selected_layers) == 0:
                 self.__log.critical(u"Es wurde kein Layer ausgewählt!")
@@ -495,9 +492,6 @@ class Laengsschnitt:
             self.__dlg.label_dbname.setText(self.__result_db)
             self.__log.info(u"Ergebnis-Datenbank wurde ausgewählt")
             self.__log.debug(u"Ergebnis-Datenbank liegt in {}".format(self.__result_db))
-
-            if self.__navigator is None or self.__navigator.get_id() != self.__id:
-                self.__navigator = MyNavigator(self.__spatialite, self.__id)
             self.__log.info("Navigator wurde initiiert.")
             return selected_layers, _layer_type
 
@@ -547,52 +541,51 @@ class Laengsschnitt:
         self.__log.debug(u"{} wurde ausgewählt.".format(features))
         self.__iface.messageBar().pushMessage("Navigation", "Route wird berechnet...", self.__iface.messageBar().INFO,
                                               60)
+        navigator = MyNavigator(self.__spatialite)
         if layer_type == LayerType.Haltung:
-            _route = self.__navigator.calculate_route_haltung(features)
+            route = navigator.calculate_route_haltung(features)
         else:
-            _route = self.__navigator.calculate_route_schacht(features)
+            route = navigator.calculate_route_schacht(features)
         self.__iface.messageBar().clearWidgets()
-        if _route:
+        if route:
             self.__log.info(u"Navigation wurde erfolgreich durchgeführt!")
-            valid_db = self.__check_resultDB(_route)
+            valid_db = self.__check_resultDB(route)
             if not valid_db:
                 self.__log.critical(u"Die übergebene Ergebnisdatenbank ist nicht vollständig.")
                 self.__iface.messageBar().pushCritical("Fehler", u"Unvollständige oder fehlerhafte Ergebnisdatenbank übergeben!")
                 self.__select_db()
                 return
-            self.__route = _route
-            self.__log.debug("Route:\t{}".format(self.__route))
+            self.__log.debug("Route:\t{}".format(route))
         else:
-            error_msg = self.__navigator.get_error_msg()
+            error_msg = navigator.get_error_msg()
             self.__log.critical(u"Es trat ein Fehler in der Navigation auf:\t\"{}\"".format(error_msg))
             self.__iface.messageBar().pushCritical("Fehler", error_msg)
             return
-        laengsschnitt = plotter.Laengsschnitt(copy.deepcopy(self.__route))
+        laengsschnitt = plotter.Laengsschnitt(copy.deepcopy(route))
         laengsschnitt.draw()
         plotter.set_ax_labels("m", "m")
         widget, _toolbar = laengsschnitt.get_widget()
-        if self.__toolbar_widget is not None:
-            for i in reversed(range(self.__dlg.verticalLayout.count())):
-                self.__dlg.verticalLayout.itemAt(i).widget().setParent(None)
-        self.__toolbar_widget = _toolbar
-        self.__dlg.verticalLayout.addWidget(self.__toolbar_widget)
+        for i in reversed(range(self.__dlg.verticalLayout.count())):
+            self.__dlg.verticalLayout.itemAt(i).widget().setParent(None)
+        self.__dlg.verticalLayout.addWidget(_toolbar)
         self.__dlg.stackedWidget.insertWidget(0, widget)
         self.__dlg.stackedWidget.setCurrentIndex(0)
         self.__log.info("Toolbar wurde eingebettet.")
         # init methods
 
         self.__dlg.checkbox_maximum.setChecked(True)
-        self.__switch_max_values(2)
-        if self.__animator is None or self.__animator.get_id() != self.__id:
-            self.__animator = plotter.Animator(self.__id, copy.deepcopy(self.__route),
+        self.__animator = None
+        self.__animator = plotter.Animator(copy.deepcopy(route),
                                                self.__result_db, self.__dlg.slider, self.__dlg.btn_forward,
                                                self.__dlg.btn_backward)
-        plotter.set_legend()
-        if self.__ganglinie.get_id() != self.__id:
-            self.__ganglinie.refresh(_id=self.__id, haltungen=self.__route.get("haltungen"),
-                                     schaechte=self.__route.get("schaechte"), dbname=self.__result_db,
-                                     laengsschnitt=laengsschnitt)
-            self.__ganglinie.draw_at(self.__animator.get_timestamps()[self.__animator.get_last_index()])
+        self.__ganglinie.refresh(haltungen=route.get("haltungen"),
+                                 schaechte=route.get("schaechte"), dbname=self.__result_db,
+                                 laengsschnitt=laengsschnitt)
+        self.__ganglinie.draw_at(self.__animator.get_timestamps()[self.__animator.get_last_index()])
+        self.__maximizer = None
+        self.__maximizer = plotter.Maximizer(copy.deepcopy(route), self.__result_db)
+        self.__maximizer.draw()
+        self.__switch_max_values(2)
         self.__animator.set_ganglinie(self.__ganglinie)
         self.__dlg2.auto_update.hide()
         self.__log.info("Auto-Update-Checkbox wurde versteckt")
@@ -604,6 +597,7 @@ class Laengsschnitt:
             self.__default_function = self.__dlg.slider.mousePressEvent
             self.__log.info("MousePressEvent des Sliders wurde gespeichert")
         self.__dlg.slider.mousePressEvent = lambda event: self.__slider_click(event)
+        plotter.set_legend()
         self.__dlg.show()
         self.__log.info("Dialog wird angezeigt")
 
@@ -645,9 +639,6 @@ class Laengsschnitt:
             """
             self.__log.info("Ganglinien-Tool wurde gestartet!")
 
-            self.__id = random.random()
-            self.__log.info("Neue ID wurde generiert")
-            self.__log.debug("ID:\t{}".format(self.__id))
             while self.__result_db == "":
                 stop = self.__show_message_box("Ergebnis-Datenbank",
                                                "Bitte wählen Sie eine Ergebnis-Datenbank aus!",
@@ -740,7 +731,7 @@ class Laengsschnitt:
             _route = dict(haltungen=_haltungen, schaechte=_schaechte)
             self.__log.info(u"Selektierung wurde geändert")
             self.__log.debug(u"Selektierung:\t{}".format(_route))
-            tmp.refresh(_id=self.__id, haltungen=_route.get("haltungen"),
+            tmp.refresh(haltungen=_route.get("haltungen"),
                         schaechte=_route.get("schaechte"), dbname=self.__result_db)
             tmp.show()
 
@@ -788,7 +779,7 @@ class Laengsschnitt:
         subscribe_auto_update()
         tmp.get_dialog().auto_update.stateChanged.connect(auto_update_changed)
         tmp.get_dialog().setWindowFlags(Qt.Window)
-        tmp.refresh(_id=self.__id, haltungen=route.get("haltungen"),
+        tmp.refresh(haltungen=route.get("haltungen"),
                     schaechte=route.get("schaechte"), dbname=self.__result_db)
         tmp.draw()
         tmp.show()

@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 
-from QKan_Database.fbfunc import FBConnection
-from matplotlib import pyplot as plt
+import datetime
+import logging
+
+import matplotlib.animation as animation
+import matplotlib.lines as lines
+import matplotlib.text as mtext
+import matplotlib.transforms as mtransforms
+from Enums import SliderMode, LayerType
 from PyQt4.QtGui import QWidget
+from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.lines import Line2D
-import matplotlib.transforms as mtransforms
-import matplotlib.text as mtext
-import matplotlib.lines as lines
-import matplotlib.animation as animation
-from Enums import SliderMode, LayerType
-import datetime
-import logging
+
+from QKan_Database.fbfunc import FBConnection
 
 main_logger = logging.getLogger("QKan_Laengsschnitt")
 # main_logger.setLevel(logging.INFO)
@@ -174,7 +176,7 @@ class Laengsschnitt:
             self.__ax.add_line(l)
             self.__objects["haltungen"][name].append(l)
             l = Line2D([self.__x_pointer, self.__x_pointer + laenge], [deckel_hoehe1, deckel_hoehe2], color='g',
-                       label="Oberflaeche",
+                       label=u"Oberfläche",
                        linewidth=3, linestyle=':')
             self.__log.info(u"Oberfläche wurde geplottet")
             self.__ax.add_line(l)
@@ -201,12 +203,10 @@ class Laengsschnitt:
 
 
 class Maximizer:
-    def __init__(self, _id, _route, _dbname):
+    def __init__(self, _route, _dbname):
         """
         Constructor
 
-        :param _id: Entspricht einer ID, welche pro Instanz unique ist.
-        :type _id: float
         :param _route: Entspricht einem Dictionary, das bereits mit allen nötigen Informationen über alle
         selektierten Elemente verfügt.
         :type _route: dict
@@ -215,7 +215,6 @@ class Maximizer:
         """
         self.__log = logging.getLogger("QKan_Laengsschnitt.plotter.Maximizer")
         self.__db = FBConnection(_dbname)
-        self.__id = _id
         self.__route = _route
         self.__fig = plt.figure(0)
         self.__ax = None
@@ -225,12 +224,6 @@ class Maximizer:
         self.__y = []
         self.__plot = None
         self.__simulation = self.__fetch_max_simulation_data()
-
-    def get_id(self):
-        """
-        Getter der ID 
-        """
-        return self.__id
 
     def __del__(self):
         """
@@ -332,12 +325,10 @@ class Maximizer:
 
 
 class Animator:
-    def __init__(self, _id, _route, _dbname, slider, _forward, _backward):
+    def __init__(self, _route, _dbname, slider, _forward, _backward):
         """
         Constructor
 
-        :param _id: Entspricht einer ID pro Animator-Instanz. Sollte unique sein.
-        :type _id: float
         :param _route: Entspricht einem Dictionary über alle Schächte und Haltungen
         :type _route: dict
         :param _dbname: Entspricht dem Datei-Pfad zur Ergebnis-Datenbank.
@@ -352,7 +343,6 @@ class Animator:
         """
         self.__log = logging.getLogger("QKan_Laengsschnitt.plotter.Animator")
         self.__db = FBConnection(_dbname)
-        self.__id = _id
         self.__ganglinie = None
         self.__route = _route
         self.__fig = plt.figure(0)
@@ -388,12 +378,6 @@ class Animator:
         """
         self.__ganglinie = ganglinie
         self.__log.info(u"Ganglinie wurde dem Längsschnitt zugewiesen")
-
-    def get_id(self):
-        """
-        Getter der ID
-        """
-        return self.__id
 
     def get_timestamps(self):
         """
@@ -675,7 +659,7 @@ def set_ax_labels(x, y):
     plt.xlabel(x)
     plt.ylabel(y)
     main_logger.info(u"Plot-Achsen wurden beschriftet")
-    main_logger.debug(u"X:\t{}\nY:\t{}".format(x,y))
+    main_logger.debug(u"X:\t{}\nY:\t{}".format(x, y))
 
 
 def set_legend():

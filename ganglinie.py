@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
+import matplotlib.dates as mdates
+from Enums import LayerType
 from PyQt4.QtGui import *
 from ganglinie_dialog import GanglinieDialog
-from QKan_Database.fbfunc import FBConnection
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-import matplotlib.dates as mdates
-from Enums import LayerType
-import logging
+
+from QKan_Database.fbfunc import FBConnection
 
 main_logger = logging.getLogger("QKan_Laengsschnitt")
 # main_logger.setLevel(logging.INFO)
@@ -33,7 +35,6 @@ class Ganglinie:
         self.__t = t
         self.__dialog = GanglinieDialog()
         self.__laengsschnitt = None
-        self.__id = 0
         self.__route = None
         self.__fig = plt.figure(t)
         self.__toolbar_widget = None
@@ -48,12 +49,6 @@ class Ganglinie:
         self.__time_axes = None
         self.__dialog.combo_type.currentIndexChanged.connect(self.__type_changed)
         self.__dialog.combo_method.currentIndexChanged.connect(self.draw)
-
-    def get_id(self):
-        """
-        Getter der ID 
-        """
-        return self.__id
 
     def get_dialog(self):
         """
@@ -278,13 +273,11 @@ class Ganglinie:
         except ValueError:
             pass
 
-    def refresh(self, _id, haltungen, schaechte, dbname, laengsschnitt=None):
+    def refresh(self, haltungen, schaechte, dbname, laengsschnitt=None):
         """
         Wird aufgerufen, um die Ganglinie mit allen wichtigen Datensätzen abzudaten.
         Wichtig bspw. wenn neue Elemente ausgewählt wurden.
 
-        :param _id: Entspricht einer ID des aktuellen Ganglinien-Objektes
-        :type _id: float
         :param haltungen: Entspricht einer Liste alle Haltungs-Namen aus QGis
         :type haltungen: list
         :param schaechte: Entspricht einer Liste aller Schächte-Namen aus QGis
@@ -294,7 +287,6 @@ class Ganglinie:
         :param laengsschnitt: Entspricht einer verknüpften Laengsschnitt-Instanz
         :type laengsschnitt: Laengsschnitt
         """
-        self.__id = _id
         self.__db = self.__db = FBConnection(dbname)
         self.__route = self.__get_route(haltungen, schaechte)
         self.__laengsschnitt = laengsschnitt
