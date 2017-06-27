@@ -18,29 +18,17 @@ main_logger.info("Navigation-Modul gestartet")
 
 
 class Navigator:
-    def __init__(self, dbname, _id):
+    def __init__(self, dbname):
         """
         Constructor
 
         :param dbname: Entspricht dem Datei-Pfad zur SpatiaLite-Datenbank.
         :type dbname: str
-        :param _id: Entspricht einem float, welche für alle Navigator-Instanzen unique sein sollte.
-        :type _id: float
         """
-        self.__id = _id
         self.__dbname = dbname
         self.__error_msg = ""
         self.db = DBConnection(dbname)
         self.log = logging.getLogger("QKan_Database.navigation.Navigator")
-
-    def get_id(self):
-        """
-        Getter der ID
-
-         :return: Gibt die ID zurück
-         :rtype: float
-        """
-        return self.__id
 
     def calculate_route_schacht(self, nodes):
         """
