@@ -25,7 +25,7 @@ def get_database_QKan():
         lyattr = {}
         for le in lay.source().split(' '):
             if '=' in le:
-                key, value = le.split('=')
+                key, value = le.split('=',2)
                 lyattr[key] = value.strip('"').strip("'")
                 # logger.debug('Verbindung gefunden: {}: {}'.format(key,value))
         if 'table' in lyattr and 'dbname' in lyattr:
