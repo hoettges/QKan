@@ -355,7 +355,7 @@ class Application:
             self.__log.info("Zeitstrahl-Slider bekommt seinen Default-EventListener zugewiesen")
             self.__default_function(event)
 
-    def __select_db(self,ganglinie=False):
+    def __select_db(self, ganglinie=False):
         """
         Diese Funktion öffnet einen Datei-Dialog, welcher den User auffordert eine Ergebnis-Datenbank auszuwählen.
         """
@@ -377,7 +377,7 @@ class Application:
         """
         Wandelt layer in einen LayerType um. So wird unabhängig von der User-spezifischen Benennung der richtige Layer
         gewählt.
-        
+
         :param layer: Ist der übergebene Layer, welcher in einen Typen geparst werden soll
         :type layer: QgsVectorLayer
         :return: Gibt einen LayerType zurück, der dem übergebenen QgsVectorLayer entspricht
@@ -428,16 +428,16 @@ class Application:
 
     def __run(self):
         """
-        Wird aufgerufen, wenn der Längsschnitt angeklickt wird. 
+        Wird aufgerufen, wenn der Längsschnitt angeklickt wird.
         """
         self.__log.info(u"Längsschnitt-Tool gestartet!")
 
         def init_application():
             """
             Initialisiert den Längsschnitt und liest die gewählten Layer aus.
-            Prüft außerdem auf Kompatibilität und Anzahl der Layer. 
+            Prüft außerdem auf Kompatibilität und Anzahl der Layer.
             Bricht ggf. die Funktion ab, wenn der Datensatz fehlerhaft ist.
-            
+
             :return: Gibt eine Liste der selektierten Layer zurück und einen LayerType
             :rtype: (list,LayerType)
             """
@@ -552,7 +552,8 @@ class Application:
             valid_db = self.__check_resultDB(route)
             if not valid_db:
                 self.__log.critical(u"Die übergebene Ergebnisdatenbank ist nicht vollständig.")
-                self.__iface.messageBar().pushCritical("Fehler", u"Unvollständige oder fehlerhafte Ergebnisdatenbank übergeben!")
+                self.__iface.messageBar().pushCritical("Fehler",
+                                                       u"Unvollständige oder fehlerhafte Ergebnisdatenbank übergeben!")
                 self.__select_db()
                 return
             self.__log.debug("Route:\t{}".format(route))
@@ -575,8 +576,8 @@ class Application:
         self.__dlg.checkbox_maximum.setChecked(True)
         self.__animator = None
         self.__animator = plotter.Animator(copy.deepcopy(route),
-                                               self.__result_db, self.__dlg.slider, self.__dlg.btn_forward,
-                                               self.__dlg.btn_backward)
+                                           self.__result_db, self.__dlg.slider, self.__dlg.btn_forward,
+                                           self.__dlg.btn_backward, self.__dlg.label_timestamp)
         self.__ganglinie.refresh(haltungen=route.get("haltungen"),
                                  schaechte=route.get("schaechte"), dbname=self.__result_db,
                                  laengsschnitt=laengsschnitt)
@@ -628,10 +629,10 @@ class Application:
 
         def init_application():
             """
-            Initialisiert die Ganglinie mit den nötigen Parametern. Fragt unter anderem die Datenbanken ab und 
+            Initialisiert die Ganglinie mit den nötigen Parametern. Fragt unter anderem die Datenbanken ab und
             prüft auf Kompatibilität und Anzahl der Layer.
             Bricht ggf. die Funktion ab, wenn fehlerhafte Daten vorliegen.
-            
+
             :return: Gibt eine Liste von den selektierten Layern und dem vorliegenden LayerType zurück.
             :rtype: (list,LayerType)
             """
@@ -676,8 +677,8 @@ class Application:
         def auto_update_changed(state):
             """
             Ist der Event-Listener der "Automatische Updates"-Checkbox.
-            
-            :param state: Ist der Zustand der Checkbox, nach dem Klicken 
+
+            :param state: Ist der Zustand der Checkbox, nach dem Klicken
             :type state: int
             """
             self.__log.info("Auto-Update wurde {}.".format("aktiviert" if state == 2 else "deaktiviert"))
@@ -689,9 +690,9 @@ class Application:
 
         def subscribe_auto_update(subscribing=True):
             """
-            Fügt die entsprechenden Event-Listener hinzu, falls subscribing True ist. Es werden ausschließlich die 
+            Fügt die entsprechenden Event-Listener hinzu, falls subscribing True ist. Es werden ausschließlich die
             wichtigen Layer subscribed, da nicht alle relevant sind.
-            
+
             :param subscribing: Gibt an, ob dem automatischen Updates subscribed/unsubscribed werden soll.
             :type subscribing: bool
             """
@@ -710,7 +711,7 @@ class Application:
         def selection_changed(selection):
             """
             Wird aufgerufen, wenn ein subscribter Layer eine Veränderung in seinen selektierten Elementen registriert.
-            
+
             :param selection: Bekommt die geänderte Auswahl eines Layers übergeben
             :type selection: list
             """
