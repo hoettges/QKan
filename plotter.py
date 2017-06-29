@@ -612,10 +612,7 @@ class Animator:
                 self.__plot.set_data(self.__x, self.__y)
                 self.__update_timestamp(index)
                 self.__slider.setValue(index)
-            return self.__plot,
-
-        self.__animation = animation.FuncAnimation(self.__fig, animate, frames=self.__max_value, interval=10, blit=True,
-                                                   repeat=True)
+        self.__animation = animation.FuncAnimation(self.__fig, animate, frames=self.__max_value, interval=200)
         self.pause()
         self.__log.info(u"Animation wurde initialisiert und pausiert")
 
