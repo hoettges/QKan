@@ -831,7 +831,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
           SELECT flaechen.flnam AS flnam, Coalesce(flaechen.haltnam,tezg.haltnam) AS haltnam, flaechen.neigkl AS neigkl,
             flaechen.he_typ AS he_typ, flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
             flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-            area(flaechen.geom) AS flaeche, flaechen.regenschreiber AS regenschreiber,
+            area(flaechen.geom)/10000 AS flaeche, flaechen.regenschreiber AS regenschreiber,
             flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
             flaechen.kommentar AS kommentar
           FROM flaechen
@@ -839,7 +839,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
           ON flaechen.abflussparameter = abflussparameter.apnam
           LEFT JOIN tezg
           ON Within(Centroid(flaechen.geom),tezg.geom)
-          WHERE abflussparameter.bodenklasse IS NULL and Coalesce(flaechen.haltnam,tezg.haltnam) IS NOT NULL{:}
+          WHERE flaeche > 0.01 and abflussparameter.bodenklasse IS NULL and Coalesce(flaechen.haltnam,tezg.haltnam) IS NOT NULL{:}
         """.format(auswahl)
         try:
             dbQK.sql(sql)
@@ -938,18 +938,27 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
 
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if auswahl_Teilgebiete != "":
-                auswahl = " WHERE flaechen.teilgebiet in ({:})".format(auswahl_Teilgebiete)
+                auswahl = " and teilgebiet in ({:})".format(auswahl_Teilgebiete)
             else:
                 auswahl = ""
 
             sql = u"""
-              SELECT tezg.flnam, tezg.haltnam, area(tezg.geom) - sum(area(Intersection(tezg.geom,flaechen.geom))) AS flaeche,
+              WITH fu AS 
+              (SELECT tezg.flnam, tezg.haltnam, area(tezg.geom)/10000 - sum(area(Intersection(tezg.geom,flaechen.geom))/10000) AS flaeche,
                 tezg.neigkl AS neigkl, tezg.regenschreiber AS regenschreiber,
                 tezg.abflussparameter AS abflussparameter, tezg.createdat AS createdat,
-                tezg.kommentar AS kommentar
+                tezg.kommentar AS kommentar, flaechen.teilgebiet as teilgebiet
               FROM
                 tezg INNER JOIN flaechen ON Intersects(tezg.geom,flaechen.geom)
-              GROUP BY tezg.haltnam{:}
+              GROUP BY tezg.haltnam)
+
+              SELECT flnam, haltnam, flaeche,
+                neigkl, regenschreiber,
+                abflussparameter, createdat,
+                kommentar
+              FROM
+                fu
+              WHERE flaeche > 0.0011{:}
             """.format(auswahl)
             try:
                 dbQK.sql(sql)
@@ -1023,7 +1032,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
           SELECT flaechen.flnam AS flnam, Coalesce(flaechen.haltnam,tezg.haltnam) AS haltnam, flaechen.neigkl AS neigkl,
             flaechen.he_typ AS he_typ, flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
             flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-            area(flaechen.geom) AS flaeche, flaechen.regenschreiber AS regenschreiber,
+            area(flaechen.geom)/10000 AS flaeche, flaechen.regenschreiber AS regenschreiber,
             flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
             flaechen.kommentar AS kommentar
           FROM flaechen
@@ -1031,7 +1040,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
           ON flaechen.abflussparameter = abflussparameter.apnam
           LEFT JOIN tezg
           ON Within(Centroid(flaechen.geom),tezg.geom)
-          WHERE abflussparameter.bodenklasse IS NOT NULL and Coalesce(flaechen.haltnam,tezg.haltnam) IS NOT NULL {:}
+          WHERE flaeche > 0.01 and abflussparameter.bodenklasse IS NOT NULL and Coalesce(flaechen.haltnam,tezg.haltnam) IS NOT NULL {:}
         """.format(auswahl)
         try:
             dbQK.sql(sql)
