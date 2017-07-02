@@ -65,15 +65,12 @@ def fehlermeldung(title, text):
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def createUnbefFlaechen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
+def createUnbefFlaechen(database_QKan, dbtyp = 'SpatiaLite'):
 
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :database_QKan: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type database: DBConnection (geerbt von dbapi...)
-
-    :epsg:          EPSG-Nummer des Projektionssystems
-    :type epsg:     Integer
 
     :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:    String
@@ -84,7 +81,7 @@ def createUnbefFlaechen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
     # ------------------------------------------------------------------------------
     # Datenbankverbindungen
 
-    dbQK = DBConnection(dbname=database_QKan, epsg=epsg)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
+    dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
     if dbQK is None:
         fehlermeldung("Fehler", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
@@ -94,8 +91,10 @@ def createUnbefFlaechen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
 
     # Für die Erzeugung der Restflächen reicht eine SQL-Abfrage aus. 
 
-    sql = """INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, geom) 
-            SELECT 'fu_' || tezg.flnam AS flnam, tezg.haltnam, tezg.neigkl, tezg.regenschreiber, tezg.teilgebiet, tezg.abflussparameter, CastToMultiPolygon(Difference(tezg.geom,GUnion(Intersection(flaechen.geom,tezg.geom)))) AS geom
+    sql = """INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, kommentar, geom) 
+            SELECT 'fu_' || tezg.flnam AS flnam, tezg.haltnam, tezg.neigkl, tezg.regenschreiber, tezg.teilgebiet, tezg.abflussparameter,
+            'Erzeugt mit Plugin Erzeuge unbefestigte Flaechen', 
+            CastToMultiPolygon(Difference(tezg.geom,GUnion(Intersection(flaechen.geom,tezg.geom)))) AS geom
             FROM tezg
             INNER JOIN flaechen
             ON Intersects(tezg.geom,flaechen.geom)
@@ -113,23 +112,3 @@ def createUnbefFlaechen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
     iface.mainWindow().statusBar().clearMessage()
     iface.messageBar().pushMessage(u"Information", u"Restflächen sind erstellt! Bitte QGIS-Fenster aktualisieren!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-
-# Verzeichnis der Testdaten
-pfad = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng'
-
-database_QKan = os.path.join(pfad,'netz.sqlite')
-epsg = '31466'
-
-if __name__ == '__main__':
-    linkFlaechenToHaltungen(database_QKan, epsg)
-elif __name__ == '__console__':
-    # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Konsole aufgerufen")
-    linkFlaechenToHaltungen(database_QKan, epsg)
-elif __name__ == '__builtin__':
-    # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Toolbox aufgerufen")
-    linkFlaechenToHaltungen(database_QKan, epsg)
-# else:
-    # QMessageBox.information(None, "Info", "Die Variable __name__ enthält: {0:s}".format(__name__))

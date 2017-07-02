@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
-    <height>240</height>
+    <width>456</width>
+    <height>419</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>180</y>
-     <width>251</width>
+     <x>110</x>
+     <y>360</y>
+     <width>171</width>
      <height>32</height>
     </rect>
    </property>
@@ -36,144 +36,14 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
-  </widget>
-  <widget class="QGroupBox" name="groupBox">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>501</width>
-     <height>141</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="toolTip">
-    <string comment="Pfade der Import- und Exportdatenbank"/>
-   </property>
-   <property name="title">
-    <string>Datenbank-Verbindungen</string>
-   </property>
-   <property name="flat">
-    <bool>false</bool>
-   </property>
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>291</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Datenziel: QKan-Datenbank (*.sqlite):</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="tf_QKanDB">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>50</y>
-      <width>431</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QKan - Zieldatenbank (wird ggfs. neu angelegt)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_selectQKanDB">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>50</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank auswählen und optional erstellen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>...</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="tf_epsg">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>100</y>
-      <width>81</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>100</y>
-      <width>191</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>EPSG-Code des Projektionssystems:</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_selectKBS">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>100</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank auswählen und optional erstellen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>...</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>220</y>
+     <x>360</x>
+     <y>400</y>
      <width>91</width>
      <height>20</height>
     </rect>
@@ -182,10 +52,91 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 1.1.5</string>
+    <string>Version 1.1.7</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tw_cnt_abflussparameter">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>180</y>
+     <width>361</width>
+     <height>131</height>
+    </rect>
+   </property>
+   <property name="columnCount">
+    <number>2</number>
+   </property>
+   <column/>
+   <column/>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>361</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Die Abflussparameter werden dabei aus der Tabelle &quot;tezg&quot; übernommen. Zur Kontrolle sind die Abflussparameter in der nachstehenden Tabelle aufgelistet.</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::RichText</enum>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>40</y>
+     <width>421</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Erzeugen von unbefestigten Flächenobjekten</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::RichText</enum>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>150</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Tabelle: tezg</string>
    </property>
   </widget>
  </widget>

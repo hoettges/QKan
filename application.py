@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QAction, QIcon, QFileDialog
+from PyQt4.QtGui import QAction, QIcon, QFileDialog, QTableWidgetItem
 # Initialize Qt resources from file resources.py
 import resources
 # Import the code for the dialog
@@ -37,10 +37,19 @@ from qgis.gui import QgsMessageBar
 from qgis.core import QgsProject, QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry, QgsMessageLog
 from k_unbef import createUnbefFlaechen
 from QKan_Database.qgis_utils import get_database_QKan
+from QKan_Database.dbfunc import DBConnection
 import codecs
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
+
+def fortschritt(text,prozent):
+    logger.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100))
+    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100), 'Export: ', QgsMessageLog.INFO)
+
+def fehlermeldung(title, text):
+    logger.debug(u'{:s} {:s}'.format(title,text))
+    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 class CreateUnbefFl:
     """QGIS Plugin Implementation."""
@@ -71,6 +80,8 @@ class CreateUnbefFl:
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
+        # Create the dialog (after translation) and keep reference
+        self.dlg = CreateUnbefFlDialog()
 
         # Declare instance attributes
         self.actions = []
@@ -160,9 +171,6 @@ class CreateUnbefFl:
         :rtype: QAction
         """
 
-        # Create the dialog (after translation) and keep reference
-        # self.dlg = CreateUnbefFlDialog()                  # z.Zt. kein Dialog
-
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
@@ -210,27 +218,46 @@ class CreateUnbefFl:
 
     def run(self):
         """Run method that performs all the real work"""
+
+        self.database_QKan = ''
+
+        self.database_QKan, epsg = get_database_QKan()
+        if not self.database_QKan:
+            fehlermeldung(u"Fehler in k_link", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error("k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            return False
+
+        # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
+        dbQK = DBConnection(dbname=self.database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+
+        if dbQK is None:
+            fehlermeldung("Fehler in QKan_CreateUnbefFl", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(self.database_QKan))
+            iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+                self.database_QKan), level=QgsMessageBar.CRITICAL)
+            return None
+
+        sql = 'SELECT abflussparameter, count(*) AS anz FROM tezg GROUP BY abflussparameter'
+        dbQK.sql(sql)
+        daten = dbQK.fetchall()
+        nzeilen = len(daten)
+        self.dlg.tw_cnt_abflussparameter.setRowCount(nzeilen)
+        self.dlg.tw_cnt_abflussparameter.setHorizontalHeaderLabels(["Abflussparameter", "Anzahl"])
+        self.dlg.tw_cnt_abflussparameter.setColumnWidth(0,292)
+        self.dlg.tw_cnt_abflussparameter.setColumnWidth(1,50)
+        for i, elem in enumerate(daten):
+            for j, item in enumerate(elem):
+                self.dlg.tw_cnt_abflussparameter.setItem(i,j,QTableWidgetItem(str(elem[j])))
+            
         # # show the dialog
-        # self.dlg.show()
+        self.dlg.show()
         # # Run the dialog event loop
-        # result = self.dlg.exec_()
+        result = self.dlg.exec_()
         # # See if OK was pressed
-        # if result:
+        if result:
             # # Do something useful here - delete the line containing pass and
             # # substitute with your code.
             # pass
 
-        project = QgsProject.instance()
-        self.default_dir = os.path.dirname(project.fileName())
+            # Start der Verarbeitung
 
-        database_QKan = ''
-        self.epsg = '25832'
-
-        database_QKan, self.epsg = get_database_QKan()
-        if not database_QKan:
-            logger.error("k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            return False
-
-        # Start der Verarbeitung
-
-        createUnbefFlaechen(database_QKan, self.epsg)
+            createUnbefFlaechen(self.database_QKan)
