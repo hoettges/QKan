@@ -1230,7 +1230,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             for formfile in glob.iglob(os.path.join(templatepath,'*.ui')):
                 # Wenn Datei im Verzeichnis 'eingabemasken' noch nicht vorhanden ist
                 if formfile not in formlist:
-                    shutil.copy(formfile,formpath)
+                    shutil.copy2(formfile,formpath)
 
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
