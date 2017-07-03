@@ -287,7 +287,7 @@ class Ganglinie:
         :param laengsschnitt: Entspricht einer verknüpften Laengsschnitt-Instanz
         :type laengsschnitt: Laengsschnitt
         """
-        self.__db = self.__db = FBConnection(dbname)
+        self.__db = FBConnection(dbname)
         self.__route = self.__get_route(haltungen, schaechte)
         self.__laengsschnitt = laengsschnitt
         self.__init_x()

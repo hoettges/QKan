@@ -358,6 +358,9 @@ class Application:
     def __select_db(self,ganglinie=False):
         """
         Diese Funktion öffnet einen Datei-Dialog, welcher den User auffordert eine Ergebnis-Datenbank auszuwählen.
+
+        :param ganglinie: Ob Ganglinie oder Längsschnitt gestartet werden soll
+        :type ganglinie: bool
         """
         try:
             self.__animator.pause()
@@ -576,7 +579,7 @@ class Application:
         self.__animator = None
         self.__animator = plotter.Animator(copy.deepcopy(route),
                                                self.__result_db, self.__dlg.slider, self.__dlg.btn_forward,
-                                               self.__dlg.btn_backward)
+                                               self.__dlg.btn_backward,self.__dlg.label_timestamp)
         self.__ganglinie.refresh(haltungen=route.get("haltungen"),
                                  schaechte=route.get("schaechte"), dbname=self.__result_db,
                                  laengsschnitt=laengsschnitt)
@@ -789,26 +792,26 @@ class Application:
 class MyNavigator(Navigator):
     def get_info(self, route):
         """
-                * Erstellt Dictionarys, welche folgende Informationen beinhalten.
-                * Es wird je ein Dictionary für die Schächte und die Haltungen gemacht.
-                * Schacht- bzw. Haltungs-Name entspricht dem Key.
-                - Schacht:
-                    +sohlhoehe:float
-                    +deckelhoehe:float
-                - Haltung:
-                    +laenge:float
-                    +schachtoben:str (Schacht-Name aus QGis)
-                    +schachtunten:str (Schacht-Name aus QGis)
-                    +sohlhoeheunten:float
-                    +sohlhoeheoben:float
-                    +querschnitt:float
+        * Erstellt Dictionarys, welche folgende Informationen beinhalten.
+        * Es wird je ein Dictionary für die Schächte und die Haltungen gemacht.
+        * Schacht- bzw. Haltungs-Name entspricht dem Key.
+        - Schacht:
+            +sohlhoehe:float
+            +deckelhoehe:float
+        - Haltung:
+            +laenge:float
+            +schachtoben:str (Schacht-Name aus QGis)
+            +schachtunten:str (Schacht-Name aus QGis)
+            +sohlhoeheunten:float
+            +sohlhoeheoben:float
+            +querschnitt:float
 
-                :param route: Beinhaltet getrennt von einander die Haltungs- und Schacht-Namen aus QGis.
-                :type route: dict
-                :return: Gibt ein Dictionary zurück mit allen Haltungs- und Schacht-Namen und den nötigen Informationen zu
-                        diesen
-                :rtype: dict
-                """
+        :param route: Beinhaltet getrennt von einander die Haltungs- und Schacht-Namen aus QGis.
+        :type route: dict
+        :return: Gibt ein Tuple von zwei Dictionaries zurück mit allen Haltungs- und Schacht-Namen und den nötigen Informationen zu
+                diesen
+        :rtype: dict, dict
+        """
         haltung_info = {}
         schacht_info = {}
         statement = u"""

@@ -45,9 +45,8 @@ class Laengsschnitt:
         self.__maxY = None
         self.__schacht_breite = 1
         self.__objects = {"haltungen": {}, "schaechte": {}}
-        self.__draw()
-
         plt.gcf().clear()
+        self.__draw()
 
     def __del__(self):
         """
@@ -59,9 +58,9 @@ class Laengsschnitt:
     def get_widget(self):
         """
         Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
-        Gibt dabei auch das Navigations-Widget zurück, damit dieses nur einmal existiert und nicht bei 
+        Gibt dabei auch das Navigations-Widget zurück, damit dieses nur einmal existiert und nicht bei
         jedem Aufruf erzeugt wird.
-        
+
         :return Gibt ein das Figure-Element und das Navigations-Widget zurück
         :rtype (FigureCanvasQTAgg,NavigationToolbar2QT)
         """
@@ -119,11 +118,11 @@ class Laengsschnitt:
 
         def draw_schacht(name):
             """
-            Zeichnet den Schacht in die Figure und geht dabei von einer Fixen Schachtbreite aus, welche in den 
+            Zeichnet den Schacht in die Figure und geht dabei von einer Fixen Schachtbreite aus, welche in den
             Attributen steht.
 
             :param name: Entspricht dem Namen des Schachts
-            :type name:str 
+            :type name:str
             """
             schacht = self.__route.get("schachtinfo").get(name)
             boden = schacht.get("sohlhoehe")
@@ -154,7 +153,7 @@ class Laengsschnitt:
             Zeichnet die Haltung und zusätzlich die Oberfläche in die Figure ein.
 
             :param name: Entspricht dem Namen der Haltung.
-            :type name:str 
+            :type name:str
             """
             haltung = self.__route.get("haltunginfo").get(name)
             self.__log.info(u"Haltung \"{}\" wird geplottet".format(name))
@@ -238,7 +237,7 @@ class Maximizer:
         """
         Berechnet die maximalen Wasserstände über den gesamten Zeitraum einer Simulation und gibt diese zurück.
 
-        :return: Gibt ein Dictionary zurück, welche alle Haltungen und Schächte und deren maximale Wasserstände 
+        :return: Gibt ein Dictionary zurück, welche alle Haltungen und Schächte und deren maximale Wasserstände
         beinhaltet.
         :rtype: dict
         """
@@ -282,8 +281,8 @@ class Maximizer:
             """
             Zeichnet den maximalen Wasserstand der Haltung ein.
 
-            :param name: Entspricht dem Namen der Haltung. 
-            :type name:str 
+            :param name: Entspricht dem Namen der Haltung.
+            :type name:str
             """
             haltung = self.__route.get("haltunginfo").get(name)
             laenge = haltung.get("laenge") - self.__schacht_breite
@@ -327,7 +326,7 @@ class Maximizer:
 
 
 class Animator:
-    def __init__(self, _route, _dbname, slider, _forward, _backward):
+    def __init__(self, _route, _dbname, slider, _forward, _backward, _label):
         """
         Constructor
 
@@ -337,7 +336,7 @@ class Animator:
         :type _dbname: str
         :param slider: Entspricht einer Referenz auf den Slider innerhalb der GUI, welcher für die Animations-
         Geschwindigkeit zuständig ist.
-        :type slider: Slider
+        :type slider: QSlider
         :param _forward: Entspricht einer Referenz auf den "Vorwärts"-Button innerhalb der GUI.
         :type _forward: QPushButton
         :param _backward: Entspricht einer Referenz auf den "Zurück"-Button innerhalb der GUI.
@@ -345,6 +344,7 @@ class Animator:
         """
         self.__log = logging.getLogger("QKan_Laengsschnitt.plotter.Animator")
         self.__db = FBConnection(_dbname)
+        self.__label = _label
         self.__ganglinie = None
         self.__route = _route
         self.__fig = plt.figure(0)
@@ -374,9 +374,9 @@ class Animator:
     def set_ganglinie(self, ganglinie):
         """
         Setter der Ganglinie
-        
+
         :param ganglinie: Entspricht der Ganglinie des Längsschnitts
-        :type ganglinie:Ganglinie 
+        :type ganglinie:Ganglinie
         """
         self.__ganglinie = ganglinie
         self.__log.info(u"Ganglinie wurde dem Längsschnitt zugewiesen")
@@ -389,7 +389,7 @@ class Animator:
 
     def get_last_index(self):
         """
-        Getter des letzten Index 
+        Getter des letzten Index
         """
         return self.__last_index
 
@@ -404,7 +404,7 @@ class Animator:
         """
         Liest die Datenbank aus, um alle nötigen Datensätze für die Animation zu erhalten.
 
-        :return: Gibt die Anzahl an zuzeichnenden Elementen, ein Dictionary, das die Wasserstände zu jedem Zeitpunkt 
+        :return: Gibt die Anzahl an zuzeichnenden Elementen, ein Dictionary, das die Wasserstände zu jedem Zeitpunkt
         aller Haltungen und Schächte beinhaltet und alle Schacht-Namen in der richtigen Reihenfolge zurück.
         :rtype: (int,dict,list)
         """
@@ -501,7 +501,7 @@ class Animator:
         Zeichnet den Zustand zu einem übergebenen Zeitpunkt
 
         :param value: Entspricht dem Index des Zeitpunkts, der gezeichnet werden soll
-        :type value:int 
+        :type value:int
         """
         self.__update_controls()
         if self.__last_index == value:
@@ -515,7 +515,7 @@ class Animator:
     def play(self, value, mode):
         """
         Startet die Animation in einer übergebenen Geschwindigkeit und Richtung.
-        
+
         :param value: Entspricht der Geschwindigkeit von 0 bis 50
         :type value: int
         :param mode: Entspricht dem aktuellen Modus. Forwärts oder Rückwärts
@@ -559,8 +559,8 @@ class Animator:
 
         :param index: Entspricht dem aktuellen Index
         :type index: int
-        :param speed: Entspricht der tatsächlichen Simulationsgeschwindigkeit.  
-        :type speed: int
+        :param speed: Entspricht der tatsächlichen Simulationsgeschwindigkeit.
+        :type speed: float
         :param mode: Entspricht dem Modus. Forwärts oder Rückwärts.
         :type mode: SliderMode
         :return: Gibt den Index des Zeitpunkts zurück, welcher als nächstes auszugeben ist.
@@ -610,10 +610,8 @@ class Animator:
                 self.__update_coordinates(index)
                 self.__plot.set_data(self.__x, self.__y)
                 self.__update_timestamp(index)
-            self.__slider.setValue(index)
-
-        self.__animation = animation.FuncAnimation(self.__fig, animate, frames=self.__max_value, interval=10)
-        self.__fig.canvas.draw()
+                self.__slider.setValue(index)
+        self.__animation = animation.FuncAnimation(self.__fig, animate, frames=self.__max_value, interval=200)
         self.pause()
         self.__log.info(u"Animation wurde initialisiert und pausiert")
 
@@ -621,12 +619,12 @@ class Animator:
         """
         Updatet die Überschrift des Längsschnitts und setzt diese auf den aktuellen Zeitpunkt.
 
-        :param value: Entspricht dem Index des aktuellen Zeitpunkts. 
+        :param value: Entspricht dem Index des aktuellen Zeitpunkts.
         :type value: int
         """
         timestamp = self.__timestamps[value]
         time = timestamp.strftime("%d.%m.%Y %H:%M:%S")[:-3]
-        self.__fig.suptitle("Zeitpunkt: {}".format(time), fontsize=20)
+        self.__label.setText(time)
 
     def __update_controls(self):
         """
@@ -654,7 +652,7 @@ def set_ax_labels(x, y):
 
     :param x: Entspricht der X-Achsen-Beschriftung
     :type x: str
-    :param y: Entspricht der Y-Achsen-Beschriftung 
+    :param y: Entspricht der Y-Achsen-Beschriftung
     :type y: str
     """
     plt.figure(0)
@@ -732,7 +730,7 @@ class ILines(lines.Line2D):
     def set_transform(self, transform):
         """
         Transformiert die Beschriftung der Linien
-        
+
         :param transform: Entspricht der übergebenen Transformation.
         :type transform: CompositeGenericTransform
         """
@@ -833,6 +831,6 @@ class SchachtLinie(ILines):
         Setter der Schacht-Breite
 
         :param width: Entspricht der fixen Schacht-Breite.
-        :type width: float
+        :type width: int
         """
         self.__schacht_breite = width
