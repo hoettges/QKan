@@ -251,6 +251,14 @@ class Navigator:
         return route
 
     def get_info(self, route):
+        """
+        Methode muss überschrieben werden bei Verwendung dieses Moduls
+
+         :param route: Die Haltungen und Schächte in einem Dictionary
+         :type route: dict
+         :return Gibt zwei Dictionaries mit zusätzlichen Informationen aus der Datenbank zurück
+         :rtype: dict, dict
+        """
         pass
 
     def get_error_msg(self):
@@ -306,6 +314,14 @@ class Worker(QtCore.QRunnable):
         return results
 
     def __get_routes_recursive(self, haltungen, results):
+        """
+        Berechnet alle möglichen Routen rekursiv
+
+        :param haltungen: Eine Liste der bisherigen Route
+        :type haltungen: list
+        :param results: Eine Liste aller bisher errechneten Routen
+        :type results: list
+        """
         if set(haltungen).issuperset(set(self.__nodes)):
             return haltungen
         statement = u"""SELECT name
@@ -360,8 +376,8 @@ class Tasks(QtCore.QObject):
         :type nodes: list
         """
         super(Tasks, self).__init__()
-        self.pool = QtCore.QThreadPool.globalInstance()
-        self.pool.setMaxThreadCount(2)
+        self.__pool = QtCore.QThreadPool.globalInstance()
+        self.__pool.setMaxThreadCount(2)
         self.__dbname = dbname
         self.__nodes = nodes
         self.results = []
@@ -377,6 +393,6 @@ class Tasks(QtCore.QObject):
             others = list(self.__nodes)
             others.remove(n)
             worker = Worker(self.__dbname, n, others, self)
-            self.pool.start(worker)
-        self.pool.waitForDone()
+            self.__pool.start(worker)
+        self.__pool.waitForDone()
         return self.results
