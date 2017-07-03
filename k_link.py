@@ -56,7 +56,7 @@ logger = logging.getLogger('QKan')
 
 def fortschritt(text,prozent):
     logger.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100), 'Export: ', QgsMessageLog.INFO)
+    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100), u'Link Flächen: ', QgsMessageLog.INFO)
 
 def fehlermeldung(title, text):
     logger.debug(u'{:s} {:s}'.format(title,text))
@@ -65,15 +65,18 @@ def fehlermeldung(title, text):
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def linkFlaechenToHaltungen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
+def linkFlaechenToHaltungen(database_QKan, liste_flaechen_abflussparam='', liste_hal_entw='', dbtyp = 'SpatiaLite'):
 
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :database_QKan: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type database: DBConnection (geerbt von dbapi...)
 
-    :epsg:          EPSG-Nummer des Projektionssystems
-    :type epsg:     Integer
+    :liste_flaechen_abflussparam: Liste der ausgewählten Abflussparameter für die Flächen
+    :type liste_flaechen_abflussparam: String
+
+    :liste_hal_entw: Liste der ausgewählten Entwässerungsarten für die Haltungen
+    :type liste_hal_entw: String
 
     :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:    String
@@ -84,7 +87,7 @@ def linkFlaechenToHaltungen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
     # ------------------------------------------------------------------------------
     # Datenbankverbindungen
 
-    dbQK = DBConnection(dbname=database_QKan, epsg=epsg)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
+    dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
     if dbQK is None:
         fehlermeldung("Fehler", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
@@ -135,10 +138,17 @@ def linkFlaechenToHaltungen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
         del dbQK
         return False
 
-    # Kopieren der Flaechen objekte in die Tabelle linkfl
+    # Kopieren der Flaechenobjekte in die Tabelle linkfl
+    if liste_flaechen_abflussparam == '':
+        auswahl = ''
+        # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
+        logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
+    else:
+        auswahl = ' WHERE flaechen.abflussparameter in ({})'.format(liste_flaechen_abflussparam)
+
     sql = """INSERT INTO linkfl (pk, flnam, haltnam, geom)
             SELECT pk, flnam, haltnam, geom
-            FROM flaechen"""
+            FROM flaechen{}""".format(auswahl)
     try:
         dbQK.sql(sql)
     except:
@@ -171,6 +181,12 @@ def linkFlaechenToHaltungen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
     # Achtung: Bei Flächen mit konkaven Bereichen kann der Zentroiden
     # ausßerhalb der Fläche liegen...
 
+    if liste_hal_entw == '':
+        # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
+        auswahl = ''
+    else:
+        auswahl = ' WHERE hal.entwart in ({})'.format(liste_hal_entw)
+    
     sql ="""WITH tlink AS
             (	SELECT fl.pk AS pk, hal.haltnam AS haltnam, fl.pk AS pk, fl.haltnam AS linkhal,
                     Distance(hal.geom,fl.geom) AS dist, 
@@ -179,13 +195,13 @@ def linkFlaechenToHaltungen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
                     haltungen AS hal
                 INNER JOIN
                     linkfl AS fl
-                ON MbrOverlaps(hal.geom,fl.gbuf))
+                ON MbrOverlaps(hal.geom,fl.gbuf){})
             UPDATE linkfl SET glink =  
             (SELECT MakeLine(PointOnSurface(t1.geofl),Centroid(t1.geohal))
             FROM tlink AS t1
             INNER JOIN (SELECT haltnam, pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
             ON t1.haltnam=t2.haltnam AND t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.0001 AND t1.linkhal IS NULL
-            WHERE linkfl.pk = t1.pk)"""
+            WHERE linkfl.pk = t1.pk)""".format(auswahl)
     try:
         dbQK.sql(sql)
     except:
@@ -202,13 +218,13 @@ def linkFlaechenToHaltungen(database_QKan, epsg, dbtyp = 'SpatiaLite'):
                     haltungen AS hal
                 INNER JOIN
                     linkfl AS fl
-                ON MbrOverlaps(hal.geom,fl.gbuf))
+                ON MbrOverlaps(hal.geom,fl.gbuf){})
             UPDATE linkfl SET haltnam =  
             (SELECT t1.haltnam
             FROM tlink AS t1
             INNER JOIN (SELECT haltnam, pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
             ON t1.haltnam=t2.haltnam AND t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.0001 AND t1.linkhal IS NULL
-            WHERE linkfl.pk = t1.pk)"""
+            WHERE linkfl.pk = t1.pk)""".format(auswahl)
     try:
         dbQK.sql(sql)
     except:

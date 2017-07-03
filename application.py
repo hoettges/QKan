@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QAction, QIcon, QFileDialog
+from PyQt4.QtGui import QAction, QIcon, QFileDialog, QListWidgetItem
 # Initialize Qt resources from file resources.py
 import resources
 # Import the code for the dialog
@@ -37,10 +37,19 @@ from qgis.gui import QgsMessageBar
 from qgis.core import QgsProject, QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry, QgsMessageLog
 from k_link import linkFlaechenToHaltungen
 from QKan_Database.qgis_utils import get_database_QKan
+from QKan_Database.dbfunc import DBConnection
 import codecs
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
+
+def fortschritt(text,prozent):
+    logger.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100))
+    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100), 'Export: ', QgsMessageLog.INFO)
+
+def fehlermeldung(title, text):
+    logger.debug(u'{:s} {:s}'.format(title,text))
+    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 class LinkFlaechenToHaltung:
     """QGIS Plugin Implementation."""
@@ -71,6 +80,8 @@ class LinkFlaechenToHaltung:
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
+        # Create the dialog (after translation) and keep reference
+        self.dlg = LinkFlaechenToHaltungDialog()
 
         # Declare instance attributes
         self.actions = []
@@ -160,7 +171,6 @@ class LinkFlaechenToHaltung:
         :rtype: QAction
         """
 
-        # Create the dialog (after translation) and keep reference
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
@@ -209,34 +219,82 @@ class LinkFlaechenToHaltung:
     def run(self):
         """Run method that performs all the real work"""
 
-        # verschoben Ende
-
-        # Standard für Suchverzeichnis festlegen
-        project = QgsProject.instance()
-        self.default_dir = os.path.dirname(project.fileName())
-
-        # Übernahme der Quelldatenbank:
-        # Wenn ein Projekt geladen ist, wird die Quelldatenbank daraus übernommen.
-        # Wenn dies nicht der Fall ist, wird die Quelldatenbank aus der
-        # json-Datei übernommen.
+        # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
+        def listitems(listWidget):
+            items = listWidget.selectedItems()
+            liste = u''
+            for elem in items:
+                if liste == '':
+                    liste = "'{}'".format(elem.text())
+                else:
+                    liste += ", '{}'".format(elem.text())
+            return liste
 
         database_QKan = ''
-        self.epsg = '25832'
 
-        database_QKan, self.epsg = get_database_QKan()
+        database_QKan, epsg = get_database_QKan()
         if not database_QKan:
+            fehlermeldung(u"Fehler in k_link", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             logger.error("k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
-        # Start der Verarbeitung
+        # Datenbankverbindung für Abfragen
+        dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if dbQK is None:
+            fehlermeldung("Fehler in QKan_CreateUnbefFl", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+            iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+                database_QKan), level=QgsMessageBar.CRITICAL)
+            return None
 
-        linkFlaechenToHaltungen(database_QKan, self.epsg)
+        # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
+        sql = 'SELECT abflussparameter FROM flaechen GROUP BY abflussparameter'
+        dbQK.sql(sql)
+        daten = dbQK.fetchall()
+        self.dlg.lw_flaechen_abflussparam.clear()
+        for elem in daten:
+            self.dlg.lw_flaechen_abflussparam.addItem(QListWidgetItem(elem[0]))
+        if len(daten) == 1:
+            self.dlg.lw_flaechen_abflussparam.setCurrentRow(0)
 
-        # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
-        layers = iface.legendInterface().layers()
-        if 'Anbindung' not in [lay.name() for lay in layers]:        # layers wurde oben erstellt
-            uri = QgsDataSourceURI()
-            uri.setDatabase(database_QKan)
-            uri.setDataSource('', 'linkfl', 'glink')
-            vlayer = QgsVectorLayer(uri.uri(), 'Anbindung', 'spatialite')
-            QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+        # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
+        sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
+        dbQK.sql(sql)
+        daten = dbQK.fetchall()
+        self.dlg.lw_hal_entw.clear()
+        for elem in daten:
+            self.dlg.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
+        if len(daten) == 1:
+            self.dlg.lw_hal_entw.setCurrentRow(0)
+
+        # show the dialog
+        self.dlg.show()
+        # Run the dialog event loop
+        result = self.dlg.exec_()
+        # See if OK was pressed
+        if result:
+            # Do something useful here - delete the line containing pass and
+            # substitute with your code.
+            # pass
+
+            # Start der Verarbeitung
+
+            # Abrufen der ausgewählten Elemente in beiden Listen
+            liste_flaechen_abflussparam = listitems(self.dlg.lw_flaechen_abflussparam)
+            liste_hal_entw = listitems(self.dlg.lw_hal_entw)
+
+            if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
+                iface.messageBar().pushMessage(u"Bedienerfehler: ", 
+                       u'Bitte in beiden Tabellen mindestens ein Element auswählen!', 
+                       level=QgsMessageBar.CRITICAL)
+                self.run()
+
+            linkFlaechenToHaltungen(database_QKan, liste_flaechen_abflussparam, liste_hal_entw)
+
+            # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
+            layers = iface.legendInterface().layers()
+            if 'Anbindung' not in [lay.name() for lay in layers]:        # layers wurde oben erstellt
+                uri = QgsDataSourceURI()
+                uri.setDatabase(database_QKan)
+                uri.setDataSource('', 'linkfl', 'glink')
+                vlayer = QgsVectorLayer(uri.uri(), 'Anbindung', 'spatialite')
+                QgsMapLayerRegistry.instance().addMapLayer(vlayer)
