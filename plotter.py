@@ -528,6 +528,7 @@ class Animator:
         self.__log.debug(u"Modus:\t{}".format(u"Forwärts" if mode == SliderMode.Forward else u"Rückwärts"))
         self.__last_time = datetime.datetime.today()
         self.__animation.event_source.start()
+        self.__animation.event_source.interval = (1000. / value) / 2.
         self.__log.info(u"Animation wird fortgesetzt")
 
     def __get_speed(self, x):
@@ -560,7 +561,7 @@ class Animator:
         :param index: Entspricht dem aktuellen Index
         :type index: int
         :param speed: Entspricht der tatsächlichen Simulationsgeschwindigkeit.
-        :type speed: float
+        :type speed: int
         :param mode: Entspricht dem Modus. Forwärts oder Rückwärts.
         :type mode: SliderMode
         :return: Gibt den Index des Zeitpunkts zurück, welcher als nächstes auszugeben ist.
