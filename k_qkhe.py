@@ -76,14 +76,14 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         try:
             os.remove(database_HE)
         except BaseException as err:
-            fehlermeldung(u"Die HE-Datenbank ist schon vorhanden und kann nicht ersetzt werden: ",
-                err)
+            fehlermeldung(u'Fehler (33) in QKan_Export: ie HE-Datenbank ist schon vorhanden und kann nicht ersetzt werden: ',
+                str(err))
             return False
     try:
         shutil.copyfile(dbtemplate_HE, database_HE)
     except BaseException as err:
-        fehlermeldung(u"Kopieren der Vorlage HE-Datenbank fehlgeschlagen: ",
-            err)
+        fehlermeldung(u'Fehler (34) in QKan_Export: Kopieren der Vorlage HE-Datenbank fehlgeschlagen: ',
+            str(err))
         return False
     fortschritt(u"Firebird-Datenbank aus Vorlage kopiert...",0.01)
 
@@ -975,7 +975,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
             for attr in dbQK.fetchall():
 
                 # In allen Feldern None durch NULL ersetzen
-                (flnam, haltnam,  neigkl, flaeche, regenschreiber, abflussparameter, createdat, kommentar) = \
+                (flnam, haltnam,  flaeche, neigkl, regenschreiber, abflussparameter, createdat, kommentar) = \
                     ('NULL' if el is None else el for el in attr)
 
                 # Datenkorrekturen
@@ -997,7 +997,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
                     PARAMETERSATZ, NEIGUNGSKLASSE, NAME, LASTMODIFIED,
                     KOMMENTAR, ID, ZUORDNUNABHEZG)
                   VALUES
-                  ( {flaeche:.4f}, {regenschreiber}, '{haltnam}', {speicherzahl},
+                  ( {flaeche:.4f}, '{regenschreiber}', '{haltnam}', {speicherzahl},
                     {speicherkonst:.3f}, {fliesszeit:.2f}, {he_typ}, {fltyp},
                     '{abflussparameter}', {neigkl}, 'f_{flnam}', '{createdat}',
                     '{kommentar}', {nextid}, {zuordnunabhezg});

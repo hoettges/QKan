@@ -566,7 +566,7 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alle Tabellen, die in QKan vorhanden sind, werden vor dem Export in der HYSTEM-EXTRAN-Datenbank geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schmutzwasser wird beim Export nach Hystem-Extran als Einzeleinleiter übertragen. Dazu werden die benötigten Parameter Einwohnerdichte, spez. Schmutzwasseranfall und Stundenfaktor aus den Teilgebieten übernommen. Falls kein Teilgebiet vorhanden ist, werden Standardwerte verwendet. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
