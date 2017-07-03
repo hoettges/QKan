@@ -219,21 +219,21 @@ class CreateUnbefFl:
     def run(self):
         """Run method that performs all the real work"""
 
-        self.database_QKan = ''
+        database_QKan = ''
 
-        self.database_QKan, epsg = get_database_QKan()
-        if not self.database_QKan:
-            fehlermeldung(u"Fehler in k_link", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            logger.error("k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+        database_QKan, epsg = get_database_QKan()
+        if not database_QKan:
+            fehlermeldung(u"Fehler in CreateUnbefFl", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error("CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
         # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
-        dbQK = DBConnection(dbname=self.database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+        dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if dbQK is None:
-            fehlermeldung("Fehler in QKan_CreateUnbefFl", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(self.database_QKan))
+            fehlermeldung("Fehler in QKan_CreateUnbefFl", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
             iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                self.database_QKan), level=QgsMessageBar.CRITICAL)
+                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
 
         sql = 'SELECT abflussparameter, count(*) AS anz FROM tezg GROUP BY abflussparameter'
@@ -248,16 +248,16 @@ class CreateUnbefFl:
             for j, item in enumerate(elem):
                 self.dlg.tw_cnt_abflussparameter.setItem(i,j,QTableWidgetItem(str(elem[j])))
             
-        # # show the dialog
+        # show the dialog
         self.dlg.show()
-        # # Run the dialog event loop
+        # Run the dialog event loop
         result = self.dlg.exec_()
-        # # See if OK was pressed
+        # See if OK was pressed
         if result:
-            # # Do something useful here - delete the line containing pass and
-            # # substitute with your code.
+            # Do something useful here - delete the line containing pass and
+            # substitute with your code.
             # pass
 
             # Start der Verarbeitung
 
-            createUnbefFlaechen(self.database_QKan)
+            createUnbefFlaechen(database_QKan)
