@@ -528,7 +528,6 @@ class Animator:
         self.__log.debug(u"Modus:\t{}".format(u"Forwärts" if mode == SliderMode.Forward else u"Rückwärts"))
         self.__last_time = datetime.datetime.today()
         self.__animation.event_source.start()
-        self.__animation.event_source.interval = (1000. / value) / 2.
         self.__log.info(u"Animation wird fortgesetzt")
 
     def __get_speed(self, x):
