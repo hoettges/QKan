@@ -276,7 +276,7 @@ class Application:
             auswahl = ''
             logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Haltungen...')
         else:
-            auswahl = ' WHERE hal.entwart in ({})'.format(liste_hal_entw)
+            auswahl = ' WHERE haltungen.entwart in ({})'.format(liste_hal_entw)
 
         if liste_teilgebiete != '':
             if auswahl == '':
