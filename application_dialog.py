@@ -25,14 +25,28 @@ import os
 
 from PyQt4 import QtGui, uic
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'application_dialog_base.ui'))
+FORM_CLASS_createlines, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'application_createlines.ui'))
 
-
-class LinkFlaechenToHaltungDialog(QtGui.QDialog, FORM_CLASS):
+class CreatelinesDialog(QtGui.QDialog, FORM_CLASS_createlines):
     def __init__(self, parent=None):
         """Constructor."""
-        super(LinkFlaechenToHaltungDialog, self).__init__(parent)
+        super(CreatelinesDialog, self).__init__(parent)
+        # Set up the user interface from Designer.
+        # After setupUI you can access any designer object by doing
+        # self.<objectname>, and you can use autoconnect slots - see
+        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
+        # #widgets-and-dialogs-with-auto-connect
+        self.setupUi(self)
+
+
+FORM_CLASS_connectflaechen, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'application_connectflaechen.ui'))
+
+class ConnectflaechenDialog(QtGui.QDialog, FORM_CLASS_connectflaechen):
+    def __init__(self, parent=None):
+        """Constructor."""
+        super(ConnectflaechenDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see

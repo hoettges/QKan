@@ -36,18 +36,10 @@ import os, time
 
 from QKan_Database.dbfunc import DBConnection
 
-# import tempfile
-import glob, shutil
-
-from qgis.core import QgsFeature, QgsGeometry, QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QFileInfo
-from PyQt4.QtGui import QAction, QIcon
+from qgis.core import QgsMessageLog
 
 from qgis.utils import iface
-from qgis.gui import QgsMessageBar, QgsMapCanvas, QgsLayerTreeMapCanvasBridge
-import codecs
-import pyspatialite.dbapi2 as splite
-import xml.etree.ElementTree as ET
+from qgis.gui import QgsMessageBar
 import logging
 
 logger = logging.getLogger('QKan')
@@ -63,13 +55,15 @@ def fehlermeldung(title, text):
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 # ------------------------------------------------------------------------------
-# Hauptprogramm
+# 1. Teilprogramm: Erzeugung der graphischen Verknüpfungen
 
-def linkFlaechenToHaltungen(database_QKan, liste_flaechen_abflussparam='', liste_hal_entw='', dbtyp = 'SpatiaLite'):
+def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '', 
+                liste_teilgebiete = '', suchradius = 50, bezug_abstand = 'kante', epsg = '25832', 
+                dbtyp = 'SpatiaLite'):
 
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
-    :database_QKan: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :dbQK: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type database: DBConnection (geerbt von dbapi...)
 
     :liste_flaechen_abflussparam: Liste der ausgewählten Abflussparameter für die Flächen
@@ -78,22 +72,17 @@ def linkFlaechenToHaltungen(database_QKan, liste_flaechen_abflussparam='', liste
     :liste_hal_entw: Liste der ausgewählten Entwässerungsarten für die Haltungen
     :type liste_hal_entw: String
 
+    :liste_teilgebiete: Liste der ausgewählten Teilgebiete
+    :type liste_teilgebiete: String
+
+    :suchradius: Suchradius in der SQL-Abfrage
+    :type suchradius: Real
+
     :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:    String
     
     :returns: void
     '''
-
-    # ------------------------------------------------------------------------------
-    # Datenbankverbindungen
-
-    dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
-
-    if dbQK is None:
-        fehlermeldung("Fehler", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-        iface.messageBar().pushMessage("Fehler", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-            database_QKan), level=QgsMessageBar.CRITICAL)
-        return None
 
     # ------------------------------------------------------------------------------
     # Die Bearbeitung erfolgt in einer zusätzlichen Tabelle 'linkfl'
@@ -108,60 +97,95 @@ def linkFlaechenToHaltungen(database_QKan, liste_flaechen_abflussparam='', liste
 
     # Tabelle "linkfl" anlegen und ggfs. leeren
     sql = """CREATE TABLE IF NOT EXISTS linkfl (
-            pk INTEGER,
+            pk INTEGER PRIMARY KEY AUTOINCREMENT,
             flnam TEXT,
-            haltnam TEXT)"""
+            haltnam TEXT,
+            aufteilen TEXT,
+            teilgebiet TEXT)"""
     try:
         dbQK.sql(sql)
     except:
-        fehlermeldung(u"(1) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung(u"QKan_LinkFlaechen (1) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
         return False
 
-    sql1 = """SELECT AddGeometryColumn('linkfl','geom',25832,'MULTIPOLYGON',2)"""
-    sql2 = """SELECT AddGeometryColumn('linkfl','gbuf',25832,'POLYGON',2)"""
-    sql3 = """SELECT AddGeometryColumn('linkfl','glink',25832,'LINESTRING',2)"""
+    sql1 = """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql2 = """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql3 = """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
     try:
         dbQK.sql(sql1)
         dbQK.sql(sql2)
         dbQK.sql(sql3)
     except:
-        fehlermeldung(u"(2) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung(u"QKan_LinkFlaechen (2) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
         return False
 
-    sql = "DELETE FROM linkfl"
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"(3) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
-        return False
+    # sql = """DELETE FROM linkfl"""
+    # try:
+        # dbQK.sql(sql)
+        # dbQK.commit()
+    # except:
+        # fehlermeldung(u"QKan_LinkFlaechen (6) SQL-Fehler in SpatiaLite: \n", sql)
+        # del dbQK
+        # return False
 
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
     if liste_flaechen_abflussparam == '':
-        auswahl = ''
         # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
+        auswahl = ''
         logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
     else:
-        auswahl = ' WHERE flaechen.abflussparameter in ({})'.format(liste_flaechen_abflussparam)
+        auswahl = ' and flaechen.abflussparameter in ({})'.format(liste_flaechen_abflussparam)
 
-    sql = """INSERT INTO linkfl (pk, flnam, haltnam, geom)
-            SELECT pk, flnam, haltnam, geom
-            FROM flaechen{}""".format(auswahl)
+    if liste_teilgebiete != '':
+        auswahl += ' and flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
+
+    # Flächen, die nicht verschnitten werden müssen (aufteilen <> 'ja')
+    sql = """WITH flges AS (
+                SELECT
+                    flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
+                    flaechen.geom
+                FROM flaechen
+                WHERE (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL){auswahl})
+            INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
+            SELECT flges.flnam, flges.aufteilen, flges.teilgebiet, flges.geom
+            FROM flges
+            LEFT JOIN linkfl
+            ON within(StartPoint(linkfl.glink),flges.geom)
+            WHERE linkfl.glink IS NULL""".format(auswahl=auswahl)
+
+    logger.debug('\nSQL-2a:\n{}\n'.format(sql))
+
     try:
         dbQK.sql(sql)
     except:
-        fehlermeldung(u"(4) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung(u"QKan_LinkFlaechen (4a) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
         return False
 
-    # Zurücksetzen des Bufferobjektes um die Fläche
-    sql = "UPDATE linkfl SET glink = NULL"                      # entfernt: haltnam = NULL, 
+    # Flächen, die verschnitten werden müssen (aufteilen <> 'ja')
+    sql = """WITH flges AS (
+                SELECT
+                    flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
+                    CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
+                FROM flaechen
+                INNER JOIN tezg
+                ON intersects(flaechen.geom,tezg.geom)
+                WHERE flaechen.aufteilen = 'ja'{auswahl})
+            INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
+            SELECT flges.flnam, flges.aufteilen, flges.teilgebiet, flges.geom
+            FROM flges
+            LEFT JOIN linkfl
+            ON within(StartPoint(linkfl.glink),flges.geom)
+            WHERE linkfl.glink IS NULL""".format(auswahl=auswahl)
+
+    logger.debug('\nSQL-2b:\n{}\n'.format(sql))
+
     try:
         dbQK.sql(sql)
     except:
-        fehlermeldung(u"(5) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung(u"QKan_LinkFlaechen (4b) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
         return False
 
@@ -169,75 +193,88 @@ def linkFlaechenToHaltungen(database_QKan, liste_flaechen_abflussparam='', liste
     # hinzugekommmene mögliche Zuordnungen eingetragen.
     # Wenn das Attribut "haltnam" vergeben ist, gilt die Fläche als zugeordnet.
 
-    sql = "UPDATE linkfl SET gbuf = buffer(geom,50)"
+    sql = """UPDATE linkfl SET gbuf = buffer(geom,{}) WHERE linkfl.glink IS NULL""".format(suchradius)
     try:
         dbQK.sql(sql)
     except:
-        fehlermeldung(u"(1) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung(u"QKan_LinkFlaechen (2) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
         return False
 
-    # Erzeugung der Verbindungslinie zwischen den Zentroiden. 
-    # Achtung: Bei Flächen mit konkaven Bereichen kann der Zentroiden
-    # ausßerhalb der Fläche liegen...
+    # Kontrollfeld "Flächen ohne Zuordnung (neu erzeugen)" angeklickt
+
+    # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche. 
+    # Filter braucht nur noch für Haltungen berücksichtigt zu werden, da Flächen bereits beim Einfügen 
+    # in tlink gefiltert wurden. 
 
     if liste_hal_entw == '':
         # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
         auswahl = ''
+        logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Haltungen...')
     else:
-        auswahl = ' WHERE hal.entwart in ({})'.format(liste_hal_entw)
-    
-    sql ="""WITH tlink AS
-            (	SELECT fl.pk AS pk, hal.haltnam AS haltnam, fl.pk AS pk, fl.haltnam AS linkhal,
-                    Distance(hal.geom,fl.geom) AS dist, 
+        auswahl = ' AND hal.entwart in ({})'.format(liste_hal_entw)
+
+    if liste_teilgebiete != '':
+        auswahl += ' AND  hal.teilgebiet in ({0:})'.format(liste_teilgebiete)
+
+    if bezug_abstand == 'mittelpunkt':
+        bezug = 'fl.geom'
+    else:
+        bezug = 'PointonSurface(fl.geom)'
+
+    # Erläuterung zur nachfolgenden SQL-Abfrage:
+    # tlink enthält alle potenziellen Verbindungen zwischen Flächen und Haltungen mit der jeweiligen Entfernung
+    # t2 enthält von diesen Verbindungen nur die Fläche (als pk) und den minimalen Abstand, 
+    # so dass in der Abfrage nach "update" nur die jeweils nächste Verbindung gefiltert wird. 
+    # Da diese Abfrage nur für neu zu erstellende Verknüpfungen gelten soll (also noch kein Eintrag
+    # im Feld "flaechen.haltnam" -> fl.haltnam -> tlink.linkhal -> t1.linkhal). 
+
+    sql = """WITH tlink AS
+            (	SELECT fl.pk AS pk, hal.haltnam AS haltnam, fl.haltnam AS linkhal,
+                    Distance(hal.geom,{bezug}) AS dist, 
                     hal.geom AS geohal, fl.geom AS geofl
                 FROM
                     haltungen AS hal
                 INNER JOIN
                     linkfl AS fl
-                ON MbrOverlaps(hal.geom,fl.gbuf){})
+                ON MbrOverlaps(hal.geom,fl.gbuf)
+                WHERE fl.glink IS NULL{auswahl})
             UPDATE linkfl SET glink =  
             (SELECT MakeLine(PointOnSurface(t1.geofl),Centroid(t1.geohal))
             FROM tlink AS t1
-            INNER JOIN (SELECT haltnam, pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
-            ON t1.haltnam=t2.haltnam AND t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.0001 AND t1.linkhal IS NULL
-            WHERE linkfl.pk = t1.pk)""".format(auswahl)
+            INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
+            ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.0001
+            WHERE linkfl.pk = t1.pk)
+            WHERE linkfl.glink IS NULL""".format(bezug=bezug, auswahl=auswahl)
+
+    logger.debug('\nSQL-3a:\n{}\n'.format(sql))
+
     try:
         dbQK.sql(sql)
     except:
-        fehlermeldung(u"(1) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung(u"QKan_LinkFlaechen (5) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
         return False
 
-    # ... gleiche Abfrage, aber Eintrag der zugeordneten Haltung
-    sql= """WITH tlink AS
-            (	SELECT fl.pk AS pk, hal.haltnam AS haltnam, fl.pk AS pk, fl.haltnam AS linkhal,
-                    Distance(hal.geom,fl.geom) AS dist, 
-                    hal.geom AS geohal, fl.geom AS geofl
-                FROM
-                    haltungen AS hal
-                INNER JOIN
-                    linkfl AS fl
-                ON MbrOverlaps(hal.geom,fl.gbuf){})
-            UPDATE linkfl SET haltnam =  
-            (SELECT t1.haltnam
-            FROM tlink AS t1
-            INNER JOIN (SELECT haltnam, pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
-            ON t1.haltnam=t2.haltnam AND t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.0001 AND t1.linkhal IS NULL
-            WHERE linkfl.pk = t1.pk)""".format(auswahl)
+    # Keine Prüfung, ob Anfang der Verknüpfungslinie noch in zugehöriger Fläche liegt. 
+    sql = """UPDATE flaechen SET haltnam = 
+            (SELECT 
+              haltungen.haltnam
+            FROM linkfl
+            INNER JOIN haltungen
+            ON intersects(buffer(EndPoint(linkfl.glink),{fangradius}),haltungen.geom)
+            INNER JOIN flaechen AS fl
+            ON within(StartPoint(linkfl.glink),fl.geom)
+            WHERE fl.pk = flaechen.pk)
+            WHERE flaechen.pk in (SELECT pk FROM linkfl) and
+                  (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL)""".format(fangradius=fangradius)
     try:
         dbQK.sql(sql)
     except:
-        fehlermeldung(u"(1) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung(u"QKan_LinkFlaechen (3) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
         return False
-
-
-    # Linie erzeugen für alle Elemente, die bereits vorher manuell zugeordnet waren. Sie 
-    # werden daran erkannt, dass im Feld "haltnam" ein Eintrag, aber kein Objekt
-    # im Feld "glink" vorhanden ist. 
-
-    # noch zu bearbeiten...
+    dbQK.commit()
 
 
     # --------------------------------------------------------------------------
@@ -245,27 +282,28 @@ def linkFlaechenToHaltungen(database_QKan, liste_flaechen_abflussparam='', liste
 
     del dbQK
 
+    iface.mapCanvas().refreshAllLayers()
 
     iface.mainWindow().statusBar().clearMessage()
     iface.messageBar().pushMessage(u"Information", u"Verknüpfungen sind erstellt!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
 
 
-# ----------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------
 
 # Verzeichnis der Testdaten
-pfad = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng'
+# pfad = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng'
 
-database_QKan = os.path.join(pfad,'netz.sqlite')
-epsg = '31466'
+# database_QKan = os.path.join(pfad,'netz.sqlite')
+# epsg = '31466'
 
-if __name__ == '__main__':
-    linkFlaechenToHaltungen(database_QKan, epsg)
-elif __name__ == '__console__':
-    # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Konsole aufgerufen")
-    linkFlaechenToHaltungen(database_QKan, epsg)
-elif __name__ == '__builtin__':
-    # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Toolbox aufgerufen")
-    linkFlaechenToHaltungen(database_QKan, epsg)
-# else:
-    # QMessageBox.information(None, "Info", "Die Variable __name__ enthält: {0:s}".format(__name__))
+# if __name__ == '__main__':
+    # createlinks(database_QKan, epsg)
+# elif __name__ == '__console__':
+    # # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Konsole aufgerufen")
+    # createlinks(database_QKan, epsg)
+# elif __name__ == '__builtin__':
+    # # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Toolbox aufgerufen")
+    # createlinks(database_QKan, epsg)
+# # else:
+    # # QMessageBox.information(None, "Info", "Die Variable __name__ enthält: {0:s}".format(__name__))

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ImportFromHEDialogBase</class>
- <widget class="QDialog" name="ImportFromHEDialogBase">
+ <class>ConnectDialogBase</class>
+ <widget class="QDialog" name="ConnectDialogBase">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
-    <height>377</height>
+    <width>417</width>
+    <height>129</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QKan Import from Hystem-Extran</string>
+   <string>Aus Verbindungslinien zugeordnete Haltungen in Flächen eintragen</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>320</y>
+     <x>100</x>
+     <y>70</y>
      <width>181</width>
      <height>32</height>
     </rect>
@@ -42,8 +42,8 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>360</y>
+     <x>340</x>
+     <y>110</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -58,77 +58,62 @@
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2">
+  <widget class="QLineEdit" name="tf_fangradius">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>521</width>
-     <height>271</height>
+     <x>214</x>
+     <y>40</y>
+     <width>81</width>
+     <height>20</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
+   <property name="toolTip">
+    <string extracomment="Maximal zulässiger Abstand zwischen Verknüpfungslinie und Haltung"/>
    </property>
-   <property name="title">
-    <string>Auswahl für Verknüpfung</string>
+   <property name="statusTip">
+    <string extracomment="Maximal zulässiger Abstand zwischen Verknüpfungslinie und Haltung"/>
    </property>
-   <widget class="QListWidget" name="lw_flaechen_abflussparam">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>60</y>
-      <width>211</width>
-      <height>192</height>
-     </rect>
-    </property>
-    <property name="selectionMode">
-     <enum>QAbstractItemView::ExtendedSelection</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>40</y>
-      <width>201</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Abflussparameter (flaechen)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>40</y>
-      <width>241</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Entwässerungssysteme (haltungen)</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="lw_hal_entw">
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>60</y>
-      <width>251</width>
-      <height>192</height>
-     </rect>
-    </property>
-    <property name="selectionMode">
-     <enum>QAbstractItemView::ExtendedSelection</enum>
-    </property>
-   </widget>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>34</x>
+     <y>40</y>
+     <width>171</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string extracomment="Maximal zulässiger Abstand zwischen Verknüpfungslinie und Haltung"/>
+   </property>
+   <property name="statusTip">
+    <string extracomment="Maximal zulässiger Abstand zwischen Verknüpfungslinie und Haltung"/>
+   </property>
+   <property name="text">
+    <string>Fangradius auf Haltungen:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>40</y>
+     <width>21</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string extracomment="Maximal zulässiger Abstand zwischen Verknüpfungslinie und Haltung"/>
+   </property>
+   <property name="statusTip">
+    <string extracomment="Maximal zulässiger Abstand zwischen Verknüpfungslinie und Haltung"/>
+   </property>
+   <property name="text">
+    <string>m</string>
+   </property>
   </widget>
  </widget>
  <resources/>
@@ -136,7 +121,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>accepted()</signal>
-   <receiver>ImportFromHEDialogBase</receiver>
+   <receiver>ConnectDialogBase</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -152,7 +137,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>ImportFromHEDialogBase</receiver>
+   <receiver>ConnectDialogBase</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

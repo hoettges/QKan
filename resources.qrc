@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/LinkFlaechenToHaltung" >
-        <file>icon.png</file>
-    </qresource>
-</RCC>

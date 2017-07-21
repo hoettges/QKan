@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- LinkFlaechenToHaltung
+ Flaechenzuordnungen
                                  A QGIS plugin
  Verknüpft Flächen mit nächster Haltung
                               -------------------
@@ -23,9 +23,9 @@
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt4.QtGui import QAction, QIcon, QFileDialog, QListWidgetItem
 # Initialize Qt resources from file resources.py
-import resources
+import resources_createlines
 # Import the code for the dialog
-from application_dialog import LinkFlaechenToHaltungDialog
+from application_dialog import CreatelinesDialog
 import os.path
 
 # Ergaenzt (jh, 12.06.2017) -------------------------------------------------
@@ -35,8 +35,8 @@ import logging
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 from qgis.core import QgsProject, QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry, QgsMessageLog
-from k_link import linkFlaechenToHaltungen
-from QKan_Database.qgis_utils import get_database_QKan
+from k_link import createlinks
+from QKan_Database.qgis_utils import get_database_QKan, get_editable_layers
 from QKan_Database.dbfunc import DBConnection
 import codecs
 
@@ -51,7 +51,7 @@ def fehlermeldung(title, text):
     logger.debug(u'{:s} {:s}'.format(title,text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
-class LinkFlaechenToHaltung:
+class Application:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -71,7 +71,7 @@ class LinkFlaechenToHaltung:
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
-            'LinkFlaechenToHaltung_{}.qm'.format(locale))
+            'Flaechenzuordnungen_{}.qm'.format(locale))
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -81,14 +81,14 @@ class LinkFlaechenToHaltung:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = LinkFlaechenToHaltungDialog()
+        self.dlg_cl = CreatelinesDialog()
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&QKan_LinkFlaechen')
+        self.menu = self.tr(u'&QKan_Flaechenzuordnungen')
         # TODO: We are going to let the user set this up in a future iteration
-        self.toolbar = self.iface.addToolBar(u'LinkFlaechenToHaltung')
-        self.toolbar.setObjectName(u'LinkFlaechenToHaltung')
+        self.toolbar = self.iface.addToolBar(u'Flaechenzuordnungen')
+        self.toolbar.setObjectName(u'Flaechenzuordnungen')
 
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 12.06.2017)
@@ -101,6 +101,22 @@ class LinkFlaechenToHaltung:
 
         if not os.path.isdir(wordir):
             os.makedirs(wordir)
+
+        # --------------------------------------------------------------------------------------------------
+        # Konfigurationsdatei qkan.json lesen
+        #
+
+        self.configfil = os.path.join(wordir, 'qkan.json')
+        if os.path.exists(self.configfil):
+            with codecs.open(self.configfil,'r','utf-8') as fileconfig:
+                self.config = json.loads(fileconfig.read().replace('\\','/'))
+        else:
+            self.config = {'epsg': '25832'}                # Projektionssystem
+            self.config['database_QKan'] = ''
+            self.config['database_HE'] = ''
+            self.config['projectfile'] = ''
+            with codecs.open(self.configfil,'w','utf-8') as fileconfig:
+                fileconfig.write(json.dumps(self.config))
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -118,7 +134,7 @@ class LinkFlaechenToHaltung:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('LinkFlaechenToHaltung', message)
+        return QCoreApplication.translate('Flaechenzuordnungen', message)
 
 
     def add_action(
@@ -197,11 +213,11 @@ class LinkFlaechenToHaltung:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/LinkFlaechenToHaltung/icon.png'
+        icon_createlines_path = ':/plugins/Flaechenzuordnungen/icon_createlines.png'
         self.add_action(
-            icon_path,
-            text=self.tr(u'Link Flaechen To Haltungen'),
-            callback=self.run,
+            icon_createlines_path,
+            text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'),
+            callback=self.run_createlines,
             parent=self.iface.mainWindow())
 
 
@@ -209,26 +225,103 @@ class LinkFlaechenToHaltung:
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&QKan_LinkFlaechen'),
+                self.tr(u'&QQKan_Flaechenzuordnungen'),
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
         del self.toolbar
 
 
-    def run(self):
+    # -------------------------------------------------------------------------
+    # Formularfunktionen
+
+    def countselection(self):
+        """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
+        der betroffenen Flächen und Haltungen"""
+        liste_flaechen_abflussparam = self.listitems(self.dlg_cl.lw_flaechen_abflussparam)
+        liste_hal_entw = self.listitems(self.dlg_cl.lw_hal_entw)
+        liste_teilgebiete = self.listitems(self.dlg_cl.lw_teilgebiete)
+
+        # Zu berücksichtigende Flächen zählen
+        if liste_flaechen_abflussparam == '':
+            # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
+            auswahl = ''
+            logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
+        else:
+            auswahl = ' WHERE flaechen.abflussparameter in ({})'.format(liste_flaechen_abflussparam)
+
+        if liste_teilgebiete != '':
+            if auswahl == '':
+                auswahl = ' WHERE flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
+            else:
+                auswahl += ' and flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
+
+        sql = """SELECT count(*) AS anzahl FROM flaechen{auswahl}""".format(auswahl=auswahl)
+        try:
+            self.dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan_LinkFlaechen (9) SQL-Fehler in SpatiaLite: \n", sql)
+            del self.dbQK
+            return False
+        daten = self.dbQK.fetchone()
+        if not (daten is None):
+            self.dlg_cl.lf_anzahl_flaechen.setText(str(daten[0]))
+        else:
+            self.dlg_cl.lf_anzahl_flaechen.setText('0')
+
+
+        # Zu berücksichtigende Haltungen zählen
+        if liste_hal_entw == '':
+            # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
+            auswahl = ''
+            logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Haltungen...')
+        else:
+            auswahl = ' WHERE hal.entwart in ({})'.format(liste_hal_entw)
+
+        if liste_teilgebiete != '':
+            if auswahl == '':
+                auswahl = ' WHERE haltungen.teilgebiet in ({})'.format(liste_teilgebiete)
+            else:
+                auswahl += ' and haltungen.teilgebiet in ({})'.format(liste_teilgebiete)
+
+        sql = """SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(auswahl=auswahl)
+        try:
+            self.dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan_LinkFlaechen (10) SQL-Fehler in SpatiaLite: \n", sql)
+            del self.dbQK
+            return False
+        daten = self.dbQK.fetchone()
+        if not (daten is None):
+            self.dlg_cl.lf_anzahl_haltungen.setText(str(daten[0]))
+        else:
+            self.dlg_cl.lf_anzahl_haltungen.setText('0')
+
+
+    # -------------------------------------------------------------------------
+    # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
+    def listitems(self, listWidget):
+        items = listWidget.selectedItems()
+        liste = u''
+        for elem in items:
+            if liste == '':
+                liste = "'{}'".format(elem.text())
+            else:
+                liste += ", '{}'".format(elem.text())
+        return liste
+
+    # -------------------------------------------------------------------------
+    # Öffnen des Formulars
+
+    def run_createlines(self):
         """Run method that performs all the real work"""
 
-        # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
-        def listitems(listWidget):
-            items = listWidget.selectedItems()
-            liste = u''
-            for elem in items:
-                if liste == '':
-                    liste = "'{}'".format(elem.text())
-                else:
-                    liste += ", '{}'".format(elem.text())
-            return liste
+        # Check, ob die relevanten Layer nicht editable sind.
+        if len({'flaechen', 'haltungen', 'linkfl', 'tezg'} & get_editable_layers()) > 0:
+            iface.messageBar().pushMessage(u"Bedienerfehler: ", 
+                   u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
+                   level=QgsMessageBar.CRITICAL)
+            return False
 
         database_QKan = ''
 
@@ -239,37 +332,154 @@ class LinkFlaechenToHaltung:
             return False
 
         # Datenbankverbindung für Abfragen
-        dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
-        if dbQK is None:
+        self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if self.dbQK is None:
             fehlermeldung("Fehler in QKan_CreateUnbefFl", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
             iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                 database_QKan), level=QgsMessageBar.CRITICAL)
             return None
 
+        # --------------------------------------------------------------------------------------------------
+        # Anpassungen der Datenbank für neuere Versionen
+
+        # Änderung gegen DB-Version 1.1.5
+        if 'teilgebiet' not in self.dbQK.attrlist('linkfl'):
+            sql = """ALTER TABLE linkfl ADD COLUMN teilgebiet TEXT"""
+            try:
+                self.dbQK.sql(sql)
+            except:
+                fehlermeldung(u"QKan_LinkFlaechen (6) SQL-Fehler in SpatiaLite: \n", sql)
+                del self.dbQK
+                return False
+
+        # Änderung gegen DB-Version 1.1.5
+        if 'aufteilen' not in self.dbQK.attrlist('flaechen'):
+            sql = """ALTER TABLE flaechen ADD COLUMN aufteilen TEXT"""
+            try:
+                self.dbQK.sql(sql)
+            except:
+                fehlermeldung(u"QKan_LinkFlaechen (7) SQL-Fehler in SpatiaLite: \n", sql)
+                del self.dbQK
+                return False
+
+        # Änderung gegen DB-Version 1.1.5
+        # Standard-Auswahl für teilgebiete hinzufügen
+        sql = """INSERT INTO teilgebiete (tgnam, kommentar) 
+                SELECT "" AS tgnam, ":1" AS kommentar FROM (VALUES 
+                  ('auswahl1', 'für benutzerdefinierte Auswahl'), 
+                  ('auswahl2', 'für benutzerdefinierte Auswahl'), 
+                  ('auswahl3', 'für benutzerdefinierte Auswahl'))
+                WHERE tgnam NOT IN (SELECT tgnam FROM teilgebiete)"""
+        try:
+            self.dbQK.sql(sql)
+            self.dbQK.commit()
+        except:
+            fehlermeldung(u"QKan_LinkFlaechen (8) SQL-Fehler in SpatiaLite: \n", sql)
+            del self.dbQK
+            return False
+        self.dbQK.commit()
+
+        # Ende Anpassungen der Datenbank für neuere Versionen
+        # --------------------------------------------------------------------------------------------------
+        
+        # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
+
+        sql = """INSERT INTO teilgebiete (tgnam)
+                SELECT teilgebiet FROM flaechen 
+                WHERE teilgebiet IS NOT NULL and
+                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                GROUP BY teilgebiet"""
+        try:
+            self.dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan_LinkFlaechen (1) SQL-Fehler in SpatiaLite: \n", sql)
+            del self.dbQK
+            return False
+
+        sql = """INSERT INTO teilgebiete (tgnam)
+                SELECT teilgebiet FROM haltungen 
+                WHERE teilgebiet IS NOT NULL and
+                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                GROUP BY teilgebiet"""
+        try:
+            self.dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan_LinkFlaechen (1) SQL-Fehler in SpatiaLite: \n", sql)
+            del self.dbQK
+            return False
+
+        self.dbQK.commit()
+
         # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
         sql = 'SELECT abflussparameter FROM flaechen GROUP BY abflussparameter'
-        dbQK.sql(sql)
-        daten = dbQK.fetchall()
-        self.dlg.lw_flaechen_abflussparam.clear()
-        for elem in daten:
-            self.dlg.lw_flaechen_abflussparam.addItem(QListWidgetItem(elem[0]))
+        self.dbQK.sql(sql)
+        daten = self.dbQK.fetchall()
+        self.dlg_cl.lw_flaechen_abflussparam.clear()
+        for ielem, elem in enumerate(daten):
+            self.dlg_cl.lw_flaechen_abflussparam.addItem(QListWidgetItem(elem[0]))
+            if 'liste_flaechen_abflussparam' in self.config:
+                if elem[0] in self.config['liste_flaechen_abflussparam']:
+                    self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
         if len(daten) == 1:
-            self.dlg.lw_flaechen_abflussparam.setCurrentRow(0)
+            self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(0)
 
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
         sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
-        dbQK.sql(sql)
-        daten = dbQK.fetchall()
-        self.dlg.lw_hal_entw.clear()
-        for elem in daten:
-            self.dlg.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
+        self.dbQK.sql(sql)
+        daten = self.dbQK.fetchall()
+        self.dlg_cl.lw_hal_entw.clear()
+        for ielem, elem in enumerate(daten):
+            self.dlg_cl.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
+            if 'liste_hal_entw' in self.config:
+                if elem[0] in self.config['liste_hal_entw']:
+                    self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
         if len(daten) == 1:
-            self.dlg.lw_hal_entw.setCurrentRow(0)
+            self.dlg_cl.lw_hal_entw.setCurrentRow(0)
+
+        # Abfragen der Tabelle teilgebiete nach Teilgebieten
+        sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
+        self.dbQK.sql(sql)
+        daten = self.dbQK.fetchall()
+        self.dlg_cl.lw_teilgebiete.clear()
+        for ielem, elem in enumerate(daten):
+            self.dlg_cl.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
+            if 'liste_teilgebiete' in self.config:
+                if elem[0] in self.config['liste_teilgebiete']:
+                    self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
+        if len(daten) == 1:
+            self.dlg_cl.lw_teilgebiete.setCurrentRow(0)
+
+        # config in Dialog übernehmen
+
+        # Suchradius
+        if 'suchradius' in self.config:
+            suchradius = self.config['suchradius']
+        else:
+            suchradius = 50.
+        self.dlg_cl.tf_suchradius.setText(str(suchradius))
+
+        # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
+        if 'bezug_abstand' in self.config:
+            bezug_abstand = self.config['bezug_abstand']
+        else:
+            bezug_abstand = 'kante'
+
+        if bezug_abstand == 'kante':
+            self.dlg_cl.rb_abstandkante.setChecked(True)
+        elif bezug_abstand == 'mittelpunkt':
+            self.dlg_cl.rb_abstandmittelpunkt.setChecked(True)
+        else:
+            fehlermeldung("Fehler im Programmcode","Nicht definierte Option")
+            return False
+
+        self.dlg_cl.lw_flaechen_abflussparam.itemClicked.connect(self.countselection)
+        self.dlg_cl.lw_hal_entw.itemClicked.connect(self.countselection)
+        self.dlg_cl.lw_teilgebiete.itemClicked.connect(self.countselection)
 
         # show the dialog
-        self.dlg.show()
+        self.dlg_cl.show()
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = self.dlg_cl.exec_()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
@@ -279,16 +489,40 @@ class LinkFlaechenToHaltung:
             # Start der Verarbeitung
 
             # Abrufen der ausgewählten Elemente in beiden Listen
-            liste_flaechen_abflussparam = listitems(self.dlg.lw_flaechen_abflussparam)
-            liste_hal_entw = listitems(self.dlg.lw_hal_entw)
+            liste_flaechen_abflussparam = self.listitems(self.dlg_cl.lw_flaechen_abflussparam)
+            liste_hal_entw = self.listitems(self.dlg_cl.lw_hal_entw)
+            liste_teilgebiete = self.listitems(self.dlg_cl.lw_teilgebiete)
+            suchradius = self.dlg_cl.tf_suchradius.text()
+            if self.dlg_cl.rb_abstandkante.isChecked():
+                bezug_abstand = 'kante'
+            elif self.dlg_cl.rb_abstandmittelpunkt.isChecked():
+                bezug_abstand = 'mittelpunkt'
+            else:
+                fehlermeldung("Fehler im Programmcode","Nicht definierte Option")
+                return False
 
             if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
                 iface.messageBar().pushMessage(u"Bedienerfehler: ", 
                        u'Bitte in beiden Tabellen mindestens ein Element auswählen!', 
                        level=QgsMessageBar.CRITICAL)
-                self.run()
+                self.run_createlines()
 
-            linkFlaechenToHaltungen(database_QKan, liste_flaechen_abflussparam, liste_hal_entw)
+            # Konfigurationsdaten schreiben
+
+            self.config['suchradius'] = suchradius
+            self.config['bezug_abstand'] = bezug_abstand
+            self.config['liste_hal_entw'] = liste_hal_entw
+            self.config['liste_flaechen_abflussparam'] = liste_flaechen_abflussparam
+            self.config['liste_teilgebiete'] = liste_teilgebiete
+            self.config['epsg'] = epsg
+
+            with codecs.open(self.configfil,'w') as fileconfig:
+                fileconfig.write(json.dumps(self.config))
+
+            # Start der Verarbeitung
+
+            createlinks(self.dbQK, liste_flaechen_abflussparam, liste_hal_entw, 
+                        liste_teilgebiete, suchradius, bezug_abstand, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()
@@ -298,3 +532,4 @@ class LinkFlaechenToHaltung:
                 uri.setDataSource('', 'linkfl', 'glink')
                 vlayer = QgsVectorLayer(uri.uri(), 'Anbindung', 'spatialite')
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+
