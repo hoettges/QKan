@@ -58,7 +58,7 @@ def fehlermeldung(title, text):
 # 1. Teilprogramm: Erzeugung der graphischen Verknüpfungen
 
 def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '', 
-                liste_teilgebiete = '', suchradius = 50, bezug_abstand = 'kante', epsg = '25832', 
+                liste_teilgebiete = '', suchradius = 50, bezug_abstand = 'kante', fangradius = 0.1, epsg = '25832', 
                 dbtyp = 'SpatiaLite'):
 
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.

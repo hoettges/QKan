@@ -352,7 +352,15 @@ class Application:
                 del self.dbQK
                 return False
 
-        # Änderung gegen DB-Version 1.1.5
+        if 'aufteilen' not in self.dbQK.attrlist('linkfl'):
+            sql = """ALTER TABLE linkfl ADD COLUMN aufteilen TEXT"""
+            try:
+                self.dbQK.sql(sql)
+            except:
+                fehlermeldung(u"QKan_LinkFlaechen (6) SQL-Fehler in SpatiaLite: \n", sql)
+                del self.dbQK
+                return False
+
         if 'aufteilen' not in self.dbQK.attrlist('flaechen'):
             sql = """ALTER TABLE flaechen ADD COLUMN aufteilen TEXT"""
             try:
@@ -361,6 +369,8 @@ class Application:
                 fehlermeldung(u"QKan_LinkFlaechen (7) SQL-Fehler in SpatiaLite: \n", sql)
                 del self.dbQK
                 return False
+
+        self.dbQK.commit()
 
         # Änderung gegen DB-Version 1.1.5
         # Standard-Auswahl für teilgebiete hinzufügen
