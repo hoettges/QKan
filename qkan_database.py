@@ -95,6 +95,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "Haltungen" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     sql = "SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg)
@@ -102,6 +103,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -136,6 +138,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "Schaechte" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     sql1 = """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg)
@@ -145,6 +148,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql2)
     except BaseException as err:
         fehlermeldung('In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
 
     consl.commit()
@@ -237,6 +241,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "Profile" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     try:
@@ -275,6 +280,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     except BaseException as err:
         fehlermeldung('Tabellendaten "Profile" konnten nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
 
     consl.commit()
@@ -293,6 +299,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "profildaten" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -311,6 +318,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "entwaesserungsarten" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     try:
@@ -324,6 +332,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     except BaseException as err:
         fehlermeldung('Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -340,6 +349,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "pumpentypen" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     try:
@@ -355,6 +365,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     except BaseException as err:
         fehlermeldung('Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
 
     consl.commit()
@@ -383,6 +394,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "pumpen" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     sql = "SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg)
@@ -390,6 +402,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
 
     consl.commit()
@@ -417,6 +430,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "wehre" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     sql = "SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg)
@@ -424,6 +438,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
 
     consl.commit()
@@ -448,6 +463,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "Teilgebiete" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     sql = "SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
@@ -455,6 +471,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -482,6 +499,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "flaechen" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     sql = "SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)".format(epsg)
@@ -489,6 +507,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -511,18 +530,20 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "linkfl" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     sql1 = """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
     sql2 = """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
     sql3 = """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
     try:
-        dbQK.sql(sql1)
-        dbQK.sql(sql2)
-        dbQK.sql(sql3)
+        cursl.execute(sql1)
+        cursl.execute(sql2)
+        cursl.execute(sql3)
     except:
         fehlermeldung(u"QKan_Database (1) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
+        consl.close()
         return False
     consl.commit()
 
@@ -546,6 +567,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "tezg" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     sql = "SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg)
@@ -553,6 +575,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -571,6 +594,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "simulationsstatus" konnte nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     try:
@@ -588,6 +612,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     except BaseException as err:
         fehlermeldung('Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -606,6 +631,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "auslasstypen" konnten nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     try:
@@ -621,6 +647,7 @@ def createdbtables(consl,cursl,epsg=25832):
 
     except BaseException as err:
         fehlermeldung('Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -645,6 +672,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "abflussparameter" konnten nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     try:
@@ -660,6 +688,7 @@ def createdbtables(consl,cursl,epsg=25832):
         
     except BaseException as err:
         fehlermeldung('Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -683,6 +712,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung('Tabelle "bodenklassen" konnten nicht erstellt werden', str(err))
+        consl.close()
         return False
 
     try:
@@ -702,6 +732,7 @@ def createdbtables(consl,cursl,epsg=25832):
         
     except BaseException as err:
         fehlermeldung('Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -719,6 +750,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(u'Fehler beim Erzeugen der Tabelle "Speicherkennlinien": ', str(err))
+        consl.close()
         return False
     consl.commit()
 
@@ -736,6 +768,7 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(u'Fehler beim Erzeugen der Tabelle "Info": ', str(err))
+        consl.close()
         return False
     consl.commit()
 
