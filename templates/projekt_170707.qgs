@@ -91,10 +91,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>388964.41716630104929209</xmin>
-      <ymin>5710772.47161513101309538</ymin>
-      <xmax>389109.76439036894589663</xmax>
-      <ymax>5710950.48928051721304655</ymax>
+      <xmin>389035.63925286178709939</xmin>
+      <ymin>5710701.12982939556241035</ymin>
+      <xmax>389118.92387786175822839</xmax>
+      <ymax>5710803.13476689532399178</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -115,28 +115,22 @@
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20170504083915353"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161204084617148"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170504083608994"/>
-      <layer_coordinate_transform destAuthId="EPSG:3044" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="linkfl20170709140542371"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508214302213"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen20161016203756230"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="Speicher_Kopie20161221080207994"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="WebAtlasDE20161016215518099"/>
-      <layer_coordinate_transform destAuthId="EPSG:3044" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindung20170708155600709"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161221075653754"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="teilgebiete20170214092005309"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="muster_modelldatenbank_geo20170611082328472"/>
-      <layer_coordinate_transform destAuthId="EPSG:3044" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindung20170708155043433"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20170504083519678"/>
       <layer_coordinate_transform destAuthId="EPSG:3044" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindung20170707215056854"/>
-      <layer_coordinate_transform destAuthId="EPSG:3044" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindung20170709134922047"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508214559105"/>
-      <layer_coordinate_transform destAuthId="EPSG:3044" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindung20170708154641045"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="auslaesse20161130084229247"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="speicherschaechte20161201095216459"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="teilgebiete20170504084043867"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508223029630"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen_Kopie20161016203906444"/>
       <layer_coordinate_transform destAuthId="EPSG: dummy" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508214657189"/>
-      <layer_coordinate_transform destAuthId="EPSG:3044" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindung20170708133254970"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="wehre20161125174724734"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161220162259105"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:31467" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161016203756252"/>
@@ -1376,48 +1370,9 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="fliesszeitkanal">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="CheckBox" name="aufteilen">
-          <widgetv2config fieldEditable="1" UncheckedState="" constraint="" CheckedState="" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
       </edittypes>
-      <renderer-v2 attr="teilgebiet" forceraster="0" symbollevels="0" type="categorizedSymbol" enableorderby="0">
-        <categories>
-          <category render="true" symbol="0" value="" label=""/>
-          <category render="true" symbol="1" value="auswahl1" label="auswahl1"/>
-        </categories>
+      <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
         <symbols>
-          <symbol alpha="1" clip_to_extent="1" type="fill" name="0">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="131,157,226,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.1"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-          <symbol alpha="1" clip_to_extent="1" type="fill" name="1">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="186,221,105,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="128,152,72,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.26"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-        </symbols>
-        <source-symbol>
           <symbol alpha="1" clip_to_extent="1" type="fill" name="0">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -1433,7 +1388,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="style" v="solid"/>
             </layer>
           </symbol>
-        </source-symbol>
+        </symbols>
         <rotation/>
         <sizescale scalemethod="diameter"/>
       </renderer-v2>
@@ -1651,7 +1606,6 @@ def my_form_open(dialog, layer, feature):
         <alias field="speicherkonst" index="11" name=""/>
         <alias field="fliesszeit" index="12" name=""/>
         <alias field="fliesszeitkanal" index="13" name=""/>
-        <alias field="aufteilen" index="14" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -1673,7 +1627,6 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="speicherkonst"/>
           <column width="-1" hidden="0" type="field" name="fliesszeitkanal"/>
           <column width="-1" hidden="0" type="field" name="fliesszeit"/>
-          <column width="-1" hidden="0" type="field" name="aufteilen"/>
         </columns>
       </attributetableconfig>
       <editform>./eingabemasken/flaechen.ui</editform>
@@ -1719,7 +1672,6 @@ def my_form_open(dialog, layer, feature):
         <default field="speicherkonst" expression=""/>
         <default field="fliesszeit" expression=""/>
         <default field="fliesszeitkanal" expression=""/>
-        <default field="aufteilen" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "flnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
@@ -7001,35 +6953,41 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
   </projectlayers>
   <properties>
-    <WMSUrl type="QString"></WMSUrl>
-    <SpatialRefSys>
-      <ProjectCRSProj4String type="QString">+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</ProjectCRSProj4String>
-      <ProjectCrs type="QString">EPSG:31467</ProjectCrs>
-      <ProjectCRSID type="int">2647</ProjectCRSID>
-      <ProjectionsEnabled type="int">1</ProjectionsEnabled>
-    </SpatialRefSys>
-    <Measurement>
-      <DistanceUnits type="QString">meters</DistanceUnits>
-      <AreaUnits type="QString">m2</AreaUnits>
-    </Measurement>
-    <Legend>
-      <filterByMap type="bool">false</filterByMap>
-    </Legend>
-    <DefaultStyles>
-      <Fill type="QString"></Fill>
-      <Line type="QString"></Line>
-      <Marker type="QString"></Marker>
-      <RandomColors type="bool">true</RandomColors>
-      <AlphaInt type="int">255</AlphaInt>
-      <ColorRamp type="QString"></ColorRamp>
-    </DefaultStyles>
-    <WMSAccessConstraints type="QString">None</WMSAccessConstraints>
-    <WMSSegmentizeFeatureInfoGeometry type="bool">false</WMSSegmentizeFeatureInfoGeometry>
-    <WMSContactMail type="QString"></WMSContactMail>
-    <WMSImageQuality type="int">90</WMSImageQuality>
-    <WMSRestrictedComposers type="QStringList"/>
+    <Variables>
+      <variableNames type="QStringList"/>
+      <variableValues type="QStringList"/>
+    </Variables>
+    <WMSContactPerson type="QString"></WMSContactPerson>
+    <WMSOnlineResource type="QString"></WMSOnlineResource>
+    <WMSUseLayerIDs type="bool">false</WMSUseLayerIDs>
+    <WMSContactOrganization type="QString"></WMSContactOrganization>
+    <WMSKeywordList type="QStringList">
+      <value></value>
+    </WMSKeywordList>
+    <WFSUrl type="QString"></WFSUrl>
+    <Paths>
+      <Absolute type="bool">false</Absolute>
+    </Paths>
     <WMSServiceTitle type="QString"></WMSServiceTitle>
+    <WFSLayers type="QStringList"/>
+    <WMSRestrictedLayers type="QStringList"/>
+    <WMSContactMail type="QString"></WMSContactMail>
+    <WMSRestrictedComposers type="QStringList"/>
+    <PositionPrecision>
+      <DecimalPlaces type="int">2</DecimalPlaces>
+      <Automatic type="bool">true</Automatic>
+      <DegreeFormat type="QString">MU</DegreeFormat>
+    </PositionPrecision>
+    <WCSUrl type="QString"></WCSUrl>
+    <WMSServiceCapabilities type="bool">false</WMSServiceCapabilities>
     <WMSContactPhone type="QString"></WMSContactPhone>
+    <WMSServiceAbstract type="QString"></WMSServiceAbstract>
+    <WMSContactPosition type="QString"></WMSContactPosition>
+    <WMSAddWktGeometry type="bool">false</WMSAddWktGeometry>
+    <Measure>
+      <Ellipsoid type="QString">bessel</Ellipsoid>
+    </Measure>
+    <WMSPrecision type="QString">8</WMSPrecision>
     <DBManager>
       <savedQueries>
         <q-1675782903>
@@ -7053,16 +7011,15 @@ SET geom = &#xd;
       <Update type="QStringList"/>
       <Delete type="QStringList"/>
     </WFSTLayers>
-    <WCSLayers type="QStringList"/>
-    <WMSRestrictedLayers type="QStringList"/>
-    <WMSFees type="QString">conditions unknown</WMSFees>
-    <Macros>
-      <pythonCode type="QString"></pythonCode>
-    </Macros>
-    <WMSAddWktGeometry type="bool">false</WMSAddWktGeometry>
-    <WCSUrl type="QString"></WCSUrl>
-    <WMSOnlineResource type="QString"></WMSOnlineResource>
-    <WMSPrecision type="QString">8</WMSPrecision>
+    <Gui>
+      <SelectionColorBluePart type="int">0</SelectionColorBluePart>
+      <CanvasColorGreenPart type="int">255</CanvasColorGreenPart>
+      <CanvasColorRedPart type="int">255</CanvasColorRedPart>
+      <SelectionColorRedPart type="int">255</SelectionColorRedPart>
+      <SelectionColorAlphaPart type="int">255</SelectionColorAlphaPart>
+      <SelectionColorGreenPart type="int">255</SelectionColorGreenPart>
+      <CanvasColorBluePart type="int">255</CanvasColorBluePart>
+    </Gui>
     <Digitizing>
       <DefaultSnapToleranceUnit type="int">1</DefaultSnapToleranceUnit>
       <LayerSnappingList type="QStringList">
@@ -7144,41 +7101,35 @@ SET geom = &#xd;
     <Identify>
       <disabledLayers type="QStringList"/>
     </Identify>
-    <WMSContactPerson type="QString"></WMSContactPerson>
-    <WMSContactOrganization type="QString"></WMSContactOrganization>
-    <WMSKeywordList type="QStringList">
-      <value></value>
-    </WMSKeywordList>
-    <Variables>
-      <variableNames type="QStringList"/>
-      <variableValues type="QStringList"/>
-    </Variables>
-    <Paths>
-      <Absolute type="bool">false</Absolute>
-    </Paths>
-    <WMSContactPosition type="QString"></WMSContactPosition>
-    <PositionPrecision>
-      <DecimalPlaces type="int">2</DecimalPlaces>
-      <Automatic type="bool">true</Automatic>
-      <DegreeFormat type="QString">MU</DegreeFormat>
-    </PositionPrecision>
-    <Gui>
-      <SelectionColorBluePart type="int">0</SelectionColorBluePart>
-      <CanvasColorGreenPart type="int">255</CanvasColorGreenPart>
-      <CanvasColorRedPart type="int">255</CanvasColorRedPart>
-      <SelectionColorRedPart type="int">255</SelectionColorRedPart>
-      <SelectionColorAlphaPart type="int">255</SelectionColorAlphaPart>
-      <SelectionColorGreenPart type="int">127</SelectionColorGreenPart>
-      <CanvasColorBluePart type="int">255</CanvasColorBluePart>
-    </Gui>
-    <WFSLayers type="QStringList"/>
-    <WMSServiceAbstract type="QString"></WMSServiceAbstract>
-    <Measure>
-      <Ellipsoid type="QString">bessel</Ellipsoid>
-    </Measure>
-    <WFSUrl type="QString"></WFSUrl>
-    <WMSServiceCapabilities type="bool">false</WMSServiceCapabilities>
-    <WMSUseLayerIDs type="bool">false</WMSUseLayerIDs>
+    <Macros>
+      <pythonCode type="QString"></pythonCode>
+    </Macros>
+    <WMSAccessConstraints type="QString">None</WMSAccessConstraints>
+    <WCSLayers type="QStringList"/>
+    <Legend>
+      <filterByMap type="bool">false</filterByMap>
+    </Legend>
+    <SpatialRefSys>
+      <ProjectCRSProj4String type="QString">+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</ProjectCRSProj4String>
+      <ProjectCrs type="QString">EPSG:31467</ProjectCrs>
+      <ProjectCRSID type="int">2647</ProjectCRSID>
+      <ProjectionsEnabled type="int">1</ProjectionsEnabled>
+    </SpatialRefSys>
+    <DefaultStyles>
+      <Fill type="QString"></Fill>
+      <Line type="QString"></Line>
+      <Marker type="QString"></Marker>
+      <RandomColors type="bool">true</RandomColors>
+      <AlphaInt type="int">255</AlphaInt>
+      <ColorRamp type="QString"></ColorRamp>
+    </DefaultStyles>
+    <WMSFees type="QString">conditions unknown</WMSFees>
+    <WMSImageQuality type="int">90</WMSImageQuality>
+    <Measurement>
+      <DistanceUnits type="QString">meters</DistanceUnits>
+      <AreaUnits type="QString">m2</AreaUnits>
+    </Measurement>
+    <WMSUrl type="QString"></WMSUrl>
   </properties>
   <visibility-presets/>
 </qgis>

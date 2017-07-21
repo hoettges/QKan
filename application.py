@@ -136,13 +136,13 @@ class ImportFromHE:
         self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
 
         if 'check_copy_forms' in self.config:
-            check_copy_forms = (self.config['check_copy_forms'] == u'True')
+            check_copy_forms = self.config['check_copy_forms']
         else:
             check_copy_forms = True
         self.dlg.cb_copy_forms.setChecked(check_copy_forms)
 
         if 'check_inittab' in self.config:
-            check_inittab = (self.config['check_inittab'] == u'True')
+            check_inittab = self.config['check_inittab']
         else:
             check_inittab = True
         self.dlg.cb_import_tabinit.setChecked(check_inittab)

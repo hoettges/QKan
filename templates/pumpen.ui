@@ -319,16 +319,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QDateEdit" name="createdat">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>220</y>
-      <width>131</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QTextEdit" name="kommentar">
     <property name="geometry">
      <rect>
@@ -336,6 +326,16 @@
       <y>300</y>
       <width>581</width>
       <height>71</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QgsDateTimeEdit" name="createdat_2">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>220</y>
+      <width>131</width>
+      <height>23</height>
      </rect>
     </property>
    </widget>
@@ -352,6 +352,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsDateTimeEdit</class>
+   <extends>QDateTimeEdit</extends>
+   <header>qgsdatetimeedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
