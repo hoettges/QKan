@@ -9,6 +9,7 @@ import logging
 logger = logging.getLogger('QKan')
 
 def get_database_QKan():
+    """Ermittlung der aktuellen QpatiaLite-Datenbank aus den geladenen Layern"""
     database_QKan = ''
     epsg = ''
     layers = iface.legendInterface().layers()
@@ -20,24 +21,51 @@ def get_database_QKan():
         QgsMessageLog.logMessage(u"\nKein QKan-Projekt geladen!", level=QgsMessageLog.CRITICAL)
 
         return False, False
+
+    # Über Layer iterieren
     for lay in layers:
-        # logger.debug('Verbindungsstring: {}'.format(lay.source()))
         lyattr = {}
+
+        # Attributstring für Layer splitten
         for le in lay.source().split(' '):
             if '=' in le:
                 key, value = le.split('=',2)
                 lyattr[key] = value.strip('"').strip("'")
-                # logger.debug('Verbindung gefunden: {}: {}'.format(key,value))
+
+        # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
         if 'table' in lyattr and 'dbname' in lyattr:
-            # logger.debug('table und dbname in keys enthalten')
             if lyattr['table'] == 'flaechen':
-                # logger.debug('table ist "haltungen" oder "schaechte"')
                 if database_QKan == '':
                     database_QKan = lyattr['dbname']
-                    # logger.debug('Datenbank erstmals gesetzt: {}'.format(database_QKan))
                     epsg = str(int(lay.crs().postgisSrid()))
                 elif database_QKan != lyattr['dbname']:
                     database_QKan = ''
                     logger.warning('Abweichende Datenbankanbindung gefunden: {}'.format(lyattr['dbname']))
                     return False, False   # Im Projekt sind mehrere Sqlite-Datenbanken eingebungen...
     return database_QKan, epsg
+
+def get_editable_layers():
+    """Liste der Tabellen, für die in der Layerliste der Status editable aktiviert ist.
+        Dient dazu, sicherzustellen, dass keine Datenbankoperationen auf editierbare
+        Layer zugreifen."""
+
+    elayers = set([])                # Zuerst leere Liste anlegen
+
+    layers = iface.legendInterface().layers()
+    # logger.debug('Layerliste erstellt')
+    if len(layers) > 0:
+    # Über Layer iterieren
+        for lay in layers:
+            lyattr = {}
+
+            # Attributstring für Layer splitten
+            for le in lay.source().split(' '):
+                if '=' in le:
+                    key, value = le.split('=',2)
+                    lyattr[key] = value.strip('"').strip("'")
+
+            # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
+            if 'table' in lyattr and 'dbname' in lyattr:
+                if lay.isEditable():
+                    elayers.add(lyattr['table'])
+    return elayers

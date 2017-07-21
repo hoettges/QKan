@@ -472,6 +472,7 @@ def createdbtables(consl,cursl,epsg=25832):
         fliesszeit REAL,
         fliesszeitkanal REAL,
         teilgebiet TEXT,
+        aufteilen TEXT,
         regenschreiber TEXT,
         abflussparameter TEXT,
         kommentar TEXT,
@@ -491,6 +492,39 @@ def createdbtables(consl,cursl,epsg=25832):
         return False
     consl.commit()
 
+
+    # Anbindung ---------------------------------------------------------------------------
+    # Die Tabelle linkfl verwaltet die Anbindung von Flächen an Haltungen. Diese Anbindung
+    # wird ausschließlich grafisch verwaltet und beim Export direkt verwendet. 
+    # Flächen, bei denen das Attribut "aufteilen" den Wert 'ja' hat, werden mit dem 
+    # Werkzeug "QKan_Link_Flaechen" mit allen durch die Verschneidung mit tezg entstehenden
+    # Anteilen zugeordnet. 
+
+    sql = """CREATE TABLE IF NOT EXISTS linkfl (
+            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+            flnam TEXT,
+            haltnam TEXT,
+            aufteilen TEXT,
+            teilgebiet TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('Tabelle "linkfl" konnte nicht erstellt werden', str(err))
+        return False
+
+    sql1 = """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql2 = """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql3 = """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    try:
+        dbQK.sql(sql1)
+        dbQK.sql(sql2)
+        dbQK.sql(sql3)
+    except:
+        fehlermeldung(u"QKan_Database (1) SQL-Fehler in SpatiaLite: \n", sql)
+        del dbQK
+        return False
+    consl.commit()
 
     # Teileinzugsgebiete ------------------------------------------------------------------
     # Bei aktivierte Option "check_difftezg" wird je Teileinzugsgebiet eine unbefestigte 
