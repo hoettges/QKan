@@ -542,7 +542,6 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql3)
     except:
         fehlermeldung(u"QKan_Database (1) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
         consl.close()
         return False
     consl.commit()

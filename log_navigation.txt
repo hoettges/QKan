@@ -110,3 +110,7 @@
 2017-07-21 15:13:32,214 - QKan_Database - INFO - <module> - Navigation-Modul gestartet
 2017-07-21 17:47:12,542 - QKan_Database - INFO - <module> - Navigation-Modul gestartet
 2017-07-21 18:00:46,381 - QKan_Database - INFO - <module> - Navigation-Modul gestartet
+2017-07-22 10:40:24,937 - QKan_Database - INFO - <module> - Navigation-Modul gestartet
+2017-07-22 10:57:12,703 - QKan_Database - INFO - <module> - Navigation-Modul gestartet
+2017-07-22 13:28:16,385 - QKan_Database - INFO - <module> - Navigation-Modul gestartet
+2017-07-22 13:43:09,000 - QKan_Database - INFO - <module> - Navigation-Modul gestartet
