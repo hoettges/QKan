@@ -5,13 +5,7 @@ from PyQt4.QtGui import *
 from Enums import SliderMode
 import logging
 
-main_logger = logging.getLogger("QKan_Laengsschnitt")
-# main_logger.setLevel(logging.INFO)
-# ch = logging.FileHandler(filename="log_laengsschnitt.txt", mode="w", encoding="utf8")
-# ch.setLevel(logging.INFO)
-# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
-# ch.setFormatter(formatter)
-# main_logger.addHandler(ch)
+main_logger = logging.getLogger("QKan")
 
 
 class Slider(QSlider):
@@ -24,7 +18,7 @@ class Slider(QSlider):
         * Pausiert den Slider zu beginn und definiert die Vorwärts-Bewegung als letzten Modus.
         """
         super(self.__class__, self).__init__(Qt.Horizontal)
-        self.__log = logging.getLogger("QKan_Laengsschnitt.slider.Slider")
+        self.__log = logging.getLogger("QKan.slider.Slider")
         self.setRange(0, 50)
         self.setSingleStep(1)
         self.setPageStep(5)

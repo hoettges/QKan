@@ -38,15 +38,8 @@ import copy
 from ganglinie import Ganglinie
 import logging
 
-main_logger = logging.getLogger("QKan_Laengsschnitt")
-main_logger.setLevel(logging.INFO)
-logging_file = os.path.join(os.path.dirname(__file__), "log_laengsschnitt.txt")
-ch = logging.FileHandler(filename=logging_file, mode="a", encoding="utf8")
-ch.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
-ch.setFormatter(formatter)
-main_logger.addHandler(ch)
-main_logger.info("Application started")
+main_logger = logging.getLogger("QKan")
+main_logger.info("Application-Modul gestartet")
 
 
 class Application:
@@ -60,7 +53,7 @@ class Application:
             application at run time.
         :type iface: QgsInterface
         """
-        self.__log = logging.getLogger("QKan_Laengsschnitt.application.Laengsschnitt")
+        self.__log = logging.getLogger("QKan.application.Laengsschnitt")
         self.__t = 2
         # Save reference to the QGIS interface
         self.__iface = iface

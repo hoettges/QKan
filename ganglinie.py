@@ -12,13 +12,7 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 
 from QKan_Database.fbfunc import FBConnection
 
-main_logger = logging.getLogger("QKan_Laengsschnitt")
-# main_logger.setLevel(logging.INFO)
-# ch = logging.FileHandler(filename="log_laengsschnitt.txt", mode="w", encoding="utf8")
-# ch.setLevel(logging.INFO)
-# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
-# ch.setFormatter(formatter)
-# main_logger.addHandler(ch)
+main_logger = logging.getLogger("QKan")
 main_logger.info("Ganglinien-Modul gestartet")
 
 
@@ -31,7 +25,7 @@ class Ganglinie:
          Ganglinien haben.
         :type t: int
         """
-        self.__log = logging.getLogger("QKan_Laengsschnitt.ganglinie.Ganglinie")
+        self.__log = logging.getLogger("QKan.ganglinie.Ganglinie")
         self.__t = t
         self.__dialog = GanglinieDialog()
         self.__laengsschnitt = None

@@ -16,13 +16,7 @@ from matplotlib.lines import Line2D
 
 from QKan_Database.fbfunc import FBConnection
 
-main_logger = logging.getLogger("QKan_Laengsschnitt")
-# main_logger.setLevel(logging.INFO)
-# ch = logging.FileHandler(filename="log_laengsschnitt.txt", mode="w", encoding="utf8")
-# ch.setLevel(logging.INFO)
-# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
-# ch.setFormatter(formatter)
-# main_logger.addHandler(ch)
+main_logger = logging.getLogger("QKan")
 main_logger.info("Plotter-Modul gestartet")
 plots = dict(surface=None, max=None, waterlevel=None)
 
@@ -36,7 +30,7 @@ class Laengsschnitt:
         selektierten Elemente verfügt.
         :type _route: dict
         """
-        self.__log = logging.getLogger("QKan_Laengsschnitt.plotter.Laengsschnitt")
+        self.__log = logging.getLogger("QKan.plotter.Laengsschnitt")
         self.__route = _route
         self.__fig = plt.figure(0)
         self.__ax = None
@@ -213,7 +207,7 @@ class Maximizer:
         :param _dbname: Entspricht dem Datenbank-Pfad der Ereignis-Datenbank
         :type _dbname: str
         """
-        self.__log = logging.getLogger("QKan_Laengsschnitt.plotter.Maximizer")
+        self.__log = logging.getLogger("QKan.plotter.Maximizer")
         self.__db = FBConnection(_dbname)
         self.__route = _route
         self.__fig = plt.figure(0)
@@ -342,7 +336,7 @@ class Animator:
         :param _backward: Entspricht einer Referenz auf den "Zurück"-Button innerhalb der GUI.
         :type _backward: QPushButton
         """
-        self.__log = logging.getLogger("QKan_Laengsschnitt.plotter.Animator")
+        self.__log = logging.getLogger("QKan.plotter.Animator")
         self.__db = FBConnection(_dbname)
         self.__label = _label
         self.__ganglinie = None
