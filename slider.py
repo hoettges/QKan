@@ -160,7 +160,7 @@ class Slider(QSlider):
         self.__update_style()
         self.setValue(0)
         self.__log.info(u"Slider wurde zurückgesetzt und pausiert")
-        self.__log.debug(u"Slider-Modus auf Forwärts gesetzt. Value auf 0 gesetzt.")
+        self.__log.debug(u"Slider-Modus auf vorwärts gesetzt. Value auf 0 gesetzt.")
 
     def get_mode(self):
         """

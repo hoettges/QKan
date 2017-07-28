@@ -512,14 +512,14 @@ class Animator:
 
         :param value: Entspricht der Geschwindigkeit von 0 bis 50
         :type value: int
-        :param mode: Entspricht dem aktuellen Modus. Forwärts oder Rückwärts
+        :param mode: Entspricht dem aktuellen Modus. Vorwärts oder Rückwärts
         :type mode: SliderMode
         """
         speed = self.__get_speed(value)
         self.__log.info(u"Animation wurde mit Geschwindigkeit = {} gestartet".format(value))
         self.__speed = speed
         self.__mode = mode
-        self.__log.debug(u"Modus:\t{}".format(u"Forwärts" if mode == SliderMode.Forward else u"Rückwärts"))
+        self.__log.debug(u"Modus:\t{}".format(u"Vorwärts" if mode == SliderMode.Forward else u"Rückwärts"))
         self.__last_time = datetime.datetime.today()
         self.__animation.event_source.start()
         self.__log.info(u"Animation wird fortgesetzt")
@@ -555,7 +555,7 @@ class Animator:
         :type index: int
         :param speed: Entspricht der tatsächlichen Simulationsgeschwindigkeit.
         :type speed: int
-        :param mode: Entspricht dem Modus. Forwärts oder Rückwärts.
+        :param mode: Entspricht dem Modus. Vorwärts oder Rückwärts.
         :type mode: SliderMode
         :return: Gibt den Index des Zeitpunkts zurück, welcher als nächstes auszugeben ist.
         :rtype: int
