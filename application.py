@@ -242,21 +242,19 @@ class Application:
         liste_hal_entw = self.listitems(self.dlg_cl.lw_hal_entw)
         liste_teilgebiete = self.listitems(self.dlg_cl.lw_teilgebiete)
 
-        # Zu berücksichtigende Flächen zählen
+        # Zu berücksichtigende ganze Flächen zählen
         if liste_flaechen_abflussparam == '':
             # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
             auswahl = ''
             logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
         else:
-            auswahl = ' WHERE flaechen.abflussparameter in ({})'.format(liste_flaechen_abflussparam)
+            auswahl = ' AND flaechen.abflussparameter in ({})'.format(liste_flaechen_abflussparam)
 
         if liste_teilgebiete != '':
-            if auswahl == '':
-                auswahl = ' WHERE flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
-            else:
-                auswahl += ' and flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
+            auswahl += ' and flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
 
-        sql = """SELECT count(*) AS anzahl FROM flaechen{auswahl}""".format(auswahl=auswahl)
+        sql = """SELECT count(*) AS anzahl FROM flaechen
+                WHERE (aufteilen <> 'ja' OR aufteilen IS NULL){auswahl}""".format(auswahl=auswahl)
         try:
             self.dbQK.sql(sql)
         except:
@@ -269,6 +267,30 @@ class Application:
         else:
             self.dlg_cl.lf_anzahl_flaechen.setText('0')
 
+        # Zu berücksichtigende zu verschneidende Flächen zählen
+        if liste_flaechen_abflussparam == '':
+            # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
+            auswahl = ''
+            logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
+        else:
+            auswahl = ' AND flaechen.abflussparameter in ({})'.format(liste_flaechen_abflussparam)
+
+        if liste_teilgebiete != '':
+            auswahl += ' and flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
+
+        sql = """SELECT count(*) AS anzahl FROM flaechen
+                WHERE aufteilen = 'ja'{auswahl}""".format(auswahl=auswahl)
+        try:
+            self.dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan_LinkFlaechen (9) SQL-Fehler in SpatiaLite: \n", sql)
+            del self.dbQK
+            return False
+        daten = self.dbQK.fetchone()
+        if not (daten is None):
+            self.dlg_cl.lf_anzahl_flaechsec.setText(str(daten[0]))
+        else:
+            self.dlg_cl.lf_anzahl_flaechsec.setText('0')
 
         # Zu berücksichtigende Haltungen zählen
         if liste_hal_entw == '':
@@ -396,7 +418,7 @@ class Application:
 
         sql = """INSERT INTO teilgebiete (tgnam)
                 SELECT teilgebiet FROM flaechen 
-                WHERE teilgebiet IS NOT NULL and
+                WHERE teilgebiet IS NOT NULL AND teilgebiet <> '' and
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         try:
@@ -408,7 +430,7 @@ class Application:
 
         sql = """INSERT INTO teilgebiete (tgnam)
                 SELECT teilgebiet FROM haltungen 
-                WHERE teilgebiet IS NOT NULL and
+                WHERE teilgebiet IS NOT NULL AND teilgebiet <> '' and
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         try:
@@ -424,12 +446,17 @@ class Application:
         sql = 'SELECT abflussparameter FROM flaechen GROUP BY abflussparameter'
         self.dbQK.sql(sql)
         daten = self.dbQK.fetchall()
+        logger.debug('\ndaten: {}'.format(str(daten)))                          # debug
         self.dlg_cl.lw_flaechen_abflussparam.clear()
         for ielem, elem in enumerate(daten):
             self.dlg_cl.lw_flaechen_abflussparam.addItem(QListWidgetItem(elem[0]))
             if 'liste_flaechen_abflussparam' in self.config:
-                if elem[0] in self.config['liste_flaechen_abflussparam']:
-                    self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
+                try: 
+                    if elem[0] in self.config['liste_flaechen_abflussparam']:
+                        self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
+                except BaseException as err:
+                    del self.dbQK
+                    logger.debug('\nelem: {}'.format(str(elem)))                          # debug
         if len(daten) == 1:
             self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(0)
 
@@ -485,6 +512,7 @@ class Application:
         self.dlg_cl.lw_flaechen_abflussparam.itemClicked.connect(self.countselection)
         self.dlg_cl.lw_hal_entw.itemClicked.connect(self.countselection)
         self.dlg_cl.lw_teilgebiete.itemClicked.connect(self.countselection)
+        self.countselection()
 
         # show the dialog
         self.dlg_cl.show()
@@ -511,11 +539,11 @@ class Application:
                 fehlermeldung("Fehler im Programmcode","Nicht definierte Option")
                 return False
 
-            if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
-                iface.messageBar().pushMessage(u"Bedienerfehler: ", 
-                       u'Bitte in beiden Tabellen mindestens ein Element auswählen!', 
-                       level=QgsMessageBar.CRITICAL)
-                self.run_createlines()
+            # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
+                # iface.messageBar().pushMessage(u"Bedienerfehler: ", 
+                       # u'Bitte in beiden Tabellen mindestens ein Element auswählen!', 
+                       # level=QgsMessageBar.CRITICAL)
+                # self.run_createlines()
 
             # Konfigurationsdaten schreiben
 

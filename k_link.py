@@ -132,7 +132,6 @@ def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '',
 
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
     if liste_flaechen_abflussparam == '':
-        # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
         auswahl = ''
         logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
     else:
@@ -141,31 +140,14 @@ def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '',
     if liste_teilgebiete != '':
         auswahl += ' and flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
 
-    # Flächen, die nicht verschnitten werden müssen (aufteilen <> 'ja')
+    # Sowohl Flächen, die nicht als auch die, die verschnitten werden müssen
     sql = """WITH flges AS (
                 SELECT
                     flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
                     flaechen.geom
                 FROM flaechen
-                WHERE (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL){auswahl})
-            INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
-            SELECT flges.flnam, flges.aufteilen, flges.teilgebiet, flges.geom
-            FROM flges
-            LEFT JOIN linkfl
-            ON within(StartPoint(linkfl.glink),flges.geom)
-            WHERE linkfl.glink IS NULL""".format(auswahl=auswahl)
-
-    logger.debug('\nSQL-2a:\n{}\n'.format(sql))
-
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkFlaechen (4a) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
-        return False
-
-    # Flächen, die verschnitten werden müssen (aufteilen <> 'ja')
-    sql = """WITH flges AS (
+                WHERE (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL){auswahl}
+                UNION
                 SELECT
                     flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
                     CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
@@ -178,22 +160,47 @@ def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '',
             FROM flges
             LEFT JOIN linkfl
             ON within(StartPoint(linkfl.glink),flges.geom)
-            WHERE linkfl.glink IS NULL""".format(auswahl=auswahl)
+            WHERE linkfl.pk IS NULL""".format(auswahl=auswahl)
 
-    logger.debug('\nSQL-2b:\n{}\n'.format(sql))
+    # logger.debug('\nSQL-2a:\n{}\n'.format(sql))
 
     try:
         dbQK.sql(sql)
     except:
-        fehlermeldung(u"QKan_LinkFlaechen (4b) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung(u"QKan_LinkFlaechen (4a) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
         return False
+
+    # Flächen, die verschnitten werden müssen (aufteilen = 'ja')
+    # sql = """WITH flges AS (
+                # SELECT
+                    # flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
+                    # CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
+                # FROM flaechen
+                # INNER JOIN tezg
+                # ON intersects(flaechen.geom,tezg.geom)
+                # WHERE flaechen.aufteilen = 'ja'{auswahl})
+            # INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
+            # SELECT flges.flnam, flges.aufteilen, flges.teilgebiet, flges.geom
+            # FROM flges
+            # LEFT JOIN linkfl
+            # ON within(StartPoint(linkfl.glink),flges.geom)
+            # WHERE linkfl.pk IS NULL""".format(auswahl=auswahl)
+
+    # logger.debug('\nSQL-2b:\n{}\n'.format(sql))
+
+    # try:
+        # dbQK.sql(sql)
+    # except:
+        # fehlermeldung(u"QKan_LinkFlaechen (4b) SQL-Fehler in SpatiaLite: \n", sql)
+        # del dbQK
+        # return False
 
     # Jetzt werden die Flächenobjekte Buffer erweitert und jeweils neu 
     # hinzugekommmene mögliche Zuordnungen eingetragen.
     # Wenn das Attribut "haltnam" vergeben ist, gilt die Fläche als zugeordnet.
 
-    sql = """UPDATE linkfl SET gbuf = buffer(geom,{}) WHERE linkfl.glink IS NULL""".format(suchradius)
+    sql = """UPDATE linkfl SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linkfl.glink IS NULL""".format(suchradius)
     try:
         dbQK.sql(sql)
     except:
@@ -208,14 +215,14 @@ def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '',
     # in tlink gefiltert wurden. 
 
     if liste_hal_entw == '':
-        # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
         auswahl = ''
-        logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Haltungen...')
+        # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Haltungen...')
     else:
         auswahl = ' AND hal.entwart in ({})'.format(liste_hal_entw)
 
     if liste_teilgebiete != '':
         auswahl += ' AND  hal.teilgebiet in ({0:})'.format(liste_teilgebiete)
+        auswlin = ' AND  linkfl.teilgebiet in ({0:})'.format(liste_teilgebiete)
 
     if bezug_abstand == 'mittelpunkt':
         bezug = 'fl.geom'
@@ -230,7 +237,7 @@ def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '',
     # im Feld "flaechen.haltnam" -> fl.haltnam -> tlink.linkhal -> t1.linkhal). 
 
     sql = """WITH tlink AS
-            (	SELECT fl.pk AS pk, hal.haltnam AS haltnam, fl.haltnam AS linkhal,
+            (	SELECT fl.pk AS pk,
                     Distance(hal.geom,{bezug}) AS dist, 
                     hal.geom AS geohal, fl.geom AS geofl
                 FROM
@@ -243,11 +250,11 @@ def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '',
             (SELECT MakeLine(PointOnSurface(t1.geofl),Centroid(t1.geohal))
             FROM tlink AS t1
             INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
-            ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.0001
+            ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
             WHERE linkfl.pk = t1.pk)
-            WHERE linkfl.glink IS NULL""".format(bezug=bezug, auswahl=auswahl)
+            WHERE linkfl.glink IS NULL{auswlin}""".format(bezug=bezug, auswahl=auswahl, auswlin=auswlin)
 
-    logger.debug('\nSQL-3a:\n{}\n'.format(sql))
+    # logger.debug('\nSQL-3a:\n{}\n'.format(sql))
 
     try:
         dbQK.sql(sql)
@@ -255,6 +262,19 @@ def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '',
         fehlermeldung(u"QKan_LinkFlaechen (5) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
         return False
+
+    # Löschen der Datensätze in linkfl, bei denen keine Verbindung erstellt wurde, weil die 
+    # nächste Haltung zu weit entfernt ist.
+
+    sql = """DELETE FROM linkfl WHERE glink IS NULL"""
+
+    try:
+        dbQK.sql(sql)
+    except:
+        fehlermeldung(u"QKan_LinkFlaechen (7) SQL-Fehler in SpatiaLite: \n", sql)
+        del dbQK
+        return False
+
 
     # Keine Prüfung, ob Anfang der Verknüpfungslinie noch in zugehöriger Fläche liegt. 
     sql = """UPDATE flaechen SET haltnam = 
