@@ -29,7 +29,7 @@ def get_database_QKan():
         # Attributstring für Layer splitten
         for le in lay.source().split(' '):
             if '=' in le:
-                key, value = le.split('=',2)
+                key, value = le.split('=',1)
                 lyattr[key] = value.strip('"').strip("'")
 
         # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
@@ -61,7 +61,7 @@ def get_editable_layers():
             # Attributstring für Layer splitten
             for le in lay.source().split(' '):
                 if '=' in le:
-                    key, value = le.split('=',2)
+                    key, value = le.split('=',1)
                     lyattr[key] = value.strip('"').strip("'")
 
             # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer

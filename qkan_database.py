@@ -79,11 +79,11 @@ def createdbtables(consl,cursl,epsg=25832):
     deckelunten REAL,
     teilgebiet TEXT,
     qzu REAL,
-    profilnam TEXT,
+    profilnam TEXT DEFAULT 'Kreisquerschnitt',
     entwart TEXT,
     rohrtyp TEXT,
     ks REAL,
-    simstatus TEXT,
+    simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
     createdat TEXT DEFAULT CURRENT_DATE,
     xschob REAL,
@@ -120,17 +120,17 @@ def createdbtables(consl,cursl,epsg=25832):
     sohlhoehe REAL,
     deckelhoehe REAL,
     durchm REAL,
-    druckdicht INTEGER, 
+    druckdicht INTEGER DEFAULT 0, 
     ueberstauflaeche REAL,
     entwart TEXT,
     strasse TEXT,
     teilgebiet TEXT,
     knotentyp TEXT,
     auslasstyp TEXT,
-    schachttyp TEXT, 
+    schachttyp TEXT DEFAULT 'Schacht', 
     istspeicher INTEGER, 
     istauslass INTEGER, 
-    simstatus TEXT,
+    simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
     createdat TEXT DEFAULT CURRENT_DATE)'''
 
@@ -152,79 +152,6 @@ def createdbtables(consl,cursl,epsg=25832):
         return False
 
     consl.commit()
-
-
-    # Auslaesse ----------------------------------------------------------------
-
-    # sql = '''
-    # CREATE TABLE auslaesse (
-    # pk INTEGER PRIMARY KEY AUTOINCREMENT,
-    # schnam TEXT,
-    # xsch REAL,
-    # ysch REAL,
-    # sohlhoehe REAL,
-    # deckelhoehe REAL,
-    # auslasstyp TEXT,
-    # simstatus TEXT,
-    # kommentar TEXT,
-    # createdat TEXT DEFAULT CURRENT_DATE)'''
-
-    # try:
-        # cursl.execute(sql)
-    # except:
-        # iface.messageBar().pushMessage("Fehler", 'Tabelle "Auslaesse" konnte nicht erstellt werden!\nAbbruch!',
-        #     level=QgsMessageBar.CRITICAL)
-        # return False
-
-    # sql1 = """SELECT AddGeometryColumn('auslaesse','geop',{},'POINT',2);""".format(epsg)
-    # sql2 = """SELECT AddGeometryColumn('auslaesse','geom',{},'MULTIPOLYGON',2);""".format(epsg)
-    # try:
-        # cursl.execute(sql1)
-        # cursl.execute(sql2)
-    # except:
-        # iface.messageBar().pushMessage("Fehler", 'In der Tabelle "Auslaesse" konnten das Attribute "geom" ' + 
-        #     'nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
-        # return False
-
-    # consl.commit()
-
-
-    # Speicherschaechte --------------------------------------------------------
-
-    # sql = '''
-    # CREATE TABLE speicherschaechte (
-    # pk integer PRIMARY KEY AUTOINCREMENT,
-    # schnam TEXT,
-    # xsch REAL,
-    # ysch REAL,
-    # sohlhoehe REAL,
-    # deckelhoehe REAL,
-    # ueberstauflaeche REAL,
-    # exponent REAL,
-    # koeffizient REAL,
-    # konstante REAL,
-    # simstatus TEXT,
-    # kommentar TEXT,
-    # createdat TEXT DEFAULT CURRENT_DATE)'''
-
-    # try:
-        # cursl.execute(sql)
-    # except:
-        # iface.messageBar().pushMessage("Fehler", 'Tabelle "Speicherschaechte" konnte nicht erstellt werden!\nAbbruch!',
-        #     level=QgsMessageBar.CRITICAL)
-        # return False
-
-    # sql1 = """SELECT AddGeometryColumn('speicherschaechte','geop',{},'POINT',2);""".format(epsg)
-    # sql2 = """SELECT AddGeometryColumn('speicherschaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg)
-    # try:
-        # cursl.execute(sql1)
-        # cursl.execute(sql2)
-    # except:
-        # iface.messageBar().pushMessage("Fehler", 'In der Tabelle "Speicherschaechte" konnten die Attribute' + 
-        #     ' "geop" und "geom" nicht hinzugefuegt werden!\nAbbruch!', level=QgsMessageBar.CRITICAL)
-        # return False
-
-    # consl.commit()
 
 
     # Profile ------------------------------------------------------------------
@@ -386,7 +313,7 @@ def createdbtables(consl,cursl,epsg=25832):
     steuersch TEXT,
     einschalthoehe REAL,
     ausschalthoehe REAL,
-    simstatus TEXT,
+    simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
     createdat TEXT DEFAULT CURRENT_DATE)'''
 
@@ -422,7 +349,7 @@ def createdbtables(consl,cursl,epsg=25832):
     uebeiwert REAL,
     aussentyp TEXT,
     aussenwsp REAL,
-    simstatus TEXT,
+    simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
     createdat TEXT DEFAULT CURRENT_DATE)'''
     
@@ -482,16 +409,17 @@ def createdbtables(consl,cursl,epsg=25832):
         pk INTEGER PRIMARY KEY AUTOINCREMENT,
         flnam TEXT,
         haltnam TEXT,
-        neigkl INTEGER,
-        he_typ INTEGER,
-        speicherzahl INTEGER,
+        neigkl INTEGER DEFAULT 0,
+        he_typ INTEGER DEFAULT 0,
+        speicherzahl INTEGER DEFAULT 2,
         speicherkonst REAL,
         fliesszeit REAL,
         fliesszeitkanal REAL,
         teilgebiet TEXT,
-        aufteilen TEXT,
         regenschreiber TEXT,
+        einwohner REAL,
         abflussparameter TEXT,
+        aufteilen TEXT DEFAULT 'nein',
         kommentar TEXT,
         createdat TEXT DEFAULT CURRENT_DATE)'''
 
@@ -555,7 +483,7 @@ def createdbtables(consl,cursl,epsg=25832):
         pk INTEGER PRIMARY KEY AUTOINCREMENT,
         flnam TEXT,
         haltnam TEXT,
-        neigkl INTEGER,
+        neigkl INTEGER DEFAULT 1,
         regenschreiber TEXT,
         teilgebiet TEXT,
         abflussparameter TEXT,
