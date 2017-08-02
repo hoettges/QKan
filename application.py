@@ -238,20 +238,21 @@ class Application:
     def countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
-        liste_flaechen_abflussparam = self.listitems(self.dlg_cl.lw_flaechen_abflussparam)
-        liste_hal_entw = self.listitems(self.dlg_cl.lw_hal_entw)
-        liste_teilgebiete = self.listitems(self.dlg_cl.lw_teilgebiete)
+        liste_flaechen_abflussparam = self.listselecteditems(self.dlg_cl.lw_flaechen_abflussparam)
+        liste_hal_entw = self.listselecteditems(self.dlg_cl.lw_hal_entw)
+        liste_teilgebiete = self.listselecteditems(self.dlg_cl.lw_teilgebiete)
+        # Aufbereiten für SQL-Abfrage
 
         # Zu berücksichtigende ganze Flächen zählen
-        if liste_flaechen_abflussparam == '':
+        if len(liste_flaechen_abflussparam) == 0:
             # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
             auswahl = ''
             logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
         else:
-            auswahl = ' AND flaechen.abflussparameter in ({})'.format(liste_flaechen_abflussparam)
+            auswahl = " AND flaechen.abflussparameter in ('{}')".format("', '".join(liste_flaechen_abflussparam))
 
-        if liste_teilgebiete != '':
-            auswahl += ' and flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
+        if len(liste_teilgebiete) != 0:
+            auswahl += " and flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
         sql = """SELECT count(*) AS anzahl FROM flaechen
                 WHERE (aufteilen <> 'ja' OR aufteilen IS NULL){auswahl}""".format(auswahl=auswahl)
@@ -268,15 +269,15 @@ class Application:
             self.dlg_cl.lf_anzahl_flaechen.setText('0')
 
         # Zu berücksichtigende zu verschneidende Flächen zählen
-        if liste_flaechen_abflussparam == '':
+        if liste_flaechen_abflussparam == '()':
             # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
             auswahl = ''
             logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
         else:
-            auswahl = ' AND flaechen.abflussparameter in ({})'.format(liste_flaechen_abflussparam)
+            auswahl = " AND flaechen.abflussparameter in ('{}')".format("', '".join(liste_flaechen_abflussparam))
 
-        if liste_teilgebiete != '':
-            auswahl += ' and flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
+        if len(liste_teilgebiete) != 0:
+            auswahl += " and flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
         sql = """SELECT count(*) AS anzahl FROM flaechen
                 WHERE aufteilen = 'ja'{auswahl}""".format(auswahl=auswahl)
@@ -293,18 +294,16 @@ class Application:
             self.dlg_cl.lf_anzahl_flaechsec.setText('0')
 
         # Zu berücksichtigende Haltungen zählen
-        if liste_hal_entw == '':
-            # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
+        if len(liste_hal_entw) == 0:
             auswahl = ''
-            logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Haltungen...')
         else:
-            auswahl = ' WHERE haltungen.entwart in ({})'.format(liste_hal_entw)
+            auswahl = " WHERE haltungen.entwart in ('{}')".format("', '".join(liste_hal_entw))
 
-        if liste_teilgebiete != '':
+        if len(liste_teilgebiete) != 0:
             if auswahl == '':
-                auswahl = ' WHERE haltungen.teilgebiet in ({})'.format(liste_teilgebiete)
+                auswahl = " WHERE haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
             else:
-                auswahl += ' and haltungen.teilgebiet in ({})'.format(liste_teilgebiete)
+                auswahl += " and haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
         sql = """SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(auswahl=auswahl)
         try:
@@ -322,15 +321,20 @@ class Application:
 
     # -------------------------------------------------------------------------
     # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
-    def listitems(self, listWidget):
+    def listselecteditems(self, listWidget):
+        """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
+
+        :param listWidget: String for translation.
+        :type listWidget: QListWidgetItem
+
+        :returns: Tuple containing selected teilgebiete
+        :rtype: tuple
+        """
         items = listWidget.selectedItems()
-        liste = u''
+        liste = []
         for elem in items:
-            if liste == '':
-                liste = "'{}'".format(elem.text())
-            else:
-                liste += ", '{}'".format(elem.text())
-        return liste
+            liste.append(elem.text())
+        return tuple(liste)
 
     # -------------------------------------------------------------------------
     # Öffnen des Formulars
@@ -457,8 +461,8 @@ class Application:
                 except BaseException as err:
                     del self.dbQK
                     logger.debug('\nelem: {}'.format(str(elem)))                          # debug
-        if len(daten) == 1:
-            self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(0)
+        # if len(daten) == 1:
+            # self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(0)
 
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
         sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
@@ -470,8 +474,8 @@ class Application:
             if 'liste_hal_entw' in self.config:
                 if elem[0] in self.config['liste_hal_entw']:
                     self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
-        if len(daten) == 1:
-            self.dlg_cl.lw_hal_entw.setCurrentRow(0)
+        # if len(daten) == 1:
+            # self.dlg_cl.lw_hal_entw.setCurrentRow(0)
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -483,8 +487,8 @@ class Application:
             if 'liste_teilgebiete' in self.config:
                 if elem[0] in self.config['liste_teilgebiete']:
                     self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
-        if len(daten) == 1:
-            self.dlg_cl.lw_teilgebiete.setCurrentRow(0)
+        # if len(daten) == 1:
+            # self.dlg_cl.lw_teilgebiete.setCurrentRow(0)
 
         # config in Dialog übernehmen
 
@@ -527,9 +531,9 @@ class Application:
             # Start der Verarbeitung
 
             # Abrufen der ausgewählten Elemente in beiden Listen
-            liste_flaechen_abflussparam = self.listitems(self.dlg_cl.lw_flaechen_abflussparam)
-            liste_hal_entw = self.listitems(self.dlg_cl.lw_hal_entw)
-            liste_teilgebiete = self.listitems(self.dlg_cl.lw_teilgebiete)
+            liste_flaechen_abflussparam = self.listselecteditems(self.dlg_cl.lw_flaechen_abflussparam)
+            liste_hal_entw = self.listselecteditems(self.dlg_cl.lw_hal_entw)
+            liste_teilgebiete = self.listselecteditems(self.dlg_cl.lw_teilgebiete)
             suchradius = self.dlg_cl.tf_suchradius.text()
             if self.dlg_cl.rb_abstandkante.isChecked():
                 bezug_abstand = 'kante'

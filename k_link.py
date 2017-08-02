@@ -57,8 +57,8 @@ def fehlermeldung(title, text):
 # ------------------------------------------------------------------------------
 # 1. Teilprogramm: Erzeugung der graphischen Verknüpfungen
 
-def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '', 
-                liste_teilgebiete = '', suchradius = 50, bezug_abstand = 'kante', fangradius = 0.1, epsg = '25832', 
+def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw, 
+                liste_teilgebiete, suchradius = 50, bezug_abstand = 'kante', fangradius = 0.1, epsg = '25832', 
                 dbtyp = 'SpatiaLite'):
 
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
@@ -131,14 +131,14 @@ def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '',
         # return False
 
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
-    if liste_flaechen_abflussparam == '':
+    if len(liste_flaechen_abflussparam) == 0:
         auswahl = ''
         logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
     else:
-        auswahl = ' and flaechen.abflussparameter in ({})'.format(liste_flaechen_abflussparam)
+        auswahl = " and flaechen.abflussparameter in ('{}')".format("', '".join(liste_flaechen_abflussparam))
 
-    if liste_teilgebiete != '':
-        auswahl += ' and flaechen.teilgebiet in ({})'.format(liste_teilgebiete)
+    if len(liste_teilgebiete) != 0:
+        auswahl += " and flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
     # Sowohl Flächen, die nicht als auch die, die verschnitten werden müssen
     sql = """WITH flges AS (
@@ -214,15 +214,15 @@ def createlinks(dbQK, liste_flaechen_abflussparam = '', liste_hal_entw = '',
     # Filter braucht nur noch für Haltungen berücksichtigt zu werden, da Flächen bereits beim Einfügen 
     # in tlink gefiltert wurden. 
 
-    if liste_hal_entw == '':
+    if len(liste_hal_entw) == 0:
         auswahl = ''
         # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Haltungen...')
     else:
-        auswahl = ' AND hal.entwart in ({})'.format(liste_hal_entw)
+        auswahl = " AND hal.entwart in ('{}')".format("', '".join(liste_hal_entw))
 
-    if liste_teilgebiete != '':
-        auswahl += ' AND  hal.teilgebiet in ({0:})'.format(liste_teilgebiete)
-        auswlin = ' AND  linkfl.teilgebiet in ({0:})'.format(liste_teilgebiete)
+    if len(liste_teilgebiete) != 0:
+        auswahl += " AND  hal.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        auswlin = " AND  linkfl.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
     if bezug_abstand == 'mittelpunkt':
         bezug = 'fl.geom'
