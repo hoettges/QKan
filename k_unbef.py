@@ -116,16 +116,23 @@ def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp = 'SpatiaLite'):
     if len(liste_tezg) == 2:
         auswahl += """)"""
 
-    sql = """INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, kommentar, geom) 
-            SELECT 'fldur_' || tezg.flnam AS flnam, tezg.haltnam, tezg.neigkl, tezg.regenschreiber, tezg.teilgebiet, tezg.abflussparameter,
-            'Erzeugt mit Plugin Erzeuge unbefestigte Flaechen', 
-            CastToMultiPolygon(Difference(tezg.geom,GUnion(Intersection(flaechen.geom,tezg.geom)))) AS geom
+    sql = """WITH flbef AS (
+            SELECT 'fldur_' || tezg.flnam AS flnam, 
+              tezg.haltnam AS haltnam, tezg.neigkl AS neigkl, 
+              tezg.regenschreiber AS regenschreiber, tezg.teilgebiet AS teilgebiet,
+              tezg.abflussparameter AS abflussparameter,
+              'Erzeugt mit Plugin Erzeuge unbefestigte Flaechen' AS kommentar, 
+              tezg.geom AS geot, 
+              GUnion(CastToMultiPolygon(Intersection(flaechen.geom,tezg.geom))) AS geob
             FROM tezg
             INNER JOIN flaechen
             ON Intersects(tezg.geom,flaechen.geom)
             WHERE 'fldur_' || tezg.flnam not in (SELECT flnam FROM flaechen)
-            {auswahl}
-            GROUP BY tezg.pk""".format(auswahl=auswahl)
+              {auswahl}
+            GROUP BY tezg.pk)
+            INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, kommentar, geom) 
+             SELECT 'fldur_' || flnam AS flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter,
+            kommentar, CastToMultiPolygon(Difference(geot,geob)) AS geom FROM flbef""".format(auswahl=auswahl)
 
     try:
         dbQK.sql(sql)
@@ -143,4 +150,4 @@ def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp = 'SpatiaLite'):
 
     iface.mainWindow().statusBar().clearMessage()
     iface.messageBar().pushMessage(u"Information", u"Restflächen sind erstellt!", level=QgsMessageBar.INFO)
-    QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
+    QgsMessageLog.logMessage(u"\nRestflächen sind erstellt!", level=QgsMessageLog.INFO)
