@@ -65,12 +65,15 @@ def fehlermeldung(title, text):
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def createUnbefFlaechen(database_QKan, dbtyp = 'SpatiaLite'):
+def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp = 'SpatiaLite'):
 
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :database_QKan: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type database: DBConnection (geerbt von dbapi...)
+
+    :liste_tezg:    Liste der bei der Bearbeitung zu berücksichtigenden Haltungsflächen (tezg)
+    :type:          list
 
     :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:    String
@@ -91,14 +94,39 @@ def createUnbefFlaechen(database_QKan, dbtyp = 'SpatiaLite'):
 
     # Für die Erzeugung der Restflächen reicht eine SQL-Abfrage aus. 
 
+    if len(liste_tezg) == 0:
+        auswahl = ''
+    elif len(liste_tezg) == 1:
+        auswahl = ' AND'
+    elif len(liste_tezg) == 2:
+        auswahl = ' AND ('
+    else:
+        fehlermeldung("Interner Fehler","Fehler in Fallunterscheidung!")
+
+    first = True
+    for attr in liste_tezg:
+        if first:
+            first = False
+            auswahl += """ (tezg.abflussparameter = '{abflussparameter}' AND
+                            tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter = attr[0], teilgebiet = attr[1])
+        else:   
+            auswahl += """ OR\n      (tezg.abflussparameter = '{abflussparameter}' AND
+                            tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter = attr[0], teilgebiet = attr[1])
+
+    if len(liste_tezg) == 2:
+        auswahl += """)"""
+
     sql = """INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, kommentar, geom) 
-            SELECT 'fu_' || tezg.flnam AS flnam, tezg.haltnam, tezg.neigkl, tezg.regenschreiber, tezg.teilgebiet, tezg.abflussparameter,
+            SELECT 'fldur_' || tezg.flnam AS flnam, tezg.haltnam, tezg.neigkl, tezg.regenschreiber, tezg.teilgebiet, tezg.abflussparameter,
             'Erzeugt mit Plugin Erzeuge unbefestigte Flaechen', 
             CastToMultiPolygon(Difference(tezg.geom,GUnion(Intersection(flaechen.geom,tezg.geom)))) AS geom
             FROM tezg
             INNER JOIN flaechen
             ON Intersects(tezg.geom,flaechen.geom)
-            GROUP BY tezg.pk"""
+            WHERE 'fldur_' || tezg.flnam not in (SELECT flnam FROM flaechen)
+            {auswahl}
+            GROUP BY tezg.pk""".format(auswahl=auswahl)
+
     try:
         dbQK.sql(sql)
         dbQK.commit()
@@ -109,6 +137,10 @@ def createUnbefFlaechen(database_QKan, dbtyp = 'SpatiaLite'):
 
     del dbQK
 
+    # Karte aktualisieren
+    iface.mapCanvas().refreshAllLayers()
+
+
     iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage(u"Information", u"Restflächen sind erstellt! Bitte QGIS-Fenster aktualisieren!", level=QgsMessageBar.INFO)
+    iface.messageBar().pushMessage(u"Information", u"Restflächen sind erstellt!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>456</width>
+    <width>483</width>
     <height>419</height>
    </rect>
   </property>
@@ -42,7 +42,7 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>390</x>
      <y>400</y>
      <width>91</width>
      <height>20</height>
@@ -52,7 +52,7 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 1.1.7</string>
+    <string>Version 1.1.9</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -63,13 +63,17 @@
     <rect>
      <x>40</x>
      <y>180</y>
-     <width>361</width>
+     <width>401</width>
      <height>131</height>
     </rect>
    </property>
-   <property name="columnCount">
-    <number>2</number>
+   <property name="selectionBehavior">
+    <enum>QAbstractItemView::SelectRows</enum>
    </property>
+   <property name="columnCount">
+    <number>3</number>
+   </property>
+   <column/>
    <column/>
    <column/>
   </widget>
@@ -124,19 +128,19 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>40</x>
      <y>150</y>
-     <width>111</width>
+     <width>401</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>14</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="text">
-    <string>Tabelle: tezg</string>
+    <string>Auswahl der zu bearbeitenden Haltungsflächen (tezg):</string>
    </property>
   </widget>
  </widget>

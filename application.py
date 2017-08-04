@@ -216,6 +216,44 @@ class CreateUnbefFl:
         del self.toolbar
 
 
+    # -------------------------------------------------------------------------
+    # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
+    def listselectedTabitems(self, listWidget):
+        """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
+
+        :param listWidget: String for translation.
+        :type listWidget: QListWidgetItem
+
+        :returns: Tuple containing selected teilgebiete
+        :rtype: tuple
+        """
+        items = listWidget.selectedItems()
+        liste = []
+        rowakt = None                          # aktuelle Zeile
+        sel = []                            # Liste mit in einer Zeile ausgewählten Attributen: ablussparameter, teilgebiet
+        for elem in items:
+            # Initialisierung
+            if rowakt is None:
+                rowakt = elem.row()
+
+            # Falls neue Zeile, vorherige in liste hinzufügen
+            if rowakt != elem.row():
+                liste.append(sel)
+                sel = []
+                rowakt = elem.row()
+
+            # Text hinzufügen, aber dabei Spalte "Anzahl" ignorieren
+            if elem.column() != 2:
+                sel.append(elem.text())
+        # zum Schluss noch das letzte Element hinzufügen
+        if len(items) > 0:
+            liste.append(sel)
+        
+        return liste
+
+    # ------------------------------------------------------------------------------------------------------------
+    # Vorbereiten und Öffnen des Formulars
+
     def run(self):
         """Run method that performs all the real work"""
 
@@ -236,18 +274,20 @@ class CreateUnbefFl:
                 database_QKan), level=QgsMessageBar.CRITICAL)
             return None
 
-        sql = 'SELECT abflussparameter, count(*) AS anz FROM tezg GROUP BY abflussparameter'
+        sql = """SELECT abflussparameter, teilgebiet, count(*) AS anz FROM tezg GROUP BY abflussparameter, teilgebiet"""
         dbQK.sql(sql)
         daten = dbQK.fetchall()
         nzeilen = len(daten)
         self.dlg.tw_cnt_abflussparameter.setRowCount(nzeilen)
-        self.dlg.tw_cnt_abflussparameter.setHorizontalHeaderLabels(["Abflussparameter", "Anzahl"])
-        self.dlg.tw_cnt_abflussparameter.setColumnWidth(0,292)
-        self.dlg.tw_cnt_abflussparameter.setColumnWidth(1,50)
+        self.dlg.tw_cnt_abflussparameter.setHorizontalHeaderLabels(["Abflussparameter", "Teilgebiet", "Anzahl"])
+        self.dlg.tw_cnt_abflussparameter.setColumnWidth(0,184)                  # 17 Pixel für Rand und Nummernspalte (und je Spalte?)
+        self.dlg.tw_cnt_abflussparameter.setColumnWidth(1,150)
+        self.dlg.tw_cnt_abflussparameter.setColumnWidth(2,50)
         for i, elem in enumerate(daten):
             for j, item in enumerate(elem):
                 self.dlg.tw_cnt_abflussparameter.setItem(i,j,QTableWidgetItem(str(elem[j])))
-            
+                self.dlg.tw_cnt_abflussparameter.setRowHeight(i,20)
+
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
@@ -259,5 +299,11 @@ class CreateUnbefFl:
             # pass
 
             # Start der Verarbeitung
+            liste_tezg = self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)
+            
+            createUnbefFlaechen(database_QKan, liste_tezg)
 
-            createUnbefFlaechen(database_QKan)
+        # else:
+            # logger.debug('Selected: \n{}'.format(self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)))
+            # logger.debug('Methoden von QTableWidgetItem:\n{}'.format(str(dir(self.dlg.tw_cnt_abflussparameter))))
+            
