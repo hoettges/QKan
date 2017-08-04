@@ -49,8 +49,8 @@ def fehlermeldung(title, text, dauer = 0):
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
     iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL, duration=dauer)
 
-def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbanktyp = 'spatialite',
-                     auswahl_Teilgebiete = "", check_export = {}):
+def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_teilgebiete,
+                     fangradius = 0.1, datenbanktyp = 'spatialite', check_export = {}):
     '''Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE-Firebird-Datenbank.
 
     :database_HE:        Datenbankobjekt, das die Verknüpfung zur HE-Firebird-Datenbank verwaltet
@@ -65,6 +65,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
     :datenbanktyp:       Typ der Datenbank (SpatiaLite, PostGIS)
     :type datenbanktyp:  String
 
+    :liste_teilgebiete: Liste der ausgewählten Teilgebiete
+    :type liste_teilgebiete: String
+
     :check_export:       Liste von Export-Optionen
     :type check_export:  Dictionary
 
@@ -76,7 +79,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         try:
             os.remove(database_HE)
         except BaseException as err:
-            fehlermeldung(u'Fehler (33) in QKan_Export: ie HE-Datenbank ist schon vorhanden und kann nicht ersetzt werden: ',
+            fehlermeldung(u'Fehler (33) in QKan_Export: Die HE-Datenbank ist schon vorhanden und kann nicht ersetzt werden: ',
                 str(err))
             return False
     try:
@@ -137,13 +140,13 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
     # --------------------------------------------------------------------------------------------
     # Export der Schaechte
 
-    if check_export['export_schaechte']:
-        if check_export['export_tabinit']:
+    if check_export['export_schaechte'] or check_export['modify_schaechte']:
+        if check_export['init_schaechte']:
             dbHE.sql("DELETE FROM SCHACHT")
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
-        if auswahl_Teilgebiete != "":
-            auswahl = " and schaechte.teilgebiet in ({:})".format(auswahl_Teilgebiete)
+        if len(liste_teilgebiete) != 0:
+            auswahl = " AND schaechte.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
             auswahl = ""
 
@@ -152,6 +155,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
                 schaechte.schnam AS schnam,
                 schaechte.deckelhoehe AS deckelhoehe,
                 schaechte.sohlhoehe AS sohlhoehe,
+                schaechte.durchm AS durchmesser,
                 schaechte.strasse AS strasse,
                 schaechte.xsch AS xsch,
                 schaechte.ysch AS ysch
@@ -160,8 +164,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
             """.format(auswahl)
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"(21) SQL-Fehler in QKan-DB: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(21) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -171,41 +175,72 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
 
         fortschritt('Export Schaechte Teil 1...', 0.1)
         createdat = time.strftime('%d.%m.%Y %H:%M:%S',time.localtime())
+
         for attr in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            (schnam, deckelhoehe_t, sohlhoehe_t, strasse, xsch_t, ysch_t) = \
+            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, xsch_t, ysch_t) = \
                 ('NULL' if el is None else el for el in attr)
 
             # Formatierung der Zahlen
-            (deckelhoehe, sohlhoehe, xsch, ysch) = \
+            (deckelhoehe, sohlhoehe, durchmesser, xsch, ysch) = \
                 ('NULL' if tt == 'NULL' else '{:.3f}'.format(float(tt)) \
-                    for tt in (deckelhoehe_t, sohlhoehe_t, xsch_t, ysch_t))
+                    for tt in (deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t))
 
+
+            # Ändern vorhandener Datensätze
+            if check_export['modify_schaechte']:
+                sql = u"""
+                    UPDATE SCHACHT SET
+                    DECKELHOEHE={deckelhoehe}, KANALART={kanalart}, DRUCKDICHTERDECKEL={druckdichterdeckel},
+                    SOHLHOEHE={sohlhoehe}, XKOORDINATE={xkoordinate}, YKOORDINATE={ykoordinate},
+                    KONSTANTERZUFLUSS={konstanterzufluss}, GELAENDEHOEHE={gelaendehoehe},
+                    ART={art}, ANZAHLKANTEN={anzahlkanten}, SCHEITELHOEHE={scheitelhoehe},
+                    PLANUNGSSTATUS='{planungsstatus}', NAME='{name}', LASTMODIFIED='{lastmodified}',
+                    ID={id}, DURCHMESSER={durchmesser}
+                    WHERE NAME = '{name}';
+                """.format(deckelhoehe=deckelhoehe, kanalart='0', druckdichterdeckel='0',
+                           sohlhoehe=sohlhoehe, xkoordinate=xsch, ykoordinate=ysch,
+                           konstanterzufluss='0', gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
+                           scheitelhoehe='0', planungsstatus='0', name=schnam, lastmodified=createdat,
+                           id=nextid, durchmesser=durchmesser)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(3a) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
+                
             # Einfuegen in die Datenbank
+            elif check_export['export_schaechte']:
+                # Trick: In Firebird ist kein SELECT ohne Tabelle möglich. Tabelle "RDB$DATABASE" hat genau 1 Datensatz
+                sql = u"""
+                    INSERT INTO SCHACHT
+                    ( DECKELHOEHE, KANALART, DRUCKDICHTERDECKEL, SOHLHOEHE, XKOORDINATE, YKOORDINATE,
+                      KONSTANTERZUFLUSS, GELAENDEHOEHE, ART, ANZAHLKANTEN, SCHEITELHOEHE,
+                      PLANUNGSSTATUS, NAME, LASTMODIFIED, ID, DURCHMESSER)
+                    SELECT
+                      {deckelhoehe}, {kanalart}, {druckdichterdeckel}, {sohlhoehe}, {xkoordinate},
+                      {ykoordinate}, {konstanterzufluss}, {gelaendehoehe}, {art}, {anzahlkanten},
+                      {scheitelhoehe}, '{planungsstatus}', '{name}', '{lastmodified}', {id}, {durchmesser}
+                    FROM RDB$DATABASE
+                    WHERE '{name}' NOT IN (SELECT NAME FROM SCHACHT);
+                """.format(deckelhoehe=deckelhoehe, kanalart='0', druckdichterdeckel='0',
+                           sohlhoehe=sohlhoehe, xkoordinate=xsch, ykoordinate=ysch,
+                           konstanterzufluss='0', gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
+                           scheitelhoehe='0', planungsstatus='0', name=schnam, lastmodified=createdat,
+                           id=nextid, durchmesser=durchmesser)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(3b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
 
-            sql = u"""
-                INSERT INTO SCHACHT
-                ( DECKELHOEHE, KANALART, DRUCKDICHTERDECKEL, SOHLHOEHE, XKOORDINATE, YKOORDINATE,
-                KONSTANTERZUFLUSS, GELAENDEHOEHE, ART, ANZAHLKANTEN, SCHEITELHOEHE,
-                PLANUNGSSTATUS, NAME, LASTMODIFIED, ID, DURCHMESSER) VALUES
-                ({deckelhoehe}, {kanalart}, {druckdichterdeckel}, {sohlhoehe}, {xkoordinate},
-                 {ykoordinate}, {konstanterzufluss}, {gelaendehoehe}, {art}, {anzahlkanten},
-                 {scheitelhoehe}, '{planungsstatus}', '{name}', '{lastmodified}', {id}, {durchmesser});
-            """.format(deckelhoehe=deckelhoehe, kanalart='0', druckdichterdeckel='0',
-                       sohlhoehe=sohlhoehe, xkoordinate=xsch, ykoordinate=ysch,
-                       konstanterzufluss='0', gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
-                       scheitelhoehe='0', planungsstatus='0', name=schnam, lastmodified=createdat,
-                       id=nextid, durchmesser='1000.')
-            try:
-                dbHE.sql(sql)
-            except:
-                fehlermeldung(u"(3) SQL-Fehler in Firebird: \n", sql)
-                del dbQK
-                del dbHE
-                return False
+                nextid += 1
 
-            nextid += 1
         dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
 
@@ -217,34 +252,35 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
     # Beim Export werden die IDs mitgeschrieben, um bei den Speicherkennlinien
     # wiederverwertet zu werden.
 
-    if check_export['export_speicher']:
-        if check_export['export_tabinit']:
+    if check_export['export_speicher'] or check_export['modify_speicher']:
+        if check_export['init_speicher']:
             # Zuerst Daten aus Detailtabelle mit Speicherkennlinie löschen
             dbHE.sql("DELETE FROM TABELLENINHALTE WHERE ID IN (SELECT ID FROM SPEICHERSCHACHT)")
             dbHE.sql("DELETE FROM SPEICHERSCHACHT")
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
-        if auswahl_Teilgebiete != "":
-            auswahl = " and schaechte.teilgebiet in ({:})".format(auswahl_Teilgebiete)
+        if len(liste_teilgebiete) != 0:
+            auswahl = " AND schaechte.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
             auswahl = ""
 
         sql = u"""
             SELECT
                 schaechte.schnam AS schnam,
-                schaechte.deckelhoehe AS deckelhoehe_t,
-                schaechte.sohlhoehe AS sohlhoehe_t,
+                schaechte.deckelhoehe AS deckelhoehe,
+                schaechte.sohlhoehe AS sohlhoehe,
+                schaechte.durchm AS durchmesser,
                 schaechte.strasse AS strasse,
-                schaechte.xsch AS xsch_t,
-                schaechte.ysch AS ysch_t,
+                schaechte.xsch AS xsch,
+                schaechte.ysch AS ysch,
                 kommentar AS kommentar
             FROM schaechte
             WHERE schaechte.schachttyp = 'Speicher'{}
             """.format(auswahl)
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -255,53 +291,84 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
 
         createdat = time.strftime('%d.%m.%Y %H:%M:%S',time.localtime())
         for attr in dbQK.fetchall():
-            fortschritt('Export Speichersschaechte...', 0.15)
+            fortschritt('Export Speicherschaechte...', 0.15)
 
             # In allen Feldern None durch NULL ersetzen
-            (schnam, deckelhoehe_t, sohlhoehe_t, strasse, xsch_t, ysch_t, kommentar) = \
+            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, xsch_t, ysch_t, kommentar) = \
                 ('NULL' if el is None else el for el in attr)
 
             # Formatierung der Zahlen
-            (deckelhoehe, sohlhoehe, xsch, ysch) = \
+            (deckelhoehe, sohlhoehe, durchmesser, xsch, ysch) = \
                 ('NULL' if tt == 'NULL' else '{:.3f}'.format(float(tt)) \
-                    for tt in (deckelhoehe_t, sohlhoehe_t, xsch_t, ysch_t))
+                    for tt in (deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t))
 
             # Speichern der aktuellen ID zum Speicherbauwerk
             refid_speicher[schnam] = nextid
 
+            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+            if check_export['modify_speicher']:
+                sql = u"""
+                    UPDATE SPEICHERSCHACHT SET
+                    ID={id}, TYP={typ}, SOHLHOEHE={sohlhoehe},
+                      XKOORDINATE={xkoordinate}, YKOORDINATE={ykoordinate},
+                      GELAENDEHOEHE={gelaendehoehe}, ART={art}, ANZAHLKANTEN={anzahlkanten},
+                      SCHEITELHOEHE={scheitelhoehe}, HOEHEVOLLFUELLUNG={hoehevollfuellung},
+                      KONSTANTERZUFLUSS={konstanterzufluss}, ABSETZWIRKUNG={absetzwirkung}, 
+                      PLANUNGSSTATUS='{planungsstatus}',
+                      NAME='{name}', LASTMODIFIED='{lastmodified}', KOMMENTAR='{kommentar}'
+                      WHERE NAME='{name}';
+                """.format(id=nextid, typ='1', sohlhoehe=sohlhoehe,
+                           xkoordinate=xsch, ykoordinate=ysch,
+                           gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
+                           scheitelhoehe=deckelhoehe, hoehevollfuellung=deckelhoehe,
+                           konstanterzufluss = '0', absetzwirkung='0', planungsstatus='0',
+                           name=schnam, lastmodified=createdat, kommentar = kommentar,
+                           durchmesser=durchmesser)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(4a) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
+
             # Einfuegen in die Datenbank
+            elif check_export['export_speicher']:
+                # Trick: In Firebird ist kein SELECT ohne Tabelle möglich. Tabelle "RDB$DATABASE" hat genau 1 Datensatz
+                sql = u"""
+                    INSERT INTO SPEICHERSCHACHT
+                    ( ID, TYP, SOHLHOEHE,
+                      XKOORDINATE, YKOORDINATE,
+                      GELAENDEHOEHE, ART, ANZAHLKANTEN,
+                      SCHEITELHOEHE, HOEHEVOLLFUELLUNG,
+                      KONSTANTERZUFLUSS, ABSETZWIRKUNG, PLANUNGSSTATUS,
+                      NAME, LASTMODIFIED, KOMMENTAR)
+                    SELECT
+                      {id}, {typ}, {sohlhoehe},
+                      {xkoordinate}, {ykoordinate},
+                      {gelaendehoehe}, {art}, {anzahlkanten},
+                      {scheitelhoehe}, {hoehevollfuellung},
+                      {konstanterzufluss}, {absetzwirkung}, '{planungsstatus}',
+                      '{name}', '{lastmodified}', '{kommentar}'
+                    FROM RDB$DATABASE
+                    WHERE '{name}' NOT IN (SELECT NAME FROM SPEICHERSCHACHT);
+                """.format(id=nextid, typ='1', sohlhoehe=sohlhoehe,
+                           xkoordinate=xsch, ykoordinate=ysch,
+                           gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
+                           scheitelhoehe=deckelhoehe, hoehevollfuellung=deckelhoehe,
+                           konstanterzufluss = '0', absetzwirkung='0', planungsstatus='0',
+                           name=schnam, lastmodified=createdat, kommentar = kommentar,
+                           durchmesser=durchmesser)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(4b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
 
-            sql = u"""
-                INSERT INTO SPEICHERSCHACHT
-                ( ID, TYP, SOHLHOEHE,
-                  XKOORDINATE, YKOORDINATE,
-                  GELAENDEHOEHE, ART, ANZAHLKANTEN,
-                  SCHEITELHOEHE, HOEHEVOLLFUELLUNG,
-                  KONSTANTERZUFLUSS, ABSETZWIRKUNG, PLANUNGSSTATUS,
-                  NAME, LASTMODIFIED, KOMMENTAR) VALUES
-                ( {id}, {typ}, {sohlhoehe},
-                  {xkoordinate}, {ykoordinate},
-                  {gelaendehoehe}, {art}, {anzahlkanten},
-                  {scheitelhoehe}, {hoehevollfuellung},
-                  '{konstanterzufluss}', '{absetzwirkung}', '{planungsstatus}',
-                  '{name}', '{lastmodified}', '{kommentar}');
-            """.format(id=nextid, typ='1', sohlhoehe=sohlhoehe,
-                       xkoordinate=xsch, ykoordinate=ysch,
-                       gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
-                       scheitelhoehe=deckelhoehe, hoehevollfuellung=deckelhoehe,
-                       konstanterzufluss = '0', absetzwirkung='0', planungsstatus='0',
-                       name=schnam, lastmodified=createdat, kommentar = kommentar,
-                       durchmesser='1000.')
-            # print(sql)
-            try:
-                dbHE.sql(sql)
-            except:
-                fehlermeldung(u"(4) SQL-Fehler in Firebird: \n", sql)
-                del dbQK
-                del dbHE
-                return False
+                nextid += 1
 
-            nextid += 1
         dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
 
@@ -310,16 +377,17 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         # --------------------------------------------------------------------------------------------
         # Export der Kennlinien der Speicherbauwerke - nur wenn auch Speicher exportiert werden
 
-        if check_export['export_speicherkennlinien']:
-            sql = u'''SELECT sl.schnam, sl.wspiegel - sc.sohlhoehe AS wtiefe, sl.oberfl
+        if check_export['export_speicherkennlinien'] or check_export['modify_speicherkennlinien']:
+
+            sql = u"""SELECT sl.schnam, sl.wspiegel - sc.sohlhoehe AS wtiefe, sl.oberfl
                       FROM speicherkennlinien AS sl
                       JOIN schaechte AS sc ON sl.schnam = sc.schnam
-                      ORDER BY sc.schnam, sl.wspiegel'''
+                      ORDER BY sc.schnam, sl.wspiegel"""
 
             try:
                 dbQK.sql(sql)
-            except:
-                fehlermeldung(u"(32) SQL-Fehler in QKan-DB: \n", sql)
+            except BaseException as err:
+                fehlermeldung(u"(32) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
                 del dbQK
                 del dbHE
                 return False
@@ -334,26 +402,33 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
                 # Einfuegen in die Datenbank
 
                 if schnam in refid_speicher:
-                    if spnam is None or schnam != spnam:
+                    if spnam == 'NULL' or schnam != spnam:
                         spnam = schnam
                         reihenfolge = 1
                     else:
                         schnam = spnam
                         reihenfolge += 1
 
-                    sql = u"""
-                        INSERT INTO TABELLENINHALTE
-                        ( KEYWERT, WERT, REIHENFOLGE, ID) VALUES
-                        ( {wtiefe}, {oberfl}, {reihenfolge}, {id});
-                    """.format(wtiefe = wtiefe, oberfl = oberfl, reihenfolge = reihenfolge, id = refid_speicher[schnam])
-                    # print(sql)
-                    try:
-                        dbHE.sql(sql)
-                    except:
-                        fehlermeldung(u"(4) SQL-Fehler in Firebird: \n", sql)
-                        del dbQK
-                        del dbHE
-                        return False
+                    # Ändern vorhandener Datensätze entfällt bei Tabellendaten
+
+                    # Einfuegen in die Datenbank
+                    if check_export['export_speicherkennlinien']:
+                        # Trick: In Firebird ist kein SELECT ohne Tabelle möglich. Tabelle "RDB$DATABASE" hat genau 1 Datensatz
+                        sql = u"""
+                            INSERT INTO TABELLENINHALTE
+                            ( KEYWERT, WERT, REIHENFOLGE, ID)
+                            SELECT
+                              {wtiefe}, {oberfl}, {reihenfolge}, {id}
+                            FROM RDB$DATABASE;
+                        """.format(wtiefe = wtiefe, oberfl = oberfl, reihenfolge = reihenfolge, id = refid_speicher[schnam])
+                        # print(sql)
+                        try:
+                            dbHE.sql(sql)
+                        except BaseException as err:
+                            fehlermeldung(u"(4d) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                            del dbQK
+                            del dbHE
+                            return False
 
             dbHE.commit()
 
@@ -362,31 +437,32 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
     # --------------------------------------------------------------------------------------------
     # Export der Auslaesse
 
-    if check_export['export_auslaesse']:
-        if check_export['export_tabinit']:
+    if check_export['export_auslaesse'] or check_export['modify_auslaesse']:
+        if check_export['init_auslaesse']:
             dbHE.sql("DELETE FROM AUSLASS")
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
-        if auswahl_Teilgebiete != "":
-            auswahl = " and schaechte.teilgebiet in ({:})".format(auswahl_Teilgebiete)
+        if len(liste_teilgebiete) != 0:
+            auswahl = " AND schaechte.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
             auswahl = ""
 
         sql = u"""
             SELECT
                 schaechte.schnam AS schnam,
-                schaechte.deckelhoehe AS deckelhoehe_t,
-                schaechte.sohlhoehe AS sohlhoehe_t,
-                schaechte.xsch AS xsch_t,
-                schaechte.ysch AS ysch_t,
+                schaechte.deckelhoehe AS deckelhoehe,
+                schaechte.sohlhoehe AS sohlhoehe,
+                schaechte.durchm AS durchmesser,
+                schaechte.xsch AS xsch,
+                schaechte.ysch AS ysch,
                 kommentar AS kommentar
             FROM schaechte
             WHERE schaechte.schachttyp = 'Auslass'{}
             """.format(auswahl)
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -401,44 +477,72 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         for attr in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            (schnam, deckelhoehe_t, sohlhoehe_t, xsch_t, ysch_t, kommentar) = \
+            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t, kommentar) = \
                 ('NULL' if el is None else el for el in attr)
 
             # Formatierung der Zahlen
-            (deckelhoehe, sohlhoehe, xsch, ysch) = \
+            (deckelhoehe, sohlhoehe, durchmesser, xsch, ysch) = \
                 ('NULL' if tt == 'NULL' else '{:.3f}'.format(float(tt)) \
-                    for tt in (deckelhoehe_t, sohlhoehe_t, xsch_t, ysch_t))
+                    for tt in (deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t))
+
+            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+            if check_export['modify_auslaesse']:
+                sql = u"""
+                    UPDATE AUSLASS SET
+                    ID={id}, TYP={typ}, RUECKSCHLAGKLAPPE={rueckschlagklappe},
+                    SOHLHOEHE={sohlhoehe}, XKOORDINATE={xkoordinate}, YKOORDINATE={ykoordinate},
+                    GELAENDEHOEHE={gelaendehoehe}, ART={art}, ANZAHLKANTEN={anzahlkanten},
+                    SCHEITELHOEHE={scheitelhoehe}, KONSTANTERZUFLUSS={konstanterzufluss},
+                    PLANUNGSSTATUS='{planungsstatus}', NAME='{name}',
+                    LASTMODIFIED='{lastmodified}', KOMMENTAR='{kommentar}'
+                    WHERE NAME = '{name}';
+                """.format(id=nextid, typ='1', rueckschlagklappe=0, sohlhoehe=sohlhoehe,
+                           xkoordinate=xsch, ykoordinate=ysch,
+                           gelaendehoehe=deckelhoehe, art='3', anzahlkanten='0',
+                           scheitelhoehe=deckelhoehe, konstanterzufluss=0, planungsstatus='0',
+                           name=schnam, lastmodified=createdat, kommentar = kommentar,
+                           durchmesser=durchmesser)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(31) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
 
             # Einfuegen in die Datenbank
+            elif check_export['export_auslaesse']:
+                sql = u"""
+                    INSERT INTO AUSLASS
+                    ( ID, TYP, RUECKSCHLAGKLAPPE, SOHLHOEHE,
+                      XKOORDINATE, YKOORDINATE,
+                      GELAENDEHOEHE, ART, ANZAHLKANTEN,
+                      SCHEITELHOEHE, KONSTANTERZUFLUSS, PLANUNGSSTATUS,
+                      NAME, LASTMODIFIED, KOMMENTAR)
+                    SELECT
+                      {id}, {typ}, {rueckschlagklappe}, {sohlhoehe},
+                      {xkoordinate}, {ykoordinate},
+                      {gelaendehoehe}, {art}, {anzahlkanten},
+                      {scheitelhoehe}, {konstanterzufluss}, '{planungsstatus}',
+                      '{name}', '{lastmodified}', '{kommentar}'
+                    FROM RDB$DATABASE
+                    WHERE '{name}' NOT IN (SELECT NAME FROM AUSLASS);
+                """.format(id=nextid, typ='1', rueckschlagklappe=0, sohlhoehe=sohlhoehe,
+                           xkoordinate=xsch, ykoordinate=ysch,
+                           gelaendehoehe=deckelhoehe, art='3', anzahlkanten='0',
+                           scheitelhoehe=deckelhoehe, konstanterzufluss=0, planungsstatus='0',
+                           name=schnam, lastmodified=createdat, kommentar = kommentar,
+                           durchmesser=durchmesser)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(31) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
 
-            sql = u"""
-                INSERT INTO AUSLASS
-                ( ID, TYP, RUECKSCHLAGKLAPPE, SOHLHOEHE,
-                  XKOORDINATE, YKOORDINATE,
-                  GELAENDEHOEHE, ART, ANZAHLKANTEN,
-                  SCHEITELHOEHE, KONSTANTERZUFLUSS, PLANUNGSSTATUS,
-                  NAME, LASTMODIFIED, KOMMENTAR) VALUES
-                ( {id}, {typ}, {rueckschlagklappe}, {sohlhoehe},
-                  {xkoordinate}, {ykoordinate},
-                  {gelaendehoehe}, {art}, {anzahlkanten},
-                  {scheitelhoehe}, {konstanterzufluss}, '{planungsstatus}',
-                  '{name}', '{lastmodified}', '{kommentar}');
-            """.format(id=nextid, typ='1', rueckschlagklappe=0, sohlhoehe=sohlhoehe,
-                       xkoordinate=xsch, ykoordinate=ysch,
-                       gelaendehoehe=deckelhoehe, art='3', anzahlkanten='0',
-                       scheitelhoehe=deckelhoehe, konstanterzufluss=0, planungsstatus='0',
-                       name=schnam, lastmodified=createdat, kommentar = kommentar,
-                       durchmesser='1000.')
-            # print(sql)
-            try:
-                dbHE.sql(sql)
-            except:
-                fehlermeldung(u"(31) SQL-Fehler in Firebird: \n", sql)
-                del dbQK
-                del dbHE
-                return False
+                nextid += 1
 
-            nextid += 1
         dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
 
@@ -452,21 +556,20 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
     # in HYSTEM-EXTRAN in der Karteikarte "Haltungen > Trockenwetter". Solange dort kein
     # Siedlungstyp zugeordnet ist, wird diese Fläche nicht wirksam und dient nur der Information!
 
-    if check_export['export_haltungen']:
-        if check_export['export_tabinit']:
+    if check_export['export_haltungen'] or check_export['modify_haltungen']:
+        if check_export['init_haltungen']:
             dbHE.sql("DELETE FROM ROHR")
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
-        if auswahl_Teilgebiete != "":
-            auswahl = " and haltungen.teilgebiet in ({:})".format(auswahl_Teilgebiete)
+        if len(liste_teilgebiete) != 0:
+            auswahl = " AND haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
             auswahl = ""
 
         sql = u"""
           SELECT
               haltungen.haltnam AS haltnam, haltungen.schoben AS schoben, haltungen.schunten AS schunten,
-              coalesce(haltungen.laenge,
-                sqrt((n2.xsch-n1.xsch)*(n2.xsch-n1.xsch)+(n2.ysch-n1.ysch)*(n2.ysch-n1.ysch))) AS laenge_t,
+              coalesce(haltungen.laenge, glength(haltungen.geom)) AS laenge_t,
               coalesce(haltungen.sohleoben,n1.sohlhoehe) AS sohleoben_t,
               coalesce(haltungen.sohleunten,n2.sohlhoehe) AS sohleunten_t,
               haltungen.profilnam AS profilnam, profile.he_nr AS he_nr, haltungen.hoehe AS hoehe_t, haltungen.breite AS breite_t,
@@ -483,8 +586,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         """.format(auswahl)
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"(5) SQL-Fehler in QKan-DB: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(5) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -506,7 +609,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
                ('NULL' if tt == 'NULL' else '{:.4f}'.format(float(tt)) \
                     for tt in (laenge_t, sohleoben_t, sohleunten_t, hoehe_t, breite_t))
 
-            if rauheit_t is None:
+            if rauheit_t == 'NULL':
                 rauheit = '1.5'
             else:
                 rauheit = '{:.3f}'.format(float(rauheit_t))
@@ -517,105 +620,225 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
             else:
                 h_sonderprofil = ''
 
-            # Einfuegen in die Datenbank
-            # Profile < 0 werden nicht uebertragen
-            if int(h_profil) > 0:
-                sql = u"""
-                  INSERT INTO ROHR
-                  ( NAME, SCHACHTOBEN, SCHACHTUNTEN, LAENGE, SOHLHOEHEOBEN,
-                    SOHLHOEHEUNTEN, PROFILTYP, SONDERPROFILBEZEICHNUNG, GEOMETRIE1,
-                    GEOMETRIE2, KANALART, RAUIGKEITSBEIWERT, ANZAHL, TEILEINZUGSGEBIET,
-                    RUECKSCHLAGKLAPPE, KONSTANTERZUFLUSS, EINZUGSGEBIET, KONSTANTERZUFLUSSTEZG,
-                    RAUIGKEITSANSATZ, GEFAELLE, GESAMTFLAECHE, ABFLUSSART,
-                    INDIVIDUALKONZEPT, HYDRAULISCHERRADIUS, RAUHIGKEITANZEIGE, PLANUNGSSTATUS,
-                    LASTMODIFIED, MATERIALART, EREIGNISBILANZIERUNG, EREIGNISGRENZWERTENDE,
-                    EREIGNISGRENZWERTANFANG, EREIGNISTRENNDAUER, EREIGNISINDIVIDUELL, ID)
-                  VALUES
-                    ('{name}', '{schachtoben}', '{schachtunten}', {laenge}, {sohlhoeheoben},
-                    {sohlhoeheunten}, '{profiltyp}', '{sonderprofilbezeichnung}', {geometrie1},
-                    {geometrie2}, '{kanalart}', {rauigkeitsbeiwert}, {anzahl}, '{teileinzugsgebiet}',
-                    {rueckschlagklappe}, {konstanterzufluss}, {einzugsgebiet}, {konstanterzuflusstezg},
-                    {rauigkeitsansatz}, {gefaelle}, {gesamtflaeche}, {abflussart},
-                    {individualkonzept}, {hydraulischerradius}, {rauhigkeitanzeige}, {planungsstatus},
-                    '{lastmodified}', {materialart}, {ereignisbilanzierung}, {ereignisgrenzwertende},
-                    {ereignisgrenzwertanfang}, {ereignistrenndauer}, {ereignisindividuell}, {id})
-                  """.format(name=haltnam, schachtoben=schoben, schachtunten=schunten,
-                               laenge=laenge, sohlhoeheoben=sohleoben,
-                             sohlhoeheunten=sohleunten, profiltyp=h_profil,
-                               sonderprofilbezeichnung=h_sonderprofil, geometrie1=hoehe,
-                             geometrie2=breite, kanalart=entw_nr,
-                               rauigkeitsbeiwert=1.5, anzahl=1, teileinzugsgebiet=teilgebiet,
-                             rueckschlagklappe=0, konstanterzufluss=0,
-                               einzugsgebiet=0, konstanterzuflusstezg = 0,
-                             rauigkeitsansatz=1, gefaelle=0,
-                               gesamtflaeche=0, abflussart=0,
-                             individualkonzept=0, hydraulischerradius=0,
-                               rauhigkeitanzeige=1.5, planungsstatus=0,
-                             lastmodified=createdat, materialart=28,
-                               ereignisbilanzierung=0, ereignisgrenzwertende=0,
-                             ereignisgrenzwertanfang=0, ereignistrenndauer=0,
-                               ereignisindividuell=0, id=nextid)
-                try:
-                    dbHE.sql(sql)
-                except:
-                    fehlermeldung(u"(6) SQL-Fehler in Firebird: \n", sql)
-                    del dbQK
-                    del dbHE
-                    return False
+            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+            if check_export['modify_haltungen']:
+                # Profile < 0 werden nicht uebertragen
+                if int(h_profil) > 0:
+                    sql = u"""
+                      UPDATE ROHR SET
+                      NAME='{name}', SCHACHTOBEN='{schachtoben}', SCHACHTUNTEN='{schachtunten}',
+                      LAENGE={laenge}, SOHLHOEHEOBEN={sohlhoeheoben},
+                      SOHLHOEHEUNTEN={sohlhoeheunten}, PROFILTYP='{profiltyp}', 
+                      SONDERPROFILBEZEICHNUNG='{sonderprofilbezeichnung}',
+                      GEOMETRIE1={geometrie1}, GEOMETRIE2={geometrie2}, KANALART='{kanalart}',
+                      RAUIGKEITSBEIWERT={rauigkeitsbeiwert}, ANZAHL={anzahl},
+                      TEILEINZUGSGEBIET='{teileinzugsgebiet}', RUECKSCHLAGKLAPPE={rueckschlagklappe},
+                      KONSTANTERZUFLUSS={konstanterzufluss}, EINZUGSGEBIET={einzugsgebiet},
+                      KONSTANTERZUFLUSSTEZG={konstanterzuflusstezg}, RAUIGKEITSANSATZ={rauigkeitsansatz},
+                      GEFAELLE={gefaelle}, GESAMTFLAECHE={gesamtflaeche}, ABFLUSSART={abflussart},
+                      INDIVIDUALKONZEPT={individualkonzept}, HYDRAULISCHERRADIUS={hydraulischerradius},
+                      RAUHIGKEITANZEIGE={rauhigkeitanzeige}, PLANUNGSSTATUS={planungsstatus},
+                      LASTMODIFIED='{lastmodified}', MATERIALART={materialart},
+                      EREIGNISBILANZIERUNG={ereignisbilanzierung},
+                      EREIGNISGRENZWERTENDE={ereignisgrenzwertende},
+                      EREIGNISGRENZWERTANFANG={ereignisgrenzwertanfang},
+                      EREIGNISTRENNDAUER={ereignistrenndauer}, EREIGNISINDIVIDUELL={ereignisindividuell},
+                      ID={id}
+                      WHERE NAME = '{name}';
+                      """.format(name=haltnam, schachtoben=schoben, schachtunten=schunten,
+                                   laenge=laenge, sohlhoeheoben=sohleoben,
+                                 sohlhoeheunten=sohleunten, profiltyp=h_profil,
+                                   sonderprofilbezeichnung=h_sonderprofil, geometrie1=hoehe,
+                                 geometrie2=breite, kanalart=entw_nr,
+                                   rauigkeitsbeiwert=1.5, anzahl=1, teileinzugsgebiet='',
+                                 rueckschlagklappe=0, konstanterzufluss=0,
+                                   einzugsgebiet=0, konstanterzuflusstezg = 0,
+                                 rauigkeitsansatz=1, gefaelle=0,
+                                   gesamtflaeche=0, abflussart=0,
+                                 individualkonzept=0, hydraulischerradius=0,
+                                   rauhigkeitanzeige=1.5, planungsstatus=0,
+                                 lastmodified=createdat, materialart=28,
+                                   ereignisbilanzierung=0, ereignisgrenzwertende=0,
+                                 ereignisgrenzwertanfang=0, ereignistrenndauer=0,
+                                   ereignisindividuell=0, id=nextid)
+                    try:
+                        dbHE.sql(sql)
+                    except BaseException as err:
+                        fehlermeldung(u"(6b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                        del dbQK
+                        del dbHE
+                        return False
 
-                nextid += 1
+            # Einfuegen in die Datenbank
+            elif check_export['export_haltungen']:
+                # Profile < 0 werden nicht uebertragen
+                if int(h_profil) > 0:
+                    sql = u"""
+                      INSERT INTO ROHR
+                      ( NAME, SCHACHTOBEN, SCHACHTUNTEN, LAENGE, SOHLHOEHEOBEN,
+                        SOHLHOEHEUNTEN, PROFILTYP, SONDERPROFILBEZEICHNUNG, GEOMETRIE1,
+                        GEOMETRIE2, KANALART, RAUIGKEITSBEIWERT, ANZAHL, TEILEINZUGSGEBIET,
+                        RUECKSCHLAGKLAPPE, KONSTANTERZUFLUSS, EINZUGSGEBIET, KONSTANTERZUFLUSSTEZG,
+                        RAUIGKEITSANSATZ, GEFAELLE, GESAMTFLAECHE, ABFLUSSART,
+                        INDIVIDUALKONZEPT, HYDRAULISCHERRADIUS, RAUHIGKEITANZEIGE, PLANUNGSSTATUS,
+                        LASTMODIFIED, MATERIALART, EREIGNISBILANZIERUNG, EREIGNISGRENZWERTENDE,
+                        EREIGNISGRENZWERTANFANG, EREIGNISTRENNDAUER, EREIGNISINDIVIDUELL, ID)
+                      SELECT
+                        '{name}', '{schachtoben}', '{schachtunten}', {laenge}, {sohlhoeheoben},
+                        {sohlhoeheunten}, '{profiltyp}', '{sonderprofilbezeichnung}', {geometrie1},
+                        {geometrie2}, '{kanalart}', {rauigkeitsbeiwert}, {anzahl}, '{teileinzugsgebiet}',
+                        {rueckschlagklappe}, {konstanterzufluss}, {einzugsgebiet}, {konstanterzuflusstezg},
+                        {rauigkeitsansatz}, {gefaelle}, {gesamtflaeche}, {abflussart},
+                        {individualkonzept}, {hydraulischerradius}, {rauhigkeitanzeige}, {planungsstatus},
+                        '{lastmodified}', {materialart}, {ereignisbilanzierung}, {ereignisgrenzwertende},
+                        {ereignisgrenzwertanfang}, {ereignistrenndauer}, {ereignisindividuell}, {id}
+                      FROM RDB$DATABASE
+                      WHERE '{name}' NOT IN (SELECT NAME FROM ROHR);
+                      """.format(name=haltnam, schachtoben=schoben, schachtunten=schunten,
+                                   laenge=laenge, sohlhoeheoben=sohleoben,
+                                 sohlhoeheunten=sohleunten, profiltyp=h_profil,
+                                   sonderprofilbezeichnung=h_sonderprofil, geometrie1=hoehe,
+                                 geometrie2=breite, kanalart=entw_nr,
+                                   rauigkeitsbeiwert=1.5, anzahl=1, teileinzugsgebiet='',
+                                 rueckschlagklappe=0, konstanterzufluss=0,
+                                   einzugsgebiet=0, konstanterzuflusstezg = 0,
+                                 rauigkeitsansatz=1, gefaelle=0,
+                                   gesamtflaeche=0, abflussart=0,
+                                 individualkonzept=0, hydraulischerradius=0,
+                                   rauhigkeitanzeige=1.5, planungsstatus=0,
+                                 lastmodified=createdat, materialart=28,
+                                   ereignisbilanzierung=0, ereignisgrenzwertende=0,
+                                 ereignisgrenzwertanfang=0, ereignistrenndauer=0,
+                                   ereignisindividuell=0, id=nextid)
+                    try:
+                        dbHE.sql(sql)
+                    except BaseException as err:
+                        fehlermeldung(u"(6b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                        del dbQK
+                        del dbHE
+                        return False
+
+                    nextid += 1
         dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
 
         fortschritt('{} Haltungen eingefuegt'.format(nextid-nr0), 0.60)
 
     # --------------------------------------------------------------------------------------------
-    # Export der Bodenklassen: In QKan nicht enthalten, Vorlagedaten nur im Code enthalten
+    # Export der Bodenklassen
 
-    if check_export['export_bodenklassen']:
-        if check_export['export_tabinit']:
+    if check_export['export_bodenklassen'] or check_export['modify_bodenklassen']:
+        if check_export['init_bodenklassen']:
             dbHE.sql("DELETE FROM BODENKLASSE")
 
-        createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
-
-        daten = [[10, 9, 10, 144, 1.584, 100, 'VollDurchlaessig', createdat,  'Exportiert mit qkhe', nextid],
-                 [2.099,  0.16, 1.256, 227.9, 1.584, 12, 'Sand', createdat,  'Exportiert mit qkhe', nextid+1],
-                 [1.798,  0.101, 1.06, 143.9, 0.72, 18, 'SandigerLehm', createdat,  'Exportiert mit qkhe', nextid+2],
-                 [1.601, 0.081, 0.94, 100.2, 0.432, 23, 'LehmLoess', createdat,  'Exportiert mit qkhe', nextid+3],
-                 [1.9, 0.03, 1.087, 180, 0.144, 16, 'Ton', createdat,  'Exportiert mit qkhe', nextid+4]]
+        sql = u"""
+            SELECT
+                bknam AS bknam,
+                infiltrationsrateanfang AS infiltrationsrateanfang, 
+                infiltrationsrateende AS infiltrationsrateende, 
+                infiltrationsratestart AS infiltrationsratestart, 
+                rueckgangskonstante AS rueckgangskonstante, 
+                regenerationskonstante AS regenerationskonstante, 
+                saettigungswassergehalt AS saettigungswassergehalt, 
+                createdat AS createdat,
+                kommentar AS kommentar
+            FROM bodenklassen
+            """.format(auswahl)
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            del dbHE
+            return False
 
         nr0 = nextid
 
-        for ds in daten:
-            sql = u"""
-              INSERT INTO BODENKLASSE (INFILTRATIONSRATEANFANG, INFILTRATIONSRATEENDE,
-                INFILTRATIONSRATESTART, RUECKGANGSKONSTANTE, REGENERATIONSKONSTANTE,
-                SAETTIGUNGSWASSERGEHALT, NAME, LASTMODIFIED, KOMMENTAR,  ID) VALUES
-                                      ({INFILTRATIONSRATEANFANG}, {INFILTRATIONSRATEENDE},
-                {INFILTRATIONSRATESTART}, {RUECKGANGSKONSTANTE}, {REGENERATIONSKONSTANTE},
-                {SAETTIGUNGSWASSERGEHALT}, '{NAME}', '{LASTMODIFIED}', '{KOMMENTAR}', {ID});
-                """.format(INFILTRATIONSRATEANFANG=ds[0], INFILTRATIONSRATEENDE=ds[1],
-                INFILTRATIONSRATESTART=ds[2], RUECKGANGSKONSTANTE=ds[3], REGENERATIONSKONSTANTE=ds[4],
-                SAETTIGUNGSWASSERGEHALT=ds[5], NAME=ds[6], LASTMODIFIED=ds[7], KOMMENTAR=ds[8],  ID=ds[9])
-            try:
-                dbHE.sql(sql)
-            except:
-                fehlermeldung(u"(7) SQL-Fehler in Firebird: \n", sql)
-                del dbQK
-                del dbHE
-                return False
+        for attr in dbQK.fetchall():
 
-        nextid += 5
+            # In allen Feldern None durch NULL ersetzen
+            (bknam, infiltrationsrateanfang, infiltrationsrateende, infiltrationsratestart, 
+             rueckgangskonstante, regenerationskonstante, saettigungswassergehalt,
+             createdat, kommentar) = \
+                ('NULL' if el is None else el for el in attr)
+
+            # Der leere Satz Bodenklasse ist nur für interne QKan-Zwecke da. 
+            if bknam == 'NULL':
+                continue
+
+            if createdat == 'NULL':
+                createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
+
+            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+            if check_export['modify_bodenklassen']:
+                sql = u"""
+                    UPDATE BODENKLASSE SET
+                    INFILTRATIONSRATEANFANG={infiltrationsrateanfang},
+                    INFILTRATIONSRATEENDE={infiltrationsrateende},
+                    INFILTRATIONSRATESTART={infiltrationsratestart},
+                    RUECKGANGSKONSTANTE={rueckgangskonstante},
+                    REGENERATIONSKONSTANTE={regenerationskonstante},
+                    SAETTIGUNGSWASSERGEHALT={saettigungswassergehalt},
+                    NAME='{name}', LASTMODIFIED='{lastmodified}',
+                    KOMMENTAR='{kommentar}', ID={id}
+                    WHERE NAME = '{name}';
+                    """.format(infiltrationsrateanfang=infiltrationsrateanfang,
+                               infiltrationsrateende=infiltrationsrateende,
+                               infiltrationsratestart=infiltrationsratestart,
+                               rueckgangskonstante=rueckgangskonstante,
+                               regenerationskonstante=regenerationskonstante,
+                               saettigungswassergehalt=saettigungswassergehalt,
+                               name=bknam, lastmodified=createdat,
+                               kommentar=kommentar,  id=nextid)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(31) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
+
+            # Einfuegen in die Datenbank
+            elif check_export['export_bodenklassen']:
+                sql = u"""
+                  INSERT INTO BODENKLASSE
+                  ( INFILTRATIONSRATEANFANG, INFILTRATIONSRATEENDE,
+                    INFILTRATIONSRATESTART, RUECKGANGSKONSTANTE, REGENERATIONSKONSTANTE,
+                    SAETTIGUNGSWASSERGEHALT, NAME, LASTMODIFIED, KOMMENTAR,  ID)
+                  SELECT
+                    {infiltrationsrateanfang}, {infiltrationsrateende},
+                    {infiltrationsratestart}, {rueckgangskonstante}, {regenerationskonstante},
+                    {saettigungswassergehalt}, '{name}', '{lastmodified}', '{kommentar}', {id}
+                    FROM RDB$DATABASE
+                    WHERE '{name}' NOT IN (SELECT NAME FROM BODENKLASSE);
+                    """.format(infiltrationsrateanfang=infiltrationsrateanfang,
+                               infiltrationsrateende=infiltrationsrateende,
+                               infiltrationsratestart=infiltrationsratestart,
+                               rueckgangskonstante=rueckgangskonstante,
+                               regenerationskonstante=regenerationskonstante,
+                               saettigungswassergehalt=saettigungswassergehalt,
+                               name=bknam, lastmodified=createdat,
+                               kommentar=kommentar,  id=nextid)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(7) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
+
+                nextid += 1
+
         dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
 
         fortschritt('{} Bodenklassen eingefuegt'.format(nextid-nr0), 0.62)
 
     # --------------------------------------------------------------------------------------------
-    # Export der Abflussparameter: In QKan nicht enthalten, Vorlagedaten nur im Code enthalten
+    # Export der Abflussparameter
 
-    if check_export['export_abflussparameter']:
-        if check_export['export_tabinit']:
+    if check_export['export_abflussparameter'] or check_export['modify_abflussparameter']:
+        if check_export['init_abflussparameter']:
             dbHE.sql("DELETE FROM ABFLUSSPARAMETER")
 
         sql = u"""
@@ -632,8 +855,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
             """.format(auswahl)
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -662,42 +885,81 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
                                mulden_startwert_t))
 
             if bodenklasse == 'NULL':
-                typ = 0                 # undurchlössig
+                typ = 0                 # undurchlässig
                 bodenklasse = ''
             else:
                 typ = 1                 # durchlässig
 
-            sql = u"""
-              INSERT INTO ABFLUSSPARAMETER
-              ( NAME, ABFLUSSBEIWERTANFANG, ABFLUSSBEIWERTENDE, BENETZUNGSVERLUST,
-                MULDENVERLUST, BENETZUNGSPEICHERSTART, MULDENAUFFUELLGRADSTART, SPEICHERKONSTANTEKONSTANT,
-                SPEICHERKONSTANTEMIN, SPEICHERKONSTANTEMAX, SPEICHERKONSTANTEKONSTANT2,
-                SPEICHERKONSTANTEMIN2, SPEICHERKONSTANTEMAX2,
-                BODENKLASSE, CHARAKTERISTISCHEREGENSPENDE, CHARAKTERISTISCHEREGENSPENDE2,
-                TYP, JAHRESGANGVERLUSTE, LASTMODIFIED, KOMMENTAR, ID)
-              VALUES
-              ( '{apnam}', {anfangsabflussbeiwert}, {endabflussbeiwert}, {benetzungsverlust},
-                {muldenverlust}, {benetzung_startwert}, {mulden_startwert}, {speicherkonstantekonstant},
-                {speicherkonstantemin}, {speicherkonstantemax}, {speicherkonstantekonstant2},
-                {speicherkonstantemin2}, {speicherkonstantemax2},
-                '{bodenklasse}', {charakteristischeregenspende}, {charakteristischeregenspende2},
-                {typ}, {jahresgangverluste}, '{createdat}', '{kommentar}', {id})
-            """.format(apnam=apnam, anfangsabflussbeiwert=anfangsabflussbeiwert,
-                         endabflussbeiwert=endabflussbeiwert, benetzungsverlust=benetzungsverlust,
-                       muldenverlust=muldenverlust, benetzung_startwert=benetzung_startwert,
-                         mulden_startwert=mulden_startwert, speicherkonstantekonstant=1,
-                       speicherkonstantemin=0, speicherkonstantemax=0, speicherkonstantekonstant2=1,
-                       speicherkonstantemin2=0, speicherkonstantemax2=0,
-                       bodenklasse=bodenklasse, charakteristischeregenspende=0, charakteristischeregenspende2=0,
-                       typ=typ, jahresgangverluste=0, createdat=createdat, kommentar=kommentar, id=nextid)
-            try:
-                dbHE.sql(sql)
-            except:
-                fehlermeldung(u"(8) SQL-Fehler in Firebird: \n", sql)
-                del dbQK
-                del dbHE
-                return False
-            nextid += 1
+            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+            if check_export['modify_auslaesse']:
+                sql = u"""
+                  UPDATE ABFLUSSPARAMETER SET
+                  NAME='{apnam}', ABFLUSSBEIWERTANFANG={anfangsabflussbeiwert},
+                  ABFLUSSBEIWERTENDE={endabflussbeiwert}, BENETZUNGSVERLUST={benetzungsverlust},
+                  MULDENVERLUST={muldenverlust}, BENETZUNGSPEICHERSTART={benetzung_startwert},
+                  MULDENAUFFUELLGRADSTART={mulden_startwert},
+                  SPEICHERKONSTANTEKONSTANT={speicherkonstantekonstant},
+                  SPEICHERKONSTANTEMIN={speicherkonstantemin},
+                  SPEICHERKONSTANTEMAX={speicherkonstantemax},
+                  SPEICHERKONSTANTEKONSTANT2={speicherkonstantekonstant2},
+                  SPEICHERKONSTANTEMIN2={speicherkonstantemin2}, SPEICHERKONSTANTEMAX2={speicherkonstantemax2},
+                  BODENKLASSE='{bodenklasse}', CHARAKTERISTISCHEREGENSPENDE={charakteristischeregenspende},
+                  CHARAKTERISTISCHEREGENSPENDE2={charakteristischeregenspende2},
+                  TYP={typ}, JAHRESGANGVERLUSTE={jahresgangverluste}, LASTMODIFIED='{createdat}',
+                  KOMMENTAR='{kommentar}', ID={id}
+                  WHERE NAME = '{apnam}';
+                """.format(apnam=apnam, anfangsabflussbeiwert=anfangsabflussbeiwert,
+                             endabflussbeiwert=endabflussbeiwert, benetzungsverlust=benetzungsverlust,
+                           muldenverlust=muldenverlust, benetzung_startwert=benetzung_startwert,
+                             mulden_startwert=mulden_startwert, speicherkonstantekonstant=1,
+                           speicherkonstantemin=0, speicherkonstantemax=0, speicherkonstantekonstant2=1,
+                           speicherkonstantemin2=0, speicherkonstantemax2=0,
+                           bodenklasse=bodenklasse, charakteristischeregenspende=0, charakteristischeregenspende2=0,
+                           typ=typ, jahresgangverluste=0, createdat=createdat, kommentar=kommentar, id=nextid)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(8a) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
+
+            # Einfuegen in die Datenbank
+            elif check_export['export_auslaesse']:
+                sql = u"""
+                  INSERT INTO ABFLUSSPARAMETER
+                  ( NAME, ABFLUSSBEIWERTANFANG, ABFLUSSBEIWERTENDE, BENETZUNGSVERLUST,
+                    MULDENVERLUST, BENETZUNGSPEICHERSTART, MULDENAUFFUELLGRADSTART, SPEICHERKONSTANTEKONSTANT,
+                    SPEICHERKONSTANTEMIN, SPEICHERKONSTANTEMAX, SPEICHERKONSTANTEKONSTANT2,
+                    SPEICHERKONSTANTEMIN2, SPEICHERKONSTANTEMAX2,
+                    BODENKLASSE, CHARAKTERISTISCHEREGENSPENDE, CHARAKTERISTISCHEREGENSPENDE2,
+                    TYP, JAHRESGANGVERLUSTE, LASTMODIFIED, KOMMENTAR, ID)
+                  SELECT
+                    '{apnam}', {anfangsabflussbeiwert}, {endabflussbeiwert}, {benetzungsverlust},
+                    {muldenverlust}, {benetzung_startwert}, {mulden_startwert}, {speicherkonstantekonstant},
+                    {speicherkonstantemin}, {speicherkonstantemax}, {speicherkonstantekonstant2},
+                    {speicherkonstantemin2}, {speicherkonstantemax2},
+                    '{bodenklasse}', {charakteristischeregenspende}, {charakteristischeregenspende2},
+                    {typ}, {jahresgangverluste}, '{createdat}', '{kommentar}', {id}
+                  FROM RDB$DATABASE
+                  WHERE '{apnam}' NOT IN (SELECT NAME FROM ABFLUSSPARAMETER);
+                """.format(apnam=apnam, anfangsabflussbeiwert=anfangsabflussbeiwert,
+                             endabflussbeiwert=endabflussbeiwert, benetzungsverlust=benetzungsverlust,
+                           muldenverlust=muldenverlust, benetzung_startwert=benetzung_startwert,
+                             mulden_startwert=mulden_startwert, speicherkonstantekonstant=1,
+                           speicherkonstantemin=0, speicherkonstantemax=0, speicherkonstantekonstant2=1,
+                           speicherkonstantemin2=0, speicherkonstantemax2=0,
+                           bodenklasse=bodenklasse, charakteristischeregenspende=0, charakteristischeregenspende2=0,
+                           typ=typ, jahresgangverluste=0, createdat=createdat, kommentar=kommentar, id=nextid)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(8b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
+
+                nextid += 1
 
         dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
@@ -705,28 +967,28 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         fortschritt('{} Abflussparameter eingefuegt'.format(nextid-nr0), 0.65)
 
     # ------------------------------------------------------------------------------------------------
-    # Export der Regenschreiber: In QKan nicht enthalten, Vorlagedaten nur im Code enthalten
+    # Export der Regenschreiber
     #
     # Wenn in QKan keine Regenschreiber eingetragen sind, wird als Name "Regenschreiber1" angenommen.
 
-    if check_export['export_regenschreiber']:
-        if check_export['export_tabinit']:
+    if check_export['export_regenschreiber'] or check_export['modify_regenschreiber']:
+        if check_export['init_regenschreiber']:
             dbHE.sql("DELETE FROM REGENSCHREIBER")
 
         # # Pruefung, ob Regenschreiber fuer Export vorhanden
-        # if auswahl_Teilgebiete != "":
-        #     auswahl = " and flaechen.teilgebiet in ({:})".format(auswahl_Teilgebiete)
+        # if len(liste_teilgebiete) != 0:
+        #     auswahl = " AND flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         # else:
         #     auswahl = ""
         #
         # sql = u"SELECT regenschreiber FROM flaechen GROUP BY regenschreiber{}".format(auswahl)
 
         # Regenschreiber berücksichtigen nicht ausgewählte Teilgebiete
-        sql = u"SELECT regenschreiber FROM flaechen GROUP BY regenschreiber"
+        sql = u"""SELECT regenschreiber FROM flaechen GROUP BY regenschreiber"""
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"(5) SQL-Fehler in QKan-DB: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(5) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -746,9 +1008,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         # endet mit ",)", z.B. (1,), während ohne oder bei mehr als einem Element alles wie üblich
         # ist: () oder (1,2,3,4)
         if len(reglis) == 1:
-            sql = u"SELECT NAME FROM REGENSCHREIBER WHERE NAME NOT IN {})".format(str(reglis)[:-2])
+            sql = u"""SELECT NAME FROM REGENSCHREIBER WHERE NAME NOT IN {})""".format(str(reglis)[:-2])
         else:
-            sql = u"SELECT NAME FROM REGENSCHREIBER WHERE NAME NOT IN {}".format(str(reglis))
+            sql = u"""SELECT NAME FROM REGENSCHREIBER WHERE NAME NOT IN {}""".format(str(reglis))
         dbHE.sql(sql)
 
         attr = dbHE.fetchall()
@@ -765,12 +1027,14 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
                     XKOORDINATE, YKOORDINATE, ZKOORDINATE, NAME,
                     FLAECHEGESAMT, FLAECHEDURCHLAESSIG, FLAECHEUNDURCHLAESSIG,
                     ANZAHLHALTUNGEN, INTERNENUMMER,
-                    LASTMODIFIED, KOMMENTAR, ID) VALUES
-                    ({nummer}, '{station}',
-                    {xkoordinate}, {ykoordinate}, {zkoordinate}, '{name}',
-                    {flaechegesamt}, {flaechedurchlaessig}, {flaecheundurchlaessig},
-                    {anzahlhaltungen}, {internenummer},
-                    '{lastmodified}', '{kommentar}', {id})
+                    LASTMODIFIED, KOMMENTAR, ID) SELECT
+                      {nummer}, '{station}',
+                      {xkoordinate}, {ykoordinate}, {zkoordinate}, '{name}',
+                      {flaechegesamt}, {flaechedurchlaessig}, {flaecheundurchlaessig},
+                      {anzahlhaltungen}, {internenummer},
+                      '{lastmodified}', '{kommentar}', {id}
+                    FROM RDB$DATABASE
+                    WHERE '{name}' NOT IN (SELECT NAME FROM REGENSCHREIBER);
                   """.format(nummer=regschnr, station=10000 + regschnr,
                              xkoordinate=0, ykoordinate=0, zkoordinate=0, name=regenschreiber,
                              flaechegesamt=0, flaechedurchlaessig=0, flaecheundurchlaessig=0,
@@ -779,8 +1043,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
 
                 try:
                     dbHE.sql(sql)
-                except:
-                    fehlermeldung(u"(17) SQL-Fehler in Firebird: \n", sql)
+                except BaseException as err:
+                    fehlermeldung(u"(17) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
                     del dbQK
                     del dbHE
                     return False
@@ -817,18 +1081,20 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
 
     # In der QKan-Datenbank sind Fz_SschwP und Fz_oberfl zu einem Feld zusammengefasst (fliesszeit)
 
-    if check_export['export_flaechen_und']:
-        if check_export['export_tabinit']:
+    # Befestigte Flächen
+    if check_export['export_flaechenrw'] or check_export['modify_flaechenrw']:
+        if check_export['init_flaechenrw']:
             dbHE.sql("DELETE FROM FLAECHE")
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
-        if auswahl_Teilgebiete != "":
-            auswahl = " and flaechen.teilgebiet in ({:})".format(auswahl_Teilgebiete)
+        if len(liste_teilgebiete) != 0:
+            auswahl = " AND flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
             auswahl = ""
 
+        # Teil 1: Nicht zu verschneidende Flächen exportieren
         sql = u"""
-          SELECT flaechen.flnam AS flnam, Coalesce(flaechen.haltnam,tezg.haltnam) AS haltnam, flaechen.neigkl AS neigkl,
+          SELECT flaechen.flnam AS flnam, haltungen.haltnam AS haltnam, flaechen.neigkl AS neigkl,
             flaechen.he_typ AS he_typ, flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
             flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
             area(flaechen.geom)/10000 AS flaeche, flaechen.regenschreiber AS regenschreiber,
@@ -837,14 +1103,17 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
           FROM flaechen
           LEFT JOIN abflussparameter
           ON flaechen.abflussparameter = abflussparameter.apnam
-          LEFT JOIN tezg
-          ON Within(Centroid(flaechen.geom),tezg.geom)
-          WHERE flaeche > 0.01 and abflussparameter.bodenklasse IS NULL and Coalesce(flaechen.haltnam,tezg.haltnam) IS NOT NULL{:}
-        """.format(auswahl)
+          INNER JOIN linkfl
+          ON within(StartPoint(linkfl.glink),flaechen.geom)
+          INNER JOIN haltungen
+          ON intersects(buffer(EndPoint(linkfl.glink),{fangradius}),haltungen.geom)
+          WHERE area(flaechen.geom)/10000 > 0.01 AND
+                (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL){auswahl}
+        """.format(auswahl=auswahl, fangradius=fangradius)
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"(23) SQL-Fehler in QKan-DB: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan_Export (23) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -872,6 +1141,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
             if he_typ == 'NULL':
                 he_typ = 0                  # Flächentyp 'Direkt'
 
+            if neigkl == 'NULL':
+                neigkl = 1
+
             if speicherzahl == 'NULL':
                 speicherzahl = 3
 
@@ -887,171 +1159,119 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
             if createdat == 'NULL':
                 createdat = time.strftime('%d.%m.%Y %H:%M:%S',time.localtime())
 
-            if kommentar is None or kommentar == '':
+            if kommentar == 'NULL' or kommentar == '':
                 kommentar = 'eingefuegt von k_qkhe'
 
-            # befestigter Anteil
-            sql = u"""
-              INSERT INTO FLAECHE
-              ( GROESSE, REGENSCHREIBER, HALTUNG,
-                BERECHNUNGSPEICHERKONSTANTE, TYP, ANZAHLSPEICHER,
-                SPEICHERKONSTANTE, SCHWERPUNKTLAUFZEIT,
-                FLIESSZEITOBERFLAECHE, LAENGSTEFLIESSZEITKANAL,
-                PARAMETERSATZ, NEIGUNGSKLASSE,
-                NAME, LASTMODIFIED,
-                KOMMENTAR, ID, ZUORDNUNABHEZG)
-              VALUES
-              ( {flaeche:.4f}, '{regenschreiber}', '{haltnam}',
-                {he_typ}, {fltyp}, {speicherzahl},
-                {speicherkonst:.3f}, {fliesszeit1:.2f},
-                {fliesszeit2:.2f}, {fliesszeitkanal:.2f},
-                '{abflussparameter}', {neigkl},
-                'f_{flnam}', '{createdat}',
-                '{kommentar}', {nextid}, {zuordnunabhezg});
-              """.format(flaeche = flaeche, regenschreiber = regenschreiber, haltnam = haltnam,
-                         he_typ=he_typ, fltyp=0, speicherzahl = speicherzahl,
-                         speicherkonst = speicherkonst, fliesszeit1 = fliesszeit,
-                         fliesszeit2=fliesszeit, fliesszeitkanal = fliesszeitkanal,
-                         abflussparameter = abflussparameter, neigkl = neigkl,
-                         flnam = flnam, createdat = createdat,
-                         kommentar = kommentar, nextid = nextid, zuordnunabhezg = 0)
-            try:
-                dbHE.sql(sql)
-            except:
-                fehlermeldung(u"(9) SQL-Fehler in Firebird: \n", sql)
-                del dbQK
-                del dbHE
-                return False
-
-            nextid += 1
-        dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
-        dbHE.commit()
-
-        fortschritt('{} Flaechen eingefuegt'.format(nextid-nr0), 0.80)
-
-        # Unbefestigte Flaechen ------------------------------------------------------------------------
-
-        # Falls Option check_export['export_difftezg'] gewählt: Erzeuge unbefestigte Flächen als Differenz aus
-        # TEZG-Fläche und befestigten Flächen. Diese Differenz wird haltungsweise berechnet.
-
-        if check_export['export_difftezg']:
-
-            # Nur Daten fuer ausgewaehlte Teilgebiete
-            if auswahl_Teilgebiete != "":
-                auswahl = " and teilgebiet in ({:})".format(auswahl_Teilgebiete)
-            else:
-                auswahl = ""
-
-            sql = u"""
-              WITH fu AS 
-              (SELECT tezg.flnam, tezg.haltnam, area(tezg.geom)/10000 - sum(area(Intersection(tezg.geom,flaechen.geom))/10000) AS flaeche,
-                tezg.neigkl AS neigkl, tezg.regenschreiber AS regenschreiber,
-                tezg.abflussparameter AS abflussparameter, tezg.createdat AS createdat,
-                tezg.kommentar AS kommentar, flaechen.teilgebiet as teilgebiet
-              FROM
-                tezg INNER JOIN flaechen ON Intersects(tezg.geom,flaechen.geom)
-              GROUP BY tezg.haltnam)
-
-              SELECT flnam, haltnam, flaeche,
-                neigkl, regenschreiber,
-                abflussparameter, createdat,
-                kommentar
-              FROM
-                fu
-              WHERE flaeche > 0.0011{:}
-            """.format(auswahl)
-            try:
-                dbQK.sql(sql)
-            except:
-                fehlermeldung(u"(24) SQL-Fehler in QKan-DB: \n", sql)
-                del dbQK
-                del dbHE
-                return False
-
-            fortschritt('Export unbefestigte Flaechen...', 0.85)
-
-            nr0 = nextid
-
-            for attr in dbQK.fetchall():
-
-                # In allen Feldern None durch NULL ersetzen
-                (flnam, haltnam,  flaeche, neigkl, regenschreiber, abflussparameter, createdat, kommentar) = \
-                    ('NULL' if el is None else el for el in attr)
-
-                # Datenkorrekturen
-
-                speicherkonst = math.sqrt(flaeche)*2.
-                fliesszeit = math.sqrt(flaeche)*6.
-
-                if createdat == 'NULL':
-                    createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
-
-                if kommentar is None or kommentar == '':
-                    kommentar = 'eingefuegt von k_qkhe'
-
-                # unbefestigter Anteil
+            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+            if check_export['modify_flaechenrw']:
                 sql = u"""
-                  INSERT INTO FLAECHE
-                  ( GROESSE, REGENSCHREIBER, HALTUNG, ANZAHLSPEICHER,
-                    SPEICHERKONSTANTE, SCHWERPUNKTLAUFZEIT, BERECHNUNGSPEICHERKONSTANTE, TYP,
-                    PARAMETERSATZ, NEIGUNGSKLASSE, NAME, LASTMODIFIED,
-                    KOMMENTAR, ID, ZUORDNUNABHEZG)
-                  VALUES
-                  ( {flaeche:.4f}, '{regenschreiber}', '{haltnam}', {speicherzahl},
-                    {speicherkonst:.3f}, {fliesszeit:.2f}, {he_typ}, {fltyp},
-                    '{abflussparameter}', {neigkl}, 'f_{flnam}', '{createdat}',
-                    '{kommentar}', {nextid}, {zuordnunabhezg});
-                  """.format(flaeche = flaeche, regenschreiber = regenschreiber, haltnam = haltnam, speicherzahl = 3,
-                             speicherkonst = speicherkonst, fliesszeit = fliesszeit, he_typ = 0, fltyp = 1,
-                             abflussparameter = abflussparameter, neigkl = neigkl, flnam = flnam, createdat = createdat,
+                  UPDATE FLAECHE SET
+                  GROESSE={flaeche:.4f}, REGENSCHREIBER='{regenschreiber}', HALTUNG='{haltnam}',
+                  BERECHNUNGSPEICHERKONSTANTE={he_typ}, TYP={fltyp}, ANZAHLSPEICHER={speicherzahl},
+                  SPEICHERKONSTANTE={speicherkonst:.3f}, SCHWERPUNKTLAUFZEIT={fliesszeit1:.2f},
+                  FLIESSZEITOBERFLAECHE={fliesszeit2:.2f}, LAENGSTEFLIESSZEITKANAL={fliesszeitkanal:.2f},
+                  PARAMETERSATZ='{abflussparameter}', NEIGUNGSKLASSE={neigkl},
+                  NAME='fbef_{flnam}-{haltnam}', LASTMODIFIED='{createdat}',
+                  KOMMENTAR='{kommentar}', ID={nextid}, ZUORDNUNABHEZG={zuordnunabhezg}
+                  WHERE NAME = 'fbef_{flnam}-{haltnam}';
+                  """.format(flaeche = flaeche, regenschreiber = regenschreiber, haltnam = haltnam,
+                             he_typ=he_typ, fltyp=0, speicherzahl = speicherzahl,
+                             speicherkonst = speicherkonst, fliesszeit1 = fliesszeit,
+                             fliesszeit2=fliesszeit, fliesszeitkanal = fliesszeitkanal,
+                             abflussparameter = abflussparameter, neigkl = neigkl,
+                             flnam = flnam, createdat = createdat,
                              kommentar = kommentar, nextid = nextid, zuordnunabhezg = 0)
                 try:
                     dbHE.sql(sql)
-                except:
-                    fehlermeldung(u"(10) SQL-Fehler in Firebird: \n", sql)
+                except BaseException as err:
+                    fehlermeldung(u"(9a) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
+
+
+            # Einfuegen in die Datenbank
+            if check_export['export_flaechenrw']:
+                sql = u"""
+                  INSERT INTO FLAECHE
+                  ( GROESSE, REGENSCHREIBER, HALTUNG,
+                    BERECHNUNGSPEICHERKONSTANTE, TYP, ANZAHLSPEICHER,
+                    SPEICHERKONSTANTE, SCHWERPUNKTLAUFZEIT,
+                    FLIESSZEITOBERFLAECHE, LAENGSTEFLIESSZEITKANAL,
+                    PARAMETERSATZ, NEIGUNGSKLASSE,
+                    NAME, LASTMODIFIED,
+                    KOMMENTAR, ID, ZUORDNUNABHEZG)
+                  SELECT
+                    {flaeche:.4f}, '{regenschreiber}', '{haltnam}',
+                    {he_typ}, {fltyp}, {speicherzahl},
+                    {speicherkonst:.3f}, {fliesszeit1:.2f},
+                    {fliesszeit2:.2f}, {fliesszeitkanal:.2f},
+                    '{abflussparameter}', {neigkl},
+                    'fbef_{flnam}-{haltnam}', '{createdat}',
+                    '{kommentar}', {nextid}, {zuordnunabhezg}
+                  FROM RDB$DATABASE
+                  WHERE 'fbef_{flnam}-{haltnam}' NOT IN (SELECT NAME FROM FLAECHE);
+                  """.format(flaeche = flaeche, regenschreiber = regenschreiber, haltnam = haltnam,
+                             he_typ=he_typ, fltyp=0, speicherzahl = speicherzahl,
+                             speicherkonst = speicherkonst, fliesszeit1 = fliesszeit,
+                             fliesszeit2=fliesszeit, fliesszeitkanal = fliesszeitkanal,
+                             abflussparameter = abflussparameter, neigkl = neigkl,
+                             flnam = flnam, createdat = createdat,
+                             kommentar = kommentar, nextid = nextid, zuordnunabhezg = 0)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(9b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
                     del dbQK
                     del dbHE
                     return False
 
                 nextid += 1
-            dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
-            dbHE.commit()
 
-            fortschritt(u'{} Unbefestigte Flaechen eingefuegt aus tezg abzgl. bef. Flächen'.format(nextid-nr0), 0.85)
 
-        # --------------------------------------------------------------------------------------------
-        # Unbefestigte Flächen (Kriterium: Attribut abflussparameter.bodenklasse ist NULL
+        dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
+        dbHE.commit()
 
-        # Nur Daten fuer ausgewaehlte Teilgebiete
-        if auswahl_Teilgebiete != "":
-            auswahl = " and flaechen.teilgebiet in ({:})".format(auswahl_Teilgebiete)
-        else:
-            auswahl = ""
+        fortschritt('{} Flaechen (nicht verschnitten) eingefuegt'.format(nextid-nr0), 0.80)
 
+        # Teil 2: Zu verschneidende Flächen exportieren
         sql = u"""
-          SELECT flaechen.flnam AS flnam, Coalesce(flaechen.haltnam,tezg.haltnam) AS haltnam, flaechen.neigkl AS neigkl,
-            flaechen.he_typ AS he_typ, flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
+          WITH flintersect AS (
+            SELECT flaechen.flnam AS flnam, flaechen.neigkl AS neigkl, flaechen.he_typ AS he_typ, 
+            flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
             flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-            area(flaechen.geom)/10000 AS flaeche, flaechen.regenschreiber AS regenschreiber,
+            flaechen.regenschreiber AS regenschreiber,
             flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
-            flaechen.kommentar AS kommentar
-          FROM flaechen
+            flaechen.kommentar AS kommentar, CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
+            FROM flaechen
+            INNER JOIN tezg
+            ON intersects(flaechen.geom,tezg.geom)
+            WHERE flaechen.aufteilen = 'ja'{auswahl})
+          SELECT flintersect.flnam AS flnam, haltungen.haltnam AS haltnam, flintersect.neigkl AS neigkl,
+            flintersect.he_typ AS he_typ, flintersect.speicherzahl AS speicherzahl, flintersect.speicherkonst AS speicherkonst,
+            flintersect.fliesszeit AS fliesszeit, flintersect.fliesszeitkanal AS fliesszeitkanal,
+            area(flintersect.geom)/10000 AS flaeche, flintersect.regenschreiber AS regenschreiber,
+            flintersect.abflussparameter AS abflussparameter, flintersect.createdat AS createdat,
+            flintersect.kommentar AS kommentar
+          FROM flintersect
           LEFT JOIN abflussparameter
-          ON flaechen.abflussparameter = abflussparameter.apnam
-          LEFT JOIN tezg
-          ON Within(Centroid(flaechen.geom),tezg.geom)
-          WHERE flaeche > 0.01 and abflussparameter.bodenklasse IS NOT NULL and Coalesce(flaechen.haltnam,tezg.haltnam) IS NOT NULL {:}
-        """.format(auswahl)
+          ON flintersect.abflussparameter = abflussparameter.apnam
+          INNER JOIN linkfl
+          ON within(StartPoint(linkfl.glink),flintersect.geom)
+          INNER JOIN haltungen
+          ON intersects(buffer(EndPoint(linkfl.glink),{fangradius}),haltungen.geom)
+          WHERE area(flintersect.geom)/10000 > 0.01
+        """.format(auswahl=auswahl, fangradius=fangradius)
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"(25) SQL-Fehler in QKan-DB: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan_Export (23) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
 
 
-        fortschritt('Export unbefestigte Flaechen...', 0.85)
+        fortschritt('Export befestigte Flaechen...', 0.70)
 
         nr0 = nextid
 
@@ -1067,8 +1287,14 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
                 ('NULL' if el is None else el for el in attr)
 
             # Datenkorrekturen
+            if regenschreiber == 'NULL':
+                regenschreiber = 'Regenschreiber1'
+
             if he_typ == 'NULL':
                 he_typ = 0                  # Flächentyp 'Direkt'
+
+            if neigkl == 'NULL':
+                neigkl = 1
 
             if speicherzahl == 'NULL':
                 speicherzahl = 3
@@ -1085,47 +1311,79 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
             if createdat == 'NULL':
                 createdat = time.strftime('%d.%m.%Y %H:%M:%S',time.localtime())
 
-            if kommentar is None or kommentar == '':
-                kommentar = 'eingefuegt von QKan'
+            if kommentar == 'NULL' or kommentar == '':
+                kommentar = 'eingefuegt von k_qkhe'
 
-            # unbefestigter Anteil
-            sql = u"""
-              INSERT INTO FLAECHE
-              ( GROESSE, REGENSCHREIBER, HALTUNG,
-                BERECHNUNGSPEICHERKONSTANTE, TYP, ANZAHLSPEICHER,
-                SPEICHERKONSTANTE, SCHWERPUNKTLAUFZEIT,
-                FLIESSZEITOBERFLAECHE, LAENGSTEFLIESSZEITKANAL,
-                PARAMETERSATZ, NEIGUNGSKLASSE,
-                NAME, LASTMODIFIED,
-                KOMMENTAR, ID, ZUORDNUNABHEZG)
-              VALUES
-              ( {flaeche:.4f}, '{regenschreiber}', '{haltnam}',
-                {he_typ}, {fltyp}, {speicherzahl},
-                {speicherkonst:.3f}, {fliesszeit1:.2f},
-                {fliesszeit2:.2f}, {fliesszeitkanal:.2f},
-                '{abflussparameter}', {neigkl},
-                'f_{flnam}', '{createdat}',
-                '{kommentar}', {nextid}, {zuordnunabhezg});
-              """.format(flaeche = flaeche, regenschreiber = regenschreiber, haltnam = haltnam,
-                         he_typ=he_typ, fltyp=1, speicherzahl = speicherzahl,
-                         speicherkonst = speicherkonst, fliesszeit1 = fliesszeit,
-                         fliesszeit2=fliesszeit, fliesszeitkanal = fliesszeitkanal,
-                         abflussparameter = abflussparameter, neigkl = neigkl,
-                         flnam = flnam, createdat = createdat,
-                         kommentar = kommentar, nextid = nextid, zuordnunabhezg = 0)
-            try:
-                dbHE.sql(sql)
-            except:
-                fehlermeldung(u"(11) SQL-Fehler in Firebird: \n", sql)
-                del dbQK
-                del dbHE
-                return False
+            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+            if check_export['modify_flaechenrw']:
+                sql = u"""
+                  UPDATE FLAECHE SET
+                  GROESSE={flaeche:.4f}, REGENSCHREIBER='{regenschreiber}', HALTUNG='{haltnam}',
+                  BERECHNUNGSPEICHERKONSTANTE={he_typ}, TYP={fltyp}, ANZAHLSPEICHER={speicherzahl},
+                  SPEICHERKONSTANTE={speicherkonst:.3f}, SCHWERPUNKTLAUFZEIT={fliesszeit1:.2f},
+                  FLIESSZEITOBERFLAECHE={fliesszeit2:.2f}, LAENGSTEFLIESSZEITKANAL={fliesszeitkanal:.2f},
+                  PARAMETERSATZ='{abflussparameter}', NEIGUNGSKLASSE={neigkl},
+                  NAME='fbef_{flnam}-{haltnam}', LASTMODIFIED='{createdat}',
+                  KOMMENTAR='{kommentar}', ID={nextid}, ZUORDNUNABHEZG={zuordnunabhezg}
+                  WHERE NAME = 'fbef_{flnam}-{haltnam}';
+                  """.format(flaeche = flaeche, regenschreiber = regenschreiber, haltnam = haltnam,
+                             he_typ=he_typ, fltyp=0, speicherzahl = speicherzahl,
+                             speicherkonst = speicherkonst, fliesszeit1 = fliesszeit,
+                             fliesszeit2=fliesszeit, fliesszeitkanal = fliesszeitkanal,
+                             abflussparameter = abflussparameter, neigkl = neigkl,
+                             flnam = flnam, createdat = createdat,
+                             kommentar = kommentar, nextid = nextid, zuordnunabhezg = 0)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(9c) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
 
-            nextid += 1
+            # Einfuegen in die Datenbank
+            if check_export['export_flaechenrw']:
+                sql = u"""
+                  INSERT INTO FLAECHE
+                  ( GROESSE, REGENSCHREIBER, HALTUNG,
+                    BERECHNUNGSPEICHERKONSTANTE, TYP, ANZAHLSPEICHER,
+                    SPEICHERKONSTANTE, SCHWERPUNKTLAUFZEIT,
+                    FLIESSZEITOBERFLAECHE, LAENGSTEFLIESSZEITKANAL,
+                    PARAMETERSATZ, NEIGUNGSKLASSE,
+                    NAME, LASTMODIFIED,
+                    KOMMENTAR, ID, ZUORDNUNABHEZG)
+                  SELECT
+                    {flaeche:.4f}, '{regenschreiber}', '{haltnam}',
+                    {he_typ}, {fltyp}, {speicherzahl},
+                    {speicherkonst:.3f}, {fliesszeit1:.2f},
+                    {fliesszeit2:.2f}, {fliesszeitkanal:.2f},
+                    '{abflussparameter}', {neigkl},
+                    'fbef_{flnam}-{haltnam}', '{createdat}',
+                    '{kommentar}', {nextid}, {zuordnunabhezg}
+                  FROM RDB$DATABASE
+                  WHERE 'fbef_{flnam}-{haltnam}' NOT IN (SELECT NAME FROM FLAECHE);
+                  """.format(flaeche = flaeche, regenschreiber = regenschreiber, haltnam = haltnam,
+                             he_typ=he_typ, fltyp=0, speicherzahl = speicherzahl,
+                             speicherkonst = speicherkonst, fliesszeit1 = fliesszeit,
+                             fliesszeit2=fliesszeit, fliesszeitkanal = fliesszeitkanal,
+                             abflussparameter = abflussparameter, neigkl = neigkl,
+                             flnam = flnam, createdat = createdat,
+                             kommentar = kommentar, nextid = nextid, zuordnunabhezg = 0)
+                try:
+                    dbHE.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(9d) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                    del dbQK
+                    del dbHE
+                    return False
+
+                nextid += 1
+
         dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
 
-        fortschritt(u'{} Unbefestigte Flaechen aus unbefestigten Flächenobjekten eingefuegt'.format(nextid-nr0), 0.85)
+        fortschritt('{} Flaechen (nicht verschnitten) eingefuegt'.format(nextid-nr0), 0.80)
+
 
     # -----------------------------------------------------------------------------------------
     # Bearbeitung in QKan: Vervollständigung der Teilgebiete
@@ -1160,7 +1418,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
              diese tezg-Flächen aufgelistet.
     """
 
-    if check_export['export_flaechen_einzeleinleiter']:
+    if check_export['export_flaechensw'] or check_export['modify_flaechensw']:
 
         sql = 'SELECT count(*) AS anz FROM teilgebiete'
         dbQK.sql(sql)
@@ -1171,8 +1429,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
 
             sql = u"""
                 SELECT count(*) AS anz FROM tezg WHERE
-                (teilgebiet is not NULL) and
-                (teilgebiet <> 'NULL') and
+                (teilgebiet is not NULL) AND
+                (teilgebiet <> 'NULL') AND
                 (teilgebiet <> '')
             """
             dbQK.sql(sql)
@@ -1314,12 +1572,12 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         #
         # Mit Stand 8.5.2017 ist nur die Variante HERKUNFT = 3 realisiert
 
-        if check_export['export_tabinit']:
+        if check_export['init_flaechensw']:
             dbHE.sql("DELETE FROM EINZELEINLEITER")
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
-        if auswahl_Teilgebiete != "":
-            auswahl = " WHERE g.teilgebiet in ({:}) ".format(auswahl_Teilgebiete)
+        if len(liste_teilgebiete) != 0:
+            auswahl = " WHERE g.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
             auswahl = ""
 
@@ -1339,8 +1597,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"(26) SQL-Fehler in QKan-DB: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(26) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -1377,8 +1635,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
                          createdat = createdat, nextid = nextid)
             try:
                 dbHE.sql(sql)
-            except:
-                fehlermeldung(u"(12) SQL-Fehler in Firebird: \n", sql)
+            except BaseException as err:
+                fehlermeldung(u"(12) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
                 del dbQK
                 del dbHE
                 return False
@@ -1414,8 +1672,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         """
         try:
             dbHE.sql(sql)
-        except:
-            fehlermeldung(u"(13) SQL-Fehler in Firebird: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(13) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -1428,8 +1686,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         """
         try:
             dbHE.sql(sql)
-        except:
-            fehlermeldung(u"(14) SQL-Fehler in Firebird: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(14) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -1445,8 +1703,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         """
         try:
             dbHE.sql(sql)
-        except:
-            fehlermeldung(u"(15) SQL-Fehler in Firebird: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(15) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -1462,8 +1720,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, datenbank
         """
         try:
             dbHE.sql(sql)
-        except:
-            fehlermeldung(u"(16) SQL-Fehler in Firebird: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(16) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
