@@ -75,7 +75,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Bedeutung :</string>
+     <string>Bezeichnung :</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

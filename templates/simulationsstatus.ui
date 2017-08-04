@@ -75,7 +75,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Bedeutung :</string>
+     <string>Bezeichnung :</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -160,6 +160,12 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>bezeichnung</tabstop>
+  <tabstop>he_nr</tabstop>
+  <tabstop>mu_nr</tabstop>
+  <tabstop>kp_nr</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

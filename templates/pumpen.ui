@@ -359,6 +359,21 @@
    <header>qgsdatetimeedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>pnam</tabstop>
+  <tabstop>schoben</tabstop>
+  <tabstop>schunten</tabstop>
+  <tabstop>volanf</tabstop>
+  <tabstop>volges</tabstop>
+  <tabstop>sohle</tabstop>
+  <tabstop>pumpentyp</tabstop>
+  <tabstop>simstatus</tabstop>
+  <tabstop>steuersch</tabstop>
+  <tabstop>einschalthoehe</tabstop>
+  <tabstop>ausschalthoehe</tabstop>
+  <tabstop>createdat_2</tabstop>
+  <tabstop>kommentar</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

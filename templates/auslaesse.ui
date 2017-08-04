@@ -371,6 +371,19 @@
    <header>qgsdatetimeedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>schnam</tabstop>
+  <tabstop>auslasstyp</tabstop>
+  <tabstop>xsch</tabstop>
+  <tabstop>ysch</tabstop>
+  <tabstop>sohlhoehe</tabstop>
+  <tabstop>deckelhoehe</tabstop>
+  <tabstop>simstatus</tabstop>
+  <tabstop>entwart</tabstop>
+  <tabstop>strasse</tabstop>
+  <tabstop>createdat</tabstop>
+  <tabstop>kommentar</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

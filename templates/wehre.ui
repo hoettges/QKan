@@ -57,7 +57,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>160</y>
+      <y>100</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -83,7 +83,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>100</y>
+      <y>130</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -135,7 +135,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>130</y>
+      <y>160</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -296,7 +296,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>100</y>
+      <y>130</y>
       <width>141</width>
       <height>20</height>
      </rect>
@@ -306,7 +306,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>130</y>
+      <y>160</y>
       <width>141</width>
       <height>20</height>
      </rect>
@@ -316,7 +316,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>160</y>
+      <y>100</y>
       <width>141</width>
       <height>20</height>
      </rect>
@@ -382,6 +382,22 @@
    <header>qgsdatetimeedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>wnam</tabstop>
+  <tabstop>schoben</tabstop>
+  <tabstop>schunten</tabstop>
+  <tabstop>wehrtyp</tabstop>
+  <tabstop>schwellenhoehe</tabstop>
+  <tabstop>kammerhoehe</tabstop>
+  <tabstop>laenge</tabstop>
+  <tabstop>uebeiwert</tabstop>
+  <tabstop>aussenwsp</tabstop>
+  <tabstop>schieberhanf</tabstop>
+  <tabstop>schiebergeschw</tabstop>
+  <tabstop>aussentyp</tabstop>
+  <tabstop>createdat</tabstop>
+  <tabstop>kommentar</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

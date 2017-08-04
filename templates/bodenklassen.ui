@@ -361,6 +361,17 @@
    <header>qgsdatetimeedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>bknam</tabstop>
+  <tabstop>infiltrationsrateanfang</tabstop>
+  <tabstop>infiltrationsrateende</tabstop>
+  <tabstop>infiltrationsratestart</tabstop>
+  <tabstop>rueckgangskonstante</tabstop>
+  <tabstop>regenerationskonstante</tabstop>
+  <tabstop>saettigungswassergehalt</tabstop>
+  <tabstop>createdat</tabstop>
+  <tabstop>kommentar</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -21,7 +21,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
+      <y>80</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -37,7 +37,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
+      <y>20</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -56,7 +56,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>20</y>
+      <y>80</y>
       <width>31</width>
       <height>20</height>
      </rect>
@@ -78,7 +78,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>50</y>
+      <y>20</y>
       <width>141</width>
       <height>20</height>
      </rect>
@@ -91,7 +91,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>80</y>
+      <y>50</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -107,7 +107,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>80</y>
+      <y>50</y>
       <width>141</width>
       <height>20</height>
      </rect>
@@ -120,7 +120,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>125</y>
+      <y>110</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -136,7 +136,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>150</y>
+      <y>135</y>
       <width>331</width>
       <height>71</height>
      </rect>
@@ -145,6 +145,12 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>bezeichnung</tabstop>
+  <tabstop>kuerzel</tabstop>
+  <tabstop>he_nr</tabstop>
+  <tabstop>bemerkung</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -105,7 +105,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>m NhN</string>
+     <string>m NHN</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_70">
@@ -183,7 +183,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>m NhN</string>
+     <string>m NHN</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -443,6 +443,21 @@
    <header>qgsdatetimeedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>schnam</tabstop>
+  <tabstop>sohlhoehe</tabstop>
+  <tabstop>deckelhoehe</tabstop>
+  <tabstop>xsch</tabstop>
+  <tabstop>ysch</tabstop>
+  <tabstop>durchm</tabstop>
+  <tabstop>simstatus</tabstop>
+  <tabstop>entwart</tabstop>
+  <tabstop>strasse</tabstop>
+  <tabstop>druckdicht</tabstop>
+  <tabstop>ueberstauflaeche</tabstop>
+  <tabstop>createdat_2</tabstop>
+  <tabstop>kommentar</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

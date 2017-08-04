@@ -303,6 +303,18 @@
    <header>qgsdatetimeedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>apnam</tabstop>
+  <tabstop>anfangsabflussbeiwert</tabstop>
+  <tabstop>endabflussbeiwert</tabstop>
+  <tabstop>benetzung_startwert</tabstop>
+  <tabstop>benetzungsverlust</tabstop>
+  <tabstop>bodenklasse</tabstop>
+  <tabstop>mulden_startwert</tabstop>
+  <tabstop>muldenverlust</tabstop>
+  <tabstop>createdat</tabstop>
+  <tabstop>kommentar</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

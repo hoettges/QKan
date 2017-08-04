@@ -312,6 +312,16 @@
    <header>qgsdatetimeedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>tgnam</tabstop>
+  <tabstop>ewdichte</tabstop>
+  <tabstop>wverbrauch</tabstop>
+  <tabstop>stdmittel</tabstop>
+  <tabstop>fremdwas</tabstop>
+  <tabstop>flaeche</tabstop>
+  <tabstop>createdat</tabstop>
+  <tabstop>kommentar</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

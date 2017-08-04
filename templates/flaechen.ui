@@ -85,7 +85,7 @@
    <widget class="QLabel" name="label_70">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>340</x>
       <y>120</y>
       <width>71</width>
       <height>21</height>
@@ -124,8 +124,8 @@
    <widget class="QLabel" name="label_21">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>90</y>
+      <x>40</x>
+      <y>120</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -138,7 +138,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>120</y>
+      <y>90</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -190,8 +190,8 @@
    <widget class="QComboBox" name="abflussparameter">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>90</y>
+      <x>140</x>
+      <y>120</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -201,7 +201,7 @@
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>120</y>
+      <y>90</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -217,7 +217,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QComboBox" name="haltnam_2">
+   <widget class="QComboBox" name="he_typ">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -253,7 +253,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLineEdit" name="neigkl_2">
+   <widget class="QLineEdit" name="speicherzahl">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -289,7 +289,7 @@
      <string>Speicherkonstante</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="neigkl_3">
+   <widget class="QLineEdit" name="speicherkonst">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -325,7 +325,7 @@
      <string>Fließzeit</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="neigkl_4">
+   <widget class="QLineEdit" name="fliesszeit">
     <property name="geometry">
      <rect>
       <x>400</x>
@@ -335,7 +335,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="neigkl_5">
+   <widget class="QLineEdit" name="fliesszeitkanal">
     <property name="geometry">
      <rect>
       <x>400</x>
@@ -387,7 +387,7 @@
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>430</x>
       <y>120</y>
       <width>141</width>
       <height>23</height>
@@ -446,6 +446,22 @@
    <header>qgsdatetimeedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>flnam</tabstop>
+  <tabstop>neigkl</tabstop>
+  <tabstop>regenschreiber</tabstop>
+  <tabstop>abflussparameter</tabstop>
+  <tabstop>aufteilen</tabstop>
+  <tabstop>he_typ</tabstop>
+  <tabstop>speicherzahl</tabstop>
+  <tabstop>speicherkonst</tabstop>
+  <tabstop>kommentar</tabstop>
+  <tabstop>haltnam</tabstop>
+  <tabstop>teilgebiet</tabstop>
+  <tabstop>createdat</tabstop>
+  <tabstop>fliesszeit</tabstop>
+  <tabstop>fliesszeitkanal</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
