@@ -1151,7 +1151,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             datasource = database_QKan
 
         # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
-        tabliste = ['schaechte', 'haltungen','pumpen','teilgebiete','wehre','flaechen']
+        tabliste = ['schaechte', 'haltungen' ,'pumpen' ,'teilgebiete' ,'wehre' ,'flaechen',
+                    'tezg']
 
         # Lesen der Projektdatei ------------------------------------------------------------------
         qgsxml = ET.parse(projecttemplate)

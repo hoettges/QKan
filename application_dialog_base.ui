@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
-    <height>440</height>
+    <width>534</width>
+    <height>437</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -365,7 +365,7 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 1.1.6</string>
+    <string>Version 1.1.9</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
