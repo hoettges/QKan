@@ -334,7 +334,7 @@ class Application:
         liste = []
         for elem in items:
             liste.append(elem.text())
-        return tuple(liste)
+        return liste
 
     # -------------------------------------------------------------------------
     # Öffnen des Formulars

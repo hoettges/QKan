@@ -302,6 +302,7 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     del dbQK
 
+    # Karte aktualisieren
     iface.mapCanvas().refreshAllLayers()
 
     iface.mainWindow().statusBar().clearMessage()
