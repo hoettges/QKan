@@ -642,26 +642,26 @@ def createdbtables(consl,cursl,epsg=25832):
         consl.close()
         return False
 
-    try:
-        daten = ["'VollDurchlaessig', 10, 9, 10, 144, 1.584, 100, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-                 "'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-                 "'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-                 "'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-                 "'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-                 "'Undurchlaessig', 0, 0, 0, 100, 1, 0, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-                 "NULL, 0, 0, 0, 0, 0, 0, '13.01.2011 08:44:50', 'nur für interne QKan-Aufgaben'"]
+    daten = [u"'VollDurchlaessig', 10, 9, 10, 144, 1.584, 100, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+             u"'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+             u"'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+             u"'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+             u"'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+             u"'Undurchlaessig', 0, 0, 0, 100, 1, 0, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+             u"NULL, 0, 0, 0, 0, 0, 0, '13.01.2011 08:44:50', 'nur für interne QKan-Aufgaben'"]
 
-        for ds in daten:
+    for ds in daten:
+        try:
             sql = u"""INSERT INTO bodenklassen
                      ( 'bknam', 'infiltrationsrateanfang', 'infiltrationsrateende', 'infiltrationsratestart', 
                        'rueckgangskonstante', 'regenerationskonstante', 'saettigungswassergehalt', 
                        'createdat', 'kommentar') Values ({})""".format(ds)
             cursl.execute(sql)
         
-    except BaseException as err:
-        fehlermeldung('Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden', str(err))
-        consl.close()
-        return False
+        except BaseException as err:
+            fehlermeldung('Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
+            consl.close()
+            return False
     consl.commit()
 
 
