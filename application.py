@@ -453,14 +453,15 @@ class Application:
         logger.debug('\ndaten: {}'.format(str(daten)))                          # debug
         self.dlg_cl.lw_flaechen_abflussparam.clear()
         for ielem, elem in enumerate(daten):
-            self.dlg_cl.lw_flaechen_abflussparam.addItem(QListWidgetItem(elem[0]))
-            if 'liste_flaechen_abflussparam' in self.config:
-                try: 
-                    if elem[0] in self.config['liste_flaechen_abflussparam']:
-                        self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
-                except BaseException as err:
-                    del self.dbQK
-                    logger.debug('\nelem: {}'.format(str(elem)))                          # debug
+            if elem[0] is not None:
+                self.dlg_cl.lw_flaechen_abflussparam.addItem(QListWidgetItem(elem[0]))
+                if 'liste_flaechen_abflussparam' in self.config:
+                    try: 
+                        if elem[0] in self.config['liste_flaechen_abflussparam']:
+                            self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
+                    except BaseException as err:
+                        del self.dbQK
+                        logger.debug('\nelem: {}'.format(str(elem)))                          # debug
         # if len(daten) == 1:
             # self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(0)
 
@@ -470,10 +471,11 @@ class Application:
         daten = self.dbQK.fetchall()
         self.dlg_cl.lw_hal_entw.clear()
         for ielem, elem in enumerate(daten):
-            self.dlg_cl.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
-            if 'liste_hal_entw' in self.config:
-                if elem[0] in self.config['liste_hal_entw']:
-                    self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
+            if elem[0] is not None:
+                self.dlg_cl.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
+                if 'liste_hal_entw' in self.config:
+                    if elem[0] in self.config['liste_hal_entw']:
+                        self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
         # if len(daten) == 1:
             # self.dlg_cl.lw_hal_entw.setCurrentRow(0)
 
@@ -483,10 +485,11 @@ class Application:
         daten = self.dbQK.fetchall()
         self.dlg_cl.lw_teilgebiete.clear()
         for ielem, elem in enumerate(daten):
-            self.dlg_cl.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-            if 'liste_teilgebiete' in self.config:
-                if elem[0] in self.config['liste_teilgebiete']:
-                    self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
+            if elem[0] is not None:
+                self.dlg_cl.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
+                if 'liste_teilgebiete' in self.config:
+                    if elem[0] in self.config['liste_teilgebiete']:
+                        self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
         # if len(daten) == 1:
             # self.dlg_cl.lw_teilgebiete.setCurrentRow(0)
 
