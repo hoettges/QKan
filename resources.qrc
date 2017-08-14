@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/QKan_ExportHE" >
+        <file>icon_qk2he.png</file>
+    </qresource>
+</RCC>
