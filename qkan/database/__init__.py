@@ -22,7 +22,9 @@
  This script initializes the plugin, making it known to QGIS.
 """
 
-import logging, os.path, tempfile
+import logging
+import os.path
+import tempfile
 from datetime import datetime as dt
 
 # Aufsetzen des Logging-Systems
@@ -38,7 +40,7 @@ if not logger.handlers:
 
     # File-Handler
     dnam = dt.today().strftime("%Y%m%d")
-    fnam = os.path.join(tempfile.gettempdir(),'QKan{}.log'.format(dnam))
+    fnam = os.path.join(tempfile.gettempdir(), 'QKan{}.log'.format(dnam))
     fh = logging.FileHandler(fnam)
     fh.setFormatter(formatter)
     logger.addHandler(fh)
@@ -53,6 +55,7 @@ if not logger.handlers:
     logger.info('Initialisierung logger erfolgreich!')
 else:
     logger.info('Logger ist schon initialisiert')
+
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name

@@ -28,14 +28,15 @@ __copyright__ = '(C) 2016, Joerg Hoettges'
 
 __revision__ = ':%H$'
 
-import os, time, shutil
-import sqlite3
-import pyspatialite.dbapi2 as splite
-from qkan_database import createdbtables
-from qgis.utils import iface
-from qgis.gui import QgsMessageBar
-from PyQt4.QtGui import QProgressBar
 import logging
+import os
+import shutil
+
+import pyspatialite.dbapi2 as splite
+from qgis.gui import QgsMessageBar
+from qgis.utils import iface
+
+from qkan_database import createdbtables
 
 logger = logging.getLogger('QKan')
 
@@ -53,10 +54,11 @@ def checknames(text):
         :rtype: logical
     '''
 
-    if max([ord(t)>127 for t in text]) or ('.' in text) or ('-' in text) :
-        return False          # Fehler gefunden
+    if max([ord(t) > 127 for t in text]) or ('.' in text) or ('-' in text):
+        return False  # Fehler gefunden
     else:
-        return True           # alles o.k.
+        return True  # alles o.k.
+
 
 # Hauptprogramm ----------------------------------------------------------------
 
@@ -78,23 +80,27 @@ class DBConnection:
         if dbname is not None:
             # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
             if os.path.exists(dbname):
-                self.consl = splite.connect(database = dbname, check_same_thread=False)
+                self.consl = splite.connect(database=dbname, check_same_thread=False)
                 self.cursl = self.consl.cursor()
             else:
-                iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank wird erstellt. Bitte waren...", level=QgsMessageBar.INFO)
+                iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank wird erstellt. Bitte waren...",
+                                               level=QgsMessageBar.INFO)
 
-                datenbank_QKan_Template = os.path.join(os.path.dirname(__file__), "templates","qkan.sqlite")
+                datenbank_QKan_Template = os.path.join(os.path.dirname(__file__), "templates", "qkan.sqlite")
                 shutil.copyfile(datenbank_QKan_Template, dbname)
 
-                self.consl = splite.connect(database = dbname)
+                self.consl = splite.connect(database=dbname)
                 self.cursl = self.consl.cursor()
 
                 sql = 'SELECT InitSpatialMetadata()'
                 self.cursl.execute(sql)
 
-                iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank ist erstellt!", level=QgsMessageBar.INFO)
+                iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank ist erstellt!",
+                                               level=QgsMessageBar.INFO)
                 if not createdbtables(self.consl, self.cursl, epsg):
-                    iface.messageBar().pushMessage("Fehler", "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden", level=QgsMessageBar.CRITICAL)
+                    iface.messageBar().pushMessage("Fehler",
+                                                   "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
+                                                   level=QgsMessageBar.CRITICAL)
         elif tabObject is not None:
             tabconnect = tabObject.publicSource()
             t_db, t_tab, t_geo, t_sql = tuple(tabconnect.split())
@@ -103,18 +109,23 @@ class DBConnection:
 
             # Pruefung auf korrekte Zeichen in Namen
             if not checknames(self.tabname):
-                iface.messageBar().pushMessage("Fehler", "Unzulaessige Zeichen in Tabellenname: " + self.tabname, level=QgsMessageBar.CRITICAL)
+                iface.messageBar().pushMessage("Fehler", "Unzulaessige Zeichen in Tabellenname: " + self.tabname,
+                                               level=QgsMessageBar.CRITICAL)
                 self.consl = None
             else:
 
                 try:
-                    self.consl = splite.connect(database = dbname)
+                    self.consl = splite.connect(database=dbname)
                     self.cursl = self.consl.cursor()
                 except:
-                    iface.messageBar().pushMessage("Fehler", 'Fehler beim Öffnen der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(dbname), level=QgsMessageBar.CRITICAL)
+                    iface.messageBar().pushMessage("Fehler",
+                                                   'Fehler beim Öffnen der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(
+                                                       dbname), level=QgsMessageBar.CRITICAL)
                     self.consl = None
         else:
-            iface.messageBar().pushMessage("Fehler", 'Fehler beim Anbinden der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(dbname), level=QgsMessageBar.CRITICAL)
+            iface.messageBar().pushMessage("Fehler",
+                                           'Fehler beim Anbinden der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(
+                                               dbname), level=QgsMessageBar.CRITICAL)
             self.consl = None
 
     def __del__(self):
@@ -145,19 +156,19 @@ class DBConnection:
 
     def fetchall(self):
         """Gibt alle Daten aus der vorher ausgeführten SQL-Abfrage zurueck"""
-    
+
         daten = self.cursl.fetchall()
         return daten
 
     def fetchone(self):
         """Gibt einen Datensatz aus der vorher ausgeführten SQL-Abfrage zurueck"""
-    
+
         daten = self.cursl.fetchone()
         return daten
 
     def fetchnext(self):
         """Gibt den naechsten Datensatz aus der vorher ausgeführten SQL-Abfrage zurueck"""
-    
+
         daten = self.cursl.fetchnext()
         return daten
 

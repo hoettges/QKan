@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
-from qgis.gui import QgsMessageBar
-from qgis.utils import iface
 
 import firebirdsql
+from qgis.gui import QgsMessageBar
+from qgis.utils import iface
 
 """
 

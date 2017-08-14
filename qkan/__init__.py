@@ -33,9 +33,17 @@ class Dummy:
         self.plugin_dir = os.path.dirname(__file__)
         self.actions = []
 
-        self.menu = QMenu('QKan', self.iface.mainWindow().menuBar())
-        prepend = self.iface.mainWindow().menuBar().actions()[3]
-        self.menu_action = self.iface.mainWindow().menuBar().insertMenu(prepend, self.menu)
+        actions = self.iface.mainWindow().menuBar().actions()
+        self.menu = None
+        for menu in actions:
+            if menu.text() == 'QKan':
+                self.menu = menu.menu()
+                self.menu_action = menu
+                break
+        if self.menu is None:
+            self.menu = QMenu('QKan', self.iface.mainWindow().menuBar())
+            prepend = actions[3]
+            self.menu_action = self.iface.mainWindow().menuBar().insertMenu(prepend, self.menu)
 
         self.toolbar = self.iface.addToolBar('QKan')
         self.toolbar.setObjectName('QKan')

@@ -31,42 +31,35 @@ __copyright__ = '(C) 2016, Joerg Hoettges'
 
 __revision__ = ':%H$'
 
+import logging
 
-import os, time
+from qgis.core import QgsMessageLog
+from qgis.gui import QgsMessageBar
+from qgis.utils import iface
 
-from QKan_Database.dbfunc import DBConnection
+from qkan.database.dbfunc import DBConnection
 
 # import tempfile
-import glob, shutil
-
-from qgis.core import QgsFeature, QgsGeometry, QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QFileInfo
-from PyQt4.QtGui import QAction, QIcon
-
-from qgis.utils import iface
-from qgis.gui import QgsMessageBar, QgsMapCanvas, QgsLayerTreeMapCanvasBridge
-import codecs
-import pyspatialite.dbapi2 as splite
-import xml.etree.ElementTree as ET
-import logging
 
 logger = logging.getLogger('QKan')
 
+
 # Fortschritts- und Fehlermeldungen
 
-def fortschritt(text,prozent):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100), 'Export: ', QgsMessageLog.INFO)
+def fortschritt(text, prozent):
+    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
+    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), 'Export: ', QgsMessageLog.INFO)
+
 
 def fehlermeldung(title, text):
-    logger.debug(u'{:s} {:s}'.format(title,text))
+    logger.debug(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
+
 
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp = 'SpatiaLite'):
-
+def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp='SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :database_QKan: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -84,7 +77,7 @@ def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp = 'SpatiaLite'):
     # ------------------------------------------------------------------------------
     # Datenbankverbindungen
 
-    dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
+    dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
     if dbQK is None:
         fehlermeldung("Fehler", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
@@ -101,17 +94,17 @@ def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp = 'SpatiaLite'):
     elif len(liste_tezg) == 2:
         auswahl = ' AND ('
     else:
-        fehlermeldung("Interner Fehler","Fehler in Fallunterscheidung!")
+        fehlermeldung("Interner Fehler", "Fehler in Fallunterscheidung!")
 
     first = True
     for attr in liste_tezg:
         if first:
             first = False
             auswahl += """ (tezg.abflussparameter = '{abflussparameter}' AND
-                            tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter = attr[0], teilgebiet = attr[1])
-        else:   
+                            tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0], teilgebiet=attr[1])
+        else:
             auswahl += """ OR\n      (tezg.abflussparameter = '{abflussparameter}' AND
-                            tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter = attr[0], teilgebiet = attr[1])
+                            tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0], teilgebiet=attr[1])
 
     if len(liste_tezg) == 2:
         auswahl += """)"""
@@ -146,7 +139,6 @@ def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp = 'SpatiaLite'):
 
     # Karte aktualisieren
     iface.mapCanvas().refreshAllLayers()
-
 
     iface.mainWindow().statusBar().clearMessage()
     iface.messageBar().pushMessage(u"Information", u"Restflächen sind erstellt!", level=QgsMessageBar.INFO)

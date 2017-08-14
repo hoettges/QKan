@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
 from Enums import SliderMode
-import logging
 
 main_logger = logging.getLogger("QKan")
 
@@ -56,9 +58,8 @@ class Slider(QSlider):
         l = metrics.width("50x")
         # slider_pos = st.sliderPositionFromValue(self.minimum(), self.maximum(), v, available) + length - l
         # pos = QPoint(slider_pos, self.rect().bottom())
-        pos = QPoint(self.rect().width()-l, self.rect().bottom())
+        pos = QPoint(self.rect().width() - l, self.rect().bottom())
         p.drawText(pos, "50x")
-
 
     def mouseReleaseEvent(self, _QMouseEvent):
         """

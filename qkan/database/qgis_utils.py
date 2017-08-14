@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from qgis.utils import iface
+import logging
+
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
-import logging
+from qgis.utils import iface
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
+
 
 def get_database_QKan():
     """Ermittlung der aktuellen QpatiaLite-Datenbank aus den geladenen Layern"""
@@ -22,14 +24,14 @@ def get_database_QKan():
 
         return False, False
 
-    # Über Layer iterieren
+    # ï¿½ber Layer iterieren
     for lay in layers:
         lyattr = {}
 
-        # Attributstring für Layer splitten
+        # Attributstring fï¿½r Layer splitten
         for le in lay.source().split(' '):
             if '=' in le:
-                key, value = le.split('=',1)
+                key, value = le.split('=', 1)
                 lyattr[key] = value.strip('"').strip("'")
 
         # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
@@ -41,27 +43,28 @@ def get_database_QKan():
                 elif database_QKan != lyattr['dbname']:
                     database_QKan = ''
                     logger.warning('Abweichende Datenbankanbindung gefunden: {}'.format(lyattr['dbname']))
-                    return False, False   # Im Projekt sind mehrere Sqlite-Datenbanken eingebungen...
+                    return False, False  # Im Projekt sind mehrere Sqlite-Datenbanken eingebungen...
     return database_QKan, epsg
 
+
 def get_editable_layers():
-    """Liste der Tabellen, für die in der Layerliste der Status editable aktiviert ist.
+    """Liste der Tabellen, fï¿½r die in der Layerliste der Status editable aktiviert ist.
         Dient dazu, sicherzustellen, dass keine Datenbankoperationen auf editierbare
         Layer zugreifen."""
 
-    elayers = set([])                # Zuerst leere Liste anlegen
+    elayers = set([])  # Zuerst leere Liste anlegen
 
     layers = iface.legendInterface().layers()
     # logger.debug('Layerliste erstellt')
     if len(layers) > 0:
-    # Über Layer iterieren
+        # ï¿½ber Layer iterieren
         for lay in layers:
             lyattr = {}
 
-            # Attributstring für Layer splitten
+            # Attributstring fï¿½r Layer splitten
             for le in lay.source().split(' '):
                 if '=' in le:
-                    key, value = le.split('=',1)
+                    key, value = le.split('=', 1)
                     lyattr[key] = value.strip('"').strip("'")
 
             # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer

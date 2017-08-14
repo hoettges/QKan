@@ -3,14 +3,14 @@
 import logging
 
 import matplotlib.dates as mdates
-from Enums import LayerType
 from PyQt4.QtGui import *
-from ganglinie_dialog import GanglinieDialog
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 
-from QKan_Database.fbfunc import FBConnection
+from Enums import LayerType
+from ganglinie_dialog import GanglinieDialog
+from qkan.database.fbfunc import FBConnection
 
 main_logger = logging.getLogger("QKan")
 main_logger.info("Ganglinien-Modul gestartet")

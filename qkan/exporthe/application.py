@@ -20,36 +20,42 @@
   (at your option) any later version.                                  
 
 """
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QAction, QIcon, QFileDialog, QListWidgetItem
-# Initialize Qt resources from file resources.py
-import resources_rc
-# Import the code for the dialog
-from application_dialog import ExportToHEDialog
-import site, os.path
-
+import codecs
 # Ergaenzt (jh, 08.02.2017) -------------------------------------------------
 import json
 import logging
+import os.path
+import site
 
+from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from PyQt4.QtGui import QFileDialog, QListWidgetItem
+from qgis.core import QgsProject, QgsMessageLog
 # from qgis.gui import QgsMessageBar
 from qgis.utils import iface
-from qgis.core import QgsProject, QgsMessageLog
+
+# noinspection PyUnresolvedReferences
+import resources_rc
+# Initialize Qt resources from file resources.py
+# Import the code for the dialog
+from application_dialog import ExportToHEDialog
 from k_qkhe import exportKanaldaten
-from QKan_Database.qgis_utils import get_database_QKan, get_editable_layers
-from QKan_Database.dbfunc import DBConnection
-import codecs
+from qkan import Dummy
+from qkan.database.dbfunc import DBConnection
+from qkan.database.qgis_utils import get_database_QKan, get_editable_layers
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
 
-def fortschritt(text,prozent):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100), 'Export: ', QgsMessageLog.INFO)
+
+def fortschritt(text, prozent):
+    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
+    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), 'Export: ', QgsMessageLog.INFO)
+
 
 def fehlermeldung(title, text):
-    logger.debug(u'{:s} {:s}'.format(title,text))
+    logger.debug(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
+
 
 class ExportToHE:
     """QGIS Plugin Implementation."""
@@ -83,13 +89,6 @@ class ExportToHE:
         # Create the dialog (after translation) and keep reference
         self.dlg = ExportToHEDialog()
 
-        # Declare instance attributes
-        self.actions = []
-        self.menu = self.tr(u'&Export to HE')
-        # TODO: We are going to let the user set this up in a future iteration
-        self.toolbar = self.iface.addToolBar(u'ExportToHE')
-        self.toolbar.setObjectName(u'ExportToHE')
-
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 08.02.2017)
 
@@ -97,7 +96,7 @@ class ExportToHE:
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen
-        wordir = os.path.join(site.getuserbase(),'qkan')
+        wordir = os.path.join(site.getuserbase(), 'qkan')
 
         if not os.path.isdir(wordir):
             os.makedirs(wordir)
@@ -108,14 +107,14 @@ class ExportToHE:
 
         self.configfil = os.path.join(wordir, 'qkan.json')
         if os.path.exists(self.configfil):
-            with codecs.open(self.configfil,'r','utf-8') as fileconfig:
-                self.config = json.loads(fileconfig.read().replace('\\','/'))
+            with codecs.open(self.configfil, 'r', 'utf-8') as fileconfig:
+                self.config = json.loads(fileconfig.read().replace('\\', '/'))
         else:
             self.config['database_HE'] = ''
             # Vorlagedatenbank nur für den Fall, dass der Anwender keine eigene Vorlage erstellen will
-            self.config['dbtemplate_HE'] = os.path.join(os.path.dirname(__file__), "templates","itwh.idbf")
+            self.config['dbtemplate_HE'] = os.path.join(os.path.dirname(__file__), "templates", "itwh.idbf")
             self.config['database_QKan'] = ''
-            with codecs.open(self.configfil,'w','utf-8') as fileconfig:
+            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
         # Standard für Suchverzeichnis festlegen
@@ -147,7 +146,7 @@ class ExportToHE:
             datenbanktyp = self.config['datenbanktyp']
         else:
             datenbanktyp = 'spatialite'
-            pass                                    # Es gibt noch keine Wahlmöglichkeit
+            pass  # Es gibt noch keine Wahlmöglichkeit
 
         self.dlg.pb_exportall.clicked.connect(self.exportall)
         self.dlg.pb_modifyall.clicked.connect(self.modifyall)
@@ -168,53 +167,52 @@ class ExportToHE:
             cbox.setChecked(checked)
             return checked
 
-        export_schaechte =          cb_set('export_schaechte',          self.dlg.cb_export_schaechte, True)
-        export_auslaesse =          cb_set('export_auslaesse',          self.dlg.cb_export_auslaesse, True)
-        export_speicher =           cb_set('export_speicher',           self.dlg.cb_export_speicher, True)
-        export_haltungen =          cb_set('export_haltungen',          self.dlg.cb_export_haltungen, True)
-        export_pumpen =             cb_set('export_pumpen',             self.dlg.cb_export_pumpen, False)
-        export_wehre =              cb_set('export_wehre',              self.dlg.cb_export_wehre, False)
-        export_flaechenrw =         cb_set('export_flaechenrw',         self.dlg.cb_export_flaechenrw, True)
-        export_flaechensw =         cb_set('export_flaechensw',         self.dlg.cb_export_flaechensw, True)
-        export_abflussparameter =   cb_set('export_abflussparameter',   self.dlg.cb_export_abflussparameter, True)
-        export_regenschreiber =     cb_set('export_regenschreiber',     self.dlg.cb_export_regenschreiber, False)
-        export_rohrprofile =        cb_set('export_rohrprofile',        self.dlg.cb_export_rohrprofile, False)
+        export_schaechte = cb_set('export_schaechte', self.dlg.cb_export_schaechte, True)
+        export_auslaesse = cb_set('export_auslaesse', self.dlg.cb_export_auslaesse, True)
+        export_speicher = cb_set('export_speicher', self.dlg.cb_export_speicher, True)
+        export_haltungen = cb_set('export_haltungen', self.dlg.cb_export_haltungen, True)
+        export_pumpen = cb_set('export_pumpen', self.dlg.cb_export_pumpen, False)
+        export_wehre = cb_set('export_wehre', self.dlg.cb_export_wehre, False)
+        export_flaechenrw = cb_set('export_flaechenrw', self.dlg.cb_export_flaechenrw, True)
+        export_flaechensw = cb_set('export_flaechensw', self.dlg.cb_export_flaechensw, True)
+        export_abflussparameter = cb_set('export_abflussparameter', self.dlg.cb_export_abflussparameter, True)
+        export_regenschreiber = cb_set('export_regenschreiber', self.dlg.cb_export_regenschreiber, False)
+        export_rohrprofile = cb_set('export_rohrprofile', self.dlg.cb_export_rohrprofile, False)
         export_speicherkennlinien = cb_set('export_speicherkennlinien', self.dlg.cb_export_speicherkennlinien, False)
-        export_bodenklassen =       cb_set('export_bodenklassen',       self.dlg.cb_export_bodenklassen, False)
+        export_bodenklassen = cb_set('export_bodenklassen', self.dlg.cb_export_bodenklassen, False)
 
-        modify_schaechte =          cb_set('modify_schaechte',          self.dlg.cb_modify_schaechte, False)
-        modify_auslaesse =          cb_set('modify_auslaesse',          self.dlg.cb_modify_auslaesse, False)
-        modify_speicher =           cb_set('modify_speicher',           self.dlg.cb_modify_speicher, False)
-        modify_haltungen =          cb_set('modify_haltungen',          self.dlg.cb_modify_haltungen, False)
-        modify_pumpen =             cb_set('modify_pumpen',             self.dlg.cb_modify_pumpen, False)
-        modify_wehre =              cb_set('modify_wehre',              self.dlg.cb_modify_wehre, False)
-        modify_flaechenrw =         cb_set('modify_flaechenrw',         self.dlg.cb_modify_flaechenrw, False)
-        modify_flaechensw =         cb_set('modify_flaechensw',         self.dlg.cb_modify_flaechensw, False)
-        modify_abflussparameter =   cb_set('modify_abflussparameter',   self.dlg.cb_modify_abflussparameter, False)
-        modify_regenschreiber =     cb_set('modify_regenschreiber',     self.dlg.cb_modify_regenschreiber, False)
-        modify_rohrprofile =        cb_set('modify_rohrprofile',        self.dlg.cb_modify_rohrprofile, False)
+        modify_schaechte = cb_set('modify_schaechte', self.dlg.cb_modify_schaechte, False)
+        modify_auslaesse = cb_set('modify_auslaesse', self.dlg.cb_modify_auslaesse, False)
+        modify_speicher = cb_set('modify_speicher', self.dlg.cb_modify_speicher, False)
+        modify_haltungen = cb_set('modify_haltungen', self.dlg.cb_modify_haltungen, False)
+        modify_pumpen = cb_set('modify_pumpen', self.dlg.cb_modify_pumpen, False)
+        modify_wehre = cb_set('modify_wehre', self.dlg.cb_modify_wehre, False)
+        modify_flaechenrw = cb_set('modify_flaechenrw', self.dlg.cb_modify_flaechenrw, False)
+        modify_flaechensw = cb_set('modify_flaechensw', self.dlg.cb_modify_flaechensw, False)
+        modify_abflussparameter = cb_set('modify_abflussparameter', self.dlg.cb_modify_abflussparameter, False)
+        modify_regenschreiber = cb_set('modify_regenschreiber', self.dlg.cb_modify_regenschreiber, False)
+        modify_rohrprofile = cb_set('modify_rohrprofile', self.dlg.cb_modify_rohrprofile, False)
         modify_speicherkennlinien = cb_set('modify_speicherkennlinien', self.dlg.cb_modify_speicherkennlinien, False)
-        modify_bodenklassen =       cb_set('modify_bodenklassen',       self.dlg.cb_modify_bodenklassen, False)
+        modify_bodenklassen = cb_set('modify_bodenklassen', self.dlg.cb_modify_bodenklassen, False)
 
-        init_schaechte =            cb_set('init_schaechte',            self.dlg.cb_init_schaechte, False)
-        init_auslaesse =            cb_set('init_auslaesse',            self.dlg.cb_init_auslaesse, False)
-        init_speicher =             cb_set('init_speicher',             self.dlg.cb_init_speicher, False)
-        init_haltungen =            cb_set('init_haltungen',            self.dlg.cb_init_haltungen, False)
-        init_pumpen =               cb_set('init_pumpen',               self.dlg.cb_init_pumpen, False)
-        init_wehre =                cb_set('init_wehre',                self.dlg.cb_init_wehre, False)
-        init_flaechenrw =           cb_set('init_flaechenrw',           self.dlg.cb_init_flaechenrw, False)
-        init_flaechensw =           cb_set('init_flaechensw',           self.dlg.cb_init_flaechensw, False)
-        init_abflussparameter =     cb_set('init_abflussparameter',     self.dlg.cb_init_abflussparameter, False)
-        init_regenschreiber =       cb_set('init_regenschreiber',       self.dlg.cb_init_regenschreiber, False)
-        init_rohrprofile =          cb_set('init_rohrprofile',          self.dlg.cb_init_rohrprofile, False)
-        init_speicherkennlinien =   cb_set('init_speicherkennlinien',   self.dlg.cb_init_speicherkennlinien, False)
-        init_bodenklassen =         cb_set('init_bodenklassen',         self.dlg.cb_init_bodenklassen, False)
+        init_schaechte = cb_set('init_schaechte', self.dlg.cb_init_schaechte, False)
+        init_auslaesse = cb_set('init_auslaesse', self.dlg.cb_init_auslaesse, False)
+        init_speicher = cb_set('init_speicher', self.dlg.cb_init_speicher, False)
+        init_haltungen = cb_set('init_haltungen', self.dlg.cb_init_haltungen, False)
+        init_pumpen = cb_set('init_pumpen', self.dlg.cb_init_pumpen, False)
+        init_wehre = cb_set('init_wehre', self.dlg.cb_init_wehre, False)
+        init_flaechenrw = cb_set('init_flaechenrw', self.dlg.cb_init_flaechenrw, False)
+        init_flaechensw = cb_set('init_flaechensw', self.dlg.cb_init_flaechensw, False)
+        init_abflussparameter = cb_set('init_abflussparameter', self.dlg.cb_init_abflussparameter, False)
+        init_regenschreiber = cb_set('init_regenschreiber', self.dlg.cb_init_regenschreiber, False)
+        init_rohrprofile = cb_set('init_rohrprofile', self.dlg.cb_init_rohrprofile, False)
+        init_speicherkennlinien = cb_set('init_speicherkennlinien', self.dlg.cb_init_speicherkennlinien, False)
+        init_bodenklassen = cb_set('init_bodenklassen', self.dlg.cb_init_bodenklassen, False)
 
-        export_difftezg =           cb_set('export_difftezg',           self.dlg.cb_export_difftezg, True)
-        export_verschneidung =      cb_set('export_verschneidung',      self.dlg.cb_export_verschneidung, True)
+        export_difftezg = cb_set('export_difftezg', self.dlg.cb_export_difftezg, True)
+        export_verschneidung = cb_set('export_verschneidung', self.dlg.cb_export_verschneidung, True)
 
         # Ende Eigene Funktionen ---------------------------------------------------
-
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -231,100 +229,17 @@ class ExportToHE:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('ExportToHE', message)
 
-
-    def add_action(
-        self,
-        icon_path,
-        text,
-        callback,
-        enabled_flag=True,
-        add_to_menu=True,
-        add_to_toolbar=True,
-        status_tip=None,
-        whats_this=None,
-        parent=None):
-        """Add a toolbar icon to the toolbar.
-
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
-
-        :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
-        :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.actions list.
-        :rtype: QAction
-        """
-
-        icon = QIcon(icon_path)
-        action = QAction(icon, text, parent)
-        action.triggered.connect(callback)
-        action.setEnabled(enabled_flag)
-
-        if status_tip is not None:
-            action.setStatusTip(status_tip)
-
-        if whats_this is not None:
-            action.setWhatsThis(whats_this)
-
-        if add_to_toolbar:
-            self.toolbar.addAction(action)
-
-        if add_to_menu:
-            self.iface.addPluginToVectorMenu(
-                self.menu,
-                action)
-
-        self.actions.append(action)
-
-        return action
-
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/QKan_ExportHE/icon_qk2he.png'
-        self.add_action(
-            icon_path,
-            text=self.tr(u'Export to Hystem-Extran'),
-            callback=self.run,
-            parent=self.iface.mainWindow())
-
+        Dummy.instance.add_action(icon_path,
+                                  text=self.tr(u'Export to Hystem-Extran'),
+                                  callback=self.run,
+                                  parent=self.iface.mainWindow())
 
     def unload(self):
-        """Removes the plugin menu item and icon from QGIS GUI."""
-        for action in self.actions:
-            self.iface.removePluginVectorMenu(
-                self.tr(u'&Export to HE'),
-                action)
-            self.iface.removeToolBarIcon(action)
-        # remove the toolbar
-        del self.toolbar
+        pass
 
     # Anfang Eigene Funktionen -------------------------------------------------
     # (jh, 08.02.2017)
@@ -335,29 +250,27 @@ class ExportToHE:
            erstellen, aber noch nicht verbinden."""
 
         filename = QFileDialog.getSaveFileName(self.dlg, "Dateinamen der Ziel-HE-Datenbank eingeben",
-                                               self.default_dir,"*.idbf")
+                                               self.default_dir, "*.idbf")
         # if os.path.dirname(filename) != '':
-            # os.chdir(os.path.dirname(filename))
+        # os.chdir(os.path.dirname(filename))
         self.dlg.tf_heDB_dest.setText(filename)
-
 
     def selectFile_HeDB_template(self):
         """Vorlage-HE-Datenbank (Firebird) auswaehlen."""
 
         filename = QFileDialog.getOpenFileName(self.dlg, u"Dateinamen der Vorlage-HE-Datenbank eingeben",
-                                               self.default_dir,"*.idbf")
+                                               self.default_dir, "*.idbf")
         # if os.path.dirname(filename) != '':
-            # os.chdir(os.path.dirname(filename))
+        # os.chdir(os.path.dirname(filename))
         self.dlg.tf_heDB_template.setText(filename)
-
 
     def selectFile_QKanDB(self):
         """Datenbankverbindung zur QKan-Datenbank (SpatiLite) auswaehlen."""
 
         filename = QFileDialog.getOpenFileName(self.dlg, u"QKan-Datenbank auswählen",
-                                               self.default_dir,"*.sqlite")
+                                               self.default_dir, "*.sqlite")
         # if os.path.dirname(filename) != '':
-            # os.chdir(os.path.dirname(filename))
+        # os.chdir(os.path.dirname(filename))
         self.dlg.tf_QKanDB.setText(filename)
 
     def exportall(self):
@@ -489,9 +402,8 @@ class ExportToHE:
         else:
             self.dlg.lf_anzahl_flaechen.setText('0')
 
-
         # Zu berücksichtigende Schächte zählen
-        auswahl =''
+        auswahl = ''
         if len(liste_teilgebiete) != 0:
             auswahl = " WHERE schaechte.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
@@ -508,9 +420,8 @@ class ExportToHE:
         else:
             self.dlg.lf_anzahl_schaechte.setText('0')
 
-
         # Zu berücksichtigende Haltungen zählen
-        auswahl =''
+        auswahl = ''
         if len(liste_teilgebiete) != 0:
             auswahl = " WHERE haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
@@ -545,7 +456,6 @@ class ExportToHE:
             liste.append(elem.text())
         return liste
 
-
     # Ende Eigene Funktionen ---------------------------------------------------
 
 
@@ -555,9 +465,9 @@ class ExportToHE:
 
         # Check, ob die relevanten Layer nicht editable sind.
         if len({'flaechen', 'haltungen', 'linkfl', 'tezg', 'schaechte'} & get_editable_layers()) > 0:
-            iface.messageBar().pushMessage(u"Bedienerfehler: ", 
-                   u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
-                   level=QgsMessageBar.CRITICAL)
+            iface.messageBar().pushMessage(u"Bedienerfehler: ",
+                                           u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
+                                           level=QgsMessageBar.CRITICAL)
             return False
 
         # Übernahme der Quelldatenbank:
@@ -577,18 +487,20 @@ class ExportToHE:
             self.dlg.tf_QKanDB.setText(database_QKan)
 
         # Datenbankverbindung für Abfragen
-        self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+        self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
         if self.dbQK is None:
-            fehlermeldung("Fehler in QKan_CreateUnbefFl", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                database_QKan), level=QgsMessageBar.CRITICAL)
+            fehlermeldung("Fehler in QKan_CreateUnbefFl",
+                          u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+            iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE",
+                                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+                                               database_QKan), level=QgsMessageBar.CRITICAL)
             return None
 
         # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
 
         sql = """INSERT INTO teilgebiete (tgnam)
                 SELECT teilgebiet FROM flaechen 
-                WHERE teilgebiet IS NOT NULL and
+                WHERE teilgebiet IS NOT NULL AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         try:
@@ -600,7 +512,7 @@ class ExportToHE:
 
         sql = """INSERT INTO teilgebiete (tgnam)
                 SELECT teilgebiet FROM haltungen 
-                WHERE teilgebiet IS NOT NULL and
+                WHERE teilgebiet IS NOT NULL AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         try:
@@ -612,7 +524,7 @@ class ExportToHE:
 
         sql = """INSERT INTO teilgebiete (tgnam)
                 SELECT teilgebiet FROM schaechte 
-                WHERE teilgebiet IS NOT NULL and
+                WHERE teilgebiet IS NOT NULL AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         try:
@@ -623,7 +535,6 @@ class ExportToHE:
             return False
 
         self.dbQK.commit()
-
 
         # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
@@ -645,8 +556,8 @@ class ExportToHE:
                     self.dlg.lw_teilgebiete.setCurrentRow(ielem)
             except BaseException as err:
                 fehlermeldung(u'QKan_ExportHE (6), Fehler in elem = {}\n'.format(str(elem)), err)
-        # if len(daten) == 1:
-            # self.dlg.lw_teilgebiete.setCurrentRow(0)
+                # if len(daten) == 1:
+                # self.dlg.lw_teilgebiete.setCurrentRow(0)
 
         # Ereignis bei Auswahländerung in Liste Teilgebiete
 
@@ -725,10 +636,9 @@ class ExportToHE:
             for el in check_export:
                 self.config[el] = check_export[el]
 
-            with codecs.open(self.configfil,'w') as fileconfig:
+            with codecs.open(self.configfil, 'w') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
-
-            exportKanaldaten(iface, database_HE, dbtemplate_HE, database_Qkan, liste_teilgebiete, 
+            exportKanaldaten(iface, database_HE, dbtemplate_HE, database_Qkan, liste_teilgebiete,
                              0.1, datenbanktyp, check_export)

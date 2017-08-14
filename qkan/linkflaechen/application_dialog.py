@@ -28,6 +28,7 @@ from PyQt4 import QtGui, uic
 FORM_CLASS_createlines, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'application_createlines.ui'))
 
+
 class CreatelinesDialog(QtGui.QDialog, FORM_CLASS_createlines):
     def __init__(self, parent=None):
         """Constructor."""
@@ -42,6 +43,7 @@ class CreatelinesDialog(QtGui.QDialog, FORM_CLASS_createlines):
 
 FORM_CLASS_connectflaechen, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'application_connectflaechen.ui'))
+
 
 class ConnectflaechenDialog(QtGui.QDialog, FORM_CLASS_connectflaechen):
     def __init__(self, parent=None):

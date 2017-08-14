@@ -7,14 +7,14 @@ import matplotlib.animation as animation
 import matplotlib.lines as lines
 import matplotlib.text as mtext
 import matplotlib.transforms as mtransforms
-from Enums import SliderMode, LayerType
 from PyQt4.QtGui import QWidget
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.lines import Line2D
 
-from QKan_Database.fbfunc import FBConnection
+from Enums import SliderMode, LayerType
+from qkan.database.fbfunc import FBConnection
 
 main_logger = logging.getLogger("QKan")
 main_logger.info("Plotter-Modul gestartet")
@@ -605,6 +605,7 @@ class Animator:
                 self.__plot.set_data(self.__x, self.__y)
                 self.__update_timestamp(index)
                 self.__slider.setValue(index)
+
         self.__animation = animation.FuncAnimation(self.__fig, animate, frames=self.__max_value, interval=200)
         self.pause()
         self.__log.info(u"Animation wurde initialisiert und pausiert")

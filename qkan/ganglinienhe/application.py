@@ -20,23 +20,29 @@
  *                                                                         *
  ***************************************************************************/
 """
+import copy
+import logging
+import os.path
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-# Initialize Qt resources from file resources.py
-import resources_laengs
-import resources_gangl
 
-from QKan_Database.navigation import Navigator
-from QKan_Database.fbfunc import FBConnection
 import plotter
-from application_dialog import LaengsschnittDialog
-import random
-import os.path
+# noinspection PyUnresolvedReferences
+import resources
+# noinspection PyUnresolvedReferences
+import resources_gangl
+# noinspection PyUnresolvedReferences
+import resources_laengs
 import slider as s
 from Enums import SliderMode, Type, LayerType
-import copy
+from application_dialog import LaengsschnittDialog
 from ganglinie import Ganglinie
-import logging
+from qkan import Dummy
+from qkan.database.fbfunc import FBConnection
+from qkan.database.navigation import Navigator
+
+# Initialize Qt resources from file resources.py
 
 main_logger = logging.getLogger("QKan")
 main_logger.info("Application-Modul gestartet")
@@ -58,12 +64,8 @@ class Application:
         # Save reference to the QGIS interface
         self.__iface = iface
 
-        # Declare instance attributes
-        self.__actions = []
-        self.__menu = u'&Laengsschnitt'
-        self.__toolbar = self.__iface.addToolBar(u'Laengsschnitt')
-        self.__toolbar.setObjectName(u'Laengsschnitt')
-        self.__dlg = None
+        # Create the dialog (after translation) and keep reference
+        self.__dlg = LaengsschnittDialog()
         self.__result_db = ""
         self.__spatialite = ""
         self.__maximizer = None
@@ -75,82 +77,6 @@ class Application:
         self.__dlg2 = self.__ganglinie.get_dialog()
         self.__workspace = ""
 
-    def __add_action(
-            self,
-            icon_path,
-            text,
-            callback,
-            enabled_flag=True,
-            add_to_menu=True,
-            add_to_toolbar=True,
-            status_tip=None,
-            whats_this=None,
-            parent=None):
-        """Add a toolbar icon to the toolbar.
-
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
-
-        :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
-        :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.__actions list.
-        :rtype: QAction
-        """
-
-        # Create the dialog (after translation) and keep reference
-        self.__dlg = LaengsschnittDialog()
-
-        icon = QIcon(icon_path)
-        action = QAction(icon, text, parent)
-        action.triggered.connect(callback)
-        action.setEnabled(enabled_flag)
-
-        if status_tip is not None:
-            action.setStatusTip(status_tip)
-
-        if whats_this is not None:
-            action.setWhatsThis(whats_this)
-
-        if add_to_toolbar:
-            self.__toolbar.addAction(action)
-
-        if add_to_menu:
-            self.__iface.addPluginToMenu(
-                self.__menu,
-                action)
-
-        self.__actions.append(action)
-
-        return action
-
     def initGui(self):
         """
         Längsschnitt- und Ganglinie-Tool werden als unabhängige Werkzeuge dargestellt.
@@ -159,12 +85,12 @@ class Application:
         icon_path_laengs = ':/plugins/QKan_Laengsschnitt/icon_laengs.png'
         icon_path_gangl = ':/plugins/QKan_Laengsschnitt/icon_gangl.png'
 
-        self.__add_action(
+        Dummy.instance.add_action(
             icon_path_laengs,
             text=u'Längsschnitt-Tool',
             callback=self.__run
         )
-        self.__add_action(
+        Dummy.instance.add_action(
             icon_path_gangl,
             text=u'Ganglinien-Tool',
             callback=self.__run_ganglinie
@@ -192,14 +118,7 @@ class Application:
         self.__dlg2.close()
 
     def unload(self):
-        """Removes the plugin menu item and icon from QGIS GUI."""
-        for action in self.__actions:
-            self.__iface.removePluginMenu(
-                u'&Laengsschnitt',
-                action)
-            self.__iface.removeToolBarIcon(action)
-        # remove the toolbar
-        del self.__toolbar
+        pass
 
     def __step_forward(self):
         """

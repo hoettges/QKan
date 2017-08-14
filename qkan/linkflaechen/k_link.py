@@ -31,36 +31,33 @@ __copyright__ = '(C) 2016, Joerg Hoettges'
 
 __revision__ = ':%H$'
 
-
-import os, time
-
-from QKan_Database.dbfunc import DBConnection
+import logging
 
 from qgis.core import QgsMessageLog
-
-from qgis.utils import iface
 from qgis.gui import QgsMessageBar
-import logging
+from qgis.utils import iface
 
 logger = logging.getLogger('QKan')
 
+
 # Fortschritts- und Fehlermeldungen
 
-def fortschritt(text,prozent):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100), u'Link Flächen: ', QgsMessageLog.INFO)
+def fortschritt(text, prozent):
+    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
+    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), u'Link Flächen: ', QgsMessageLog.INFO)
+
 
 def fehlermeldung(title, text):
-    logger.debug(u'{:s} {:s}'.format(title,text))
+    logger.debug(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
+
 
 # ------------------------------------------------------------------------------
 # 1. Teilprogramm: Erzeugung der graphischen Verknüpfungen
 
-def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw, 
-                liste_teilgebiete, suchradius = 50, bezug_abstand = 'kante', fangradius = 0.1, epsg = '25832', 
-                dbtyp = 'SpatiaLite'):
-
+def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
+                liste_teilgebiete, suchradius=50, bezug_abstand='kante', fangradius=0.1, epsg='25832',
+                dbtyp='SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :dbQK: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -121,11 +118,11 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         del dbQK
         return False
 
-    # sql = """DELETE FROM linkfl"""
-    # try:
+        # sql = """DELETE FROM linkfl"""
+        # try:
         # dbQK.sql(sql)
         # dbQK.commit()
-    # except:
+        # except:
         # fehlermeldung(u"QKan_LinkFlaechen (6) SQL-Fehler in SpatiaLite: \n", sql)
         # del dbQK
         # return False
@@ -171,27 +168,27 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         del dbQK
         return False
 
-    # Flächen, die verschnitten werden müssen (aufteilen = 'ja')
-    # sql = """WITH flges AS (
-                # SELECT
-                    # flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
-                    # CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
-                # FROM flaechen
-                # INNER JOIN tezg
-                # ON intersects(flaechen.geom,tezg.geom)
-                # WHERE flaechen.aufteilen = 'ja'{auswahl})
-            # INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
-            # SELECT flges.flnam, flges.aufteilen, flges.teilgebiet, flges.geom
-            # FROM flges
-            # LEFT JOIN linkfl
-            # ON within(StartPoint(linkfl.glink),flges.geom)
-            # WHERE linkfl.pk IS NULL""".format(auswahl=auswahl)
+        # Flächen, die verschnitten werden müssen (aufteilen = 'ja')
+        # sql = """WITH flges AS (
+        # SELECT
+        # flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet,
+        # CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
+        # FROM flaechen
+        # INNER JOIN tezg
+        # ON intersects(flaechen.geom,tezg.geom)
+        # WHERE flaechen.aufteilen = 'ja'{auswahl})
+        # INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
+        # SELECT flges.flnam, flges.aufteilen, flges.teilgebiet, flges.geom
+        # FROM flges
+        # LEFT JOIN linkfl
+        # ON within(StartPoint(linkfl.glink),flges.geom)
+        # WHERE linkfl.pk IS NULL""".format(auswahl=auswahl)
 
-    # logger.debug('\nSQL-2b:\n{}\n'.format(sql))
+        # logger.debug('\nSQL-2b:\n{}\n'.format(sql))
 
-    # try:
+        # try:
         # dbQK.sql(sql)
-    # except:
+        # except:
         # fehlermeldung(u"QKan_LinkFlaechen (4b) SQL-Fehler in SpatiaLite: \n", sql)
         # del dbQK
         # return False
@@ -200,7 +197,8 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     # hinzugekommmene mögliche Zuordnungen eingetragen.
     # Wenn das Attribut "haltnam" vergeben ist, gilt die Fläche als zugeordnet.
 
-    sql = """UPDATE linkfl SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linkfl.glink IS NULL""".format(suchradius)
+    sql = """UPDATE linkfl SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linkfl.glink IS NULL""".format(
+        suchradius)
     try:
         dbQK.sql(sql)
     except:
@@ -275,8 +273,7 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         del dbQK
         return False
 
-
-    # Keine Prüfung, ob Anfang der Verknüpfungslinie noch in zugehöriger Fläche liegt. 
+    # Keine Prüfung, ob Anfang der Verknüpfungslinie noch in zugehöriger Fläche liegt.
     sql = """UPDATE flaechen SET haltnam = 
             (SELECT 
               haltungen.haltnam
@@ -296,7 +293,6 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         return False
     dbQK.commit()
 
-
     # --------------------------------------------------------------------------
     # Datenbankverbindungen schliessen
 
@@ -309,7 +305,6 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     iface.messageBar().pushMessage(u"Information", u"Verknüpfungen sind erstellt!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
 
-
 # -------------------------------------------------------------------------------------------------------------
 
 # Verzeichnis der Testdaten
@@ -319,12 +314,12 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 # epsg = '31466'
 
 # if __name__ == '__main__':
-    # createlinks(database_QKan, epsg)
+# createlinks(database_QKan, epsg)
 # elif __name__ == '__console__':
-    # # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Konsole aufgerufen")
-    # createlinks(database_QKan, epsg)
+# # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Konsole aufgerufen")
+# createlinks(database_QKan, epsg)
 # elif __name__ == '__builtin__':
-    # # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Toolbox aufgerufen")
-    # createlinks(database_QKan, epsg)
+# # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Toolbox aufgerufen")
+# createlinks(database_QKan, epsg)
 # # else:
-    # # QMessageBox.information(None, "Info", "Die Variable __name__ enthält: {0:s}".format(__name__))
+# # QMessageBox.information(None, "Info", "Die Variable __name__ enthält: {0:s}".format(__name__))

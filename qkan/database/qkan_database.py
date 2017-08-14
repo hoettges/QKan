@@ -28,27 +28,31 @@ __version__ = '1.1.5'
 
 __revision__ = ':%H$'
 
+import logging
 import os
+
 import pyspatialite.dbapi2 as splite
+from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
-from qgis.core import QgsMessageLog
-import logging
 
 logger = logging.getLogger('QKan')
 
+
 # Fortschritts- und Fehlermeldungen
 
-def fortschritt(text,prozent=0.):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text,prozent*100.))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text,prozent*100.), 'Export: ', QgsMessageLog.INFO)
+def fortschritt(text, prozent=0.):
+    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100.))
+    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100.), 'Export: ', QgsMessageLog.INFO)
 
-def fehlermeldung(title, text, dauer = 0):
-    logger.debug(u'{:s} {:s}'.format(title,text))
+
+def fehlermeldung(title, text, dauer=0):
+    logger.debug(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
     iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL, duration=dauer)
 
-def createdbtables(consl,cursl,epsg=25832):
+
+def createdbtables(consl, cursl, epsg=25832):
     ''' Erstellt fuer eine neue QKan-Datenbank die zum Import aus Hystem-Extran
         benötigten Referenztabellen.
 
@@ -107,7 +111,6 @@ def createdbtables(consl,cursl,epsg=25832):
         return False
     consl.commit()
 
-
     # Schaechte ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
 
@@ -147,12 +150,12 @@ def createdbtables(consl,cursl,epsg=25832):
         cursl.execute(sql1)
         cursl.execute(sql2)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung('In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden',
+                      str(err))
         consl.close()
         return False
 
     consl.commit()
-
 
     # Profile ------------------------------------------------------------------
 
@@ -174,36 +177,36 @@ def createdbtables(consl,cursl,epsg=25832):
     try:
 
         daten = [u"'Kreisquerschnitt', 1, NULL, NULL",
-                u"'Rechteckquerschnitt', 2, NULL, NULL",
-                u"'Eiquerschnitt 0,67', 3, NULL, NULL",
-                u"'Maulquerschnitt 1,20', 4, NULL, NULL",
-                u"'Halbschalenquerschnitt, offen 2,00', 5, NULL, NULL",
-                u"'Kreisquerschnitt, gestreckt 0,89', 6, NULL, NULL",
-                u"'Kreisquerschnitt, \xfcberh\xf6ht 0,67', 7, NULL, NULL",
-                u"'Eiquerschnitt, \xfcberh\xf6ht 0,57', 8, NULL, NULL",
-                u"'Eiquerschnitt, breit 0,80', 9, NULL, NULL",
-                u"'Eiquerschnitt, gedr\xfcckt 1,00', 10, NULL, NULL",
-                u"'Drachenquerschnitt 1,00', 11, NULL, NULL",
-                u"'Maulquerschnitt 1,33', 12, NULL, NULL",
-                u"'Maulquerschnitt, \xfcberh\xf6ht 1,00', 13, NULL, NULL",
-                u"'Maulquerschnitt, gedr\xfcckt 0,89', 14, NULL, NULL",
-                u"'Maulquerschnitt, gestreckt 1,14', 15, NULL, NULL",
-                u"'Maulquerschnitt, gestaucht 2,00', 16, NULL, NULL",
-                u"'Haubenquerschnitt 0,89', 17, NULL, NULL",
-                u"'Parabelquerschnitt 1,00', 18, NULL, NULL",
-                u"'Rechteckquerschnitt mit geneigter Sohle 2,00', 19, NULL, NULL",
-                u"'Rechteckquerschnitt mit geneigter Sohle 1,00', 20, NULL, NULL",
-                u"'Rechteckquerschnitt mit geneigter Sohle 0,50', 21, NULL, NULL",
-                u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 2,00, b=0,2B', 22, NULL, NULL",
-                u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 1,00, b=0,2B', 23, NULL, NULL",
-                u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 0,50, b=0,2B', 24, NULL, NULL",
-                u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 2,00, b=0,4B', 25, NULL, NULL",
-                u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 1,00, b=0,4B', 26, NULL, NULL",
-                u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 0,50, b=0,4B', 27, NULL, NULL",
-                u"'Trapezquerschnitt', 68, NULL, NULL"]
+                 u"'Rechteckquerschnitt', 2, NULL, NULL",
+                 u"'Eiquerschnitt 0,67', 3, NULL, NULL",
+                 u"'Maulquerschnitt 1,20', 4, NULL, NULL",
+                 u"'Halbschalenquerschnitt, offen 2,00', 5, NULL, NULL",
+                 u"'Kreisquerschnitt, gestreckt 0,89', 6, NULL, NULL",
+                 u"'Kreisquerschnitt, \xfcberh\xf6ht 0,67', 7, NULL, NULL",
+                 u"'Eiquerschnitt, \xfcberh\xf6ht 0,57', 8, NULL, NULL",
+                 u"'Eiquerschnitt, breit 0,80', 9, NULL, NULL",
+                 u"'Eiquerschnitt, gedr\xfcckt 1,00', 10, NULL, NULL",
+                 u"'Drachenquerschnitt 1,00', 11, NULL, NULL",
+                 u"'Maulquerschnitt 1,33', 12, NULL, NULL",
+                 u"'Maulquerschnitt, \xfcberh\xf6ht 1,00', 13, NULL, NULL",
+                 u"'Maulquerschnitt, gedr\xfcckt 0,89', 14, NULL, NULL",
+                 u"'Maulquerschnitt, gestreckt 1,14', 15, NULL, NULL",
+                 u"'Maulquerschnitt, gestaucht 2,00', 16, NULL, NULL",
+                 u"'Haubenquerschnitt 0,89', 17, NULL, NULL",
+                 u"'Parabelquerschnitt 1,00', 18, NULL, NULL",
+                 u"'Rechteckquerschnitt mit geneigter Sohle 2,00', 19, NULL, NULL",
+                 u"'Rechteckquerschnitt mit geneigter Sohle 1,00', 20, NULL, NULL",
+                 u"'Rechteckquerschnitt mit geneigter Sohle 0,50', 21, NULL, NULL",
+                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 2,00, b=0,2B', 22, NULL, NULL",
+                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 1,00, b=0,2B', 23, NULL, NULL",
+                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 0,50, b=0,2B', 24, NULL, NULL",
+                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 2,00, b=0,4B', 25, NULL, NULL",
+                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 1,00, b=0,4B', 26, NULL, NULL",
+                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 0,50, b=0,4B', 27, NULL, NULL",
+                 u"'Trapezquerschnitt', 68, NULL, NULL"]
 
         for ds in daten:
-            cursl.execute(u'INSERT INTO profile (profilnam, he_nr, mu_nr, kp_nr) Values (' + ds + ')')
+            cursl.execute(u'INSERT INTO profile (profilnam, he_nr, mu_nr, kp_nr) VALUES (' + ds + ')')
 
     except BaseException as err:
         fehlermeldung('Tabellendaten "Profile" konnten nicht hinzugefuegt werden', str(err))
@@ -211,7 +214,6 @@ def createdbtables(consl,cursl,epsg=25832):
         return False
 
     consl.commit()
-
 
     # Geometrie Sonderprofile --------------------------------------------------
 
@@ -229,7 +231,6 @@ def createdbtables(consl,cursl,epsg=25832):
         consl.close()
         return False
     consl.commit()
-
 
     # Entwaesserungssysteme ----------------------------------------------------
 
@@ -250,19 +251,19 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
 
-        daten = ["'MW', 'Mischwasser', NULL, 0", 
-                 "'RW', 'Regenwasser', NULL, 1", 
+        daten = ["'MW', 'Mischwasser', NULL, 0",
+                 "'RW', 'Regenwasser', NULL, 1",
                  "'SW', 'Schmutzwasser', NULL, 2"]
 
         for ds in daten:
-            cursl.execute('INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr) Values (' + ds + ')')
+            cursl.execute(
+                'INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr) VALUES (' + ds + ')')
 
     except BaseException as err:
         fehlermeldung('Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
-
 
     # Pumpentypen --------------------------------------------------------------
 
@@ -281,14 +282,14 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
 
-        daten = ["'Offline', 1", 
-                 "'Online Schaltstufen', 2", 
-                 "'Online Kennlinie', 3", 
-                 "'Online Wasserstandsdifferenz', 4", 
+        daten = ["'Offline', 1",
+                 "'Online Schaltstufen', 2",
+                 "'Online Kennlinie', 3",
+                 "'Online Wasserstandsdifferenz', 4",
                  "'Ideal', 5"]
 
         for ds in daten:
-            cursl.execute('INSERT INTO pumpentypen (bezeichnung, he_nr) Values (' + ds + ')')
+            cursl.execute('INSERT INTO pumpentypen (bezeichnung, he_nr) VALUES (' + ds + ')')
 
     except BaseException as err:
         fehlermeldung('Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden', str(err))
@@ -296,7 +297,6 @@ def createdbtables(consl,cursl,epsg=25832):
         return False
 
     consl.commit()
-
 
     # Pumpen -------------------------------------------------------------------
 
@@ -334,7 +334,6 @@ def createdbtables(consl,cursl,epsg=25832):
 
     consl.commit()
 
-
     # Wehre --------------------------------------------------------------------
 
     sql = '''CREATE TABLE wehre (
@@ -352,7 +351,7 @@ def createdbtables(consl,cursl,epsg=25832):
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
     createdat TEXT DEFAULT CURRENT_DATE)'''
-    
+
     try:
         cursl.execute(sql)
     except BaseException as err:
@@ -369,7 +368,6 @@ def createdbtables(consl,cursl,epsg=25832):
         return False
 
     consl.commit()
-
 
     # Teilgebiete ------------------------------------------------------------------
     # Entsprechen in HYSTEM-EXTRAN 7.x den Siedlungstypen
@@ -401,7 +399,6 @@ def createdbtables(consl,cursl,epsg=25832):
         consl.close()
         return False
     consl.commit()
-
 
     # Befestigte und unbefestigte Flächen ------------------------------------------------------
 
@@ -438,7 +435,6 @@ def createdbtables(consl,cursl,epsg=25832):
         consl.close()
         return False
     consl.commit()
-
 
     # Anbindung ---------------------------------------------------------------------------
     # Die Tabelle linkfl verwaltet die Anbindung von Flächen an Haltungen. Diese Anbindung
@@ -506,7 +502,6 @@ def createdbtables(consl,cursl,epsg=25832):
         return False
     consl.commit()
 
-
     # Simulationsstatus/Planungsstatus -----------------------------------------
 
     sql = '''
@@ -526,23 +521,22 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
 
-        daten = ["'keine Angabe', 0, NULL, NULL", 
-                 "'vorhanden', 1, NULL, NULL", 
-                 "'geplant', 2, NULL, NULL", 
-                 "'fiktiv', 3, NULL, NULL", 
-                 u"'außer Betrieb (keine Sim.)', 4, NULL, NULL", 
+        daten = ["'keine Angabe', 0, NULL, NULL",
+                 "'vorhanden', 1, NULL, NULL",
+                 "'geplant', 2, NULL, NULL",
+                 "'fiktiv', 3, NULL, NULL",
+                 u"'außer Betrieb (keine Sim.)', 4, NULL, NULL",
                  u"'verfüllt (keine Sim.)', 5, NULL, NULL"]
 
         for ds in daten:
-            cursl.execute('INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) Values (' + 
-                            ds + ')')
+            cursl.execute('INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) VALUES (' +
+                          ds + ')')
 
     except BaseException as err:
         fehlermeldung('Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
-
 
     # Auslasstypen -------------------------------------------------------------
 
@@ -563,21 +557,20 @@ def createdbtables(consl,cursl,epsg=25832):
 
     try:
 
-        daten = ["'frei', 0, NULL, NULL", 
-                 "'normal', 1, NULL, NULL", 
-                 "'konstant', 2, NULL, NULL", 
-                 "'Tide', 3, NULL, NULL", 
+        daten = ["'frei', 0, NULL, NULL",
+                 "'normal', 1, NULL, NULL",
+                 "'konstant', 2, NULL, NULL",
+                 "'Tide', 3, NULL, NULL",
                  "'Zeitreihe', 4, NULL, NULL"]
 
         for ds in daten:
-            cursl.execute('INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) Values (' + ds + ')')
+            cursl.execute('INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) VALUES (' + ds + ')')
 
     except BaseException as err:
         fehlermeldung('Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
-
 
     # Abflussparameter -------------------------------------------------------------
 
@@ -603,7 +596,7 @@ def createdbtables(consl,cursl,epsg=25832):
         return False
 
     try:
-        daten = ["'$Default_Bef', 'Exportiert mit qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, 'NULL', '13.01.2011 08:44:50'", 
+        daten = ["'$Default_Bef', 'Exportiert mit qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, 'NULL', '13.01.2011 08:44:50'",
                  "'$Default_Unbef', 'Exportiert mit qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
 
         for ds in daten:
@@ -612,13 +605,12 @@ def createdbtables(consl,cursl,epsg=25832):
                        'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
                        'createdat') Values ({})""".format(ds)
             cursl.execute(sql)
-        
+
     except BaseException as err:
         fehlermeldung('Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
-
 
     # Bodenklasse -------------------------------------------------------------
 
@@ -642,12 +634,12 @@ def createdbtables(consl,cursl,epsg=25832):
         consl.close()
         return False
 
-    daten = [u"'VollDurchlaessig', 10, 9, 10, 144, 1.584, 100, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-             u"'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-             u"'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-             u"'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-             u"'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
-             u"'Undurchlaessig', 0, 0, 0, 100, 1, 0, '13.01.2011 08:44:50', 'Importiert mit qg2he'", 
+    daten = [u"'VollDurchlaessig', 10, 9, 10, 144, 1.584, 100, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             u"'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             u"'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             u"'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             u"'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             u"'Undurchlaessig', 0, 0, 0, 100, 1, 0, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
              u"NULL, 0, 0, 0, 0, 0, 0, '13.01.2011 08:44:50', 'nur für interne QKan-Aufgaben'"]
 
     for ds in daten:
@@ -657,13 +649,12 @@ def createdbtables(consl,cursl,epsg=25832):
                        'rueckgangskonstante', 'regenerationskonstante', 'saettigungswassergehalt', 
                        'createdat', 'kommentar') Values ({})""".format(ds)
             cursl.execute(sql)
-        
+
         except BaseException as err:
             fehlermeldung('Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
             consl.close()
             return False
     consl.commit()
-
 
     # Kennlinie Speicherbauwerke -----------------------------------------------
 
@@ -681,7 +672,6 @@ def createdbtables(consl,cursl,epsg=25832):
         consl.close()
         return False
     consl.commit()
-
 
     # Allgemeiner Informationen -----------------------------------------------
 
@@ -702,9 +692,9 @@ def createdbtables(consl,cursl,epsg=25832):
 
     sql = "INSERT INTO info (subject, value) VALUES ('Version', '{}'); \n".format(__version__)
 
-    fortschritt('Tabellen erstellt...',0.01)
+    fortschritt('Tabellen erstellt...', 0.01)
 
-# ----------------------------------------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------------------------------------------
     # Alles prima gelaufen...
 
     return True
@@ -716,12 +706,12 @@ if __name__ in ('__main__', '__console__', '__builtin__'):
 
     # Verzeichnis der Testdaten
     pfad = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh'
-    database_QKan = os.path.join(pfad,'test1.sqlite')
+    database_QKan = os.path.join(pfad, 'test1.sqlite')
 
     if os.path.exists(database_QKan):
         os.remove(database_QKan)
 
-    consl = splite.connect(database = database_QKan)
+    consl = splite.connect(database=database_QKan)
     cursl = consl.cursor()
 
     # iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank wird erstellt. Bitte warten...",
@@ -729,7 +719,7 @@ if __name__ in ('__main__', '__console__', '__builtin__'):
     progressMessageBar = iface.messageBar().createMessage("Doing something boring...")
     progress = QProgressBar()
     progress.setMaximum(10)
-    progress.setAlignment(Qt.AlignLeft|Qt.AlignVCenter)
+    progress.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
     progressMessageBar.layout().addWidget(progress)
     iface.messageBar().pushWidget(progressMessageBar, iface.messageBar().INFO)
     progress.setValue(2)
@@ -737,6 +727,7 @@ if __name__ in ('__main__', '__console__', '__builtin__'):
 
     iface.mainWindow().statusBar().showMessage("SpatiaLite-Datenbank wird erstellt. Bitte warten... {} %".format(20))
     import time
+
     time.sleep(1)
 
     sql = 'SELECT InitSpatialMetadata(transaction = TRUE)'
