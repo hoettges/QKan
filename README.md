@@ -28,7 +28,8 @@ insbesondere der geographischen Objekte (z. B. befestigte Flächen)
 ausschließlich die Geo-Funktionen der eingesetzten Datenbank genutzt werden. 
 Dies hat den Vorteil, dass bei verknüpften Tabellen durch die sehr 
 leistungsfähige Indizierung der Datenbanken erhebliche Effizienzgewinne 
-erzielt werden können und zum anderen die Programmierung stark 
+erzielt werden können und zum anderen die Programmierung stark vereinfacht 
+wird. 
 
 Das Projekt wird mit Förderung durch das Programm "Mittelstand.innovativ!" 
 des Landes NRW von folgenden Ingenieurbüros finanziert:
