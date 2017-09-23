@@ -36,12 +36,12 @@ des Landes NRW von folgenden Ingenieurbüros finanziert:
 - blue-ing, Düsseldorf: www.blue-ing.de
 - Ingenieurbüro Reinhard Beck, Wuppertal: www.ibbeck.de
 
-Details zu den Plugins sind in mehreren Vorträgen erläutert:
+Details zum Projekt "QKan" sind in mehreren Vorträgen erläutert:
 
 - Höttges, J. (2017): "QKan - Kanalkataster mit QGIS". FOSSGIS 2017, Passau: 
   https://doi.org/10.5446/30533
 - Höttges, J. (2017): "QKan - Management of drainage system data with QGIS".
-  FOSS4G 2017, Boston. presentation and paper accepted for publication.
+  FOSS4G 2017, Boston. Presentation and paper accepted for publication.
 
 ## Installation
 Eine ausführliche Installationsanleitung finden Sie unter:
