@@ -1,5 +1,4 @@
 # QKan
-=======
 
 Das Kanalkataster QKan dient dazu, Daten von städtischen 
 Entwässerungssystemen für Berechnungen aufzubereiten und die Ergebnisse 
