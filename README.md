@@ -1,4 +1,5 @@
 # QKan
+=======
 
 Das Kanalkataster QKan dient dazu, Daten von städtischen 
 Entwässerungssystemen für Berechnungen aufzubereiten und die Ergebnisse 
@@ -15,7 +16,6 @@ Berechnung aufzubereiten, aber auch die Kanaldaten aus dem
 Berechnungsprogramm zu exportieren, um im GIS weitere Datenaufbereitungen 
 vorzunehmen, die nicht im Berechungsprogramm integriert sind, wie z. B. die 
 Zuordnung von GIS-basierten Flächendaten. 
-=======
 
 Das Kanalkataster QKan dient dazu, Daten von städtischen 
 Entwässerungssystemen für Berechnungen aufzubereiten und die Ergebnisse 
