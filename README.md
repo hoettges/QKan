@@ -57,7 +57,7 @@ Details zum Projekt "QKan" sind in mehreren Vorträgen erläutert:
 - Höttges, J. (2017): "QKan - Kanalkataster mit QGIS". FOSSGIS 2017, Passau: 
   https://doi.org/10.5446/30533
 - Höttges, J. (2017): "QKan - Management of drainage system data with QGIS".
-  FOSS4G 2017, Boston. presentation and paper accepted for publication.
+  FOSS4G 2017, Boston. http://scholarworks.umass.edu/foss4g/vol17/iss1/13/
 
 ## Installation
 Eine ausführliche Installationsanleitung finden Sie unter:
