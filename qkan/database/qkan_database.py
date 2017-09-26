@@ -502,6 +502,37 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
     consl.commit()
 
+
+    # Einleitungen ------------------------------------------------------------------
+    # Enthält direkte SW-Einleitungen: 
+    #  - Punktquellen
+
+    sql = '''CREATE TABLE einleit (
+        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+        elnam TEXT,
+        haltnam TEXT,
+        einwohner REAL,
+        zufluss REAL,
+        kommentar TEXT,
+        createdat TEXT DEFAULT CURRENT_DATE)'''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('Tabelle "einleit" konnte nicht erstellt werden', str(err))
+        consl.close()
+        return False
+
+    sql = "SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)".format(epsg)
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
+        return False
+    consl.commit()
+
+
     # Simulationsstatus/Planungsstatus -----------------------------------------
 
     sql = '''

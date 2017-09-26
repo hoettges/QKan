@@ -33,14 +33,10 @@ from qgis.core import QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry, Qgs
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-# noinspection PyUnresolvedReferences
-import resources_connectflaechen
-# noinspection PyUnresolvedReferences
-import resources_createlines
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
-from application_dialog import CreatelinesDialog
-from k_link import createlinks
+from application_dialog import CreatelinesDialog, AssigntezgDialog
+from k_link import createlinks, assigntezg
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qgis_utils import get_database_QKan, get_editable_layers
@@ -90,6 +86,7 @@ class Application:
 
         # Create the dialog (after translation) and keep reference
         self.dlg_cl = CreatelinesDialog()
+        self.dlg_at = AssigntezgDialog()
 
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 12.06.2017)
@@ -146,6 +143,14 @@ class Application:
             callback=self.run_createlines,
             parent=self.iface.mainWindow())
 
+        icon_assigntezg_path = ':/plugins/Flaechenzuordnungen/icon_assigntezg.png'
+        Dummy.instance.add_action(
+            icon_assigntezg_path,
+            text=self.tr(u'Haltungen und Flächen zu Teilgebiet zuordnen'),
+            callback=self.run_assigntezg,
+            parent=self.iface.mainWindow())
+
+
     def unload(self):
         pass
 
@@ -164,7 +169,7 @@ class Application:
         if len(liste_flaechen_abflussparam) == 0:
             # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
             auswahl = ''
-            logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
+            # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
         else:
             auswahl = " AND flaechen.abflussparameter in ('{}')".format("', '".join(liste_flaechen_abflussparam))
 
@@ -189,7 +194,7 @@ class Application:
         if liste_flaechen_abflussparam == '()':
             # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
             auswahl = ''
-            logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
+            # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
         else:
             auswahl = " AND flaechen.abflussparameter in ('{}')".format("', '".join(liste_flaechen_abflussparam))
 
@@ -253,7 +258,7 @@ class Application:
         return liste
 
     # -------------------------------------------------------------------------
-    # Öffnen des Formulars
+    # Öffnen des Formulars zur Erstellung der Verknüpfungen
 
     def run_createlines(self):
         """Run method that performs all the real work"""
@@ -368,7 +373,7 @@ class Application:
         sql = 'SELECT abflussparameter FROM flaechen GROUP BY abflussparameter'
         self.dbQK.sql(sql)
         daten = self.dbQK.fetchall()
-        logger.debug('\ndaten: {}'.format(str(daten)))  # debug
+        # logger.debug('\ndaten: {}'.format(str(daten)))  # debug
         self.dlg_cl.lw_flaechen_abflussparam.clear()
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
@@ -379,7 +384,7 @@ class Application:
                             self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
                     except BaseException as err:
                         del self.dbQK
-                        logger.debug('\nelem: {}'.format(str(elem)))  # debug
+                        # logger.debug('\nelem: {}'.format(str(elem)))  # debug
                         # if len(daten) == 1:
                         # self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(0)
 
@@ -495,3 +500,62 @@ class Application:
                 uri.setDataSource('', 'linkfl', 'glink')
                 vlayer = QgsVectorLayer(uri.uri(), 'Anbindung', 'spatialite')
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+
+    # -------------------------------------------------------------------------
+    # Öffnen des Formulars zur Erstellung der Verknüpfungen
+
+    def run_assigntezg(self):
+        """Öffnen des Formulars zur Zuordnung von Teilgebieten auf Haltungen und Flächen"""
+
+        # Check, ob die relevanten Layer nicht editable sind.
+        if len({'flaechen', 'haltungen', 'linkfl', 'tezg'} & get_editable_layers()) > 0:
+            iface.messageBar().pushMessage(u"Bedienerfehler: ", 
+                   u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
+                   level=QgsMessageBar.CRITICAL)
+            return False
+
+        database_QKan = ''
+
+        database_QKan, epsg = get_database_QKan()
+        if not database_QKan:
+            fehlermeldung(u"Fehler in k_link", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error("k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            return False
+
+        # Datenbankverbindung für Abfragen
+        self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if self.dbQK is None:
+            fehlermeldung("Fehler in QKan_CreateUnbefFl", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+            iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+                database_QKan), level=QgsMessageBar.CRITICAL)
+            return None
+
+        # Abfragen der Tabelle teilgebiete nach Teilgebieten
+        sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
+        self.dbQK.sql(sql)
+        daten = self.dbQK.fetchall()
+        self.dlg_at.lw_teilgebiete.clear()
+        for ielem, elem in enumerate(daten):
+            if elem[0] is not None:
+                self.dlg_at.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
+                if 'liste_teilgebiete' in self.config:
+                    if elem[0] in self.config['liste_teilgebiete']:
+                        self.dlg_at.lw_teilgebiete.setCurrentRow(ielem)
+
+        # show the dialog
+        self.dlg_at.show()
+        # Run the dialog event loop
+        result = self.dlg_at.exec_()
+        # See if OK was pressed
+        if result:
+
+            liste_teilgebiete = self.listselecteditems(self.dlg_at.lw_teilgebiete)
+
+            self.config['liste_teilgebiete'] = liste_teilgebiete
+            self.config['epsg'] = epsg
+
+            with codecs.open(self.configfil,'w') as fileconfig:
+                fileconfig.write(json.dumps(self.config))
+
+            # Start der Verarbeitung
+            assigntezg(self.dbQK, liste_teilgebiete, ['haltungen', 'flaechen'])

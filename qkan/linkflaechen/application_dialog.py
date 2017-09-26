@@ -41,14 +41,14 @@ class CreatelinesDialog(QtGui.QDialog, FORM_CLASS_createlines):
         self.setupUi(self)
 
 
-FORM_CLASS_connectflaechen, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'application_connectflaechen.ui'))
+FORM_CLASS_assigntezg, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'application_assigntezg.ui'))
 
 
-class ConnectflaechenDialog(QtGui.QDialog, FORM_CLASS_connectflaechen):
+class AssigntezgDialog(QtGui.QDialog, FORM_CLASS_assigntezg):
     def __init__(self, parent=None):
         """Constructor."""
-        super(ConnectflaechenDialog, self).__init__(parent)
+        super(AssigntezgDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see

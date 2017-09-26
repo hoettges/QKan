@@ -1390,17 +1390,17 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
        - einwohnerspezifischer Schmutzwasseranfall
        - Fremdwasseranteil
        - Stundenmittel
-      zu verwalten und den tezg-Flächen zuzuordnen und zum Anderen, um die Möglichkeit zu haben,
-      um für den Export Teile eines Netzes auszuwählen.
+      zu verwalten und den tezg-Flächen zuzuordnen, die gleichzeitig Trockenwetterzufluss repräsentieren
+      und zum Anderen, um die Möglichkeit zu haben, um für den Export Teile eines Netzes auszuwählen.
 
       Aus diesem Grund werden vor dem Export der Einzeleinleiter diese Daten geprüft:
 
       1 Wenn in QKan keine Teilgebiete vorhanden sind, wird zunächst geprüft, ob die
          tezg-Flächen einem (noch nicht angelegten) Teilgebiet zugeordnet sind.
-         1.1 Keine tezg-Fläche ist einem Teilgebiet zugeordnet. Dann wird ein Teilgebiet angelegt
-             und alle tezg-Flächen diesem Teilgebiet zugeordnet
-         1.2 Die tezg-Flächen sind einem oder mehreren (noch nicht vorhandenen) Teilgebieten zugeordnet.
-             Dann werden entsprechende Teilgebiete mit Standardwerten angelegt.
+         1.1 Keine tezg-Fläche ist einem Teilgebiet zugeordnet. Dann wird ein Teilgebiet "Teilgebiet1" 
+             angelegt und alle tezg-Flächen diesem Teilgebiet zugeordnet
+         1.2 Die tezg-Flächen sind einem oder mehreren noch nicht in der Tabelle "teilgebiete" vorhandenen 
+             Teilgebieten zugeordnet. Dann werden entsprechende Teilgebiete mit Standardwerten angelegt.
       2 Wenn in QKan Teilgebiete vorhanden sind, wird geprüft, ob es auch tezg-Flächen gibt, die diesen
          Teilgebieten zugeordnet sind.
          2.1 Es gibt keine tezg-Flächen, die einem Teilgebiet zugeordnet sind.
@@ -1438,7 +1438,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                      fremdwas, flaeche, kommentar, createdat, geom)
                    Values
                    ( 'Teilgebiet1', 60, 120, 14, 100, '{createdat}',
-                     'Hinzugefuegt aus QKan')""".format(createdat=createdat)
+                     'Automatisch durch  QKan hinzugefuegt')""".format(createdat=createdat)
                 try:
                     dbQK.sql(sql)
                 except BaseException as err:
@@ -1565,18 +1565,104 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         #    2 = Frischwasserverbrauch
         #    3 = Einwohner
         #
-        # Mit Stand 8.5.2017 ist nur die Variante HERKUNFT = 3 realisiert
+
+        # HERKUNFT = 1 (Direkt) wird aus einer eigenen Tabelle "einleiter" erzeugt und ebenfalls in die 
+        # HE-Tabelle "Einzeleinleiter" übertragen
+        #
+        # HERKUNFT = 2 (Frischwasserverbrauch) ist zurzeit nicht realisiert
+        #
+        # HERKUNFT = 3 (Einwohner) wird durch eine Verknüpfung aus den "tezg"-Flächen und dem verknüpften 
+        # Teilgebiet erzeugt und in die HE-Tabelle "Einzeleinleiter" übertragen
+
 
         if check_export['init_flaechensw']:
             dbHE.sql("DELETE FROM EINZELEINLEITER")
+
+        # --------------------------------------------------------------------------------------------
+        # Herkunft = 1 (Direkt) und 3 (Einwohnerbezogen)
+
+        # Nur Daten fuer ausgewaehlte Teilgebiete
+        if len(liste_teilgebiete) != 0:
+            auswahl = " WHERE teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        else:
+            auswahl = ""
+
+        sql = u"""SELECT
+          elnam AS elnam,
+          x(centroid(geom)) AS xel,
+          y(centroid(geom)) AS yel,
+          haltnam AS haltnam,
+          wverbrauch AS wverbrauch, 
+          stdmittel AS stdmittel,
+          fremdwas AS fremdwas, 
+          einwohner AS ew,
+          zufluss AS zufluss
+          FROM einleit{auswahl}
+        """.format(auswahl=auswahl)
+
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"(35) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            del dbHE
+            return False
+
+        nr0 = nextid
+
+        fortschritt('Export Einzeleinleiter (direkt)...', 0.92)
+        for b in dbQK.fetchall():
+
+            # In allen Feldern None durch NULL ersetzen
+            elnam, xel, yel, haltnam, ew, stdmittel, fremdwas = \
+                ('NULL' if el is None else el for el in b)
+
+            # Einfuegen in die Datenbank
+            sql = u"""
+              INSERT INTO EINZELEINLEITER
+              ( XKOORDINATE, YKOORDINATE, ZUORDNUNGGESPERRT, ZUORDNUNABHEZG, ROHR,
+                ABWASSERART, EINWOHNER, WASSERVERBRAUCH, HERKUNFT,
+                STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE,
+                ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME,
+                ABRECHNUNGSZEITRAUM, ABZUG,
+                LASTMODIFIED, ID) VALUES
+              ( {xel}, {yel}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
+                {abwasserart}, {ew}, {wverbrauch}, {herkunft},
+                {stdmittel}, {fremdwas}, {faktor}, {flaeche},
+                {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}_SW_TEZG',
+                {abrechnungszeitraum}, {abzug},
+                '{createdat}', {nextid});
+              """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
+                         abwasserart = 0, ew = ew, wverbrauch = wverbrauch, herkunft = 1,
+                         stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, 
+                         zuflussmodell = 0, zuflussdirekt = 0, zufluss = zufluss, planungsstatus = 0, elnam = elnam,
+                         abrechnungszeitraum = 365, abzug = 0,
+                         createdat = createdat, nextid = nextid)
+            try:
+                dbHE.sql(sql)
+            except BaseException as err:
+                fehlermeldung(u"(36) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                del dbQK
+                del dbHE
+                return False
+
+            nextid += 1
+        dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
+        dbHE.commit()
+
+        fortschritt(u'{} Einzeleinleiter (direkt) eingefuegt'.format(nextid - nr0), 0.95)
+
+
+        # --------------------------------------------------------------------------------------------
+        # Trockenwetter aus tezg-Flächen. Nur die Flächen werden berücksichtigt, die einem Teilgebiet 
+        # mit Wasserverbrauch zugeordnet sind.
+        # Herkunft = 3 (Einwohner)
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
         if len(liste_teilgebiete) != 0:
             auswahl = " WHERE g.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
             auswahl = ""
-
-        # Abfrage fuer Herkunft = 3 (Einwohner)
 
         sql = u""" SELECT
           tezg.flnam AS flnam,
@@ -1586,9 +1672,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
           teilgebiete.ewdichte*area(tezg.geom)/10000. AS ew,
           teilgebiete.stdmittel AS stdmittel,
           teilgebiete.fremdwas AS fremdwas,
-          teilgebiete.tgnam AS tgnam
-        FROM tezg INNER JOIN teilgebiete ON tezg.teilgebiet = teilgebiete.tgnam
-        """.format(auswahl)
+          teilgebiete.wverbrauch AS wverbrauch
+        FROM tezg INNER JOIN teilgebiete ON tezg.teilgebiet = teilgebiete.tgnam{auswahl}
+        """.format(auswahl=auswahl)
 
         try:
             dbQK.sql(sql)
@@ -1600,11 +1686,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         nr0 = nextid
 
-        fortschritt('Export Einzeleinleiter...', 0.95)
+        fortschritt('Export Einzeleinleiter (Einwohner bezogen)...', 0.95)
         for b in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            flnam, xfl, yfl, haltnam, ew, stdmittel, fremdwas, tgnam = \
+            flnam, xfl, yfl, haltnam, ew, stdmittel, fremdwas, wverbrauch = \
                 ('NULL' if el is None else el for el in b)
 
             # Einfuegen in die Datenbank
@@ -1612,19 +1698,19 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               INSERT INTO EINZELEINLEITER
               ( XKOORDINATE, YKOORDINATE, ZUORDNUNGGESPERRT, ZUORDNUNABHEZG, ROHR,
                 ABWASSERART, EINWOHNER, WASSERVERBRAUCH, HERKUNFT,
-                STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE, TEILEINZUGSGEBIET,
+                STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE,
                 ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME,
                 ABRECHNUNGSZEITRAUM, ABZUG,
                 LASTMODIFIED, ID) VALUES
               ( {xfl}, {yfl}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
                 {abwasserart}, {ew}, {wverbrauch}, {herkunft},
-                {stdmittel}, {fremdwas}, {faktor}, {flaeche}, '{teilgebiet}',
+                {stdmittel}, {fremdwas}, {faktor}, {flaeche},
                 {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{flnam}_SW_TEZG',
                 {abrechnungszeitraum}, {abzug},
                 '{createdat}', {nextid});
               """.format(xfl=xfl, yfl=yfl, zuordnunggesperrt=0, zuordnunabhezg=1, haltnam=haltnam,
-                         abwasserart=0, ew=ew, wverbrauch=0, herkunft=3,
-                         stdmittel=stdmittel, fremdwas=fremdwas, faktor=1, flaeche=0, teilgebiet=tgnam,
+                         abwasserart = 0, ew = ew, wverbrauch = wverbrauch, herkunft = 3,
+                         stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, 
                          zuflussmodell=0, zuflussdirekt=0, zufluss=0, planungsstatus=0, flnam=flnam,
                          abrechnungszeitraum=365, abzug=0,
                          createdat=createdat, nextid=nextid)
@@ -1640,7 +1726,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
 
-        fortschritt(u'{} Einzeleinleiter eingefuegt'.format(nextid - nr0), 0.95)
+        fortschritt(u'{} Einzeleinleiter (Einwohner bezogen) eingefuegt'.format(nextid - nr0), 0.95)
 
     # --------------------------------------------------------------------------------------------------
     # Setzen der internen Referenzen

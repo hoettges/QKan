@@ -67,10 +67,10 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     :type liste_flaechen_abflussparam: String
 
     :liste_hal_entw: Liste der ausgewählten Entwässerungsarten für die Haltungen
-    :type liste_hal_entw: String
+    :type liste_hal_entw: list of String
 
     :liste_teilgebiete: Liste der ausgewählten Teilgebiete
-    :type liste_teilgebiete: String
+    :type liste_teilgebiete: list of String
 
     :suchradius: Suchradius in der SQL-Abfrage
     :type suchradius: Real
@@ -167,31 +167,6 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         fehlermeldung(u"QKan_LinkFlaechen (4a) SQL-Fehler in SpatiaLite: \n", sql)
         del dbQK
         return False
-
-        # Flächen, die verschnitten werden müssen (aufteilen = 'ja')
-        # sql = """WITH flges AS (
-        # SELECT
-        # flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet,
-        # CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
-        # FROM flaechen
-        # INNER JOIN tezg
-        # ON intersects(flaechen.geom,tezg.geom)
-        # WHERE flaechen.aufteilen = 'ja'{auswahl})
-        # INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
-        # SELECT flges.flnam, flges.aufteilen, flges.teilgebiet, flges.geom
-        # FROM flges
-        # LEFT JOIN linkfl
-        # ON within(StartPoint(linkfl.glink),flges.geom)
-        # WHERE linkfl.pk IS NULL""".format(auswahl=auswahl)
-
-        # logger.debug('\nSQL-2b:\n{}\n'.format(sql))
-
-        # try:
-        # dbQK.sql(sql)
-        # except:
-        # fehlermeldung(u"QKan_LinkFlaechen (4b) SQL-Fehler in SpatiaLite: \n", sql)
-        # del dbQK
-        # return False
 
     # Jetzt werden die Flächenobjekte Buffer erweitert und jeweils neu 
     # hinzugekommmene mögliche Zuordnungen eingetragen.
@@ -304,6 +279,69 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     iface.mainWindow().statusBar().clearMessage()
     iface.messageBar().pushMessage(u"Information", u"Verknüpfungen sind erstellt!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
+
+
+
+# -------------------------------------------------------------------------------------------------------------
+
+def assigntezg(dbQK, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite'):
+    '''Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
+       Teilgebiete zu. Falls sich mehrere dieser Teilgebiete überlappen, ist das Resultat zufällig eines von diesen. 
+
+    :dbQK: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :type database: DBConnection (geerbt von dbapi...)
+
+    :liste_teilgebiete: Name des auf die gewählten Tabellen zu übertragenden Teilgebietes
+    :type liste_teilgebiete: list of String
+
+    :tablist: Liste der Tabellen, auf die die Teilgebiet "liste_teilgebiete" zu übertragen sind.
+    :type tablist: list of String
+
+    :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
+    :type dbtyp:    String
+    
+    :returns: void
+    '''
+
+    if len(liste_teilgebiete) != 0:
+        tgnames = "', '".join(liste_teilgebiete)
+        for table in tablist:
+            sql = """
+            UPDATE {table} SET teilgebiet = 
+            (	SELECT teilgebiete.tgnam
+                FROM teilgebiete
+                INNER JOIN {table} AS tt
+                ON Intersects(tt.geom,teilgebiete.geom)
+                WHERE tt.pk = {table}.pk AND
+                       teilgebiete.tgnam in ('{tgnames}'))
+            WHERE {table}.pk IN
+            (	SELECT {table}.pk
+                FROM teilgebiete
+                INNER JOIN {table}
+                ON Intersects({table}.geom,teilgebiete.geom)
+                WHERE teilgebiete.tgnam in ('{tgnames}'))
+            """.format(table=table, tgnames=tgnames)
+            try:
+                dbQK.sql(sql)
+            except:
+                fehlermeldung(u"QKan_LinkFlaechen (8) SQL-Fehler in SpatiaLite: \n", sql)
+                del dbQK
+                return False
+
+        dbQK.commit()
+
+    # --------------------------------------------------------------------------
+    # Datenbankverbindungen schliessen
+
+    del dbQK
+
+    # Karte aktualisieren
+    iface.mapCanvas().refreshAllLayers()
+
+    iface.mainWindow().statusBar().clearMessage()
+    iface.messageBar().pushMessage(u"Information", u"Zuordnung von Haltungen und Flächen ist fertig!", level=QgsMessageBar.INFO)
+    QgsMessageLog.logMessage(u"\nZuordnung von Haltungen und Flächen ist fertig!", level=QgsMessageLog.INFO)
+
 
 # -------------------------------------------------------------------------------------------------------------
 
