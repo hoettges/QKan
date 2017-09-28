@@ -12,12 +12,12 @@ qgisMinimumVersion=2.14
 description=Gruppe der QKan-Erweiterung(en)
 version=1.0
 author=Jörg Höttges/FH Aachen, Leon Ochsenfeld, Yannick Linke
-email=hoettges@fh-aachen.de,ochsenfeld@fh-aachen.de,invisi@0x0f.net
+email=hoettges@fh-aachen.de
 
 about=Dieses Plugin enthält die folgenden Module: Database, CreateUnbefFL, ExportHE, ImportHE, LinkFlaechen, GanglinienHE. Nähere Informationen können Sie der README.md entnehmen.
 
-tracker=https://github.com/hoettges/
-repository=https://github.com/hoettges/
+tracker=https://github.com/hoettges/QKan/issues
+repository=https://github.com/hoettges/QKan
 # End of mandatory metadata
 
 # Recommended items:
@@ -28,7 +28,7 @@ repository=https://github.com/hoettges/
 # Tags are comma separated with spaces allowed
 tags=flood, hydraulics, spatialite, cadastre, intersection
 
-homepage=https://github.com/hoettges/
+homepage=https://github.com/hoettges/QKan
 category=Plugins
 icon=QKan.png
 # experimental flag
