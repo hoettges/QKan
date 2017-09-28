@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/plugins/qkan/linkflaechen" >
+        <file>icon_assigntezg.png</file>
+        <file>icon_createlines.png</file>
+    </qresource>
+</RCC>

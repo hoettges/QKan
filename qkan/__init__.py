@@ -129,7 +129,7 @@ class Dummy:
             self.toolbar.addAction(action)
 
         if add_to_menu:
-            actions = self.menu.actions() + [action]
+            actions = self.actions + [action]
             actions.sort(key=lambda x: x.text().lower())
             self.menu.clear()
             for action in actions:

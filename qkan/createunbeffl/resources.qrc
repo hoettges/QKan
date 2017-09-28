@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/CreateUnbefFl" >
+    <qresource prefix="/plugins/qkan/createunbeffl" >
         <file>icon.png</file>
     </qresource>
 </RCC>

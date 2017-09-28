@@ -35,6 +35,8 @@ from qgis.utils import iface
 
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
+# noinspection PyUnresolvedReferences
+import resources
 from application_dialog import CreatelinesDialog, AssigntezgDialog
 from k_link import createlinks, assigntezg
 from qkan import Dummy
@@ -136,14 +138,14 @@ class Application:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_createlines_path = ':/plugins/Flaechenzuordnungen/icon_createlines.png'
+        icon_createlines_path = ':/plugins/qkan/linkflaechen/icon_createlines.png'
         Dummy.instance.add_action(
             icon_createlines_path,
             text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'),
             callback=self.run_createlines,
             parent=self.iface.mainWindow())
 
-        icon_assigntezg_path = ':/plugins/Flaechenzuordnungen/icon_assigntezg.png'
+        icon_assigntezg_path = ':/plugins/qkan/linkflaechen/icon_assigntezg.png'
         Dummy.instance.add_action(
             icon_assigntezg_path,
             text=self.tr(u'Haltungen und Flächen zu Teilgebiet zuordnen'),

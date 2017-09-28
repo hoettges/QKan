@@ -30,10 +30,6 @@ from PyQt4.QtGui import *
 import plotter
 # noinspection PyUnresolvedReferences
 import resources
-# noinspection PyUnresolvedReferences
-import resources_gangl
-# noinspection PyUnresolvedReferences
-import resources_laengs
 import slider as s
 from Enums import SliderMode, Type, LayerType
 from application_dialog import LaengsschnittDialog
@@ -82,27 +78,30 @@ class Application:
         Längsschnitt- und Ganglinie-Tool werden als unabhängige Werkzeuge dargestellt.
         Hier werden die GUI-Elemente mit bestimmten Event-Listenern verbunden.
         """
-        icon_path_laengs = ':/plugins/QKan_Laengsschnitt/icon_laengs.png'
-        icon_path_gangl = ':/plugins/QKan_Laengsschnitt/icon_gangl.png'
+        icon_path_laengs = ':/plugins/qkan/ganglinienhe/icon_laengs.png'
+        icon_path_gangl = ':/plugins/qkan/ganglinienhe/icon_gangl.png'
+        icon_forward = ':/plugins/qkan/ganglinienhe/icon_forward.png'
+        icon_backward = ':/plugins/qkan/ganglinienhe/icon_backward.png'
 
         Dummy.instance.add_action(
             icon_path_laengs,
             text=u'Längsschnitt-Tool',
-            callback=self.__run
+            callback=self.__run,
+            parent=self.__iface.mainWindow()
         )
         Dummy.instance.add_action(
             icon_path_gangl,
             text=u'Ganglinien-Tool',
-            callback=self.__run_ganglinie
+            callback=self.__run_ganglinie,
+            parent=self.__iface.mainWindow()
         )
         self.__dlg.setWindowFlags(Qt.Window)
         self.__dlg2.setWindowFlags(Qt.Window)
 
-        workspace = os.path.dirname(__file__)
         self.__dlg.btn_forward.setText("")
-        self.__dlg.btn_forward.setIcon(QIcon(os.path.join(workspace, "forward.png")))
+        self.__dlg.btn_forward.setIcon(QIcon(icon_forward))
         self.__dlg.btn_backward.setText("")
-        self.__dlg.btn_backward.setIcon(QIcon(os.path.join(workspace, "backward.png")))
+        self.__dlg.btn_backward.setIcon(QIcon(icon_backward))
         self.__dlg.finished.connect(self.__finished)
         self.__dlg.btn_path.clicked.connect(self.__select_db)
         self.__dlg.checkbox_maximum.stateChanged.connect(self.__switch_max_values)

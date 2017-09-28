@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/QKan_Laengsschnitt" >
-        <file>icon_gangl.png</file>
-    </qresource>
-</RCC>

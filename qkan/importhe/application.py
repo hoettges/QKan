@@ -39,7 +39,7 @@ from import_from_he import importKanaldaten
 # Anbindung an Logging-System (Initialisierung in __init__)
 from qkan import Dummy
 # noinspection PyUnresolvedReferences
-import resources_rc
+import resources
 
 LOGGER = logging.getLogger('QKan')
 
@@ -165,7 +165,7 @@ class ImportFromHE:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/ImportFromHE/icon.png'
+        icon_path = ':/plugins/qkan/importhe/icon.png'
         Dummy.instance.add_action(
             icon_path,
             text=self.tr(u'Import aus Hystem-Extran'),

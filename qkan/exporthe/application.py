@@ -34,7 +34,7 @@ from qgis.core import QgsProject, QgsMessageLog
 from qgis.utils import iface
 
 # noinspection PyUnresolvedReferences
-import resources_rc
+import resources
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
 from application_dialog import ExportToHEDialog
@@ -232,7 +232,7 @@ class ExportToHE:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/QKan_ExportHE/icon_qk2he.png'
+        icon_path = ':/plugins/qkan/exporthe/icon_qk2he.png'
         Dummy.instance.add_action(icon_path,
                                   text=self.tr(u'Export to Hystem-Extran'),
                                   callback=self.run,
