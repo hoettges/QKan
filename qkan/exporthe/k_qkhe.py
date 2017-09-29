@@ -1589,13 +1589,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         sql = u"""SELECT
           elnam AS elnam,
-          x(centroid(geom)) AS xel,
-          y(centroid(geom)) AS yel,
+          x(geom) AS xel,
+          y(geom) AS yel,
           haltnam AS haltnam,
-          wverbrauch AS wverbrauch, 
-          stdmittel AS stdmittel,
-          fremdwas AS fremdwas, 
-          einwohner AS ew,
           zufluss AS zufluss
           FROM einleit{auswahl}
         """.format(auswahl=auswahl)
@@ -1614,7 +1610,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         for b in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            elnam, xel, yel, haltnam, ew, stdmittel, fremdwas = \
+            elnam, xel, yel, haltnam, zufluss = \
                 ('NULL' if el is None else el for el in b)
 
             # Einfuegen in die Datenbank
@@ -1633,8 +1629,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 {abrechnungszeitraum}, {abzug},
                 '{createdat}', {nextid});
               """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
-                         abwasserart = 0, ew = ew, wverbrauch = wverbrauch, herkunft = 1,
-                         stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, 
+                         abwasserart = 0, ew = 0, wverbrauch = 0, herkunft = 1,
+                         stdmittel = 0, fremdwas = 0, faktor = 1, flaeche = 0, 
                          zuflussmodell = 0, zuflussdirekt = 0, zufluss = zufluss, planungsstatus = 0, elnam = elnam,
                          abrechnungszeitraum = 365, abzug = 0,
                          createdat = createdat, nextid = nextid)
@@ -1659,38 +1655,39 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         # Herkunft = 3 (Einwohner)
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
+
         if len(liste_teilgebiete) != 0:
-            auswahl = " WHERE g.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            auswahl = " WHERE teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
             auswahl = ""
 
-        sql = u""" SELECT
-          tezg.flnam AS flnam,
-          x(centroid(tezg.geom)) AS xfl,
-          y(centroid(tezg.geom)) AS yfl,
-          tezg.haltnam AS haltnam,
-          teilgebiete.ewdichte*area(tezg.geom)/10000. AS ew,
-          teilgebiete.stdmittel AS stdmittel,
-          teilgebiete.fremdwas AS fremdwas,
-          teilgebiete.wverbrauch AS wverbrauch
-        FROM tezg INNER JOIN teilgebiete ON tezg.teilgebiet = teilgebiete.tgnam{auswahl}
+        sql = u"""SELECT
+          elnam AS elnam,
+          x(centroid(geom)) AS xel,
+          y(centroid(geom)) AS yel,
+          haltnam AS haltnam,
+          wverbrauch AS wverbrauch, 
+          stdmittel AS stdmittel,
+          fremdwas AS fremdwas, 
+          einwohner AS einwohner
+          FROM einleit{auswahl}
         """.format(auswahl=auswahl)
 
         try:
             dbQK.sql(sql)
         except BaseException as err:
-            fehlermeldung(u"(26) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            fehlermeldung(u"(35) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
 
         nr0 = nextid
 
-        fortschritt('Export Einzeleinleiter (Einwohner bezogen)...', 0.95)
+        fortschritt('Export Einzeleinleiter (direkt)...', 0.92)
         for b in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            flnam, xfl, yfl, haltnam, ew, stdmittel, fremdwas, wverbrauch = \
+            elnam, xel, yel, haltnam, wverbrauch, stdmittel, fremdwas, einwohner = \
                 ('NULL' if el is None else el for el in b)
 
             # Einfuegen in die Datenbank
@@ -1702,22 +1699,22 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME,
                 ABRECHNUNGSZEITRAUM, ABZUG,
                 LASTMODIFIED, ID) VALUES
-              ( {xfl}, {yfl}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
-                {abwasserart}, {ew}, {wverbrauch}, {herkunft},
+              ( {xel}, {yel}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
+                {abwasserart}, {einwohner}, {wverbrauch}, {herkunft},
                 {stdmittel}, {fremdwas}, {faktor}, {flaeche},
-                {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{flnam}_SW_TEZG',
+                {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}_SW_TEZG',
                 {abrechnungszeitraum}, {abzug},
                 '{createdat}', {nextid});
-              """.format(xfl=xfl, yfl=yfl, zuordnunggesperrt=0, zuordnunabhezg=1, haltnam=haltnam,
-                         abwasserart = 0, ew = ew, wverbrauch = wverbrauch, herkunft = 3,
+              """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
+                         abwasserart = 0, einwohner = einwohner, wverbrauch = wverbrauch, herkunft = 3,
                          stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, 
-                         zuflussmodell=0, zuflussdirekt=0, zufluss=0, planungsstatus=0, flnam=flnam,
-                         abrechnungszeitraum=365, abzug=0,
-                         createdat=createdat, nextid=nextid)
+                         zuflussmodell = 0, zuflussdirekt = 0, zufluss = 0, planungsstatus = 0, elnam = elnam,
+                         abrechnungszeitraum = 365, abzug = 0,
+                         createdat = createdat, nextid = nextid)
             try:
                 dbHE.sql(sql)
             except BaseException as err:
-                fehlermeldung(u"(12) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                fehlermeldung(u"(36) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
                 del dbQK
                 del dbHE
                 return False

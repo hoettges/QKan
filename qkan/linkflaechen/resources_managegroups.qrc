@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/Flaechenzuordnungen" >
+        <file>icon_managegroups.png</file>
+    </qresource>
+</RCC>

@@ -118,11 +118,11 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         del dbQK
         return False
 
-    # sql = """DELETE FROM linkfl"""
-    # try:
+        # sql = """DELETE FROM linkfl"""
+        # try:
         # dbQK.sql(sql)
         # dbQK.commit()
-    # except:
+        # except:
         # fehlermeldung(u"QKan_LinkFlaechen (6) SQL-Fehler in SpatiaLite: \n", sql)
         # del dbQK
         # return False
@@ -151,11 +151,7 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 FROM flaechen
                 INNER JOIN tezg
                 ON intersects(flaechen.geom,tezg.geom)
-                WHERE tezg.ROWID IN (
-                    SELECT ROWID FROM SpatialIndex
-                    WHERE f_table_name = 'tezg' AND
-                        search_frame = flaechen.geom) AND 
-                flaechen.aufteilen = 'ja'{auswahl})
+                WHERE flaechen.aufteilen = 'ja'{auswahl})
             INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
             SELECT flges.flnam, flges.aufteilen, flges.teilgebiet, flges.geom
             FROM flges
@@ -163,7 +159,7 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             ON within(StartPoint(linkfl.glink),flges.geom)
             WHERE linkfl.pk IS NULL""".format(auswahl=auswahl)
 
-    # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
+    # logger.debug('\nSQL-2a:\n{}\n'.format(sql))
 
     try:
         dbQK.sql(sql)
@@ -231,7 +227,7 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             WHERE linkfl.pk = t1.pk)
             WHERE linkfl.glink IS NULL{auswlin}""".format(bezug=bezug, auswahl=auswahl, auswlin=auswlin)
 
-    # logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
+    # logger.debug('\nSQL-3a:\n{}\n'.format(sql))
 
     try:
         dbQK.sql(sql)
@@ -253,25 +249,16 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         return False
 
     # Keine Prüfung, ob Anfang der Verknüpfungslinie noch in zugehöriger Fläche liegt.
-    sql = """WITH linkflbuf AS
-            (   SELECT pk, buffer(EndPoint(linkfl.glink),{fangradius}) AS geob, 
-                       StartPoint(linkfl.glink) AS geos
-                FROM linkfl
-            )
-            UPDATE flaechen SET haltnam = 
+    sql = """UPDATE flaechen SET haltnam = 
             (SELECT 
               haltungen.haltnam
-            FROM linkflbuf
+            FROM linkfl
             INNER JOIN haltungen
-            ON intersects(linkflbuf.geob,haltungen.geom)
+            ON intersects(buffer(EndPoint(linkfl.glink),{fangradius}),haltungen.geom)
             INNER JOIN flaechen AS fl
-            ON within(linkflbuf.geos,fl.geom)
-            WHERE fl.pk = flaechen.pk AND flaechen.pk IN 
-            (   SELECT ROWID FROM SpatialIndex WHERE
-                f_table_name = 'flaechen' AND
-                search_frame = 
-            ))
-            WHERE flaechen.pk in (SELECT pk FROM linkflbuf) and
+            ON within(StartPoint(linkfl.glink),fl.geom)
+            WHERE fl.pk = flaechen.pk)
+            WHERE flaechen.pk in (SELECT pk FROM linkfl) and
                   (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL)""".format(fangradius=fangradius)
     try:
         dbQK.sql(sql)
@@ -297,7 +284,7 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
 # -------------------------------------------------------------------------------------------------------------
 
-def assigntezg(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite'):
+def assigntezg(dbQK, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite'):
     '''Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
        Teilgebiete zu. Falls sich mehrere dieser Teilgebiete überlappen, ist das Resultat zufällig eines von diesen. 
 
@@ -316,10 +303,6 @@ def assigntezg(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite
     :returns: void
     '''
 
-    if auswahltyp == 'within':
-        spatialrelation = 'within'
-    elif auswahltyp == 'overlaps':
-        spatialrelation = 'intersects'
     if len(liste_teilgebiete) != 0:
         tgnames = "', '".join(liste_teilgebiete)
         for table in tablist:
@@ -328,16 +311,16 @@ def assigntezg(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite
             (	SELECT teilgebiete.tgnam
                 FROM teilgebiete
                 INNER JOIN {table} AS tt
-                ON {spatialrelation}(tt.geom,teilgebiete.geom)
+                ON Intersects(tt.geom,teilgebiete.geom)
                 WHERE tt.pk = {table}.pk AND
                        teilgebiete.tgnam in ('{tgnames}'))
             WHERE {table}.pk IN
             (	SELECT {table}.pk
                 FROM teilgebiete
                 INNER JOIN {table}
-                ON {spatialrelation}({table}.geom,teilgebiete.geom)
+                ON Intersects({table}.geom,teilgebiete.geom)
                 WHERE teilgebiete.tgnam in ('{tgnames}'))
-            """.format(table=table, tgnames=tgnames, spatialrelation=spatialrelation)
+            """.format(table=table, tgnames=tgnames)
             try:
                 dbQK.sql(sql)
             except:
@@ -360,104 +343,21 @@ def assigntezg(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite
     QgsMessageLog.logMessage(u"\nZuordnung von Haltungen und Flächen ist fertig!", level=QgsMessageLog.INFO)
 
 
-
 # -------------------------------------------------------------------------------------------------------------
 
-def reloadgroup(dbQK, gruppenname, dbtyp = 'SpatiaLite'):
-    '''Lädt die unter einem Gruppennamen gespeicherten Teilgebietszuordnungen zurück in die Tabellen 
-       "haltungen", "schaechte", "flaechen", "tezg", "linkfl", "linksw", "swref"
+# Verzeichnis der Testdaten
+# pfad = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng'
 
-    :dbQK: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type database: DBConnection (geerbt von dbapi...)
+# database_QKan = os.path.join(pfad,'netz.sqlite')
+# epsg = '31466'
 
-    :gruppenname: Bezeichnung der Gruppe, unter der die Teilgebietszuordnungen abgelegt wurden.
-    :type gruppenname: String
-
-    :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:    String
-    
-    :returns: void
-    '''
-
-    tablist = ["haltungen", "schaechte", "flaechen", "linkfl", "tezg", "swref"]
-
-    for table in tablist:
-        sql = u"""
-        UPDATE {table}
-        SET teilgebiet = 
-        (   SELECT g.teilgebiet
-            FROM gruppen AS g
-            WHERE g.grnam = 'Pieczkowski' AND
-            g.tabelle = '{table}' AND
-            {table}.pk = g.pktab)""".format(table=table)
-        try:
-            dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen.reloadgroup (9) SQL-Fehler in SpatiaLite: \n", sql)
-            del dbQK
-            return False
-
-    dbQK.commit()
-
-
-
-# -------------------------------------------------------------------------------------------------------------
-
-def storegroup(dbQK, gruppenname, kommentar, dbtyp = 'SpatiaLite'):
-    '''Speichert die aktuellen Teilgebietszuordnungen der Tabellen 
-       "haltungen", "schaechte", "flaechen", "tezg", "linkfl", "linksw", "swref"
-       unter einem neuen Gruppennamen
-
-    :dbQK: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type database: DBConnection (geerbt von dbapi...)
-
-    :gruppenname: Bezeichnung der Gruppe, unter der die Teilgebietszuordnungen abgelegt werden.
-    :type gruppenname: String
-
-    :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:    String
-    
-    :returns: void
-    '''
-
-    tablist = ["haltungen", "schaechte", "flaechen", "linkfl", "tezg", "swref"]
-
-    # Abfrage setzt sich aus den mit UNION verbundenen Tabellen aus tablist zusammen...
-    sql = u"""
-    INSERT INTO gruppen
-    (grnam, pktab, teilgebiet, tabelle, kommentar)
-    SELECT 
-      '{gruppenname}' AS grnam,
-      pk AS pktab, 
-      teilgebiet AS teilgebiet, 
-      'haltungen' AS tabelle, 
-      '{kommentar}' AS kommentar
-    FROM
-      haltungen
-    WHERE teilgebiet <> '' And teilgebiet IS NOT NULL
-    """.format(gruppenname=gruppenname, kommentar=kommentar)
-
-    for table in tablist[1:]:
-        sql += u"""UNION
-        SELECT 
-          '{gruppenname}' AS grnam,
-          pk AS pktab, 
-          teilgebiet AS teilgebiet, 
-          '{table}' AS tabelle, 
-          '{kommentar}' AS kommentar
-        FROM
-          {table}
-        WHERE teilgebiet <> '' And teilgebiet IS NOT NULL
-        """.format(gruppenname=gruppenname, kommentar=kommentar,table=table)
-
-    logger.debug(u'\nSQL-4:\n{}\n'.format(sql))
-    # Zusammengesetzte SQL-Abfrage ausführen...
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkFlaechen.savegroup (10) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
-        return False
-
-    dbQK.commit()
-
+# if __name__ == '__main__':
+# createlinks(database_QKan, epsg)
+# elif __name__ == '__console__':
+# # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Konsole aufgerufen")
+# createlinks(database_QKan, epsg)
+# elif __name__ == '__builtin__':
+# # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Toolbox aufgerufen")
+# createlinks(database_QKan, epsg)
+# # else:
+# # QMessageBox.information(None, "Info", "Die Variable __name__ enthält: {0:s}".format(__name__))

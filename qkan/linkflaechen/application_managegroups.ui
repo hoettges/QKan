@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>317</width>
-    <height>480</height>
+    <width>675</width>
+    <height>608</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,15 +16,15 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>410</y>
-     <width>181</width>
-     <height>32</height>
+     <x>240</x>
+     <y>550</y>
+     <width>91</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>10</pointsize>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -36,7 +36,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Abort|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Close</set>
    </property>
    <property name="centerButtons">
     <bool>true</bool>
@@ -45,8 +45,8 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>460</y>
+     <x>600</x>
+     <y>590</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -65,9 +65,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>40</y>
-     <width>271</width>
-     <height>341</height>
+     <y>30</y>
+     <width>631</width>
+     <height>281</height>
     </rect>
    </property>
    <property name="font">
@@ -78,13 +78,13 @@
     </font>
    </property>
    <property name="title">
-    <string>Auswahloptionen</string>
+    <string>Teilgebietszuordnungen verwalten</string>
    </property>
-   <widget class="QListWidget" name="lw_teilgebiete">
+   <widget class="QListWidget" name="lw_gruppen">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>140</y>
+      <y>50</y>
       <width>231</width>
       <height>171</height>
      </rect>
@@ -96,72 +96,187 @@
      <string extracomment="Auswahl der zu bearbeitenden Teilgebiete. Alle auswählen mit [Strg]+A"/>
     </property>
     <property name="selectionMode">
-     <enum>QAbstractItemView::ExtendedSelection</enum>
+     <enum>QAbstractItemView::SingleSelection</enum>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>90</y>
-      <width>241</width>
+      <y>30</y>
+      <width>171</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>diesen ausgewählten Teilgebieten</string>
+     <string>Gespeicherte Gruppen:</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="rb_within">
+   <widget class="QTableWidget" name="tw_gruppenattr">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>60</y>
-      <width>82</width>
-      <height>17</height>
+      <x>290</x>
+      <y>50</y>
+      <width>321</width>
+      <height>171</height>
      </rect>
     </property>
-    <property name="text">
-     <string>innerhalb</string>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
     </property>
-   </widget>
-   <widget class="QRadioButton" name="rb_overlaps">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>60</y>
-      <width>111</width>
-      <height>17</height>
-     </rect>
+    <property name="columnCount">
+     <number>3</number>
     </property>
-    <property name="text">
-     <string>überlappend</string>
-    </property>
+    <attribute name="horizontalHeaderMinimumSectionSize">
+     <number>15</number>
+    </attribute>
+    <column>
+     <property name="text">
+      <string>Teilgebiet</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Tabelle</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Anzahl</string>
+     </property>
+    </column>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>290</x>
       <y>30</y>
-      <width>151</width>
+      <width>321</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Haltungen und Flächen</string>
+     <string>Datensätze für gewählte Gruppe:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_reloadgroup">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>240</y>
+      <width>211</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Aus Gruppe wiederherstellen</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>330</y>
+     <width>631</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Neue Gruppe</string>
+   </property>
+   <widget class="QLineEdit" name="tf_newgroup">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>30</y>
+      <width>231</width>
+      <height>20</height>
+     </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>110</y>
+      <y>30</y>
       <width>81</width>
       <height>16</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="text">
-     <string>zuordnen:</string>
+     <string>Bezeichnung:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Kommentar:</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="tf_kommentar">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>60</y>
+      <width>331</width>
+      <height>41</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_storegroup">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>150</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Neue Gruppe speichern</string>
     </property>
    </widget>
   </widget>
