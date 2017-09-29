@@ -75,6 +75,16 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     :suchradius: Suchradius in der SQL-Abfrage
     :type suchradius: Real
 
+    :bezug_abstand: Bestimmt, ob in der SQL-Abfrage der Mittelpunkt oder die nächste Kante der Fläche
+                    berücksichtigt wird
+    :type fangradius: Real
+
+    :fangradius: Suchradius für den Endpunkt in der SQL-Abfrage
+    :type fangradius: Real
+
+    :epsg: Nummer des Projektionssystems
+    :type epsg: String
+
     :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:    String
     
@@ -92,40 +102,6 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     # Flächen, bei denen im Feld "haltungen" bereits eine Eintragung vorhanden ist, 
     # werden nicht bearbeitet. Damit ist eine manuelle Zuordnung möglich. 
 
-    # Tabelle "linkfl" anlegen und ggfs. leeren
-    sql = """CREATE TABLE IF NOT EXISTS linkfl (
-            pk INTEGER PRIMARY KEY AUTOINCREMENT,
-            flnam TEXT,
-            haltnam TEXT,
-            aufteilen TEXT,
-            teilgebiet TEXT)"""
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkFlaechen (1) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
-        return False
-
-    sql1 = """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
-    sql2 = """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
-    sql3 = """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
-    try:
-        dbQK.sql(sql1)
-        dbQK.sql(sql2)
-        dbQK.sql(sql3)
-    except:
-        fehlermeldung(u"QKan_LinkFlaechen (2) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
-        return False
-
-    # sql = """DELETE FROM linkfl"""
-    # try:
-        # dbQK.sql(sql)
-        # dbQK.commit()
-    # except:
-        # fehlermeldung(u"QKan_LinkFlaechen (6) SQL-Fehler in SpatiaLite: \n", sql)
-        # del dbQK
-        # return False
 
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
     if len(liste_flaechen_abflussparam) == 0:
@@ -172,7 +148,7 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         del dbQK
         return False
 
-    # Jetzt werden die Flächenobjekte Buffer erweitert und jeweils neu 
+    # Jetzt werden die Flächenobjekte mit einem Buffer erweitert und jeweils neu 
     # hinzugekommmene mögliche Zuordnungen eingetragen.
     # Wenn das Attribut "haltnam" vergeben ist, gilt die Fläche als zugeordnet.
 

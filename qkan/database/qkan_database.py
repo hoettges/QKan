@@ -525,7 +525,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     sql = """CREATE TABLE IF NOT EXISTS linksw (
             pk INTEGER PRIMARY KEY AUTOINCREMENT,
-            swnam TEXT,
+            pkswref INTEGER,
             haltnam TEXT,
             teilgebiet TEXT)"""
 
@@ -536,7 +536,7 @@ def createdbtables(consl, cursl, epsg=25832):
         consl.close()
         return False
 
-    sql1 = """SELECT AddGeometryColumn('linksw','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql1 = """SELECT AddGeometryColumn('linksw','geom',{epsg},'POINT',2)""".format(epsg=epsg)
     sql2 = """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
     sql3 = """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
     sqlindex = "SELECT CreateSpatialIndex('linksw','geom')"
