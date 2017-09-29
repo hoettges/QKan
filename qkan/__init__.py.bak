@@ -24,7 +24,7 @@ class Dummy:
             importhe.ImportFromHE(iface),
             exporthe.ExportToHE(iface),
             ganglinienhe.Application(iface),
-            linkflaechen.LinkFl(iface)
+            linkflaechen.LinkFlaechen(iface)
         ]
         Dummy.instance = self
 

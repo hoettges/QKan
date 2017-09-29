@@ -57,7 +57,7 @@ def fehlermeldung(title, text):
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 
-class Application:
+class LinkFl:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):

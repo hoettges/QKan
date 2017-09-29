@@ -53,7 +53,7 @@ def fehlermeldung(title, text):
 
 
 # ------------------------------------------------------------------------------
-# 1. Teilprogramm: Erzeugung der graphischen Verknüpfungen
+# Erzeugung der graphischen Verknüpfungen für Flächen
 
 def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 liste_teilgebiete, suchradius=50, bezug_abstand='kante', fangradius=0.1, epsg='25832',
