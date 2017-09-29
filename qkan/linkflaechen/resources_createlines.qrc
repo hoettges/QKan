@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/plugins/qkan/linkflaechen" >
-        <file>icon_managegroups.png</file>
+        <file>icon_createlines.png</file>
     </qresource>
 </RCC>

@@ -139,27 +139,26 @@ class Application:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_createlines_path = ':/plugins/qkan/linkflaechen/icon_createlines.png'
-        Dummy.instance.add_action(
-            icon_createlines_path,
-            text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'),
-            callback=self.run_createlines,
-            parent=self.iface.mainWindow())
-
         icon_assigntezg_path = ':/plugins/qkan/linkflaechen/icon_assigntezg.png'
         Dummy.instance.add_action(
-            icon_assigntezg_path,
-            text=self.tr(u'Haltungen und Flächen zu Teilgebiet zuordnen'),
-            callback=self.run_assigntezg,
+            icon_assigntezg_path, 
+            text=self.tr(u'Haltungen und Flächen zu Teilgebiet zuordnen'), 
+            callback=self.run_assigntezg, 
             parent=self.iface.mainWindow())
 
-        icon_managegroups_path = ':/plugins/Flaechenzuordnungen/icon_managegroups.png'
+        icon_createlines_path = ':/plugins/qkan/linkflaechen/icon_createlines.png'
         Dummy.instance.add_action(
-            icon_managegroups_path,
-            text=self.tr(u'Teilgebietszuordnungen als Gruppen verwalten'),
-            callback=self.run_managegroups,
+            icon_createlines_path, 
+            text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'), 
+            callback=self.run_createlines, 
             parent=self.iface.mainWindow())
 
+        icon_managegroups_path = ':/plugins/qkan/linkflaechen/icon_managegroups.png'
+        Dummy.instance.add_action(
+            icon_managegroups_path, 
+            text=self.tr(u'Teilgebietszuordnungen als Gruppen verwalten'), 
+            callback=self.run_managegroups, 
+            parent=self.iface.mainWindow())
 
     def unload(self):
         pass
@@ -313,11 +312,11 @@ class Application:
                     self.dlg_mg.tw_gruppenattr.setItem(i, j, QTableWidgetItem(elem[j]))
                     self.dlg_mg.tw_gruppenattr.setRowHeight(i, 20)
 
-    def reloadgroup(self):
+    def reloadgrouptgb(self):
         reloadgroup(self.dbQK, self.gruppe, dbtyp = 'SpatiaLite')
         iface.messageBar().pushMessage("Fertig!", 'Teilgebiete wurden geladen!', level=QgsMessageBar.INFO)
 
-    def storegroup(self):
+    def storegrouptgb(self):
         neuegruppe = self.dlg_mg.tf_newgroup.text()
         if neuegruppe != '' and neuegruppe is not None:
             kommentar = self.dlg_mg.tf_kommentar.toPlainText()
@@ -568,9 +567,9 @@ class Application:
             auswahltyp = 'within'
 
         if auswahltyp == 'within':
-            self.dlg_cl.rb_within.setChecked(True)
+            self.dlg_at.rb_within.setChecked(True)
         elif auswahltyp == 'overlaps':
-            self.dlg_cl.rb_overlaps.setChecked(True)
+            self.dlg_at.rb_overlaps.setChecked(True)
         else:
             fehlermeldung("Fehler im Programmcode (3)", "Nicht definierte Option")
             return False
@@ -584,9 +583,9 @@ class Application:
         if result:
 
             liste_teilgebiete = self.listselecteditems(self.dlg_at.lw_teilgebiete)
-            if self.dlg_cl.rb_within.isChecked():
+            if self.dlg_at.rb_within.isChecked():
                 auswahltyp = 'within'
-            elif self.dlg_cl.rb_abstandmittelpunkt.isChecked():
+            elif self.dlg_at.rb_abstandmittelpunkt.isChecked():
                 auswahltyp = 'overlaps'
             else:
                 fehlermeldung("Fehler im Programmcode (4)", "Nicht definierte Option")
@@ -638,8 +637,8 @@ class Application:
         self.showgroups()
 
         self.dlg_mg.lw_gruppen.itemClicked.connect(self.listGroupAttr)
-        self.dlg_mg.pb_storegroup.clicked.connect(self.storegroup)
-        self.dlg_mg.pb_reloadgroup.clicked.connect(self.reloadgroup)
+        self.dlg_mg.pb_storegroup.clicked.connect(self.storegrouptgb)
+        self.dlg_mg.pb_reloadgroup.clicked.connect(self.reloadgrouptgb)
 
         self.dlg_mg.lw_gruppen.setCurrentRow(0)
         # Anzeige initialisieren
