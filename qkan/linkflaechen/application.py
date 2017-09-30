@@ -719,7 +719,7 @@ class LinkFl:
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()
-            if 'Anbindung' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
+            if 'Anbindungen SW-Punkte' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
                 uri = QgsDataSourceURI()
                 uri.setDatabase(database_QKan)
                 uri.setDataSource('', 'linksw', 'glink')
