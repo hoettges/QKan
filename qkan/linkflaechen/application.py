@@ -157,7 +157,7 @@ class LinkFl:
         icon_createlinesw_path = ':/plugins/qkan/linkflaechen/icon_createlinesw.png'
         Dummy.instance.add_action(
             icon_createlinesw_path, 
-            text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'), 
+            text=self.tr(u'Erzeuge Verknüpfungslinien von SW-Punkten zu Haltungen'), 
             callback=self.run_createlinesw, 
             parent=self.iface.mainWindow())
 
@@ -198,7 +198,7 @@ class LinkFl:
         try:
             self.dbQK.sql(sql)
         except:
-            fehlermeldung(u"QKan_LinkFlaechen (9) SQL-Fehler in SpatiaLite: \n", sql)
+            fehlermeldung(u"QKan_LinkFlaechen.countselectionfl (9) SQL-Fehler in SpatiaLite: \n", sql)
             del self.dbQK
             return False
         daten = self.dbQK.fetchone()
@@ -223,7 +223,7 @@ class LinkFl:
         try:
             self.dbQK.sql(sql)
         except:
-            fehlermeldung(u"QKan_LinkFlaechen (9) SQL-Fehler in SpatiaLite: \n", sql)
+            fehlermeldung(u"QKan_LinkFlaechen.countselectionfl (9) SQL-Fehler in SpatiaLite: \n", sql)
             del self.dbQK
             return False
         daten = self.dbQK.fetchone()
@@ -248,7 +248,40 @@ class LinkFl:
         try:
             self.dbQK.sql(sql)
         except:
-            fehlermeldung(u"QKan_LinkFlaechen (10) SQL-Fehler in SpatiaLite: \n", sql)
+            fehlermeldung(u"QKan_LinkFlaechen.countselectionfl (10) SQL-Fehler in SpatiaLite: \n", sql)
+            del self.dbQK
+            return False
+        daten = self.dbQK.fetchone()
+        if not (daten is None):
+            self.dlg_cl.lf_anzahl_haltungen.setText(str(daten[0]))
+        else:
+            self.dlg_cl.lf_anzahl_haltungen.setText('0')
+
+
+    def countselectionsw(self):
+        """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
+        der betroffenen Haltungen"""
+        liste_hal_entw = self.listselecteditems(self.dlg_cl.lw_hal_entw)
+        liste_teilgebiete = self.listselecteditems(self.dlg_cl.lw_teilgebiete)
+        # Aufbereiten für SQL-Abfrage
+
+        # Zu berücksichtigende Haltungen zählen
+        if len(liste_hal_entw) == 0:
+            auswahl = ''
+        else:
+            auswahl = u" WHERE haltungen.entwart in ('{}')".format("', '".join(liste_hal_entw))
+
+        if len(liste_teilgebiete) != 0:
+            if auswahl == '':
+                auswahl = u" WHERE haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            else:
+                auswahl += u" and haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+
+        sql = u"""SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(auswahl=auswahl)
+        try:
+            self.dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan_LinkFlaechen.countselectionsw (10) SQL-Fehler in SpatiaLite: \n", sql)
             del self.dbQK
             return False
         daten = self.dbQK.fetchone()
@@ -594,6 +627,39 @@ class LinkFl:
 
         self.dbQK.commit()
 
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
+        sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
+        self.dbQK.sql(sql)
+        daten = self.dbQK.fetchall()
+        self.dlg_sw.lw_hal_entw.clear()
+        for ielem, elem in enumerate(daten):
+            if elem[0] is not None:
+                self.dlg_sw.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
+                if 'liste_hal_entw' in self.config:
+                    if elem[0] in self.config['liste_hal_entw']:
+                        self.dlg_sw.lw_hal_entw.setCurrentRow(ielem)
+                        # if len(daten) == 1:
+                        # self.dlg_sw.lw_hal_entw.setCurrentRow(0)
+
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         self.dbQK.sql(sql)
@@ -617,6 +683,22 @@ class LinkFl:
             suchradius = 50.
         self.dlg_sw.tf_suchradius.setText(str(suchradius))
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        self.dlg_sw.lw_flaechen_abflussparam.itemClicked.connect(self.countselectionsw)
+        self.dlg_sw.lw_hal_entw.itemClicked.connect(self.countselectionsw)
         self.dlg_sw.lw_teilgebiete.itemClicked.connect(self.countselectionsw)
         self.countselectionsw()
 
@@ -633,12 +715,30 @@ class LinkFl:
             # Start der Verarbeitung
 
             # Abrufen der ausgewählten Elemente in beiden Listen
+
+            liste_hal_entw = self.listselecteditems(self.dlg_sw.lw_hal_entw)
             liste_teilgebiete = self.listselecteditems(self.dlg_sw.lw_teilgebiete)
             suchradius = self.dlg_sw.tf_suchradius.text()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             # Konfigurationsdaten schreiben
 
             self.config['suchradius'] = suchradius
+
+            self.config['liste_hal_entw'] = liste_hal_entw
+
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['epsg'] = epsg
 
@@ -648,6 +748,7 @@ class LinkFl:
             # Start der Verarbeitung
 
             createlinksw(self.dbQK, liste_teilgebiete, suchradius, epsg)
+
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()
