@@ -106,7 +106,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
     if len(liste_flaechen_abflussparam) == 0:
         auswahl = ''
-        logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
+        # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
     else:
         auswahl = " and flaechen.abflussparameter in ('{}')".format("', '".join(liste_flaechen_abflussparam))
 
@@ -139,7 +139,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             ON within(StartPoint(linkfl.glink),flges.geom)
             WHERE linkfl.pk IS NULL""".format(auswahl=auswahl)
 
-    # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
+    logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
 
     try:
         dbQK.sql(sql)
@@ -205,7 +205,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             WHERE linkfl.pk = t1.pk)
             WHERE linkfl.glink IS NULL{auswlin}""".format(bezug=bezug, auswahl=auswahl, auswlin=auswlin)
 
-    # logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
+    logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
     try:
         dbQK.sql(sql)
@@ -260,6 +260,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     iface.mainWindow().statusBar().clearMessage()
     iface.messageBar().pushMessage(u"Information", u"Verknüpfungen sind erstellt!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
+
+    return True
 
 
 
@@ -434,6 +436,8 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
     iface.messageBar().pushMessage(u"Information", u"Verknüpfungen sind erstellt!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
 
+    return True
+
 
 
 # -------------------------------------------------------------------------------------------------------------
@@ -495,6 +499,7 @@ def assigntezg(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite
     iface.messageBar().pushMessage(u"Information", u"Zuordnung von Haltungen und Flächen ist fertig!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nZuordnung von Haltungen und Flächen ist fertig!", level=QgsMessageLog.INFO)
 
+    return True
 
 
 # -------------------------------------------------------------------------------------------------------------
@@ -534,6 +539,8 @@ def reloadgroup(dbQK, gruppenname, dbtyp = 'SpatiaLite'):
             return False
 
     dbQK.commit()
+
+    return True
 
 
 
@@ -597,3 +604,4 @@ def storegroup(dbQK, gruppenname, kommentar, dbtyp = 'SpatiaLite'):
 
     dbQK.commit()
 
+    return True

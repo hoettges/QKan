@@ -186,7 +186,7 @@ class LinkFl:
         if len(liste_flaechen_abflussparam) == 0:
             # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
             auswahl = u''
-            # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
+            logger.debug(u'liste_flaechen_abflussparam:\n{}'.format(liste_flaechen_abflussparam))
         else:
             auswahl = u" AND flaechen.abflussparameter in ('{}')".format("', '".join(liste_flaechen_abflussparam))
 
@@ -208,18 +208,10 @@ class LinkFl:
             self.dlg_cl.lf_anzahl_flaechen.setText('0')
 
         # Zu berücksichtigende zu verschneidende Flächen zählen
-        if liste_flaechen_abflussparam == u'()':
-            # Keine Auswahl. Soll eigentlich nicht vorkommen, funktioniert aber...
-            auswahl = u''
-            # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
-        else:
-            auswahl = u" AND flaechen.abflussparameter in ('{}')".format("', '".join(liste_flaechen_abflussparam))
-
-        if len(liste_teilgebiete) != 0:
-            auswahl += u" and flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
         sql = u"""SELECT count(*) AS anzahl FROM flaechen
                 WHERE aufteilen = 'ja'{auswahl}""".format(auswahl=auswahl)
+        logger.debug(u'sql Flaechen zu verschneiden:\n{}'.format(sql))
         try:
             self.dbQK.sql(sql)
         except:
@@ -563,7 +555,7 @@ class LinkFl:
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
 
-        del dbQK
+        del self.dbQK
 
 
     # -------------------------------------------------------------------------
@@ -762,7 +754,7 @@ class LinkFl:
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
 
-        del dbQK
+        del self.dbQK
 
 
     # -------------------------------------------------------------------------
@@ -850,7 +842,7 @@ class LinkFl:
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
 
-        del dbQK
+        del self.dbQK
 
 
     # ----------------------------------------------------------------------------------------------
@@ -912,4 +904,4 @@ class LinkFl:
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
 
-        del dbQK
+        del self.dbQK
