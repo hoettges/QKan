@@ -233,18 +233,17 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 FROM linkfl
             )
             UPDATE flaechen SET haltnam = 
-            (SELECT 
-              haltungen.haltnam
-            FROM linkflbuf
-            INNER JOIN haltungen
-            ON intersects(linkflbuf.geob,haltungen.geom)
-            INNER JOIN flaechen AS fl
-            ON within(linkflbuf.geos,fl.geom)
-            WHERE fl.pk = flaechen.pk AND flaechen.pk IN 
-            (   SELECT ROWID FROM SpatialIndex WHERE
-                f_table_name = 'flaechen' AND
-                search_frame = 
-            ))
+            (   SELECT haltungen.haltnam
+                FROM linkflbuf
+                INNER JOIN haltungen
+                ON intersects(linkflbuf.geob,haltungen.geom)
+                INNER JOIN flaechen AS fl
+                ON within(linkflbuf.geos,fl.geom)
+                WHERE fl.pk = flaechen.pk AND flaechen.pk IN 
+                (   SELECT ROWID FROM SpatialIndex WHERE
+                    f_table_name = 'flaechen' AND
+                    search_frame = linkflbuf.geos)
+            )
             WHERE flaechen.pk in (SELECT pk FROM linkflbuf) and
                   (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL)""".format(fangradius=fangradius)
     try:
@@ -255,10 +254,178 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         return False
     dbQK.commit()
 
-    # --------------------------------------------------------------------------
-    # Datenbankverbindungen schliessen
+    # Karte aktualisieren
+    iface.mapCanvas().refreshAllLayers()
 
-    del dbQK
+    iface.mainWindow().statusBar().clearMessage()
+    iface.messageBar().pushMessage(u"Information", u"Verknüpfungen sind erstellt!", level=QgsMessageBar.INFO)
+    QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
+
+
+
+# ------------------------------------------------------------------------------
+# Erzeugung der graphischen Verknüpfungen für SW-Punkte
+
+def createlinksw(dbQK, liste_teilgebiete, suchradius=50, fangradius=0.1, epsg='25832',
+                 dbtyp='SpatiaLite'):
+    '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
+
+    :dbQK: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :type database: DBConnection (geerbt von dbapi...)
+
+    :liste_teilgebiete: Liste der ausgewählten Teilgebiete
+    :type liste_teilgebiete: list of String
+
+    :suchradius: Suchradius in der SQL-Abfrage
+    :type suchradius: Real
+
+    :fangradius: Suchradius für den Endpunkt in der SQL-Abfrage
+    :type fangradius: Real
+
+    :epsg: Nummer des Projektionssystems
+    :type epsg: String
+
+    :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
+    :type dbtyp:    String
+    
+    :returns: void
+    '''
+
+    # ------------------------------------------------------------------------------
+    # Die Bearbeitung erfolgt analog zu createlinks, mit folgenden Änderungen:
+    # - Es gibt keine Auswahl nach Abflussparametern und Entwässerungssystem
+    # - Es handelt sich um Punktobjekte anstelle von Flächen. 
+    #   - Daher entfällt die Option, ob der Abstand auf die Kante oder den 
+    #     Mittelpunkt bezogen werden soll
+    #   - es gibt keine Verschneidung
+
+    # Kopieren der SW-Punkte in die Tabelle linksw. Dabei wird aus dem Punktobjekt
+    # aus swref ein Flächenobjekt, damit ein Spatialindex verwendet werden kann 
+    # (für POINT gibt es keinen MBR?)
+    
+    if len(liste_teilgebiete) != 0:
+        auswahl = " WHERE swref.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+    else:
+        auswahl = ''
+
+    sql = """WITH swges AS (
+                SELECT
+                    swref.pk, swref.teilgebiet, swref.geom
+                FROM swref{auswahl})
+            INSERT INTO linksw (pkswref, teilgebiet, geom)
+            SELECT swges.pk, swges.teilgebiet, buffer(swges.geom,{radius})
+            FROM swges
+            LEFT JOIN linksw
+            ON linksw.pkswref = swges.pk
+            WHERE linksw.pk IS NULL""".format(auswahl=auswahl, radius = 0.5)
+
+    logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
+
+    try:
+        dbQK.sql(sql)
+    except:
+        fehlermeldung(u"QKan_LinkSW (4a) SQL-Fehler in SpatiaLite: \n", sql)
+        del dbQK
+        return False
+
+    # Jetzt werden die SW-Punkte mit einem Buffer erweitert und jeweils neu 
+    # hinzugekommmene mögliche Zuordnungen eingetragen.
+    # Wenn das Attribut "haltnam" vergeben ist, gilt die Fläche als zugeordnet.
+
+    sql = """UPDATE linksw SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linksw.glink IS NULL""".format(
+        suchradius)
+    try:
+        dbQK.sql(sql)
+    except:
+        fehlermeldung(u"QKan_LinkSW (2) SQL-Fehler in SpatiaLite: \n", sql)
+        del dbQK
+        return False
+
+    # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche. 
+    # Filter braucht nur noch für Haltungen berücksichtigt zu werden, da Flächen bereits beim Einfügen 
+    # in tlink gefiltert wurden. 
+
+    
+    if len(liste_teilgebiete) != 0:
+        auswahl = " AND  hal.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        auswlin = " AND  linksw.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+    else:
+        auswahl = ''
+
+    # Erläuterung zur nachfolgenden SQL-Abfrage:
+    # tlink enthält alle potenziellen Verbindungen zwischen Flächen und Haltungen mit der jeweiligen Entfernung
+    # t2 enthält von diesen Verbindungen nur die Fläche (als pk) und den minimalen Abstand, 
+    # so dass in der Abfrage nach "update" nur die jeweils nächste Verbindung gefiltert wird. 
+    # Da diese Abfrage nur für neu zu erstellende Verknüpfungen gelten soll (also noch kein Eintrag
+    # im Feld "swref.haltnam" -> sw.haltnam -> tlink.linkhal -> t1.linkhal). 
+
+    sql = """WITH tlink AS
+            (	SELECT sw.pk AS pk,
+                    Distance(hal.geom,sw.geom) AS dist, 
+                    hal.geom AS geohal, sw.geom AS geosw
+                FROM
+                    haltungen AS hal
+                INNER JOIN
+                    linksw AS sw
+                ON MbrOverlaps(hal.geom,sw.gbuf)
+                WHERE sw.glink IS NULL{auswahl})
+            UPDATE linksw SET glink =  
+            (SELECT MakeLine(PointOnSurface(t1.geosw),Centroid(t1.geohal))
+            FROM tlink AS t1
+            INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
+            ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
+            WHERE linksw.pk = t1.pk)
+            WHERE linksw.glink IS NULL{auswlin}""".format(auswahl=auswahl, auswlin=auswlin)
+
+    logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
+
+    try:
+        dbQK.sql(sql)
+    except:
+        fehlermeldung(u"QKan_LinkSW (5) SQL-Fehler in SpatiaLite: \n", sql)
+        del dbQK
+        return False
+
+    # Löschen der Datensätze in linksw, bei denen keine Verbindung erstellt wurde, weil die 
+    # nächste Haltung zu weit entfernt ist.
+
+    sql = """DELETE FROM linksw WHERE glink IS NULL"""
+
+    try:
+        dbQK.sql(sql)
+    except:
+        fehlermeldung(u"QKan_LinkSW (7) SQL-Fehler in SpatiaLite: \n", sql)
+        del dbQK
+        return False
+
+    # Keine Prüfung, ob Anfang der Verknüpfungslinie noch in zugehöriger Fläche liegt.
+
+    sql = """WITH linkswbuf AS
+            (   SELECT pk, buffer(EndPoint(linksw.glink),{fangradius}) AS geob, 
+                       StartPoint(linksw.glink)) AS geos
+                FROM linksw
+            )
+            UPDATE swref SET haltnam = 
+            (   SELECT haltungen.haltnam
+                FROM linkswbuf
+                INNER JOIN haltungen
+                ON intersects(linkswbuf.geob,haltungen.geom)
+                INNER JOIN swref AS sw
+                ON within(linkswbuf.geos,sw.geom)
+                WHERE sw.pk = swref.pk AND sw.pk IN 
+                (   SELECT ROWID FROM SpatialIndex WHERE
+                    f_table_name = 'swref' AND
+                    search_frame = linkflbuf.geos)
+            )
+            WHERE swref.pk in (SELECT pk FROM linkswbuf) and
+                  (swref.aufteilen <> 'ja' or swref.aufteilen IS NULL)""".format(fangradius=fangradius)
+    try:
+        dbQK.sql(sql)
+    except:
+        fehlermeldung(u"QKan_LinkSW (3) SQL-Fehler in SpatiaLite: \n", sql)
+        del dbQK
+        return False
+    dbQK.commit()
 
     # Karte aktualisieren
     iface.mapCanvas().refreshAllLayers()
@@ -320,11 +487,6 @@ def assigntezg(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite
                 return False
 
         dbQK.commit()
-
-    # --------------------------------------------------------------------------
-    # Datenbankverbindungen schliessen
-
-    del dbQK
 
     # Karte aktualisieren
     iface.mapCanvas().refreshAllLayers()

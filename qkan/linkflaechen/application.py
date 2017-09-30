@@ -519,6 +519,12 @@ class LinkFl:
                 vlayer = QgsVectorLayer(uri.uri(), 'Anbindung', 'spatialite')
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)
 
+        # --------------------------------------------------------------------------
+        # Datenbankverbindungen schliessen
+
+        del dbQK
+
+
     # -------------------------------------------------------------------------
     # Öffnen des Formulars zur Erstellung der Verknüpfungen
 
@@ -601,6 +607,12 @@ class LinkFl:
             # Start der Verarbeitung
             assigntezg(self.dbQK, auswahltyp, liste_teilgebiete, ['haltungen', 'flaechen'])
 
+        # --------------------------------------------------------------------------
+        # Datenbankverbindungen schliessen
+
+        del dbQK
+
+
     # ----------------------------------------------------------------------------------------------
     # Laden und Speichern von Teilgebietszuordnungen als Gruppe
 
@@ -657,3 +669,7 @@ class LinkFl:
             # Start der Verarbeitung
             # Nur Formular schließen
 
+        # --------------------------------------------------------------------------
+        # Datenbankverbindungen schliessen
+
+        del dbQK

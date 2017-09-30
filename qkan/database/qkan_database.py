@@ -506,7 +506,7 @@ def createdbtables(consl, cursl, epsg=25832):
     sql1 = """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
     sql2 = """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
     sql3 = """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
-    sqlindex = "SELECT CreateSpatialIndex('linkfl','geom')"
+    sqlindex = "SELECT CreateSpatialIndex('linkfl','glink')"
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
@@ -536,7 +536,7 @@ def createdbtables(consl, cursl, epsg=25832):
         consl.close()
         return False
 
-    sql1 = """SELECT AddGeometryColumn('linksw','geom',{epsg},'POINT',2)""".format(epsg=epsg)
+    sql1 = """SELECT AddGeometryColumn('linksw','geom',{epsg},'POLYGON',2)""".format(epsg=epsg)
     sql2 = """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
     sql3 = """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
     sqlindex = "SELECT CreateSpatialIndex('linksw','geom')"
