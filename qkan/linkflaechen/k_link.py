@@ -55,7 +55,7 @@ def fehlermeldung(title, text):
 # ------------------------------------------------------------------------------
 # Erzeugung der graphischen Verknüpfungen für Flächen
 
-def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
+def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 liste_teilgebiete, suchradius=50, bezug_abstand='kante', fangradius=0.1, epsg='25832',
                 dbtyp='SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
@@ -266,7 +266,7 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 # ------------------------------------------------------------------------------
 # Erzeugung der graphischen Verknüpfungen für SW-Punkte
 
-def createlinksw(dbQK, liste_teilgebiete, suchradius=50, fangradius=0.1, epsg='25832',
+def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradius=0.1,
                  dbtyp='SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -292,7 +292,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, fangradius=0.1, epsg='2
     '''
 
     # ------------------------------------------------------------------------------
-    # Die Bearbeitung erfolgt analog zu createlinks, mit folgenden Änderungen:
+    # Die Bearbeitung erfolgt analog zu createlinkfl, mit folgenden Änderungen:
     # - Es gibt keine Auswahl nach Abflussparametern und Entwässerungssystem
     # - Es handelt sich um Punktobjekte anstelle von Flächen. 
     #   - Daher entfällt die Option, ob der Abstand auf die Kante oder den 
