@@ -385,20 +385,16 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
     # (für POINT gibt es keinen MBR?)
     
     if len(liste_teilgebiete) != 0:
-        auswahl = " WHERE swref.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        auswahl = " AND swref.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
     else:
         auswahl = ''
 
-    sql = u"""WITH swges AS (
-                SELECT
-                    swref.pk, swref.teilgebiet, swref.geom
-                FROM swref{auswahl})
-            INSERT INTO linksw (pkswref, teilgebiet, geom)
-            SELECT swges.pk, swges.teilgebiet, buffer(swges.geom,{radius})
-            FROM swges
+    sql = u"""INSERT INTO linksw (pkswref, teilgebiet, geom)
+            SELECT swref.pk, swref.teilgebiet, MakeCircle(x(swref.geom),y(swref.geom),{radius})
+            FROM swref
             LEFT JOIN linksw
-            ON linksw.pkswref = swges.pk
-            WHERE linksw.pk IS NULL""".format(auswahl=auswahl, radius = 0.5)
+            ON linksw.pkswref = swref.pk
+            WHERE linksw.pk IS NULL{auswahl}""".format(auswahl=auswahl, radius = 0.5)
 
     logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
 
@@ -509,7 +505,8 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
         return False
 
     sql = u"""WITH linkswbuf AS
-            (   SELECT pk, buffer(EndPoint(linksw.glink),{fangradius}) AS geob
+            (   SELECT pk, 
+                    MakeCircle(x(EndPoint(linksw.glink)),y(EndPoint(linksw.glink)),{fangradius}) AS geob
                 FROM linksw
             )
             UPDATE linksw SET haltnam = 
@@ -520,7 +517,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
                 WHERE linkswbuf.pk = linksw.pk AND haltungen.pk IN 
                 (   SELECT ROWID FROM SpatialIndex WHERE
                     f_table_name = 'haltungen' AND
-                    search_frame = linkflbuf.geob)
+                    search_frame = linkswbuf.geob)
             )
             WHERE linksw.pk in (SELECT pk FROM linkswbuf)""".format(fangradius=fangradius)
 
@@ -543,21 +540,17 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
         del dbQK
         return False
 
-    sql = u"""WITH linkswbuf AS
-            (   SELECT pk, StartPoint(linksw.glink)) AS geos
+    sql = u"""UPDATE swref SET haltnam = 
+            (   SELECT linksw.haltnam
                 FROM linksw
-            )
-            UPDATE swref SET haltnam = 
-            (   SELECT haltungen.haltnam
-                FROM linkswbuf
                 INNER JOIN swref AS sw
-                ON within(linkswbuf.geos,sw.geom)
+                ON within(sw.geom,linksw.geom)
                 WHERE sw.pk = swref.pk AND sw.pk IN 
                 (   SELECT ROWID FROM SpatialIndex WHERE
                     f_table_name = 'swref' AND
-                    search_frame = linkflbuf.geos)
+                    search_frame = linksw.geom)
             )
-            WHERE swref.pk in (SELECT pk FROM linkswbuf)""".format(fangradius=fangradius)
+            WHERE swref.pk in (SELECT pkswref FROM linksw)""".format(fangradius=fangradius)
 
     logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
