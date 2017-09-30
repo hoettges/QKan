@@ -253,8 +253,8 @@ class LinkFl:
     def countselectionsw(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Haltungen"""
-        liste_hal_entw = self.listselecteditems(self.dlg_cl.lw_hal_entw)
-        liste_teilgebiete = self.listselecteditems(self.dlg_cl.lw_teilgebiete)
+        liste_hal_entw = self.listselecteditems(self.dlg_sw.lw_hal_entw)
+        liste_teilgebiete = self.listselecteditems(self.dlg_sw.lw_teilgebiete)
         # Aufbereiten für SQL-Abfrage
 
         # Zu berücksichtigende Haltungen zählen
@@ -278,9 +278,29 @@ class LinkFl:
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
-            self.dlg_cl.lf_anzahl_haltungen.setText(str(daten[0]))
+            self.dlg_sw.lf_anzahl_haltungen.setText(str(daten[0]))
         else:
-            self.dlg_cl.lf_anzahl_haltungen.setText('0')
+            self.dlg_sw.lf_anzahl_haltungen.setText('0')
+
+        # Zu berücksichtigende SW-Punkte zählen
+
+        if len(liste_teilgebiete) != 0:
+            auswahl = u" WHERE swref.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        else:
+            auswahl = ''
+
+        sql = u"""SELECT count(*) AS anzahl FROM swref{auswahl}""".format(auswahl=auswahl)
+        try:
+            self.dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan_LinkFlaechen.countselectionsw (11) SQL-Fehler in SpatiaLite: \n", sql)
+            del self.dbQK
+            return False
+        daten = self.dbQK.fetchone()
+        if not (daten is None):
+            self.dlg_sw.lf_anzahl_swref.setText(str(daten[0]))
+        else:
+            self.dlg_sw.lf_anzahl_swref.setText('0')
 
 
     # -------------------------------------------------------------------------
@@ -620,24 +640,6 @@ class LinkFl:
         self.dbQK.commit()
 
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
         sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
         self.dbQK.sql(sql)
@@ -675,21 +677,6 @@ class LinkFl:
             suchradius = 50.
         self.dlg_sw.tf_suchradius.setText(str(suchradius))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        self.dlg_sw.lw_flaechen_abflussparam.itemClicked.connect(self.countselectionsw)
         self.dlg_sw.lw_hal_entw.itemClicked.connect(self.countselectionsw)
         self.dlg_sw.lw_teilgebiete.itemClicked.connect(self.countselectionsw)
         self.countselectionsw()
@@ -711,18 +698,6 @@ class LinkFl:
             liste_hal_entw = self.listselecteditems(self.dlg_sw.lw_hal_entw)
             liste_teilgebiete = self.listselecteditems(self.dlg_sw.lw_teilgebiete)
             suchradius = self.dlg_sw.tf_suchradius.text()
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             # Konfigurationsdaten schreiben
@@ -764,7 +739,7 @@ class LinkFl:
         """Öffnen des Formulars zur Zuordnung von Teilgebieten auf Haltungen und Flächen"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({'flaechen', 'haltungen', 'linkfl', 'tezg'} & get_editable_layers()) > 0:
+        if len({'flaechen', 'haltungen', 'linkfl', 'linksw', 'tezg', 'swref'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ", 
                    u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
                    level=QgsMessageBar.CRITICAL)
@@ -837,7 +812,7 @@ class LinkFl:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
-            assigntezg(self.dbQK, auswahltyp, liste_teilgebiete, ['haltungen', 'flaechen'])
+            assigntezg(self.dbQK, auswahltyp, liste_teilgebiete, ['haltungen', 'flaechen', 'swref'])
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen

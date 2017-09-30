@@ -149,7 +149,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             ON within(StartPoint(linkfl.glink),flges.geom)
             WHERE linkfl.pk IS NULL""".format(auswahl=auswahl)
 
-    logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
 
     try:
         dbQK.sql(sql)
@@ -227,7 +227,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             WHERE linkfl.pk = t1.pk)
             WHERE linkfl.glink IS NULL{auswlin}""".format(bezug=bezug, auswahl=auswahl, auswlin=auswlin)
 
-    logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
     try:
         dbQK.sql(sql)
@@ -282,7 +282,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             WHERE linkfl.pk in (SELECT pk FROM linkflbuf)
         """.format(fangradius=fangradius)
 
-    logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
 
     try:
         dbQK.sql(sql)
@@ -321,7 +321,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             WHERE flaechen.pk in (SELECT pk FROM linkflbuf) and
                   (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL)""".format(fangradius=fangradius)
 
-    logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
     try:
         dbQK.sql(sql)
@@ -331,7 +331,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         return False
     dbQK.commit()
 
-    logger.debug(u'\nSQL-5:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-5:\n{}\n'.format(sql))
 
     # Karte aktualisieren
     iface.mapCanvas().refreshAllLayers()
@@ -625,6 +625,9 @@ def assigntezg(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite
                 ON {spatialrelation}({table}.geom,teilgebiete.geom)
                 WHERE teilgebiete.tgnam in ('{tgnames}'))
             """.format(table=table, tgnames=tgnames, spatialrelation=spatialrelation)
+
+            # logger.debug(u'\nSQL:\n{}\n'.format(sql))
+
             try:
                 dbQK.sql(sql)
             except:
@@ -735,7 +738,7 @@ def storegroup(dbQK, gruppenname, kommentar, dbtyp = 'SpatiaLite'):
         WHERE teilgebiet <> '' And teilgebiet IS NOT NULL
         """.format(gruppenname=gruppenname, kommentar=kommentar,table=table)
 
-    logger.debug(u'\nSQL-4:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-4:\n{}\n'.format(sql))
     # Zusammengesetzte SQL-Abfrage ausführen...
     try:
         dbQK.sql(sql)

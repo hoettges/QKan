@@ -141,7 +141,7 @@
      <string>SW-Punkte:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lf_anzahl_flaechen">
+   <widget class="QLabel" name="lf_anzahl_swref">
     <property name="geometry">
      <rect>
       <x>120</x>
