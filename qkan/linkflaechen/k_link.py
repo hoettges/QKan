@@ -161,8 +161,6 @@ def createlinks(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         del dbQK
         return False
 
-    # Kontrollfeld "Flächen ohne Zuordnung (neu erzeugen)" angeklickt
-
     # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche. 
     # Filter braucht nur noch für Haltungen berücksichtigt zu werden, da Flächen bereits beim Einfügen 
     # in tlink gefiltert wurden. 
