@@ -496,6 +496,14 @@ class LinkFl:
             suchradius = 50.
         self.dlg_cl.tf_suchradius.setText(str(suchradius))
 
+        # Haltungen direkt in flaechen eintragen. Es kann wegen der längeren Zeitdauer sinnvoll
+        # sein, dies erst am Schluss der Bearbeitung in einem eigenen Vorgang zu machen.
+        if 'link_schreibe_haltungen' in self.config:
+            checked = self.config['link_schreibe_haltungen']
+        else:
+            checked = True
+        self.dlg_cl.cb_schreibe_haltungen.setChecked(checked)
+
         # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
         if 'bezug_abstand' in self.config:
             bezug_abstand = self.config['bezug_abstand']
@@ -532,6 +540,7 @@ class LinkFl:
             liste_hal_entw = self.listselecteditems(self.dlg_cl.lw_hal_entw)
             liste_teilgebiete = self.listselecteditems(self.dlg_cl.lw_teilgebiete)
             suchradius = self.dlg_cl.tf_suchradius.text()
+            schreibe_haltungen = self.dlg_cl.cb_schreibe_haltungen.isChecked()
             if self.dlg_cl.rb_abstandkante.isChecked():
                 bezug_abstand = 'kante'
             elif self.dlg_cl.rb_abstandmittelpunkt.isChecked():
@@ -549,6 +558,7 @@ class LinkFl:
             # Konfigurationsdaten schreiben
 
             self.config['suchradius'] = suchradius
+            self.config['link_schreibe_haltungen'] = schreibe_haltungen
             self.config['bezug_abstand'] = bezug_abstand
             self.config['liste_hal_entw'] = liste_hal_entw
             self.config['liste_flaechen_abflussparam'] = liste_flaechen_abflussparam
@@ -561,7 +571,7 @@ class LinkFl:
             # Start der Verarbeitung
 
             createlinkfl(self.dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                        liste_teilgebiete, suchradius, bezug_abstand, epsg)
+                        liste_teilgebiete, suchradius, schreibe_haltungen, bezug_abstand, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()
@@ -677,6 +687,14 @@ class LinkFl:
             suchradius = 50.
         self.dlg_sw.tf_suchradius.setText(str(suchradius))
 
+        # Haltungen direkt in swref eintragen. Es kann wegen der längeren Zeitdauer sinnvoll
+        # sein, dies erst am Schluss der Bearbeitung in einem eigenen Vorgang zu machen.
+        if 'link_schreibe_haltungen' in self.config:
+            checked = self.config['link_schreibe_haltungen']
+        else:
+            checked = True
+        self.dlg_sw.cb_schreibe_haltungen.setChecked(checked)
+
         self.dlg_sw.lw_hal_entw.itemClicked.connect(self.countselectionsw)
         self.dlg_sw.lw_teilgebiete.itemClicked.connect(self.countselectionsw)
         self.countselectionsw()
@@ -698,12 +716,13 @@ class LinkFl:
             liste_hal_entw = self.listselecteditems(self.dlg_sw.lw_hal_entw)
             liste_teilgebiete = self.listselecteditems(self.dlg_sw.lw_teilgebiete)
             suchradius = self.dlg_sw.tf_suchradius.text()
+            schreibe_haltungen = self.dlg_sw.cb_schreibe_haltungen.isChecked()
 
 
             # Konfigurationsdaten schreiben
 
             self.config['suchradius'] = suchradius
-
+            self.config['link_schreibe_haltungen'] = schreibe_haltungen
             self.config['liste_hal_entw'] = liste_hal_entw
 
             self.config['liste_teilgebiete'] = liste_teilgebiete
@@ -714,7 +733,7 @@ class LinkFl:
 
             # Start der Verarbeitung
 
-            createlinksw(self.dbQK, liste_teilgebiete, suchradius, epsg)
+            createlinksw(self.dbQK, liste_teilgebiete, suchradius, schreibe_haltungen, epsg)
 
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
