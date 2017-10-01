@@ -565,7 +565,7 @@ class LinkFl:
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()
-            if 'Anbindung' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
+            if u'Anbindungen Flächen' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
                 uri = QgsDataSourceURI()
                 uri.setDatabase(database_QKan)
                 uri.setDataSource('', 'linkfl', 'glink')
@@ -719,7 +719,7 @@ class LinkFl:
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()
-            if 'Anbindungen SW-Punkte' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
+            if u'Anbindungen SW-Punkte' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
                 uri = QgsDataSourceURI()
                 uri.setDatabase(database_QKan)
                 uri.setDataSource('', 'linksw', 'glink')
@@ -798,7 +798,7 @@ class LinkFl:
             liste_teilgebiete = self.listselecteditems(self.dlg_at.lw_teilgebiete)
             if self.dlg_at.rb_within.isChecked():
                 auswahltyp = 'within'
-            elif self.dlg_at.rb_abstandmittelpunkt.isChecked():
+            elif self.dlg_at.rb_overlaps.isChecked():
                 auswahltyp = 'overlaps'
             else:
                 fehlermeldung("Fehler im Programmcode (4)", "Nicht definierte Option")

@@ -309,7 +309,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 FROM linkfl
             )
             UPDATE flaechen SET haltnam = 
-            (   SELECT haltungen.haltnam
+            (   SELECT linkflbuf.haltnam
                 FROM linkflbuf
                 INNER JOIN flaechen AS fl
                 ON within(linkflbuf.geos,fl.geom)
@@ -390,7 +390,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
         auswahl = ''
 
     sql = u"""INSERT INTO linksw (pkswref, teilgebiet, geom)
-            SELECT swref.pk, swref.teilgebiet, MakeCircle(x(swref.geom),y(swref.geom),{radius})
+            SELECT swref.pk, swref.teilgebiet,buffer(swref.geom,{radius})
             FROM swref
             LEFT JOIN linksw
             ON linksw.pkswref = swref.pk
@@ -619,7 +619,7 @@ def assigntezg(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite
                 WHERE teilgebiete.tgnam in ('{tgnames}'))
             """.format(table=table, tgnames=tgnames, spatialrelation=spatialrelation)
 
-            # logger.debug(u'\nSQL:\n{}\n'.format(sql))
+            logger.debug(u'\nSQL:\n{}\n'.format(sql))
 
             try:
                 dbQK.sql(sql)
