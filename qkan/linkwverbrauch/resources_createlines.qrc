@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/Flaechenzuordnungen" >
-        <file>icon_createlines.png</file>
-    </qresource>
-</RCC>

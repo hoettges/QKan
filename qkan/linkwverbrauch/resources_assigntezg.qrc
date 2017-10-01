@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/Flaechenzuordnungen" >
-        <file>icon_assigntezg.png</file>
-    </qresource>
-</RCC>
