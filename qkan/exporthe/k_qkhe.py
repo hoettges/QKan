@@ -23,14 +23,9 @@ import logging
 import math
 import os
 import shutil
-# import pyspatialite.dbapi2 as splite
-# import site, shutil
-# import json
 import time
 
 from qgis.core import QgsMessageLog
-# from qgis.core import QgsGeometry, QgsFeature
-# import qgis.utils
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
@@ -145,9 +140,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # --------------------------------------------------------------------------------------------
     # Export der Schaechte
 
+    if check_export['init_schaechte']:
+        dbHE.sql("DELETE FROM SCHACHT")
     if check_export['export_schaechte'] or check_export['modify_schaechte']:
-        if check_export['init_schaechte']:
-            dbHE.sql("DELETE FROM SCHACHT")
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
         if len(liste_teilgebiete) != 0:
@@ -255,11 +250,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # Beim Export werden die IDs mitgeschrieben, um bei den Speicherkennlinien
     # wiederverwertet zu werden.
 
+    if check_export['init_speicher']:
+        # Zuerst Daten aus Detailtabelle mit Speicherkennlinie löschen
+        dbHE.sql("DELETE FROM TABELLENINHALTE WHERE ID IN (SELECT ID FROM SPEICHERSCHACHT)")
+        dbHE.sql("DELETE FROM SPEICHERSCHACHT")
     if check_export['export_speicher'] or check_export['modify_speicher']:
-        if check_export['init_speicher']:
-            # Zuerst Daten aus Detailtabelle mit Speicherkennlinie löschen
-            dbHE.sql("DELETE FROM TABELLENINHALTE WHERE ID IN (SELECT ID FROM SPEICHERSCHACHT)")
-            dbHE.sql("DELETE FROM SPEICHERSCHACHT")
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
         if len(liste_teilgebiete) != 0:
@@ -439,9 +434,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # --------------------------------------------------------------------------------------------
     # Export der Auslaesse
 
+    if check_export['init_auslaesse']:
+        dbHE.sql("DELETE FROM AUSLASS")
     if check_export['export_auslaesse'] or check_export['modify_auslaesse']:
-        if check_export['init_auslaesse']:
-            dbHE.sql("DELETE FROM AUSLASS")
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
         if len(liste_teilgebiete) != 0:
@@ -557,9 +552,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # in HYSTEM-EXTRAN in der Karteikarte "Haltungen > Trockenwetter". Solange dort kein
     # Siedlungstyp zugeordnet ist, wird diese Fläche nicht wirksam und dient nur der Information!
 
+    if check_export['init_haltungen']:
+        dbHE.sql("DELETE FROM ROHR")
     if check_export['export_haltungen'] or check_export['modify_haltungen']:
-        if check_export['init_haltungen']:
-            dbHE.sql("DELETE FROM ROHR")
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
         if len(liste_teilgebiete) != 0:
@@ -728,9 +723,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # --------------------------------------------------------------------------------------------
     # Export der Bodenklassen
 
+    if check_export['init_bodenklassen']:
+        dbHE.sql("DELETE FROM BODENKLASSE")
     if check_export['export_bodenklassen'] or check_export['modify_bodenklassen']:
-        if check_export['init_bodenklassen']:
-            dbHE.sql("DELETE FROM BODENKLASSE")
 
         sql = u"""
             SELECT
@@ -838,9 +833,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # --------------------------------------------------------------------------------------------
     # Export der Abflussparameter
 
+    if check_export['init_abflussparameter']:
+        dbHE.sql("DELETE FROM ABFLUSSPARAMETER")
     if check_export['export_abflussparameter'] or check_export['modify_abflussparameter']:
-        if check_export['init_abflussparameter']:
-            dbHE.sql("DELETE FROM ABFLUSSPARAMETER")
 
         sql = u"""
             SELECT
@@ -972,9 +967,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     #
     # Wenn in QKan keine Regenschreiber eingetragen sind, wird als Name "Regenschreiber1" angenommen.
 
+    if check_export['init_regenschreiber']:
+        dbHE.sql("DELETE FROM REGENSCHREIBER")
     if check_export['export_regenschreiber'] or check_export['modify_regenschreiber']:
-        if check_export['init_regenschreiber']:
-            dbHE.sql("DELETE FROM REGENSCHREIBER")
 
         # # Pruefung, ob Regenschreiber fuer Export vorhanden
         # if len(liste_teilgebiete) != 0:
@@ -1058,33 +1053,35 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         fortschritt('{} Regenschreiber eingefuegt'.format(nextid - nr0), 0.68)
 
-    # ------------------------------------------------------------------------------------------------------
-    # Export der Flaechendaten
-    #
-    # Die Daten werden in max. drei Teilen nach HYSTEM-EXTRAN exportiert:
-    # 1. Befestigte Flächen
-    # 2.1 Bei gesetzter Option check_export['export_difftezg']:
-    #     Fläche der tezg abzüglich der Summe aller (befestigter und unbefestigter!) Flächen
-    # 2.2 Unbefestigte Flächen
 
-    # Die Abflusseigenschaften werden über die Tabelle "abflussparameter" geregelt. Dort ist 
-    # im attribut bodenklasse nur bei unbefestigten Flächen ein Eintrag. Dies ist das Kriterium
-    # zur Unterscheidung
-
-    # undurchlässigen Flächen -------------------------------------------------------------------------------
-
-    # Es gibt in HYSTEM-EXTRAN 3 Flächentypen (BERECHNUNGSSPEICHERKONSTANTE):
-    # verwendete Parameter:    Anz_Sp  SpKonst.  Fz_SschwP  Fz_Oberfl  Fz_Kanal
-    # 0 - direkt                 x       x
-    # 1 - Fließzeiten                                          x          x
-    # 2 - Schwerpunktfließzeit                       x
-
-    # In der QKan-Datenbank sind Fz_SschwP und Fz_oberfl zu einem Feld zusammengefasst (fliesszeit)
-
-    # Befestigte Flächen
+    if check_export['init_flaechenrw']:
+        dbHE.sql("DELETE FROM FLAECHE")
     if check_export['export_flaechenrw'] or check_export['modify_flaechenrw']:
-        if check_export['init_flaechenrw']:
-            dbHE.sql("DELETE FROM FLAECHE")
+        """
+        Export der Flaechendaten
+
+        Die Daten werden in max. drei Teilen nach HYSTEM-EXTRAN exportiert:
+        1. Befestigte Flächen
+        2.1 Bei gesetzter Option check_export['export_difftezg']:
+            Fläche der tezg abzüglich der Summe aller (befestigter und unbefestigter!) Flächen
+        2.2 Unbefestigte Flächen
+
+        Die Abflusseigenschaften werden über die Tabelle "abflussparameter" geregelt. Dort ist 
+        im attribut bodenklasse nur bei unbefestigten Flächen ein Eintrag. Dies ist das Kriterium
+        zur Unterscheidung
+
+        undurchlässigen Flächen -------------------------------------------------------------------------------
+
+        Es gibt in HYSTEM-EXTRAN 3 Flächentypen (BERECHNUNGSSPEICHERKONSTANTE):
+        verwendete Parameter:    Anz_Sp  SpKonst.  Fz_SschwP  Fz_Oberfl  Fz_Kanal
+        0 - direkt                 x       x
+        1 - Fließzeiten                                          x          x
+        2 - Schwerpunktfließzeit                       x
+
+        In der QKan-Datenbank sind Fz_SschwP und Fz_oberfl zu einem Feld zusammengefasst (fliesszeit)
+
+        Befestigte Flächen"""
+
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
         if len(liste_teilgebiete) != 0:
@@ -1380,40 +1377,45 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         fortschritt('{} Flaechen (nicht verschnitten) eingefuegt'.format(nextid - nr0), 0.80)
 
-    # -----------------------------------------------------------------------------------------
-    # Bearbeitung in QKan: Vervollständigung der Teilgebiete
-    """
-      Prüfung der vorliegenden Teilgebiete in QKan
-      ============================================
-      Zunächst eine grundsätzliche Anmerkung: In HE gibt es keine Teilgebiete in der Form, wie sie
-      in QKan vorhanden sind. Diese werden (nur) in QKan verwendet, um zum Einen die Grundlagendaten
-       - einwohnerspezifischer Schmutzwasseranfall
-       - Fremdwasseranteil
-       - Stundenmittel
-      zu verwalten und den tezg-Flächen zuzuordnen, die gleichzeitig Trockenwetterzufluss repräsentieren
-      und zum Anderen, um die Möglichkeit zu haben, um für den Export Teile eines Netzes auszuwählen.
 
-      Aus diesem Grund werden vor dem Export der Einzeleinleiter diese Daten geprüft:
+    if check_export['init_einleit']:
+        # gilt für beide nachfolgenden Exporte einleitew und einleitdirekt
+        dbHE.sql("DELETE FROM EINZELEINLEITER")
+    if check_export['export_einleitew'] or check_export['modify_einleitew']:
+        # Herkunft = 1 (Direkt) und 3 (Einwohnerbezogen)
 
-      1 Wenn in QKan keine Teilgebiete vorhanden sind, wird zunächst geprüft, ob die
-         tezg-Flächen einem (noch nicht angelegten) Teilgebiet zugeordnet sind.
-         1.1 Keine tezg-Fläche ist einem Teilgebiet zugeordnet. Dann wird ein Teilgebiet "Teilgebiet1" 
-             angelegt und alle tezg-Flächen diesem Teilgebiet zugeordnet
-         1.2 Die tezg-Flächen sind einem oder mehreren noch nicht in der Tabelle "teilgebiete" vorhandenen 
-             Teilgebieten zugeordnet. Dann werden entsprechende Teilgebiete mit Standardwerten angelegt.
-      2 Wenn in QKan Teilgebiete vorhanden sind, wird geprüft, ob es auch tezg-Flächen gibt, die diesen
-         Teilgebieten zugeordnet sind.
-         2.1 Es gibt keine tezg-Flächen, die einem Teilgebiet zugeordnet sind.
-             2.1.1 Es gibt in QKan genau ein Teilgebiet. Dann werden alle tezg-Flächen diesem Teilgebiet
-                   zugeordnet.
-             2.1.2 Es gibt in QKan mehrere Teilgebiete. Dann werden alle tezg-Flächen geographisch dem
-                   betreffenden Teilgebiet zugeordnet.
-         2.2 Es gibt mindestens eine tezg-Fläche, die einem Teilgebiet zugeordnet ist.
-             Dann wird geprüft, ob es noch nicht zugeordnete tezg-Flächen gibt, eine Warnung angezeigt und
-             diese tezg-Flächen aufgelistet.
-    """
+        """
+        Bearbeitung in QKan: Vervollständigung der Teilgebiete
 
-    if check_export['export_flaechensw'] or check_export['modify_flaechensw']:
+        Prüfung der vorliegenden Teilgebiete in QKan
+        ============================================
+        Zunächst eine grundsätzliche Anmerkung: In HE gibt es keine Teilgebiete in der Form, wie sie
+        in QKan vorhanden sind. Diese werden (nur) in QKan verwendet, um zum Einen die Grundlagendaten
+         - einwohnerspezifischer Schmutzwasseranfall
+         - Fremdwasseranteil
+         - Stundenmittel
+        zu verwalten und den tezg-Flächen zuzuordnen, die gleichzeitig Trockenwetterzufluss repräsentieren
+        und zum Anderen, um die Möglichkeit zu haben, um für den Export Teile eines Netzes auszuwählen.
+
+        Aus diesem Grund werden vor dem Export der Einzeleinleiter diese Daten geprüft:
+
+        1 Wenn in QKan keine Teilgebiete vorhanden sind, wird zunächst geprüft, ob die
+           tezg-Flächen einem (noch nicht angelegten) Teilgebiet zugeordnet sind.
+           1.1 Keine tezg-Fläche ist einem Teilgebiet zugeordnet. Dann wird ein Teilgebiet "Teilgebiet1" 
+               angelegt und alle tezg-Flächen diesem Teilgebiet zugeordnet
+           1.2 Die tezg-Flächen sind einem oder mehreren noch nicht in der Tabelle "teilgebiete" vorhandenen 
+               Teilgebieten zugeordnet. Dann werden entsprechende Teilgebiete mit Standardwerten angelegt.
+        2 Wenn in QKan Teilgebiete vorhanden sind, wird geprüft, ob es auch tezg-Flächen gibt, die diesen
+           Teilgebieten zugeordnet sind.
+           2.1 Es gibt keine tezg-Flächen, die einem Teilgebiet zugeordnet sind.
+               2.1.1 Es gibt in QKan genau ein Teilgebiet. Dann werden alle tezg-Flächen diesem Teilgebiet
+                     zugeordnet.
+               2.1.2 Es gibt in QKan mehrere Teilgebiete. Dann werden alle tezg-Flächen geographisch dem
+                     betreffenden Teilgebiet zugeordnet.
+           2.2 Es gibt mindestens eine tezg-Fläche, die einem Teilgebiet zugeordnet ist.
+               Dann wird geprüft, ob es noch nicht zugeordnete tezg-Flächen gibt, eine Warnung angezeigt und
+               diese tezg-Flächen aufgelistet.
+        """
 
         sql = 'SELECT count(*) AS anz FROM teilgebiete'
         dbQK.sql(sql)
@@ -1574,14 +1576,13 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         # HERKUNFT = 3 (Einwohner) wird durch eine Verknüpfung aus den "tezg"-Flächen und dem verknüpften 
         # Teilgebiet erzeugt und in die HE-Tabelle "Einzeleinleiter" übertragen
 
-
-        if check_export['init_flaechensw']:
-            dbHE.sql("DELETE FROM EINZELEINLEITER")
-
         # --------------------------------------------------------------------------------------------
-        # Herkunft = 1 (Direkt) und 3 (Einwohnerbezogen)
+        # Herkunft = 3 (Einwohner). 
+        # Nur die Flächen werden berücksichtigt, die einem Teilgebiet 
+        # mit Wasserverbrauch zugeordnet sind.
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
+
         if len(liste_teilgebiete) != 0:
             auswahl = " WHERE teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
@@ -1592,85 +1593,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
           x(geom) AS xel,
           y(geom) AS yel,
           haltnam AS haltnam,
-          zufluss AS zufluss
-          FROM einleit{auswahl}
-        """.format(auswahl=auswahl)
-
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(35) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
-            del dbHE
-            return False
-
-        nr0 = nextid
-
-        fortschritt('Export Einzeleinleiter (direkt)...', 0.92)
-        for b in dbQK.fetchall():
-
-            # In allen Feldern None durch NULL ersetzen
-            elnam, xel, yel, haltnam, zufluss = \
-                ('NULL' if el is None else el for el in b)
-
-            # Einfuegen in die Datenbank
-            sql = u"""
-              INSERT INTO EINZELEINLEITER
-              ( XKOORDINATE, YKOORDINATE, ZUORDNUNGGESPERRT, ZUORDNUNABHEZG, ROHR,
-                ABWASSERART, EINWOHNER, WASSERVERBRAUCH, HERKUNFT,
-                STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE,
-                ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME,
-                ABRECHNUNGSZEITRAUM, ABZUG,
-                LASTMODIFIED, ID) VALUES
-              ( {xel}, {yel}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
-                {abwasserart}, {ew}, {wverbrauch}, {herkunft},
-                {stdmittel}, {fremdwas}, {faktor}, {flaeche},
-                {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}_SW_TEZG',
-                {abrechnungszeitraum}, {abzug},
-                '{createdat}', {nextid});
-              """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
-                         abwasserart = 0, ew = 0, wverbrauch = 0, herkunft = 1,
-                         stdmittel = 0, fremdwas = 0, faktor = 1, flaeche = 0, 
-                         zuflussmodell = 0, zuflussdirekt = 0, zufluss = zufluss, planungsstatus = 0, elnam = elnam,
-                         abrechnungszeitraum = 365, abzug = 0,
-                         createdat = createdat, nextid = nextid)
-            try:
-                dbHE.sql(sql)
-            except BaseException as err:
-                fehlermeldung(u"(36) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
-                del dbQK
-                del dbHE
-                return False
-
-            nextid += 1
-        dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
-        dbHE.commit()
-
-        fortschritt(u'{} Einzeleinleiter (direkt) eingefuegt'.format(nextid - nr0), 0.95)
-
-
-        # --------------------------------------------------------------------------------------------
-        # Trockenwetter aus tezg-Flächen. Nur die Flächen werden berücksichtigt, die einem Teilgebiet 
-        # mit Wasserverbrauch zugeordnet sind.
-        # Herkunft = 3 (Einwohner)
-
-        # Nur Daten fuer ausgewaehlte Teilgebiete
-
-        if len(liste_teilgebiete) != 0:
-            auswahl = " WHERE teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-        else:
-            auswahl = ""
-
-        sql = u"""SELECT
-          elnam AS elnam,
-          x(centroid(geom)) AS xel,
-          y(centroid(geom)) AS yel,
-          haltnam AS haltnam,
           wverbrauch AS wverbrauch, 
           stdmittel AS stdmittel,
           fremdwas AS fremdwas, 
-          einwohner AS einwohner
-          FROM einleit{auswahl}
+          ew AS einwohner
+          FROM einwohner{auswahl}
         """.format(auswahl=auswahl)
 
         try:
@@ -1725,6 +1652,80 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         fortschritt(u'{} Einzeleinleiter (Einwohner bezogen) eingefuegt'.format(nextid - nr0), 0.95)
 
+
+    if check_export['export_einleitdirekt'] or check_export['modify_direkt']:
+        # Herkunft = 1 (Direkt)
+
+        # Nur Daten fuer ausgewaehlte Teilgebiete
+        if len(liste_teilgebiete) != 0:
+            auswahl = " WHERE teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        else:
+            auswahl = ""
+
+        sql = u"""SELECT
+          elnam AS elnam,
+          x(geom) AS xel,
+          y(geom) AS yel,
+          haltnam AS haltnam,
+          zufluss AS zufluss
+          FROM einleit{auswahl}
+        """.format(auswahl=auswahl)
+
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"(35) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            del dbHE
+            return False
+
+        nr0 = nextid
+
+        fortschritt('Export Einzeleinleiter (direkt)...', 0.92)
+        for b in dbQK.fetchall():
+
+            # In allen Feldern None durch NULL ersetzen
+            elnam, xel, yel, haltnam, zufluss = \
+                ('NULL' if el is None else el for el in b)
+
+            # Einfuegen in die Datenbank
+            sql = u"""
+              INSERT INTO EINZELEINLEITER
+              ( XKOORDINATE, YKOORDINATE, ZUORDNUNGGESPERRT, ZUORDNUNABHEZG, ROHR,
+                ABWASSERART, EINWOHNER, WASSERVERBRAUCH, HERKUNFT,
+                STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE,
+                ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME,
+                ABRECHNUNGSZEITRAUM, ABZUG,
+                LASTMODIFIED, ID) VALUES
+              ( {xel}, {yel}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
+                {abwasserart}, {ew}, {wverbrauch}, {herkunft},
+                {stdmittel}, {fremdwas}, {faktor}, {flaeche},
+                {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}_SWQ',
+                {abrechnungszeitraum}, {abzug},
+                '{createdat}', {nextid});
+              """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
+                         abwasserart = 0, ew = 0, wverbrauch = 0, herkunft = 1,
+                         stdmittel = 0, fremdwas = 0, faktor = 1, flaeche = 0, 
+                         zuflussmodell = 0, zuflussdirekt = 0, zufluss = zufluss, planungsstatus = 0, elnam = elnam,
+                         abrechnungszeitraum = 365, abzug = 0,
+                         createdat = createdat, nextid = nextid)
+            try:
+                dbHE.sql(sql)
+            except BaseException as err:
+                fehlermeldung(u"(36) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                del dbQK
+                del dbHE
+                return False
+
+            nextid += 1
+        dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
+        dbHE.commit()
+
+        fortschritt(u'{} Einzeleinleiter (direkt) eingefuegt'.format(nextid - nr0), 0.95)
+
+
+    if False:
+        
     # --------------------------------------------------------------------------------------------------
     # Setzen der internen Referenzen
 
@@ -1740,7 +1741,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # --------------------------------------------------------------------------------------------------
     # 2. Haltungen (="ROHR"): Referenz zu Schaechten (="SCHACHT")
 
-    if False:
         sql = u"""
           UPDATE ROHR
           SET SCHACHTOBENREF =
@@ -1805,6 +1805,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
+
+    # Zum Schluss: Schließen der Datenbankverbindungen
 
     del dbQK
     del dbHE
