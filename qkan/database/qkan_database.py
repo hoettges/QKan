@@ -522,7 +522,7 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
     consl.commit()
 
-    # Anbindung Wasserverbräuche --------------------------------------------------------------
+    # Anbindung Direkteinleitungen --------------------------------------------------------------
     # Die Tabelle linksw verwaltet die Anbindung von Gebäuden an Haltungen. Diese Anbindung
     # wird anschließend in das Feld haltnam eingetragen. Der Export erfolgt allerdings anhand
     # der grafischen Verknüpfungen dieser Tabelle. 
@@ -544,6 +544,39 @@ def createdbtables(consl, cursl, epsg=25832):
     sql2 = """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
     sql3 = """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
     sqlindex = "SELECT CreateSpatialIndex('linksw','geom')"
+    try:
+        cursl.execute(sql1)
+        cursl.execute(sql2)
+        cursl.execute(sql3)
+        cursl.execute(sqlindex)
+    except:
+        fehlermeldung(u"QKan_Database (2) SQL-Fehler in SpatiaLite: \n", sql)
+        consl.close()
+        return False
+    consl.commit()
+
+    # Anbindung einwohnerbezogene Direkteinleitungen---------------------------------------------
+    # Die Tabelle linkew verwaltet die Anbindung von Gebäuden an Haltungen. Diese Anbindung
+    # wird anschließend in das Feld haltnam eingetragen. Der Export erfolgt allerdings anhand
+    # der grafischen Verknüpfungen dieser Tabelle. 
+
+    sql = """CREATE TABLE linkew (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    pkewref INTEGER,
+    haltnam TEXT,
+    teilgebiet TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('Tabelle "linkew" konnte nicht erstellt werden', str(err))
+        consl.close()
+        return False
+
+    sql1 = """SELECT AddGeometryColumn('linkew','geom',{epsg},'POLYGON',2)""".format(epsg=epsg)
+    sql2 = """SELECT AddGeometryColumn('linkew','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql3 = """SELECT AddGeometryColumn('linkew','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    sqlindex = "SELECT CreateSpatialIndex('linkew','geom')"
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)

@@ -118,7 +118,7 @@
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>30</x>
       <y>290</y>
       <width>111</width>
       <height>20</height>
@@ -138,13 +138,13 @@
      <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden Flächen (mit und ohne Verschneidung)"/>
     </property>
     <property name="text">
-     <string>Direkteinleitungen:</string>
+     <string>Einwohner-Punkte:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lf_anzahl_einleit">
+   <widget class="QLabel" name="lf_anzahl_einwohner">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>290</y>
       <width>71</width>
       <height>20</height>
@@ -176,9 +176,9 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>30</x>
       <y>320</y>
-      <width>101</width>
+      <width>81</width>
       <height>20</height>
      </rect>
     </property>
@@ -202,7 +202,7 @@
    <widget class="QLabel" name="lf_anzahl_haltungen">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>320</y>
       <width>71</width>
       <height>20</height>
@@ -407,7 +407,7 @@
      <rect>
       <x>300</x>
       <y>330</y>
-      <width>191</width>
+      <width>151</width>
       <height>31</height>
      </rect>
     </property>
@@ -426,7 +426,7 @@
     </property>
     <property name="text">
      <string>Haltungsnamen in 
-Direkteinleitungen eintragen</string>
+EW-Punkte eintragen</string>
     </property>
    </widget>
   </widget>

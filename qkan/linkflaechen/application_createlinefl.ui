@@ -642,7 +642,8 @@
      <string extracomment="Die Bearbeitung dauert erheblich länger. Die Eintragung kann auch nachträglich für alle Verbindungslinien zusammen vorgenommen werden."/>
     </property>
     <property name="text">
-     <string>Haltungsnamen in SW-Punkten eintragen</string>
+     <string>Haltungsnamen in Flächen eintragen
+(ohne aufzuteilende Flächen)</string>
     </property>
    </widget>
   </widget>
