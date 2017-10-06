@@ -56,7 +56,7 @@
      <string>Teilgebiet</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="wasserverbrauch">
+   <widget class="QLineEdit" name="zufluss">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -235,7 +235,7 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>wasserverbrauch</tabstop>
+  <tabstop>zufluss</tabstop>
   <tabstop>teilgebiet</tabstop>
   <tabstop>haltnam</tabstop>
  </tabstops>
