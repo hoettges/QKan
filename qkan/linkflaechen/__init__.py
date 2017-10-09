@@ -25,11 +25,11 @@
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
-    """Load Application class from file application.
+    """Load LinkFlaechen class from file application.
 
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
     #
-    from .application import Application
-    return Application(iface)
+    from .application import LinkFl
+    return LinkFl(iface)

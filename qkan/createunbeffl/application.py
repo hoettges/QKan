@@ -118,7 +118,7 @@ class CreateUnbefFl:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/CreateUnbefFl/icon.png'
+        icon_path = ':/plugins/qkan/createunbeffl/icon.png'
         Dummy.instance.add_action(
             icon_path,
             text=self.tr(u'Erzeuge unbefestigte Flächen...'),

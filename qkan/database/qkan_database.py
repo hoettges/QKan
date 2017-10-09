@@ -68,8 +68,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Haltungen ----------------------------------------------------------------
 
-    sql = '''
-    CREATE TABLE haltungen (
+    sql = '''CREATE TABLE haltungen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     haltnam TEXT,
     schoben TEXT,
@@ -103,8 +102,10 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
 
     sql = "SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('haltungen','geom')"
     try:
         cursl.execute(sql)
+        cursl.execute(sqlindex)
     except BaseException as err:
         fehlermeldung('In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
@@ -114,8 +115,7 @@ def createdbtables(consl, cursl, epsg=25832):
     # Schaechte ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
 
-    sql = '''
-    CREATE TABLE schaechte (
+    sql = '''CREATE TABLE schaechte (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     schnam TEXT,
     xsch REAL,
@@ -146,9 +146,11 @@ def createdbtables(consl, cursl, epsg=25832):
 
     sql1 = """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg)
     sql2 = """SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg)
+    sqlindex = """SELECT CreateSpatialIndex('schaechte','geom')"""
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
+        cursl.execute(sqlindex)
     except BaseException as err:
         fehlermeldung('In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden',
                       str(err))
@@ -159,8 +161,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Profile ------------------------------------------------------------------
 
-    sql = '''
-    CREATE TABLE profile (
+    sql = '''CREATE TABLE profile (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     profilnam TEXT,
     he_nr INTEGER,
@@ -217,8 +218,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Geometrie Sonderprofile --------------------------------------------------
 
-    sql = '''
-    CREATE TABLE profildaten (
+    sql = '''CREATE TABLE profildaten (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     profilnam TEXT, 
     wspiegel REAL, 
@@ -234,8 +234,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Entwaesserungssysteme ----------------------------------------------------
 
-    sql = '''
-    CREATE TABLE entwaesserungsarten (
+    sql = '''CREATE TABLE entwaesserungsarten (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     kuerzel TEXT, 
     bezeichnung TEXT, 
@@ -267,8 +266,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Pumpentypen --------------------------------------------------------------
 
-    sql = '''
-    CREATE TABLE pumpentypen (
+    sql = '''CREATE TABLE pumpentypen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bezeichnung TEXT, 
     he_nr INTEGER)'''
@@ -300,8 +298,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Pumpen -------------------------------------------------------------------
 
-    sql = '''
-    CREATE TABLE pumpen (
+    sql = '''CREATE TABLE pumpen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     pnam TEXT,
     schoben TEXT,
@@ -325,8 +322,10 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
 
     sql = "SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('pumpen','geom')"
     try:
         cursl.execute(sql)
+        cursl.execute(sqlindex)
     except BaseException as err:
         fehlermeldung('In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
@@ -360,8 +359,10 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
 
     sql = "SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('wehre','geom')"
     try:
         cursl.execute(sql)
+        cursl.execute(sqlindex)
     except BaseException as err:
         fehlermeldung('In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
@@ -371,18 +372,29 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Teilgebiete ------------------------------------------------------------------
     # Entsprechen in HYSTEM-EXTRAN 7.x den Siedlungstypen
-    # [flaeche] wird nur für den Import benötigt, wenn keine Flächenobjekte vorhanden sind
+    # "flaeche" wird nur für den Import benötigt, wenn keine Flächenobjekte vorhanden sind
+    # Verwendung: 
+    # 1. Auswahl von Objekten in verschiedenen Tabellen für verschiedene Aufgaben (z. B. 
+    #    automatische Verknüpfung von befestigten Flächen und direkten Einleitungen). 
+    # 2. Spezifische Verbrauchsdaten in Verbindung mit "einwohner"
+    # Einheiten:
+    #  - ewdichte: EW/ha
+    #  - wverbrauch: l/(EW·d)
+    #  - stdmittel: h/d
+    #  - fremdwas: %
+    #  - flaeche: ha
+
 
     sql = '''CREATE TABLE teilgebiete (
-        pk INTEGER PRIMARY KEY AUTOINCREMENT,
-        tgnam TEXT,
-        ewdichte REAL,
-        wverbrauch REAL,
-        stdmittel REAL,
-        fremdwas REAL,
-        flaeche REAL,
-        kommentar TEXT,
-        createdat TEXT DEFAULT CURRENT_DATE)'''
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    tgnam TEXT,
+    ewdichte REAL,
+    wverbrauch REAL,
+    stdmittel REAL,
+    fremdwas REAL,
+    flaeche REAL,
+    kommentar TEXT,
+    createdat TEXT DEFAULT CURRENT_DATE)'''
 
     try:
         cursl.execute(sql)
@@ -392,10 +404,46 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
 
     sql = "SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('teilgebiete','geom')"
+    try:
+        cursl.execute(sql)
+        cursl.execute(sqlindex)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
+        return False
+    consl.commit()
+
+    # Gruppen ------------------------------------------------------------------
+    # Bearbeitungen, die auf Auswahlen basieren, verwenden ausschließlich die 
+    # Tabelle "Teilgebiete". Diese Zuordnung ist sozusagen aktiv, im Gegensatz 
+    # zu inaktiven Zuordnungen, die in der Tabelle "gruppen" gespeichert werden. 
+    # Mit einem plugin "Zuordnung zu Teilgebieten" können gespeicherte 
+    # Zuordnungen gespeichert und geladen werden. Dabei werden die 
+    # Zuordnungen für folgende Tabellen verwaltet: 
+    #  - "haltungen" 
+    #  - "schaechte" 
+    #  - "flaechen" 
+    #  - "linkfl" 
+    #  - "linksw" 
+    #  - "tezg" 
+    #  - "einleit" 
+    #  - "einwohner" 
+    #  - "swgebaeude"
+
+    sql = '''CREATE TABLE gruppen (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    pktab INTEGER,
+    grnam TEXT,
+    teilgebiet TEXT,
+    tabelle TEXT,
+    kommentar TEXT,
+    createdat TEXT DEFAULT CURRENT_DATE)'''
+
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung('Tabelle "gruppen" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
     consl.commit()
@@ -403,22 +451,22 @@ def createdbtables(consl, cursl, epsg=25832):
     # Befestigte und unbefestigte Flächen ------------------------------------------------------
 
     sql = '''CREATE TABLE flaechen (
-        pk INTEGER PRIMARY KEY AUTOINCREMENT,
-        flnam TEXT,
-        haltnam TEXT,
-        neigkl INTEGER DEFAULT 0,
-        he_typ INTEGER DEFAULT 0,
-        speicherzahl INTEGER DEFAULT 2,
-        speicherkonst REAL,
-        fliesszeit REAL,
-        fliesszeitkanal REAL,
-        teilgebiet TEXT,
-        regenschreiber TEXT,
-        einwohner REAL,
-        abflussparameter TEXT,
-        aufteilen TEXT DEFAULT 'nein',
-        kommentar TEXT,
-        createdat TEXT DEFAULT CURRENT_DATE)'''
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    flnam TEXT,
+    haltnam TEXT,
+    neigkl INTEGER DEFAULT 0,
+    he_typ INTEGER DEFAULT 0,
+    speicherzahl INTEGER DEFAULT 2,
+    speicherkonst REAL,
+    fliesszeit REAL,
+    fliesszeitkanal REAL,
+    teilgebiet TEXT,
+    regenschreiber TEXT,
+    einwohner REAL,
+    abflussparameter TEXT,
+    aufteilen TEXT DEFAULT 'nein',
+    kommentar TEXT,
+    createdat TEXT DEFAULT CURRENT_DATE)'''
 
     try:
         cursl.execute(sql)
@@ -428,27 +476,29 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
 
     sql = "SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('flaechen','geom')"
     try:
         cursl.execute(sql)
+        cursl.execute(sqlindex)
     except BaseException as err:
         fehlermeldung('In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
 
-    # Anbindung ---------------------------------------------------------------------------
+    # Anbindung Flächen ---------------------------------------------------------------------------
     # Die Tabelle linkfl verwaltet die Anbindung von Flächen an Haltungen. Diese Anbindung
     # wird ausschließlich grafisch verwaltet und beim Export direkt verwendet. 
     # Flächen, bei denen das Attribut "aufteilen" den Wert 'ja' hat, werden mit dem 
     # Werkzeug "QKan_Link_Flaechen" mit allen durch die Verschneidung mit tezg entstehenden
     # Anteilen zugeordnet. 
 
-    sql = """CREATE TABLE IF NOT EXISTS linkfl (
-            pk INTEGER PRIMARY KEY AUTOINCREMENT,
-            flnam TEXT,
-            haltnam TEXT,
-            aufteilen TEXT,
-            teilgebiet TEXT)"""
+    sql = """CREATE TABLE linkfl (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    flnam TEXT,
+    haltnam TEXT,
+    aufteilen TEXT,
+    teilgebiet TEXT)"""
 
     try:
         cursl.execute(sql)
@@ -460,31 +510,99 @@ def createdbtables(consl, cursl, epsg=25832):
     sql1 = """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
     sql2 = """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
     sql3 = """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    sqlindex = "SELECT CreateSpatialIndex('linkfl','glink')"
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
         cursl.execute(sql3)
+        cursl.execute(sqlindex)
     except:
         fehlermeldung(u"QKan_Database (1) SQL-Fehler in SpatiaLite: \n", sql)
         consl.close()
         return False
     consl.commit()
 
+    # Anbindung Direkteinleitungen --------------------------------------------------------------
+    # Die Tabelle linksw verwaltet die Anbindung von Gebäuden an Haltungen. Diese Anbindung
+    # wird anschließend in das Feld haltnam eingetragen. Der Export erfolgt allerdings anhand
+    # der grafischen Verknüpfungen dieser Tabelle. 
+
+    sql = """CREATE TABLE linksw (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    pkswref INTEGER,
+    haltnam TEXT,
+    teilgebiet TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('Tabelle "linksw" konnte nicht erstellt werden', str(err))
+        consl.close()
+        return False
+
+    sql1 = """SELECT AddGeometryColumn('linksw','geom',{epsg},'POLYGON',2)""".format(epsg=epsg)
+    sql2 = """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql3 = """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    sqlindex = "SELECT CreateSpatialIndex('linksw','geom')"
+    try:
+        cursl.execute(sql1)
+        cursl.execute(sql2)
+        cursl.execute(sql3)
+        cursl.execute(sqlindex)
+    except:
+        fehlermeldung(u"QKan_Database (2) SQL-Fehler in SpatiaLite: \n", sql)
+        consl.close()
+        return False
+    consl.commit()
+
+    # Anbindung einwohnerbezogene Direkteinleitungen---------------------------------------------
+    # Die Tabelle linkew verwaltet die Anbindung von Gebäuden an Haltungen. Diese Anbindung
+    # wird anschließend in das Feld haltnam eingetragen. Der Export erfolgt allerdings anhand
+    # der grafischen Verknüpfungen dieser Tabelle. 
+
+    sql = """CREATE TABLE linkew (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    pkewref INTEGER,
+    haltnam TEXT,
+    teilgebiet TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('Tabelle "linkew" konnte nicht erstellt werden', str(err))
+        consl.close()
+        return False
+
+    sql1 = """SELECT AddGeometryColumn('linkew','geom',{epsg},'POLYGON',2)""".format(epsg=epsg)
+    sql2 = """SELECT AddGeometryColumn('linkew','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql3 = """SELECT AddGeometryColumn('linkew','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    sqlindex = "SELECT CreateSpatialIndex('linkew','geom')"
+    try:
+        cursl.execute(sql1)
+        cursl.execute(sql2)
+        cursl.execute(sql3)
+        cursl.execute(sqlindex)
+    except:
+        fehlermeldung(u"QKan_Database (2) SQL-Fehler in SpatiaLite: \n", sql)
+        consl.close()
+        return False
+    consl.commit()
+
     # Teileinzugsgebiete ------------------------------------------------------------------
-    # Bei aktivierte Option "check_difftezg" wird je Teileinzugsgebiet eine unbefestigte 
+    # Bei aktivierter Option "check_difftezg" wird je Teileinzugsgebiet eine unbefestigte 
     # Fläche als Differenz zu den innerhalb liegenden Flächen (befestigte und unbefestigte!)
     # gebildet
 
     sql = '''CREATE TABLE tezg (
-        pk INTEGER PRIMARY KEY AUTOINCREMENT,
-        flnam TEXT,
-        haltnam TEXT,
-        neigkl INTEGER DEFAULT 1,
-        regenschreiber TEXT,
-        teilgebiet TEXT,
-        abflussparameter TEXT,
-        kommentar TEXT,
-        createdat TEXT DEFAULT CURRENT_DATE)'''
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    flnam TEXT,
+    haltnam TEXT,
+    neigkl INTEGER DEFAULT 1,
+    regenschreiber TEXT,
+    teilgebiet TEXT,
+    abflussparameter TEXT,
+    kommentar TEXT,
+    createdat TEXT DEFAULT CURRENT_DATE)'''
 
     try:
         cursl.execute(sql)
@@ -494,18 +612,124 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
 
     sql = "SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('tezg','geom')"
     try:
         cursl.execute(sql)
+        cursl.execute(sqlindex)
     except BaseException as err:
         fehlermeldung('In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
 
+
+    # Direkte Einleitungen ----------------------------------------------------------
+    # Erfasst alle Direkteinleitungen mit festem SW-Zufluss (m³/a)
+    # Die Zuordnung zum Teilgebiet dient nur der Auswahl
+
+    sql = '''CREATE TABLE einleit (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    elnam TEXT,
+    haltnam TEXT,
+    zufluss REAL,
+    teilgebiet TEXT, 
+    kommentar TEXT,
+    createdat TEXT DEFAULT CURRENT_DATE)'''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('Tabelle "einleit" konnte nicht erstellt werden', str(err))
+        consl.close()
+        return False
+
+    sql = "SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('einleit','geom')"
+    try:
+        cursl.execute(sql)
+        cursl.execute(sqlindex)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
+        return False
+    consl.commit()
+
+
+    # Verbrauchsbezogene Einleitungen ----------------------------------------------------------
+    # Alle Einwohnerbezogenen SW-Einleitungen. 
+    # Die Zuordnung zur Tabelle "teilgebiet" verknüpft die dort gespeicherten Attribute:
+    #  - ewdichte
+    #  - wverbrauch
+    #  - stdmittel
+    #  - fremdwas
+
+    sql = '''CREATE TABLE einwohner (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    elnam TEXT, 
+    haltnam TEXT, 
+    ew REAL, 
+    teilgebiet TEXT, 
+    kommentar TEXT, 
+    createdat TEXT DEFAULT CURRENT_DATE)'''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('Tabelle "einwohner" konnte nicht erstellt werden', str(err))
+        consl.close()
+        return False
+
+    sql = "SELECT AddGeometryColumn('einwohner','geom',{},'POINT',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('einwohner','geom')"
+    try:
+        cursl.execute(sql)
+        cursl.execute(sqlindex)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "einwohner" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
+        return False
+    consl.commit()
+
+
+    # Einleitungen aus Wasserverbrauchstabellen ----------------------------------------------------------
+    # Die Tabelle wird individuell verwaltet und anschließend auf die Tabelle "einleit" übertragen
+
+    # sql = '''CREATE TABLE swref (
+        # pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+        # oi TEXT, 
+        # gebnam TEXT, 
+        # ags TEXT, 
+        # strassenname TEXT, 
+        # hausnummer TEXT, 
+        # zusatz TEXT, 
+        # haltnam TEXT, 
+        # wasserverbrauch REAL, 
+        # teilgebiet TEXT, 
+        # kommentar TEXT, 
+        # createdat TEXT DEFAULT CURRENT_DATE)'''
+
+    # try:
+        # cursl.execute(sql)
+    # except BaseException as err:
+        # fehlermeldung('Tabelle "swref" konnte nicht erstellt werden', str(err))
+        # consl.close()
+        # return False
+
+    # sql = "SELECT AddGeometryColumn('swref','geom',{},'POINT',2)".format(epsg)
+    # sqlindex = "SELECT CreateSpatialIndex('swref','geom')"
+    # try:
+        # cursl.execute(sql)
+        # cursl.execute(sqlindex)
+    # except BaseException as err:
+        # fehlermeldung('In der Tabelle "swref" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        # consl.close()
+        # return False
+    # consl.commit()
+
+
     # Simulationsstatus/Planungsstatus -----------------------------------------
 
-    sql = '''
-    CREATE TABLE simulationsstatus (
+    sql = '''CREATE TABLE simulationsstatus (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bezeichnung TEXT,
     he_nr INTEGER,
@@ -540,8 +764,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Auslasstypen -------------------------------------------------------------
 
-    sql = '''
-    CREATE TABLE auslasstypen (
+    sql = '''CREATE TABLE auslasstypen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bezeichnung TEXT,
     he_nr INTEGER,
@@ -574,8 +797,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Abflussparameter -------------------------------------------------------------
 
-    sql = '''
-    CREATE TABLE abflussparameter (
+    sql = '''CREATE TABLE abflussparameter (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     apnam TEXT, 
     anfangsabflussbeiwert REAL, 
@@ -614,8 +836,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Bodenklasse -------------------------------------------------------------
 
-    sql = '''
-    CREATE TABLE bodenklassen (
+    sql = '''CREATE TABLE bodenklassen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bknam TEXT, 
     infiltrationsrateanfang REAL,
@@ -658,8 +879,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Kennlinie Speicherbauwerke -----------------------------------------------
 
-    sql = '''
-    CREATE TABLE speicherkennlinien (
+    sql = '''CREATE TABLE speicherkennlinien (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     schnam TEXT, 
     wspiegel REAL, 
@@ -675,8 +895,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Allgemeiner Informationen -----------------------------------------------
 
-    sql = '''
-    CREATE TABLE info (
+    sql = '''CREATE TABLE info (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     subject TEXT, 
     value TEXT,

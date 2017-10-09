@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/Flaechenzuordnungen" >
-        <file>icon_connectflaechen.png</file>
-    </qresource>
-</RCC>

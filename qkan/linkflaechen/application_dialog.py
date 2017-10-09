@@ -25,14 +25,14 @@ import os
 
 from PyQt4 import QtGui, uic
 
-FORM_CLASS_createlines, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'application_createlines.ui'))
+FORM_CLASS_createlinefl, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'application_createlinefl.ui'))
 
 
-class CreatelinesDialog(QtGui.QDialog, FORM_CLASS_createlines):
+class CreatelineflDialog(QtGui.QDialog, FORM_CLASS_createlinefl):
     def __init__(self, parent=None):
         """Constructor."""
-        super(CreatelinesDialog, self).__init__(parent)
+        super(CreatelineflDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -41,14 +41,62 @@ class CreatelinesDialog(QtGui.QDialog, FORM_CLASS_createlines):
         self.setupUi(self)
 
 
-FORM_CLASS_connectflaechen, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'application_connectflaechen.ui'))
+FORM_CLASS_createlinesw, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'application_createlinesw.ui'))
 
 
-class ConnectflaechenDialog(QtGui.QDialog, FORM_CLASS_connectflaechen):
+class CreatelineswDialog(QtGui.QDialog, FORM_CLASS_createlinesw):
     def __init__(self, parent=None):
         """Constructor."""
-        super(ConnectflaechenDialog, self).__init__(parent)
+        super(CreatelineswDialog, self).__init__(parent)
+        # Set up the user interface from Designer.
+        # After setupUI you can access any designer object by doing
+        # self.<objectname>, and you can use autoconnect slots - see
+        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
+        # #widgets-and-dialogs-with-auto-connect
+        self.setupUi(self)
+
+
+FORM_CLASS_createlineew, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'application_createlineew.ui'))
+
+
+class CreatelineewDialog(QtGui.QDialog, FORM_CLASS_createlineew):
+    def __init__(self, parent=None):
+        """Constructor."""
+        super(CreatelineewDialog, self).__init__(parent)
+        # Set up the user interface from Designer.
+        # After setupUI you can access any designer object by doing
+        # self.<objectname>, and you can use autoconnect slots - see
+        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
+        # #widgets-and-dialogs-with-auto-connect
+        self.setupUi(self)
+
+
+FORM_CLASS_assigntezg, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'application_assigntezg.ui'))
+
+
+class AssigntezgDialog(QtGui.QDialog, FORM_CLASS_assigntezg):
+    def __init__(self, parent=None):
+        """Constructor."""
+        super(AssigntezgDialog, self).__init__(parent)
+        # Set up the user interface from Designer.
+        # After setupUI you can access any designer object by doing
+        # self.<objectname>, and you can use autoconnect slots - see
+        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
+        # #widgets-and-dialogs-with-auto-connect
+        self.setupUi(self)
+
+
+FORM_CLASS_managegroups, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'application_managegroups.ui'))
+
+
+class ManagegroupsDialog(QtGui.QDialog, FORM_CLASS_managegroups):
+    def __init__(self, parent=None):
+        """Constructor."""
+        super(ManagegroupsDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
