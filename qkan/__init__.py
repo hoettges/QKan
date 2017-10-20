@@ -40,16 +40,20 @@ class Dummy:
                 self.menu = menu.menu()
                 self.menu_action = menu
                 break
-        if self.menu is None:
-            self.menu = QMenu('QKan', self.iface.mainWindow().menuBar())
-            prepend = actions[3]
-            self.menu_action = self.iface.mainWindow().menuBar().insertMenu(prepend, self.menu)
 
         self.toolbar = self.iface.addToolBar('QKan')
         self.toolbar.setObjectName('QKan')
 
     def initGui(self):
-        # self.create_menu()
+        # Create and insert QKan menu after the 3rd menu
+        if self.menu is None:
+            self.menu = QMenu('QKan', self.iface.mainWindow().menuBar())
+
+            actions = self.iface.mainWindow().menuBar().actions()
+            prepend = actions[3]
+            self.menu_action = self.iface.mainWindow().menuBar().insertMenu(prepend, self.menu)
+
+        # Calls initGui on all known QKan plugins
         for plugin in self.plugins:
             plugin.initGui()
 
@@ -60,7 +64,6 @@ class Dummy:
 
         # Remove entries from Plugin menu and toolbar
         for action in self.actions:
-            self.iface.removePluginMenu('QKan', action)
             self.iface.removeToolBarIcon(action)
 
         # Remove the toolbar
