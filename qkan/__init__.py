@@ -57,6 +57,11 @@ class Dummy:
         for plugin in self.plugins:
             plugin.initGui()
 
+        # Finally sort all actions
+        self.actions.sort(key=lambda x: x.text().lower())
+        self.menu.clear()
+        self.menu.addActions(self.actions)
+
     def unload(self):
         # Remove entries from own menu
         for action in self.menu.actions():
@@ -132,13 +137,8 @@ class Dummy:
             self.toolbar.addAction(action)
 
         if add_to_menu:
-            actions = self.actions + [action]
-            actions.sort(key=lambda x: x.text().lower())
-            self.menu.clear()
-            for action in actions:
-                self.menu.addAction(action)
-
-                # self.iface.addPluginToMenu('QKan', action)
+            self.actions += [action]  # Append action
+            self.menu.addAction(action)
 
         self.actions.append(action)
 
