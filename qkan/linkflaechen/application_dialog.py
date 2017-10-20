@@ -26,7 +26,7 @@ import os
 from PyQt4 import QtGui, uic
 
 FORM_CLASS_createlinefl, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'application_createlinefl.ui'))
+    os.path.dirname(__file__), 'resources', 'application_createlinefl.ui'))
 
 
 class CreatelineflDialog(QtGui.QDialog, FORM_CLASS_createlinefl):
@@ -42,7 +42,7 @@ class CreatelineflDialog(QtGui.QDialog, FORM_CLASS_createlinefl):
 
 
 FORM_CLASS_createlinesw, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'application_createlinesw.ui'))
+    os.path.dirname(__file__), 'resources', 'application_createlinesw.ui'))
 
 
 class CreatelineswDialog(QtGui.QDialog, FORM_CLASS_createlinesw):
@@ -58,7 +58,7 @@ class CreatelineswDialog(QtGui.QDialog, FORM_CLASS_createlinesw):
 
 
 FORM_CLASS_createlineew, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'application_createlineew.ui'))
+    os.path.dirname(__file__), 'resources', 'application_createlineew.ui'))
 
 
 class CreatelineewDialog(QtGui.QDialog, FORM_CLASS_createlineew):
@@ -74,7 +74,7 @@ class CreatelineewDialog(QtGui.QDialog, FORM_CLASS_createlineew):
 
 
 FORM_CLASS_assigntezg, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'application_assigntezg.ui'))
+    os.path.dirname(__file__), 'resources', 'application_assigntezg.ui'))
 
 
 class AssigntezgDialog(QtGui.QDialog, FORM_CLASS_assigntezg):
@@ -90,7 +90,7 @@ class AssigntezgDialog(QtGui.QDialog, FORM_CLASS_assigntezg):
 
 
 FORM_CLASS_managegroups, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'application_managegroups.ui'))
+    os.path.dirname(__file__), 'resources', 'application_managegroups.ui'))
 
 
 class ManagegroupsDialog(QtGui.QDialog, FORM_CLASS_managegroups):
