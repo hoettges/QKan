@@ -35,7 +35,7 @@ from qgis.utils import iface
 
 # Initialize Qt resources from file resources.py
 # noinspection PyUnresolvedReferences 
-import resources_createlinefl, resources_createlinesw, resources_createlineew, resources_assigntezg, resources_managegroups
+import resources
 # Import the code for the dialog
 from application_dialog import CreatelineflDialog, CreatelineswDialog, CreatelineewDialog, AssigntezgDialog, ManagegroupsDialog
 from k_link import createlinkfl, createlinksw, createlinkew, assigntezg, storegroup, reloadgroup
@@ -141,35 +141,35 @@ class LinkFl:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_assigntezg_path = ':/plugins/qkan/linkflaechen/icon_assigntezg.png'
+        icon_assigntezg_path = ':/plugins/qkan/linkflaechen/resources/icon_assigntezg.png'
         Dummy.instance.add_action(
             icon_assigntezg_path, 
             text=self.tr(u'Haltungen und Flächen zu Teilgebiet zuordnen'), 
             callback=self.run_assigntezg, 
             parent=self.iface.mainWindow())
 
-        icon_createlinefl_path = ':/plugins/qkan/linkflaechen/icon_createlinefl.png'
+        icon_createlinefl_path = ':/plugins/qkan/linkflaechen/resources/icon_createlinefl.png'
         Dummy.instance.add_action(
             icon_createlinefl_path, 
             text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'), 
             callback=self.run_createlinefl, 
             parent=self.iface.mainWindow())
 
-        icon_createlinesw_path = ':/plugins/qkan/linkflaechen/icon_createlinesw.png'
+        icon_createlinesw_path = ':/plugins/qkan/linkflaechen/resources/icon_createlinesw.png'
         Dummy.instance.add_action(
             icon_createlinesw_path, 
             text=self.tr(u'Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen'), 
             callback=self.run_createlinesw, 
             parent=self.iface.mainWindow())
 
-        icon_createlineew_path = ':/plugins/qkan/linkflaechen/icon_createlineew.png'
+        icon_createlineew_path = ':/plugins/qkan/linkflaechen/resources/icon_createlineew.png'
         Dummy.instance.add_action(
             icon_createlineew_path, 
             text=self.tr(u'Erzeuge Verknüpfungslinien von EW-bezogenen Einleitungen zu Haltungen'), 
             callback=self.run_createlineew, 
             parent=self.iface.mainWindow())
 
-        icon_managegroups_path = ':/plugins/qkan/linkflaechen/icon_managegroups.png'
+        icon_managegroups_path = ':/plugins/qkan/linkflaechen/resources/icon_managegroups.png'
         Dummy.instance.add_action(
             icon_managegroups_path, 
             text=self.tr(u'Teilgebietszuordnungen als Gruppen verwalten'), 
