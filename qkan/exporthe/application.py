@@ -211,8 +211,9 @@ class ExportToHE:
         init_speicherkennlinien = cb_set('init_speicherkennlinien', self.dlg.cb_init_speicherkennlinien, False)
         init_bodenklassen = cb_set('init_bodenklassen', self.dlg.cb_init_bodenklassen, False)
 
-        export_difftezg = cb_set('export_difftezg', self.dlg.cb_export_difftezg, True)
-        export_verschneidung = cb_set('export_verschneidung', self.dlg.cb_export_verschneidung, True)
+        combine_flaechenrw = cb_set('combine_flaechenrw', self.dlg.cb_combine_flaechenrw, True)
+        combine_einleitdirekt = cb_set('combine_einleitdirekt', self.dlg.cb_combine_einleitdirekt, True)
+        combine_einleitew = cb_set('combine_einleitew', self.dlg.cb_combine_einleitew, True)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -632,8 +633,9 @@ class ExportToHE:
             check_export['init_speicherkennlinien'] = self.dlg.cb_init_speicherkennlinien.isChecked()
             check_export['init_bodenklassen'] = self.dlg.cb_init_bodenklassen.isChecked()
 
-            check_export['export_difftezg'] = self.dlg.cb_export_difftezg.isChecked()
-            check_export['export_verschneidung'] = self.dlg.cb_export_verschneidung.isChecked()
+            check_export['combine_flaechenrw'] = self.dlg.cb_combine_flaechenrw.isChecked()
+            check_export['combine_einleitdirekt'] = self.dlg.cb_combine_einleitdirekt.isChecked()
+            check_export['combine_einleitew'] = self.dlg.cb_combine_einleitew.isChecked()
 
             # Konfigurationsdaten schreiben
             self.config['database_HE'] = database_HE

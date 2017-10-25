@@ -415,20 +415,20 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True
     #     Mittelpunkt bezogen werden soll
     #   - es gibt keine Verschneidung
 
-    # Kopieren der Direkteinleitungen-Punkte in die Tabelle linkew. Dabei wird aus dem Punktobjekt
-    # aus einleit ein Flächenobjekt, damit ein Spatialindex verwendet werden kann 
+    # Kopieren der EW-bezogenen-Einleitungen-Punkte in die Tabelle linkew. Dabei wird aus dem Punktobjekt
+    # aus einwohner ein Flächenobjekt, damit ein Spatialindex verwendet werden kann 
     # (für POINT gibt es keinen MBR?)
     
     if len(liste_teilgebiete) != 0:
-        auswahl = " AND einleit.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        auswahl = " AND einwohner.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
     else:
         auswahl = ''
 
     sql = u"""INSERT INTO linkew (pkewref, teilgebiet, geom)
-            SELECT einleit.pk, einleit.teilgebiet,buffer(einleit.geom,{radius})
-            FROM einleit
+            SELECT einwohner.pk, einwohner.teilgebiet,buffer(einwohner.geom,{radius})
+            FROM einwohner
             LEFT JOIN linkew
-            ON linkew.pkewref = einleit.pk
+            ON linkew.pkewref = einwohner.pk
             WHERE linkew.pk IS NULL{auswahl}""".format(auswahl=auswahl, radius = 0.5)
 
     logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
@@ -440,7 +440,7 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True
         del dbQK
         return False
 
-    # Jetzt werden die Direkteinleitungen-Punkte mit einem Buffer erweitert und jeweils neu 
+    # Jetzt werden die EW-bezogenen Einleitungen-Punkte mit einem Buffer erweitert und jeweils neu 
     # hinzugekommmene mögliche Zuordnungen eingetragen.
     # Wenn das Attribut "haltnam" vergeben ist, gilt die Fläche als zugeordnet.
 
@@ -459,17 +459,18 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True
 
 
     if len(liste_teilgebiete) != 0:
-        auswahl = " AND  hal.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-        auswlin = " AND  linkew.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        auswahl = " AND hal.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        auswlin = " AND linkew.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
     else:
         auswahl = ''
+        auswlin = ''
 
     # Erläuterung zur nachfolgenden SQL-Abfrage:
     # tlink enthält alle potenziellen Verbindungen zwischen Flächen und Haltungen mit der jeweiligen Entfernung
     # t2 enthält von diesen Verbindungen nur die Fläche (als pk) und den minimalen Abstand, 
     # so dass in der Abfrage nach "update" nur die jeweils nächste Verbindung gefiltert wird. 
     # Da diese Abfrage nur für neu zu erstellende Verknüpfungen gelten soll (also noch kein Eintrag
-    # im Feld "einleit.haltnam" -> ew.haltnam -> tlink.linkhal -> t1.linkhal). 
+    # im Feld "einwohner.haltnam" -> ew.haltnam -> tlink.linkhal -> t1.linkhal). 
 
     # SpatialIndex anlegen
     sqlindex = "SELECT CreateSpatialIndex('haltungen','geom')"
@@ -585,43 +586,45 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True
             del dbQK
             return False
 
+        # Abfrage ist identisch in k_qkhe.py vorhanden
+
         # SpatialIndex anlegen
-        sqlindex = "SELECT CreateSpatialIndex('einleit','geom')"
+        sqlindex = "SELECT CreateSpatialIndex('einwohner','geom')"
         try:
             dbQK.sql(sqlindex)
         except BaseException as err:
-            fehlermeldung('In der Tabelle "einleit" konnte CreateSpatialIndex auf "geom" nicht durchgeführt werden', str(err))
+            fehlermeldung('In der Tabelle "einwohner" konnte CreateSpatialIndex auf "geom" nicht durchgeführt werden', str(err))
             del dbQK
             return False
 
         if len(liste_teilgebiete) != 0:
             ausw_ew = " AND ew.teilgebiet in ('{0:}') AND linkew.teilgebiet in ('{0:}')".format("', '".join(liste_teilgebiete))
-            ausw_einleit = "einleit.teilgebiet in ('{}') AND".format("', '".join(liste_teilgebiete))
+            ausw_einwohner = "einwohner.teilgebiet in ('{}') AND".format("', '".join(liste_teilgebiete))
         else:
             ausw_ew = ""
-            ausw_einleit = ""
+            ausw_einwohner = ""
 
-        sql = u"""UPDATE einleit SET haltnam = 
+        sql = u"""UPDATE einwohner SET haltnam = 
                 (   SELECT linkew.haltnam
                     FROM linkew
-                    INNER JOIN einleit AS ew
+                    INNER JOIN einwohner AS ew
                     ON within(ew.geom,linkew.geom)
                     WHERE ew.ROWID IN 
                     (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'einleit' AND
+                        f_table_name = 'einwohner' AND
                         search_frame = linkew.geom){ausw_ew} AND
-                    ew.pk = einleit.pk
+                    ew.pk = einwohner.pk
                 )
-                WHERE {ausw_einleit} einleit.pk in 
+                WHERE {ausw_einwohner} einwohner.pk in 
                 (   SELECT ew.pk
                     FROM linkew
-                    INNER JOIN einleit AS ew
+                    INNER JOIN einwohner AS ew
                     ON within(ew.geom,linkew.geom)
                     WHERE ew.ROWID IN 
                     (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'einleit' AND
+                        f_table_name = 'einwohner' AND
                         search_frame = linkew.geom){ausw_ew}
-                )""".format(ausw_ew=ausw_ew, ausw_einleit=ausw_einleit)
+                )""".format(ausw_ew=ausw_ew, ausw_einwohner=ausw_einwohner)
 
         logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
@@ -850,6 +853,8 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True
             fehlermeldung(u"QKan_LinkSW (3) SQL-Fehler in SpatiaLite: \n", sql)
             del dbQK
             return False
+
+        # Abfrage ist identisch in k_qkhe.py vorhanden
 
         # SpatialIndex anlegen
         sqlindex = "SELECT CreateSpatialIndex('einleit','geom')"

@@ -346,11 +346,11 @@ class LinkFl:
         # Zu berücksichtigende EW-Punkte zählen
 
         if len(liste_teilgebiete) != 0:
-            auswahl = u" WHERE einleit.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            auswahl = u" WHERE einwohner.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
             auswahl = ''
 
-        sql = u"""SELECT count(*) AS anzahl FROM einleit{auswahl}""".format(auswahl=auswahl)
+        sql = u"""SELECT count(*) AS anzahl FROM einwohner{auswahl}""".format(auswahl=auswahl)
         try:
             self.dbQK.sql(sql)
         except:
@@ -359,9 +359,9 @@ class LinkFl:
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
-            self.dlg_ew.lf_anzahl_einleit.setText(str(daten[0]))
+            self.dlg_ew.lf_anzahl_einwohner.setText(str(daten[0]))
         else:
-            self.dlg_ew.lf_anzahl_einleit.setText('0')
+            self.dlg_ew.lf_anzahl_einwohner.setText('0')
 
 
     # -------------------------------------------------------------------------
