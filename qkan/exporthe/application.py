@@ -392,7 +392,7 @@ class ExportToHE:
         # Zu berücksichtigende Flächen zählen
         auswahl = ''
         if len(liste_teilgebiete) != 0:
-            auswahl = " WHERE flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            auswahl = u" WHERE flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
         sql = u"""SELECT count(*) AS anzahl FROM flaechen{auswahl}""".format(auswahl=auswahl)
 
@@ -411,9 +411,9 @@ class ExportToHE:
         # Zu berücksichtigende Schächte zählen
         auswahl = ''
         if len(liste_teilgebiete) != 0:
-            auswahl = " WHERE schaechte.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            auswahl = u" WHERE schaechte.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
-        sql = """SELECT count(*) AS anzahl FROM schaechte{auswahl}""".format(auswahl=auswahl)
+        sql = u"""SELECT count(*) AS anzahl FROM schaechte{auswahl}""".format(auswahl=auswahl)
         try:
             self.dbQK.sql(sql)
         except:
@@ -429,9 +429,9 @@ class ExportToHE:
         # Zu berücksichtigende Haltungen zählen
         auswahl = ''
         if len(liste_teilgebiete) != 0:
-            auswahl = " WHERE haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            auswahl = u" WHERE haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
-        sql = """SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(auswahl=auswahl)
+        sql = u"""SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(auswahl=auswahl)
         try:
             self.dbQK.sql(sql)
         except:
@@ -504,7 +504,7 @@ class ExportToHE:
 
         # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
 
-        sql = """INSERT INTO teilgebiete (tgnam)
+        sql = u"""INSERT INTO teilgebiete (tgnam)
                 SELECT teilgebiet FROM flaechen 
                 WHERE teilgebiet IS NOT NULL AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
@@ -516,7 +516,7 @@ class ExportToHE:
             del self.dbQK
             return False
 
-        sql = """INSERT INTO teilgebiete (tgnam)
+        sql = u"""INSERT INTO teilgebiete (tgnam)
                 SELECT teilgebiet FROM haltungen 
                 WHERE teilgebiet IS NOT NULL AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
@@ -528,7 +528,7 @@ class ExportToHE:
             del self.dbQK
             return False
 
-        sql = """INSERT INTO teilgebiete (tgnam)
+        sql = u"""INSERT INTO teilgebiete (tgnam)
                 SELECT teilgebiet FROM schaechte 
                 WHERE teilgebiet IS NOT NULL AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)

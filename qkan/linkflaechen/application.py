@@ -1057,7 +1057,8 @@ class LinkFl:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
-            assigntezg(self.dbQK, auswahltyp, liste_teilgebiete, ['haltungen', 'flaechen', 'einleit', 'einwohner'])
+            assigntezg(self.dbQK, auswahltyp, liste_teilgebiete, 
+                       ['haltungen', 'flaechen', 'schaechte', 'einleit', 'einwohner'])
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen

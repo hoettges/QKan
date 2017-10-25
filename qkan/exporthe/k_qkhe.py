@@ -1653,7 +1653,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         fortschritt(u'{} Einzeleinleiter (Einwohner bezogen) eingefuegt'.format(nextid - nr0), 0.95)
 
 
-    if check_export['export_einleitdirekt'] or check_export['modify_direkt']:
+    if check_export['export_einleitdirekt'] or check_export['modify_einleitdirekt']:
         # Herkunft = 1 (Direkt)
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
