@@ -1967,7 +1967,7 @@ hinzufügen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Flächen werden vor dem Export haltungsweise zusammengefasst, so dass pro Haltung nur ein Datensatz existiert. Dies erhöht die Verarbeitungsgeschwindigkeit in HYSTEM-EXTRAN, während die direkte Zuordnung zu den Geoobjekten in QKan verloren geht. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
@@ -1992,7 +1992,7 @@ hinzufügen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die SW-Einleiterdaten werden vor dem Export haltungsweise zusammengefasst, so dass pro Haltung nur ein Datensatz existiert. Dies erhöht die Verarbeitungsgeschwindigkeit in HYSTEM-EXTRAN, während die direkte Zuordnung zu den Geoobjekten in QKan verloren geht. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
@@ -2017,7 +2017,7 @@ hinzufügen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die SW-Einleiterdaten werden vor dem Export haltungsweise zusammengefasst, so dass pro Haltung nur ein Datensatz existiert. Dies erhöht die Verarbeitungsgeschwindigkeit in HYSTEM-EXTRAN, während die direkte Zuordnung zu den Geoobjekten in QKan verloren geht. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
@@ -2029,10 +2029,10 @@ hinzufügen</string>
    <widget class="QLabel" name="label_34">
     <property name="geometry">
      <rect>
-      <x>315</x>
-      <y>150</y>
+      <x>320</x>
+      <y>25</y>
       <width>61</width>
-      <height>41</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -2043,8 +2043,7 @@ hinzufügen</string>
      </font>
     </property>
     <property name="text">
-     <string>Pro Haltung
-zusammen-
+     <string>zusammen-
 fassen</string>
     </property>
    </widget>
@@ -2096,7 +2095,7 @@ fassen</string>
      </rect>
     </property>
     <property name="toolTip">
-     <string extracomment="Auswahl der zu bearbeitenden Teilgebiete. Alle auswählen mit [Strg]+A"/>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auswahl der zu bearbeitenden Teilgebiete. Wenn kein Teilgebiet ausgewählt ist, werden alle berücksichtigt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="selectionMode">
      <enum>QAbstractItemView::ExtendedSelection</enum>

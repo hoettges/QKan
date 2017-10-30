@@ -1087,6 +1087,55 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         else:
             auswahl = ""
 
+        # Um eine manuelle Plausibiliätsprüfung zu ermöglichen (ansonsten überflüssig!), werden
+        # die mit "linkfl" verknüpften Flächen und Haltungen in "linkfl" eingetragen. 
+
+        # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
+
+        sql = """WITH flintersect AS (
+            SELECT flaechen.flnam AS flnam, CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
+            FROM flaechen
+            INNER JOIN tezg
+            ON intersects(flaechen.geom,tezg.geom)
+            WHERE flaechen.aufteilen = 'ja'
+            UNION
+            SELECT flaechen.flnam AS flnam, flaechen.geom AS geom
+            FROM flaechen
+            WHERE flaechen.aufteilen = 'nein' OR flaechen.aufteilen IS NULL
+            )
+        UPDATE linkfl SET flnam =
+        (   SELECT fi.flnam    
+            FROM flintersect AS fi
+            INNER JOIN linkfl AS lf
+            ON within(StartPoint(lf.glink),fi.geom)
+            WHERE lf.pk = linkfl.pk
+        )"""
+        logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan_Export (24) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            del dbHE
+            return False
+
+        # 2. Haltungen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
+
+        sql = """UPDATE linkfl SET haltnam = 
+                (   SELECT ha.haltnam
+                    FROM linkfl AS lf
+                    INNER JOIN haltungen AS ha
+                    ON intersects(buffer(EndPoint(lf.glink),0.1),ha.geom)
+                    WHERE linkfl.pk = lf.pk)"""
+        logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan_Export (25) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            del dbHE
+            return False
+
         # Zu verschneidende und nicht zu Flächen exportieren
         if check_export['combine_flaechenrw']:
             sql = u"""
@@ -1109,7 +1158,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
                 flaechen.kommentar AS kommentar, flaechen.geom AS geom
                 FROM flaechen
-                WHERE flaechen.aufteilen = 'nein'{auswahl}
+                WHERE flaechen.aufteilen = 'nein' OR flaechen.aufteilen IS NULL{auswahl}
                 )
               SELECT 'fls_' || haltungen.haltnam AS flnam, haltungen.haltnam AS haltnam, max(flintersect.neigkl) AS neigkl,
                 flintersect.he_typ AS he_typ, max(flintersect.speicherzahl) AS speicherzahl, max(flintersect.speicherkonst) AS speicherkonst,
@@ -1122,10 +1171,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               ON within(StartPoint(linkfl.glink),flintersect.geom)
               INNER JOIN haltungen
               ON intersects(buffer(EndPoint(linkfl.glink),{fangradius}),haltungen.geom)
-              WHERE area(flintersect.geom)/10000 > 0.01
-              GROUP BY haltnam
+              WHERE area(flintersect.geom) > 0.1
+              GROUP BY haltungen.haltnam
             """.format(auswahl=auswahl, fangradius=fangradius)
             logger.debug('combine_flaechenrw = True')
+            logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         else:
             sql = u"""
               WITH flintersect AS (
@@ -1147,7 +1197,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
                 flaechen.kommentar AS kommentar, flaechen.geom AS geom
                 FROM flaechen
-                WHERE flaechen.aufteilen = 'nein'{auswahl}
+                WHERE flaechen.aufteilen = 'nein' OR flaechen.aufteilen IS NULL{auswahl}
                 )
               SELECT flintersect.flnam AS flnam, haltungen.haltnam AS haltnam, flintersect.neigkl AS neigkl,
                 flintersect.he_typ AS he_typ, flintersect.speicherzahl AS speicherzahl, flintersect.speicherkonst AS speicherkonst,
@@ -1160,9 +1210,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               ON within(StartPoint(linkfl.glink),flintersect.geom)
               INNER JOIN haltungen
               ON intersects(buffer(EndPoint(linkfl.glink),{fangradius}),haltungen.geom)
-              WHERE area(flintersect.geom)/10000 > 0.01
+              WHERE area(flintersect.geom) > 0.1
             """.format(auswahl=auswahl, fangradius=fangradius)
             logger.debug('combine_flaechenrw = False')
+            logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         try:
             dbQK.sql(sql)
         except BaseException as err:
@@ -1313,8 +1364,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             ausw_sw = ""
             ausw_einleit = ""
 
+        # Anmerkung: coalesce sorgt dafür, dass nur bei zugeordneten Datensätzen eine Änderung vorgenommen
+        # wird. Ohne coalesce würden diese Daten mit NULL überschrieben. 
         sql = u"""UPDATE einleit SET haltnam = 
-                (   SELECT linksw.haltnam
+                (   SELECT coalesce(linksw.haltnam, einleit.haltnam)
                     FROM linksw
                     INNER JOIN einleit AS sw
                     ON within(sw.geom,linksw.geom)
@@ -1323,16 +1376,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                         f_table_name = 'einleit' AND
                         search_frame = linksw.geom){ausw_sw} AND
                     sw.pk = einleit.pk
-                )
-                WHERE {ausw_einleit} einleit.pk in 
-                (   SELECT sw.pk
-                    FROM linksw
-                    INNER JOIN einleit AS sw
-                    ON within(sw.geom,linksw.geom)
-                    WHERE sw.ROWID IN 
-                    (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'einleit' AND
-                        search_frame = linksw.geom){ausw_sw}
                 )""".format(ausw_sw=ausw_sw, ausw_einleit=ausw_einleit)
 
         logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
@@ -1356,23 +1399,25 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         if check_export['combine_einleitdirekt']:
             sql = u"""SELECT
-              'eld_' || haltnam AS elnam,
+              printf('eld__%d_%s',ROWID,haltnam) AS elnam,
               avg(x(geom)) AS xel,
               avg(y(geom)) AS yel,
               haltnam AS haltnam,
-              sum(zufluss) AS zufluss
+              sum(zufluss) AS zuflussdirekt
               FROM einleit{auswahl}
               GROUP BY haltnam
             """.format(auswahl=auswahl)
         else:
             sql = u"""SELECT
-              elnam AS elnam,
+              printf('eld__%d_%s',ROWID,haltnam) AS elnam,
               x(geom) AS xel,
               y(geom) AS yel,
               haltnam AS haltnam,
-              zufluss AS zufluss
+              zufluss AS zuflussdirekt
               FROM einleit{auswahl}
             """.format(auswahl=auswahl)
+
+        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
@@ -1388,7 +1433,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         for b in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            elnam, xel, yel, haltnam, zufluss = \
+            elnam, xel, yel, haltnam, zuflussdirekt = \
                 ('NULL' if el is None else el for el in b)
 
             # Einfuegen in die Datenbank
@@ -1409,7 +1454,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
                          abwasserart = 0, einwohner = 0, wverbrauch = 0, herkunft = 1,
                          stdmittel = 0, fremdwas = 0, faktor = 1, flaeche = 0, 
-                         zuflussmodell = 0, zuflussdirekt = 0, zufluss = zufluss, planungsstatus = 0, elnam = elnam[:27],
+                         zuflussmodell = 0, zuflussdirekt = zuflussdirekt, zufluss = 0, planungsstatus = 0, elnam = elnam[:27],
                          abrechnungszeitraum = 365, abzug = 0,
                          createdat = createdat, nextid = nextid)
             try:
@@ -1648,8 +1693,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             ausw_ew = ""
             ausw_einwohner = ""
 
+        # Anmerkung: coalesce sorgt dafür, dass nur bei zugeordneten Datensätzen eine Änderung vorgenommen
+        # wird. Ohne coalesce würden diese Daten mit NULL überschrieben. 
         sql = u"""UPDATE einwohner SET haltnam = 
-                (   SELECT linkew.haltnam
+                (   SELECT coalesce(linkew.haltnam, einwohner.haltnam)
                     FROM linkew
                     INNER JOIN einwohner AS ew
                     ON within(ew.geom,linkew.geom)
@@ -1658,19 +1705,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                         f_table_name = 'einwohner' AND
                         search_frame = linkew.geom){ausw_ew} AND
                     ew.pk = einwohner.pk
-                )
-                WHERE {ausw_einwohner} einwohner.pk in 
-                (   SELECT ew.pk
-                    FROM linkew
-                    INNER JOIN einwohner AS ew
-                    ON within(ew.geom,linkew.geom)
-                    WHERE ew.ROWID IN 
-                    (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'einwohner' AND
-                        search_frame = linkew.geom){ausw_ew}
                 )""".format(ausw_ew=ausw_ew, ausw_einwohner=ausw_einwohner)
 
-        logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
+        logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
@@ -1691,7 +1728,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         if check_export['combine_einleitdirekt']:
             sql = u"""SELECT
-              'eld_' || einwohner.haltnam AS elnam,
+              'ew_' || einwohner.haltnam AS elnam,
               avg(x(einwohner.geom)) AS xel,
               avg(y(einwohner.geom)) AS yel,
               einwohner.haltnam AS haltnam,
@@ -1720,6 +1757,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               ON einwohner.teilgebiet = teilgebiete.tgnam
               {auswahl}
             """.format(auswahl=auswahl)
+
+        logger.debug(u'\nSQL-6:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)

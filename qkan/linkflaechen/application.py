@@ -144,7 +144,7 @@ class LinkFl:
         icon_assigntezg_path = ':/plugins/qkan/linkflaechen/resources/icon_assigntezg.png'
         Dummy.instance.add_action(
             icon_assigntezg_path, 
-            text=self.tr(u'Haltungen und Flächen zu Teilgebiet zuordnen'), 
+            text=self.tr(u'Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen'), 
             callback=self.run_assigntezg, 
             parent=self.iface.mainWindow())
 
