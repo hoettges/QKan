@@ -110,7 +110,7 @@ def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp='SpatiaLite'):
         auswahl += """)"""
 
     sql = """WITH flbef AS (
-            SELECT 'fldur_' || tezg.flnam AS flnam, 
+            SELECT 'fd_' || tezg.flnam AS flnam, 
               tezg.haltnam AS haltnam, tezg.neigkl AS neigkl, 
               tezg.regenschreiber AS regenschreiber, tezg.teilgebiet AS teilgebiet,
               tezg.abflussparameter AS abflussparameter,
@@ -120,11 +120,11 @@ def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp='SpatiaLite'):
             FROM tezg
             INNER JOIN flaechen
             ON Intersects(tezg.geom,flaechen.geom)
-            WHERE 'fldur_' || tezg.flnam not in (SELECT flnam FROM flaechen)
+            WHERE 'fd_' || tezg.flnam not in (SELECT flnam FROM flaechen)
               {auswahl}
             GROUP BY tezg.pk)
             INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, kommentar, geom) 
-             SELECT 'fldur_' || flnam AS flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter,
+             SELECT flnam AS flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter,
             kommentar, CastToMultiPolygon(Difference(geot,geob)) AS geom FROM flbef""".format(auswahl=auswahl)
 
     try:

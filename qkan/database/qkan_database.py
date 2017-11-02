@@ -496,6 +496,7 @@ def createdbtables(consl, cursl, epsg=25832):
     sql = """CREATE TABLE linkfl (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     flnam TEXT,
+    tezgnam TEXT,
     haltnam TEXT,
     aufteilen TEXT,
     teilgebiet TEXT)"""

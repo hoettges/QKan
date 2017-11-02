@@ -37,6 +37,10 @@ from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
+# Progress bar
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
+
 logger = logging.getLogger('QKan')
 
 
@@ -102,6 +106,10 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     # Flächen, bei denen im Feld "haltungen" bereits eine Eintragung vorhanden ist, 
     # werden nicht bearbeitet. Damit ist eine manuelle Zuordnung möglich. 
 
+    # Progress Bar
+    bar = QProgressDialog()
+    bar.setRange(0,0)
+    bar.show()
 
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
     if len(liste_flaechen_abflussparam) == 0:
@@ -419,6 +427,11 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True
     # aus einwohner ein Flächenobjekt, damit ein Spatialindex verwendet werden kann 
     # (für POINT gibt es keinen MBR?)
     
+    # Progress Bar
+    bar = QProgressDialog()
+    bar.setRange(0,0)
+    bar.show()
+
     if len(liste_teilgebiete) != 0:
         auswahl = " AND einwohner.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
     else:
@@ -688,6 +701,11 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True
     # aus einleit ein Flächenobjekt, damit ein Spatialindex verwendet werden kann 
     # (für POINT gibt es keinen MBR?)
     
+    # Progress Bar
+    bar = QProgressDialog()
+    bar.setRange(0,0)
+    bar.show()
+
     if len(liste_teilgebiete) != 0:
         auswahl = " AND einleit.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
     else:
@@ -919,7 +937,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True
 
 # -------------------------------------------------------------------------------------------------------------
 
-def assigntezg(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite'):
+def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite'):
     '''Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
        Teilgebiete zu. Falls sich mehrere dieser Teilgebiete überlappen, ist das Resultat zufällig eines von diesen. 
 
@@ -937,6 +955,11 @@ def assigntezg(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite
     
     :returns: void
     '''
+
+    # Progress Bar
+    bar = QProgressDialog()
+    bar.setRange(0,0)
+    bar.show()
 
     if auswahltyp == 'within':
         spatialrelation = 'within'
@@ -999,6 +1022,11 @@ def reloadgroup(dbQK, gruppenname, dbtyp = 'SpatiaLite'):
     
     :returns: void
     '''
+
+    # Progress Bar
+    bar = QProgressDialog()
+    bar.setRange(0,0)
+    bar.show()
 
     tablist = ["haltungen", "schaechte", "flaechen", "linkfl", "tezg", "einleit", "einwohner"]
 

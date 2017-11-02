@@ -73,14 +73,14 @@ class CreatelineewDialog(QtGui.QDialog, FORM_CLASS_createlineew):
         self.setupUi(self)
 
 
-FORM_CLASS_assigntezg, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'resources', 'application_assigntezg.ui'))
+FORM_CLASS_assigntgeb, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'resources', 'application_assigntgeb.ui'))
 
 
-class AssigntezgDialog(QtGui.QDialog, FORM_CLASS_assigntezg):
+class AssigntgebDialog(QtGui.QDialog, FORM_CLASS_assigntgeb):
     def __init__(self, parent=None):
         """Constructor."""
-        super(AssigntezgDialog, self).__init__(parent)
+        super(AssigntgebDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see

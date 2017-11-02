@@ -1265,6 +1265,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             if kommentar == 'NULL' or kommentar == '':
                 kommentar = 'eingefuegt von k_qkhe'
 
+            fnam = (u'fb_{}-{}'.format(flnam, haltnam))[:30]
+
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export['modify_flaechenrw']:
                 sql = u"""
@@ -1274,15 +1276,15 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                   SPEICHERKONSTANTE={speicherkonst:.3f}, SCHWERPUNKTLAUFZEIT={fliesszeit1:.2f},
                   FLIESSZEITOBERFLAECHE={fliesszeit2:.2f}, LAENGSTEFLIESSZEITKANAL={fliesszeitkanal:.2f},
                   PARAMETERSATZ='{abflussparameter}', NEIGUNGSKLASSE={neigkl},
-                  NAME='fbef_{flnam}-{haltnam}', LASTMODIFIED='{createdat}',
+                  NAME='{flnam}', LASTMODIFIED='{createdat}',
                   KOMMENTAR='{kommentar}', ID={nextid}, ZUORDNUNABHEZG={zuordnunabhezg}
-                  WHERE NAME = 'fbef_{flnam}-{haltnam}';
+                  WHERE NAME = '{flnam}';
                   """.format(flaeche=flaeche, regenschreiber=regenschreiber, haltnam=haltnam,
                              he_typ=he_typ, fltyp=0, speicherzahl=speicherzahl,
                              speicherkonst=speicherkonst, fliesszeit1=fliesszeit,
                              fliesszeit2=fliesszeit, fliesszeitkanal=fliesszeitkanal,
                              abflussparameter=abflussparameter, neigkl=neigkl,
-                             flnam=flnam, createdat=createdat,
+                             flnam=fnam, createdat=createdat,
                              kommentar=kommentar, nextid=nextid, zuordnunabhezg=0)
                 try:
                     dbHE.sql(sql)
@@ -1309,16 +1311,16 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     {speicherkonst:.3f}, {fliesszeit1:.2f},
                     {fliesszeit2:.2f}, {fliesszeitkanal:.2f},
                     '{abflussparameter}', {neigkl},
-                    'fbef_{flnam}-{haltnam}', '{createdat}',
+                    '{flnam}', '{createdat}',
                     '{kommentar}', {nextid}, {zuordnunabhezg}
                   FROM RDB$DATABASE
-                  WHERE 'fbef_{flnam}-{haltnam}' NOT IN (SELECT NAME FROM FLAECHE);
+                  WHERE '{flnam}' NOT IN (SELECT NAME FROM FLAECHE);
                   """.format(flaeche=flaeche, regenschreiber=regenschreiber, haltnam=haltnam,
                              he_typ=he_typ, fltyp=0, speicherzahl=speicherzahl,
                              speicherkonst=speicherkonst, fliesszeit1=fliesszeit,
                              fliesszeit2=fliesszeit, fliesszeitkanal=fliesszeitkanal,
                              abflussparameter=abflussparameter, neigkl=neigkl,
-                             flnam=flnam, createdat=createdat,
+                             flnam=fnam, createdat=createdat,
                              kommentar=kommentar, nextid=nextid, zuordnunabhezg=0)
                 try:
                     dbHE.sql(sql)
@@ -1482,31 +1484,31 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         Prüfung der vorliegenden Teilgebiete in QKan
         ============================================
         Zunächst eine grundsätzliche Anmerkung: In HE gibt es keine Teilgebiete in der Form, wie sie
-        in QKan vorhanden sind. Diese werden (nur) in QKan verwendet, um zum Einen die Grundlagendaten
+        in QKan vorhanden sind. Diese werden (nur) in QKan verwendet, um zum Einen für die Variante 
+        Herkunft = 3 die Grundlagendaten
          - einwohnerspezifischer Schmutzwasseranfall
          - Fremdwasseranteil
          - Stundenmittel
-        zu verwalten und den tezg-Flächen zuzuordnen, die gleichzeitig Trockenwetterzufluss repräsentieren
-        und zum Anderen, um die Möglichkeit zu haben, um für den Export Teile eines Netzes auszuwählen.
+        zu verwalten und zum Anderen, um die Möglichkeit zu haben, um für den Export Teile eines Netzes auszuwählen.
 
         Aus diesem Grund werden vor dem Export der Einzeleinleiter diese Daten geprüft:
 
         1 Wenn in QKan keine Teilgebiete vorhanden sind, wird zunächst geprüft, ob die
-           tezg-Flächen einem (noch nicht angelegten) Teilgebiet zugeordnet sind.
-           1.1 Keine tezg-Fläche ist einem Teilgebiet zugeordnet. Dann wird ein Teilgebiet "Teilgebiet1" 
-               angelegt und alle tezg-Flächen diesem Teilgebiet zugeordnet
-           1.2 Die tezg-Flächen sind einem oder mehreren noch nicht in der Tabelle "teilgebiete" vorhandenen 
+           Einwohnerpunkte einem (noch nicht angelegten) Teilgebiet zugeordnet sind.
+           1.1 Kein Einwohnerpunkt ist einem Teilgebiet zugeordnet. Dann wird ein Teilgebiet "Teilgebiet1" 
+               angelegt und alle Einwohnerpunkte diesem Teilgebiet zugeordnet
+           1.2 Die Einwohnerpunkte sind einem oder mehreren noch nicht in der Tabelle "teilgebiete" vorhandenen 
                Teilgebieten zugeordnet. Dann werden entsprechende Teilgebiete mit Standardwerten angelegt.
-        2 Wenn in QKan Teilgebiete vorhanden sind, wird geprüft, ob es auch tezg-Flächen gibt, die diesen
+        2 Wenn in QKan Teilgebiete vorhanden sind, wird geprüft, ob es auch Einwohnerpunkte gibt, die diesen
            Teilgebieten zugeordnet sind.
-           2.1 Es gibt keine tezg-Flächen, die einem Teilgebiet zugeordnet sind.
-               2.1.1 Es gibt in QKan genau ein Teilgebiet. Dann werden alle tezg-Flächen diesem Teilgebiet
+           2.1 Es gibt keine Einwohnerpunkte, die einem Teilgebiet zugeordnet sind.
+               2.1.1 Es gibt in QKan genau ein Teilgebiet. Dann werden alle Einwohnerpunkte diesem Teilgebiet
                      zugeordnet.
-               2.1.2 Es gibt in QKan mehrere Teilgebiete. Dann werden alle tezg-Flächen geographisch dem
+               2.1.2 Es gibt in QKan mehrere Teilgebiete. Dann werden alle Einwohnerpunkte geographisch dem
                      betreffenden Teilgebiet zugeordnet.
-           2.2 Es gibt mindestens eine tezg-Fläche, die einem Teilgebiet zugeordnet ist.
-               Dann wird geprüft, ob es noch nicht zugeordnete tezg-Flächen gibt, eine Warnung angezeigt und
-               diese tezg-Flächen aufgelistet.
+           2.2 Es gibt mindestens einen Einwohnerpunkt, der einem Teilgebiet zugeordnet ist.
+               Dann wird geprüft, ob es noch nicht zugeordnete Einwohnerpunkte gibt, eine Warnung angezeigt und
+               diese Einwohnerpunkte aufgelistet.
         """
 
         sql = 'SELECT count(*) AS anz FROM teilgebiete'
@@ -1517,7 +1519,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
 
             sql = u"""
-                SELECT count(*) AS anz FROM tezg WHERE
+                SELECT count(*) AS anz FROM einwohner WHERE
                 (teilgebiet is not NULL) AND
                 (teilgebiet <> 'NULL') AND
                 (teilgebiet <> '')
@@ -1525,7 +1527,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             dbQK.sql(sql)
             anz = int(dbQK.fetchone()[0])
             if anz == 0:
-                # 1.1 Keine tezg-Fläche mit Teilgebiet ----------------------------------------------------
+                # 1.1 Kein Einwohnerpunkt mit Teilgebiet ----------------------------------------------------
                 sql = u"""
                    INSERT INTO teilgebiete
                    ( tgnam, ewdichte, wverbrauch, stdmittel,
@@ -1540,9 +1542,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
                 dbQK.commit()
             else:
-                # 1.2 tezg-Flächen mit Teilgebiet ----------------------------------------------------
-                # Liste der in allen tezg-Flächen vorkommenden Teilgebieten
-                sql = 'SELECT teilgebiet FROM tezg WHERE teilgebiet is not NULL GROUP BY teilgebiet'
+                # 1.2 Einwohnerpunkte mit Teilgebiet ----------------------------------------------------
+                # Liste der in allen Einwohnerpunkten vorkommenden Teilgebiete
+                sql = 'SELECT teilgebiet FROM einwohner WHERE teilgebiet is not NULL GROUP BY teilgebiet'
                 dbQK.sql(sql)
                 listeilgeb = dbQK.fetchall()
                 for tgb in listeilgeb:
@@ -1566,80 +1568,80 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 # Kontrolle mit Warnung
                 sql = u"""
                     SELECT count(*) AS anz
-                    FROM tezg
-                    LEFT JOIN teilgebiete ON tezg.teilgebiet = teilgebiete.tgnam
+                    FROM einwohner
+                    LEFT JOIN teilgebiete ON einwohner.teilgebiet = teilgebiete.tgnam
                     WHERE teilgebiete.pk IS NULL
                 """
                 dbQK.sql(sql)
                 anz = int(dbQK.fetchone()[0])
                 if anz > 0:
-                    iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'tezg':",
-                                                   u"{} Flächen sind keinem Teilgebiet zugeordnet".format(anz),
+                    iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einwohner':",
+                                                   u"{} Einwohnerpunkte sind keinem Teilgebiet zugeordnet".format(anz),
                                                    level=QgsMessageBar.WARNING, duration=0)
         else:
             # 2 Teilgebiete in QKan ----------------------------------------------------
             sql = u"""
                 SELECT count(*) AS anz
-                FROM tezg
-                INNER JOIN teilgebiete ON tezg.teilgebiet = teilgebiete.tgnam
+                FROM einwohner
+                INNER JOIN teilgebiete ON einwohner.teilgebiet = teilgebiete.tgnam
             """
             dbQK.sql(sql)
             anz = int(dbQK.fetchone()[0])
             if anz == 0:
-                # 2.1 Keine tezg-Fläche mit Teilgebiet ----------------------------------------------------
+                # 2.1 Keine Einwohnerpunkte mit Teilgebiet ----------------------------------------------------
                 if anztgb == 1:
                     # 2.1.1 Es existiert genau ein Teilgebiet ---------------------------------------------
-                    sql = u"UPDATE tezg SET teilgebiet = (SELECT tgnam FROM teilgebiete GROUP BY tgnam)"
+                    sql = u"UPDATE einwohner SET teilgebiet = (SELECT tgnam FROM teilgebiete GROUP BY tgnam)"
                     try:
                         dbQK.sql(sql)
                     except BaseException as err:
                         fehlermeldung(u"(29) Fehler in SQL:\n{sql}\n", err)
                         return False
                     dbQK.commit()
-                    iface.messageBar().pushMessage(u"Tabelle 'tezg':\n",
-                                                   u"Alle Flächen in der Tabelle 'tezg' wurden einem Teilgebiet zugeordnet",
-                                                   level=QgsMessageBar.INFO, duration=3)
+                    iface.messageBar().pushMessage(u"Tabelle 'einwohner':\n",
+                                       u"Alle Einwohnerpunkte in der Tabelle 'einwohner' wurden einem Teilgebiet zugeordnet",
+                                       level=QgsMessageBar.INFO, duration=3)
                 else:
                     # 2.1.2 Es existieren mehrere Teilgebiete ------------------------------------------
-                    sql = u"""UPDATE tezg SET teilgebiet = (SELECT tgnam FROM teilgebiete
-                          WHERE within(centroid(tezg.geom),teilgebiete.geom))"""
+                    sql = u"""UPDATE einwohner SET teilgebiet = (SELECT tgnam FROM teilgebiete
+                          WHERE within(einwohner.geom,teilgebiete.geom))"""
                     try:
                         dbQK.sql(sql)
                     except BaseException as err:
                         fehlermeldung(u"(30) Fehler in SQL:\n{sql}\n", err)
                         return False
                     dbQK.commit()
-                    iface.messageBar().pushMessage(u"Tabelle 'tezg':\n",
-                                                   u"Alle Flächen in der Tabelle 'tezg' wurden dem Teilgebiet zugeordnet, in dem sie liegen.",
-                                                   level=QgsMessageBar.INFO, duration=3)
+                    iface.messageBar().pushMessage(u"Tabelle 'einwohner':\n",
+                                       u"Alle Einwohnerpunkte in der Tabelle 'einwohner' wurden dem Teilgebiet zugeordnet, in dem sie liegen.",
+                                       level=QgsMessageBar.INFO, duration=3)
 
                     # Kontrolle mit Warnung
                     sql = u"""
                         SELECT count(*) AS anz
-                        FROM tezg
-                        LEFT JOIN teilgebiete ON tezg.teilgebiet = teilgebiete.tgnam
+                        FROM einwohner
+                        LEFT JOIN teilgebiete ON einwohner.teilgebiet = teilgebiete.tgnam
                         WHERE teilgebiete.pk IS NULL
                     """
                     dbQK.sql(sql)
                     anz = int(dbQK.fetchone()[0])
                     if anz > 0:
-                        iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'tezg':",
-                                                       u"{} Flächen sind keinem Teilgebiet zugeordnet".format(anz),
+                        iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einwohner':",
+                                                       u"{} Einwohnerpunkte sind keinem Teilgebiet zugeordnet".format(anz),
                                                        level=QgsMessageBar.WARNING, duration=0)
             else:
-                # 2.2 Es gibt tezg mit zugeordnetem Teilgebiet
+                # 2.2 Es gibt Einwohnerpunkte mit zugeordnetem Teilgebiet
                 # Kontrolle mit Warnung
                 sql = u"""
                     SELECT count(*) AS anz
-                    FROM tezg
-                    LEFT JOIN teilgebiete ON tezg.teilgebiet = teilgebiete.tgnam
+                    FROM einwohner
+                    LEFT JOIN teilgebiete ON einwohner.teilgebiet = teilgebiete.tgnam
                     WHERE teilgebiete.pk is NULL
                 """
                 dbQK.sql(sql)
                 anz = int(dbQK.fetchone()[0])
                 if anz > 0:
-                    iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'tezg':",
-                                                   u"{} Flächen sind keinem Teilgebiet zugeordnet".format(anz),
+                    iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einwohner':",
+                                                   u"{} Einwohnerpunkte sind keinem Teilgebiet zugeordnet".format(anz),
                                                    level=QgsMessageBar.WARNING, duration=0)
 
         # --------------------------------------------------------------------------------------------
@@ -1665,10 +1667,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         #
         # HERKUNFT = 2 (Frischwasserverbrauch) ist zurzeit nicht realisiert
         #
-        # HERKUNFT = 3 (Einwohner) wird durch eine Verknüpfung aus den "tezg"-Flächen und dem verknüpften 
-        # Teilgebiet erzeugt und in die HE-Tabelle "Einzeleinleiter" übertragen
-
-        # --------------------------------------------------------------------------------------------
         # Herkunft = 3 (Einwohner). 
         # Nur die Flächen werden berücksichtigt, die einem Teilgebiet 
         # mit Wasserverbrauch zugeordnet sind.

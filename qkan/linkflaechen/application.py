@@ -37,8 +37,8 @@ from qgis.utils import iface
 # noinspection PyUnresolvedReferences 
 import resources
 # Import the code for the dialog
-from application_dialog import CreatelineflDialog, CreatelineswDialog, CreatelineewDialog, AssigntezgDialog, ManagegroupsDialog
-from k_link import createlinkfl, createlinksw, createlinkew, assigntezg, storegroup, reloadgroup
+from application_dialog import CreatelineflDialog, CreatelineswDialog, CreatelineewDialog, AssigntgebDialog, ManagegroupsDialog
+from k_link import createlinkfl, createlinksw, createlinkew, assigntgeb, storegroup, reloadgroup
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qgis_utils import get_database_QKan, get_editable_layers
@@ -90,7 +90,7 @@ class LinkFl:
         self.dlg_cl = CreatelineflDialog()
         self.dlg_sw = CreatelineswDialog()
         self.dlg_ew = CreatelineewDialog()
-        self.dlg_at = AssigntezgDialog()
+        self.dlg_at = AssigntgebDialog()
         self.dlg_mg = ManagegroupsDialog()
 
         # Anfang Eigene Funktionen -------------------------------------------------
@@ -141,11 +141,11 @@ class LinkFl:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_assigntezg_path = ':/plugins/qkan/linkflaechen/resources/icon_assigntezg.png'
+        icon_assigntgeb_path = ':/plugins/qkan/linkflaechen/resources/icon_assigntgeb.png'
         Dummy.instance.add_action(
-            icon_assigntezg_path, 
+            icon_assigntgeb_path, 
             text=self.tr(u'Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen'), 
-            callback=self.run_assigntezg, 
+            callback=self.run_assigntgeb, 
             parent=self.iface.mainWindow())
 
         icon_createlinefl_path = ':/plugins/qkan/linkflaechen/resources/icon_createlinefl.png'
@@ -385,7 +385,7 @@ class LinkFl:
     # ----------------------------------------------------------------------------
     # Funktion zum Auflisten der Gruppen
     def showgroups(self):
-        """Abfragen der Tabelle tezg nach verwendeten Abflussparametern"""
+        """Abfragen der Tabelle gruppen nach verwendeten vorhandenen Gruppen"""
 
         sql = """SELECT grnam FROM gruppen GROUP BY grnam"""
         self.dbQK.sql(sql)
@@ -448,7 +448,7 @@ class LinkFl:
         """Run method that performs all the real work"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({'flaechen', 'haltungen', 'linkfl', 'tezg'} & get_editable_layers()) > 0:
+        if len({'flaechen', 'haltungen', 'linkfl'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                                            level=QgsMessageBar.CRITICAL)
@@ -502,7 +502,7 @@ class LinkFl:
 
         self.dbQK.commit()
 
-        # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
+        # Abfragen der Tabelle flaechen nach verwendeten Abflussparametern
         sql = 'SELECT abflussparameter FROM flaechen GROUP BY abflussparameter'
         self.dbQK.sql(sql)
         daten = self.dbQK.fetchall()
@@ -657,7 +657,7 @@ class LinkFl:
         """Run method that performs all the real work"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({'einleit', 'einwohner', 'einwohner', 'haltungen', 'linksw', 'linkew', 'tezg'} & get_editable_layers()) > 0:
+        if len({'einleit', 'einwohner', 'einwohner', 'haltungen', 'linksw', 'linkew'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                                            level=QgsMessageBar.CRITICAL)
@@ -820,7 +820,7 @@ class LinkFl:
         """Run method that performs all the real work"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({'einleit', 'einwohner', 'einwohner', 'haltungen', 'linksw', 'linkew', 'tezg'} & get_editable_layers()) > 0:
+        if len({'einleit', 'einwohner', 'einwohner', 'haltungen', 'linksw', 'linkew'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                                            level=QgsMessageBar.CRITICAL)
@@ -979,11 +979,11 @@ class LinkFl:
     # -------------------------------------------------------------------------
     # Öffnen des Formulars zur Erstellung der Verknüpfungen
 
-    def run_assigntezg(self):
+    def run_assigntgeb(self):
         """Öffnen des Formulars zur Zuordnung von Teilgebieten auf Haltungen und Flächen"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({'flaechen', 'haltungen', 'linkfl', 'linksw', 'linkew', 'tezg', 'einleit', 
+        if len({'flaechen', 'haltungen', 'linkfl', 'linksw', 'linkew', 'teilgebiete', 'einleit', 
                  'einwohner'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ", 
                    u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
@@ -1001,8 +1001,8 @@ class LinkFl:
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
         if self.dbQK is None:
-            fehlermeldung("Fehler in LinkFl.run_assigntezg", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage("Fehler in LinkFl.run_assigntezg", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+            fehlermeldung("Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+            iface.messageBar().pushMessage("Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                 database_QKan), level=QgsMessageBar.CRITICAL)
             return None
 
@@ -1057,8 +1057,8 @@ class LinkFl:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
-            assigntezg(self.dbQK, auswahltyp, liste_teilgebiete, 
-                       ['haltungen', 'flaechen', 'schaechte', 'einleit', 'einwohner'])
+            assigntgeb(self.dbQK, auswahltyp, liste_teilgebiete, 
+                       ['haltungen', 'flaechen', 'schaechte', 'einleit', 'einwohner', 'tezg'])
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
@@ -1074,7 +1074,7 @@ class LinkFl:
 
         # Check, ob die relevanten Layer nicht editable sind.
         if len({'flaechen', 'haltungen', 'schaechte', 'linksw', 'linkew', 'einleit', 'einwohner', 
-                 'linkfl', 'tezg'} & get_editable_layers()) > 0:
+                 'linkfl', 'teilgebiete'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                                            level=QgsMessageBar.CRITICAL)
@@ -1089,7 +1089,6 @@ class LinkFl:
             logger.error("CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
-        # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if self.dbQK is None:
