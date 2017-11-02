@@ -43,6 +43,50 @@ logger = logging.getLogger('QKan')
 
 # Funktionen -------------------------------------------------------------------
 
+# Versionskontrolle der QKan-Datenbank
+
+def version(dbQK, actversion = '2.1.1'):
+    """Checks database version. Database is just connected by the calling procedure.
+
+        :param actversion: aktuelle Version
+        :type actversion: text
+
+        :returns: Anpassung erfolgreich: True = alles o.k.
+        :rtype: logical
+    """
+
+    sql = u"""SELECT value
+            FROM info
+            WHERE subject = 'version'"""
+
+    try:
+        dbQK.sql(sql)
+    except BaseException as err:
+        fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+        del dbQK
+        return False
+
+    # ---------------------------------------------------------------------------------------------
+    # Aktualisierung von Version 2.0.2
+
+    versiondbQK = int(dbQK.fetchone()[0])
+    if versiondbQK == '2.0.2':
+        sql1 = u"""ALTER TABLE "linkfl"
+            ADD COLUMN tezgnam TEXT"""
+        sql2 = """UPDATE info SET value = '2.1.1' WHERE subject = 'version';"""
+        try:
+            dbQK.sql(sql1)
+            dbQK.sql(sql2)
+        except BaseException as err:
+            fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            return False
+
+        versiondbQK = '2.1.1'
+
+    return True
+
+
 # Pruefung, ob in Tabellen oder Spalten unerlaubte Zeichen enthalten sind
 def checknames(text):
     ''' Pruefung auf nicht erlaubte Zeichen in Tabellen- und Spaltennamen.
@@ -82,6 +126,12 @@ class DBConnection:
             if os.path.exists(dbname):
                 self.consl = splite.connect(database=dbname, check_same_thread=False)
                 self.cursl = self.consl.cursor()
+
+            # Versionsprüfung
+            if not version(database_QKan):
+                self.consl.close()
+                return False
+
             else:
                 iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank wird erstellt. Bitte waren...",
                                                level=QgsMessageBar.INFO)
