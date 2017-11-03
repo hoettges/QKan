@@ -32,6 +32,10 @@ import logging
 import os
 import shutil
 
+from qgis.core import QgsMessageLog
+from qgis.gui import QgsMessageBar
+from qgis.utils import iface
+
 import pyspatialite.dbapi2 as splite
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
@@ -43,9 +47,15 @@ logger = logging.getLogger('QKan')
 
 # Funktionen -------------------------------------------------------------------
 
+def fehlermeldung(title, text, dauer=0):
+    logger.debug(u'{:s} {:s}'.format(title, text))
+    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
+    iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL, duration=dauer)
+
+
 # Versionskontrolle der QKan-Datenbank
 
-def version(dbQK, actversion = '2.1.1'):
+def version(dbcursl, actversion = '2.1.1'):
     """Checks database version. Database is just connected by the calling procedure.
 
         :param actversion: aktuelle Version
@@ -60,26 +70,24 @@ def version(dbQK, actversion = '2.1.1'):
             WHERE subject = 'version'"""
 
     try:
-        dbQK.sql(sql)
+        dbcursl.execute(sql)
     except BaseException as err:
         fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-        del dbQK
         return False
 
     # ---------------------------------------------------------------------------------------------
     # Aktualisierung von Version 2.0.2
 
-    versiondbQK = int(dbQK.fetchone()[0])
+    versiondbQK = dbcursl.fetchone()[0]
     if versiondbQK == '2.0.2':
-        sql1 = u"""ALTER TABLE "linkfl"
-            ADD COLUMN tezgnam TEXT"""
-        sql2 = """UPDATE info SET value = '2.1.1' WHERE subject = 'version';"""
+        sql1 = u"""ALTER TABLE linkfl ADD COLUMN tezgnam TEXT"""
+        sql2 = u"""UPDATE info SET value = '2.1.1' WHERE subject = 'version';"""
         try:
-            dbQK.sql(sql1)
-            dbQK.sql(sql2)
+            dbcursl.execute(sql1)
+            dbcursl.execute(sql2)
         except BaseException as err:
-            fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+            fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n" + \
+                           "SQL Nr. 1: {}\nSQL Nr. 1: {}\n".format(err), sql1, sql2)
             return False
 
         versiondbQK = '2.1.1'
@@ -128,9 +136,9 @@ class DBConnection:
                 self.cursl = self.consl.cursor()
 
                 # Versionsprüfung
-                if not version(database_QKan):
+                if not version(self.cursl):
                     self.consl.close()
-                    return False
+                    return None
 
             else:
                 iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank wird erstellt. Bitte waren...",

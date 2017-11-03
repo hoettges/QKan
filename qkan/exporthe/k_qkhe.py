@@ -1092,23 +1092,17 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
 
-        sql = """WITH flintersect AS (
-            SELECT flaechen.flnam AS flnam, CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
-            FROM flaechen
-            INNER JOIN tezg
-            ON intersects(flaechen.geom,tezg.geom)
-            WHERE flaechen.aufteilen = 'ja'
-            UNION
-            SELECT flaechen.flnam AS flnam, flaechen.geom AS geom
-            FROM flaechen
-            WHERE flaechen.aufteilen = 'nein' OR flaechen.aufteilen IS NULL
-            )
-        UPDATE linkfl SET flnam =
-        (   SELECT fi.flnam    
-            FROM flintersect AS fi
-            INNER JOIN linkfl AS lf
-            ON within(StartPoint(lf.glink),fi.geom)
-            WHERE lf.pk = linkfl.pk
+        sql = """WITH missing AS
+            (   SELECT lf.pk
+                FROM linkfl AS lf
+                LEFT JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                WHERE fl.pk IS NULL)
+            UPDATE linkfl SET flnam =
+            (   SELECT flnam
+                FROM flaechen AS fl
+                WHERE within(StartPoint(linkfl.glink),fl.geom))
+            WHERE linkfl.pk IN missing
         )"""
         logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
         try:
@@ -1121,12 +1115,43 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         # 2. Haltungen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
 
-        sql = """UPDATE linkfl SET haltnam = 
-                (   SELECT ha.haltnam
-                    FROM linkfl AS lf
-                    INNER JOIN haltungen AS ha
-                    ON intersects(buffer(EndPoint(lf.glink),0.1),ha.geom)
-                    WHERE linkfl.pk = lf.pk)"""
+        sql = """WITH missing AS
+            (   SELECT lf.pk
+                FROM linkfl AS lf
+                LEFT JOIN haltungen AS ha
+                ON lf.haltnam = ha.haltnam
+                WHERE ha.pk IS NULL)
+            UPDATE linkfl SET haltnam =
+            (   SELECT haltnam
+                FROM haltungen AS ha
+                ON intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
+            WHERE linkfl.pk IS IN missing
+            """
+        logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan_Export (25) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            del dbHE
+            return False
+
+        # 3. TEZG-Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl), nur für aufteilen = 'ja'
+
+        sql = """WITH missing AS
+            (   SELECT lf.pk
+                FROM linkfl AS lf
+                LEFT JOIN tezg AS tg
+                ON lf.flnam = tg.flnam
+                WHERE tg.pk IS NULL)
+            UPDATE linkfl SET tezgnam =
+            (   SELECT tg.flnam
+                FROM tezg AS tg
+                INNER JOIN flaechen as fl
+                ON linkfl.flnam = fl.flnam
+                WHERE within(StartPoint(linkfl.glink),tg.geom) AND fl.aufteilen = 'ja')
+            WHERE linkfl.pk IN missing
+            """
         logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
         try:
             dbQK.sql(sql)
@@ -1140,78 +1165,73 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         if check_export['combine_flaechenrw']:
             sql = u"""
               WITH flintersect AS (
-                SELECT flaechen.flnam AS flnam, flaechen.neigkl AS neigkl, flaechen.he_typ AS he_typ, 
-                flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
-                flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-                flaechen.regenschreiber AS regenschreiber,
-                flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
-                flaechen.kommentar AS kommentar, CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
-                FROM flaechen
-                INNER JOIN tezg
-                ON intersects(flaechen.geom,tezg.geom)
-                WHERE flaechen.aufteilen = 'ja'{auswahl}
+                SELECT fl.flnam AS flnam, fl.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
+                fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
+                fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
+                fl.regenschreiber AS regenschreiber,
+                fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
+                fl.kommentar AS kommentar, CastToMultiPolygon(intersection(fl.geom,tg.geom)) AS geom
+                FROM linkfl AS lf
+                INNER JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                INNER JOIN tezg AS tg
+                ON fl.flnam = tg.flnam
+                WHERE fl.aufteilen = 'ja'{auswahl}
                 UNION
-                SELECT flaechen.flnam AS flnam, flaechen.neigkl AS neigkl, flaechen.he_typ AS he_typ, 
-                flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
-                flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-                flaechen.regenschreiber AS regenschreiber,
-                flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
-                flaechen.kommentar AS kommentar, flaechen.geom AS geom
-                FROM flaechen
-                WHERE flaechen.aufteilen = 'nein' OR flaechen.aufteilen IS NULL{auswahl}
+                SELECT fl.flnam AS flnam, fl.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
+                fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
+                fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
+                fl.regenschreiber AS regenschreiber,
+                fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
+                fl.kommentar AS kommentar, fl.geom AS geom
+                FROM linkfl AS lf
+                INNER JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                WHERE fl.aufteilen = 'nein' OR fl.aufteilen IS NULL{auswahl}
                 )
-              SELECT 'fls_' || haltungen.haltnam AS flnam, haltungen.haltnam AS haltnam, max(flintersect.neigkl) AS neigkl,
-                flintersect.he_typ AS he_typ, max(flintersect.speicherzahl) AS speicherzahl, max(flintersect.speicherkonst) AS speicherkonst,
-                max(flintersect.fliesszeit) AS fliesszeit, max(flintersect.fliesszeitkanal) AS fliesszeitkanal,
-                sum(area(flintersect.geom)/10000) AS flaeche, flintersect.regenschreiber AS regenschreiber,
-                flintersect.abflussparameter AS abflussparameter, flintersect.createdat AS createdat,
-                flintersect.kommentar AS kommentar
-              FROM flintersect
-              INNER JOIN linkfl
-              ON within(StartPoint(linkfl.glink),flintersect.geom)
-              INNER JOIN haltungen
-              ON intersects(buffer(EndPoint(linkfl.glink),{fangradius}),haltungen.geom)
-              WHERE area(flintersect.geom) > 0.1
-              GROUP BY haltungen.haltnam
-            """.format(auswahl=auswahl, fangradius=fangradius)
+              SELECT 'fls_' || ha.haltnam AS flnam, ha.haltnam AS haltnam, max(fi.neigkl) AS neigkl,
+                fi.he_typ AS he_typ, max(fi.speicherzahl) AS speicherzahl, max(fi.speicherkonst) AS speicherkonst,
+                max(fi.fliesszeit) AS fliesszeit, max(fi.fliesszeitkanal) AS fliesszeitkanal,
+                sum(area(fi.geom)/10000) AS flaeche, fi.regenschreiber AS regenschreiber,
+                fi.abflussparameter AS abflussparameter, fi.createdat AS createdat,
+                fi.kommentar AS kommentar
+              FROM flintersect AS ft
+              INNER JOIN haltungen AS ha
+              ON fi.haltnam = fi.haltnam
+              WHERE area(fi.geom) > 0.1
+              GROUP BY ha.haltnam
+            """.format(auswahl=auswahl)
             logger.debug('combine_flaechenrw = True')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         else:
-            sql = u"""
-              WITH flintersect AS (
-                SELECT flaechen.flnam AS flnam, flaechen.neigkl AS neigkl, flaechen.he_typ AS he_typ, 
-                flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
-                flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-                flaechen.regenschreiber AS regenschreiber,
-                flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
-                flaechen.kommentar AS kommentar, CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
-                FROM flaechen
-                INNER JOIN tezg
-                ON intersects(flaechen.geom,tezg.geom)
-                WHERE flaechen.aufteilen = 'ja'{auswahl}
-                UNION
-                SELECT flaechen.flnam AS flnam, flaechen.neigkl AS neigkl, flaechen.he_typ AS he_typ, 
-                flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
-                flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-                flaechen.regenschreiber AS regenschreiber,
-                flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
-                flaechen.kommentar AS kommentar, flaechen.geom AS geom
-                FROM flaechen
-                WHERE flaechen.aufteilen = 'nein' OR flaechen.aufteilen IS NULL{auswahl}
-                )
-              SELECT flintersect.flnam AS flnam, haltungen.haltnam AS haltnam, flintersect.neigkl AS neigkl,
-                flintersect.he_typ AS he_typ, flintersect.speicherzahl AS speicherzahl, flintersect.speicherkonst AS speicherkonst,
-                flintersect.fliesszeit AS fliesszeit, flintersect.fliesszeitkanal AS fliesszeitkanal,
-                area(flintersect.geom)/10000 AS flaeche, flintersect.regenschreiber AS regenschreiber,
-                flintersect.abflussparameter AS abflussparameter, flintersect.createdat AS createdat,
-                flintersect.kommentar AS kommentar
-              FROM flintersect
-              INNER JOIN linkfl
-              ON within(StartPoint(linkfl.glink),flintersect.geom)
-              INNER JOIN haltungen
-              ON intersects(buffer(EndPoint(linkfl.glink),{fangradius}),haltungen.geom)
-              WHERE area(flintersect.geom) > 0.1
-            """.format(auswahl=auswahl, fangradius=fangradius)
+            sql1 = u"""
+              SELECT 'fls_' || ha.haltnam AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
+                fl.he_typ AS he_typ, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
+                fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
+                area(CastToMultiPolygon(intersection(fl.geom,tg.geom)))/10000 AS flaeche, fl.regenschreiber AS regenschreiber,
+                fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
+                fl.kommentar AS kommentar
+              FROM linkfl AS lf
+              INNER JOIN (SELECT * FROM flaechen WHERE aufteilen = 'ja'{auswahl}) AS fl
+              ON lf.flnam = fl.flnam
+              INNER JOIN haltungen AS ha
+              ON lf.haltnam = ha.haltnam
+              INNER JOIN tezg AS tg
+              ON lf.tezgnam = tg.flnam
+            """.format(auswahl=auswahl)
+            sql2 = u"""
+              SELECT 'fls_' || ha.haltnam AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
+                fl.he_typ AS he_typ, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
+                fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
+                area(fl.geom)/10000 AS flaeche, fl.regenschreiber AS regenschreiber,
+                fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
+                fl.kommentar AS kommentar
+              FROM linkfl AS lf
+              INNER JOIN (SELECT * FROM flaechen WHERE aufteilen <> 'ja' OR aufteilen IS NULL{auswahl}) AS fl
+              ON lf.flnam = fl.flnam
+              INNER JOIN haltungen AS ha
+              ON lf.haltnam = ha.haltnam
+            """.format(auswahl=auswahl)
             logger.debug('combine_flaechenrw = False')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         try:
