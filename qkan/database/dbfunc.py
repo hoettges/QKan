@@ -127,10 +127,10 @@ class DBConnection:
                 self.consl = splite.connect(database=dbname, check_same_thread=False)
                 self.cursl = self.consl.cursor()
 
-            # Versionsprüfung
-            if not version(database_QKan):
-                self.consl.close()
-                return False
+                # Versionsprüfung
+                if not version(database_QKan):
+                    self.consl.close()
+                    return False
 
             else:
                 iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank wird erstellt. Bitte waren...",
