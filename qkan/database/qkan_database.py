@@ -530,7 +530,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     sql = """CREATE TABLE linksw (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
-    pkswref INTEGER,
+    elnam TEXT,
     haltnam TEXT,
     teilgebiet TEXT)"""
 
@@ -563,7 +563,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     sql = """CREATE TABLE linkew (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
-    pkewref INTEGER,
+    elnam TEXT,
     haltnam TEXT,
     teilgebiet TEXT)"""
 

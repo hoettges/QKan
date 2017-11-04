@@ -80,14 +80,24 @@ def version(dbcursl, actversion = '2.1.1'):
 
     versiondbQK = dbcursl.fetchone()[0]
     if versiondbQK == '2.0.2':
-        sql1 = u"""ALTER TABLE linkfl ADD COLUMN tezgnam TEXT"""
-        sql2 = u"""UPDATE info SET value = '2.1.1' WHERE subject = 'version';"""
+        sql1 = u"""ALTER TABLE linkfl ADD COLUMN flnam TEXT"""
+        sql2 = u"""ALTER TABLE linksw ADD COLUMN elnam TEXT"""
+        sql3 = u"""ALTER TABLE linkew ADD COLUMN elnam TEXT"""
         try:
             dbcursl.execute(sql1)
             dbcursl.execute(sql2)
+            dbcursl.execute(sql3)
         except BaseException as err:
-            fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n" + \
-                           "SQL Nr. 1: {}\nSQL Nr. 1: {}\n".format(err), sql1, sql2)
+            fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n{}\n".format(err) + \
+                           "SQL Nr. 1: {}\nSQL Nr. 2: {}\nSQL Nr. 3: {}\n".format(sql1, sql2, sql3))
+            return False
+
+        sql = u"""UPDATE info SET value = '2.1.1' WHERE subject = 'version' and value = '2.0.2';"""
+        try:
+            dbcursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n{}\n".format(err) + \
+                           "SQL: {}\n".format(sql))
             return False
 
         versiondbQK = '2.1.1'

@@ -1092,7 +1092,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
 
-        sql = """WITH missing AS
+        sql = u"""WITH missing AS
             (   SELECT lf.pk
                 FROM linkfl AS lf
                 LEFT JOIN flaechen AS fl
@@ -1102,8 +1102,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             (   SELECT flnam
                 FROM flaechen AS fl
                 WHERE within(StartPoint(linkfl.glink),fl.geom))
-            WHERE linkfl.pk IN missing
-        )"""
+            WHERE linkfl.pk IN missing"""
         logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
         try:
             dbQK.sql(sql)
@@ -1115,7 +1114,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         # 2. Haltungen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
 
-        sql = """WITH missing AS
+        sql = u"""WITH missing AS
             (   SELECT lf.pk
                 FROM linkfl AS lf
                 LEFT JOIN haltungen AS ha
@@ -1124,9 +1123,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             UPDATE linkfl SET haltnam =
             (   SELECT haltnam
                 FROM haltungen AS ha
-                ON intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
-            WHERE linkfl.pk IS IN missing
-            """
+                WHERE intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
+            WHERE linkfl.pk IN missing"""
         logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
         try:
             dbQK.sql(sql)
@@ -1138,7 +1136,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         # 3. TEZG-Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl), nur für aufteilen = 'ja'
 
-        sql = """WITH missing AS
+        sql = u"""WITH missing AS
             (   SELECT lf.pk
                 FROM linkfl AS lf
                 LEFT JOIN tezg AS tg
@@ -1150,8 +1148,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 INNER JOIN flaechen as fl
                 ON linkfl.flnam = fl.flnam
                 WHERE within(StartPoint(linkfl.glink),tg.geom) AND fl.aufteilen = 'ja')
-            WHERE linkfl.pk IN missing
-            """
+            WHERE linkfl.pk IN missing"""
         logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
         try:
             dbQK.sql(sql)
@@ -1199,8 +1196,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               INNER JOIN haltungen AS ha
               ON fi.haltnam = fi.haltnam
               WHERE area(fi.geom) > 0.1
-              GROUP BY ha.haltnam
-            """.format(auswahl=auswahl)
+              GROUP BY ha.haltnam""".format(auswahl=auswahl)
             logger.debug('combine_flaechenrw = True')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         else:
@@ -1217,8 +1213,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               INNER JOIN haltungen AS ha
               ON lf.haltnam = ha.haltnam
               INNER JOIN tezg AS tg
-              ON lf.tezgnam = tg.flnam
-            """.format(auswahl=auswahl)
+              ON lf.tezgnam = tg.flnam""".format(auswahl=auswahl)
             sql2 = u"""
               SELECT 'fls_' || ha.haltnam AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
                 fl.he_typ AS he_typ, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
@@ -1230,8 +1225,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               INNER JOIN (SELECT * FROM flaechen WHERE aufteilen <> 'ja' OR aufteilen IS NULL{auswahl}) AS fl
               ON lf.flnam = fl.flnam
               INNER JOIN haltungen AS ha
-              ON lf.haltnam = ha.haltnam
-            """.format(auswahl=auswahl)
+              ON lf.haltnam = ha.haltnam""".format(auswahl=auswahl)
             logger.debug('combine_flaechenrw = False')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         try:
@@ -1379,26 +1373,19 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             del dbQK
             return False
 
-        if len(liste_teilgebiete) != 0:
-            ausw_sw = " AND sw.teilgebiet in ('{0:}') AND linksw.teilgebiet in ('{0:}')".format("', '".join(liste_teilgebiete))
-            ausw_einleit = "einleit.teilgebiet in ('{}') AND".format("', '".join(liste_teilgebiete))
-        else:
-            ausw_sw = ""
-            ausw_einleit = ""
+        # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
 
-        # Anmerkung: coalesce sorgt dafür, dass nur bei zugeordneten Datensätzen eine Änderung vorgenommen
-        # wird. Ohne coalesce würden diese Daten mit NULL überschrieben. 
-        sql = u"""UPDATE einleit SET haltnam = 
-                (   SELECT coalesce(linksw.haltnam, einleit.haltnam)
-                    FROM linksw
-                    INNER JOIN einleit AS sw
-                    ON within(sw.geom,linksw.geom)
-                    WHERE sw.ROWID IN 
-                    (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'einleit' AND
-                        search_frame = linksw.geom){ausw_sw} AND
-                    sw.pk = einleit.pk
-                )""".format(ausw_sw=ausw_sw, ausw_einleit=ausw_einleit)
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linksw AS lf
+                LEFT JOIN haltungen AS ha
+                ON lf.haltnam = ha.haltnam
+                WHERE ha.pk IS NULL)
+            UPDATE linksw SET haltnam =
+            (   SELECT haltnam
+                FROM haltungen AS ha
+                WHERE intersects(buffer(EndPoint(linksw.glink),0.1),ha.geom))
+            WHERE linksw.pk IN missing"""
 
         logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
