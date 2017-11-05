@@ -1081,12 +1081,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         Befestigte Flächen"""
 
 
-        # Nur Daten fuer ausgewaehlte Teilgebiete
-        if len(liste_teilgebiete) != 0:
-            auswahl = " AND flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-        else:
-            auswahl = ""
-
         # Um eine manuelle Plausibiliätsprüfung zu ermöglichen (ansonsten überflüssig!), werden
         # die mit "linkfl" verknüpften Flächen und Haltungen in "linkfl" eingetragen. 
 
@@ -1159,6 +1153,13 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             return False
 
         # Zu verschneidende und nicht zu Flächen exportieren
+
+        # Nur Daten fuer ausgewaehlte Teilgebiete
+        if len(liste_teilgebiete) != 0:
+            auswahl = " AND fl.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        else:
+            auswahl = ""
+
         if check_export['combine_flaechenrw']:
             sql = u"""
               WITH flintersect AS (
@@ -1187,14 +1188,14 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 WHERE fl.aufteilen = 'nein' OR fl.aufteilen IS NULL{auswahl}
                 )
               SELECT 'fls_' || ha.haltnam AS flnam, ha.haltnam AS haltnam, max(fi.neigkl) AS neigkl,
-                fi.he_typ AS he_typ, max(fi.speicherzahl) AS speicherzahl, max(fi.speicherkonst) AS speicherkonst,
+                max(fi.he_typ) AS he_typ, max(fi.speicherzahl) AS speicherzahl, max(fi.speicherkonst) AS speicherkonst,
                 max(fi.fliesszeit) AS fliesszeit, max(fi.fliesszeitkanal) AS fliesszeitkanal,
-                sum(area(fi.geom)/10000) AS flaeche, fi.regenschreiber AS regenschreiber,
-                fi.abflussparameter AS abflussparameter, fi.createdat AS createdat,
-                fi.kommentar AS kommentar
-              FROM flintersect AS ft
+                sum(area(fi.geom)/10000) AS flaeche, max(fi.regenschreiber) AS regenschreiber,
+                max(fi.abflussparameter) AS abflussparameter, max(fi.createdat) AS createdat,
+                max(fi.kommentar) AS kommentar
+              FROM flintersect AS fi
               INNER JOIN haltungen AS ha
-              ON fi.haltnam = fi.haltnam
+              ON fi.haltnam = ha.haltnam
               WHERE area(fi.geom) > 0.1
               GROUP BY ha.haltnam""".format(auswahl=auswahl)
             logger.debug('combine_flaechenrw = True')
@@ -1373,6 +1374,29 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             del dbQK
             return False
 
+        # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
+
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linksw AS lf
+                LEFT JOIN einleit AS el
+                ON lf.elnam = el.elnam
+                WHERE el.pk IS NULL)
+            UPDATE linksw SET elnam =
+            (   SELECT elnam
+                FROM einleit AS el
+                WHERE contains(buffer(StartPoint(linksw.glink),0.1),el.geom))
+            WHERE linksw.pk IN missing"""
+
+        logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan.k_qkhe (4a) SQL-Fehler in SpatiaLite: \n", sql)
+            del dbQK
+            return False
+
         # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
 
         sql = u"""WITH missing AS
@@ -1392,10 +1416,27 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         try:
             dbQK.sql(sql)
         except:
-            fehlermeldung(u"QKan_LinkSW (3) SQL-Fehler in SpatiaLite: \n", sql)
+            fehlermeldung(u"QKan.k_qkhe (4b) SQL-Fehler in SpatiaLite: \n", sql)
             del dbQK
             return False
-        # logger.debug(u'\nSQL-5:\n{}\n'.format(sql))
+
+        # 3. Haltungen in "einleit" eintragen (ohne Einschränkung auf auswahl)
+        # Hinweis: coalesce stellt sicher, dass evtl. manuell eingetragene Haltungen, für die
+        # kein Objekt in linksw erstellt wurde, nicht überschrieben werden. 
+
+        sql = u"""UPDATE einleit SET haltnam =
+            (   SELECT coalesce(haltnam, einleit.haltnam)
+                FROM linksw AS lf
+                WHERE lf.elnam = einleit.elnam)"""
+
+        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan.k_qkhe (4c) SQL-Fehler in SpatiaLite: \n", sql)
+            del dbQK
+            return False
 
         dbQK.commit()
 
@@ -1691,36 +1732,69 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             del dbQK
             return False
 
-        if len(liste_teilgebiete) != 0:
-            ausw_ew = " AND ew.teilgebiet in ('{0:}') AND linkew.teilgebiet in ('{0:}')".format("', '".join(liste_teilgebiete))
-            ausw_einwohner = "einwohner.teilgebiet in ('{}') AND".format("', '".join(liste_teilgebiete))
-        else:
-            ausw_ew = ""
-            ausw_einwohner = ""
+        # 1. einwohner-Punkt in "linkew" eintragen (ohne Einschränkung auf auswahl)
 
-        # Anmerkung: coalesce sorgt dafür, dass nur bei zugeordneten Datensätzen eine Änderung vorgenommen
-        # wird. Ohne coalesce würden diese Daten mit NULL überschrieben. 
-        sql = u"""UPDATE einwohner SET haltnam = 
-                (   SELECT coalesce(linkew.haltnam, einwohner.haltnam)
-                    FROM linkew
-                    INNER JOIN einwohner AS ew
-                    ON within(ew.geom,linkew.geom)
-                    WHERE ew.ROWID IN 
-                    (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'einwohner' AND
-                        search_frame = linkew.geom){ausw_ew} AND
-                    ew.pk = einwohner.pk
-                )""".format(ausw_ew=ausw_ew, ausw_einwohner=ausw_einwohner)
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linkew AS lf
+                LEFT JOIN einwohner AS el
+                ON lf.elnam = el.elnam
+                WHERE el.pk IS NULL)
+            UPDATE linkew SET elnam =
+            (   SELECT elnam
+                FROM einwohner AS el
+                WHERE contains(buffer(StartPoint(linkew.glink),0.1),el.geom))
+            WHERE linkew.pk IN missing"""
 
         logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
         except:
-            fehlermeldung(u"QKan_Link.createlinkew (3) SQL-Fehler in SpatiaLite: \n", sql)
+            fehlermeldung(u"QKan.k_qkhe (4a) SQL-Fehler in SpatiaLite: \n", sql)
             del dbQK
             return False
-        # logger.debug(u'\nSQL-5:\n{}\n'.format(sql))
+
+        # 2. Haltungen in "linkew" eintragen (ohne Einschränkung auf auswahl)
+
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linkew AS lf
+                LEFT JOIN haltungen AS ha
+                ON lf.haltnam = ha.haltnam
+                WHERE ha.pk IS NULL)
+            UPDATE linkew SET haltnam =
+            (   SELECT haltnam
+                FROM haltungen AS ha
+                WHERE intersects(buffer(EndPoint(linkew.glink),0.1),ha.geom))
+            WHERE linkew.pk IN missing"""
+
+        logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan.k_qkhe (4b) SQL-Fehler in SpatiaLite: \n", sql)
+            del dbQK
+            return False
+
+        # 3. Haltungen in "einwohner" eintragen (ohne Einschränkung auf auswahl)
+        # Hinweis: coalesce stellt sicher, dass evtl. manuell eingetragene Haltungen, für die
+        # kein Objekt in linkew erstellt wurde, nicht überschrieben werden. 
+
+        sql = u"""UPDATE einwohner SET haltnam =
+            (   SELECT coalesce(haltnam, einwohner.haltnam)
+                FROM linkew AS lf
+                WHERE lf.elnam = einwohner.elnam)"""
+
+        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan.k_qkhe (4c) SQL-Fehler in SpatiaLite: \n", sql)
+            del dbQK
+            return False
 
         dbQK.commit()
 
@@ -1731,7 +1805,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         else:
             auswahl = ""
 
-        if check_export['combine_einleitdirekt']:
+        if check_export['combine_einleitew']:
             sql = u"""SELECT
               'ew_' || einwohner.haltnam AS elnam,
               avg(x(einwohner.geom)) AS xel,
@@ -1775,7 +1849,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         nr0 = nextid
 
-        fortschritt('Export Einzeleinleiter (direkt)...', 0.92)
+        fortschritt('Export EW-bezogene Einleitungen...', 0.92)
         for b in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen

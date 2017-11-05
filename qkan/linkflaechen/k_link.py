@@ -256,7 +256,13 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         del dbQK
         return False
 
-    if schreibe_haltungen:
+
+
+
+
+
+
+    if schreibe_haltungen and False:
         # Nur wenn aktiviert, weil die beiden nachfolgenden Abfragen etwas länger dauern.
 
         # Haltungsname in Tabelle eintragen. Dabei findet keine Prüfung statt, 
