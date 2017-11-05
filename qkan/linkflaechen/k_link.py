@@ -184,14 +184,13 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     # in tlink gefiltert wurden. 
 
     if len(liste_hal_entw) == 0:
-        auswahl = ''
-        # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Haltungen...')
+        auswha = ''
     else:
-        auswahl = " AND hal.entwart in ('{}')".format("', '".join(liste_hal_entw))
+        auswha = " AND ha.entwart in ('{}')".format("', '".join(liste_hal_entw))
 
     if len(liste_teilgebiete) != 0:
-        auswahl += " AND  hal.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-        auswlin = " AND  linkfl.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        auswha += " AND  ha.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        auswlinkfl = " AND  linkfl.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
 
     if bezug_abstand == 'mittelpunkt':
         bezug = 'fl.geom'
@@ -216,24 +215,24 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     sql = u"""WITH tlink AS
             (	SELECT fl.pk AS pk,
-                    Distance(hal.geom,{bezug}) AS dist, 
-                    hal.geom AS geohal, fl.geom AS geofl
+                    Distance(ha.geom,{bezug}) AS dist, 
+                    ha.geom AS geohal, fl.geom AS geofl
                 FROM
-                    haltungen AS hal
+                    haltungen AS ha
                 INNER JOIN
                     linkfl AS fl
-                ON Intersects(hal.geom,fl.gbuf)
-                WHERE fl.glink IS NULL AND hal.ROWID IN
+                ON Intersects(ha.geom,fl.gbuf)
+                WHERE fl.glink IS NULL AND ha.ROWID IN
                 (   SELECT ROWID FROM SpatialIndex WHERE
                     f_table_name = 'haltungen' AND
-                    search_frame = fl.gbuf){auswahl})
+                    search_frame = fl.gbuf){auswha})
             UPDATE linkfl SET glink =  
             (SELECT MakeLine(PointOnSurface(t1.geofl),Centroid(t1.geohal))
             FROM tlink AS t1
             INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
             ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
             WHERE linkfl.pk = t1.pk)
-            WHERE linkfl.glink IS NULL{auswlin}""".format(bezug=bezug, auswahl=auswahl, auswlin=auswlin)
+            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, auswha=auswha, auswlinkfl=auswlinkfl)
 
     logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
@@ -256,129 +255,97 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         del dbQK
         return False
 
+    # Verknüpfen von linkfl mit Haltungen, Flächen und tezg-Flächen. Dabei wird die Auswahl berücksichtigt, 
+    # um die Abfrage zu beschleunigen. 
 
+        # 1. Flächen in "linkfl" eintragen
 
+    # Nur ausgewählte Haltungen
+    if len(liste_hal_entw) == 0:
+        auswfl = ''
+    else:
+        auswfl = "fl.teilgebiet in ('{}') AND ".format("', '".join(liste_teilgebiete))
 
+    sql = u"""WITH missing AS
+        (   SELECT lf.pk
+            FROM linkfl AS lf
+            LEFT JOIN flaechen AS fl
+            ON lf.flnam = fl.flnam
+            WHERE {auswfl}(fl.pk IS NULL OR NOT within(StartPoint(linkfl.glink),fl.geom)))
+        UPDATE linkfl SET flnam =
+        (   SELECT flnam
+            FROM flaechen AS fl
+            WHERE within(StartPoint(linkfl.glink),fl.geom))
+        WHERE linkfl.pk IN missing"""
+    logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
+    try:
+        dbQK.sql(sql)
+    except BaseException as err:
+        fehlermeldung(u"QKan_Export (24) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+        del dbQK
+        del dbHE
+        return False
 
+    # 2. Haltungen in "linkfl" eintragen
 
+    # Nur ausgewählte Haltungen
+    if len(liste_hal_entw) == 0:
+        auswha = ''
+    else:
+        auswha = "ha.teilgebiet in ('{}') AND ".format("', '".join(liste_teilgebiete))
 
-    if schreibe_haltungen and False:
-        # Nur wenn aktiviert, weil die beiden nachfolgenden Abfragen etwas länger dauern.
+    if len(liste_hal_entw) <> 0:
+        auswha += "ha.entwart in ('{}') AND ".format("', '".join(liste_hal_entw))
 
-        # Haltungsname in Tabelle eintragen. Dabei findet keine Prüfung statt, 
-        # ob Anfang der Verknüpfungslinie noch in zugehöriger Fläche liegt.
-        # Dabei wird in zwei Schritten vorgegangen: Zuerst wird die Haltung in linkfl 
-        # eingetragen, anschließend in der Fläche. Falls bei der Fläche das Attribut 
-        # "aufteilen" auf 'ja' steht, wird kein Eintrag vorgenommen. 
+    sql = u"""WITH missing AS
+        (   SELECT lf.pk
+            FROM linkfl AS lf
+            LEFT JOIN haltungen AS ha
+            ON lf.haltnam = ha.haltnam
+            WHERE {auswha}(ha.pk IS NULL OR NOT intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom)))
+        UPDATE linkfl SET haltnam =
+        (   SELECT haltnam
+            FROM haltungen AS ha
+            WHERE intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
+        WHERE linkfl.pk IN missing"""
+    logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
+    try:
+        dbQK.sql(sql)
+    except BaseException as err:
+        fehlermeldung(u"QKan_Export (25) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+        del dbQK
+        del dbHE
+        return False
 
-        # 1. Schritt: Haltungsnamen in linkfl eintragen
+        # 3. TEZG-Flächen in "linkfl" eintragen, nur für aufteilen = 'ja'
 
-        # SpatialIndex anlegen
-        sqlindex = "SELECT CreateSpatialIndex('haltungen','geom')"
-        try:
-            dbQK.sql(sqlindex)
-        except BaseException as err:
-            fehlermeldung('In der Tabelle "haltungen" konnte CreateSpatialIndex auf "geom" nicht durchgeführt werden', str(err))
-            del dbQK
-            return False
+    # Nur ausgewählte tezg-Flächen
+    if len(liste_hal_entw) == 0:
+        auswtg = ''
+    else:
+        auswtg = "tg.teilgebiet in ('{}') AND ".format("', '".join(liste_teilgebiete))
 
-        if len(liste_teilgebiete) != 0:
-            auswahl = " AND  haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-            ausw_linkfl = " WHERE  linkfl.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-        else:
-            auswahl = ''
-            ausw_linksw = ''
-
-        sql = u"""WITH linkflbuf AS
-                (   SELECT pk, buffer(EndPoint(linkfl.glink),{fangradius}) AS geob
-                    FROM linkfl{ausw_linkfl}
-                )
-                UPDATE linkfl SET haltnam = 
-                (   SELECT haltungen.haltnam
-                    FROM linkflbuf
-                    INNER JOIN haltungen
-                    ON intersects(linkflbuf.geob,haltungen.geom)
-                    WHERE haltungen.ROWID IN 
-                    (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'haltungen' AND
-                        search_frame = linkflbuf.geob){auswahl} AND 
-                    linkflbuf.pk = linkfl.pk
-                )
-                WHERE linkfl.pk in 
-                (   SELECT linkflbuf.pk
-                    FROM linkflbuf
-                    INNER JOIN haltungen
-                    ON intersects(linkflbuf.geob,haltungen.geom)
-                    WHERE haltungen.ROWID IN 
-                    (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'haltungen' AND
-                        search_frame = linkflbuf.geob){auswahl}
-                )
-            """.format(fangradius=fangradius, auswahl=auswahl, ausw_linkfl=ausw_linkfl)
-
-        logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
-
-        try:
-            dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen (11) SQL-Fehler in SpatiaLite: \n", sql)
-            del dbQK
-            return False
-
-        # 2. Schritt: Haltungsnamen von linkfl in Fläche übertragen. allerdings nur bei 
-        # Flächen, die nicht aufgeteilt werden. 
-
-        # SpatialIndex anlegen
-        sqlindex = "SELECT CreateSpatialIndex('flaechen','geom')"
-        try:
-            dbQK.sql(sqlindex)
-        except BaseException as err:
-            fehlermeldung('In der Tabelle "flaechen" konnte CreateSpatialIndex auf "geom" nicht durchgeführt werden', str(err))
-            del dbQK
-            return False
-
-        if len(liste_teilgebiete) != 0:
-            ausw_linkfl = " WHERE linkfl.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-            ausw_fl = " AND fl.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-            ausw_flaechen = "flaechen.teilgebiet in ('{}') AND".format("', '".join(liste_teilgebiete))
-
-        sql = u"""WITH linkflbuf AS
-                (   SELECT pk, haltnam, StartPoint(linkfl.glink) AS geos
-                    FROM linkfl{ausw_linkfl}
-                )
-                UPDATE flaechen SET haltnam = 
-                (   SELECT linkflbuf.haltnam
-                    FROM linkflbuf
-                    INNER JOIN flaechen AS fl
-                    ON within(linkflbuf.geos,fl.geom)
-                    WHERE fl.ROWID IN 
-                    (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'flaechen' AND
-                        search_frame = linkflbuf.geos){ausw_fl} AND 
-                    fl.pk = flaechen.pk
-                )
-                WHERE {ausw_flaechen} (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL) AND 
-                flaechen.pk in 
-                (   SELECT fl.pk
-                    FROM linkflbuf
-                    INNER JOIN flaechen AS fl
-                    ON within(linkflbuf.geos,fl.geom)
-                    WHERE fl.ROWID IN 
-                    (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'flaechen' AND
-                        search_frame = linkflbuf.geos){ausw_fl}
-                )""".format(ausw_fl=ausw_fl,
-                      ausw_linkfl=ausw_linkfl, ausw_flaechen=ausw_flaechen)
-
-        logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
-
-        try:
-            dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen (3) SQL-Fehler in SpatiaLite: \n", sql)
-            del dbQK
-            return False
-        logger.debug(u'\nSQL-5:\n{}\n'.format(sql))
+    sql = u"""WITH missing AS
+        (   SELECT lf.pk
+            FROM linkfl AS lf
+            LEFT JOIN tezg AS tg
+            ON lf.flnam = tg.flnam
+            WHERE {auswtg}(tg.pk IS NULL OR NOT within(StartPoint(linkfl.glink),tg.geom)))
+        UPDATE linkfl SET tezgnam =
+        (   SELECT tg.flnam
+            FROM tezg AS tg
+            INNER JOIN (SELECT flnam FROM flaechen WHERE fl.aufteilen = 'ja') as fl
+            ON linkfl.flnam = fl.flnam
+            WHERE within(StartPoint(linkfl.glink),tg.geom))
+        WHERE linkfl.pk IN missing"""
+    logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
+    try:
+        dbQK.sql(sql)
+    except BaseException as err:
+        fehlermeldung(u"QKan_Export (25) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+        del dbQK
+        del dbHE
+        return False
 
     dbQK.commit()
 

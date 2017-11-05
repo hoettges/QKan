@@ -1091,7 +1091,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkfl AS lf
                 LEFT JOIN flaechen AS fl
                 ON lf.flnam = fl.flnam
-                WHERE fl.pk IS NULL)
+                WHERE fl.pk IS NULL OR NOT within(StartPoint(linkfl.glink),fl.geom))
             UPDATE linkfl SET flnam =
             (   SELECT flnam
                 FROM flaechen AS fl
@@ -1113,7 +1113,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkfl AS lf
                 LEFT JOIN haltungen AS ha
                 ON lf.haltnam = ha.haltnam
-                WHERE ha.pk IS NULL)
+                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
             UPDATE linkfl SET haltnam =
             (   SELECT haltnam
                 FROM haltungen AS ha
@@ -1135,13 +1135,13 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkfl AS lf
                 LEFT JOIN tezg AS tg
                 ON lf.flnam = tg.flnam
-                WHERE tg.pk IS NULL)
+                WHERE tg.pk IS NULL OR NOT within(StartPoint(linkfl.glink),tg.geom))
             UPDATE linkfl SET tezgnam =
             (   SELECT tg.flnam
                 FROM tezg AS tg
-                INNER JOIN flaechen as fl
+                INNER JOIN (SELECT flnam FROM flaechen WHERE fl.aufteilen = 'ja') as fl
                 ON linkfl.flnam = fl.flnam
-                WHERE within(StartPoint(linkfl.glink),tg.geom) AND fl.aufteilen = 'ja')
+                WHERE within(StartPoint(linkfl.glink),tg.geom))
             WHERE linkfl.pk IN missing"""
         logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
         try:
@@ -1381,7 +1381,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linksw AS lf
                 LEFT JOIN einleit AS el
                 ON lf.elnam = el.elnam
-                WHERE el.pk IS NULL)
+                WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(linksw.glink),0.1),el.geom))
             UPDATE linksw SET elnam =
             (   SELECT elnam
                 FROM einleit AS el
@@ -1404,7 +1404,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linksw AS lf
                 LEFT JOIN haltungen AS ha
                 ON lf.haltnam = ha.haltnam
-                WHERE ha.pk IS NULL)
+                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(linksw.glink),0.1),ha.geom))
             UPDATE linksw SET haltnam =
             (   SELECT haltnam
                 FROM haltungen AS ha
@@ -1739,7 +1739,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkew AS lf
                 LEFT JOIN einwohner AS el
                 ON lf.elnam = el.elnam
-                WHERE el.pk IS NULL)
+                WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(linkew.glink),0.1),el.geom))
             UPDATE linkew SET elnam =
             (   SELECT elnam
                 FROM einwohner AS el
@@ -1762,7 +1762,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkew AS lf
                 LEFT JOIN haltungen AS ha
                 ON lf.haltnam = ha.haltnam
-                WHERE ha.pk IS NULL)
+                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(linkew.glink),0.1),ha.geom))
             UPDATE linkew SET haltnam =
             (   SELECT haltnam
                 FROM haltungen AS ha
