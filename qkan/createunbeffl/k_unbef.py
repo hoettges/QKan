@@ -129,12 +129,38 @@ def createUnbefFlaechen(database_QKan, liste_tezg, dbtyp='SpatiaLite'):
 
     try:
         dbQK.sql(sql)
-        dbQK.commit()
     except:
-        fehlermeldung(u"SQL-Fehler in QKan_CreateUnbefFl: \n", sql)
+        fehlermeldung(u"SQL-Fehler in QKan_CreateUnbefFl (1): \n", sql)
         del dbQK
         return False
 
+    # Hinzufügen von Verknüpfungen in die Tabelle linkfl für die neu erstellten unbefestigten Flächen
+    sql = u"""INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom, glink)
+            SELECT
+                fl.flnam AS flnam, 
+                NULL AS aufteilen, 
+                tg.teilgebiet AS teilgebiet, 
+                NULL AS geom,
+                MakeLine(PointOnSurface(fl.geom),Centroid(ha.geom)) AS glink
+                FROM linkfl AS lf
+                INNER JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                INNER JOIN haltungen AS ha
+                ON lf.haltnam = ha.haltnam
+                INNER JOIN tezg AS tg
+                ON 'fd_' || tg.flnam = fl.flnam
+                WHERE fl.flnam NOT IN
+                (   SELECT flnam FROM linkfl)"""
+
+    try:
+        dbQK.sql(sql)
+    except:
+        fehlermeldung(u"SQL-Fehler in QKan_CreateUnbefFl (2): \n", sql)
+        del dbQK
+        return False
+
+
+    dbQK.commit()
     del dbQK
 
     # Karte aktualisieren

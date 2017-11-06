@@ -30,7 +30,7 @@ import site
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt4.QtGui import QFileDialog, QListWidgetItem
 from qgis.core import QgsProject, QgsMessageLog
-# from qgis.gui import QgsMessageBar
+from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 # noinspection PyUnresolvedReferences

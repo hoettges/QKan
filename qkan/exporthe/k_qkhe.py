@@ -1091,7 +1091,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkfl AS lf
                 LEFT JOIN flaechen AS fl
                 ON lf.flnam = fl.flnam
-                WHERE fl.pk IS NULL OR NOT within(StartPoint(linkfl.glink),fl.geom))
+                WHERE fl.pk IS NULL OR NOT within(StartPoint(lf.glink),fl.geom))
             UPDATE linkfl SET flnam =
             (   SELECT flnam
                 FROM flaechen AS fl
@@ -1113,7 +1113,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkfl AS lf
                 LEFT JOIN haltungen AS ha
                 ON lf.haltnam = ha.haltnam
-                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
+                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom))
             UPDATE linkfl SET haltnam =
             (   SELECT haltnam
                 FROM haltungen AS ha
@@ -1135,7 +1135,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkfl AS lf
                 LEFT JOIN tezg AS tg
                 ON lf.flnam = tg.flnam
-                WHERE tg.pk IS NULL OR NOT within(StartPoint(linkfl.glink),tg.geom))
+                WHERE tg.pk IS NULL OR NOT within(StartPoint(lf.glink),tg.geom))
             UPDATE linkfl SET tezgnam =
             (   SELECT tg.flnam
                 FROM tezg AS tg
@@ -1163,7 +1163,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         if check_export['combine_flaechenrw']:
             sql = u"""
               WITH flintersect AS (
-                SELECT fl.flnam AS flnam, fl.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
+                SELECT lf.flnam AS flnam, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
                 fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
                 fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
                 fl.regenschreiber AS regenschreiber,
@@ -1176,7 +1176,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 ON fl.flnam = tg.flnam
                 WHERE fl.aufteilen = 'ja'{auswahl}
                 UNION
-                SELECT fl.flnam AS flnam, fl.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
+                SELECT lf.flnam AS flnam, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
                 fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
                 fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
                 fl.regenschreiber AS regenschreiber,
@@ -1185,24 +1185,26 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkfl AS lf
                 INNER JOIN flaechen AS fl
                 ON lf.flnam = fl.flnam
-                WHERE fl.aufteilen = 'nein' OR fl.aufteilen IS NULL{auswahl}
+                WHERE (fl.aufteilen = 'nein' OR fl.aufteilen IS NULL){auswahl}
                 )
-              SELECT 'fls_' || ha.haltnam AS flnam, ha.haltnam AS haltnam, max(fi.neigkl) AS neigkl,
-                max(fi.he_typ) AS he_typ, max(fi.speicherzahl) AS speicherzahl, max(fi.speicherkonst) AS speicherkonst,
-                max(fi.fliesszeit) AS fliesszeit, max(fi.fliesszeitkanal) AS fliesszeitkanal,
-                sum(area(fi.geom)/10000) AS flaeche, max(fi.regenschreiber) AS regenschreiber,
-                max(fi.abflussparameter) AS abflussparameter, max(fi.createdat) AS createdat,
+              SELECT 'fls_' || ha.haltnam AS flnam, ha.haltnam AS haltnam, fi.neigkl AS neigkl,
+                fi.he_typ AS he_typ, fi.speicherzahl AS speicherzahl, fi.speicherkonst AS speicherkonst,
+                fi.fliesszeit AS fliesszeit, fi.fliesszeitkanal AS fliesszeitkanal,
+                sum(area(fi.geom)/10000) AS flaeche, fi.regenschreiber AS regenschreiber,
+                abflussparameter AS abflussparameter, max(fi.createdat) AS createdat,
                 max(fi.kommentar) AS kommentar
               FROM flintersect AS fi
               INNER JOIN haltungen AS ha
               ON fi.haltnam = ha.haltnam
               WHERE area(fi.geom) > 0.1
-              GROUP BY ha.haltnam""".format(auswahl=auswahl)
+              GROUP BY ha.haltnam, fi.abflussparameter, fi.regenschreiber, 
+                       fi.fliesszeitkanal, fi.speicherkonst, fi.speicherzahl, 
+                       fi.fliesszeit, fi.he_typ, fi.neigkl""".format(auswahl=auswahl)
             logger.debug('combine_flaechenrw = True')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         else:
             sql1 = u"""
-              SELECT 'fls_' || ha.haltnam AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
+              SELECT printf('fls_%s-%d', ha.haltnam, lf.pk) AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
                 fl.he_typ AS he_typ, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
                 fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
                 area(CastToMultiPolygon(intersection(fl.geom,tg.geom)))/10000 AS flaeche, fl.regenschreiber AS regenschreiber,
@@ -1216,14 +1218,14 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               INNER JOIN tezg AS tg
               ON lf.tezgnam = tg.flnam""".format(auswahl=auswahl)
             sql2 = u"""
-              SELECT 'fls_' || ha.haltnam AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
+              SELECT printf('fls_%s-%d', ha.haltnam, lf.pk) AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
                 fl.he_typ AS he_typ, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
                 fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
                 area(fl.geom)/10000 AS flaeche, fl.regenschreiber AS regenschreiber,
                 fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
                 fl.kommentar AS kommentar
               FROM linkfl AS lf
-              INNER JOIN (SELECT * FROM flaechen WHERE aufteilen <> 'ja' OR aufteilen IS NULL{auswahl}) AS fl
+              INNER JOIN (SELECT * FROM flaechen WHERE (aufteilen <> 'ja' OR aufteilen IS NULL){auswahl}) AS fl
               ON lf.flnam = fl.flnam
               INNER JOIN haltungen AS ha
               ON lf.haltnam = ha.haltnam""".format(auswahl=auswahl)
@@ -1280,7 +1282,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             if kommentar == 'NULL' or kommentar == '':
                 kommentar = 'eingefuegt von k_qkhe'
 
-            fnam = (u'fb_{}-{}'.format(flnam, haltnam))[:30]
+            fnam = (u'{}-{}'.format(flnam, nextid))[:30]
 
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export['modify_flaechenrw']:
@@ -1381,7 +1383,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linksw AS lf
                 LEFT JOIN einleit AS el
                 ON lf.elnam = el.elnam
-                WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(linksw.glink),0.1),el.geom))
+                WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(lf.glink),0.1),el.geom))
             UPDATE linksw SET elnam =
             (   SELECT elnam
                 FROM einleit AS el
@@ -1404,7 +1406,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linksw AS lf
                 LEFT JOIN haltungen AS ha
                 ON lf.haltnam = ha.haltnam
-                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(linksw.glink),0.1),ha.geom))
+                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom))
             UPDATE linksw SET haltnam =
             (   SELECT haltnam
                 FROM haltungen AS ha
@@ -1739,7 +1741,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkew AS lf
                 LEFT JOIN einwohner AS el
                 ON lf.elnam = el.elnam
-                WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(linkew.glink),0.1),el.geom))
+                WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(lf.glink),0.1),el.geom))
             UPDATE linkew SET elnam =
             (   SELECT elnam
                 FROM einwohner AS el
@@ -1762,7 +1764,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkew AS lf
                 LEFT JOIN haltungen AS ha
                 ON lf.haltnam = ha.haltnam
-                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(linkew.glink),0.1),ha.geom))
+                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom))
             UPDATE linkew SET haltnam =
             (   SELECT haltnam
                 FROM haltungen AS ha
