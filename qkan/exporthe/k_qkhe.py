@@ -1139,7 +1139,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             UPDATE linkfl SET tezgnam =
             (   SELECT tg.flnam
                 FROM tezg AS tg
-                INNER JOIN (SELECT flnam FROM flaechen WHERE fl.aufteilen = 'ja') as fl
+                INNER JOIN (SELECT flnam FROM flaechen AS fl WHERE fl.aufteilen = 'ja') as fl
                 ON linkfl.flnam = fl.flnam
                 WHERE within(StartPoint(linkfl.glink),tg.geom))
             WHERE linkfl.pk IN missing"""
@@ -1163,7 +1163,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         if check_export['combine_flaechenrw']:
             sql = u"""
               WITH flintersect AS (
-                SELECT lf.flnam AS flnam, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
+                SELECT lf.pk AS pk, lf.flnam AS flnam, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
                 fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
                 fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
                 fl.regenschreiber AS regenschreiber,
@@ -1176,7 +1176,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 ON fl.flnam = tg.flnam
                 WHERE fl.aufteilen = 'ja'{auswahl}
                 UNION
-                SELECT lf.flnam AS flnam, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
+                SELECT lf.pk AS pk, lf.flnam AS flnam, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
                 fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
                 fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
                 fl.regenschreiber AS regenschreiber,
@@ -1187,9 +1187,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 ON lf.flnam = fl.flnam
                 WHERE (fl.aufteilen = 'nein' OR fl.aufteilen IS NULL){auswahl}
                 )
-              SELECT 'fls_' || ha.haltnam AS flnam, ha.haltnam AS haltnam, fi.neigkl AS neigkl,
-                fi.he_typ AS he_typ, fi.speicherzahl AS speicherzahl, fi.speicherkonst AS speicherkonst,
-                fi.fliesszeit AS fliesszeit, fi.fliesszeitkanal AS fliesszeitkanal,
+              SELECT printf('fs_%d-%s', fi.pk, ha.haltnam) AS flnam, ha.haltnam AS haltnam, fi.neigkl AS neigkl,
+                fi.he_typ AS he_typ, fi.speicherzahl AS speicherzahl, avg(fi.speicherkonst) AS speicherkonst,
+                max(fi.fliesszeit) AS fliesszeit, max(fi.fliesszeitkanal) AS fliesszeitkanal,
                 sum(area(fi.geom)/10000) AS flaeche, fi.regenschreiber AS regenschreiber,
                 abflussparameter AS abflussparameter, max(fi.createdat) AS createdat,
                 max(fi.kommentar) AS kommentar
@@ -1198,34 +1198,34 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               ON fi.haltnam = ha.haltnam
               WHERE area(fi.geom) > 0.1
               GROUP BY ha.haltnam, fi.abflussparameter, fi.regenschreiber, 
-                       fi.fliesszeitkanal, fi.speicherkonst, fi.speicherzahl, 
-                       fi.fliesszeit, fi.he_typ, fi.neigkl""".format(auswahl=auswahl)
+                       fi.speicherzahl, 
+                       fi.he_typ, fi.neigkl""".format(auswahl=auswahl)
             logger.debug('combine_flaechenrw = True')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         else:
-            sql1 = u"""
-              SELECT printf('fls_%s-%d', ha.haltnam, lf.pk) AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
+            sql = u"""
+              SELECT printf('fs_%d-%s', lf.pk, ha.haltnam) AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
                 fl.he_typ AS he_typ, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
                 fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
                 area(CastToMultiPolygon(intersection(fl.geom,tg.geom)))/10000 AS flaeche, fl.regenschreiber AS regenschreiber,
                 fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
                 fl.kommentar AS kommentar
               FROM linkfl AS lf
-              INNER JOIN (SELECT * FROM flaechen WHERE aufteilen = 'ja'{auswahl}) AS fl
+              INNER JOIN (SELECT * FROM flaechen AS fl WHERE aufteilen = 'ja'{auswahl}) AS fl
               ON lf.flnam = fl.flnam
               INNER JOIN haltungen AS ha
               ON lf.haltnam = ha.haltnam
               INNER JOIN tezg AS tg
-              ON lf.tezgnam = tg.flnam""".format(auswahl=auswahl)
-            sql2 = u"""
-              SELECT printf('fls_%s-%d', ha.haltnam, lf.pk) AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
+              ON lf.tezgnam = tg.flnam
+              UNION
+              SELECT printf('fs_%d-%s', lf.pk, ha.haltnam) AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
                 fl.he_typ AS he_typ, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
                 fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
                 area(fl.geom)/10000 AS flaeche, fl.regenschreiber AS regenschreiber,
                 fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
                 fl.kommentar AS kommentar
               FROM linkfl AS lf
-              INNER JOIN (SELECT * FROM flaechen WHERE (aufteilen <> 'ja' OR aufteilen IS NULL){auswahl}) AS fl
+              INNER JOIN (SELECT * FROM flaechen AS fl WHERE (aufteilen <> 'ja' OR aufteilen IS NULL){auswahl}) AS fl
               ON lf.flnam = fl.flnam
               INNER JOIN haltungen AS ha
               ON lf.haltnam = ha.haltnam""".format(auswahl=auswahl)
@@ -1451,7 +1451,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         if check_export['combine_einleitdirekt']:
             sql = u"""SELECT
-              printf('eld__%d_%s',ROWID,haltnam) AS elnam,
+              printf('ed-%d-%s',pk,haltnam) AS elnam,
               avg(x(geom)) AS xel,
               avg(y(geom)) AS yel,
               haltnam AS haltnam,
@@ -1461,7 +1461,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             """.format(auswahl=auswahl)
         else:
             sql = u"""SELECT
-              printf('eld__%d_%s',ROWID,haltnam) AS elnam,
+              printf('ed-%d-%s',pk,haltnam) AS elnam,
               x(geom) AS xel,
               y(geom) AS yel,
               haltnam AS haltnam,
@@ -1809,33 +1809,38 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         if check_export['combine_einleitew']:
             sql = u"""SELECT
-              'ew_' || einwohner.haltnam AS elnam,
-              avg(x(einwohner.geom)) AS xel,
-              avg(y(einwohner.geom)) AS yel,
-              einwohner.haltnam AS haltnam,
-              teilgebiete.wverbrauch AS wverbrauch, 
-              teilgebiete.stdmittel AS stdmittel,
-              teilgebiete.fremdwas AS fremdwas, 
-              einwohner.ew AS einwohner
-              FROM einwohner
-              INNER JOIN teilgebiete
-              ON einwohner.teilgebiet = teilgebiete.tgnam
+              printf('ew_%d-%s', ew.pk, ew.haltnam) AS elnam,
+              avg(x(ew.geom)) AS xel,
+              avg(y(ew.geom)) AS yel,
+              ew.haltnam AS haltnam,
+              printf('%.6f',tg.wverbrauch) AS wverbrauch, 
+              printf('%.1f',tg.stdmittel) AS stdmittel,
+              printf('%.3f',tg.fremdwas) AS fremdwas, 
+              printf('%.6f',ew.ew) AS einwohner
+              FROM einwohner AS ew
+              INNER JOIN teilgebiete AS tg
+              ON ew.teilgebiet = tg.tgnam
               {auswahl}
-              GROUP BY haltnam
+              GROUP BY ew.haltnam, 
+                printf('%.6f',tg.wverbrauch), 
+                printf('%.1f',tg.stdmittel),
+                printf('%.3f',tg.fremdwas),
+                printf('%.6f',ew.ew)
+
             """.format(auswahl=auswahl)
         else:
             sql = u"""SELECT
-              einwohner.elnam AS elnam,
-              x(einwohner.geom) AS xel,
-              y(einwohner.geom) AS yel,
-              einwohner.haltnam AS haltnam,
-              teilgebiete.wverbrauch AS wverbrauch, 
-              teilgebiete.stdmittel AS stdmittel,
-              teilgebiete.fremdwas AS fremdwas, 
-              einwohner.ew AS einwohner
-              FROM einwohner
-              INNER JOIN teilgebiete
-              ON einwohner.teilgebiet = teilgebiete.tgnam
+              printf('ew_%d-%s', ew.pk, ew.elnam) AS elnam,
+              x(ew.geom) AS xel,
+              y(ew.geom) AS yel,
+              ew.haltnam AS haltnam,
+              tg.wverbrauch AS wverbrauch, 
+              tg.stdmittel AS stdmittel,
+              tg.fremdwas AS fremdwas, 
+              ew.ew AS einwohner
+              FROM einwohner AS ew
+              INNER JOIN teilgebiete AS tg
+              ON ew.teilgebiet = tg.tgnam
               {auswahl}
             """.format(auswahl=auswahl)
 
