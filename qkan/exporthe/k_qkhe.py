@@ -1173,7 +1173,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 INNER JOIN flaechen AS fl
                 ON lf.flnam = fl.flnam
                 INNER JOIN tezg AS tg
-                ON fl.flnam = tg.flnam
+                ON lf.tezgnam = tg.flnam
                 WHERE fl.aufteilen = 'ja'{auswahl}
                 UNION
                 SELECT lf.pk AS pk, lf.flnam AS flnam, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
@@ -1185,7 +1185,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                 FROM linkfl AS lf
                 INNER JOIN flaechen AS fl
                 ON lf.flnam = fl.flnam
-                WHERE (fl.aufteilen = 'nein' OR fl.aufteilen IS NULL){auswahl}
+                WHERE (fl.aufteilen <> 'ja' OR fl.aufteilen IS NULL){auswahl}
                 )
               SELECT printf('fs_%d-%s', fi.pk, ha.haltnam) AS flnam, ha.haltnam AS haltnam, fi.neigkl AS neigkl,
                 fi.he_typ AS he_typ, fi.speicherzahl AS speicherzahl, avg(fi.speicherkonst) AS speicherkonst,
