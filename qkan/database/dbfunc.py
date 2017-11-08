@@ -78,7 +78,12 @@ def version(dbcursl, actversion = '2.1.1'):
     # ---------------------------------------------------------------------------------------------
     # Aktualisierung von Version 2.0.2
 
-    versiondbQK = dbcursl.fetchone()[0]
+    data = dbcursl.fetchone()
+    if data is not None:
+        versiondbQK = data[0]
+    else:
+        versiondbQK = '1.9.9'
+
     if versiondbQK == '2.0.2':
         # sql1 = u"""ALTER TABLE linkfl ADD COLUMN flnam TEXT"""
         sql2 = u"""ALTER TABLE linksw ADD COLUMN elnam TEXT"""
