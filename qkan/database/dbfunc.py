@@ -48,12 +48,22 @@ logger = logging.getLogger('QKan')
 # Funktionen -------------------------------------------------------------------
 
 def fehlermeldung(title, text, dauer=0):
-    logger.debug(u'{:s} {:s}'.format(title, text))
+    logger.error(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
     iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL, duration=dauer)
 
 
 # Versionskontrolle der QKan-Datenbank
+
+def attrlist2(dbcursl, tablenam):
+    """Gibt Spaltenliste zurück."""
+
+    sql = 'PRAGMA table_info("{0:s}")'.format(tablenam)
+    dbcursl.execute(sql)
+    daten = dbcursl.fetchall()
+    # lattr = [el[1] for el in daten if el[2]  == u'TEXT']
+    lattr = [el[1] for el in daten]
+    return lattr
 
 def version(dbcursl, actversion = '2.1.1'):
     """Checks database version. Database is just connected by the calling procedure.
@@ -65,6 +75,9 @@ def version(dbcursl, actversion = '2.1.1'):
         :rtype: logical
     """
 
+    # ---------------------------------------------------------------------------------------------
+    # Aktuelle Version abfragen
+
     sql = u"""SELECT value
             FROM info
             WHERE subject = 'version'"""
@@ -75,33 +88,130 @@ def version(dbcursl, actversion = '2.1.1'):
         fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
         return False
 
-    # ---------------------------------------------------------------------------------------------
-    # Aktualisierung von Version 2.0.2
-
     data = dbcursl.fetchone()
     if data is not None:
         versiondbQK = data[0]
     else:
+        sql = u"""INSERT INTO info (subject, value) Values ('version', '1.9.9')"""
+        try:
+            dbcursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan.qgis_utils.version(2) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                           "SQL: {}\n".format(sql))
+            return False
+
         versiondbQK = '1.9.9'
 
-    if versiondbQK == '2.0.2':
-        # sql1 = u"""ALTER TABLE linkfl ADD COLUMN flnam TEXT"""
-        sql2 = u"""ALTER TABLE linksw ADD COLUMN elnam TEXT"""
-        sql3 = u"""ALTER TABLE linkew ADD COLUMN elnam TEXT"""
+    # ---------------------------------------------------------------------------------------------
+    # Aktualisierung von Version 1.9.9 und früher
+
+    if versiondbQK == '1.9.9':
+
+        # Tabelle einwohner
+        sqllis = [u"""CREATE TABLE IF NOT EXISTS einwohner (
+            pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+            elnam TEXT, 
+            haltnam TEXT, 
+            ew REAL, 
+            teilgebiet TEXT, 
+            kommentar TEXT, 
+            createdat TEXT DEFAULT CURRENT_DATE)""", 
+        u"""SELECT AddGeometryColumn('einwohner','geom',25832,'POINT',2)"""]
+        for sql in sqllis:
+            try:
+                dbcursl.execute(sql)
+            except BaseException as err:
+                fehlermeldung(u"QKan.qgis_utils.version(3a) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                               "SQL: {}\nS".format(sql))
+                return False
+
+        sqllis = [u"""CREATE TABLE IF NOT EXISTS linkew (
+            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+            elnam TEXT,
+            haltnam TEXT,
+            teilgebiet TEXT)""", 
+            u"""SELECT AddGeometryColumn('linksw','geom',25832,'POLYGON',2)""", 
+            u"""SELECT AddGeometryColumn('linksw','gbuf',25832,'MULTIPOLYGON',2)""", 
+            u"""SELECT AddGeometryColumn('linksw','glink',25832,'LINESTRING',2)"""]
+        for sql in sqllis:
+            try:
+                dbcursl.execute(sql)
+            except BaseException as err:
+                fehlermeldung(u"QKan.qgis_utils.version(3b) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                               "SQL: {}\nS".format(sql))
+                return False
+
+        # Tabelle einleit
+        sqllis = [u"""CREATE TABLE IF NOT EXISTS einleit(
+            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+            elnam TEXT,
+            haltnam TEXT,
+            zufluss REAL,
+            teilgebiet TEXT, 
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_DATE)""", 
+        u"""SELECT AddGeometryColumn('einleit','geom',25832,'POINT',2)"""]
+        for sql in sqllis:
+            try:
+                dbcursl.execute(sql)
+            except BaseException as err:
+                fehlermeldung(u"QKan.qgis_utils.version(3c) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                                   "SQL: {}\nS".format(sql))
+                return False
+
+        sqllis = [u"""CREATE TABLE IF NOT EXISTS linksw (
+                pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                elnam TEXT,
+                haltnam TEXT,
+                teilgebiet TEXT)""", 
+                u"""SELECT AddGeometryColumn('linksw','geom',25832,'POLYGON',2)""", 
+                u"""SELECT AddGeometryColumn('linksw','gbuf',25832,'MULTIPOLYGON',2)""", 
+                u"""SELECT AddGeometryColumn('linksw','glink',25832,'LINESTRING',2)"""]
+        for sql in sqllis:
+            try:
+                dbcursl.execute(sql)
+            except BaseException as err:
+                fehlermeldung(u"QKan.qgis_utils.version(3d) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                               "SQL: {}\nS".format(sql))
+                return False
+
+        sql = u"""UPDATE info SET value = '2.0.2' WHERE subject = 'version' and value = '1.9.9';"""
         try:
-            # dbcursl.execute(sql1)
-            dbcursl.execute(sql2)
-            dbcursl.execute(sql3)
+            dbcursl.execute(sql)
         except BaseException as err:
-            fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
-                           "SQL Nr. 1: {}\nSQL Nr. 2: {}\nSQL Nr. 3: {}\n".format(sql1, sql2, sql3))
+            fehlermeldung(u"QKan.qgis_utils.version(3e) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                           "SQL: {}\n".format(sql))
             return False
+
+        versiondbQK = '2.0.2'
+
+    if versiondbQK == '2.0.2':
+
+        if u'elnam' not in attrlist2(dbcursl,'linksw'):
+            logger.debug('linksw.elnam ist nicht in: {}'.format(str(attrlist2(dbcursl,'linksw'))))
+            sql = u"""ALTER TABLE linksw ADD COLUMN elnam TEXT"""
+            try:
+                dbcursl.execute(sql)
+            except BaseException as err:
+                fehlermeldung(u"QKan.qgis_utils.version(4a) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                               "SQL Nr. 1: {}\n".format(sql))
+                return False
+
+        if u'elnam' not in attrlist2(dbcursl,'linkew'):
+            logger.debug('linkew.elnam ist nicht in: {}'.format(str(attrlist2(dbcursl,'linkew'))))
+            sql = u"""ALTER TABLE linkew ADD COLUMN elnam TEXT"""
+            try:
+                dbcursl.execute(sql)
+            except BaseException as err:
+                fehlermeldung(u"QKan.qgis_utils.version(4b) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                               "SQL Nr. 1: {}\n".format(sql))
+                return False
 
         sql = u"""UPDATE info SET value = '2.1.1' WHERE subject = 'version' and value = '2.0.2';"""
         try:
             dbcursl.execute(sql)
         except BaseException as err:
-            fehlermeldung(u"QKan.qgis_utils.version(1) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+            fehlermeldung(u"QKan.qgis_utils.version(4c) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
                            "SQL: {}\n".format(sql))
             return False
 

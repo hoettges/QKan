@@ -53,7 +53,7 @@ def fortschritt(text, prozent):
 
 
 def fehlermeldung(title, text):
-    logger.debug(u'{:s} {:s}'.format(title, text))
+    logger.error(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 
@@ -204,7 +204,8 @@ class ExportToHE:
         init_pumpen = cb_set('init_pumpen', self.dlg.cb_init_pumpen, False)
         init_wehre = cb_set('init_wehre', self.dlg.cb_init_wehre, False)
         init_flaechenrw = cb_set('init_flaechenrw', self.dlg.cb_init_flaechenrw, False)
-        init_einleit = cb_set('init_einleit', self.dlg.cb_init_einleit, False)                  # fuer beide: einleitew und einleitdirekt
+        init_einleitew = cb_set('init_einleitew', self.dlg.cb_init_einleitew, False)
+        init_einleitdirekt = cb_set('init_einleitdirekt', self.dlg.cb_init_einleitdirekt, False)
         init_abflussparameter = cb_set('init_abflussparameter', self.dlg.cb_init_abflussparameter, False)
         init_regenschreiber = cb_set('init_regenschreiber', self.dlg.cb_init_regenschreiber, False)
         init_rohrprofile = cb_set('init_rohrprofile', self.dlg.cb_init_rohrprofile, False)
@@ -322,7 +323,8 @@ class ExportToHE:
         self.dlg.cb_init_pumpen.setChecked(True)
         self.dlg.cb_init_wehre.setChecked(True)
         self.dlg.cb_init_flaechenrw.setChecked(True)
-        self.dlg.cb_init_einleit.setChecked(True)                  # fuer beide: einleitew und einleitdirekt
+        self.dlg.cb_init_einleitew.setChecked(True)
+        self.dlg.cb_init_einleitdirekt.setChecked(True)
         self.dlg.cb_init_abflussparameter.setChecked(True)
         self.dlg.cb_init_regenschreiber.setChecked(True)
         self.dlg.cb_init_rohrprofile.setChecked(True)
@@ -375,7 +377,8 @@ class ExportToHE:
         self.dlg.cb_init_pumpen.setChecked(False)
         self.dlg.cb_init_wehre.setChecked(False)
         self.dlg.cb_init_flaechenrw.setChecked(False)
-        self.dlg.cb_init_einleit.setChecked(False)                  # fuer beide: einleitew und einleitdirekt
+        self.dlg.cb_init_einleitew.setChecked(False)
+        self.dlg.cb_init_einleitdirekt.setChecked(False)
         self.dlg.cb_init_abflussparameter.setChecked(False)
         self.dlg.cb_init_regenschreiber.setChecked(False)
         self.dlg.cb_init_rohrprofile.setChecked(False)
@@ -626,7 +629,8 @@ class ExportToHE:
             check_export['init_pumpen'] = self.dlg.cb_init_pumpen.isChecked()
             check_export['init_wehre'] = self.dlg.cb_init_wehre.isChecked()
             check_export['init_flaechenrw'] = self.dlg.cb_init_flaechenrw.isChecked()
-            check_export['init_einleit'] = self.dlg.cb_init_einleit.isChecked()                  # fuer beide: einleitew und einleitdirekt
+            check_export['init_einleitew'] = self.dlg.cb_init_einleitew.isChecked()
+            check_export['init_einleitdirekt'] = self.dlg.cb_init_einleitdirekt.isChecked()
             check_export['init_abflussparameter'] = self.dlg.cb_init_abflussparameter.isChecked()
             check_export['init_regenschreiber'] = self.dlg.cb_init_regenschreiber.isChecked()
             check_export['init_rohrprofile'] = self.dlg.cb_init_rohrprofile.isChecked()

@@ -1726,11 +1726,11 @@ hinzufügen</string>
      <string/>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_init_einleit">
+   <widget class="QCheckBox" name="cb_init_einleitew">
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>250</y>
+      <y>240</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1930,27 +1930,6 @@ hinzufügen</string>
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>245</x>
-      <y>240</y>
-      <width>21</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Courier New</family>
-      <pointsize>36</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>}</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="cb_combine_flaechenrw">
     <property name="geometry">
      <rect>
@@ -2045,6 +2024,31 @@ hinzufügen</string>
     <property name="text">
      <string>zusammen-
 fassen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_init_einleitdirekt">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>260</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
