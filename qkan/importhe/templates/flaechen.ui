@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>647</width>
-    <height>512</height>
+    <height>508</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -405,6 +405,25 @@
     </property>
     <property name="text">
      <string>auf mehrere TEZG-Flächen aufteilen (Verschneidung)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_version">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>450</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Version QKan Import</string>
+    </property>
+    <property name="text">
+     <string>Version 2.1.2</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
   </widget>

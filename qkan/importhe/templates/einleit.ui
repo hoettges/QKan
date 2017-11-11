@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>248</height>
+    <height>296</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -174,7 +174,7 @@
       <x>100</x>
       <y>170</y>
       <width>471</width>
-      <height>21</height>
+      <height>61</height>
      </rect>
     </property>
    </widget>
@@ -212,6 +212,25 @@
       <width>141</width>
       <height>23</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_version">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>240</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Version QKan Import</string>
+    </property>
+    <property name="text">
+     <string>Version 2.1.2</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
   </widget>

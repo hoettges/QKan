@@ -50,7 +50,7 @@ def fortschritt(text, prozent):
 
 
 def fehlermeldung(title, text):
-    logger.debug(u'{:s} {:s}'.format(title, text))
+    logger.error(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 

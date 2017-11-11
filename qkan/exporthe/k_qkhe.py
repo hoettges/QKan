@@ -43,7 +43,7 @@ def fortschritt(text, prozent=0.):
 
 
 def fehlermeldung(title, text, dauer=0):
-    logger.debug(u'{:s} {:s}'.format(title, text))
+    logger.error(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
     iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL, duration=dauer)
 
@@ -195,13 +195,13 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     KONSTANTERZUFLUSS={konstanterzufluss}, GELAENDEHOEHE={gelaendehoehe},
                     ART={art}, ANZAHLKANTEN={anzahlkanten}, SCHEITELHOEHE={scheitelhoehe},
                     PLANUNGSSTATUS='{planungsstatus}', NAME='{name}', LASTMODIFIED='{lastmodified}',
-                    ID={id}, DURCHMESSER={durchmesser}
+                    DURCHMESSER={durchmesser}
                     WHERE NAME = '{name}';
                 """.format(deckelhoehe=deckelhoehe, kanalart='0', druckdichterdeckel='0',
                            sohlhoehe=sohlhoehe, xkoordinate=xsch, ykoordinate=ysch,
                            konstanterzufluss='0', gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
                            scheitelhoehe='0', planungsstatus='0', name=schnam, lastmodified=createdat,
-                           id=nextid, durchmesser=durchmesser)
+                           durchmesser=durchmesser)
                 try:
                     dbHE.sql(sql)
                 except BaseException as err:
@@ -211,7 +211,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_schaechte']:
+            if check_export['export_schaechte']:
                 # Trick: In Firebird ist kein SELECT ohne Tabelle möglich. Tabelle "RDB$DATABASE" hat genau 1 Datensatz
                 sql = u"""
                     INSERT INTO SCHACHT
@@ -306,7 +306,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             if check_export['modify_speicher']:
                 sql = u"""
                     UPDATE SPEICHERSCHACHT SET
-                    ID={id}, TYP={typ}, SOHLHOEHE={sohlhoehe},
+                    TYP={typ}, SOHLHOEHE={sohlhoehe},
                       XKOORDINATE={xkoordinate}, YKOORDINATE={ykoordinate},
                       GELAENDEHOEHE={gelaendehoehe}, ART={art}, ANZAHLKANTEN={anzahlkanten},
                       SCHEITELHOEHE={scheitelhoehe}, HOEHEVOLLFUELLUNG={hoehevollfuellung},
@@ -314,7 +314,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                       PLANUNGSSTATUS='{planungsstatus}',
                       NAME='{name}', LASTMODIFIED='{lastmodified}', KOMMENTAR='{kommentar}'
                       WHERE NAME='{name}';
-                """.format(id=nextid, typ='1', sohlhoehe=sohlhoehe,
+                """.format(typ='1', sohlhoehe=sohlhoehe,
                            xkoordinate=xsch, ykoordinate=ysch,
                            gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
                            scheitelhoehe=deckelhoehe, hoehevollfuellung=deckelhoehe,
@@ -330,7 +330,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_speicher']:
+            if check_export['export_speicher']:
                 # Trick: In Firebird ist kein SELECT ohne Tabelle möglich. Tabelle "RDB$DATABASE" hat genau 1 Datensatz
                 sql = u"""
                     INSERT INTO SPEICHERSCHACHT
@@ -485,14 +485,14 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             if check_export['modify_auslaesse']:
                 sql = u"""
                     UPDATE AUSLASS SET
-                    ID={id}, TYP={typ}, RUECKSCHLAGKLAPPE={rueckschlagklappe},
+                    TYP={typ}, RUECKSCHLAGKLAPPE={rueckschlagklappe},
                     SOHLHOEHE={sohlhoehe}, XKOORDINATE={xkoordinate}, YKOORDINATE={ykoordinate},
                     GELAENDEHOEHE={gelaendehoehe}, ART={art}, ANZAHLKANTEN={anzahlkanten},
                     SCHEITELHOEHE={scheitelhoehe}, KONSTANTERZUFLUSS={konstanterzufluss},
                     PLANUNGSSTATUS='{planungsstatus}', NAME='{name}',
                     LASTMODIFIED='{lastmodified}', KOMMENTAR='{kommentar}'
                     WHERE NAME = '{name}';
-                """.format(id=nextid, typ='1', rueckschlagklappe=0, sohlhoehe=sohlhoehe,
+                """.format(typ='1', rueckschlagklappe=0, sohlhoehe=sohlhoehe,
                            xkoordinate=xsch, ykoordinate=ysch,
                            gelaendehoehe=deckelhoehe, art='3', anzahlkanten='0',
                            scheitelhoehe=deckelhoehe, konstanterzufluss=0, planungsstatus='0',
@@ -507,7 +507,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_auslaesse']:
+            if check_export['export_auslaesse']:
                 sql = u"""
                     INSERT INTO AUSLASS
                     ( ID, TYP, RUECKSCHLAGKLAPPE, SOHLHOEHE,
@@ -578,7 +578,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               LEFT JOIN profile ON haltungen.profilnam = profile.profilnam
               LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.bezeichnung
               LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
-              WHERE (st.he_nr = '0' or st.he_nr IS NULL){:}
+              WHERE (st.he_nr IN ('0', '1', '2') or st.he_nr IS NULL){:}
         """.format(auswahl)
         try:
             dbQK.sql(sql)
@@ -638,8 +638,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                       EREIGNISBILANZIERUNG={ereignisbilanzierung},
                       EREIGNISGRENZWERTENDE={ereignisgrenzwertende},
                       EREIGNISGRENZWERTANFANG={ereignisgrenzwertanfang},
-                      EREIGNISTRENNDAUER={ereignistrenndauer}, EREIGNISINDIVIDUELL={ereignisindividuell},
-                      ID={id}
+                      EREIGNISTRENNDAUER={ereignistrenndauer}, EREIGNISINDIVIDUELL={ereignisindividuell}
                       WHERE NAME = '{name}';
                       """.format(name=haltnam, schachtoben=schoben, schachtunten=schunten,
                                  laenge=laenge, sohlhoeheoben=sohleoben,
@@ -656,7 +655,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                                  lastmodified=createdat, materialart=28,
                                  ereignisbilanzierung=0, ereignisgrenzwertende=0,
                                  ereignisgrenzwertanfang=0, ereignistrenndauer=0,
-                                 ereignisindividuell=0, id=nextid)
+                                 ereignisindividuell=0)
                     try:
                         dbHE.sql(sql)
                     except BaseException as err:
@@ -666,7 +665,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                         return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_haltungen']:
+            if check_export['export_haltungen']:
                 # Profile < 0 werden nicht uebertragen
                 if int(h_profil) > 0:
                     sql = u"""
@@ -776,7 +775,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     REGENERATIONSKONSTANTE={regenerationskonstante},
                     SAETTIGUNGSWASSERGEHALT={saettigungswassergehalt},
                     NAME='{name}', LASTMODIFIED='{lastmodified}',
-                    KOMMENTAR='{kommentar}', ID={id}
+                    KOMMENTAR='{kommentar}'
                     WHERE NAME = '{name}';
                     """.format(infiltrationsrateanfang=infiltrationsrateanfang,
                                infiltrationsrateende=infiltrationsrateende,
@@ -785,7 +784,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                                regenerationskonstante=regenerationskonstante,
                                saettigungswassergehalt=saettigungswassergehalt,
                                name=bknam, lastmodified=createdat,
-                               kommentar=kommentar, id=nextid)
+                               kommentar=kommentar)
                 try:
                     dbHE.sql(sql)
                 except BaseException as err:
@@ -795,7 +794,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_bodenklassen']:
+            if check_export['export_bodenklassen']:
                 sql = u"""
                   INSERT INTO BODENKLASSE
                   ( INFILTRATIONSRATEANFANG, INFILTRATIONSRATEENDE,
@@ -902,7 +901,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                   BODENKLASSE='{bodenklasse}', CHARAKTERISTISCHEREGENSPENDE={charakteristischeregenspende},
                   CHARAKTERISTISCHEREGENSPENDE2={charakteristischeregenspende2},
                   TYP={typ}, JAHRESGANGVERLUSTE={jahresgangverluste}, LASTMODIFIED='{createdat}',
-                  KOMMENTAR='{kommentar}', ID={id}
+                  KOMMENTAR='{kommentar}'
                   WHERE NAME = '{apnam}';
                 """.format(apnam=apnam, anfangsabflussbeiwert=anfangsabflussbeiwert,
                            endabflussbeiwert=endabflussbeiwert, benetzungsverlust=benetzungsverlust,
@@ -911,7 +910,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                            speicherkonstantemin=0, speicherkonstantemax=0, speicherkonstantekonstant2=1,
                            speicherkonstantemin2=0, speicherkonstantemax2=0,
                            bodenklasse=bodenklasse, charakteristischeregenspende=0, charakteristischeregenspende2=0,
-                           typ=typ, jahresgangverluste=0, createdat=createdat, kommentar=kommentar, id=nextid)
+                           typ=typ, jahresgangverluste=0, createdat=createdat, kommentar=kommentar)
                 try:
                     dbHE.sql(sql)
                 except BaseException as err:
@@ -921,7 +920,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_auslaesse']:
+            if check_export['export_auslaesse']:
                 sql = u"""
                   INSERT INTO ABFLUSSPARAMETER
                   ( NAME, ABFLUSSBEIWERTANFANG, ABFLUSSBEIWERTENDE, BENETZUNGSVERLUST,
@@ -1080,36 +1079,35 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         Befestigte Flächen"""
 
-
-        # Nur Daten fuer ausgewaehlte Teilgebiete
-        if len(liste_teilgebiete) != 0:
-            auswahl = " AND flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-        else:
-            auswahl = ""
+        # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
+        sql = u"""UPDATE flaechen
+            SET flnam = printf('f_%d',pk)
+            WHERE flnam IS NULL OR flnam = ''"""
+        logger.debug(u'Ergänzen von flnam in flaechen wenn leer: \n{}'.format(sql))
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan_Export (37) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            del dbHE
+            return False
 
         # Um eine manuelle Plausibiliätsprüfung zu ermöglichen (ansonsten überflüssig!), werden
         # die mit "linkfl" verknüpften Flächen und Haltungen in "linkfl" eingetragen. 
 
         # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
 
-        sql = """WITH flintersect AS (
-            SELECT flaechen.flnam AS flnam, CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
-            FROM flaechen
-            INNER JOIN tezg
-            ON intersects(flaechen.geom,tezg.geom)
-            WHERE flaechen.aufteilen = 'ja'
-            UNION
-            SELECT flaechen.flnam AS flnam, flaechen.geom AS geom
-            FROM flaechen
-            WHERE flaechen.aufteilen = 'nein' OR flaechen.aufteilen IS NULL
-            )
-        UPDATE linkfl SET flnam =
-        (   SELECT fi.flnam    
-            FROM flintersect AS fi
-            INNER JOIN linkfl AS lf
-            ON within(StartPoint(lf.glink),fi.geom)
-            WHERE lf.pk = linkfl.pk
-        )"""
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linkfl AS lf
+                LEFT JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                WHERE fl.pk IS NULL OR NOT within(StartPoint(lf.glink),fl.geom))
+            UPDATE linkfl SET flnam =
+            (   SELECT flnam
+                FROM flaechen AS fl
+                WHERE within(StartPoint(linkfl.glink),fl.geom))
+            WHERE linkfl.pk IN missing"""
         logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
         try:
             dbQK.sql(sql)
@@ -1121,12 +1119,41 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         # 2. Haltungen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
 
-        sql = """UPDATE linkfl SET haltnam = 
-                (   SELECT ha.haltnam
-                    FROM linkfl AS lf
-                    INNER JOIN haltungen AS ha
-                    ON intersects(buffer(EndPoint(lf.glink),0.1),ha.geom)
-                    WHERE linkfl.pk = lf.pk)"""
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linkfl AS lf
+                LEFT JOIN haltungen AS ha
+                ON lf.haltnam = ha.haltnam
+                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom))
+            UPDATE linkfl SET haltnam =
+            (   SELECT haltnam
+                FROM haltungen AS ha
+                WHERE intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
+            WHERE linkfl.pk IN missing"""
+        logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan_Export (25) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            del dbHE
+            return False
+
+        # 3. TEZG-Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl), nur für aufteilen = 'ja'
+
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linkfl AS lf
+                LEFT JOIN tezg AS tg
+                ON lf.flnam = tg.flnam
+                WHERE tg.pk IS NULL OR NOT within(StartPoint(lf.glink),tg.geom))
+            UPDATE linkfl SET tezgnam =
+            (   SELECT tg.flnam
+                FROM tezg AS tg
+                INNER JOIN (SELECT flnam FROM flaechen AS fl WHERE fl.aufteilen = 'ja') as fl
+                ON linkfl.flnam = fl.flnam
+                WHERE within(StartPoint(linkfl.glink),tg.geom))
+            WHERE linkfl.pk IN missing"""
         logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
         try:
             dbQK.sql(sql)
@@ -1137,81 +1164,61 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             return False
 
         # Zu verschneidende und nicht zu Flächen exportieren
+
+        # Nur Daten fuer ausgewaehlte Teilgebiete
+        if len(liste_teilgebiete) != 0:
+            auswahl = " AND fl.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        else:
+            auswahl = ""
+
         if check_export['combine_flaechenrw']:
             sql = u"""
               WITH flintersect AS (
-                SELECT flaechen.flnam AS flnam, flaechen.neigkl AS neigkl, flaechen.he_typ AS he_typ, 
-                flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
-                flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-                flaechen.regenschreiber AS regenschreiber,
-                flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
-                flaechen.kommentar AS kommentar, CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
-                FROM flaechen
-                INNER JOIN tezg
-                ON intersects(flaechen.geom,tezg.geom)
-                WHERE flaechen.aufteilen = 'ja'{auswahl}
-                UNION
-                SELECT flaechen.flnam AS flnam, flaechen.neigkl AS neigkl, flaechen.he_typ AS he_typ, 
-                flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
-                flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-                flaechen.regenschreiber AS regenschreiber,
-                flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
-                flaechen.kommentar AS kommentar, flaechen.geom AS geom
-                FROM flaechen
-                WHERE flaechen.aufteilen = 'nein' OR flaechen.aufteilen IS NULL{auswahl}
+                SELECT lf.pk AS pk, lf.flnam AS flnam, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
+                fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
+                fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
+                fl.regenschreiber AS regenschreiber,
+                fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
+                fl.kommentar AS kommentar, 
+                CASE WHEN tg.flnam IS NULL THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                FROM linkfl AS lf
+                INNER JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                LEFT JOIN tezg AS tg
+                ON lf.tezgnam = tg.flnam
                 )
-              SELECT 'fls_' || haltungen.haltnam AS flnam, haltungen.haltnam AS haltnam, max(flintersect.neigkl) AS neigkl,
-                flintersect.he_typ AS he_typ, max(flintersect.speicherzahl) AS speicherzahl, max(flintersect.speicherkonst) AS speicherkonst,
-                max(flintersect.fliesszeit) AS fliesszeit, max(flintersect.fliesszeitkanal) AS fliesszeitkanal,
-                sum(area(flintersect.geom)/10000) AS flaeche, flintersect.regenschreiber AS regenschreiber,
-                flintersect.abflussparameter AS abflussparameter, flintersect.createdat AS createdat,
-                flintersect.kommentar AS kommentar
-              FROM flintersect
-              INNER JOIN linkfl
-              ON within(StartPoint(linkfl.glink),flintersect.geom)
-              INNER JOIN haltungen
-              ON intersects(buffer(EndPoint(linkfl.glink),{fangradius}),haltungen.geom)
-              WHERE area(flintersect.geom) > 0.1
-              GROUP BY haltungen.haltnam
-            """.format(auswahl=auswahl, fangradius=fangradius)
+              SELECT printf('fs_%d-%s', fi.pk, ha.haltnam) AS flnam, ha.haltnam AS haltnam, fi.neigkl AS neigkl,
+                fi.he_typ AS he_typ, fi.speicherzahl AS speicherzahl, avg(fi.speicherkonst) AS speicherkonst,
+                max(fi.fliesszeit) AS fliesszeit, max(fi.fliesszeitkanal) AS fliesszeitkanal,
+                sum(area(fi.geom)/10000) AS flaeche, fi.regenschreiber AS regenschreiber,
+                abflussparameter AS abflussparameter, max(fi.createdat) AS createdat,
+                max(fi.kommentar) AS kommentar
+              FROM flintersect AS fi
+              INNER JOIN haltungen AS ha
+              ON fi.haltnam = ha.haltnam
+              WHERE area(fi.geom) > 0.1
+              GROUP BY ha.haltnam, fi.abflussparameter, fi.regenschreiber, 
+                       fi.speicherzahl, 
+                       fi.he_typ, fi.neigkl""".format(auswahl=auswahl)
             logger.debug('combine_flaechenrw = True')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         else:
             sql = u"""
-              WITH flintersect AS (
-                SELECT flaechen.flnam AS flnam, flaechen.neigkl AS neigkl, flaechen.he_typ AS he_typ, 
-                flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
-                flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-                flaechen.regenschreiber AS regenschreiber,
-                flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
-                flaechen.kommentar AS kommentar, CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
-                FROM flaechen
-                INNER JOIN tezg
-                ON intersects(flaechen.geom,tezg.geom)
-                WHERE flaechen.aufteilen = 'ja'{auswahl}
-                UNION
-                SELECT flaechen.flnam AS flnam, flaechen.neigkl AS neigkl, flaechen.he_typ AS he_typ, 
-                flaechen.speicherzahl AS speicherzahl, flaechen.speicherkonst AS speicherkonst,
-                flaechen.fliesszeit AS fliesszeit, flaechen.fliesszeitkanal AS fliesszeitkanal,
-                flaechen.regenschreiber AS regenschreiber,
-                flaechen.abflussparameter AS abflussparameter, flaechen.createdat AS createdat,
-                flaechen.kommentar AS kommentar, flaechen.geom AS geom
-                FROM flaechen
-                WHERE flaechen.aufteilen = 'nein' OR flaechen.aufteilen IS NULL{auswahl}
-                )
-              SELECT flintersect.flnam AS flnam, haltungen.haltnam AS haltnam, flintersect.neigkl AS neigkl,
-                flintersect.he_typ AS he_typ, flintersect.speicherzahl AS speicherzahl, flintersect.speicherkonst AS speicherkonst,
-                flintersect.fliesszeit AS fliesszeit, flintersect.fliesszeitkanal AS fliesszeitkanal,
-                area(flintersect.geom)/10000 AS flaeche, flintersect.regenschreiber AS regenschreiber,
-                flintersect.abflussparameter AS abflussparameter, flintersect.createdat AS createdat,
-                flintersect.kommentar AS kommentar
-              FROM flintersect
-              INNER JOIN linkfl
-              ON within(StartPoint(linkfl.glink),flintersect.geom)
-              INNER JOIN haltungen
-              ON intersects(buffer(EndPoint(linkfl.glink),{fangradius}),haltungen.geom)
-              WHERE area(flintersect.geom) > 0.1
-            """.format(auswahl=auswahl, fangradius=fangradius)
+              SELECT printf('fs_%d-%s', lf.pk, ha.haltnam) AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
+                fl.he_typ AS he_typ, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
+                fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
+                CASE WHEN tg.flnam IS NULL THEN area(fl.geom)/10000 
+                ELSE area(CastToMultiPolygon(intersection(fl.geom,tg.geom)))/10000 END AS flaeche, 
+                fl.regenschreiber AS regenschreiber,
+                fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
+                fl.kommentar AS kommentar
+              FROM linkfl AS lf
+              INNER JOIN flaechen AS fl
+              ON lf.flnam = fl.flnam
+              INNER JOIN haltungen AS ha
+              ON lf.haltnam = ha.haltnam
+              LEFT JOIN tezg AS tg
+              ON lf.tezgnam = tg.flnam""".format(auswahl=auswahl)
             logger.debug('combine_flaechenrw = False')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         try:
@@ -1265,7 +1272,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             if kommentar == 'NULL' or kommentar == '':
                 kommentar = 'eingefuegt von k_qkhe'
 
-            fnam = (u'fb_{}-{}'.format(flnam, haltnam))[:30]
+            fnam = (u'{}-{}'.format(flnam, nextid))[:30]
 
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export['modify_flaechenrw']:
@@ -1277,7 +1284,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                   FLIESSZEITOBERFLAECHE={fliesszeit2:.2f}, LAENGSTEFLIESSZEITKANAL={fliesszeitkanal:.2f},
                   PARAMETERSATZ='{abflussparameter}', NEIGUNGSKLASSE={neigkl},
                   NAME='{flnam}', LASTMODIFIED='{createdat}',
-                  KOMMENTAR='{kommentar}', ID={nextid}, ZUORDNUNABHEZG={zuordnunabhezg}
+                  KOMMENTAR='{kommentar}', ZUORDNUNABHEZG={zuordnunabhezg}
                   WHERE NAME = '{flnam}';
                   """.format(flaeche=flaeche, regenschreiber=regenschreiber, haltnam=haltnam,
                              he_typ=he_typ, fltyp=0, speicherzahl=speicherzahl,
@@ -1285,7 +1292,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                              fliesszeit2=fliesszeit, fliesszeitkanal=fliesszeitkanal,
                              abflussparameter=abflussparameter, neigkl=neigkl,
                              flnam=fnam, createdat=createdat,
-                             kommentar=kommentar, nextid=nextid, zuordnunabhezg=0)
+                             kommentar=kommentar, zuordnunabhezg=0)
                 try:
                     dbHE.sql(sql)
                 except BaseException as err:
@@ -1338,13 +1345,24 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         fortschritt('{} Flaechen eingefuegt'.format(nextid - nr0), 0.80)
 
 
-    if check_export['init_einleit']:
-        # gilt für beide nachfolgenden Exporte einleitew und einleitdirekt
-        dbHE.sql("DELETE FROM EINZELEINLEITER")
-
+    if check_export['init_einleitdirekt']:
+        dbHE.sql("DELETE FROM EINZELEINLEITER WHERE HERKUNFT = 1")
     if check_export['export_einleitdirekt'] or check_export['modify_einleitdirekt']:
         # Herkunft = 1 (Direkt)
         
+        # Vorbereitung einleit: Falls elnam leer ist, plausibel ergänzen:
+        sql = u"""UPDATE einleit
+            SET elnam = printf('d_%d',pk)
+            WHERE elnam IS NULL OR elnam = ''"""
+        logger.debug(u'Ergänzen von elnam in einleit wenn leer: \n{}'.format(sql))
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan_Export (38) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            del dbHE
+            return False
+
         # Datenvorbereitung: Verknüpfung von Einleitpunkt zu Haltung wird durch Tabelle "linksw"
         # repräsentiert. Diese Zuordnung wird zunächst in "einleit.haltnam" übertragen.
 
@@ -1359,36 +1377,89 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             del dbQK
             return False
 
-        if len(liste_teilgebiete) != 0:
-            ausw_sw = " AND sw.teilgebiet in ('{0:}') AND linksw.teilgebiet in ('{0:}')".format("', '".join(liste_teilgebiete))
-            ausw_einleit = "einleit.teilgebiet in ('{}') AND".format("', '".join(liste_teilgebiete))
-        else:
-            ausw_sw = ""
-            ausw_einleit = ""
+        # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
 
-        # Anmerkung: coalesce sorgt dafür, dass nur bei zugeordneten Datensätzen eine Änderung vorgenommen
-        # wird. Ohne coalesce würden diese Daten mit NULL überschrieben. 
-        sql = u"""UPDATE einleit SET haltnam = 
-                (   SELECT coalesce(linksw.haltnam, einleit.haltnam)
-                    FROM linksw
-                    INNER JOIN einleit AS sw
-                    ON within(sw.geom,linksw.geom)
-                    WHERE sw.ROWID IN 
-                    (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'einleit' AND
-                        search_frame = linksw.geom){ausw_sw} AND
-                    sw.pk = einleit.pk
-                )""".format(ausw_sw=ausw_sw, ausw_einleit=ausw_einleit)
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linksw AS lf
+                LEFT JOIN einleit AS el
+                ON lf.elnam = el.elnam
+                WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(lf.glink),0.1),el.geom))
+            UPDATE linksw SET elnam =
+            (   SELECT elnam
+                FROM einleit AS el
+                WHERE contains(buffer(StartPoint(linksw.glink),0.1),el.geom))
+            WHERE linksw.pk IN missing"""
+
+        logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"(4a) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
+            del dbQK
+            return False
+
+        # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
+
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linksw AS lf
+                LEFT JOIN haltungen AS ha
+                ON lf.haltnam = ha.haltnam
+                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom))
+            UPDATE linksw SET haltnam =
+            (   SELECT haltnam
+                FROM haltungen AS ha
+                WHERE intersects(buffer(EndPoint(linksw.glink),0.1),ha.geom))
+            WHERE linksw.pk IN missing"""
 
         logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkSW (3) SQL-Fehler in SpatiaLite: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(4b) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             return False
-        # logger.debug(u'\nSQL-5:\n{}\n'.format(sql))
+
+        # 3. Haltungen in "einleit" eintragen (ohne Einschränkung auf auswahl)
+
+        # 3.1 Index erzeugen
+
+        sql = u"""CREATE INDEX IF NOT EXISTS ind_einleit_elnam ON einleit (elnam)"""
+
+        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"(4c) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
+            del dbQK
+            return False
+
+        # 3.2 Eintrag vornehmen
+
+        sql = u"""WITH missing AS
+            (   SELECT el.pk
+                FROM einleit AS el
+                INNER JOIN linksw AS lf
+                ON el.elnam = lf.elnam
+                WHERE (el.haltnam IS NULL AND lf.haltnam IS NOT NULL) OR el.haltnam <> lf.haltnam)
+            UPDATE einleit SET haltnam =
+            (   SELECT haltnam
+                FROM linksw AS lf
+                WHERE einleit.elnam = lf.elnam)
+            WHERE einleit.pk IN missing"""
+
+        logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"(4d) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
+            del dbQK
+            return False
 
         dbQK.commit()
 
@@ -1401,7 +1472,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         if check_export['combine_einleitdirekt']:
             sql = u"""SELECT
-              printf('eld__%d_%s',ROWID,haltnam) AS elnam,
+              printf('ed-%d-%s',pk,haltnam) AS elnam,
               avg(x(geom)) AS xel,
               avg(y(geom)) AS yel,
               haltnam AS haltnam,
@@ -1411,7 +1482,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             """.format(auswahl=auswahl)
         else:
             sql = u"""SELECT
-              printf('eld__%d_%s',ROWID,haltnam) AS elnam,
+              printf('ed-%d-%s',pk,haltnam) AS elnam,
               x(geom) AS xel,
               y(geom) AS yel,
               haltnam AS haltnam,
@@ -1419,12 +1490,12 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               FROM einleit{auswahl}
             """.format(auswahl=auswahl)
 
-        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
+        logger.debug(u'\nSQL-4e:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
         except BaseException as err:
-            fehlermeldung(u"(35) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            fehlermeldung(u"(4e) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -1475,6 +1546,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
 
 
+    if check_export['init_einleitew']:
+        dbHE.sql("DELETE FROM EINZELEINLEITER WHERE HERKUNFT = 3")
     if check_export['export_einleitew'] or check_export['modify_einleitew']:
         # Herkunft = 1 (Direkt) und 3 (Einwohnerbezogen)
 
@@ -1673,6 +1746,19 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         # Datenvorbereitung: 
 
+        # Vorbereitung einwohner: Falls elnam leer ist, plausibel ergänzen:
+        sql = u"""UPDATE einwohner
+            SET elnam = printf('e_%d',pk)
+            WHERE elnam IS NULL OR elnam = ''"""
+        logger.debug(u'Ergänzen von elnam in einwohner wenn leer: \n{}'.format(sql))
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan_Export (39) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            del dbQK
+            del dbHE
+            return False
+
         # Abfrage ist identisch in k_qkhe.py vorhanden
 
         # SpatialIndex anlegen
@@ -1684,36 +1770,89 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             del dbQK
             return False
 
-        if len(liste_teilgebiete) != 0:
-            ausw_ew = " AND ew.teilgebiet in ('{0:}') AND linkew.teilgebiet in ('{0:}')".format("', '".join(liste_teilgebiete))
-            ausw_einwohner = "einwohner.teilgebiet in ('{}') AND".format("', '".join(liste_teilgebiete))
-        else:
-            ausw_ew = ""
-            ausw_einwohner = ""
+        # 1. einwohner-Punkt in "linkew" eintragen (ohne Einschränkung auf auswahl)
 
-        # Anmerkung: coalesce sorgt dafür, dass nur bei zugeordneten Datensätzen eine Änderung vorgenommen
-        # wird. Ohne coalesce würden diese Daten mit NULL überschrieben. 
-        sql = u"""UPDATE einwohner SET haltnam = 
-                (   SELECT coalesce(linkew.haltnam, einwohner.haltnam)
-                    FROM linkew
-                    INNER JOIN einwohner AS ew
-                    ON within(ew.geom,linkew.geom)
-                    WHERE ew.ROWID IN 
-                    (   SELECT ROWID FROM SpatialIndex WHERE
-                        f_table_name = 'einwohner' AND
-                        search_frame = linkew.geom){ausw_ew} AND
-                    ew.pk = einwohner.pk
-                )""".format(ausw_ew=ausw_ew, ausw_einwohner=ausw_einwohner)
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linkew AS lf
+                LEFT JOIN einwohner AS el
+                ON lf.elnam = el.elnam
+                WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(lf.glink),0.1),el.geom))
+            UPDATE linkew SET elnam =
+            (   SELECT elnam
+                FROM einwohner AS el
+                WHERE contains(buffer(StartPoint(linkew.glink),0.1),el.geom))
+            WHERE linkew.pk IN missing"""
 
         logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_Link.createlinkew (3) SQL-Fehler in SpatiaLite: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(4a) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             return False
-        # logger.debug(u'\nSQL-5:\n{}\n'.format(sql))
+
+        # 2. Haltungen in "linkew" eintragen (ohne Einschränkung auf auswahl)
+
+        sql = u"""WITH missing AS
+            (   SELECT lf.pk
+                FROM linkew AS lf
+                LEFT JOIN haltungen AS ha
+                ON lf.haltnam = ha.haltnam
+                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom))
+            UPDATE linkew SET haltnam =
+            (   SELECT haltnam
+                FROM haltungen AS ha
+                WHERE intersects(buffer(EndPoint(linkew.glink),0.1),ha.geom))
+            WHERE linkew.pk IN missing"""
+
+        logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"(4b) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
+            del dbQK
+            return False
+
+        # 3. Haltungen in "einwohner" eintragen (ohne Einschränkung auf auswahl)
+
+        # 3.1 Index erzeugen
+
+        sql = u"""CREATE INDEX IF NOT EXISTS ind_einwohner_elnam ON einwohner (elnam)"""
+
+        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"(4c) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
+            del dbQK
+            return False
+
+        # 3.2 Eintrag vornehmen
+
+        sql = u"""WITH missing AS
+            (   SELECT el.pk
+                FROM einwohner AS el
+                INNER JOIN linkew AS lf
+                ON el.elnam = lf.elnam
+                WHERE (el.haltnam IS NULL AND lf.haltnam IS NOT NULL) OR el.haltnam <> lf.haltnam)
+            UPDATE einwohner SET haltnam =
+            (   SELECT lf.haltnam
+                FROM linkew AS lf
+                WHERE einwohner.elnam = lf.elnam)
+            WHERE einwohner.pk IN missing"""
+
+        logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except BaseException as err:
+            fehlermeldung(u"(4d) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
+            del dbQK
+            return False
 
         dbQK.commit()
 
@@ -1724,51 +1863,56 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         else:
             auswahl = ""
 
-        if check_export['combine_einleitdirekt']:
+        if check_export['combine_einleitew']:
             sql = u"""SELECT
-              'ew_' || einwohner.haltnam AS elnam,
-              avg(x(einwohner.geom)) AS xel,
-              avg(y(einwohner.geom)) AS yel,
-              einwohner.haltnam AS haltnam,
-              teilgebiete.wverbrauch AS wverbrauch, 
-              teilgebiete.stdmittel AS stdmittel,
-              teilgebiete.fremdwas AS fremdwas, 
-              einwohner.ew AS einwohner
-              FROM einwohner
-              INNER JOIN teilgebiete
-              ON einwohner.teilgebiet = teilgebiete.tgnam
+              printf('ew_%d-%s', ew.pk, ew.haltnam) AS elnam,
+              avg(x(ew.geom)) AS xel,
+              avg(y(ew.geom)) AS yel,
+              ew.haltnam AS haltnam,
+              printf('%.6f',tg.wverbrauch) AS wverbrauch, 
+              printf('%.1f',tg.stdmittel) AS stdmittel,
+              printf('%.3f',tg.fremdwas) AS fremdwas, 
+              printf('%.6f',ew.ew) AS einwohner
+              FROM einwohner AS ew
+              INNER JOIN teilgebiete AS tg
+              ON ew.teilgebiet = tg.tgnam
               {auswahl}
-              GROUP BY haltnam
+              GROUP BY ew.haltnam, 
+                printf('%.6f',tg.wverbrauch), 
+                printf('%.1f',tg.stdmittel),
+                printf('%.3f',tg.fremdwas),
+                printf('%.6f',ew.ew)
+
             """.format(auswahl=auswahl)
         else:
             sql = u"""SELECT
-              einwohner.elnam AS elnam,
-              x(einwohner.geom) AS xel,
-              y(einwohner.geom) AS yel,
-              einwohner.haltnam AS haltnam,
-              teilgebiete.wverbrauch AS wverbrauch, 
-              teilgebiete.stdmittel AS stdmittel,
-              teilgebiete.fremdwas AS fremdwas, 
-              einwohner.ew AS einwohner
-              FROM einwohner
-              INNER JOIN teilgebiete
-              ON einwohner.teilgebiet = teilgebiete.tgnam
+              printf('ew_%d-%s', ew.pk, ew.elnam) AS elnam,
+              x(ew.geom) AS xel,
+              y(ew.geom) AS yel,
+              ew.haltnam AS haltnam,
+              tg.wverbrauch AS wverbrauch, 
+              tg.stdmittel AS stdmittel,
+              tg.fremdwas AS fremdwas, 
+              ew.ew AS einwohner
+              FROM einwohner AS ew
+              INNER JOIN teilgebiete AS tg
+              ON ew.teilgebiet = tg.tgnam
               {auswahl}
             """.format(auswahl=auswahl)
 
-        logger.debug(u'\nSQL-6:\n{}\n'.format(sql))
+        logger.debug(u'\nSQL-4e:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
         except BaseException as err:
-            fehlermeldung(u"(35) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            fehlermeldung(u"(4e) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
 
         nr0 = nextid
 
-        fortschritt('Export Einzeleinleiter (direkt)...', 0.92)
+        fortschritt('Export EW-bezogene Einleitungen...', 0.92)
         for b in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen

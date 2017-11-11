@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>644</width>
-    <height>360</height>
+    <width>636</width>
+    <height>420</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -161,7 +161,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>190</y>
+      <y>220</y>
       <width>631</width>
       <height>31</height>
      </rect>
@@ -187,7 +187,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>160</y>
+      <y>190</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -283,7 +283,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>230</y>
+      <y>260</y>
       <width>581</width>
       <height>71</height>
      </rect>
@@ -293,7 +293,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>130</y>
+      <y>160</y>
       <width>46</width>
       <height>21</height>
      </rect>
@@ -306,7 +306,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>130</y>
+      <y>160</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -316,10 +316,55 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>160</y>
+      <y>190</y>
       <width>141</width>
       <height>23</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_13">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>130</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Teilgebiet</string>
+    </property>
+    <property name="buddy">
+     <cstring>simstatus</cstring>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="teilgebiet">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>130</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_version">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>360</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Version QKan Import</string>
+    </property>
+    <property name="text">
+     <string>Version 2.1.2</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
   </widget>
@@ -328,7 +373,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>644</width>
+     <width>636</width>
      <height>21</height>
     </rect>
    </property>

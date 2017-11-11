@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>648</width>
-    <height>136</height>
+    <width>646</width>
+    <height>166</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -96,13 +96,32 @@
      </rect>
     </property>
    </widget>
+   <widget class="QLabel" name="lb_version">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>110</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Version QKan Import</string>
+    </property>
+    <property name="text">
+     <string>Version 2.1.2</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>648</width>
+     <width>646</width>
      <height>21</height>
     </rect>
    </property>
