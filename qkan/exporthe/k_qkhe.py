@@ -1396,8 +1396,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan.k_qkhe (4a) SQL-Fehler in SpatiaLite: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(4a) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             return False
 
@@ -1419,8 +1419,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan.k_qkhe (4b) SQL-Fehler in SpatiaLite: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(4b) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             return False
 
@@ -1434,24 +1434,31 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan.k_qkhe (4c) SQL-Fehler in SpatiaLite: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(4c) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             return False
 
         # 3.2 Eintrag vornehmen
 
-        sql = u"""UPDATE einleit SET haltnam =
-            (   SELECT lf.haltnam
+        sql = u"""WITH missing AS
+            (   SELECT el.pk
+                FROM einleit AS el
+                INNER JOIN linksw AS lf
+                ON el.elnam = lf.elnam
+                WHERE (el.haltnam IS NULL AND lf.haltnam IS NOT NULL) OR el.haltnam <> lf.haltnam)
+            UPDATE einleit SET haltnam =
+            (   SELECT haltnam
                 FROM linksw AS lf
-                WHERE einleit.elnam = lf.elnam AND haltnam IS NOT NULL)"""
+                WHERE einleit.elnam = lf.elnam)
+            WHERE einleit.pk IN missing"""
 
-        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
+        logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan.k_qkhe (4c) SQL-Fehler in SpatiaLite: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(4d) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             return False
 
@@ -1484,12 +1491,12 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               FROM einleit{auswahl}
             """.format(auswahl=auswahl)
 
-        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
+        logger.debug(u'\nSQL-4e:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
         except BaseException as err:
-            fehlermeldung(u"(35) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            fehlermeldung(u"(4e) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
@@ -1782,8 +1789,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan.k_qkhe (4a) SQL-Fehler in SpatiaLite: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(4a) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             return False
 
@@ -1805,8 +1812,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan.k_qkhe (4b) SQL-Fehler in SpatiaLite: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(4b) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             return False
 
@@ -1820,24 +1827,31 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan.k_qkhe (4c) SQL-Fehler in SpatiaLite: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(4c) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             return False
 
         # 3.2 Eintrag vornehmen
 
-        sql = u"""UPDATE einwohner SET haltnam =
+        sql = u"""WITH missing AS
+            (   SELECT el.pk
+                FROM einwohner AS el
+                INNER JOIN linkew AS lf
+                ON el.elnam = lf.elnam
+                WHERE (el.haltnam IS NULL AND lf.haltnam IS NOT NULL) OR el.haltnam <> lf.haltnam)
+            UPDATE einwohner SET haltnam =
             (   SELECT lf.haltnam
                 FROM linkew AS lf
-                WHERE einwohner.elnam = lf.elnam AND haltnam IS NOT NULL)"""
+                WHERE einwohner.elnam = lf.elnam)
+            WHERE einwohner.pk IN missing"""
 
         logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan.k_qkhe (4d) SQL-Fehler in SpatiaLite: \n", sql)
+        except BaseException as err:
+            fehlermeldung(u"(4d) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             return False
 
@@ -1887,12 +1901,12 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               {auswahl}
             """.format(auswahl=auswahl)
 
-        logger.debug(u'\nSQL-6:\n{}\n'.format(sql))
+        logger.debug(u'\nSQL-4e:\n{}\n'.format(sql))
 
         try:
             dbQK.sql(sql)
         except BaseException as err:
-            fehlermeldung(u"(35) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+            fehlermeldung(u"(4e) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
             del dbQK
             del dbHE
             return False
