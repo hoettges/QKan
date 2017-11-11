@@ -39,25 +39,6 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>390</x>
-     <y>400</y>
-     <width>91</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Version QKan Import</string>
-   </property>
-   <property name="text">
-    <string>Version 2.0.0</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-   </property>
-  </widget>
   <widget class="QTableWidget" name="tw_cnt_abflussparameter">
    <property name="geometry">
     <rect>
@@ -141,6 +122,25 @@
    </property>
    <property name="text">
     <string>Auswahl der zu bearbeitenden Haltungsflächen (tezg):</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lb_version">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>400</y>
+     <width>71</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Version QKan Import</string>
+   </property>
+   <property name="text">
+    <string>Version 2.1.2</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
  </widget>

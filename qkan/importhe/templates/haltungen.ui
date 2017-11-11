@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
-    <height>527</height>
+    <width>644</width>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -317,14 +317,6 @@
       </rect>
      </property>
     </widget>
-    <zorder>sohleunten</zorder>
-    <zorder>label_9</zorder>
-    <zorder>label_8</zorder>
-    <zorder>label_15</zorder>
-    <zorder>schunten</zorder>
-    <zorder>sohleoben</zorder>
-    <zorder>label_14</zorder>
-    <zorder>label_5</zorder>
    </widget>
    <widget class="QLineEdit" name="hoehe">
     <property name="geometry">
@@ -516,13 +508,32 @@
      </rect>
     </property>
    </widget>
+   <widget class="QLabel" name="lb_version">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>490</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Version QKan Import</string>
+    </property>
+    <property name="text">
+     <string>Version 2.1.2</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>643</width>
+     <width>644</width>
      <height>21</height>
     </rect>
    </property>

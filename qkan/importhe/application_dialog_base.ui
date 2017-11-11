@@ -352,7 +352,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QLabel" name="lb_version">
    <property name="geometry">
     <rect>
      <x>440</x>
@@ -365,7 +365,7 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.0.0</string>
+    <string>Version 2.1.2</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

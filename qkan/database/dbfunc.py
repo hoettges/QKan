@@ -65,7 +65,7 @@ def attrlist2(dbcursl, tablenam):
     lattr = [el[1] for el in daten]
     return lattr
 
-def version(dbcursl, actversion = '2.1.1'):
+def version(dbcursl, actversion = '2.1.2'):
     """Checks database version. Database is just connected by the calling procedure.
 
         :param actversion: aktuelle Version
@@ -213,7 +213,7 @@ def version(dbcursl, actversion = '2.1.1'):
             try:
                 dbcursl.execute(sql)
             except BaseException as err:
-                fehlermeldung(u"QKan.qgis_utils.version(4b) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                fehlermeldung(u"QKan.qgis_utils.version(4c) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
                                "SQL Nr. 1: {}\n".format(sql))
                 return False
 
@@ -221,11 +221,21 @@ def version(dbcursl, actversion = '2.1.1'):
         try:
             dbcursl.execute(sql)
         except BaseException as err:
-            fehlermeldung(u"QKan.qgis_utils.version(4c) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+            fehlermeldung(u"QKan.qgis_utils.version(4d) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
                            "SQL: {}\n".format(sql))
             return False
 
         versiondbQK = '2.1.1'
+
+    if versiondbQK < actversion:
+
+        sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version';""".format(actversion)
+        try:
+            dbcursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(u"QKan.qgis_utils.version(4e) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                           "SQL: {}\n".format(sql))
+            return False
 
     return True
 

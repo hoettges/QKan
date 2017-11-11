@@ -195,13 +195,13 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     KONSTANTERZUFLUSS={konstanterzufluss}, GELAENDEHOEHE={gelaendehoehe},
                     ART={art}, ANZAHLKANTEN={anzahlkanten}, SCHEITELHOEHE={scheitelhoehe},
                     PLANUNGSSTATUS='{planungsstatus}', NAME='{name}', LASTMODIFIED='{lastmodified}',
-                    ID={id}, DURCHMESSER={durchmesser}
+                    DURCHMESSER={durchmesser}
                     WHERE NAME = '{name}';
                 """.format(deckelhoehe=deckelhoehe, kanalart='0', druckdichterdeckel='0',
                            sohlhoehe=sohlhoehe, xkoordinate=xsch, ykoordinate=ysch,
                            konstanterzufluss='0', gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
                            scheitelhoehe='0', planungsstatus='0', name=schnam, lastmodified=createdat,
-                           id=nextid, durchmesser=durchmesser)
+                           durchmesser=durchmesser)
                 try:
                     dbHE.sql(sql)
                 except BaseException as err:
@@ -211,7 +211,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_schaechte']:
+            if check_export['export_schaechte']:
                 # Trick: In Firebird ist kein SELECT ohne Tabelle möglich. Tabelle "RDB$DATABASE" hat genau 1 Datensatz
                 sql = u"""
                     INSERT INTO SCHACHT
@@ -306,7 +306,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             if check_export['modify_speicher']:
                 sql = u"""
                     UPDATE SPEICHERSCHACHT SET
-                    ID={id}, TYP={typ}, SOHLHOEHE={sohlhoehe},
+                    TYP={typ}, SOHLHOEHE={sohlhoehe},
                       XKOORDINATE={xkoordinate}, YKOORDINATE={ykoordinate},
                       GELAENDEHOEHE={gelaendehoehe}, ART={art}, ANZAHLKANTEN={anzahlkanten},
                       SCHEITELHOEHE={scheitelhoehe}, HOEHEVOLLFUELLUNG={hoehevollfuellung},
@@ -314,7 +314,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                       PLANUNGSSTATUS='{planungsstatus}',
                       NAME='{name}', LASTMODIFIED='{lastmodified}', KOMMENTAR='{kommentar}'
                       WHERE NAME='{name}';
-                """.format(id=nextid, typ='1', sohlhoehe=sohlhoehe,
+                """.format(typ='1', sohlhoehe=sohlhoehe,
                            xkoordinate=xsch, ykoordinate=ysch,
                            gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
                            scheitelhoehe=deckelhoehe, hoehevollfuellung=deckelhoehe,
@@ -330,7 +330,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_speicher']:
+            if check_export['export_speicher']:
                 # Trick: In Firebird ist kein SELECT ohne Tabelle möglich. Tabelle "RDB$DATABASE" hat genau 1 Datensatz
                 sql = u"""
                     INSERT INTO SPEICHERSCHACHT
@@ -485,14 +485,14 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             if check_export['modify_auslaesse']:
                 sql = u"""
                     UPDATE AUSLASS SET
-                    ID={id}, TYP={typ}, RUECKSCHLAGKLAPPE={rueckschlagklappe},
+                    TYP={typ}, RUECKSCHLAGKLAPPE={rueckschlagklappe},
                     SOHLHOEHE={sohlhoehe}, XKOORDINATE={xkoordinate}, YKOORDINATE={ykoordinate},
                     GELAENDEHOEHE={gelaendehoehe}, ART={art}, ANZAHLKANTEN={anzahlkanten},
                     SCHEITELHOEHE={scheitelhoehe}, KONSTANTERZUFLUSS={konstanterzufluss},
                     PLANUNGSSTATUS='{planungsstatus}', NAME='{name}',
                     LASTMODIFIED='{lastmodified}', KOMMENTAR='{kommentar}'
                     WHERE NAME = '{name}';
-                """.format(id=nextid, typ='1', rueckschlagklappe=0, sohlhoehe=sohlhoehe,
+                """.format(typ='1', rueckschlagklappe=0, sohlhoehe=sohlhoehe,
                            xkoordinate=xsch, ykoordinate=ysch,
                            gelaendehoehe=deckelhoehe, art='3', anzahlkanten='0',
                            scheitelhoehe=deckelhoehe, konstanterzufluss=0, planungsstatus='0',
@@ -507,7 +507,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_auslaesse']:
+            if check_export['export_auslaesse']:
                 sql = u"""
                     INSERT INTO AUSLASS
                     ( ID, TYP, RUECKSCHLAGKLAPPE, SOHLHOEHE,
@@ -638,8 +638,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                       EREIGNISBILANZIERUNG={ereignisbilanzierung},
                       EREIGNISGRENZWERTENDE={ereignisgrenzwertende},
                       EREIGNISGRENZWERTANFANG={ereignisgrenzwertanfang},
-                      EREIGNISTRENNDAUER={ereignistrenndauer}, EREIGNISINDIVIDUELL={ereignisindividuell},
-                      ID={id}
+                      EREIGNISTRENNDAUER={ereignistrenndauer}, EREIGNISINDIVIDUELL={ereignisindividuell}
                       WHERE NAME = '{name}';
                       """.format(name=haltnam, schachtoben=schoben, schachtunten=schunten,
                                  laenge=laenge, sohlhoeheoben=sohleoben,
@@ -656,7 +655,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                                  lastmodified=createdat, materialart=28,
                                  ereignisbilanzierung=0, ereignisgrenzwertende=0,
                                  ereignisgrenzwertanfang=0, ereignistrenndauer=0,
-                                 ereignisindividuell=0, id=nextid)
+                                 ereignisindividuell=0)
                     try:
                         dbHE.sql(sql)
                     except BaseException as err:
@@ -666,7 +665,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                         return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_haltungen']:
+            if check_export['export_haltungen']:
                 # Profile < 0 werden nicht uebertragen
                 if int(h_profil) > 0:
                     sql = u"""
@@ -776,7 +775,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     REGENERATIONSKONSTANTE={regenerationskonstante},
                     SAETTIGUNGSWASSERGEHALT={saettigungswassergehalt},
                     NAME='{name}', LASTMODIFIED='{lastmodified}',
-                    KOMMENTAR='{kommentar}', ID={id}
+                    KOMMENTAR='{kommentar}'
                     WHERE NAME = '{name}';
                     """.format(infiltrationsrateanfang=infiltrationsrateanfang,
                                infiltrationsrateende=infiltrationsrateende,
@@ -785,7 +784,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                                regenerationskonstante=regenerationskonstante,
                                saettigungswassergehalt=saettigungswassergehalt,
                                name=bknam, lastmodified=createdat,
-                               kommentar=kommentar, id=nextid)
+                               kommentar=kommentar)
                 try:
                     dbHE.sql(sql)
                 except BaseException as err:
@@ -795,7 +794,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_bodenklassen']:
+            if check_export['export_bodenklassen']:
                 sql = u"""
                   INSERT INTO BODENKLASSE
                   ( INFILTRATIONSRATEANFANG, INFILTRATIONSRATEENDE,
@@ -902,7 +901,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                   BODENKLASSE='{bodenklasse}', CHARAKTERISTISCHEREGENSPENDE={charakteristischeregenspende},
                   CHARAKTERISTISCHEREGENSPENDE2={charakteristischeregenspende2},
                   TYP={typ}, JAHRESGANGVERLUSTE={jahresgangverluste}, LASTMODIFIED='{createdat}',
-                  KOMMENTAR='{kommentar}', ID={id}
+                  KOMMENTAR='{kommentar}'
                   WHERE NAME = '{apnam}';
                 """.format(apnam=apnam, anfangsabflussbeiwert=anfangsabflussbeiwert,
                            endabflussbeiwert=endabflussbeiwert, benetzungsverlust=benetzungsverlust,
@@ -911,7 +910,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                            speicherkonstantemin=0, speicherkonstantemax=0, speicherkonstantekonstant2=1,
                            speicherkonstantemin2=0, speicherkonstantemax2=0,
                            bodenklasse=bodenklasse, charakteristischeregenspende=0, charakteristischeregenspende2=0,
-                           typ=typ, jahresgangverluste=0, createdat=createdat, kommentar=kommentar, id=nextid)
+                           typ=typ, jahresgangverluste=0, createdat=createdat, kommentar=kommentar)
                 try:
                     dbHE.sql(sql)
                 except BaseException as err:
@@ -921,7 +920,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                     return False
 
             # Einfuegen in die Datenbank
-            elif check_export['export_auslaesse']:
+            if check_export['export_auslaesse']:
                 sql = u"""
                   INSERT INTO ABFLUSSPARAMETER
                   ( NAME, ABFLUSSBEIWERTANFANG, ABFLUSSBEIWERTENDE, BENETZUNGSVERLUST,
@@ -1285,7 +1284,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                   FLIESSZEITOBERFLAECHE={fliesszeit2:.2f}, LAENGSTEFLIESSZEITKANAL={fliesszeitkanal:.2f},
                   PARAMETERSATZ='{abflussparameter}', NEIGUNGSKLASSE={neigkl},
                   NAME='{flnam}', LASTMODIFIED='{createdat}',
-                  KOMMENTAR='{kommentar}', ID={nextid}, ZUORDNUNABHEZG={zuordnunabhezg}
+                  KOMMENTAR='{kommentar}', ZUORDNUNABHEZG={zuordnunabhezg}
                   WHERE NAME = '{flnam}';
                   """.format(flaeche=flaeche, regenschreiber=regenschreiber, haltnam=haltnam,
                              he_typ=he_typ, fltyp=0, speicherzahl=speicherzahl,
@@ -1293,7 +1292,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                              fliesszeit2=fliesszeit, fliesszeitkanal=fliesszeitkanal,
                              abflussparameter=abflussparameter, neigkl=neigkl,
                              flnam=fnam, createdat=createdat,
-                             kommentar=kommentar, nextid=nextid, zuordnunabhezg=0)
+                             kommentar=kommentar, zuordnunabhezg=0)
                 try:
                     dbHE.sql(sql)
                 except BaseException as err:

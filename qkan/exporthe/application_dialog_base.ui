@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>933</width>
+    <width>875</width>
     <height>597</height>
    </rect>
   </property>
@@ -265,7 +265,7 @@
     <rect>
      <x>530</x>
      <y>30</y>
-     <width>381</width>
+     <width>321</width>
      <height>491</height>
     </rect>
    </property>
@@ -802,302 +802,6 @@
      <string>Daten</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_init_haltungen">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>120</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_abflussparameter">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>300</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_auslaesse">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>70</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_schaechte">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>50</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_speicher">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>90</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_wehre">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>170</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_pumpen">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>150</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_26">
-    <property name="geometry">
-     <rect>
-      <x>251</x>
-      <y>20</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>vorher
-initialisieren</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_rohrprofile">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>340</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_bodenklassen">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>390</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_flaechenrw">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>210</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_regenschreiber">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>320</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_27">
     <property name="geometry">
      <rect>
@@ -1474,31 +1178,6 @@ hinzufügen</string>
      <string>+</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_initall">
-    <property name="geometry">
-     <rect>
-      <x>269</x>
-      <y>440</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="gesamte Spalte aktivieren"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="gesamte Spalte aktivieren"/>
-    </property>
-    <property name="text">
-     <string>+</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pb_modifyall">
     <property name="geometry">
      <rect>
@@ -1528,31 +1207,6 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>129</x>
-      <y>460</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="gesamte Spalte deaktivieren"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="gesamte Spalte deaktivieren"/>
-    </property>
-    <property name="text">
-     <string>-</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_initnone">
-    <property name="geometry">
-     <rect>
-      <x>269</x>
       <y>460</y>
       <width>16</width>
       <height>16</height>
@@ -1701,56 +1355,6 @@ hinzufügen</string>
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_init_speicherkennlinien">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>360</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_init_einleitew">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>240</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_29">
     <property name="geometry">
      <rect>
@@ -1896,7 +1500,7 @@ hinzufügen</string>
      <rect>
       <x>10</x>
       <y>190</y>
-      <width>361</width>
+      <width>301</width>
       <height>21</height>
      </rect>
     </property>
@@ -1909,7 +1513,7 @@ hinzufügen</string>
      <rect>
       <x>10</x>
       <y>280</y>
-      <width>361</width>
+      <width>301</width>
       <height>21</height>
      </rect>
     </property>
@@ -1922,7 +1526,7 @@ hinzufügen</string>
      <rect>
       <x>10</x>
       <y>410</y>
-      <width>361</width>
+      <width>301</width>
       <height>21</height>
      </rect>
     </property>
@@ -1933,7 +1537,7 @@ hinzufügen</string>
    <widget class="QCheckBox" name="cb_combine_flaechenrw">
     <property name="geometry">
      <rect>
-      <x>330</x>
+      <x>260</x>
       <y>210</y>
       <width>21</width>
       <height>20</height>
@@ -1958,7 +1562,7 @@ hinzufügen</string>
    <widget class="QCheckBox" name="cb_combine_einleitew">
     <property name="geometry">
      <rect>
-      <x>330</x>
+      <x>260</x>
       <y>240</y>
       <width>21</width>
       <height>20</height>
@@ -1983,7 +1587,7 @@ hinzufügen</string>
    <widget class="QCheckBox" name="cb_combine_einleitdirekt">
     <property name="geometry">
      <rect>
-      <x>330</x>
+      <x>260</x>
       <y>260</y>
       <width>21</width>
       <height>20</height>
@@ -2008,7 +1612,7 @@ hinzufügen</string>
    <widget class="QLabel" name="label_34">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>250</x>
       <y>25</y>
       <width>61</width>
       <height>21</height>
@@ -2026,36 +1630,11 @@ hinzufügen</string>
 fassen</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_init_einleitdirekt">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>260</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die jeweilige Tabelle in der HYSTEM-EXTRAN-Datenbank wird vor dem Export geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
   </widget>
-  <widget class="QLabel" name="label_6">
+  <widget class="QLabel" name="lb_version">
    <property name="geometry">
     <rect>
-     <x>840</x>
+     <x>780</x>
      <y>580</y>
      <width>91</width>
      <height>20</height>
@@ -2065,7 +1644,7 @@ fassen</string>
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.0.1</string>
+    <string>Version 2.1.2</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
