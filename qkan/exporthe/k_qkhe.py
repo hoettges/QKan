@@ -578,7 +578,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
               LEFT JOIN profile ON haltungen.profilnam = profile.profilnam
               LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.bezeichnung
               LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
-              WHERE (st.he_nr = '0' or st.he_nr IS NULL){:}
+              WHERE (st.he_nr IN ('0', '1', '2') or st.he_nr IS NULL){:}
         """.format(auswahl)
         try:
             dbQK.sql(sql)
