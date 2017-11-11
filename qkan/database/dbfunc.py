@@ -207,6 +207,16 @@ def version(dbcursl, actversion = '2.1.1'):
                                "SQL Nr. 1: {}\n".format(sql))
                 return False
 
+        if u'tezgnam' not in attrlist2(dbcursl,'linkfl'):
+            logger.debug('linkfl.tezgnam ist nicht in: {}'.format(str(attrlist2(dbcursl,'linkfl'))))
+            sql = u"""ALTER TABLE linkfl ADD COLUMN tezgnam TEXT"""
+            try:
+                dbcursl.execute(sql)
+            except BaseException as err:
+                fehlermeldung(u"QKan.qgis_utils.version(4b) SQL-Fehler in QKan-DB: \n{}\n".format(err), 
+                               "SQL Nr. 1: {}\n".format(sql))
+                return False
+
         sql = u"""UPDATE info SET value = '2.1.1' WHERE subject = 'version' and value = '2.0.2';"""
         try:
             dbcursl.execute(sql)

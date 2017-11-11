@@ -1425,13 +1425,26 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             return False
 
         # 3. Haltungen in "einleit" eintragen (ohne Einschränkung auf auswahl)
-        # Hinweis: coalesce stellt sicher, dass evtl. manuell eingetragene Haltungen, für die
-        # kein Objekt in linksw erstellt wurde, nicht überschrieben werden. 
+
+        # 3.1 Index erzeugen
+
+        sql = u"""CREATE INDEX IF NOT EXISTS ind_einleit_elnam ON einleit (elnam)"""
+
+        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan.k_qkhe (4c) SQL-Fehler in SpatiaLite: \n", sql)
+            del dbQK
+            return False
+
+        # 3.2 Eintrag vornehmen
 
         sql = u"""UPDATE einleit SET haltnam =
-            (   SELECT coalesce(haltnam, einleit.haltnam)
+            (   SELECT lf.haltnam
                 FROM linksw AS lf
-                WHERE lf.elnam = einleit.elnam)"""
+                WHERE einleit.elnam = lf.elnam AND haltnam IS NOT NULL)"""
 
         logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
 
@@ -1798,13 +1811,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             return False
 
         # 3. Haltungen in "einwohner" eintragen (ohne Einschränkung auf auswahl)
-        # Hinweis: coalesce stellt sicher, dass evtl. manuell eingetragene Haltungen, für die
-        # kein Objekt in linkew erstellt wurde, nicht überschrieben werden. 
 
-        sql = u"""UPDATE einwohner SET haltnam =
-            (   SELECT coalesce(haltnam, einwohner.haltnam)
-                FROM linkew AS lf
-                WHERE lf.elnam = einwohner.elnam)"""
+        # 3.1 Index erzeugen
+
+        sql = u"""CREATE INDEX IF NOT EXISTS ind_einwohner_elnam ON einwohner (elnam)"""
 
         logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
 
@@ -1812,6 +1822,22 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             dbQK.sql(sql)
         except:
             fehlermeldung(u"QKan.k_qkhe (4c) SQL-Fehler in SpatiaLite: \n", sql)
+            del dbQK
+            return False
+
+        # 3.2 Eintrag vornehmen
+
+        sql = u"""UPDATE einwohner SET haltnam =
+            (   SELECT lf.haltnam
+                FROM linkew AS lf
+                WHERE einwohner.elnam = lf.elnam AND haltnam IS NOT NULL)"""
+
+        logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
+
+        try:
+            dbQK.sql(sql)
+        except:
+            fehlermeldung(u"QKan.k_qkhe (4d) SQL-Fehler in SpatiaLite: \n", sql)
             del dbQK
             return False
 
