@@ -60,7 +60,7 @@ def fehlermeldung(title, text):
 # Erzeugung der graphischen Verknüpfungen für Flächen
 
 def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                liste_teilgebiete, suchradius=50, schreibe_haltungen=True, bezug_abstand='kante', 
+                liste_teilgebiete, suchradius=50, bezug_abstand='kante', 
                 epsg='25832', fangradius=0.1, dbtyp='SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -363,7 +363,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 # ------------------------------------------------------------------------------
 # Erzeugung der graphischen Verknüpfungen für Direkteinleitungen
 
-def createlinkew(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True, epsg='25832', fangradius=0.1,
+def createlinkew(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradius=0.1,
                  dbtyp='SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -586,7 +586,7 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True
 # ------------------------------------------------------------------------------
 # Erzeugung der graphischen Verknüpfungen für Direkteinleitungen
 
-def createlinksw(dbQK, liste_teilgebiete, suchradius=50, schreibe_haltungen=True, epsg='25832', fangradius=0.1,
+def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradius=0.1,
                  dbtyp='SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 

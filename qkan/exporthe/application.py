@@ -150,10 +150,8 @@ class ExportToHE:
 
         self.dlg.pb_exportall.clicked.connect(self.exportall)
         self.dlg.pb_modifyall.clicked.connect(self.modifyall)
-        self.dlg.pb_initall.clicked.connect(self.initall)
         self.dlg.pb_exportnone.clicked.connect(self.exportnone)
         self.dlg.pb_modifynone.clicked.connect(self.modifynone)
-        self.dlg.pb_initnone.clicked.connect(self.initnone)
 
         # Auswahl der zu exportierenden Tabellen ----------------------------------------------
 
@@ -196,21 +194,6 @@ class ExportToHE:
         modify_rohrprofile = cb_set('modify_rohrprofile', self.dlg.cb_modify_rohrprofile, False)
         modify_speicherkennlinien = cb_set('modify_speicherkennlinien', self.dlg.cb_modify_speicherkennlinien, False)
         modify_bodenklassen = cb_set('modify_bodenklassen', self.dlg.cb_modify_bodenklassen, False)
-
-        init_schaechte = cb_set('init_schaechte', self.dlg.cb_init_schaechte, False)
-        init_auslaesse = cb_set('init_auslaesse', self.dlg.cb_init_auslaesse, False)
-        init_speicher = cb_set('init_speicher', self.dlg.cb_init_speicher, False)
-        init_haltungen = cb_set('init_haltungen', self.dlg.cb_init_haltungen, False)
-        init_pumpen = cb_set('init_pumpen', self.dlg.cb_init_pumpen, False)
-        init_wehre = cb_set('init_wehre', self.dlg.cb_init_wehre, False)
-        init_flaechenrw = cb_set('init_flaechenrw', self.dlg.cb_init_flaechenrw, False)
-        init_einleitew = cb_set('init_einleitew', self.dlg.cb_init_einleitew, False)
-        init_einleitdirekt = cb_set('init_einleitdirekt', self.dlg.cb_init_einleitdirekt, False)
-        init_abflussparameter = cb_set('init_abflussparameter', self.dlg.cb_init_abflussparameter, False)
-        init_regenschreiber = cb_set('init_regenschreiber', self.dlg.cb_init_regenschreiber, False)
-        init_rohrprofile = cb_set('init_rohrprofile', self.dlg.cb_init_rohrprofile, False)
-        init_speicherkennlinien = cb_set('init_speicherkennlinien', self.dlg.cb_init_speicherkennlinien, False)
-        init_bodenklassen = cb_set('init_bodenklassen', self.dlg.cb_init_bodenklassen, False)
 
         combine_flaechenrw = cb_set('combine_flaechenrw', self.dlg.cb_combine_flaechenrw, True)
         combine_einleitdirekt = cb_set('combine_einleitdirekt', self.dlg.cb_combine_einleitdirekt, True)
@@ -313,24 +296,6 @@ class ExportToHE:
         self.dlg.cb_modify_speicherkennlinien.setChecked(True)
         self.dlg.cb_modify_bodenklassen.setChecked(True)
 
-    def initall(self):
-        """Aktiviert alle Checkboxen zm Initialisieren"""
-
-        self.dlg.cb_init_schaechte.setChecked(True)
-        self.dlg.cb_init_auslaesse.setChecked(True)
-        self.dlg.cb_init_speicher.setChecked(True)
-        self.dlg.cb_init_haltungen.setChecked(True)
-        self.dlg.cb_init_pumpen.setChecked(True)
-        self.dlg.cb_init_wehre.setChecked(True)
-        self.dlg.cb_init_flaechenrw.setChecked(True)
-        self.dlg.cb_init_einleitew.setChecked(True)
-        self.dlg.cb_init_einleitdirekt.setChecked(True)
-        self.dlg.cb_init_abflussparameter.setChecked(True)
-        self.dlg.cb_init_regenschreiber.setChecked(True)
-        self.dlg.cb_init_rohrprofile.setChecked(True)
-        self.dlg.cb_init_speicherkennlinien.setChecked(True)
-        self.dlg.cb_init_bodenklassen.setChecked(True)
-
     def exportnone(self):
         """Deaktiviert alle Checkboxen zm Export"""
 
@@ -366,24 +331,6 @@ class ExportToHE:
         self.dlg.cb_modify_rohrprofile.setChecked(False)
         self.dlg.cb_modify_speicherkennlinien.setChecked(False)
         self.dlg.cb_modify_bodenklassen.setChecked(False)
-
-    def initnone(self):
-        """Deaktiviert alle Checkboxen zm Initialisieren"""
-
-        self.dlg.cb_init_schaechte.setChecked(False)
-        self.dlg.cb_init_auslaesse.setChecked(False)
-        self.dlg.cb_init_speicher.setChecked(False)
-        self.dlg.cb_init_haltungen.setChecked(False)
-        self.dlg.cb_init_pumpen.setChecked(False)
-        self.dlg.cb_init_wehre.setChecked(False)
-        self.dlg.cb_init_flaechenrw.setChecked(False)
-        self.dlg.cb_init_einleitew.setChecked(False)
-        self.dlg.cb_init_einleitdirekt.setChecked(False)
-        self.dlg.cb_init_abflussparameter.setChecked(False)
-        self.dlg.cb_init_regenschreiber.setChecked(False)
-        self.dlg.cb_init_rohrprofile.setChecked(False)
-        self.dlg.cb_init_speicherkennlinien.setChecked(False)
-        self.dlg.cb_init_bodenklassen.setChecked(False)
 
     # -------------------------------------------------------------------------
     # Formularfunktionen
@@ -621,21 +568,6 @@ class ExportToHE:
             check_export['modify_rohrprofile'] = self.dlg.cb_modify_rohrprofile.isChecked()
             check_export['modify_speicherkennlinien'] = self.dlg.cb_modify_speicherkennlinien.isChecked()
             check_export['modify_bodenklassen'] = self.dlg.cb_modify_bodenklassen.isChecked()
-
-            check_export['init_schaechte'] = self.dlg.cb_init_schaechte.isChecked()
-            check_export['init_auslaesse'] = self.dlg.cb_init_auslaesse.isChecked()
-            check_export['init_speicher'] = self.dlg.cb_init_speicher.isChecked()
-            check_export['init_haltungen'] = self.dlg.cb_init_haltungen.isChecked()
-            check_export['init_pumpen'] = self.dlg.cb_init_pumpen.isChecked()
-            check_export['init_wehre'] = self.dlg.cb_init_wehre.isChecked()
-            check_export['init_flaechenrw'] = self.dlg.cb_init_flaechenrw.isChecked()
-            check_export['init_einleitew'] = self.dlg.cb_init_einleitew.isChecked()
-            check_export['init_einleitdirekt'] = self.dlg.cb_init_einleitdirekt.isChecked()
-            check_export['init_abflussparameter'] = self.dlg.cb_init_abflussparameter.isChecked()
-            check_export['init_regenschreiber'] = self.dlg.cb_init_regenschreiber.isChecked()
-            check_export['init_rohrprofile'] = self.dlg.cb_init_rohrprofile.isChecked()
-            check_export['init_speicherkennlinien'] = self.dlg.cb_init_speicherkennlinien.isChecked()
-            check_export['init_bodenklassen'] = self.dlg.cb_init_bodenklassen.isChecked()
 
             check_export['combine_flaechenrw'] = self.dlg.cb_combine_flaechenrw.isChecked()
             check_export['combine_einleitdirekt'] = self.dlg.cb_combine_einleitdirekt.isChecked()

@@ -1759,7 +1759,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             del dbHE
             return False
 
-        # Abfrage ist identisch in k_qkhe.py vorhanden
+        # Datenvorbereitung: Verknüpfung von Einleitpunkt zu Haltung wird durch Tabelle "linksw"
+        # repräsentiert. Diese Zuordnung wird zunächst in "einleit.haltnam" übertragen.
+
+        # Abfrage ist identisch in k_link.py vorhanden
 
         # SpatialIndex anlegen
         sqlindex = "SELECT CreateSpatialIndex('einwohner','geom')"
