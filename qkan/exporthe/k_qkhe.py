@@ -25,6 +25,7 @@ import os
 import shutil
 import time
 
+from PyQt4.QtGui import QProgressBar
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
@@ -34,12 +35,14 @@ from qkan.database.fbfunc import FBConnection
 
 logger = logging.getLogger('QKan')
 
+progress_bar = None
 
 # Fortschritts- und Fehlermeldungen
 
 def fortschritt(text, prozent=0.):
     logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100.))
     QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100.), 'Export: ', QgsMessageLog.INFO)
+    progress_bar.setValue(prozent * 100)
 
 
 def fehlermeldung(title, text, dauer=0):
@@ -72,6 +75,13 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
     :returns: void
     '''
+
+    global progress_bar
+    progress_bar = QProgressBar(iface.messageBar())
+    progress_bar.setRange(0, 100)
+    status_message = iface.messageBar().createMessage("", "Export in Arbeit. Bitte warten.")
+    status_message.layout().addWidget(progress_bar)
+    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
     # ITWH-Datenbank aus gewählter Vorlage kopieren
     if os.path.exists(database_HE):
@@ -174,6 +184,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
 
         for attr in dbQK.fetchall():
+            progress_bar.setValue(progress_bar.value() + 1)
 
             # In allen Feldern None durch NULL ersetzen
             (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, xsch_t, ysch_t) = \
@@ -847,7 +858,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         if createdat == 'NULL':
             createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
 
-        fortschritt(u'Export Abflussparameter...', 70)
+        fortschritt(u'Export Abflussparameter...', .7)
 
         for attr in dbQK.fetchall():
 
@@ -2021,9 +2032,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     del dbHE
 
     fortschritt('Ende...', 1)
-
-    iface.messageBar().pushMessage(u"Status: ", u"Datenexport abgeschlossen.",
-                                   level=QgsMessageBar.INFO, duration=0)
+    progress_bar.setValue(100)
+    status_message.setText("Datenexport abgeschlossen.")
+    status_message.setLevel(QgsMessageBar.SUCCESS)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
