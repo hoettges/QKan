@@ -140,8 +140,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # --------------------------------------------------------------------------------------------
     # Export der Schaechte
 
-    if check_export['init_schaechte']:
-        dbHE.sql("DELETE FROM SCHACHT")
     if check_export['export_schaechte'] or check_export['modify_schaechte']:
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
@@ -250,10 +248,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # Beim Export werden die IDs mitgeschrieben, um bei den Speicherkennlinien
     # wiederverwertet zu werden.
 
-    if check_export['init_speicher']:
-        # Zuerst Daten aus Detailtabelle mit Speicherkennlinie löschen
-        dbHE.sql("DELETE FROM TABELLENINHALTE WHERE ID IN (SELECT ID FROM SPEICHERSCHACHT)")
-        dbHE.sql("DELETE FROM SPEICHERSCHACHT")
     if check_export['export_speicher'] or check_export['modify_speicher']:
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
@@ -434,8 +428,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # --------------------------------------------------------------------------------------------
     # Export der Auslaesse
 
-    if check_export['init_auslaesse']:
-        dbHE.sql("DELETE FROM AUSLASS")
     if check_export['export_auslaesse'] or check_export['modify_auslaesse']:
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
@@ -552,8 +544,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # in HYSTEM-EXTRAN in der Karteikarte "Haltungen > Trockenwetter". Solange dort kein
     # Siedlungstyp zugeordnet ist, wird diese Fläche nicht wirksam und dient nur der Information!
 
-    if check_export['init_haltungen']:
-        dbHE.sql("DELETE FROM ROHR")
     if check_export['export_haltungen'] or check_export['modify_haltungen']:
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
@@ -722,8 +712,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # --------------------------------------------------------------------------------------------
     # Export der Bodenklassen
 
-    if check_export['init_bodenklassen']:
-        dbHE.sql("DELETE FROM BODENKLASSE")
     if check_export['export_bodenklassen'] or check_export['modify_bodenklassen']:
 
         sql = u"""
@@ -832,8 +820,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     # --------------------------------------------------------------------------------------------
     # Export der Abflussparameter
 
-    if check_export['init_abflussparameter']:
-        dbHE.sql("DELETE FROM ABFLUSSPARAMETER")
     if check_export['export_abflussparameter'] or check_export['modify_abflussparameter']:
 
         sql = u"""
@@ -966,8 +952,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     #
     # Wenn in QKan keine Regenschreiber eingetragen sind, wird als Name "Regenschreiber1" angenommen.
 
-    if check_export['init_regenschreiber']:
-        dbHE.sql("DELETE FROM REGENSCHREIBER")
     if check_export['export_regenschreiber'] or check_export['modify_regenschreiber']:
 
         # # Pruefung, ob Regenschreiber fuer Export vorhanden
@@ -1052,9 +1036,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         fortschritt('{} Regenschreiber eingefuegt'.format(nextid - nr0), 0.68)
 
-
-    if check_export['init_flaechenrw']:
-        dbHE.sql("DELETE FROM FLAECHE")
     if check_export['export_flaechenrw'] or check_export['modify_flaechenrw']:
         """
         Export der Flaechendaten
@@ -1344,12 +1325,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         fortschritt('{} Flaechen eingefuegt'.format(nextid - nr0), 0.80)
 
-
-    if check_export['init_einleitdirekt']:
-        dbHE.sql("DELETE FROM EINZELEINLEITER WHERE HERKUNFT = 1")
     if check_export['export_einleitdirekt'] or check_export['modify_einleitdirekt']:
         # Herkunft = 1 (Direkt)
-        
+
         # Vorbereitung einleit: Falls elnam leer ist, plausibel ergänzen:
         sql = u"""UPDATE einleit
             SET elnam = printf('d_%d',pk)
@@ -1544,10 +1522,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
 
         fortschritt(u'{} Einzeleinleiter (direkt) eingefuegt'.format(nextid - nr0), 0.95)
 
-
-
-    if check_export['init_einleitew']:
-        dbHE.sql("DELETE FROM EINZELEINLEITER WHERE HERKUNFT = 3")
     if check_export['export_einleitew'] or check_export['modify_einleitew']:
         # Herkunft = 1 (Direkt) und 3 (Einwohnerbezogen)
 
