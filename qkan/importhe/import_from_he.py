@@ -46,19 +46,9 @@ from qgis.utils import iface
 from qkan.database.dbfunc import DBConnection
 from qkan.database.fbfunc import FBConnection
 
+from qkan.database.qgis_utils import fortschritt, fehlermeldung
+
 logger = logging.getLogger('QKan')
-
-
-# Fortschritts- und Fehlermeldungen
-
-def fortschritt(text, prozent):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), 'Export: ', QgsMessageLog.INFO)
-
-
-def fehlermeldung(title, text):
-    logger.error(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 
 # ------------------------------------------------------------------------------
@@ -88,9 +78,6 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
     if dbHE is None:
         fehlermeldung("Fehler in QKan_Import_from_HE",
                       u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_HE))
-        iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE",
-                                       u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                                           database_HE), level=QgsMessageBar.CRITICAL)
         return None
 
     dbQK = DBConnection(dbname=database_QKan, epsg=epsg)  # Datenbankobjekt der QKan-Datenbank zum Schreiben
@@ -98,9 +85,6 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
     if dbQK is None:
         fehlermeldung("Fehler in QKan_Import_from_HE",
                       u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-        iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE",
-                                       u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                                           database_QKan), level=QgsMessageBar.CRITICAL)
         return None
 
     # Referenztabellen laden. 

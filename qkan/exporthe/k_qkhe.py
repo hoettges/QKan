@@ -32,24 +32,11 @@ from qgis.utils import iface
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.fbfunc import FBConnection
+from qkan.database.qgis_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger('QKan')
 
 progress_bar = None
-
-# Fortschritts- und Fehlermeldungen
-
-def fortschritt(text, prozent=0.):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100.))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100.), 'Export: ', QgsMessageLog.INFO)
-    progress_bar.setValue(prozent * 100)
-
-
-def fehlermeldung(title, text, dauer=0):
-    logger.error(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
-    iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL, duration=dauer)
-
 
 def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_teilgebiete,
                      fangradius=0.1, datenbanktyp='spatialite', check_export={}):

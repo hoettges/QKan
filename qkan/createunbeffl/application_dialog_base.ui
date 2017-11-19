@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>483</width>
-    <height>419</height>
+    <height>426</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>110</x>
+     <x>130</x>
      <y>360</y>
-     <width>171</width>
+     <width>161</width>
      <height>32</height>
     </rect>
    </property>
@@ -42,8 +42,8 @@
   <widget class="QTableWidget" name="tw_cnt_abflussparameter">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>180</y>
+     <x>20</x>
+     <y>140</y>
      <width>401</width>
      <height>131</height>
     </rect>
@@ -62,9 +62,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>80</y>
-     <width>361</width>
-     <height>51</height>
+     <y>60</y>
+     <width>441</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
@@ -86,7 +86,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>40</y>
+     <y>20</y>
      <width>421</width>
      <height>41</height>
     </rect>
@@ -109,8 +109,8 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>150</y>
+     <x>20</x>
+     <y>110</y>
      <width>401</width>
      <height>31</height>
     </rect>
@@ -128,7 +128,7 @@
    <property name="geometry">
     <rect>
      <x>410</x>
-     <y>400</y>
+     <y>410</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -137,11 +137,49 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.1.3</string>
+    <string>Version 2.1.4</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>290</y>
+     <width>371</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Optionen</string>
+   </property>
+   <widget class="QCheckBox" name="cb_autokorrektur">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>371</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;1. Falls in der Tabelle &amp;quot;tezg&amp;quot; leere oder doppelte Namen (flnam) vorkommen, werden diese mit &amp;quot;ft_nnnn&amp;quot; überschrieben. &lt;/p&gt;&lt;p&gt;2. Falls in der Tabelle &amp;quot;abflussfaktoren&amp;quot; kein Datensatz für unbefestigte Flächen existiert (Kriterium: bodenklasse = NULL), wird ein entsprechender Datensatz '$Default_Bef' ergänzt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Automatische Korrektur von Datenfehlern in der Tabelle &quot;tezg&quot;</string>
+    </property>
+    <property name="text">
+     <string>Autokorrektur von Namen und Abflussfaktoren in den TEZG-Flächen</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

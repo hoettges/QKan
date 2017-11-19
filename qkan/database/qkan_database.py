@@ -35,21 +35,9 @@ import pyspatialite.dbapi2 as splite
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
+from qgis_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger('QKan')
-
-
-# Fortschritts- und Fehlermeldungen
-
-def fortschritt(text, prozent=0.):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100.))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100.), 'Export: ', QgsMessageLog.INFO)
-
-
-def fehlermeldung(title, text, dauer=0):
-    logger.debug(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
-    iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL, duration=dauer)
 
 
 def createdbtables(consl, cursl, epsg=25832):

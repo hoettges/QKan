@@ -24,6 +24,8 @@ import logging
 import os.path
 # Ergaenzt (jh, 12.06.2017) -------------------------------------------------
 import site
+import codecs
+import json
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt4.QtGui import QTableWidgetItem
@@ -38,20 +40,10 @@ from application_dialog import CreateUnbefFlDialog
 from k_unbef import createUnbefFlaechen
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qgis_utils import get_database_QKan
+from qkan.database.qgis_utils import get_database_QKan, fortschritt, fehlermeldung
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
-
-
-def fortschritt(text, prozent):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), 'Export: ', QgsMessageLog.INFO)
-
-
-def fehlermeldung(title, text):
-    logger.error(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 
 class CreateUnbefFl:
@@ -98,7 +90,23 @@ class CreateUnbefFl:
         if not os.path.isdir(wordir):
             os.makedirs(wordir)
 
-            # Ende Eigene Funktionen ---------------------------------------------------
+        # --------------------------------------------------------------------------------------------------
+        # Konfigurationsdatei qkan.json lesen
+        #
+
+        self.configfil = os.path.join(wordir, 'qkan.json')
+        if os.path.exists(self.configfil):
+            with codecs.open(self.configfil, 'r', 'utf-8') as fileconfig:
+                self.config = json.loads(fileconfig.read().replace('\\', '/'))
+        else:
+            self.config = {'epsg': '25832'}  # Projektionssystem
+            self.config['database_QKan'] = ''
+            self.config['database_HE'] = ''
+            self.config['projectfile'] = ''
+            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+                fileconfig.write(json.dumps(self.config))
+
+        # Ende Eigene Funktionen ---------------------------------------------------
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -203,6 +211,16 @@ class CreateUnbefFl:
                 self.dlg.tw_cnt_abflussparameter.setItem(i, j, QTableWidgetItem(str(elem[j])))
                 self.dlg.tw_cnt_abflussparameter.setRowHeight(i, 20)
 
+        # config in Dialog übernehmen
+
+        # Autokorrektur
+
+        if 'autokorrektur' in self.config:
+            autokorrektur = self.config['autokorrektur']
+        else:
+            autokorrektur = True
+        self.dlg.cb_autokorrektur.setChecked(autokorrektur)
+
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
@@ -215,8 +233,14 @@ class CreateUnbefFl:
 
             # Start der Verarbeitung
             liste_tezg = self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)
+            autokorrektur = self.dlg.cb_autokorrektur.isChecked()
 
-            createUnbefFlaechen(database_QKan, liste_tezg)
+            self.config['autokorrektur'] = autokorrektur
+
+            with codecs.open(self.configfil,'w') as fileconfig:
+                fileconfig.write(json.dumps(self.config))
+
+            createUnbefFlaechen(database_QKan, liste_tezg, autokorrektur)
 
             # else:
             # logger.debug('Selected: \n{}'.format(self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)))

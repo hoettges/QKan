@@ -41,16 +41,9 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 from qkan_database import createdbtables
+from qgis_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger('QKan')
-
-
-# Funktionen -------------------------------------------------------------------
-
-def fehlermeldung(title, text, dauer=0):
-    logger.error(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
-    iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL, duration=dauer)
 
 
 # Versionskontrolle der QKan-Datenbank
@@ -348,14 +341,18 @@ class DBConnection:
         lattr = [el[1] for el in daten]
         return lattr
 
-    def sql(self, sql):
+    def sql(self, sql, errormessage = 'allgemein'):
         """Fuehrt eine SQL-Abfrage aus."""
 
         try:
             self.cursl.execute(sql)
+            logger.debug(u'dbfunc.sql: {}\n{}\n'.format(errormessage,sql))
+            return True
         except BaseException as err:
-            logger.error(u"(1) Fehler in SQL: {}".format(sql))
-            logger.error(err)
+            fehlermeldung(u'SQL-Fehler in {e}'.format(e=errormessage), 
+                          u"{e}\n{s}".format(e=err, s=sql))
+            self.__del__()
+            return False
 
     def fetchall(self):
         """Gibt alle Daten aus der vorher ausgeführten SQL-Abfrage zurueck"""

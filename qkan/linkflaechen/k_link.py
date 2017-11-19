@@ -41,19 +41,9 @@ from qgis.utils import iface
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 
+from qkan.database.qgis_utils import fehlermeldung, checknames
+
 logger = logging.getLogger('QKan')
-
-
-# Fortschritts- und Fehlermeldungen
-
-def fortschritt(text, prozent):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), u'Link Flächen: ', QgsMessageLog.INFO)
-
-
-def fehlermeldung(title, text):
-    logger.error(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 
 # ------------------------------------------------------------------------------
@@ -125,11 +115,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # SpatialIndex anlegen
     sqlindex = "SELECT CreateSpatialIndex('tezg','geom')"
-    try:
-        dbQK.sql(sqlindex)
-    except BaseException as err:
-        fehlermeldung('In der Tabelle "tezg" konnte CreateSpatialIndex auf "geom" nicht durchgeführt werden', str(err))
-        del dbQK
+
+    if not dbQK.sql(sqlindex, 'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
         return False
 
     sql = u"""WITH flges AS (
@@ -157,13 +144,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             ON within(StartPoint(linkfl.glink),flges.geom)
             WHERE linkfl.pk IS NULL""".format(auswahl=auswahl)
 
-    logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkFlaechen (4a) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan_LinkFlaechen (4a) SQL-Fehler in SpatiaLite"):
         return False
 
     # Jetzt werden die Flächenobjekte mit einem Buffer erweitert und jeweils neu 
@@ -172,11 +155,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     sql = u"""UPDATE linkfl SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linkfl.glink IS NULL""".format(
         suchradius)
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkFlaechen (2) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"createlinkfl (2)"):
         return False
 
     # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche. 
@@ -206,11 +185,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # SpatialIndex anlegen
     sqlindex = "SELECT CreateSpatialIndex('haltungen','geom')"
-    try:
-        dbQK.sql(sqlindex)
-    except BaseException as err:
-        fehlermeldung('In der Tabelle "tezg" konnte CreateSpatialIndex auf "geom" nicht durchgeführt werden', str(err))
-        del dbQK
+
+    if not dbQK.sql(sqlindex, 'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
         return False
 
     sql = u"""WITH tlink AS
@@ -234,13 +210,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             WHERE linkfl.pk = t1.pk)
             WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, auswha=auswha, auswlinkfl=auswlinkfl)
 
-    logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkFlaechen (5) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"createlinkfl (5)"):
         return False
 
     # Löschen der Datensätze in linkfl, bei denen keine Verbindung erstellt wurde, weil die 
@@ -248,11 +220,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     sql = u"""DELETE FROM linkfl WHERE glink IS NULL"""
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkFlaechen (7) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan_LinkFlaechen (7) SQL-Fehler in SpatiaLite"):
         return False
 
     # Verknüpfen von linkfl mit Haltungen, Flächen und tezg-Flächen. Dabei wird die Auswahl berücksichtigt, 
@@ -277,13 +245,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             FROM flaechen AS fl
             WHERE within(StartPoint(linkfl.glink),fl.geom))
         WHERE linkfl.pk IN missing"""
-    logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
-    try:
-        dbQK.sql(sql)
-    except BaseException as err:
-        fehlermeldung(u"QKan_Export (24) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-        del dbQK
-        del dbHE
+    # logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
+
+    if not dbQK.sql(sql, u"QKan_Export (24)"):
         return False
 
     # 2. Haltungen in "linkfl" eintragen
@@ -308,13 +272,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             FROM haltungen AS ha
             WHERE intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
         WHERE linkfl.pk IN missing"""
-    logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
-    try:
-        dbQK.sql(sql)
-    except BaseException as err:
-        fehlermeldung(u"QKan_Export (25) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-        del dbQK
-        del dbHE
+    # logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
+
+    if not dbQK.sql(sql, u"QKan_Export (25)"):
         return False
 
         # 3. TEZG-Flächen in "linkfl" eintragen, nur für aufteilen = 'ja'
@@ -338,13 +298,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             ON linkfl.flnam = fl.flnam
             WHERE within(StartPoint(linkfl.glink),tg.geom))
         WHERE linkfl.pk IN missing"""
-    logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
-    try:
-        dbQK.sql(sql)
-    except BaseException as err:
-        fehlermeldung(u"QKan_Export (25) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-        del dbQK
-        del dbHE
+    # logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
+
+    if not dbQK.sql(sql, u"QKan_Export (26)"):
         return False
 
     dbQK.commit()
@@ -417,13 +373,9 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
             ON linkew.pkewref = einwohner.pk
             WHERE linkew.pk IS NULL{auswahl}""".format(auswahl=auswahl, radius = 0.5)
 
-    logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_Link.createlinkew (4a) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan_Link.createlinkew (4a) SQL-Fehler in SpatiaLite"):
         return False
 
     # Jetzt werden die EW-bezogenen Einleitungen-Punkte mit einem Buffer erweitert und jeweils neu 
@@ -432,11 +384,8 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
 
     sql = u"""UPDATE linkew SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linkew.glink IS NULL""".format(
         suchradius)
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_Link.createlinkew (2) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+
+    if not dbQK.sql(sql, u"QKan_Link.createlinkew (2) SQL-Fehler in SpatiaLite"):
         return False
 
     # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche. 
@@ -460,11 +409,8 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
 
     # SpatialIndex anlegen
     sqlindex = "SELECT CreateSpatialIndex('haltungen','geom')"
-    try:
-        dbQK.sql(sqlindex)
-    except BaseException as err:
-        fehlermeldung('In der Tabelle "tezg" konnte CreateSpatialIndex auf "geom" nicht durchgeführt werden', str(err))
-        del dbQK
+
+    if not dbQK.sql(sqlindex, u'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
         return False
 
     sql = u"""WITH tlink AS
@@ -488,13 +434,9 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
             WHERE linkew.pk = t1.pk)
             WHERE linkew.glink IS NULL{auswlin}""".format(auswahl=auswahl, auswlin=auswlin)
 
-    logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_Link.createlinkew (5) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan_Link.createlinkew (5) SQL-Fehler in SpatiaLite"):
         return False
 
     # Löschen der Datensätze in linkew, bei denen keine Verbindung erstellt wurde, weil die 
@@ -502,11 +444,7 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
 
     sql = u"""DELETE FROM linkew WHERE glink IS NULL"""
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_Link.createlinkew (7) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan_Link.createlinkew (7) SQL-Fehler in SpatiaLite"):
         return False
 
     # 1. einwohner-Punkt in "linkew" eintragen
@@ -529,13 +467,9 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
             WHERE contains(buffer(StartPoint(linkew.glink),0.1),el.geom))
         WHERE linkew.pk IN missing"""
 
-    logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan.k_qkhe (4a) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan.k_qkhe (4a) SQL-Fehler in SpatiaLite"):
         return False
 
     # 2. Haltungen in "linkew" eintragen
@@ -562,13 +496,9 @@ def createlinkew(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
             WHERE intersects(buffer(EndPoint(linkew.glink),0.1),ha.geom))
         WHERE linkew.pk IN missing"""
 
-    logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan.k_qkhe (4b) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan.k_qkhe (4b) SQL-Fehler in SpatiaLite"):
         return False
 
     dbQK.commit()
@@ -640,13 +570,9 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
             ON linksw.pkswref = einleit.pk
             WHERE linksw.pk IS NULL{auswahl}""".format(auswahl=auswahl, radius = 0.5)
 
-    logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkSW (4a) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan_LinkSW (4a) SQL-Fehler in SpatiaLite"):
         return False
 
     # Jetzt werden die Direkteinleitungen-Punkte mit einem Buffer erweitert und jeweils neu 
@@ -655,11 +581,8 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
 
     sql = u"""UPDATE linksw SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linksw.glink IS NULL""".format(
         suchradius)
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkSW (2) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+
+    if not dbQK.sql(sql, u"QKan_LinkSW (2) SQL-Fehler in SpatiaLite"):
         return False
 
     # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche. 
@@ -682,11 +605,8 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
 
     # SpatialIndex anlegen
     sqlindex = "SELECT CreateSpatialIndex('haltungen','geom')"
-    try:
-        dbQK.sql(sqlindex)
-    except BaseException as err:
-        fehlermeldung('In der Tabelle "tezg" konnte CreateSpatialIndex auf "geom" nicht durchgeführt werden', str(err))
-        del dbQK
+
+    if not dbQK.sql(sqlindex, u'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
         return False
 
     sql = u"""WITH tlink AS
@@ -710,13 +630,9 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
             WHERE linksw.pk = t1.pk)
             WHERE linksw.glink IS NULL{auswlin}""".format(auswahl=auswahl, auswlin=auswlin)
 
-    logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkSW (5) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan_LinkSW (5) SQL-Fehler in SpatiaLite"):
         return False
 
     # Löschen der Datensätze in linksw, bei denen keine Verbindung erstellt wurde, weil die 
@@ -724,11 +640,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
 
     sql = u"""DELETE FROM linksw WHERE glink IS NULL"""
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkSW (7) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan_LinkSW (7) SQL-Fehler in SpatiaLite"):
         return False
 
     # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
@@ -751,13 +663,9 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
             WHERE contains(buffer(StartPoint(linksw.glink),0.1),el.geom))
         WHERE linksw.pk IN missing"""
 
-    logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan.k_qkhe (4a) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan.k_qkhe (4a) SQL-Fehler in SpatiaLite"):
         return False
 
     # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
@@ -784,13 +692,9 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
             WHERE intersects(buffer(EndPoint(linksw.glink),0.1),ha.geom))
         WHERE linksw.pk IN missing"""
 
-    logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
+    # logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan.k_qkhe (4b) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+    if not dbQK.sql(sql, u"QKan.k_qkhe (4b) SQL-Fehler in SpatiaLite"):
         return False
 
     dbQK.commit()
@@ -808,23 +712,28 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg='25832', fangradiu
 
 # -------------------------------------------------------------------------------------------------------------
 
-def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite'):
+def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, bufferradius='0', dbtyp = 'SpatiaLite'):
     '''Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
        Teilgebiete zu. Falls sich mehrere dieser Teilgebiete überlappen, ist das Resultat zufällig eines von diesen. 
 
-    :dbQK: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type database: DBConnection (geerbt von dbapi...)
+    :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :type database:         DBConnection (geerbt von dbapi...)
 
-    :liste_teilgebiete: Name des auf die gewählten Tabellen zu übertragenden Teilgebietes
-    :type liste_teilgebiete: list of String
+    :liste_teilgebiete:     Name des auf die gewählten Tabellen zu übertragenden Teilgebietes
+    :type liste_teilgebiete:list of String
 
-    :tablist: Liste der Tabellen, auf die die Teilgebiet "liste_teilgebiete" zu übertragen sind.
-    :type tablist: list of String
+    :tablist:               Liste der Tabellen, auf die die Teilgebiet "liste_teilgebiete" zu übertragen sind.
+    :type tablist:          list of String
 
-    :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:    String
+    :autokorrektur:         Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
+                            werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
+                            abgebrochen.
+    :type autokorrektur:    String
     
-    :returns: void
+    :dbtyp:                 Typ der Datenbank (SpatiaLite, PostGIS)
+    :type dbtyp:            String
+    
+    :returns:               void
     '''
 
     # Progress Bar
@@ -832,36 +741,67 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, dbtyp = 'SpatiaLite
     bar.setRange(0,0)
     bar.show()
 
-    if auswahltyp == 'within':
-        spatialrelation = 'within'
-    elif auswahltyp == 'overlaps':
-        spatialrelation = 'intersects'
+    # logger.debug(u'\nbetroffene Tabellen (1):\n{}\n'.format(str(tablist)))
+
+    if not checknames(dbQK, 'teilgebiete', 'tgnam', 'tg_', autokorrektur):
+        return False
+
     if len(liste_teilgebiete) != 0:
         tgnames = "', '".join(liste_teilgebiete)
         for table in tablist:
-            sql = u"""
-            UPDATE {table} SET teilgebiet = 
-            (	SELECT teilgebiete.tgnam
-                FROM teilgebiete
-                INNER JOIN {table} AS tt
-                ON {spatialrelation}(tt.geom,teilgebiete.geom)
-                WHERE tt.pk = {table}.pk AND
-                       teilgebiete.tgnam in ('{tgnames}'))
-            WHERE {table}.pk IN
-            (	SELECT {table}.pk
-                FROM teilgebiete
-                INNER JOIN {table}
-                ON {spatialrelation}({table}.geom,teilgebiete.geom)
-                WHERE teilgebiete.tgnam in ('{tgnames}'))
-            """.format(table=table, tgnames=tgnames, spatialrelation=spatialrelation)
 
-            logger.debug(u'\nSQL:\n{}\n'.format(sql))
+            if auswahltyp == 'within':
+                if bufferradius == '0' or bufferradius.strip == '':
+                    sql = u"""
+                    UPDATE {table} SET teilgebiet = 
+                    (	SELECT teilgebiete.tgnam
+                        FROM teilgebiete
+                        INNER JOIN {table} AS tt
+                        ON within(tt.geom, teilgebiete.geom)
+                        WHERE tt.pk = {table}.pk AND
+                               teilgebiete.tgnam in ('{tgnames}'))
+                    WHERE {table}.pk IN
+                    (	SELECT {table}.pk
+                        FROM teilgebiete
+                        INNER JOIN {table}
+                        ON within({table}.geom, teilgebiete.geom)
+                        WHERE teilgebiete.tgnam in ('{tgnames}'))
+                    """.format(table=table, tgnames=tgnames, bufferradius=bufferradius)
+                else:
+                    sql = u"""
+                    UPDATE {table} SET teilgebiet = 
+                    (	SELECT teilgebiete.tgnam
+                        FROM teilgebiete
+                        INNER JOIN {table} AS tt
+                        ON within(tt.geom, buffer(teilgebiete.geom, {bufferradius}))
+                        WHERE tt.pk = {table}.pk AND
+                               teilgebiete.tgnam in ('{tgnames}'))
+                    WHERE {table}.pk IN
+                    (	SELECT {table}.pk
+                        FROM teilgebiete
+                        INNER JOIN {table}
+                        ON within({table}.geom, buffer(teilgebiete.geom, {bufferradius}))
+                        WHERE teilgebiete.tgnam in ('{tgnames}'))
+                    """.format(table=table, tgnames=tgnames, bufferradius=bufferradius)
+            elif auswahltyp == 'overlaps':
+                sql = u"""
+                UPDATE {table} SET teilgebiet = 
+                (	SELECT teilgebiete.tgnam
+                    FROM teilgebiete
+                    INNER JOIN {table} AS tt
+                    ON intersects(tt.geom,teilgebiete.geom)
+                    WHERE tt.pk = {table}.pk AND
+                           teilgebiete.tgnam in ('{tgnames}'))
+                WHERE {table}.pk IN
+                (	SELECT {table}.pk
+                    FROM teilgebiete
+                    INNER JOIN {table}
+                    ON intersects({table}.geom,teilgebiete.geom)
+                    WHERE teilgebiete.tgnam in ('{tgnames}'))
+                """.format(table=table, tgnames=tgnames)
 
-            try:
-                dbQK.sql(sql)
-            except:
-                fehlermeldung(u"QKan_LinkFlaechen (8) SQL-Fehler in SpatiaLite: \n", sql)
-                del dbQK
+            # logger.debug(u'\nSQL:\n{}\n'.format(sql))
+            if not dbQK.sql(sql, u"QKan.k_link.assigntgeb (8)"):
                 return False
 
         dbQK.commit()
@@ -916,11 +856,8 @@ def reloadgroup(dbQK, gruppenname, dbtyp = 'SpatiaLite'):
             WHERE g.grnam = '{gruppenname}' AND
             g.tabelle = '{table}')""".format(table=table, gruppenname=gruppenname)
         # logger.debug(u'reloadgroup.sql: \n{}'.format(sql))
-        try:
-            dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen.reloadgroup (9) SQL-Fehler in SpatiaLite: \n", sql)
-            del dbQK
+
+        if dbQK.sql(sql, u"QKan_LinkFlaechen.reloadgroup (9) SQL-Fehler in SpatiaLite: \n"):
             return False
 
     dbQK.commit()
@@ -980,11 +917,8 @@ def storegroup(dbQK, gruppenname, kommentar, dbtyp = 'SpatiaLite'):
 
     # logger.debug(u'\nSQL-4:\n{}\n'.format(sql))
     # Zusammengesetzte SQL-Abfrage ausführen...
-    try:
-        dbQK.sql(sql)
-    except:
-        fehlermeldung(u"QKan_LinkFlaechen.savegroup (10) SQL-Fehler in SpatiaLite: \n", sql)
-        del dbQK
+
+    if not dbQK.sql(sql, u"QKan_LinkFlaechen.savegroup (10) SQL-Fehler in SpatiaLite"):
         return False
 
     dbQK.commit()

@@ -41,20 +41,10 @@ from application_dialog import CreatelineflDialog, CreatelineswDialog, Createlin
 from k_link import createlinkfl, createlinksw, createlinkew, assigntgeb, storegroup, reloadgroup
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qgis_utils import get_database_QKan, get_editable_layers
+from qkan.database.qgis_utils import get_database_QKan, get_editable_layers, fehlermeldung
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
-
-
-def fortschritt(text, prozent):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), 'Export: ', QgsMessageLog.INFO)
-
-
-def fehlermeldung(title, text):
-    logger.error(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 
 class LinkFl:
@@ -121,7 +111,7 @@ class LinkFl:
             with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-                # Ende Eigene Funktionen ---------------------------------------------------
+        # Ende Eigene Funktionen ---------------------------------------------------
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -952,8 +942,29 @@ class LinkFl:
         del self.dbQK
 
 
+    # Zuordnen der Haltungs- etc. -objekte zu (ausgewählten) Teilgebieten
+
+    # Hilfsfunktionen
+
+    def enable_bufferradius(self, on=True):
+        """Aktiviert/Deaktiviert die Eingabe der Pufferbreite abhängig von der 
+        Auswahloption"""
+
+        self.dlg_at.lb_bufferradius.setEnabled(on)
+        self.dlg_at.tf_bufferradius.setEnabled(on)
+        self.dlg_at.unit_bufferradius.setEnabled(on)
+
+
+    def select_within(self):
+        """Aktiviert die Eingabe der Pufferbreite"""
+        self.enable_bufferradius(True)
+
+    def select_overlaps(self):
+        """Deaktiviert die Eingabe der Pufferbreite"""
+        self.enable_bufferradius(False)
+
     # -------------------------------------------------------------------------
-    # Öffnen des Formulars zur Erstellung der Verknüpfungen
+    # Öffnen des Formulars
 
     def run_assigntgeb(self):
         """Öffnen des Formulars zur Zuordnung von Teilgebieten auf Haltungen und Flächen"""
@@ -982,6 +993,19 @@ class LinkFl:
                 database_QKan), level=QgsMessageBar.CRITICAL)
             return None
 
+        self.dlg_at.rb_within.clicked.connect(self.select_within)
+        self.dlg_at.rb_overlaps.clicked.connect(self.select_overlaps)
+
+        # config in Dialog übernehmen
+
+        # Autokorrektur
+
+        if 'autokorrektur' in self.config:
+            autokorrektur = self.config['autokorrektur']
+        else:
+            autokorrektur = True
+        self.dlg_at.cb_autokorrektur.setChecked(autokorrektur)
+
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         self.dbQK.sql(sql)
@@ -1002,11 +1026,20 @@ class LinkFl:
 
         if auswahltyp == 'within':
             self.dlg_at.rb_within.setChecked(True)
+            self.enable_bufferradius(True)
         elif auswahltyp == 'overlaps':
             self.dlg_at.rb_overlaps.setChecked(True)
+            self.enable_bufferradius(False)
         else:
             fehlermeldung("Fehler im Programmcode (3)", "Nicht definierte Option")
             return False
+
+        # Festlegung des Pufferradius
+        if 'bufferradius' in self.config:
+            bufferradius = self.config['bufferradius']
+        else:
+            bufferradius = '0'
+        self.dlg_at.tf_bufferradius.setText(bufferradius)
 
 
         # show the dialog
@@ -1015,6 +1048,8 @@ class LinkFl:
         result = self.dlg_at.exec_()
         # See if OK was pressed
         if result:
+
+            # Inhalte aus Formular lesen
 
             liste_teilgebiete = self.listselecteditems(self.dlg_at.lw_teilgebiete)
             if self.dlg_at.rb_within.isChecked():
@@ -1025,16 +1060,24 @@ class LinkFl:
                 fehlermeldung("Fehler im Programmcode (4)", "Nicht definierte Option")
                 return False
 
+            autokorrektur = self.dlg_at.cb_autokorrektur.isChecked()
+
+            # config schreiben
+
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['auswahltyp'] = auswahltyp
             self.config['epsg'] = epsg
+            self.config['bufferradius'] = bufferradius
+            self.config['autokorrektur'] = autokorrektur
 
             with codecs.open(self.configfil,'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
+
             assigntgeb(self.dbQK, auswahltyp, liste_teilgebiete, 
-                       ['haltungen', 'flaechen', 'schaechte', 'einleit', 'einwohner', 'tezg'])
+                       ['haltungen', 'flaechen', 'schaechte', 'einleit', 'einwohner', 'tezg'], 
+                       autokorrektur, bufferradius)
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
