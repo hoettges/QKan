@@ -511,6 +511,14 @@ class ExportToHE:
         self.dlg.lw_teilgebiete.itemClicked.connect(self.countselection)
         self.countselection()
 
+        # Autokorrektur
+
+        if 'autokorrektur' in self.config:
+            autokorrektur = self.config['autokorrektur']
+        else:
+            autokorrektur = True
+        self.dlg.cb_autokorrektur.setChecked(autokorrektur)
+
         # Formular anzeigen
 
         self.dlg.show()
@@ -527,6 +535,7 @@ class ExportToHE:
             database_HE = self.dlg.tf_heDB_dest.text()
             dbtemplate_HE = self.dlg.tf_heDB_template.text()
             datenbanktyp = 'spatialite'
+            autokorrektur = self.dlg.cb_autokorrektur.isChecked()
 
             check_export = {}
             check_export['export_schaechte'] = self.dlg.cb_export_schaechte.isChecked()
@@ -569,6 +578,7 @@ class ExportToHE:
             self.config['database_Qkan'] = database_Qkan
             self.config['datenbanktyp'] = datenbanktyp
             self.config['liste_teilgebiete'] = liste_teilgebiete
+            self.config['autokorrektur'] = autokorrektur
             for el in check_export:
                 self.config[el] = check_export[el]
 
@@ -576,5 +586,5 @@ class ExportToHE:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
-            exportKanaldaten(iface, database_HE, dbtemplate_HE, database_Qkan, liste_teilgebiete,
+            exportKanaldaten(iface, database_HE, dbtemplate_HE, self.dbQK, liste_teilgebiete, autokorrektur, 
                              0.1, datenbanktyp, check_export)

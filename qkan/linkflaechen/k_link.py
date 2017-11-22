@@ -799,6 +799,10 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, buff
                     ON intersects({table}.geom,teilgebiete.geom)
                     WHERE teilgebiete.tgnam in ('{tgnames}'))
                 """.format(table=table, tgnames=tgnames)
+            else:
+                fehlermeldung('Programmfehler', 'k_link.assigntgeb: auswahltyp hat unbekannten Fall {}'.format(str(auswahltyp)))
+                del dbQK
+                return False
 
             # logger.debug(u'\nSQL:\n{}\n'.format(sql))
             if not dbQK.sql(sql, u"QKan.k_link.assigntgeb (8)"):

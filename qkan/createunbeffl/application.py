@@ -197,8 +197,10 @@ class CreateUnbefFl:
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
 
-        sql = """SELECT abflussparameter, teilgebiet, count(*) AS anz FROM tezg GROUP BY abflussparameter, teilgebiet"""
-        dbQK.sql(sql)
+        sql = u"""SELECT abflussparameter, teilgebiet, count(*) AS anz FROM tezg GROUP BY abflussparameter, teilgebiet"""
+        if not dbQK.sql(sql, 'createunbeffl.run'):
+            return None
+
         daten = dbQK.fetchall()
         nzeilen = len(daten)
         self.dlg.tw_cnt_abflussparameter.setRowCount(nzeilen)
@@ -240,7 +242,7 @@ class CreateUnbefFl:
             with codecs.open(self.configfil,'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-            createUnbefFlaechen(database_QKan, liste_tezg, autokorrektur)
+            createUnbefFlaechen(dbQK, liste_tezg, autokorrektur)
 
             # else:
             # logger.debug('Selected: \n{}'.format(self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)))

@@ -1644,7 +1644,7 @@ fassen</string>
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.1.4</string>
+    <string>Version 2.1.5</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1656,7 +1656,7 @@ fassen</string>
      <x>20</x>
      <y>260</y>
      <width>491</width>
-     <height>261</height>
+     <height>201</height>
     </rect>
    </property>
    <property name="font">
@@ -1674,7 +1674,7 @@ fassen</string>
       <x>20</x>
       <y>20</y>
       <width>211</width>
-      <height>231</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -1840,6 +1840,44 @@ fassen</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_5">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>470</y>
+     <width>491</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Optionen</string>
+   </property>
+   <widget class="QCheckBox" name="cb_autokorrektur">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>371</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;1. Falls in den Tabellen &amp;quot;flaechen&amp;quot; und &amp;quot;einleitsw&amp;quot; leere oder doppelte Namen (flnam bzw. elnam) vorkommen, werden diese mit &amp;quot;f_nnnn&amp;quot; bzw. &amp;quot;e_nnnn&amp;quot; überschrieben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Automatische Korrektur von Namensfehlern in den Tabellen &quot;flaechen&quot; und &quot;einleitsw&quot;</string>
+    </property>
+    <property name="text">
+     <string>Autokorrektur von Namen in Flächen und Einleitpunkten</string>
     </property>
    </widget>
   </widget>

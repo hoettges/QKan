@@ -18,7 +18,7 @@ def meldung(title, text):
     iface.messageBar().pushMessage(title, text, level=QgsMessageBar.INFO)
 
     
-def fortschritt(text, prozent):
+def fortschritt(text, prozent=0):
     logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
     QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), u'Link Flächen: ', QgsMessageLog.INFO)
 

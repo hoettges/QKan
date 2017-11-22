@@ -377,7 +377,7 @@ class LinkFl:
     def showgroups(self):
         """Abfragen der Tabelle gruppen nach verwendeten vorhandenen Gruppen"""
 
-        sql = """SELECT grnam FROM gruppen GROUP BY grnam"""
+        sql = u"""SELECT grnam FROM gruppen GROUP BY grnam"""
         self.dbQK.sql(sql)
         daten = self.dbQK.fetchall()
 

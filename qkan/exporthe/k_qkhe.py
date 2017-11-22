@@ -32,30 +32,39 @@ from qgis.utils import iface
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.fbfunc import FBConnection
-from qkan.database.qgis_utils import fortschritt, fehlermeldung
+from qkan.database.qgis_utils import fortschritt, fehlermeldung, checknames
 
 logger = logging.getLogger('QKan')
 
 progress_bar = None
 
-def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_teilgebiete,
+def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autokorrektur, 
                      fangradius=0.1, datenbanktyp='spatialite', check_export={}):
     '''Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE-Firebird-Datenbank.
 
-    :database_HE:        Datenbankobjekt, das die Verknüpfung zur HE-Firebird-Datenbank verwaltet
-    :type database_HE:   string
+    :database_HE:           Pfad zur HE-Firebird-Datenbank
+    :type database_HE:      string
 
-    :dbtemplate_HE:      Vorlage für die zu erstellende Firebird-Datenbank
-    :type dbtemplate_HE: string
+    :dbtemplate_HE:         Vorlage für die zu erstellende Firebird-Datenbank
+    :type dbtemplate_HE:    string
 
-    :database_QKan:      Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type database_QKan: string
+    :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :type dbQK:             DBConnection
+
+    :liste_teilgebiete:     Liste der ausgewählten Teilgebiete
+    :type liste_teilgebiete: String
+
+    :autokorrektur:         Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
+                            werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
+                            abgebrochen.
+    :type autokorrektur:    String
+
+    :fangradius:         Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine 
+                         Haltung bzw. ein Einleitpunkt zugeordnet wird. 
+    :type fangradius:    Float
 
     :datenbanktyp:       Typ der Datenbank (SpatiaLite, PostGIS)
     :type datenbanktyp:  String
-
-    :liste_teilgebiete: Liste der ausgewählten Teilgebiete
-    :type liste_teilgebiete: String
 
     :check_export:       Liste von Export-Optionen
     :type check_export:  Dictionary
@@ -86,6 +95,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                       str(err))
         return False
     fortschritt(u"Firebird-Datenbank aus Vorlage kopiert...", 0.01)
+    progress_bar.setValue(1)
 
     # Verbindung zur Hystem-Extran-Datenbank
 
@@ -96,19 +106,12 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
                       'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_HE))
         return None
 
-    # Verbindung zur QKan-Datenbank
-
-    dbQK = DBConnection(database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesenen
-
-    if dbQK is None:
-        fehlermeldung(u"(2) Fehler",
-                      'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-        return None
 
     # --------------------------------------------------------------------------------------------------
     # Kontrolle der vorhandenen Profilquerschnitte. 
 
     fortschritt('Pruefung der Profiltypen...', 0.02)
+    progress_bar.setValue(2)
 
     # --------------------------------------------------------------------------------------------------
     # Zur Abschaetzung der voraussichtlichen Laufzeit
@@ -168,10 +171,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         nr0 = nextid
 
         fortschritt('Export Schaechte Teil 1...', 0.1)
+        progress_bar.setValue(10)
         createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
 
         for attr in dbQK.fetchall():
-            progress_bar.setValue(progress_bar.value() + 1)
+            # progress_bar.setValue(progress_bar.value() + 1)
 
             # In allen Feldern None durch NULL ersetzen
             (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, xsch_t, ysch_t) = \
@@ -239,6 +243,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         dbHE.commit()
 
         fortschritt('{} Schaechte eingefuegt'.format(nextid - nr0), 0.30)
+        progress_bar.setValue(30)
 
     # --------------------------------------------------------------------------------------------
     # Export der Speicherbauwerke
@@ -281,6 +286,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
         for attr in dbQK.fetchall():
             fortschritt('Export Speicherschaechte...', 0.15)
+            progress_bar.setValue(15)
 
             # In allen Feldern None durch NULL ersetzen
             (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, xsch_t, ysch_t, kommentar) = \
@@ -422,6 +428,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
             dbHE.commit()
 
             fortschritt('{} Speicher eingefuegt'.format(nextid - nr0), 0.40)
+    progress_bar.setValue(45)
 
     # --------------------------------------------------------------------------------------------
     # Export der Auslaesse
@@ -533,6 +540,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         dbHE.commit()
 
         fortschritt(u'{} Auslässe eingefuegt'.format(nextid - nr0), 0.40)
+    progress_bar.setValue(50)
 
     # --------------------------------------------------------------------------------------------
     # Export der Haltungen
@@ -706,6 +714,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         dbHE.commit()
 
         fortschritt('{} Haltungen eingefuegt'.format(nextid - nr0), 0.60)
+    progress_bar.setValue(70)
 
     # --------------------------------------------------------------------------------------------
     # Export der Bodenklassen
@@ -1059,14 +1068,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         Befestigte Flächen"""
 
         # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
-        sql = u"""UPDATE flaechen
-            SET flnam = printf('f_%d',pk)
-            WHERE flnam IS NULL OR flnam = ''"""
-        logger.debug(u'Ergänzen von flnam in flaechen wenn leer: \n{}'.format(sql))
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"QKan_Export (37) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+        if not checknames(dbQK, 'flaechen', 'flnam', 'f_', autokorrektur):
             del dbQK
             del dbHE
             return False
@@ -1327,14 +1329,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         # Herkunft = 1 (Direkt)
 
         # Vorbereitung einleit: Falls elnam leer ist, plausibel ergänzen:
-        sql = u"""UPDATE einleit
-            SET elnam = printf('d_%d',pk)
-            WHERE elnam IS NULL OR elnam = ''"""
-        logger.debug(u'Ergänzen von elnam in einleit wenn leer: \n{}'.format(sql))
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"QKan_Export (38) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+
+        if not checknames(dbQK, 'einleit', 'elnam', 'e_', autokorrektur):
             del dbQK
             del dbHE
             return False
@@ -1719,14 +1715,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
         # Datenvorbereitung: 
 
         # Vorbereitung einwohner: Falls elnam leer ist, plausibel ergänzen:
-        sql = u"""UPDATE einwohner
-            SET elnam = printf('e_%d',pk)
-            WHERE elnam IS NULL OR elnam = ''"""
-        logger.debug(u'Ergänzen von elnam in einwohner wenn leer: \n{}'.format(sql))
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"QKan_Export (39) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
+
+        if not checknames(dbQK, 'einwohner', 'elnam', 'e_', autokorrektur):
             del dbQK
             del dbHE
             return False
@@ -2023,22 +2013,3 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, database_QKan, liste_tei
     status_message.setText("Datenexport abgeschlossen.")
     status_message.setLevel(QgsMessageBar.SUCCESS)
 
-
-# ----------------------------------------------------------------------------------------------------------------------
-
-# Verzeichnis der Testdaten
-pfad = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh'
-
-database_HE = os.path.join(pfad, 'muster-modelldatenbank.idbf')
-database_QKan = os.path.join(pfad, 'muster.sqlite')
-
-if __name__ == '__main__':
-    exportKanaldaten(database_HE, database_QKan)
-elif __name__ == '__console__':
-    # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Konsole aufgerufen")
-    exportKanaldaten(database_HE, database_QKan)
-elif __name__ == '__builtin__':
-    # QMessageBox.information(None, "Info", "Das Programm wurde aus der QGIS-Toolbox aufgerufen")
-    exportKanaldaten(database_HE, database_QKan)
-# else:
-# QMessageBox.information(None, "Info", "Die Variable __name__ enthält: {0:s}".format(__name__))

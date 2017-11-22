@@ -51,10 +51,10 @@ logger = logging.getLogger('QKan')
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def createUnbefFlaechen(database_QKan, liste_tezg, autokorrektur, dbtyp='SpatiaLite'):
+def createUnbefFlaechen(dbQK, liste_tezg, autokorrektur, dbtyp='SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
-    :database_QKan:         Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type database:         DBConnection (geerbt von dbapi...)
 
     :liste_tezg:            Liste der bei der Bearbeitung zu berücksichtigenden Haltungsflächen (tezg)
@@ -74,24 +74,21 @@ def createUnbefFlaechen(database_QKan, liste_tezg, autokorrektur, dbtyp='SpatiaL
     # ------------------------------------------------------------------------------
     # Datenbankverbindungen
 
-    dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Schreiben
-
-    if dbQK is None:
-        fehlermeldung("Fehler", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-        return None
-
     # Kontrolle, ob tezg-Flächen eindeutig Namen haben:
 
-    checknames(dbQK, 'tezg', 'flnam', 'ft_', autokorrektur)
+    if not checknames(dbQK, 'tezg', 'flnam', 'ft_', autokorrektur):
+        return False
+    if not checknames(dbQK, 'flaechen', 'flnam', 'f_', autokorrektur):
+        return False
 
     # Kontrolle, ob in Tabelle "abflussparameter" ein Datensatz für unbefestigte Flächen vorhanden ist
     # (Standard: apnam = '$Default_Unbef')
 
     sql = u"""SELECT apnam
         FROM abflussparameter
-        WHERE bodenklasse IS NOT NULL OR trim(bodenklasse) = ''"""
+        WHERE bodenklasse IS NOT NULL AND trim(bodenklasse) <> ''"""
 
-    if not dbQK.sql(sql, 'QKan.k_unbef (1)'):
+    if not dbQK.sql(sql, 'k_unbef (1)'):
         return False
 
     data = dbQK.fetchone()
@@ -105,7 +102,7 @@ def createUnbefFlaechen(database_QKan, liste_tezg, autokorrektur, dbtyp='SpatiaL
                          ( 'apnam', 'kommentar', 'anfangsabflussbeiwert', 'endabflussbeiwert', 'benetzungsverlust', 
                            'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
                            'createdat') Values ({})""".format(ds)
-                if not dbQK.sql(sql, 'QKan.k_unbef (2)'):
+                if not dbQK.sql(sql, 'k_unbef (2)'):
                     return False
         else:
             fehlermeldung('Datenfehler: ','Bitte ergänzen Sie in der Tabelle "abflussparameter" einen Datensatz für unbefestigte Flächen ("bodenklasse" darf nicht leer oder NULL sein)')
@@ -154,20 +151,19 @@ def createUnbefFlaechen(database_QKan, liste_tezg, autokorrektur, dbtyp='SpatiaL
               tezg.regenschreiber AS regenschreiber, tezg.teilgebiet AS teilgebiet,
               tezg.abflussparameter AS abflussparameter,
               'Erzeugt mit Plugin Erzeuge unbefestigte Flaechen' AS kommentar, 
-              tezg.geom AS geot, 
-              GUnion(CastToMultiPolygon(Intersection(flaechen.geom,tezg.geom))) AS geob
+              MakeValid(tezg.geom) AS geot, 
+              ST_Union(MakeValid(flaechen.geom)) AS geob
             FROM tezg
             INNER JOIN flaechen
-            ON Intersects(tezg.geom,flaechen.geom)
-            WHERE 'fd_' || ltrim(tezg.flnam, 'ft_') not in (SELECT flnam FROM flaechen)
-              {auswahl}
+            ON Intersects(tezg.geom, flaechen.geom)
+            WHERE 'fd_' || ltrim(tezg.flnam, 'ft_') not in 
+            (   SELECT flnam FROM flaechen WHERE flnam IS NOT NULL){auswahl}
             GROUP BY tezg.pk)
             INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, kommentar, geom) 
              SELECT flnam AS flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter,
             kommentar, CastToMultiPolygon(Difference(geot,geob)) AS geom FROM flbef""".format(auswahl=auswahl)
 
     logger.debug(u'QKan.k_unbef (3) - liste_tezg = \n{}'.format(str(liste_tezg)))
-    logger.debug(u'QKan.k_unbef (3) - SQL = \n{sql}'.format(sql=sql))
     if not dbQK.sql(sql, u"QKan_CreateUnbefFl (4)"):
         return False
 
@@ -176,20 +172,15 @@ def createUnbefFlaechen(database_QKan, liste_tezg, autokorrektur, dbtyp='SpatiaL
             SELECT
                 fl.flnam AS flnam, 
                 NULL AS aufteilen, 
-                tg.teilgebiet AS teilgebiet, 
+                fl.teilgebiet AS teilgebiet, 
                 NULL AS geom,
                 MakeLine(PointOnSurface(fl.geom),Centroid(ha.geom)) AS glink
-                FROM linkfl AS lf
-                INNER JOIN flaechen AS fl
-                ON lf.flnam = fl.flnam
+                FROM flaechen AS fl
                 INNER JOIN haltungen AS ha
-                ON lf.haltnam = ha.haltnam
-                INNER JOIN tezg AS tg
-                ON 'fd_' || tg.flnam = fl.flnam
+                ON fl.haltnam = ha.haltnam
                 WHERE fl.flnam NOT IN
-                (   SELECT flnam FROM linkfl)"""
+                (   SELECT flnam FROM linkfl WHERE flnam IS NOT NULL)"""
 
-    logger.debug(u'QKan.k_unbef (5) - SQL = \n{sql}'.format(sql=sql))
     if not dbQK.sql(sql, "QKan.k_unbef (5)"):
         return False
 
