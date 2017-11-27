@@ -137,6 +137,30 @@ class CreateUnbefFl:
         pass
 
     # -------------------------------------------------------------------------
+    # Formularfunktionen
+
+    def countselection(self):
+        """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
+        der betroffenen TEZG-Flächen"""
+
+        liste_selected = self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)
+        # Aufbereiten für SQL-Abfrage
+
+        # Unterschiedliches Vorgehen, je nachdem ob mindestens eine oder keine Zeile
+        # ausgewählt wurde
+
+        if len(liste_selected) == 0:
+            anzahl = sum([int(attr[-2]) for attr in self.listetezg])
+        else:
+            anzahl = sum([int(attr[-2]) for attr in liste_selected])
+
+        if not (anzahl is None):
+            self.dlg.lf_anzahl_tezg.setText('{}'.format(anzahl))
+        else:
+            self.dlg.lf_anzahl_tezg.setText('0')
+
+
+    # -------------------------------------------------------------------------
     # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
     def listselectedTabitems(self, listWidget):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
@@ -163,8 +187,7 @@ class CreateUnbefFl:
                 rowakt = elem.row()
 
             # Text hinzufügen, aber dabei Spalte "Anzahl" ignorieren
-            if elem.column() != 2:
-                sel.append(elem.text())
+            sel.append(elem.text())
         # zum Schluss noch das letzte Element hinzufügen
         if len(items) > 0:
             liste.append(sel)
@@ -197,20 +220,85 @@ class CreateUnbefFl:
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
 
-        sql = u"""SELECT abflussparameter, teilgebiet, count(*) AS anz FROM tezg GROUP BY abflussparameter, teilgebiet"""
-        if not dbQK.sql(sql, 'createunbeffl.run'):
+        # Kontrolle, ob in Tabelle "abflussparameter" ein Datensatz für unbefestigte Flächen vorhanden ist
+        # (Standard: apnam = '$Default_Unbef')
+
+        sql = u"""SELECT apnam
+            FROM abflussparameter
+            WHERE bodenklasse IS NOT NULL AND trim(bodenklasse) <> ''"""
+
+        if not dbQK.sql(sql, 'createunbeffl.run (1)'):
+            return False
+
+        data = dbQK.fetchone()
+
+        if data is None:
+            if autokorrektur:
+                daten = ["'$Default_Unbef', u'von QKan ergänzt', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
+
+                for ds in daten:
+                    sql = u"""INSERT INTO abflussparameter
+                             ( 'apnam', 'kommentar', 'anfangsabflussbeiwert', 'endabflussbeiwert', 'benetzungsverlust', 
+                               'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
+                               'createdat') Values ({})""".format(ds)
+                    if not dbQK.sql(sql, 'createunbeffl.run (2)'):
+                        return False
+            else:
+                fehlermeldung('Datenfehler: ','Bitte ergänzen Sie in der Tabelle "abflussparameter" einen Datensatz für unbefestigte Flächen ("bodenklasse" darf nicht leer oder NULL sein)')
+
+        # # Kontrolle, ob noch Flächen in Tabelle "tezg" ohne Zuordnung zu einem Abflussparameter oder zu einem 
+        # # Abflussparameter, bei dem keine Bodenklasse definiert ist (Kennzeichen für undurchlässige Flächen).
+
+        # sql = u"""SELECT te.abflussparameter, te.teilgebiet, count(*) AS anz 
+            # FROM tezg AS te
+            # LEFT JOIN abflussparameter AS ap
+            # ON te.abflussparameter = ap.apnam
+            # WHERE ap.bodenklasse IS NULL
+            # GROUP BY abflussparameter, teilgebiet"""
+
+        # if not dbQK.sql(sql, 'createunbeffl.run (3)'):
+            # return False
+
+        # data = dbQK.fetchall()
+
+        # if len(data) > 0:
+            # liste = [u'{}\t{}\t{}'.format(el1, el2, el3) for el1, el2, el3 in data]
+            # liste.insert(0, u'\nAbflussparameter\tTeilgebiet\tAnzahl')
+            
+            # fehlermeldung(u'In Tabelle "tezg" fehlen Abflussparameter oder gehören zu befestigten Flächen (Bodenklasse = NULL):\n', 
+                          # u'\n'.join(liste))
+            # return False
+
+        sql = u"""SELECT te.abflussparameter, te.teilgebiet, bk.bknam, count(*) AS anz, 
+                CASE WHEN te.abflussparameter ISNULL THEN 'Fehler: Kein Abflussparameter angegeben' ELSE
+                    CASE WHEN bk.infiltrationsrateanfang ISNULL THEN 'Fehler: Keine Bodenklasse angegeben' 
+                         WHEN bk.infiltrationsrateanfang < 0.00001 THEN 'Fehler: undurchlässige Bodenart'
+                         ELSE ''
+                    END
+                END AS status
+                            FROM tezg AS te
+                            LEFT JOIN abflussparameter AS ap
+                            ON te.abflussparameter = ap.apnam
+                            LEFT JOIN bodenklassen AS bk
+                            ON bk.bknam = ap.bodenklasse
+                            GROUP BY abflussparameter, teilgebiet"""
+        if not dbQK.sql(sql, 'createunbeffl.run (4)'):
             return None
 
-        daten = dbQK.fetchall()
-        nzeilen = len(daten)
+        self.listetezg = dbQK.fetchall()
+        nzeilen = len(self.listetezg)
         self.dlg.tw_cnt_abflussparameter.setRowCount(nzeilen)
-        self.dlg.tw_cnt_abflussparameter.setHorizontalHeaderLabels(["Abflussparameter", "Teilgebiet", "Anzahl"])
-        self.dlg.tw_cnt_abflussparameter.setColumnWidth(0, 184)  # 17 Pixel für Rand und Nummernspalte (und je Spalte?)
-        self.dlg.tw_cnt_abflussparameter.setColumnWidth(1, 150)
-        self.dlg.tw_cnt_abflussparameter.setColumnWidth(2, 50)
-        for i, elem in enumerate(daten):
+        self.dlg.tw_cnt_abflussparameter.setHorizontalHeaderLabels([u"Abflussparameter", u"Teilgebiet", 
+                                                                     u"Bodenklasse", u"Anzahl", u"Anmerkungen"])
+        self.dlg.tw_cnt_abflussparameter.setColumnWidth(0, 144)  # 17 Pixel für Rand und Nummernspalte (und je Spalte?)
+        self.dlg.tw_cnt_abflussparameter.setColumnWidth(1, 140)
+        self.dlg.tw_cnt_abflussparameter.setColumnWidth(2, 90)
+        self.dlg.tw_cnt_abflussparameter.setColumnWidth(3, 50)
+        self.dlg.tw_cnt_abflussparameter.setColumnWidth(4, 200)
+        for i, elem in enumerate(self.listetezg):
             for j, item in enumerate(elem):
-                self.dlg.tw_cnt_abflussparameter.setItem(i, j, QTableWidgetItem(str(elem[j])))
+                cell = u'{}'.format(elem[j])
+                self.dlg.tw_cnt_abflussparameter.setItem(i, j, QTableWidgetItem(cell))
                 self.dlg.tw_cnt_abflussparameter.setRowHeight(i, 20)
 
         # config in Dialog übernehmen
@@ -223,6 +311,9 @@ class CreateUnbefFl:
             autokorrektur = True
         self.dlg.cb_autokorrektur.setChecked(autokorrektur)
 
+        self.dlg.tw_cnt_abflussparameter.itemClicked.connect(self.countselection)
+        self.countselection()
+ 
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
@@ -234,7 +325,8 @@ class CreateUnbefFl:
             # pass
 
             # Start der Verarbeitung
-            liste_tezg = self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)
+            liste_abflussparam = self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)
+            logger.debug(u'\nliste_abflussparam (1): {}'.format(liste_abflussparam))
             autokorrektur = self.dlg.cb_autokorrektur.isChecked()
 
             self.config['autokorrektur'] = autokorrektur
@@ -242,7 +334,7 @@ class CreateUnbefFl:
             with codecs.open(self.configfil,'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-            createUnbefFlaechen(dbQK, liste_tezg, autokorrektur)
+            createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur)
 
             # else:
             # logger.debug('Selected: \n{}'.format(self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)))

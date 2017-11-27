@@ -63,6 +63,9 @@ class DBConnection:
         :type tabObject: QgsVectorLayer
         """
 
+        # Übernahme von epsg in die Klasse
+        self.epsg = epsg
+
         if dbname is not None:
             # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
             if os.path.exists(dbname):
@@ -177,7 +180,7 @@ class DBConnection:
 
     # Versionskontrolle der QKan-Datenbank
 
-    def version(self, actversion = '2.1.2'):
+    def version(self, actversion = '2.2.0'):
         """Checks database version. Database is just connected by the calling procedure.
 
             :param actversion: aktuelle Version
@@ -213,38 +216,38 @@ class DBConnection:
         if versiondbQK == '1.9.9':
 
             # Tabelle einwohner
-            sqllis = [u"""CREATE TABLE IF NOT EXISTS einwohner (
-                pk INTEGER PRIMARY KEY AUTOINCREMENT, 
-                elnam TEXT, 
-                haltnam TEXT, 
-                ew REAL, 
-                teilgebiet TEXT, 
-                kommentar TEXT, 
-                createdat TEXT DEFAULT CURRENT_DATE)""", 
-            u"""SELECT AddGeometryColumn('einwohner','geom',25832,'POINT',2)"""]
-            for sql in sqllis:
-                if not self.sql(sql, 'dbfunc.version (3a)'):
-                    return False
+            # sqllis = [u"""CREATE TABLE IF NOT EXISTS einwohner (
+                # pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+                # elnam TEXT, 
+                # haltnam TEXT, 
+                # ew REAL, 
+                # teilgebiet TEXT, 
+                # kommentar TEXT, 
+                # createdat TEXT DEFAULT CURRENT_DATE)""", 
+            # u"""SELECT AddGeometryColumn('einwohner','geom',25832,'POINT',2)"""]
+            # for sql in sqllis:
+                # if not self.sql(sql, 'dbfunc.version (3a)'):
+                    # return False
 
-            sqllis = [u"""CREATE TABLE IF NOT EXISTS linkew (
-                pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                elnam TEXT,
-                haltnam TEXT,
-                teilgebiet TEXT)""", 
-                u"""SELECT AddGeometryColumn('linksw','geom',25832,'POLYGON',2)""", 
-                u"""SELECT AddGeometryColumn('linksw','gbuf',25832,'MULTIPOLYGON',2)""", 
-                u"""SELECT AddGeometryColumn('linksw','glink',25832,'LINESTRING',2)"""]
-            for sql in sqllis:
-                if not self.sql(sql, 'dbfunc.version (3b)'):
-                    return False
+            # sqllis = [u"""CREATE TABLE IF NOT EXISTS linkew (
+                # pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                # elnam TEXT,
+                # haltnam TEXT,
+                # teilgebiet TEXT)""", 
+                # u"""SELECT AddGeometryColumn('linksw','geom',25832,'POLYGON',2)""", 
+                # u"""SELECT AddGeometryColumn('linksw','gbuf',25832,'MULTIPOLYGON',2)""", 
+                # u"""SELECT AddGeometryColumn('linksw','glink',25832,'LINESTRING',2)"""]
+            # for sql in sqllis:
+                # if not self.sql(sql, 'dbfunc.version (3b)'):
+                    # return False
 
             # Tabelle einleit
             sqllis = [u"""CREATE TABLE IF NOT EXISTS einleit(
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
                 elnam TEXT,
                 haltnam TEXT,
-                zufluss REAL,
                 teilgebiet TEXT, 
+                zufluss REAL,
                 kommentar TEXT,
                 createdat TEXT DEFAULT CURRENT_DATE)""", 
             u"""SELECT AddGeometryColumn('einleit','geom',25832,'POINT',2)"""]
@@ -269,6 +272,7 @@ class DBConnection:
                 return False
 
             versiondbQK = '2.0.2'
+
 
         if versiondbQK == '2.0.2':
 
@@ -302,15 +306,59 @@ class DBConnection:
                     return False
                 self.commit()
 
-            sql = u"""UPDATE info SET value = '2.1.1' WHERE subject = 'version' and value = '2.0.2';"""
+            sql = u"""UPDATE info SET value = '2.1.2' WHERE subject = 'version' and value = '2.0.2';"""
             if not self.sql(sql, 'dbfunc.version (4d)'):
                 return False
 
-            versiondbQK = '2.1.1'
+            versiondbQK = '2.1.2'
+
+
+        if versiondbQK == '2.1.2':
+            attrlis = self.attrlist('einleit')
+            if not attrlis:
+                return False
+            elif u'ew' not in attrlis:
+                logger.debug('einleit.ew ist nicht in: {}'.format(str(attrlis)))
+                sql = u"""ALTER TABLE einleit ADD COLUMN ew REAL"""
+                if not self.sql(sql, 'dbfunc.version (4f)'):
+                    return False
+                sql = u"""ALTER TABLE einleit ADD COLUMN einzugsgebiet TEXT"""
+                if not self.sql(sql, 'dbfunc.version (4g)'):
+                    return False
+                self.commit()
+
+
+            sql = """CREATE TABLE IF NOT EXISTS einzugsgebiete (
+                pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                tgnam TEXT,
+                ewdichte REAL,
+                wverbrauch REAL,
+                stdmittel REAL,
+                fremdwas REAL,
+                kommentar TEXT,
+                createdat TEXT DEFAULT CURRENT_DATE)"""
+
+            if not self.sql(sql, 'dbfunc.version (4h)'):
+                return False
+
+            sql = """SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)""".format(self.epsg)
+            if not self.sql(sql, 'dbfunc.version (4i)'):
+                return False
+
+            sql = """SELECT CreateSpatialIndex('einzugsgebiete','geom')"""
+            if not self.sql(sql, 'dbfunc.version (4j)'):
+                return False
+
+            sql = u"""UPDATE info SET value = '2.1.6' WHERE subject = 'version' and value = '2.1.2';"""
+            if not self.sql(sql, 'dbfunc.version (4k)'):
+                return False
+
+            versiondbQK = '2.1.6'
+
 
         if versiondbQK < actversion:
 
-            sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version';""".format(actversion)
+            sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version' and value = '{}';""".format(actversion, versiondbQK)
             if not self.sql(sql, 'dbfunc.version (4e)'):
                 return False
 

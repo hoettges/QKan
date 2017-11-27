@@ -266,7 +266,7 @@
      <x>530</x>
      <y>30</y>
      <width>321</width>
-     <height>491</height>
+     <height>481</height>
     </rect>
    </property>
    <property name="font">
@@ -466,7 +466,7 @@
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>340</y>
+      <y>310</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -491,7 +491,7 @@
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>320</y>
+      <y>290</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -516,7 +516,7 @@
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>300</y>
+      <y>270</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -541,7 +541,7 @@
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>390</y>
+      <y>360</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -706,7 +706,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>300</y>
+      <y>270</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -726,7 +726,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>320</y>
+      <y>290</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -746,7 +746,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>340</y>
+      <y>310</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -766,7 +766,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>390</y>
+      <y>360</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -875,7 +875,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>340</y>
+      <y>310</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -925,7 +925,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>390</y>
+      <y>360</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1000,7 +1000,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>300</y>
+      <y>270</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1053,7 +1053,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>320</y>
+      <y>290</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1131,7 +1131,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>440</y>
+      <y>410</y>
       <width>31</width>
       <height>20</height>
      </rect>
@@ -1157,7 +1157,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>129</x>
-      <y>440</y>
+      <y>410</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -1182,7 +1182,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>189</x>
-      <y>440</y>
+      <y>410</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -1207,7 +1207,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>129</x>
-      <y>460</y>
+      <y>430</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -1232,7 +1232,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>189</x>
-      <y>460</y>
+      <y>430</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -1257,7 +1257,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>460</y>
+      <y>430</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -1283,7 +1283,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>360</y>
+      <y>330</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1308,7 +1308,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>19</x>
-      <y>360</y>
+      <y>330</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -1331,7 +1331,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>360</y>
+      <y>330</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1355,81 +1355,11 @@ hinzufügen</string>
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label_29">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>240</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>SW-Einleiter (EW):</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_einleitew">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>240</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_export_einleitew">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>240</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_33">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>260</y>
+      <y>230</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -1442,14 +1372,14 @@ hinzufügen</string>
      </font>
     </property>
     <property name="text">
-     <string>SW-Einleiter (Qzu):</string>
+     <string>SW-Einleiter:</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_modify_einleitdirekt">
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>260</y>
+      <y>230</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1474,7 +1404,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>260</y>
+      <y>230</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1512,7 +1442,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>280</y>
+      <y>250</y>
       <width>301</width>
       <height>21</height>
      </rect>
@@ -1525,7 +1455,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>410</y>
+      <y>380</y>
       <width>301</width>
       <height>21</height>
      </rect>
@@ -1559,36 +1489,11 @@ hinzufügen</string>
      <string/>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_combine_einleitew">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>240</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die SW-Einleiterdaten werden vor dem Export haltungsweise zusammengefasst, so dass pro Haltung nur ein Datensatz existiert. Dies erhöht die Verarbeitungsgeschwindigkeit in HYSTEM-EXTRAN, während die direkte Zuordnung zu den Geoobjekten in QKan verloren geht. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="cb_combine_einleitdirekt">
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>260</y>
+      <y>230</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1644,7 +1549,7 @@ fassen</string>
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.1.5</string>
+    <string>Version 2.2.0</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

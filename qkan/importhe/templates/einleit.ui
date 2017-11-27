@@ -29,6 +29,9 @@
     <property name="text">
      <string>zu Haltung</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
@@ -42,18 +45,24 @@
     <property name="text">
      <string>Wasserverbrauch</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>130</y>
-      <width>51</width>
+      <x>360</x>
+      <y>100</y>
+      <width>61</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
      <string>Teilgebiet</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLineEdit" name="zufluss">
@@ -79,8 +88,8 @@
    <widget class="QComboBox" name="teilgebiet">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>130</y>
+      <x>430</x>
+      <y>100</y>
       <width>111</width>
       <height>22</height>
      </rect>
@@ -203,6 +212,9 @@
     <property name="text">
      <string>Erstelldatum</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
    </widget>
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
@@ -227,10 +239,36 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.1.5</string>
+     <string>Version 2.2.0</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_23">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>130</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Einzugsgebiet</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="einzugsgebiet">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>130</y>
+      <width>111</width>
+      <height>22</height>
+     </rect>
     </property>
    </widget>
   </widget>

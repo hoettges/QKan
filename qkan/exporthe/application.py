@@ -162,7 +162,6 @@ class ExportToHE:
         export_pumpen = cb_set('export_pumpen', self.dlg.cb_export_pumpen, False)
         export_wehre = cb_set('export_wehre', self.dlg.cb_export_wehre, False)
         export_flaechenrw = cb_set('export_flaechenrw', self.dlg.cb_export_flaechenrw, True)
-        export_einleitew = cb_set('export_einleitew', self.dlg.cb_export_einleitew, True)
         export_einleitdirekt = cb_set('export_einleitdirekt', self.dlg.cb_export_einleitdirekt, True)
         export_abflussparameter = cb_set('export_abflussparameter', self.dlg.cb_export_abflussparameter, True)
         export_regenschreiber = cb_set('export_regenschreiber', self.dlg.cb_export_regenschreiber, False)
@@ -177,7 +176,6 @@ class ExportToHE:
         modify_pumpen = cb_set('modify_pumpen', self.dlg.cb_modify_pumpen, False)
         modify_wehre = cb_set('modify_wehre', self.dlg.cb_modify_wehre, False)
         modify_flaechenrw = cb_set('modify_flaechenrw', self.dlg.cb_modify_flaechenrw, False)
-        modify_einleitew = cb_set('modify_einleitew', self.dlg.cb_modify_einleitew, False)
         modify_einleitdirekt = cb_set('modify_einleitdirekt', self.dlg.cb_modify_einleitdirekt, False)
         modify_abflussparameter = cb_set('modify_abflussparameter', self.dlg.cb_modify_abflussparameter, False)
         modify_regenschreiber = cb_set('modify_regenschreiber', self.dlg.cb_modify_regenschreiber, False)
@@ -187,7 +185,6 @@ class ExportToHE:
 
         combine_flaechenrw = cb_set('combine_flaechenrw', self.dlg.cb_combine_flaechenrw, True)
         combine_einleitdirekt = cb_set('combine_einleitdirekt', self.dlg.cb_combine_einleitdirekt, True)
-        combine_einleitew = cb_set('combine_einleitew', self.dlg.cb_combine_einleitew, True)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -260,7 +257,6 @@ class ExportToHE:
         self.dlg.cb_export_pumpen.setChecked(True)
         self.dlg.cb_export_wehre.setChecked(True)
         self.dlg.cb_export_flaechenrw.setChecked(True)
-        self.dlg.cb_export_einleitew.setChecked(True)
         self.dlg.cb_export_einleitdirekt.setChecked(True)
         self.dlg.cb_export_abflussparameter.setChecked(True)
         self.dlg.cb_export_regenschreiber.setChecked(True)
@@ -278,7 +274,6 @@ class ExportToHE:
         self.dlg.cb_modify_pumpen.setChecked(True)
         self.dlg.cb_modify_wehre.setChecked(True)
         self.dlg.cb_modify_flaechenrw.setChecked(True)
-        self.dlg.cb_modify_einleitew.setChecked(True)
         self.dlg.cb_modify_einleitdirekt.setChecked(True)
         self.dlg.cb_modify_abflussparameter.setChecked(True)
         self.dlg.cb_modify_regenschreiber.setChecked(True)
@@ -296,7 +291,6 @@ class ExportToHE:
         self.dlg.cb_export_pumpen.setChecked(False)
         self.dlg.cb_export_wehre.setChecked(False)
         self.dlg.cb_export_flaechenrw.setChecked(False)
-        self.dlg.cb_export_einleitew.setChecked(False)
         self.dlg.cb_export_einleitdirekt.setChecked(False)
         self.dlg.cb_export_abflussparameter.setChecked(False)
         self.dlg.cb_export_regenschreiber.setChecked(False)
@@ -314,7 +308,6 @@ class ExportToHE:
         self.dlg.cb_modify_pumpen.setChecked(False)
         self.dlg.cb_modify_wehre.setChecked(False)
         self.dlg.cb_modify_flaechenrw.setChecked(False)
-        self.dlg.cb_modify_einleitew.setChecked(False)
         self.dlg.cb_modify_einleitdirekt.setChecked(False)
         self.dlg.cb_modify_abflussparameter.setChecked(False)
         self.dlg.cb_modify_regenschreiber.setChecked(False)
@@ -545,7 +538,6 @@ class ExportToHE:
             check_export['export_pumpen'] = self.dlg.cb_export_pumpen.isChecked()
             check_export['export_wehre'] = self.dlg.cb_export_wehre.isChecked()
             check_export['export_flaechenrw'] = self.dlg.cb_export_flaechenrw.isChecked()
-            check_export['export_einleitew'] = self.dlg.cb_export_einleitew.isChecked()
             check_export['export_einleitdirekt'] = self.dlg.cb_export_einleitdirekt.isChecked()
             check_export['export_abflussparameter'] = self.dlg.cb_export_abflussparameter.isChecked()
             check_export['export_regenschreiber'] = self.dlg.cb_export_regenschreiber.isChecked()
@@ -560,7 +552,6 @@ class ExportToHE:
             check_export['modify_pumpen'] = self.dlg.cb_modify_pumpen.isChecked()
             check_export['modify_wehre'] = self.dlg.cb_modify_wehre.isChecked()
             check_export['modify_flaechenrw'] = self.dlg.cb_modify_flaechenrw.isChecked()
-            check_export['modify_einleitew'] = self.dlg.cb_modify_einleitew.isChecked()
             check_export['modify_einleitdirekt'] = self.dlg.cb_modify_einleitdirekt.isChecked()
             check_export['modify_abflussparameter'] = self.dlg.cb_modify_abflussparameter.isChecked()
             check_export['modify_regenschreiber'] = self.dlg.cb_modify_regenschreiber.isChecked()
@@ -570,7 +561,6 @@ class ExportToHE:
 
             check_export['combine_flaechenrw'] = self.dlg.cb_combine_flaechenrw.isChecked()
             check_export['combine_einleitdirekt'] = self.dlg.cb_combine_einleitdirekt.isChecked()
-            check_export['combine_einleitew'] = self.dlg.cb_combine_einleitew.isChecked()
 
             # Konfigurationsdaten schreiben
             self.config['database_HE'] = database_HE

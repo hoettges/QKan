@@ -6,6 +6,11 @@ from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
+import tempfile
+import os 
+import os.path
+from datetime import datetime as dt
+
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
 
@@ -27,6 +32,12 @@ def fehlermeldung(title, text):
     logger.error(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
     iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL)
+
+    # Protokolldatei anzeigen
+
+    # dnam = dt.today().strftime("%Y%m%d")
+    # fnam = os.path.join(tempfile.gettempdir(), 'QKan{}.log'.format(dnam))
+    # os.startfile(fnam)
 
 # Allgemeine Funktionen
 

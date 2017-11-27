@@ -171,7 +171,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         nr0 = nextid
 
         fortschritt('Export Schaechte Teil 1...', 0.1)
-        progress_bar.setValue(10)
+        progress_bar.setValue(15)
         createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
 
         for attr in dbQK.fetchall():
@@ -285,8 +285,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
         for attr in dbQK.fetchall():
-            fortschritt('Export Speicherschaechte...', 0.15)
-            progress_bar.setValue(15)
+            fortschritt('Export Speicherschaechte...', 0.35)
+            progress_bar.setValue(35)
 
             # In allen Feldern None durch NULL ersetzen
             (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, xsch_t, ysch_t, kommentar) = \
@@ -823,6 +823,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         dbHE.commit()
 
         fortschritt('{} Bodenklassen eingefuegt'.format(nextid - nr0), 0.62)
+    progress_bar.setValue(80)
 
     # --------------------------------------------------------------------------------------------
     # Export der Abflussparameter
@@ -953,6 +954,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         dbHE.commit()
 
         fortschritt('{} Abflussparameter eingefuegt'.format(nextid - nr0), 0.65)
+    progress_bar.setValue(85)
 
     # ------------------------------------------------------------------------------------------------
     # Export der Regenschreiber
@@ -1042,6 +1044,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         dbHE.commit()
 
         fortschritt('{} Regenschreiber eingefuegt'.format(nextid - nr0), 0.68)
+    progress_bar.setValue(90)
 
     if check_export['export_flaechenrw'] or check_export['modify_flaechenrw']:
         """
@@ -1324,9 +1327,203 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         dbHE.commit()
 
         fortschritt('{} Flaechen eingefuegt'.format(nextid - nr0), 0.80)
+    progress_bar.setValue(90)
 
     if check_export['export_einleitdirekt'] or check_export['modify_einleitdirekt']:
-        # Herkunft = 1 (Direkt)
+        # Herkunft = 1 (Direkt) und 3 (Einwohnerbezogen)
+
+        """
+        Bearbeitung in QKan: Vervollständigung der Einzugsgebiete
+
+        Prüfung der vorliegenden Einzugsgebiete in QKan
+        ============================================
+        Zunächst eine grundsätzliche Anmerkung: In HE gibt es keine Einzugsgebiete in der Form, wie sie
+        in QKan vorhanden sind. Diese werden (nur) in QKan verwendet, um für die Variante 
+        Herkunft = 3 die Grundlagendaten
+         - einwohnerspezifischer Schmutzwasseranfall
+         - Fremdwasseranteil
+         - Stundenmittel
+        zu verwalten.
+
+        Aus diesem Grund werden vor dem Export der Einzeleinleiter diese Daten geprüft:
+
+        1 Wenn in QKan keine Einzugsgebiete vorhanden sind, wird zunächst geprüft, ob die
+           Einwohnerpunkte einem (noch nicht angelegten) Einzugsgebiet zugeordnet sind.
+           1.1 Kein Einwohnerpunkt ist einem Einzugsgebiet zugeordnet. Dann wird ein Einzugsgebiet "Einzugsgebiet1" 
+               angelegt und alle Einwohnerpunkte diesem Einzugsgebiet zugeordnet
+           1.2 Die Einwohnerpunkte sind einem oder mehreren noch nicht in der Tabelle "einzugsgebiete" vorhandenen 
+               Einzugsgebieten zugeordnet. Dann werden entsprechende Einzugsgebiete mit Standardwerten angelegt.
+        2 Wenn in QKan Einzugsgebiete vorhanden sind, wird geprüft, ob es auch Einwohnerpunkte gibt, die diesen
+           Einzugsgebieten zugeordnet sind.
+           2.1 Es gibt keine Einwohnerpunkte, die einem Einzugsgebiet zugeordnet sind.
+               2.1.1 Es gibt in QKan genau ein Einzugsgebiet. Dann werden alle Einwohnerpunkte diesem Einzugsgebiet
+                     zugeordnet.
+               2.1.2 Es gibt in QKan mehrere Einzugsgebiete. Dann werden alle Einwohnerpunkte geographisch dem
+                     betreffenden Einzugsgebiet zugeordnet.
+           2.2 Es gibt mindestens einen Einwohnerpunkt, der einem Einzugsgebiet zugeordnet ist.
+               Dann wird geprüft, ob es noch nicht zugeordnete Einwohnerpunkte gibt, eine Warnung angezeigt und
+               diese Einwohnerpunkte aufgelistet.
+        """
+
+        sql = 'SELECT count(*) AS anz FROM einzugsgebiete'
+        dbQK.sql(sql)
+        anztgb = int(dbQK.fetchone()[0])
+        if anztgb == 0:
+            # 1 Kein Einzugsgebiet in QKan -----------------------------------------------------------------
+            createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
+
+            sql = u"""
+                SELECT count(*) AS anz FROM einleit WHERE
+                (einzugsgebiet is not NULL) AND
+                (einzugsgebiet <> 'NULL') AND
+                (einzugsgebiet <> '')
+            """
+            dbQK.sql(sql)
+            anz = int(dbQK.fetchone()[0])
+            if anz == 0:
+                # 1.1 Kein Einwohnerpunkt mit Einzugsgebiet ----------------------------------------------------
+                sql = u"""
+                   INSERT INTO einzugsgebiete
+                   ( tgnam, ewdichte, wverbrauch, stdmittel,
+                     fremdwas, createdat, kommentar)
+                   Values
+                   ( 'einzugsgebiet1', 60, 120, 14, 100, '{createdat}',
+                     'Automatisch durch  QKan hinzugefuegt')""".format(createdat=createdat)
+                try:
+                    dbQK.sql(sql)
+                except BaseException as err:
+                    fehlermeldung(u"(27) Fehler in SQL:\n{sql}\n", err)
+                    return False
+                dbQK.commit()
+            else:
+                # 1.2 Einwohnerpunkte mit Einzugsgebiet ----------------------------------------------------
+                # Liste der in allen Einwohnerpunkten vorkommenden Einzugsgebiete
+                sql = u"""SELECT einzugsgebiet FROM einleit WHERE einzugsgebiet is not NULL GROUP BY einzugsgebiet"""
+                dbQK.sql(sql)
+                listeilgeb = dbQK.fetchall()
+                for tgb in listeilgeb:
+                    sql = u"""
+                       INSERT INTO einzugsgebiete
+                       ( tgnam, ewdichte, wverbrauch, stdmittel,
+                         fremdwas, createdat, kommentar)
+                       Values
+                       ( '{tgnam}', 60, 120, 14, 100, '{createdat}',
+                         'Hinzugefuegt aus QKan')""".format(tgnam=tgb[0], createdat=createdat)
+                    try:
+                        dbQK.sql(sql)
+                    except BaseException as err:
+                        fehlermeldung(u"(28) Fehler in SQL:\n{sql}\n", err)
+                        return False
+                    dbQK.commit()
+                    iface.messageBar().pushMessage(u"Tabelle 'einzugsgebiete':\n",
+                                                   u"Es wurden {} Einzugsgebiete hinzugefügt".format(len(tgb)),
+                                                   level=QgsMessageBar.INFO, duration=3)
+
+                # Kontrolle mit Warnung
+                sql = u"""
+                    SELECT count(*) AS anz
+                    FROM einleit
+                    LEFT JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
+                    WHERE einzugsgebiete.pk IS NULL
+                """
+                dbQK.sql(sql)
+                anz = int(dbQK.fetchone()[0])
+                if anz > 0:
+                    iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einleit':",
+                                                   u"{} Einleitpunkte sind keinem Einzugsgebiet zugeordnet".format(anz),
+                                                   level=QgsMessageBar.WARNING, duration=0)
+        else:
+            # 2 Einzugsgebiete in QKan ----------------------------------------------------
+            sql = u"""
+                SELECT count(*) AS anz
+                FROM einleit
+                INNER JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
+            """
+            dbQK.sql(sql)
+            anz = int(dbQK.fetchone()[0])
+            if anz == 0:
+                # 2.1 Keine Einleitpunkte mit Einzugsgebiet ----------------------------------------------------
+                if anztgb == 1:
+                    # 2.1.1 Es existiert genau ein Einzugsgebiet ---------------------------------------------
+                    sql = u"""UPDATE einleit SET einzugsgebiet = (SELECT tgnam FROM einzugsgebiete GROUP BY tgnam)"""
+                    try:
+                        dbQK.sql(sql)
+                    except BaseException as err:
+                        fehlermeldung(u"(29) Fehler in SQL:\n{sql}\n", err)
+                        return False
+                    dbQK.commit()
+                    iface.messageBar().pushMessage(u"Tabelle 'einleit':\n",
+                                       u"Alle Einleitpunkte in der Tabelle 'einleit' wurden einem Einzugsgebiet zugeordnet",
+                                       level=QgsMessageBar.INFO, duration=3)
+                else:
+                    # 2.1.2 Es existieren mehrere Einzugsgebiete ------------------------------------------
+                    sql = u"""UPDATE einleit SET einzugsgebiet = (SELECT tgnam FROM einzugsgebiete
+                          WHERE within(einleit.geom, einzugsgebiete.geom))"""
+                    try:
+                        dbQK.sql(sql)
+                    except BaseException as err:
+                        fehlermeldung(u"(30) Fehler in SQL:\n{sql}\n", err)
+                        return False
+                    dbQK.commit()
+                    iface.messageBar().pushMessage(u"Tabelle 'einleit':\n",
+                                       u"Alle Einleitpunkte in der Tabelle 'einleit' wurden dem Einzugsgebiet zugeordnet, in dem sie liegen.",
+                                       level=QgsMessageBar.INFO, duration=3)
+
+                    # Kontrolle mit Warnung
+                    sql = u"""
+                        SELECT count(*) AS anz
+                        FROM einleit
+                        LEFT JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
+                        WHERE einzugsgebiete.pk IS NULL
+                    """
+                    dbQK.sql(sql)
+                    anz = int(dbQK.fetchone()[0])
+                    if anz > 0:
+                        iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einleit':",
+                                                       u"{} Einleitpunkte sind keinem Einzugsgebiet zugeordnet".format(anz),
+                                                       level=QgsMessageBar.WARNING, duration=0)
+            else:
+                # 2.2 Es gibt Einleitpunkte mit zugeordnetem Einzugsgebiet
+                # Kontrolle mit Warnung
+                sql = u"""
+                    SELECT count(*) AS anz
+                    FROM einleit
+                    LEFT JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
+                    WHERE einzugsgebiete.pk is NULL
+                """
+                dbQK.sql(sql)
+                anz = int(dbQK.fetchone()[0])
+                if anz > 0:
+                    iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einleit':",
+                                                   u"{} Einleitpunkte sind keinem Einzugsgebiet zugeordnet".format(anz),
+                                                   level=QgsMessageBar.WARNING, duration=0)
+
+        # --------------------------------------------------------------------------------------------
+        # Export der Einzeleinleiter aus Schmutzwasser
+        #
+        # Referenzlisten (HE 7.8):
+        #
+        # ABWASSERART (Im Formular "Art"):
+        #    0 = Häuslich
+        #    1 = Gewerblich
+        #    2 = Industriell
+        #    5 = Regenwasser
+        #
+        # HERKUNFT (Im Formular "Herkunft"):
+        #    0 = Siedlungstyp
+        #    1 = Direkt
+        #    2 = Frischwasserverbrauch
+        #    3 = Einwohner
+        #
+
+        # HERKUNFT = 1 (Direkt) wird aus einer eigenen Tabelle "einleiter" erzeugt und ebenfalls in die 
+        # HE-Tabelle "Einzeleinleiter" übertragen
+        #
+        # HERKUNFT = 2 (Frischwasserverbrauch) ist zurzeit nicht realisiert
+        #
+        # Herkunft = 3 (Einwohner). 
+        # Nur die Flächen werden berücksichtigt, die einem Einzugsgebiet 
+        # mit Wasserverbrauch zugeordnet sind.
 
         # Vorbereitung einleit: Falls elnam leer ist, plausibel ergänzen:
 
@@ -1448,9 +1645,36 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               avg(x(geom)) AS xel,
               avg(y(geom)) AS yel,
               haltnam AS haltnam,
-              sum(zufluss) AS zuflussdirekt
-              FROM einleit{auswahl}
+              NULL AS wverbrauch, 
+              NULL AS stdmittel,
+              NULL AS fremdwas, 
+              NULL AS einwohner,
+              sum(zufluss) AS zuflussdirekt, 
+              1 AS herkunft
+              FROM einleit
+              WHERE zufluss IS NOT NULL {auswahl}
               GROUP BY haltnam
+          UNION
+              SELECT
+              printf('ew_%d-%s', el.pk, el.haltnam) AS elnam,
+              avg(x(el.geom)) AS xel,
+              avg(y(el.geom)) AS yel,
+              el.haltnam AS haltnam,
+              printf('%.6f',tg.wverbrauch) AS wverbrauch, 
+              printf('%.1f',tg.stdmittel) AS stdmittel,
+              printf('%.3f',tg.fremdwas) AS fremdwas, 
+              printf('%.6f',el.ew) AS einwohner,
+              NULL AS zuflussdirekt, 
+              3 AS herkunft
+              FROM einleit AS el
+              INNER JOIN einzugsgebiete AS tg
+              ON el.einzugsgebiet = tg.tgnam
+              WHERE zufluss IS NULL {auswahl}
+              GROUP BY el.haltnam, 
+                printf('%.6f',tg.wverbrauch), 
+                printf('%.1f',tg.stdmittel),
+                printf('%.3f',tg.fremdwas),
+                printf('%.6f',el.ew)
             """.format(auswahl=auswahl)
         else:
             sql = u"""SELECT
@@ -1458,8 +1682,30 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               x(geom) AS xel,
               y(geom) AS yel,
               haltnam AS haltnam,
-              zufluss AS zuflussdirekt
-              FROM einleit{auswahl}
+              NULL AS wverbrauch, 
+              NULL AS stdmittel,
+              NULL AS fremdwas, 
+              NULL AS einwohner,
+              zufluss AS zuflussdirekt, 
+              1 AS herkunft
+              FROM einleit
+              WHERE zufluss IS NOT NULL {auswahl}
+          UNION
+              SELECT
+              printf('ew_%d-%s', el.pk, el.elnam) AS elnam,
+              x(el.geom) AS xel,
+              y(el.geom) AS yel,
+              el.haltnam AS haltnam,
+              tg.wverbrauch AS wverbrauch, 
+              tg.stdmittel AS stdmittel,
+              tg.fremdwas AS fremdwas, 
+              el.ew AS einwohner,
+              NULL AS zuflussdirekt, 
+              3 AS herkunft
+              FROM einleit AS el
+              INNER JOIN einzugsgebiete AS tg
+              ON el.einzugsgebiet = tg.tgnam 
+              WHERE zufluss IS NULL {auswahl}
             """.format(auswahl=auswahl)
 
         logger.debug(u'\nSQL-4e:\n{}\n'.format(sql))
@@ -1478,7 +1724,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         for b in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            elnam, xel, yel, haltnam, zuflussdirekt = \
+            elnam, xel, yel, haltnam, wverbrauch, stdmittel, fremdwas, einwohner, zuflussdirekt, herkunft = \
                 ('NULL' if el is None else el for el in b)
 
             # Einfuegen in die Datenbank
@@ -1493,12 +1739,12 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               ( {xel}, {yel}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
                 {abwasserart}, {einwohner}, {wverbrauch}, {herkunft},
                 {stdmittel}, {fremdwas}, {faktor}, {flaeche},
-                {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}_SW',
+                {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}',
                 {abrechnungszeitraum}, {abzug},
                 '{createdat}', {nextid});
               """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
-                         abwasserart = 0, einwohner = 0, wverbrauch = 0, herkunft = 1,
-                         stdmittel = 0, fremdwas = 0, faktor = 1, flaeche = 0, 
+                         abwasserart = 0, einwohner = einwohner, wverbrauch = wverbrauch, herkunft = herkunft,
+                         stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, 
                          zuflussmodell = 0, zuflussdirekt = zuflussdirekt, zufluss = 0, planungsstatus = 0, elnam = elnam[:27],
                          abrechnungszeitraum = 365, abzug = 0,
                          createdat = createdat, nextid = nextid)
@@ -1515,410 +1761,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         dbHE.commit()
 
         fortschritt(u'{} Einzeleinleiter (direkt) eingefuegt'.format(nextid - nr0), 0.95)
-
-    if check_export['export_einleitew'] or check_export['modify_einleitew']:
-        # Herkunft = 1 (Direkt) und 3 (Einwohnerbezogen)
-
-        """
-        Bearbeitung in QKan: Vervollständigung der Teilgebiete
-
-        Prüfung der vorliegenden Teilgebiete in QKan
-        ============================================
-        Zunächst eine grundsätzliche Anmerkung: In HE gibt es keine Teilgebiete in der Form, wie sie
-        in QKan vorhanden sind. Diese werden (nur) in QKan verwendet, um zum Einen für die Variante 
-        Herkunft = 3 die Grundlagendaten
-         - einwohnerspezifischer Schmutzwasseranfall
-         - Fremdwasseranteil
-         - Stundenmittel
-        zu verwalten und zum Anderen, um die Möglichkeit zu haben, um für den Export Teile eines Netzes auszuwählen.
-
-        Aus diesem Grund werden vor dem Export der Einzeleinleiter diese Daten geprüft:
-
-        1 Wenn in QKan keine Teilgebiete vorhanden sind, wird zunächst geprüft, ob die
-           Einwohnerpunkte einem (noch nicht angelegten) Teilgebiet zugeordnet sind.
-           1.1 Kein Einwohnerpunkt ist einem Teilgebiet zugeordnet. Dann wird ein Teilgebiet "Teilgebiet1" 
-               angelegt und alle Einwohnerpunkte diesem Teilgebiet zugeordnet
-           1.2 Die Einwohnerpunkte sind einem oder mehreren noch nicht in der Tabelle "teilgebiete" vorhandenen 
-               Teilgebieten zugeordnet. Dann werden entsprechende Teilgebiete mit Standardwerten angelegt.
-        2 Wenn in QKan Teilgebiete vorhanden sind, wird geprüft, ob es auch Einwohnerpunkte gibt, die diesen
-           Teilgebieten zugeordnet sind.
-           2.1 Es gibt keine Einwohnerpunkte, die einem Teilgebiet zugeordnet sind.
-               2.1.1 Es gibt in QKan genau ein Teilgebiet. Dann werden alle Einwohnerpunkte diesem Teilgebiet
-                     zugeordnet.
-               2.1.2 Es gibt in QKan mehrere Teilgebiete. Dann werden alle Einwohnerpunkte geographisch dem
-                     betreffenden Teilgebiet zugeordnet.
-           2.2 Es gibt mindestens einen Einwohnerpunkt, der einem Teilgebiet zugeordnet ist.
-               Dann wird geprüft, ob es noch nicht zugeordnete Einwohnerpunkte gibt, eine Warnung angezeigt und
-               diese Einwohnerpunkte aufgelistet.
-        """
-
-        sql = 'SELECT count(*) AS anz FROM teilgebiete'
-        dbQK.sql(sql)
-        anztgb = int(dbQK.fetchone()[0])
-        if anztgb == 0:
-            # 1 Kein Teilgebiet in QKan -----------------------------------------------------------------
-            createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
-
-            sql = u"""
-                SELECT count(*) AS anz FROM einwohner WHERE
-                (teilgebiet is not NULL) AND
-                (teilgebiet <> 'NULL') AND
-                (teilgebiet <> '')
-            """
-            dbQK.sql(sql)
-            anz = int(dbQK.fetchone()[0])
-            if anz == 0:
-                # 1.1 Kein Einwohnerpunkt mit Teilgebiet ----------------------------------------------------
-                sql = u"""
-                   INSERT INTO teilgebiete
-                   ( tgnam, ewdichte, wverbrauch, stdmittel,
-                     fremdwas, flaeche, kommentar, createdat, geom)
-                   Values
-                   ( 'Teilgebiet1', 60, 120, 14, 100, '{createdat}',
-                     'Automatisch durch  QKan hinzugefuegt')""".format(createdat=createdat)
-                try:
-                    dbQK.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(27) Fehler in SQL:\n{sql}\n", err)
-                    return False
-                dbQK.commit()
-            else:
-                # 1.2 Einwohnerpunkte mit Teilgebiet ----------------------------------------------------
-                # Liste der in allen Einwohnerpunkten vorkommenden Teilgebiete
-                sql = 'SELECT teilgebiet FROM einwohner WHERE teilgebiet is not NULL GROUP BY teilgebiet'
-                dbQK.sql(sql)
-                listeilgeb = dbQK.fetchall()
-                for tgb in listeilgeb:
-                    sql = u"""
-                       INSERT INTO teilgebiete
-                       ( tgnam, ewdichte, wverbrauch, stdmittel,
-                         fremdwas, flaeche, kommentar, createdat, geom)
-                       Values
-                       ( '{tgnam}', 60, 120, 14, 100, '{createdat}',
-                         'Hinzugefuegt aus QKan')""".format(tgnam=tgb[0], createdat=createdat)
-                    try:
-                        dbQK.sql(sql)
-                    except BaseException as err:
-                        fehlermeldung(u"(28) Fehler in SQL:\n{sql}\n", err)
-                        return False
-                    dbQK.commit()
-                    iface.messageBar().pushMessage(u"Tabelle 'teilgebiete':\n",
-                                                   u"Es wurden {} Teilgebiete hinzugefügt".format(len(tgb)),
-                                                   level=QgsMessageBar.INFO, duration=3)
-
-                # Kontrolle mit Warnung
-                sql = u"""
-                    SELECT count(*) AS anz
-                    FROM einwohner
-                    LEFT JOIN teilgebiete ON einwohner.teilgebiet = teilgebiete.tgnam
-                    WHERE teilgebiete.pk IS NULL
-                """
-                dbQK.sql(sql)
-                anz = int(dbQK.fetchone()[0])
-                if anz > 0:
-                    iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einwohner':",
-                                                   u"{} Einwohnerpunkte sind keinem Teilgebiet zugeordnet".format(anz),
-                                                   level=QgsMessageBar.WARNING, duration=0)
-        else:
-            # 2 Teilgebiete in QKan ----------------------------------------------------
-            sql = u"""
-                SELECT count(*) AS anz
-                FROM einwohner
-                INNER JOIN teilgebiete ON einwohner.teilgebiet = teilgebiete.tgnam
-            """
-            dbQK.sql(sql)
-            anz = int(dbQK.fetchone()[0])
-            if anz == 0:
-                # 2.1 Keine Einwohnerpunkte mit Teilgebiet ----------------------------------------------------
-                if anztgb == 1:
-                    # 2.1.1 Es existiert genau ein Teilgebiet ---------------------------------------------
-                    sql = u"UPDATE einwohner SET teilgebiet = (SELECT tgnam FROM teilgebiete GROUP BY tgnam)"
-                    try:
-                        dbQK.sql(sql)
-                    except BaseException as err:
-                        fehlermeldung(u"(29) Fehler in SQL:\n{sql}\n", err)
-                        return False
-                    dbQK.commit()
-                    iface.messageBar().pushMessage(u"Tabelle 'einwohner':\n",
-                                       u"Alle Einwohnerpunkte in der Tabelle 'einwohner' wurden einem Teilgebiet zugeordnet",
-                                       level=QgsMessageBar.INFO, duration=3)
-                else:
-                    # 2.1.2 Es existieren mehrere Teilgebiete ------------------------------------------
-                    sql = u"""UPDATE einwohner SET teilgebiet = (SELECT tgnam FROM teilgebiete
-                          WHERE within(einwohner.geom,teilgebiete.geom))"""
-                    try:
-                        dbQK.sql(sql)
-                    except BaseException as err:
-                        fehlermeldung(u"(30) Fehler in SQL:\n{sql}\n", err)
-                        return False
-                    dbQK.commit()
-                    iface.messageBar().pushMessage(u"Tabelle 'einwohner':\n",
-                                       u"Alle Einwohnerpunkte in der Tabelle 'einwohner' wurden dem Teilgebiet zugeordnet, in dem sie liegen.",
-                                       level=QgsMessageBar.INFO, duration=3)
-
-                    # Kontrolle mit Warnung
-                    sql = u"""
-                        SELECT count(*) AS anz
-                        FROM einwohner
-                        LEFT JOIN teilgebiete ON einwohner.teilgebiet = teilgebiete.tgnam
-                        WHERE teilgebiete.pk IS NULL
-                    """
-                    dbQK.sql(sql)
-                    anz = int(dbQK.fetchone()[0])
-                    if anz > 0:
-                        iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einwohner':",
-                                                       u"{} Einwohnerpunkte sind keinem Teilgebiet zugeordnet".format(anz),
-                                                       level=QgsMessageBar.WARNING, duration=0)
-            else:
-                # 2.2 Es gibt Einwohnerpunkte mit zugeordnetem Teilgebiet
-                # Kontrolle mit Warnung
-                sql = u"""
-                    SELECT count(*) AS anz
-                    FROM einwohner
-                    LEFT JOIN teilgebiete ON einwohner.teilgebiet = teilgebiete.tgnam
-                    WHERE teilgebiete.pk is NULL
-                """
-                dbQK.sql(sql)
-                anz = int(dbQK.fetchone()[0])
-                if anz > 0:
-                    iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einwohner':",
-                                                   u"{} Einwohnerpunkte sind keinem Teilgebiet zugeordnet".format(anz),
-                                                   level=QgsMessageBar.WARNING, duration=0)
-
-        # --------------------------------------------------------------------------------------------
-        # Export der Einzeleinleiter aus Schmutzwasser
-        #
-        # Referenzlisten (HE 7.8):
-        #
-        # ABWASSERART (Im Formular "Art"):
-        #    0 = Häuslich
-        #    1 = Gewerblich
-        #    2 = Industriell
-        #    5 = Regenwasser
-        #
-        # HERKUNFT (Im Formular "Herkunft"):
-        #    0 = Siedlungstyp
-        #    1 = Direkt
-        #    2 = Frischwasserverbrauch
-        #    3 = Einwohner
-        #
-
-        # HERKUNFT = 1 (Direkt) wird aus einer eigenen Tabelle "einleiter" erzeugt und ebenfalls in die 
-        # HE-Tabelle "Einzeleinleiter" übertragen
-        #
-        # HERKUNFT = 2 (Frischwasserverbrauch) ist zurzeit nicht realisiert
-        #
-        # Herkunft = 3 (Einwohner). 
-        # Nur die Flächen werden berücksichtigt, die einem Teilgebiet 
-        # mit Wasserverbrauch zugeordnet sind.
-
-        # Datenvorbereitung: 
-
-        # Vorbereitung einwohner: Falls elnam leer ist, plausibel ergänzen:
-
-        if not checknames(dbQK, 'einwohner', 'elnam', 'e_', autokorrektur):
-            del dbQK
-            del dbHE
-            return False
-
-        # Datenvorbereitung: Verknüpfung von Einleitpunkt zu Haltung wird durch Tabelle "linksw"
-        # repräsentiert. Diese Zuordnung wird zunächst in "einleit.haltnam" übertragen.
-
-        # Abfrage ist identisch in k_link.py vorhanden
-
-        # SpatialIndex anlegen
-        sqlindex = "SELECT CreateSpatialIndex('einwohner','geom')"
-        try:
-            dbQK.sql(sqlindex)
-        except BaseException as err:
-            fehlermeldung('In der Tabelle "einwohner" konnte CreateSpatialIndex auf "geom" nicht durchgeführt werden', str(err))
-            del dbQK
-            return False
-
-        # 1. einwohner-Punkt in "linkew" eintragen (ohne Einschränkung auf auswahl)
-
-        sql = u"""WITH missing AS
-            (   SELECT lf.pk
-                FROM linkew AS lf
-                LEFT JOIN einwohner AS el
-                ON lf.elnam = el.elnam
-                WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(lf.glink),0.1),el.geom))
-            UPDATE linkew SET elnam =
-            (   SELECT elnam
-                FROM einwohner AS el
-                WHERE contains(buffer(StartPoint(linkew.glink),0.1),el.geom))
-            WHERE linkew.pk IN missing"""
-
-        logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
-
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(4a) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
-            del dbQK
-            return False
-
-        # 2. Haltungen in "linkew" eintragen (ohne Einschränkung auf auswahl)
-
-        sql = u"""WITH missing AS
-            (   SELECT lf.pk
-                FROM linkew AS lf
-                LEFT JOIN haltungen AS ha
-                ON lf.haltnam = ha.haltnam
-                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom))
-            UPDATE linkew SET haltnam =
-            (   SELECT haltnam
-                FROM haltungen AS ha
-                WHERE intersects(buffer(EndPoint(linkew.glink),0.1),ha.geom))
-            WHERE linkew.pk IN missing"""
-
-        logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
-
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(4b) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
-            del dbQK
-            return False
-
-        # 3. Haltungen in "einwohner" eintragen (ohne Einschränkung auf auswahl)
-
-        # 3.1 Index erzeugen
-
-        sql = u"""CREATE INDEX IF NOT EXISTS ind_einwohner_elnam ON einwohner (elnam)"""
-
-        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
-
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(4c) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
-            del dbQK
-            return False
-
-        # 3.2 Eintrag vornehmen
-
-        sql = u"""WITH missing AS
-            (   SELECT el.pk
-                FROM einwohner AS el
-                INNER JOIN linkew AS lf
-                ON el.elnam = lf.elnam
-                WHERE (el.haltnam IS NULL AND lf.haltnam IS NOT NULL) OR el.haltnam <> lf.haltnam)
-            UPDATE einwohner SET haltnam =
-            (   SELECT lf.haltnam
-                FROM linkew AS lf
-                WHERE einwohner.elnam = lf.elnam)
-            WHERE einwohner.pk IN missing"""
-
-        logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
-
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(4d) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
-            del dbQK
-            return False
-
-        dbQK.commit()
-
-        # Nur Daten fuer ausgewaehlte Teilgebiete
-
-        if len(liste_teilgebiete) != 0:
-            auswahl = " WHERE teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-        else:
-            auswahl = ""
-
-        if check_export['combine_einleitew']:
-            sql = u"""SELECT
-              printf('ew_%d-%s', ew.pk, ew.haltnam) AS elnam,
-              avg(x(ew.geom)) AS xel,
-              avg(y(ew.geom)) AS yel,
-              ew.haltnam AS haltnam,
-              printf('%.6f',tg.wverbrauch) AS wverbrauch, 
-              printf('%.1f',tg.stdmittel) AS stdmittel,
-              printf('%.3f',tg.fremdwas) AS fremdwas, 
-              printf('%.6f',ew.ew) AS einwohner
-              FROM einwohner AS ew
-              INNER JOIN teilgebiete AS tg
-              ON ew.teilgebiet = tg.tgnam
-              {auswahl}
-              GROUP BY ew.haltnam, 
-                printf('%.6f',tg.wverbrauch), 
-                printf('%.1f',tg.stdmittel),
-                printf('%.3f',tg.fremdwas),
-                printf('%.6f',ew.ew)
-
-            """.format(auswahl=auswahl)
-        else:
-            sql = u"""SELECT
-              printf('ew_%d-%s', ew.pk, ew.elnam) AS elnam,
-              x(ew.geom) AS xel,
-              y(ew.geom) AS yel,
-              ew.haltnam AS haltnam,
-              tg.wverbrauch AS wverbrauch, 
-              tg.stdmittel AS stdmittel,
-              tg.fremdwas AS fremdwas, 
-              ew.ew AS einwohner
-              FROM einwohner AS ew
-              INNER JOIN teilgebiete AS tg
-              ON ew.teilgebiet = tg.tgnam
-              {auswahl}
-            """.format(auswahl=auswahl)
-
-        logger.debug(u'\nSQL-4e:\n{}\n'.format(sql))
-
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(4e) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
-            del dbQK
-            del dbHE
-            return False
-
-        nr0 = nextid
-
-        fortschritt('Export EW-bezogene Einleitungen...', 0.92)
-        for b in dbQK.fetchall():
-
-            # In allen Feldern None durch NULL ersetzen
-            elnam, xel, yel, haltnam, wverbrauch, stdmittel, fremdwas, einwohner = \
-                ('NULL' if el is None else el for el in b)
-
-            # Einfuegen in die Datenbank
-            sql = u"""
-              INSERT INTO EINZELEINLEITER
-              ( XKOORDINATE, YKOORDINATE, ZUORDNUNGGESPERRT, ZUORDNUNABHEZG, ROHR,
-                ABWASSERART, EINWOHNER, WASSERVERBRAUCH, HERKUNFT,
-                STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE,
-                ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME,
-                ABRECHNUNGSZEITRAUM, ABZUG,
-                LASTMODIFIED, ID) VALUES
-              ( {xel}, {yel}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
-                {abwasserart}, {einwohner}, {wverbrauch}, {herkunft},
-                {stdmittel}, {fremdwas}, {faktor}, {flaeche},
-                {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}_EW',
-                {abrechnungszeitraum}, {abzug},
-                '{createdat}', {nextid});
-              """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
-                         abwasserart = 0, einwohner = einwohner, wverbrauch = wverbrauch, herkunft = 3,
-                         stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, 
-                         zuflussmodell = 0, zuflussdirekt = 0, zufluss = 0, planungsstatus = 0, elnam = elnam[:27],
-                         abrechnungszeitraum = 365, abzug = 0,
-                         createdat = createdat, nextid = nextid)
-            try:
-                dbHE.sql(sql)
-            except BaseException as err:
-                fehlermeldung(u"(36) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
-                del dbQK
-                del dbHE
-                return False
-
-            nextid += 1
-        dbHE.sql("UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
-        dbHE.commit()
-
-        fortschritt(u'{} Einzeleinleiter (Einwohner bezogen) eingefuegt'.format(nextid - nr0), 0.95)
-
 
 
     if False:
@@ -2010,6 +1852,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
     fortschritt('Ende...', 1)
     progress_bar.setValue(100)
-    status_message.setText("Datenexport abgeschlossen.")
+    status_message.setText(u"Datenexport abgeschlossen.")
     status_message.setLevel(QgsMessageBar.SUCCESS)
 

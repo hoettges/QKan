@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
-    <height>426</height>
+    <width>695</width>
+    <height>447</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>360</y>
+     <x>250</x>
+     <y>380</y>
      <width>161</width>
      <height>32</height>
     </rect>
@@ -44,7 +44,7 @@
     <rect>
      <x>20</x>
      <y>140</y>
-     <width>401</width>
+     <width>651</width>
      <height>131</height>
     </rect>
    </property>
@@ -52,8 +52,10 @@
     <enum>QAbstractItemView::SelectRows</enum>
    </property>
    <property name="columnCount">
-    <number>3</number>
+    <number>5</number>
    </property>
+   <column/>
+   <column/>
    <column/>
    <column/>
    <column/>
@@ -63,7 +65,7 @@
     <rect>
      <x>20</x>
      <y>60</y>
-     <width>441</width>
+     <width>651</width>
      <height>41</height>
     </rect>
    </property>
@@ -73,7 +75,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Die Abflussparameter werden dabei aus der Tabelle &quot;tezg&quot; übernommen. Zur Kontrolle sind die Abflussparameter in der nachstehenden Tabelle aufgelistet.</string>
+    <string>Die Abflussparameter für die erzeugten Flächenobjekte werden aus der Tabelle &quot;tezg&quot; übernommen. Zur Kontrolle sind die Abflussparameter in der nachstehenden Tabelle aufgelistet.</string>
    </property>
    <property name="textFormat">
     <enum>Qt::RichText</enum>
@@ -127,8 +129,8 @@
   <widget class="QLabel" name="lb_version">
    <property name="geometry">
     <rect>
-     <x>410</x>
-     <y>410</y>
+     <x>620</x>
+     <y>430</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -137,7 +139,7 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.1.5</string>
+    <string>Version 2.2.0</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -148,9 +150,16 @@
     <rect>
      <x>20</x>
      <y>290</y>
-     <width>371</width>
-     <height>41</height>
+     <width>321</width>
+     <height>61</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
    <property name="title">
     <string>Optionen</string>
@@ -159,8 +168,8 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>10</y>
-      <width>371</width>
+      <y>20</y>
+      <width>301</width>
       <height>31</height>
      </rect>
     </property>
@@ -177,7 +186,86 @@
      <string>Automatische Korrektur von Datenfehlern in der Tabelle &quot;tezg&quot;</string>
     </property>
     <property name="text">
-     <string>Autokorrektur von Namen und Abflussfaktoren in den TEZG-Flächen</string>
+     <string>Autokorrektur von Namen und Abflussfaktoren
+in den TEZG-Flächen</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>290</y>
+     <width>311</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Aktuell berücksichtigt</string>
+   </property>
+   <widget class="QLabel" name="lf_anzahl_tezg">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden ganzen Flächen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden ganzen Flächen"/>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Panel</enum>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>30</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden Flächen (mit und ohne Verschneidung)"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden Flächen (mit und ohne Verschneidung)"/>
+    </property>
+    <property name="text">
+     <string>TEZG-Flächen:</string>
     </property>
    </widget>
   </widget>

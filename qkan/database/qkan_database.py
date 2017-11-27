@@ -22,7 +22,7 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__version__ = '1.1.5'
+__version__ = '2.1.6'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -358,13 +358,11 @@ def createdbtables(consl, cursl, epsg=25832):
 
     consl.commit()
 
-    # Teilgebiete ------------------------------------------------------------------
+    # Einzugsgebiete ------------------------------------------------------------------
     # Entsprechen in HYSTEM-EXTRAN 7.x den Siedlungstypen
     # "flaeche" wird nur für den Import benötigt, wenn keine Flächenobjekte vorhanden sind
     # Verwendung: 
-    # 1. Auswahl von Objekten in verschiedenen Tabellen für verschiedene Aufgaben (z. B. 
-    #    automatische Verknüpfung von befestigten Flächen und direkten Einleitungen). 
-    # 2. Spezifische Verbrauchsdaten in Verbindung mit "einwohner"
+    # Spezifische Verbrauchsdaten in Verbindung mit "einwohner"
     # Einheiten:
     #  - ewdichte: EW/ha
     #  - wverbrauch: l/(EW·d)
@@ -373,14 +371,43 @@ def createdbtables(consl, cursl, epsg=25832):
     #  - flaeche: ha
 
 
-    sql = '''CREATE TABLE teilgebiete (
+    sql = '''CREATE TABLE einzugsgebiete (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     tgnam TEXT,
     ewdichte REAL,
     wverbrauch REAL,
     stdmittel REAL,
     fremdwas REAL,
-    flaeche REAL,
+    kommentar TEXT,
+    createdat TEXT DEFAULT CURRENT_DATE)'''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('Tabelle "Einzugsgebiete" konnte nicht erstellt werden', str(err))
+        consl.close()
+        return False
+
+    sql = "SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('einzugsgebiete','geom')"
+    try:
+        cursl.execute(sql)
+        cursl.execute(sqlindex)
+    except BaseException as err:
+        fehlermeldung('In der Tabelle "Einzugsgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        consl.close()
+        return False
+    consl.commit()
+
+    # Teilgebiete ------------------------------------------------------------------
+    #  Verwendung:
+    # Auswahl von Objekten in verschiedenen Tabellen für verschiedene Aufgaben (z. B. 
+    # automatische Verknüpfung von befestigten Flächen und direkten Einleitungen). 
+
+
+    sql = '''CREATE TABLE teilgebiete (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    tgnam TEXT,
     kommentar TEXT,
     createdat TEXT DEFAULT CURRENT_DATE)'''
 
@@ -416,7 +443,6 @@ def createdbtables(consl, cursl, epsg=25832):
     #  - "linksw" 
     #  - "tezg" 
     #  - "einleit" 
-    #  - "einwohner" 
     #  - "swgebaeude"
 
     sql = '''CREATE TABLE gruppen (
@@ -450,7 +476,6 @@ def createdbtables(consl, cursl, epsg=25832):
     fliesszeitkanal REAL,
     teilgebiet TEXT,
     regenschreiber TEXT,
-    einwohner REAL,
     abflussparameter TEXT,
     aufteilen TEXT DEFAULT 'nein',
     kommentar TEXT,
@@ -544,39 +569,6 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
     consl.commit()
 
-    # Anbindung einwohnerbezogene Direkteinleitungen---------------------------------------------
-    # Die Tabelle linkew verwaltet die Anbindung von Gebäuden an Haltungen. Diese Anbindung
-    # wird anschließend in das Feld haltnam eingetragen. Der Export erfolgt allerdings anhand
-    # der grafischen Verknüpfungen dieser Tabelle. 
-
-    sql = """CREATE TABLE linkew (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
-    elnam TEXT,
-    haltnam TEXT,
-    teilgebiet TEXT)"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung('Tabelle "linkew" konnte nicht erstellt werden', str(err))
-        consl.close()
-        return False
-
-    sql1 = """SELECT AddGeometryColumn('linkew','geom',{epsg},'POLYGON',2)""".format(epsg=epsg)
-    sql2 = """SELECT AddGeometryColumn('linkew','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
-    sql3 = """SELECT AddGeometryColumn('linkew','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
-    sqlindex = "SELECT CreateSpatialIndex('linkew','geom')"
-    try:
-        cursl.execute(sql1)
-        cursl.execute(sql2)
-        cursl.execute(sql3)
-        cursl.execute(sqlindex)
-    except:
-        fehlermeldung(u"QKan_Database (2) SQL-Fehler in SpatiaLite: \n", sql)
-        consl.close()
-        return False
-    consl.commit()
-
     # Teileinzugsgebiete ------------------------------------------------------------------
     # Bei aktivierter Option "check_difftezg" wird je Teileinzugsgebiet eine unbefestigte 
     # Fläche als Differenz zu den innerhalb liegenden Flächen (befestigte und unbefestigte!)
@@ -620,8 +612,9 @@ def createdbtables(consl, cursl, epsg=25832):
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     elnam TEXT,
     haltnam TEXT,
-    zufluss REAL,
     teilgebiet TEXT, 
+    zufluss REAL,
+    ew REAL,
     kommentar TEXT,
     createdat TEXT DEFAULT CURRENT_DATE)'''
 
@@ -639,42 +632,6 @@ def createdbtables(consl, cursl, epsg=25832):
         cursl.execute(sqlindex)
     except BaseException as err:
         fehlermeldung('In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
-        consl.close()
-        return False
-    consl.commit()
-
-
-    # Verbrauchsbezogene Einleitungen ----------------------------------------------------------
-    # Alle Einwohnerbezogenen SW-Einleitungen. 
-    # Die Zuordnung zur Tabelle "teilgebiet" verknüpft die dort gespeicherten Attribute:
-    #  - ewdichte
-    #  - wverbrauch
-    #  - stdmittel
-    #  - fremdwas
-
-    sql = '''CREATE TABLE einwohner (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
-    elnam TEXT, 
-    haltnam TEXT, 
-    ew REAL, 
-    teilgebiet TEXT, 
-    kommentar TEXT, 
-    createdat TEXT DEFAULT CURRENT_DATE)'''
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung('Tabelle "einwohner" konnte nicht erstellt werden', str(err))
-        consl.close()
-        return False
-
-    sql = "SELECT AddGeometryColumn('einwohner','geom',{},'POINT',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('einwohner','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung('In der Tabelle "einwohner" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
