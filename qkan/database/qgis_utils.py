@@ -12,7 +12,7 @@ import os.path
 from datetime import datetime as dt
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger('QKan')
+logger = logging.getLogger(u'QKan')
 
 
 # Fortschritts- und Fehlermeldungen
@@ -35,20 +35,20 @@ def fehlermeldung(title, text):
 
     # Protokolldatei anzeigen
 
-    # dnam = dt.today().strftime("%Y%m%d")
-    # fnam = os.path.join(tempfile.gettempdir(), 'QKan{}.log'.format(dnam))
+    # dnam = dt.today().strftime(u"%Y%m%d")
+    # fnam = os.path.join(tempfile.gettempdir(), u'QKan{}.log'.format(dnam))
     # os.startfile(fnam)
 
 # Allgemeine Funktionen
 
 def get_database_QKan():
     """Ermittlung der aktuellen QpatiaLite-Datenbank aus den geladenen Layern"""
-    database_QKan = ''
-    epsg = ''
+    database_QKan = u''
+    epsg = u''
     layers = iface.legendInterface().layers()
-    # logger.debug('Layerliste erstellt')
+    # logger.debug(u'Layerliste erstellt')
     if len(layers) == 0:
-        logger.error('Keine Layer vorhanden...')
+        logger.error(u'Keine Layer vorhanden...')
         iface.mainWindow().statusBar().clearMessage()
         iface.messageBar().pushMessage(u"Fehler: ", u"Kein QKan-Projekt geladen!", level=QgsMessageBar.CRITICAL)
         QgsMessageLog.logMessage(u"\nKein QKan-Projekt geladen!", level=QgsMessageLog.CRITICAL)
@@ -60,20 +60,20 @@ def get_database_QKan():
         lyattr = {}
 
         # Attributstring für Layer splitten
-        for le in lay.source().split(' '):
-            if '=' in le:
-                key, value = le.split('=', 1)
-                lyattr[key] = value.strip('"').strip("'")
+        for le in lay.source().split(u' '):
+            if u'=' in le:
+                key, value = le.split(u'=', 1)
+                lyattr[key] = value.strip(u'"').strip(u"'")
 
         # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
-        if 'table' in lyattr and 'dbname' in lyattr:
-            if lyattr['table'] == 'flaechen':
-                if database_QKan == '':
+        if u'table' in lyattr and u'dbname' in lyattr:
+            if lyattr['table'] == u'flaechen':
+                if database_QKan == u'':
                     database_QKan = lyattr['dbname']
                     epsg = str(int(lay.crs().postgisSrid()))
                 elif database_QKan != lyattr['dbname']:
-                    database_QKan = ''
-                    logger.warning('Abweichende Datenbankanbindung gefunden: {}'.format(lyattr['dbname']))
+                    database_QKan = u''
+                    logger.warning(u'Abweichende Datenbankanbindung gefunden: {}'.format(lyattr['dbname']))
                     return False, False  # Im Projekt sind mehrere Sqlite-Datenbanken eingebungen...
     return database_QKan, epsg
 
@@ -86,26 +86,26 @@ def get_editable_layers():
     elayers = set([])  # Zuerst leere Liste anlegen
 
     layers = iface.legendInterface().layers()
-    # logger.debug('Layerliste erstellt')
+    # logger.debug(u'Layerliste erstellt')
     if len(layers) > 0:
         # über Layer iterieren
         for lay in layers:
             lyattr = {}
 
             # Attributstring für Layer splitten
-            for le in lay.source().split(' '):
-                if '=' in le:
-                    key, value = le.split('=', 1)
-                    lyattr[key] = value.strip('"').strip("'")
+            for le in lay.source().split(u' '):
+                if u'=' in le:
+                    key, value = le.split(u'=', 1)
+                    lyattr[key] = value.strip(u'"').strip(u"'")
 
             # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
-            if 'table' in lyattr and 'dbname' in lyattr:
+            if u'table' in lyattr and u'dbname' in lyattr:
                 if lay.isEditable():
                     elayers.add(lyattr['table'])
     return elayers
 
 
-def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = 'SpatiaLite'):
+def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'SpatiaLite'):
     """Prüft, ob in der Tabelle {tab} im Attribut {attr} eindeutige Namen enthalten sind. 
     Falls nicht, werden Namen vergeben, die sich aus {prefix} und ROWID zusammensetzen
 
@@ -148,7 +148,7 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = 'SpatiaLite'):
 
     if len(daten) > 0:
         if autokorrektur:
-            meldung('Automatische Korrektur von Daten: ', 
+            meldung(u'Automatische Korrektur von Daten: ', 
                 u'In der Tabelle "{tab}" wurden leere Namen im Feld "{attr}" aufgefüllt'.format(tab=tab, attr=attr))
 
             sql = u"""UPDATE {tab}
@@ -158,7 +158,7 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = 'SpatiaLite'):
             if not dbQK.sql(sql, u"QKan.qgis_utils.checknames (2)"):
                 return False
         else:
-            fehlermeldung('Datenfehler', 
+            fehlermeldung(u'Datenfehler', 
                 u'In der Tabelle "{tab}" gibt es leere Namen im Feld "{attr}". Abbruch!'.format(tab=tab, attr=attr))
             return False
 
@@ -169,14 +169,14 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = 'SpatiaLite'):
             FROM {tab}
             GROUP BY {attr}
             HAVING anzahl > 1 OR {attr} IS NULL""".format(tab=tab, attr=attr)
-    if not dbQK.sql(sql, "QKan.qgis_utils.checknames (3)"):
+    if not dbQK.sql(sql, u"QKan.qgis_utils.checknames (3)"):
         return False
 
     daten = dbQK.fetchall()
 
     if len(daten) > 0:
         if autokorrektur:
-            meldung('Automatische Korrektur von Daten: ', 
+            meldung(u'Automatische Korrektur von Daten: ', 
                 u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}"'.format(tab=tab, attr=attr))
 
             sql = u"""WITH doppelte AS
@@ -191,7 +191,7 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = 'SpatiaLite'):
             if not dbQK.sql(sql, u"QKan.qgis_utils.checknames (4)"):
                 return False
         else:
-            fehlermeldung('Datenfehler', 
+            fehlermeldung(u'Datenfehler', 
                 u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}". Abbruch!'.format(tab=tab, attr=attr))
             return False
 

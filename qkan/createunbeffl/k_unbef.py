@@ -43,7 +43,7 @@ from qkan.database.qgis_utils import checknames, fortschritt, fehlermeldung
 
 # import tempfile
 
-logger = logging.getLogger('QKan')
+logger = logging.getLogger(u'QKan')
 
 progress_bar = None
 
@@ -95,9 +95,9 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
 
     # Kontrolle, ob tezg-Flächen eindeutig Namen haben:
 
-    if not checknames(dbQK, 'tezg', 'flnam', 'ft_', autokorrektur):
+    if not checknames(dbQK, u'tezg', u'flnam', u'ft_', autokorrektur):
         return False
-    if not checknames(dbQK, 'flaechen', 'flnam', 'f_', autokorrektur):
+    if not checknames(dbQK, u'flaechen', u'flnam', u'f_', autokorrektur):
         return False
 
 
@@ -117,7 +117,7 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
             WHERE te.abflussparameter ISNULL OR
                   bk.infiltrationsrateanfang ISNULL OR
                   bk.infiltrationsrateanfang < 0.00001"""
-        if not dbQK.sql(sql, 'QKan.CreateUnbefFl (1)'):
+        if not dbQK.sql(sql, u'QKan.CreateUnbefFl (1)'):
             return False
         data = dbQK.fetchall()
         if len(data) > 0:
@@ -131,11 +131,11 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
     progress_bar.setValue(10)
 
     if len(liste_abflussparam) == 0:
-        auswahl = ''
+        auswahl = u''
     elif len(liste_abflussparam) == 1:
-        auswahl = ' AND'
+        auswahl = u' AND'
     elif len(liste_abflussparam) >= 2:
-        auswahl = ' AND ('
+        auswahl = u' AND ('
     else:
         fehlermeldung(u"Interner Fehler", u"Fehler in Fallunterscheidung!")
         return False
@@ -148,14 +148,14 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
             return False
         if first:
             first = False
-            auswahl += """ (tezg.abflussparameter = '{abflussparameter}' AND
+            auswahl += u""" (tezg.abflussparameter = '{abflussparameter}' AND
                             tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0], teilgebiet=attr[1])
         else:
-            auswahl += """ OR\n      (tezg.abflussparameter = '{abflussparameter}' AND
+            auswahl += u""" OR\n      (tezg.abflussparameter = '{abflussparameter}' AND
                             tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0], teilgebiet=attr[1])
 
     if len(liste_abflussparam) == 2:
-        auswahl += """)"""
+        auswahl += u""")"""
     # Ende SQL-Krierien zur Auswahl der tezg-Flächen
 
     sql = u"""WITH flbef AS (
@@ -199,7 +199,7 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
                 WHERE fl.flnam NOT IN
                 (   SELECT flnam FROM linkfl WHERE flnam IS NOT NULL)"""
 
-    if not dbQK.sql(sql, "QKan.Createunbefl (5)"):
+    if not dbQK.sql(sql, u"QKan.Createunbefl (5)"):
         return False
 
     # status_message.setText(u"Nachbearbeitung")

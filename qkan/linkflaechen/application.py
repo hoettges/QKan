@@ -44,7 +44,7 @@ from qkan.database.dbfunc import DBConnection
 from qkan.database.qgis_utils import get_database_QKan, get_editable_layers, fehlermeldung
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger('QKan')
+logger = logging.getLogger(u'QKan')
 
 
 class LinkFl:
@@ -85,7 +85,7 @@ class LinkFl:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 12.06.2017)
 
-        logger.info('\n\nQKan_LinkFlaechen initialisiert...')
+        logger.info(u'\n\nQKan_LinkFlaechen initialisiert...')
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen
@@ -178,10 +178,10 @@ class LinkFl:
             auswahl = u''
             logger.debug(u'liste_flaechen_abflussparam:\n{}'.format(liste_flaechen_abflussparam))
         else:
-            auswahl = u" AND flaechen.abflussparameter in ('{}')".format("', '".join(liste_flaechen_abflussparam))
+            auswahl = u" AND flaechen.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam))
 
         if len(liste_teilgebiete) != 0:
-            auswahl += u" and flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            auswahl += u" and flaechen.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
 
         sql = u"""SELECT count(*) AS anzahl FROM flaechen
                 WHERE (aufteilen <> 'ja' OR aufteilen IS NULL){auswahl}""".format(auswahl=auswahl)
@@ -195,7 +195,7 @@ class LinkFl:
         if not (daten is None):
             self.dlg_cl.lf_anzahl_flaechen.setText(str(daten[0]))
         else:
-            self.dlg_cl.lf_anzahl_flaechen.setText('0')
+            self.dlg_cl.lf_anzahl_flaechen.setText(u'0')
 
         # Zu berücksichtigende zu verschneidende Flächen zählen
 
@@ -212,19 +212,19 @@ class LinkFl:
         if not (daten is None):
             self.dlg_cl.lf_anzahl_flaechsec.setText(str(daten[0]))
         else:
-            self.dlg_cl.lf_anzahl_flaechsec.setText('0')
+            self.dlg_cl.lf_anzahl_flaechsec.setText(u'0')
 
         # Zu berücksichtigende Haltungen zählen
         if len(liste_hal_entw) == 0:
-            auswahl = ''
+            auswahl = u''
         else:
-            auswahl = u" WHERE haltungen.entwart in ('{}')".format("', '".join(liste_hal_entw))
+            auswahl = u" WHERE haltungen.entwart in ('{}')".format(u"', '".join(liste_hal_entw))
 
         if len(liste_teilgebiete) != 0:
-            if auswahl == '':
-                auswahl = u" WHERE haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            if auswahl == u'':
+                auswahl = u" WHERE haltungen.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
             else:
-                auswahl += u" and haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+                auswahl += u" and haltungen.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
 
         sql = u"""SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(auswahl=auswahl)
         try:
@@ -237,7 +237,7 @@ class LinkFl:
         if not (daten is None):
             self.dlg_cl.lf_anzahl_haltungen.setText(str(daten[0]))
         else:
-            self.dlg_cl.lf_anzahl_haltungen.setText('0')
+            self.dlg_cl.lf_anzahl_haltungen.setText(u'0')
 
 
     def countselectionsw(self):
@@ -249,15 +249,15 @@ class LinkFl:
 
         # Zu berücksichtigende Haltungen zählen
         if len(liste_hal_entw) == 0:
-            auswahl = ''
+            auswahl = u''
         else:
-            auswahl = u" WHERE haltungen.entwart in ('{}')".format("', '".join(liste_hal_entw))
+            auswahl = u" WHERE haltungen.entwart in ('{}')".format(u"', '".join(liste_hal_entw))
 
         if len(liste_teilgebiete) != 0:
-            if auswahl == '':
-                auswahl = u" WHERE haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            if auswahl == u'':
+                auswahl = u" WHERE haltungen.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
             else:
-                auswahl += u" and haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+                auswahl += u" and haltungen.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
 
         sql = u"""SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(auswahl=auswahl)
         try:
@@ -270,14 +270,14 @@ class LinkFl:
         if not (daten is None):
             self.dlg_sw.lf_anzahl_haltungen.setText(str(daten[0]))
         else:
-            self.dlg_sw.lf_anzahl_haltungen.setText('0')
+            self.dlg_sw.lf_anzahl_haltungen.setText(u'0')
 
         # Zu berücksichtigende SW-Punkte zählen
 
         if len(liste_teilgebiete) != 0:
-            auswahl = u" WHERE einleit.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            auswahl = u" WHERE einleit.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
         else:
-            auswahl = ''
+            auswahl = u''
 
         sql = u"""SELECT count(*) AS anzahl FROM einleit{auswahl}""".format(auswahl=auswahl)
         try:
@@ -290,7 +290,7 @@ class LinkFl:
         if not (daten is None):
             self.dlg_sw.lf_anzahl_einleit.setText(str(daten[0]))
         else:
-            self.dlg_sw.lf_anzahl_einleit.setText('0')
+            self.dlg_sw.lf_anzahl_einleit.setText(u'0')
 
 
     # -------------------------------------------------------------------------
@@ -344,10 +344,10 @@ class LinkFl:
                 """.format(gruppe=self.gruppe)
             self.dbQK.sql(sql)
             daten = self.dbQK.fetchall()
-            logger.debug('\ndaten: {}'.format(str(daten)))  # debug
+            logger.debug(u'\ndaten: {}'.format(str(daten)))  # debug
             nzeilen = len(daten)
             self.dlg_mg.tw_gruppenattr.setRowCount(nzeilen)
-            # self.dlg_mg.tw_gruppenattr.setHorizontalHeaderLabels(["Teilgebiet", "Tabelle", "Anzahl"])
+            # self.dlg_mg.tw_gruppenattr.setHorizontalHeaderLabels([u"Teilgebiet", u"Tabelle", u"Anzahl"])
             self.dlg_mg.tw_gruppenattr.setColumnWidth(0, 174)  # 17 Pixel für Rand und Nummernspalte (und je Spalte?)
             self.dlg_mg.tw_gruppenattr.setColumnWidth(1, 80)
             self.dlg_mg.tw_gruppenattr.setColumnWidth(2, 50)
@@ -357,18 +357,18 @@ class LinkFl:
                     self.dlg_mg.tw_gruppenattr.setRowHeight(i, 20)
 
     def reloadgrouptgb(self):
-        reloadgroup(self.dbQK, self.gruppe, dbtyp = 'SpatiaLite')
-        iface.messageBar().pushMessage("Fertig!", 'Teilgebiete wurden geladen!', level=QgsMessageBar.INFO)
+        reloadgroup(self.dbQK, self.gruppe, dbtyp = u'SpatiaLite')
+        iface.messageBar().pushMessage(u"Fertig!", u'Teilgebiete wurden geladen!', level=QgsMessageBar.INFO)
 
     def storegrouptgb(self):
         neuegruppe = self.dlg_mg.tf_newgroup.text()
-        if neuegruppe != '' and neuegruppe is not None:
+        if neuegruppe != u'' and neuegruppe is not None:
             kommentar = self.dlg_mg.tf_kommentar.toPlainText()
             if kommentar is None:
-                kommentar = ''
-            storegroup(self.dbQK, neuegruppe, kommentar, dbtyp = 'SpatiaLite')
+                kommentar = u''
+            storegroup(self.dbQK, neuegruppe, kommentar, dbtyp = u'SpatiaLite')
             self.showgroups()
-            iface.messageBar().pushMessage("Fertig!", 'Teilgebiete wurden gespeichert', level=QgsMessageBar.INFO)
+            iface.messageBar().pushMessage(u"Fertig!", u'Teilgebiete wurden gespeichert', level=QgsMessageBar.INFO)
 
     # -------------------------------------------------------------------------
     # Öffnen des Formulars zur Erstellung der Verknüpfungen
@@ -377,28 +377,28 @@ class LinkFl:
         """Run method that performs all the real work"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({'flaechen', 'haltungen', 'linkfl'} & get_editable_layers()) > 0:
+        if len({u'flaechen', u'haltungen', u'linkfl'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                                            level=QgsMessageBar.CRITICAL)
             return False
 
-        database_QKan = ''
+        database_QKan = u''
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             fehlermeldung(u"Fehler in k_link", 
                           u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            logger.error("k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error(u"k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if self.dbQK is None:
-            fehlermeldung("Fehler in LinkFl.run_createlinefl",
+            fehlermeldung(u"Fehler in LinkFl.run_createlinefl",
                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage("Fehler in LinkFl.run_createlinefl",
+            iface.messageBar().pushMessage(u"Fehler in LinkFl.run_createlinefl",
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
@@ -432,10 +432,10 @@ class LinkFl:
         self.dbQK.commit()
 
         # Abfragen der Tabelle flaechen nach verwendeten Abflussparametern
-        sql = 'SELECT abflussparameter FROM flaechen GROUP BY abflussparameter'
+        sql = u'SELECT abflussparameter FROM flaechen GROUP BY abflussparameter'
         self.dbQK.sql(sql)
         daten = self.dbQK.fetchall()
-        # logger.debug('\ndaten: {}'.format(str(daten)))  # debug
+        # logger.debug(u'\ndaten: {}'.format(str(daten)))  # debug
         self.dlg_cl.lw_flaechen_abflussparam.clear()
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
@@ -446,12 +446,12 @@ class LinkFl:
                             self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
                     except BaseException as err:
                         del self.dbQK
-                        # logger.debug('\nelem: {}'.format(str(elem)))  # debug
+                        # logger.debug(u'\nelem: {}'.format(str(elem)))  # debug
                         # if len(daten) == 1:
                         # self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(0)
 
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
-        sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
+        sql = u'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
         self.dbQK.sql(sql)
         daten = self.dbQK.fetchall()
         self.dlg_cl.lw_hal_entw.clear()
@@ -465,7 +465,7 @@ class LinkFl:
                         # self.dlg_cl.lw_hal_entw.setCurrentRow(0)
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
-        sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
+        sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         self.dbQK.sql(sql)
         daten = self.dbQK.fetchall()
         self.dlg_cl.lw_teilgebiete.clear()
@@ -498,7 +498,7 @@ class LinkFl:
         elif bezug_abstand == 'mittelpunkt':
             self.dlg_cl.rb_abstandmittelpunkt.setChecked(True)
         else:
-            fehlermeldung("Fehler im Programmcode", "Nicht definierte Option")
+            fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
             return False
 
         self.dlg_cl.lw_flaechen_abflussparam.itemClicked.connect(self.countselectionfl)
@@ -528,7 +528,7 @@ class LinkFl:
             elif self.dlg_cl.rb_abstandmittelpunkt.isChecked():
                 bezug_abstand = 'mittelpunkt'
             else:
-                fehlermeldung("Fehler im Programmcode", "Nicht definierte Option")
+                fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
                 return False
 
                 # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
@@ -559,8 +559,8 @@ class LinkFl:
             if u'Anbindungen Flächen' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
                 uri = QgsDataSourceURI()
                 uri.setDatabase(database_QKan)
-                uri.setDataSource('', 'linkfl', 'glink')
-                vlayer = QgsVectorLayer(uri.uri(), u'Anbindungen Flächen', 'spatialite')
+                uri.setDataSource(u'', u'linkfl', u'glink')
+                vlayer = QgsVectorLayer(uri.uri(), u'Anbindungen Flächen', u'spatialite')
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)
 
         # --------------------------------------------------------------------------
@@ -576,28 +576,28 @@ class LinkFl:
         """Run method that performs all the real work"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({'einleit', 'haltungen', 'linksw'} & get_editable_layers()) > 0:
+        if len({u'einleit', u'haltungen', u'linksw'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                                            level=QgsMessageBar.CRITICAL)
             return False
 
-        database_QKan = ''
+        database_QKan = u''
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             fehlermeldung(u"Fehler in LinkFl.run_createlinesw", 
                           u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            logger.error("LinkFl.run_createlinesw: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error(u"LinkFl.run_createlinesw: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if self.dbQK is None:
-            fehlermeldung("Fehler in LinkFl.run_createlinesw",
+            fehlermeldung(u"Fehler in LinkFl.run_createlinesw",
                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage("Fehler in LinkFl.run_createlinesw",
+            iface.messageBar().pushMessage(u"Fehler in LinkFl.run_createlinesw",
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
@@ -632,7 +632,7 @@ class LinkFl:
 
 
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
-        sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
+        sql = u'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
         self.dbQK.sql(sql)
         daten = self.dbQK.fetchall()
         self.dlg_sw.lw_hal_entw.clear()
@@ -646,7 +646,7 @@ class LinkFl:
                         # self.dlg_sw.lw_hal_entw.setCurrentRow(0)
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
-        sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
+        sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         self.dbQK.sql(sql)
         daten = self.dbQK.fetchall()
         self.dlg_sw.lw_teilgebiete.clear()
@@ -715,8 +715,8 @@ class LinkFl:
             if u'Anbindungen SW-Punkte' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
                 uri = QgsDataSourceURI()
                 uri.setDatabase(database_QKan)
-                uri.setDataSource('', 'linksw', 'glink')
-                vlayer = QgsVectorLayer(uri.uri(), u'Anbindungen SW-Punkte', 'spatialite')
+                uri.setDataSource(u'', u'linksw', u'glink')
+                vlayer = QgsVectorLayer(uri.uri(), u'Anbindungen SW-Punkte', u'spatialite')
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)
 
         # --------------------------------------------------------------------------
@@ -753,26 +753,26 @@ class LinkFl:
         """Öffnen des Formulars zur Zuordnung von Teilgebieten auf Haltungen und Flächen"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({'flaechen', 'haltungen', 'linkfl', 'linksw', 'teilgebiete', 
-                 'einleit'} & get_editable_layers()) > 0:
+        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'teilgebiete', 
+                 u'einleit'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ", 
                    u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
                    level=QgsMessageBar.CRITICAL)
             return False
 
-        database_QKan = ''
+        database_QKan = u''
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             fehlermeldung(u"Fehler in k_link", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            logger.error("k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error(u"k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
         if self.dbQK is None:
-            fehlermeldung("Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage("Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+            fehlermeldung(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+            iface.messageBar().pushMessage(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                 database_QKan), level=QgsMessageBar.CRITICAL)
             return None
 
@@ -790,7 +790,7 @@ class LinkFl:
         self.dlg_at.cb_autokorrektur.setChecked(autokorrektur)
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
-        sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
+        sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         self.dbQK.sql(sql)
         daten = self.dbQK.fetchall()
         self.dlg_at.lw_teilgebiete.clear()
@@ -805,23 +805,23 @@ class LinkFl:
         if 'auswahltyp' in self.config:
             auswahltyp = self.config['auswahltyp']
         else:
-            auswahltyp = 'within'
+            auswahltyp = u'within'
 
-        if auswahltyp == 'within':
+        if auswahltyp == u'within':
             self.dlg_at.rb_within.setChecked(True)
             self.enable_bufferradius(True)
-        elif auswahltyp == 'overlaps':
+        elif auswahltyp == u'overlaps':
             self.dlg_at.rb_overlaps.setChecked(True)
             self.enable_bufferradius(False)
         else:
-            fehlermeldung("Fehler im Programmcode (3)", "Nicht definierte Option")
+            fehlermeldung(u"Fehler im Programmcode (3)", u"Nicht definierte Option")
             return False
 
         # Festlegung des Pufferradius
         if 'bufferradius' in self.config:
             bufferradius = self.config['bufferradius']
         else:
-            bufferradius = '0'
+            bufferradius = u'0'
         self.dlg_at.tf_bufferradius.setText(bufferradius)
 
 
@@ -836,11 +836,11 @@ class LinkFl:
 
             liste_teilgebiete = self.listselecteditems(self.dlg_at.lw_teilgebiete)
             if self.dlg_at.rb_within.isChecked():
-                auswahltyp = 'within'
+                auswahltyp = u'within'
             elif self.dlg_at.rb_overlaps.isChecked():
-                auswahltyp = 'overlaps'
+                auswahltyp = u'overlaps'
             else:
-                fehlermeldung("Fehler im Programmcode (4)", "Nicht definierte Option")
+                fehlermeldung(u"Fehler im Programmcode (4)", u"Nicht definierte Option")
                 return False
 
             autokorrektur = self.dlg_at.cb_autokorrektur.isChecked()
@@ -859,7 +859,7 @@ class LinkFl:
             # Start der Verarbeitung
 
             assigntgeb(self.dbQK, auswahltyp, liste_teilgebiete, 
-                       ['haltungen', 'flaechen', 'schaechte', 'einleit', 'tezg'], 
+                       [u'haltungen', u'flaechen', u'schaechte', u'einleit', u'tezg'], 
                        autokorrektur, bufferradius)
 
         # --------------------------------------------------------------------------
@@ -875,28 +875,28 @@ class LinkFl:
         """Speichern und Wiederherstellen von Teilgebietszuordnungen als Gruppe"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({'flaechen', 'haltungen', 'schaechte', 'linksw', 'einleit', 
-                 'linkfl', 'teilgebiete'} & get_editable_layers()) > 0:
+        if len({u'flaechen', u'haltungen', u'schaechte', u'linksw', u'einleit', 
+                 u'linkfl', u'teilgebiete'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                                            level=QgsMessageBar.CRITICAL)
             return False
 
-        database_QKan = ''
+        database_QKan = u''
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             fehlermeldung(u"Fehler in LinkFl.run_managegroups",
                           u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            logger.error("CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error(u"CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if self.dbQK is None:
-            fehlermeldung("Fehler in LinkFl.run_managegroups",
+            fehlermeldung(u"Fehler in LinkFl.run_managegroups",
                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage("Fehler in LinkFl.run_managegroups",
+            iface.messageBar().pushMessage(u"Fehler in LinkFl.run_managegroups",
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None

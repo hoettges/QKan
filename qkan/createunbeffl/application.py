@@ -81,11 +81,11 @@ class CreateUnbefFl:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 12.06.2017)
 
-        logger.info('\n\nQKan_CreateUnbefFlaechen initialisiert...')
+        logger.info(u'\n\nQKan_CreateUnbefFlaechen initialisiert...')
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen
-        wordir = os.path.join(site.getuserbase(), 'qkan')
+        wordir = os.path.join(site.getuserbase(), u'qkan')
 
         if not os.path.isdir(wordir):
             os.makedirs(wordir)
@@ -94,7 +94,7 @@ class CreateUnbefFl:
         # Konfigurationsdatei qkan.json lesen
         #
 
-        self.configfil = os.path.join(wordir, 'qkan.json')
+        self.configfil = os.path.join(wordir, u'qkan.json')
         if os.path.exists(self.configfil):
             with codecs.open(self.configfil, 'r', 'utf-8') as fileconfig:
                 self.config = json.loads(fileconfig.read().replace('\\', '/'))
@@ -155,9 +155,9 @@ class CreateUnbefFl:
             anzahl = sum([int(attr[-2]) for attr in liste_selected])
 
         if not (anzahl is None):
-            self.dlg.lf_anzahl_tezg.setText('{}'.format(anzahl))
+            self.dlg.lf_anzahl_tezg.setText(u'{}'.format(anzahl))
         else:
-            self.dlg.lf_anzahl_tezg.setText('0')
+            self.dlg.lf_anzahl_tezg.setText(u'0')
 
 
     # -------------------------------------------------------------------------
@@ -200,22 +200,22 @@ class CreateUnbefFl:
     def run(self):
         """Run method that performs all the real work"""
 
-        database_QKan = ''
+        database_QKan = u''
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             fehlermeldung(u"Fehler in CreateUnbefFl",
                           u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            logger.error("CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error(u"CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
         # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
         dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if dbQK is None:
-            fehlermeldung("Fehler in QKan_CreateUnbefFl",
+            fehlermeldung(u"Fehler in QKan_CreateUnbefFl",
                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE",
+            iface.messageBar().pushMessage(u"Fehler in QKan_Import_from_HE",
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
@@ -227,24 +227,24 @@ class CreateUnbefFl:
             FROM abflussparameter
             WHERE bodenklasse IS NOT NULL AND trim(bodenklasse) <> ''"""
 
-        if not dbQK.sql(sql, 'createunbeffl.run (1)'):
+        if not dbQK.sql(sql, u'createunbeffl.run (1)'):
             return False
 
         data = dbQK.fetchone()
 
         if data is None:
             if autokorrektur:
-                daten = ["'$Default_Unbef', u'von QKan ergänzt', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
+                daten = [u"'$Default_Unbef', u'von QKan ergänzt', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
 
                 for ds in daten:
                     sql = u"""INSERT INTO abflussparameter
                              ( 'apnam', 'kommentar', 'anfangsabflussbeiwert', 'endabflussbeiwert', 'benetzungsverlust', 
                                'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
                                'createdat') Values ({})""".format(ds)
-                    if not dbQK.sql(sql, 'createunbeffl.run (2)'):
+                    if not dbQK.sql(sql, u'createunbeffl.run (2)'):
                         return False
             else:
-                fehlermeldung('Datenfehler: ','Bitte ergänzen Sie in der Tabelle "abflussparameter" einen Datensatz für unbefestigte Flächen ("bodenklasse" darf nicht leer oder NULL sein)')
+                fehlermeldung(u'Datenfehler: ', u'Bitte ergänzen Sie in der Tabelle "abflussparameter" einen Datensatz für unbefestigte Flächen ("bodenklasse" darf nicht leer oder NULL sein)')
 
         # # Kontrolle, ob noch Flächen in Tabelle "tezg" ohne Zuordnung zu einem Abflussparameter oder zu einem 
         # # Abflussparameter, bei dem keine Bodenklasse definiert ist (Kennzeichen für undurchlässige Flächen).
@@ -256,7 +256,7 @@ class CreateUnbefFl:
             # WHERE ap.bodenklasse IS NULL
             # GROUP BY abflussparameter, teilgebiet"""
 
-        # if not dbQK.sql(sql, 'createunbeffl.run (3)'):
+        # if not dbQK.sql(sql, u'createunbeffl.run (3)'):
             # return False
 
         # data = dbQK.fetchall()
@@ -282,7 +282,7 @@ class CreateUnbefFl:
                             LEFT JOIN bodenklassen AS bk
                             ON bk.bknam = ap.bodenklasse
                             GROUP BY abflussparameter, teilgebiet"""
-        if not dbQK.sql(sql, 'createunbeffl.run (4)'):
+        if not dbQK.sql(sql, u'createunbeffl.run (4)'):
             return None
 
         self.listetezg = dbQK.fetchall()
@@ -337,5 +337,5 @@ class CreateUnbefFl:
             createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur)
 
             # else:
-            # logger.debug('Selected: \n{}'.format(self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)))
-            # logger.debug('Methoden von QTableWidgetItem:\n{}'.format(str(dir(self.dlg.tw_cnt_abflussparameter))))
+            # logger.debug(u'Selected: \n{}'.format(self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)))
+            # logger.debug(u'Methoden von QTableWidgetItem:\n{}'.format(str(dir(self.dlg.tw_cnt_abflussparameter))))

@@ -37,7 +37,7 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from qgis_utils import fortschritt, fehlermeldung
 
-logger = logging.getLogger('QKan')
+logger = logging.getLogger(u'QKan')
 
 
 def createdbtables(consl, cursl, epsg=25832):
@@ -56,7 +56,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Haltungen ----------------------------------------------------------------
 
-    sql = '''CREATE TABLE haltungen (
+    sql = u'''CREATE TABLE haltungen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     haltnam TEXT,
     schoben TEXT,
@@ -85,17 +85,17 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "Haltungen" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "Haltungen" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql = "SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('haltungen','geom')"
+    sql = u"SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('haltungen','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
@@ -103,7 +103,7 @@ def createdbtables(consl, cursl, epsg=25832):
     # Schaechte ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
 
-    sql = '''CREATE TABLE schaechte (
+    sql = u'''CREATE TABLE schaechte (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     schnam TEXT,
     xsch REAL,
@@ -128,19 +128,19 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "Schaechte" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "Schaechte" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql1 = """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg)
-    sql2 = """SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg)
-    sqlindex = """SELECT CreateSpatialIndex('schaechte','geom')"""
+    sql1 = u"""SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg)
+    sql2 = u"""SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg)
+    sqlindex = u"""SELECT CreateSpatialIndex('schaechte','geom')"""
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden',
+        fehlermeldung(u'In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden',
                       str(err))
         consl.close()
         return False
@@ -149,7 +149,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Profile ------------------------------------------------------------------
 
-    sql = '''CREATE TABLE profile (
+    sql = u'''CREATE TABLE profile (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     profilnam TEXT,
     he_nr INTEGER,
@@ -159,7 +159,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "Profile" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "Profile" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
@@ -195,10 +195,10 @@ def createdbtables(consl, cursl, epsg=25832):
                  u"'Trapezquerschnitt', 68, NULL, NULL"]
 
         for ds in daten:
-            cursl.execute(u'INSERT INTO profile (profilnam, he_nr, mu_nr, kp_nr) VALUES (' + ds + ')')
+            cursl.execute(u'INSERT INTO profile (profilnam, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung('Tabellendaten "Profile" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "Profile" konnten nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
 
@@ -206,7 +206,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Geometrie Sonderprofile --------------------------------------------------
 
-    sql = '''CREATE TABLE profildaten (
+    sql = u'''CREATE TABLE profildaten (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     profilnam TEXT, 
     wspiegel REAL, 
@@ -215,14 +215,14 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "profildaten" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "profildaten" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
     consl.commit()
 
     # Entwaesserungssysteme ----------------------------------------------------
 
-    sql = '''CREATE TABLE entwaesserungsarten (
+    sql = u'''CREATE TABLE entwaesserungsarten (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     kuerzel TEXT, 
     bezeichnung TEXT, 
@@ -232,29 +232,29 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "entwaesserungsarten" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "entwaesserungsarten" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
     try:
 
-        daten = ["'MW', 'Mischwasser', NULL, 0",
-                 "'RW', 'Regenwasser', NULL, 1",
-                 "'SW', 'Schmutzwasser', NULL, 2"]
+        daten = [u"'MW', 'Mischwasser', NULL, 0",
+                 u"'RW', 'Regenwasser', NULL, 1",
+                 u"'SW', 'Schmutzwasser', NULL, 2"]
 
         for ds in daten:
             cursl.execute(
-                'INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr) VALUES (' + ds + ')')
+                u'INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung('Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
 
     # Pumpentypen --------------------------------------------------------------
 
-    sql = '''CREATE TABLE pumpentypen (
+    sql = u'''CREATE TABLE pumpentypen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bezeichnung TEXT, 
     he_nr INTEGER)'''
@@ -262,23 +262,23 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "pumpentypen" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "pumpentypen" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
     try:
 
-        daten = ["'Offline', 1",
-                 "'Online Schaltstufen', 2",
-                 "'Online Kennlinie', 3",
-                 "'Online Wasserstandsdifferenz', 4",
-                 "'Ideal', 5"]
+        daten = [u"'Offline', 1",
+                 u"'Online Schaltstufen', 2",
+                 u"'Online Kennlinie', 3",
+                 u"'Online Wasserstandsdifferenz', 4",
+                 u"'Ideal', 5"]
 
         for ds in daten:
-            cursl.execute('INSERT INTO pumpentypen (bezeichnung, he_nr) VALUES (' + ds + ')')
+            cursl.execute(u'INSERT INTO pumpentypen (bezeichnung, he_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung('Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
 
@@ -286,7 +286,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Pumpen -------------------------------------------------------------------
 
-    sql = '''CREATE TABLE pumpen (
+    sql = u'''CREATE TABLE pumpen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     pnam TEXT,
     schoben TEXT,
@@ -305,17 +305,17 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "pumpen" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "pumpen" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql = "SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('pumpen','geom')"
+    sql = u"SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('pumpen','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
 
@@ -323,7 +323,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Wehre --------------------------------------------------------------------
 
-    sql = '''CREATE TABLE wehre (
+    sql = u'''CREATE TABLE wehre (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     wnam TEXT,
     schoben TEXT,
@@ -342,17 +342,17 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "wehre" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "wehre" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql = "SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('wehre','geom')"
+    sql = u"SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('wehre','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
 
@@ -371,7 +371,7 @@ def createdbtables(consl, cursl, epsg=25832):
     #  - flaeche: ha
 
 
-    sql = '''CREATE TABLE einzugsgebiete (
+    sql = u'''CREATE TABLE einzugsgebiete (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     tgnam TEXT,
     ewdichte REAL,
@@ -384,17 +384,17 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "Einzugsgebiete" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "Einzugsgebiete" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql = "SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('einzugsgebiete','geom')"
+    sql = u"SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('einzugsgebiete','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "Einzugsgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "Einzugsgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
@@ -405,7 +405,7 @@ def createdbtables(consl, cursl, epsg=25832):
     # automatische Verknüpfung von befestigten Flächen und direkten Einleitungen). 
 
 
-    sql = '''CREATE TABLE teilgebiete (
+    sql = u'''CREATE TABLE teilgebiete (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     tgnam TEXT,
     kommentar TEXT,
@@ -414,17 +414,17 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "Teilgebiete" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "Teilgebiete" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql = "SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('teilgebiete','geom')"
+    sql = u"SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('teilgebiete','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
@@ -445,7 +445,7 @@ def createdbtables(consl, cursl, epsg=25832):
     #  - "einleit" 
     #  - "swgebaeude"
 
-    sql = '''CREATE TABLE gruppen (
+    sql = u'''CREATE TABLE gruppen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     pktab INTEGER,
     grnam TEXT,
@@ -457,14 +457,14 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "gruppen" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "gruppen" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
     consl.commit()
 
     # Befestigte und unbefestigte Flächen ------------------------------------------------------
 
-    sql = '''CREATE TABLE flaechen (
+    sql = u'''CREATE TABLE flaechen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     flnam TEXT,
     haltnam TEXT,
@@ -484,17 +484,17 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "flaechen" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "flaechen" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql = "SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('flaechen','geom')"
+    sql = u"SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('flaechen','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
@@ -506,7 +506,7 @@ def createdbtables(consl, cursl, epsg=25832):
     # Werkzeug "QKan_Link_Flaechen" mit allen durch die Verschneidung mit tezg entstehenden
     # Anteilen zugeordnet. 
 
-    sql = """CREATE TABLE linkfl (
+    sql = u"""CREATE TABLE linkfl (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     flnam TEXT,
     tezgnam TEXT,
@@ -517,14 +517,14 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "linkfl" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "linkfl" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql1 = """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
-    sql2 = """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
-    sql3 = """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
-    sqlindex = "SELECT CreateSpatialIndex('linkfl','glink')"
+    sql1 = u"""SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql2 = u"""SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql3 = u"""SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('linkfl','glink')"
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
@@ -541,7 +541,7 @@ def createdbtables(consl, cursl, epsg=25832):
     # wird anschließend in das Feld haltnam eingetragen. Der Export erfolgt allerdings anhand
     # der grafischen Verknüpfungen dieser Tabelle. 
 
-    sql = """CREATE TABLE linksw (
+    sql = u"""CREATE TABLE linksw (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     elnam TEXT,
     haltnam TEXT,
@@ -550,14 +550,14 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "linksw" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "linksw" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql1 = """SELECT AddGeometryColumn('linksw','geom',{epsg},'POLYGON',2)""".format(epsg=epsg)
-    sql2 = """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
-    sql3 = """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
-    sqlindex = "SELECT CreateSpatialIndex('linksw','geom')"
+    sql1 = u"""SELECT AddGeometryColumn('linksw','geom',{epsg},'POLYGON',2)""".format(epsg=epsg)
+    sql2 = u"""SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql3 = u"""SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('linksw','geom')"
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
@@ -574,7 +574,7 @@ def createdbtables(consl, cursl, epsg=25832):
     # Fläche als Differenz zu den innerhalb liegenden Flächen (befestigte und unbefestigte!)
     # gebildet
 
-    sql = '''CREATE TABLE tezg (
+    sql = u'''CREATE TABLE tezg (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     flnam TEXT,
     haltnam TEXT,
@@ -588,17 +588,17 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "tezg" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "tezg" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql = "SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('tezg','geom')"
+    sql = u"SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('tezg','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
@@ -608,7 +608,7 @@ def createdbtables(consl, cursl, epsg=25832):
     # Erfasst alle Direkteinleitungen mit festem SW-Zufluss (m³/a)
     # Die Zuordnung zum Teilgebiet dient nur der Auswahl
 
-    sql = '''CREATE TABLE einleit (
+    sql = u'''CREATE TABLE einleit (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     elnam TEXT,
     haltnam TEXT,
@@ -621,17 +621,17 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "einleit" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "einleit" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
-    sql = "SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('einleit','geom')"
+    sql = u"SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)".format(epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('einleit','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung('In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
@@ -640,7 +640,7 @@ def createdbtables(consl, cursl, epsg=25832):
     # Einleitungen aus Wasserverbrauchstabellen ----------------------------------------------------------
     # Die Tabelle wird individuell verwaltet und anschließend auf die Tabelle "einleit" übertragen
 
-    # sql = '''CREATE TABLE swref (
+    # sql = u'''CREATE TABLE swref (
         # pk INTEGER PRIMARY KEY AUTOINCREMENT, 
         # oi TEXT, 
         # gebnam TEXT, 
@@ -657,17 +657,17 @@ def createdbtables(consl, cursl, epsg=25832):
     # try:
         # cursl.execute(sql)
     # except BaseException as err:
-        # fehlermeldung('Tabelle "swref" konnte nicht erstellt werden', str(err))
+        # fehlermeldung(u'Tabelle "swref" konnte nicht erstellt werden', str(err))
         # consl.close()
         # return False
 
-    # sql = "SELECT AddGeometryColumn('swref','geom',{},'POINT',2)".format(epsg)
-    # sqlindex = "SELECT CreateSpatialIndex('swref','geom')"
+    # sql = u"SELECT AddGeometryColumn('swref','geom',{},'POINT',2)".format(epsg)
+    # sqlindex = u"SELECT CreateSpatialIndex('swref','geom')"
     # try:
         # cursl.execute(sql)
         # cursl.execute(sqlindex)
     # except BaseException as err:
-        # fehlermeldung('In der Tabelle "swref" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        # fehlermeldung(u'In der Tabelle "swref" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
         # consl.close()
         # return False
     # consl.commit()
@@ -675,7 +675,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Simulationsstatus/Planungsstatus -----------------------------------------
 
-    sql = '''CREATE TABLE simulationsstatus (
+    sql = u'''CREATE TABLE simulationsstatus (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bezeichnung TEXT,
     he_nr INTEGER,
@@ -685,32 +685,31 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "simulationsstatus" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "simulationsstatus" konnte nicht erstellt werden', str(err))
         consl.close()
         return False
 
     try:
 
-        daten = ["'keine Angabe', 0, NULL, NULL",
-                 "'vorhanden', 1, NULL, NULL",
-                 "'geplant', 2, NULL, NULL",
-                 "'fiktiv', 3, NULL, NULL",
+        daten = [u"'keine Angabe', 0, NULL, NULL",
+                 u"'vorhanden', 1, NULL, NULL",
+                 u"'geplant', 2, NULL, NULL",
+                 u"'fiktiv', 3, NULL, NULL",
                  u"'außer Betrieb (keine Sim.)', 4, NULL, NULL",
                  u"'verfüllt (keine Sim.)', 5, NULL, NULL"]
 
         for ds in daten:
-            cursl.execute('INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) VALUES (' +
-                          ds + ')')
+            cursl.execute(u'INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung('Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
 
     # Auslasstypen -------------------------------------------------------------
 
-    sql = '''CREATE TABLE auslasstypen (
+    sql = u'''CREATE TABLE auslasstypen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bezeichnung TEXT,
     he_nr INTEGER,
@@ -720,30 +719,30 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "auslasstypen" konnten nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "auslasstypen" konnten nicht erstellt werden', str(err))
         consl.close()
         return False
 
     try:
 
-        daten = ["'frei', 0, NULL, NULL",
-                 "'normal', 1, NULL, NULL",
-                 "'konstant', 2, NULL, NULL",
-                 "'Tide', 3, NULL, NULL",
-                 "'Zeitreihe', 4, NULL, NULL"]
+        daten = [u"'frei', 0, NULL, NULL",
+                 u"'normal', 1, NULL, NULL",
+                 u"'konstant', 2, NULL, NULL",
+                 u"'Tide', 3, NULL, NULL",
+                 u"'Zeitreihe', 4, NULL, NULL"]
 
         for ds in daten:
-            cursl.execute('INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) VALUES (' + ds + ')')
+            cursl.execute(u'INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung('Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
 
     # Abflussparameter -------------------------------------------------------------
 
-    sql = '''CREATE TABLE abflussparameter (
+    sql = u'''CREATE TABLE abflussparameter (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     apnam TEXT, 
     anfangsabflussbeiwert REAL, 
@@ -759,13 +758,13 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "abflussparameter" konnten nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "abflussparameter" konnten nicht erstellt werden', str(err))
         consl.close()
         return False
 
     try:
-        daten = ["'$Default_Bef', 'Exportiert mit qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, 'NULL', '13.01.2011 08:44:50'",
-                 "'$Default_Unbef', 'Exportiert mit qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
+        daten = [u"'$Default_Bef', 'Exportiert mit qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, 'NULL', '13.01.2011 08:44:50'",
+                 u"'$Default_Unbef', 'Exportiert mit qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
 
         for ds in daten:
             sql = u"""INSERT INTO abflussparameter
@@ -775,14 +774,14 @@ def createdbtables(consl, cursl, epsg=25832):
             cursl.execute(sql)
 
     except BaseException as err:
-        fehlermeldung('Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden', str(err))
         consl.close()
         return False
     consl.commit()
 
     # Bodenklasse -------------------------------------------------------------
 
-    sql = '''CREATE TABLE bodenklassen (
+    sql = u'''CREATE TABLE bodenklassen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     bknam TEXT, 
     infiltrationsrateanfang REAL,
@@ -797,7 +796,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung('Tabelle "bodenklassen" konnten nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "bodenklassen" konnten nicht erstellt werden', str(err))
         consl.close()
         return False
 
@@ -818,14 +817,14 @@ def createdbtables(consl, cursl, epsg=25832):
             cursl.execute(sql)
 
         except BaseException as err:
-            fehlermeldung('Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
+            fehlermeldung(u'Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
             consl.close()
             return False
     consl.commit()
 
     # Kennlinie Speicherbauwerke -----------------------------------------------
 
-    sql = '''CREATE TABLE speicherkennlinien (
+    sql = u'''CREATE TABLE speicherkennlinien (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     schnam TEXT, 
     wspiegel REAL, 
@@ -841,7 +840,7 @@ def createdbtables(consl, cursl, epsg=25832):
 
     # Allgemeiner Informationen -----------------------------------------------
 
-    sql = '''CREATE TABLE info (
+    sql = u'''CREATE TABLE info (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     subject TEXT, 
     value TEXT,
@@ -855,9 +854,9 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
     consl.commit()
 
-    sql = "INSERT INTO info (subject, value) VALUES ('Version', '{}'); \n".format(__version__)
+    sql = u"INSERT INTO info (subject, value) VALUES ('Version', '{}'); \n".format(__version__)
 
-    fortschritt('Tabellen erstellt...', 0.01)
+    fortschritt(u'Tabellen erstellt...', 0.01)
 
     # ----------------------------------------------------------------------------------------------------------------------
     # Alles prima gelaufen...
@@ -870,8 +869,8 @@ def createdbtables(consl, cursl, epsg=25832):
 if __name__ in ('__main__', '__console__', '__builtin__'):
 
     # Verzeichnis der Testdaten
-    pfad = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh'
-    database_QKan = os.path.join(pfad, 'test1.sqlite')
+    pfad = u'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh'
+    database_QKan = os.path.join(pfad, u'test1.sqlite')
 
     if os.path.exists(database_QKan):
         os.remove(database_QKan)
@@ -895,7 +894,7 @@ if __name__ in ('__main__', '__console__', '__builtin__'):
 
     time.sleep(1)
 
-    sql = 'SELECT InitSpatialMetadata(transaction = TRUE)'
+    sql = u'SELECT InitSpatialMetadata(transaction = TRUE)'
     cursl.execute(sql)
 
     iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank ist erstellt!", level=QgsMessageBar.INFO)

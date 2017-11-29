@@ -43,7 +43,7 @@ from qgis.utils import iface
 from qkan_database import createdbtables
 from qgis_utils import fortschritt, fehlermeldung
 
-logger = logging.getLogger('QKan')
+logger = logging.getLogger(u'QKan')
 
 
 # Hauptprogramm ----------------------------------------------------------------
@@ -78,33 +78,33 @@ class DBConnection:
                     return None
 
             else:
-                iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank wird erstellt. Bitte waren...",
+                iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank wird erstellt. Bitte waren...",
                                                level=QgsMessageBar.INFO)
 
-                datenbank_QKan_Template = os.path.join(os.path.dirname(__file__), "templates", "qkan.sqlite")
+                datenbank_QKan_Template = os.path.join(os.path.dirname(__file__), u"templates", u"qkan.sqlite")
                 shutil.copyfile(datenbank_QKan_Template, dbname)
 
                 self.consl = splite.connect(database=dbname)
                 self.cursl = self.consl.cursor()
 
-                sql = 'SELECT InitSpatialMetadata()'
+                sql = u'SELECT InitSpatialMetadata()'
                 self.cursl.execute(sql)
 
-                iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank ist erstellt!",
+                iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank ist erstellt!",
                                                level=QgsMessageBar.INFO)
                 if not createdbtables(self.consl, self.cursl, epsg):
-                    iface.messageBar().pushMessage("Fehler",
-                                                   "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
+                    iface.messageBar().pushMessage(u"Fehler",
+                                                   u"SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
                                                    level=QgsMessageBar.CRITICAL)
         elif tabObject is not None:
             tabconnect = tabObject.publicSource()
             t_db, t_tab, t_geo, t_sql = tuple(tabconnect.split())
-            dbname = t_db.split('=')[1].strip("'")
-            self.tabname = t_tab.split('=')[1].strip('"')
+            dbname = t_db.split(u'=')[1].strip(u"'")
+            self.tabname = t_tab.split(u'=')[1].strip(u'"')
 
             # Pruefung auf korrekte Zeichen in Namen
             if not checknames(self.tabname):
-                iface.messageBar().pushMessage("Fehler", "Unzulaessige Zeichen in Tabellenname: " + self.tabname,
+                iface.messageBar().pushMessage(u"Fehler", u"Unzulaessige Zeichen in Tabellenname: " + self.tabname,
                                                level=QgsMessageBar.CRITICAL)
                 self.consl = None
             else:
@@ -113,13 +113,13 @@ class DBConnection:
                     self.consl = splite.connect(database=dbname)
                     self.cursl = self.consl.cursor()
                 except:
-                    iface.messageBar().pushMessage("Fehler",
-                                                   'Fehler beim Öffnen der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(
+                    iface.messageBar().pushMessage(u"Fehler",
+                                                   u'Fehler beim Öffnen der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(
                                                        dbname), level=QgsMessageBar.CRITICAL)
                     self.consl = None
         else:
-            iface.messageBar().pushMessage("Fehler",
-                                           'Fehler beim Anbinden der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(
+            iface.messageBar().pushMessage(u"Fehler",
+                                           u'Fehler beim Anbinden der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(
                                                dbname), level=QgsMessageBar.CRITICAL)
             self.consl = None
 
@@ -134,7 +134,7 @@ class DBConnection:
         """Gibt Spaltenliste zurück."""
 
         sql = u'PRAGMA table_info("{0:s}")'.format(tablenam)
-        if not self.sql(sql, 'dbfunc.attrlist'):
+        if not self.sql(sql, u'dbfunc.attrlist'):
             return False
 
         daten = self.cursl.fetchall()
@@ -142,7 +142,7 @@ class DBConnection:
         lattr = [el[1] for el in daten]
         return lattr
 
-    def sql(self, sql, errormessage = 'allgemein'):
+    def sql(self, sql, errormessage = u'allgemein'):
         """Fuehrt eine SQL-Abfrage aus."""
 
         try:
@@ -180,7 +180,7 @@ class DBConnection:
 
     # Versionskontrolle der QKan-Datenbank
 
-    def version(self, actversion = '2.2.0'):
+    def version(self, actversion = u'2.2.1'):
         """Checks database version. Database is just connected by the calling procedure.
 
             :param actversion: aktuelle Version
@@ -197,7 +197,7 @@ class DBConnection:
                 FROM info
                 WHERE subject = 'version'"""
 
-        if not self.sql(sql, 'dbfunc.version (1)'):
+        if not self.sql(sql, u'dbfunc.version (1)'):
             return False
 
         data = self.cursl.fetchone()
@@ -205,15 +205,15 @@ class DBConnection:
             versiondbQK = data[0]
         else:
             sql = u"""INSERT INTO info (subject, value) Values ('version', '1.9.9')"""
-            if not self.sql(sql, 'dbfunc.version (2)'):
+            if not self.sql(sql, u'dbfunc.version (2)'):
                 return False
 
-            versiondbQK = '1.9.9'
+            versiondbQK = u'1.9.9'
 
         # ---------------------------------------------------------------------------------------------
         # Aktualisierung von Version 1.9.9 und früher
 
-        if versiondbQK == '1.9.9':
+        if versiondbQK == u'1.9.9':
 
             # Tabelle einwohner
             # sqllis = [u"""CREATE TABLE IF NOT EXISTS einwohner (
@@ -252,7 +252,7 @@ class DBConnection:
                 createdat TEXT DEFAULT CURRENT_DATE)""", 
             u"""SELECT AddGeometryColumn('einleit','geom',25832,'POINT',2)"""]
             for sql in sqllis:
-                if not self.sql(sql, 'dbfunc.version (3c)'):
+                if not self.sql(sql, u'dbfunc.version (3c)'):
                     return False
 
             sqllis = [u"""CREATE TABLE IF NOT EXISTS linksw (
@@ -264,71 +264,71 @@ class DBConnection:
                     u"""SELECT AddGeometryColumn('linksw','gbuf',25832,'MULTIPOLYGON',2)""", 
                     u"""SELECT AddGeometryColumn('linksw','glink',25832,'LINESTRING',2)"""]
             for sql in sqllis:
-                if not self.sql(sql, 'dbfunc.version (3d)'):
+                if not self.sql(sql, u'dbfunc.version (3d)'):
                     return False
 
             sql = u"""UPDATE info SET value = '2.0.2' WHERE subject = 'version' and value = '1.9.9';"""
-            if not self.sql(sql, 'dbfunc.version (3e)'):
+            if not self.sql(sql, u'dbfunc.version (3e)'):
                 return False
 
-            versiondbQK = '2.0.2'
+            versiondbQK = u'2.0.2'
 
 
-        if versiondbQK == '2.0.2':
+        if versiondbQK == u'2.0.2':
 
-            attrlis = self.attrlist('linksw')
+            attrlis = self.attrlist(u'linksw')
             if not attrlis:
                 return False
             elif u'elnam' not in attrlis:
-                logger.debug('linksw.elnam ist nicht in: {}'.format(str(attrlis)))
+                logger.debug(u'linksw.elnam ist nicht in: {}'.format(str(attrlis)))
                 sql = u"""ALTER TABLE linksw ADD COLUMN elnam TEXT"""
-                if not self.sql(sql, 'dbfunc.version (4a)'):
+                if not self.sql(sql, u'dbfunc.version (4a)'):
                     return False
                 self.commit()
 
-            attrlis = self.attrlist('linkew')
+            attrlis = self.attrlist(u'linkew')
             if not attrlis:
                 return False
             elif u'elnam' not in attrlis:
-                logger.debug('linkew.elnam ist nicht in: {}'.format(str(attrlis)))
+                logger.debug(u'linkew.elnam ist nicht in: {}'.format(str(attrlis)))
                 sql = u"""ALTER TABLE linkew ADD COLUMN elnam TEXT"""
-                if not self.sql(sql, 'dbfunc.version (4b)'):
+                if not self.sql(sql, u'dbfunc.version (4b)'):
                     return False
                 self.commit()
 
-            attrlis = self.attrlist('linkfl')
+            attrlis = self.attrlist(u'linkfl')
             if not attrlis:
                 return False
             elif u'tezgnam' not in attrlis:
-                logger.debug('linkfl.tezgnam ist nicht in: {}'.format(str(attrlis)))
+                logger.debug(u'linkfl.tezgnam ist nicht in: {}'.format(str(attrlis)))
                 sql = u"""ALTER TABLE linkfl ADD COLUMN tezgnam TEXT"""
-                if not self.sql(sql, 'dbfunc.version (4c)'):
+                if not self.sql(sql, u'dbfunc.version (4c)'):
                     return False
                 self.commit()
 
             sql = u"""UPDATE info SET value = '2.1.2' WHERE subject = 'version' and value = '2.0.2';"""
-            if not self.sql(sql, 'dbfunc.version (4d)'):
+            if not self.sql(sql, u'dbfunc.version (4d)'):
                 return False
 
-            versiondbQK = '2.1.2'
+            versiondbQK = u'2.1.2'
 
 
-        if versiondbQK == '2.1.2':
-            attrlis = self.attrlist('einleit')
+        if versiondbQK == u'2.1.2':
+            attrlis = self.attrlist(u'einleit')
             if not attrlis:
                 return False
             elif u'ew' not in attrlis:
-                logger.debug('einleit.ew ist nicht in: {}'.format(str(attrlis)))
+                logger.debug(u'einleit.ew ist nicht in: {}'.format(str(attrlis)))
                 sql = u"""ALTER TABLE einleit ADD COLUMN ew REAL"""
-                if not self.sql(sql, 'dbfunc.version (4f)'):
+                if not self.sql(sql, u'dbfunc.version (4f)'):
                     return False
                 sql = u"""ALTER TABLE einleit ADD COLUMN einzugsgebiet TEXT"""
-                if not self.sql(sql, 'dbfunc.version (4g)'):
+                if not self.sql(sql, u'dbfunc.version (4g)'):
                     return False
                 self.commit()
 
 
-            sql = """CREATE TABLE IF NOT EXISTS einzugsgebiete (
+            sql = u"""CREATE TABLE IF NOT EXISTS einzugsgebiete (
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
                 tgnam TEXT,
                 ewdichte REAL,
@@ -338,28 +338,28 @@ class DBConnection:
                 kommentar TEXT,
                 createdat TEXT DEFAULT CURRENT_DATE)"""
 
-            if not self.sql(sql, 'dbfunc.version (4h)'):
+            if not self.sql(sql, u'dbfunc.version (4h)'):
                 return False
 
-            sql = """SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)""".format(self.epsg)
-            if not self.sql(sql, 'dbfunc.version (4i)'):
+            sql = u"""SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)""".format(self.epsg)
+            if not self.sql(sql, u'dbfunc.version (4i)'):
                 return False
 
-            sql = """SELECT CreateSpatialIndex('einzugsgebiete','geom')"""
-            if not self.sql(sql, 'dbfunc.version (4j)'):
+            sql = u"""SELECT CreateSpatialIndex('einzugsgebiete','geom')"""
+            if not self.sql(sql, u'dbfunc.version (4j)'):
                 return False
 
             sql = u"""UPDATE info SET value = '2.1.6' WHERE subject = 'version' and value = '2.1.2';"""
-            if not self.sql(sql, 'dbfunc.version (4k)'):
+            if not self.sql(sql, u'dbfunc.version (4k)'):
                 return False
 
-            versiondbQK = '2.1.6'
+            versiondbQK = u'2.1.6'
 
 
         if versiondbQK < actversion:
 
             sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version' and value = '{}';""".format(actversion, versiondbQK)
-            if not self.sql(sql, 'dbfunc.version (4e)'):
+            if not self.sql(sql, u'dbfunc.version (4e)'):
                 return False
 
         self.commit()

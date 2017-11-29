@@ -41,7 +41,7 @@ from qkan import Dummy
 # noinspection PyUnresolvedReferences
 import resources
 
-LOGGER = logging.getLogger('QKan')
+LOGGER = logging.getLogger(u'QKan')
 
 
 class ImportFromHE:
@@ -184,9 +184,9 @@ class ImportFromHE:
            erstellen, aber noch nicht verbinden."""
 
         filename = QFileDialog.getOpenFileName(self.dlg,
-                                               "Dateinamen der zu lesenden HE-Datenbank eingeben",
+                                               u"Dateinamen der zu lesenden HE-Datenbank eingeben",
                                                self.default_dir,
-                                               "*.idbf")
+                                               u"*.idbf")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
         self.dlg.tf_heDB.setText(filename)
@@ -196,9 +196,9 @@ class ImportFromHE:
            Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt. """
 
         filename = QFileDialog.getSaveFileName(self.dlg,
-                                               "Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
+                                               u"Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
                                                self.default_dir,
-                                               "*.sqlite")
+                                               u"*.sqlite")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
         self.dlg.tf_qkanDB.setText(filename)
@@ -207,9 +207,9 @@ class ImportFromHE:
         """Zu erzeugende Projektdatei festlegen, falls ausgewählt."""
 
         filename = QFileDialog.getSaveFileName(self.dlg,
-                                               "Dateinamen der zu erstellenden Projektdatei eingeben",
+                                               u"Dateinamen der zu erstellenden Projektdatei eingeben",
                                                self.default_dir,
-                                               "*.qgs")
+                                               u"*.qgs")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
         self.dlg.tf_projectFile.setText(filename)
@@ -222,8 +222,8 @@ class ImportFromHE:
         projSelector = QgsGenericProjectionSelector()
         projSelector.exec_()
         erg = projSelector.selectedAuthId()
-        if len(erg.split(':')) == 2:
-            self.dlg.tf_epsg.setText(erg.split(':')[1])
+        if len(erg.split(u':')) == 2:
+            self.dlg.tf_epsg.setText(erg.split(u':')[1])
         else:
             self.dlg.tf_epsg.setText(erg)
 
