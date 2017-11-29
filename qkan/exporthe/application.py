@@ -41,20 +41,10 @@ from application_dialog import ExportToHEDialog
 from k_qkhe import exportKanaldaten
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qgis_utils import get_database_QKan, get_editable_layers
+from qkan.database.qgis_utils import get_database_QKan, get_editable_layers, fortschritt, fehlermeldung
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
-
-
-def fortschritt(text, prozent):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), 'Export: ', QgsMessageLog.INFO)
-
-
-def fehlermeldung(title, text):
-    logger.error(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
 
 
 class ExportToHE:
@@ -150,10 +140,8 @@ class ExportToHE:
 
         self.dlg.pb_exportall.clicked.connect(self.exportall)
         self.dlg.pb_modifyall.clicked.connect(self.modifyall)
-        self.dlg.pb_initall.clicked.connect(self.initall)
         self.dlg.pb_exportnone.clicked.connect(self.exportnone)
         self.dlg.pb_modifynone.clicked.connect(self.modifynone)
-        self.dlg.pb_initnone.clicked.connect(self.initnone)
 
         # Auswahl der zu exportierenden Tabellen ----------------------------------------------
 
@@ -174,7 +162,6 @@ class ExportToHE:
         export_pumpen = cb_set('export_pumpen', self.dlg.cb_export_pumpen, False)
         export_wehre = cb_set('export_wehre', self.dlg.cb_export_wehre, False)
         export_flaechenrw = cb_set('export_flaechenrw', self.dlg.cb_export_flaechenrw, True)
-        export_einleitew = cb_set('export_einleitew', self.dlg.cb_export_einleitew, True)
         export_einleitdirekt = cb_set('export_einleitdirekt', self.dlg.cb_export_einleitdirekt, True)
         export_abflussparameter = cb_set('export_abflussparameter', self.dlg.cb_export_abflussparameter, True)
         export_regenschreiber = cb_set('export_regenschreiber', self.dlg.cb_export_regenschreiber, False)
@@ -189,7 +176,6 @@ class ExportToHE:
         modify_pumpen = cb_set('modify_pumpen', self.dlg.cb_modify_pumpen, False)
         modify_wehre = cb_set('modify_wehre', self.dlg.cb_modify_wehre, False)
         modify_flaechenrw = cb_set('modify_flaechenrw', self.dlg.cb_modify_flaechenrw, False)
-        modify_einleitew = cb_set('modify_einleitew', self.dlg.cb_modify_einleitew, False)
         modify_einleitdirekt = cb_set('modify_einleitdirekt', self.dlg.cb_modify_einleitdirekt, False)
         modify_abflussparameter = cb_set('modify_abflussparameter', self.dlg.cb_modify_abflussparameter, False)
         modify_regenschreiber = cb_set('modify_regenschreiber', self.dlg.cb_modify_regenschreiber, False)
@@ -197,24 +183,8 @@ class ExportToHE:
         modify_speicherkennlinien = cb_set('modify_speicherkennlinien', self.dlg.cb_modify_speicherkennlinien, False)
         modify_bodenklassen = cb_set('modify_bodenklassen', self.dlg.cb_modify_bodenklassen, False)
 
-        init_schaechte = cb_set('init_schaechte', self.dlg.cb_init_schaechte, False)
-        init_auslaesse = cb_set('init_auslaesse', self.dlg.cb_init_auslaesse, False)
-        init_speicher = cb_set('init_speicher', self.dlg.cb_init_speicher, False)
-        init_haltungen = cb_set('init_haltungen', self.dlg.cb_init_haltungen, False)
-        init_pumpen = cb_set('init_pumpen', self.dlg.cb_init_pumpen, False)
-        init_wehre = cb_set('init_wehre', self.dlg.cb_init_wehre, False)
-        init_flaechenrw = cb_set('init_flaechenrw', self.dlg.cb_init_flaechenrw, False)
-        init_einleitew = cb_set('init_einleitew', self.dlg.cb_init_einleitew, False)
-        init_einleitdirekt = cb_set('init_einleitdirekt', self.dlg.cb_init_einleitdirekt, False)
-        init_abflussparameter = cb_set('init_abflussparameter', self.dlg.cb_init_abflussparameter, False)
-        init_regenschreiber = cb_set('init_regenschreiber', self.dlg.cb_init_regenschreiber, False)
-        init_rohrprofile = cb_set('init_rohrprofile', self.dlg.cb_init_rohrprofile, False)
-        init_speicherkennlinien = cb_set('init_speicherkennlinien', self.dlg.cb_init_speicherkennlinien, False)
-        init_bodenklassen = cb_set('init_bodenklassen', self.dlg.cb_init_bodenklassen, False)
-
         combine_flaechenrw = cb_set('combine_flaechenrw', self.dlg.cb_combine_flaechenrw, True)
         combine_einleitdirekt = cb_set('combine_einleitdirekt', self.dlg.cb_combine_einleitdirekt, True)
-        combine_einleitew = cb_set('combine_einleitew', self.dlg.cb_combine_einleitew, True)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -287,7 +257,6 @@ class ExportToHE:
         self.dlg.cb_export_pumpen.setChecked(True)
         self.dlg.cb_export_wehre.setChecked(True)
         self.dlg.cb_export_flaechenrw.setChecked(True)
-        self.dlg.cb_export_einleitew.setChecked(True)
         self.dlg.cb_export_einleitdirekt.setChecked(True)
         self.dlg.cb_export_abflussparameter.setChecked(True)
         self.dlg.cb_export_regenschreiber.setChecked(True)
@@ -305,31 +274,12 @@ class ExportToHE:
         self.dlg.cb_modify_pumpen.setChecked(True)
         self.dlg.cb_modify_wehre.setChecked(True)
         self.dlg.cb_modify_flaechenrw.setChecked(True)
-        self.dlg.cb_modify_einleitew.setChecked(True)
         self.dlg.cb_modify_einleitdirekt.setChecked(True)
         self.dlg.cb_modify_abflussparameter.setChecked(True)
         self.dlg.cb_modify_regenschreiber.setChecked(True)
         self.dlg.cb_modify_rohrprofile.setChecked(True)
         self.dlg.cb_modify_speicherkennlinien.setChecked(True)
         self.dlg.cb_modify_bodenklassen.setChecked(True)
-
-    def initall(self):
-        """Aktiviert alle Checkboxen zm Initialisieren"""
-
-        self.dlg.cb_init_schaechte.setChecked(True)
-        self.dlg.cb_init_auslaesse.setChecked(True)
-        self.dlg.cb_init_speicher.setChecked(True)
-        self.dlg.cb_init_haltungen.setChecked(True)
-        self.dlg.cb_init_pumpen.setChecked(True)
-        self.dlg.cb_init_wehre.setChecked(True)
-        self.dlg.cb_init_flaechenrw.setChecked(True)
-        self.dlg.cb_init_einleitew.setChecked(True)
-        self.dlg.cb_init_einleitdirekt.setChecked(True)
-        self.dlg.cb_init_abflussparameter.setChecked(True)
-        self.dlg.cb_init_regenschreiber.setChecked(True)
-        self.dlg.cb_init_rohrprofile.setChecked(True)
-        self.dlg.cb_init_speicherkennlinien.setChecked(True)
-        self.dlg.cb_init_bodenklassen.setChecked(True)
 
     def exportnone(self):
         """Deaktiviert alle Checkboxen zm Export"""
@@ -341,7 +291,6 @@ class ExportToHE:
         self.dlg.cb_export_pumpen.setChecked(False)
         self.dlg.cb_export_wehre.setChecked(False)
         self.dlg.cb_export_flaechenrw.setChecked(False)
-        self.dlg.cb_export_einleitew.setChecked(False)
         self.dlg.cb_export_einleitdirekt.setChecked(False)
         self.dlg.cb_export_abflussparameter.setChecked(False)
         self.dlg.cb_export_regenschreiber.setChecked(False)
@@ -359,31 +308,12 @@ class ExportToHE:
         self.dlg.cb_modify_pumpen.setChecked(False)
         self.dlg.cb_modify_wehre.setChecked(False)
         self.dlg.cb_modify_flaechenrw.setChecked(False)
-        self.dlg.cb_modify_einleitew.setChecked(False)
         self.dlg.cb_modify_einleitdirekt.setChecked(False)
         self.dlg.cb_modify_abflussparameter.setChecked(False)
         self.dlg.cb_modify_regenschreiber.setChecked(False)
         self.dlg.cb_modify_rohrprofile.setChecked(False)
         self.dlg.cb_modify_speicherkennlinien.setChecked(False)
         self.dlg.cb_modify_bodenklassen.setChecked(False)
-
-    def initnone(self):
-        """Deaktiviert alle Checkboxen zm Initialisieren"""
-
-        self.dlg.cb_init_schaechte.setChecked(False)
-        self.dlg.cb_init_auslaesse.setChecked(False)
-        self.dlg.cb_init_speicher.setChecked(False)
-        self.dlg.cb_init_haltungen.setChecked(False)
-        self.dlg.cb_init_pumpen.setChecked(False)
-        self.dlg.cb_init_wehre.setChecked(False)
-        self.dlg.cb_init_flaechenrw.setChecked(False)
-        self.dlg.cb_init_einleitew.setChecked(False)
-        self.dlg.cb_init_einleitdirekt.setChecked(False)
-        self.dlg.cb_init_abflussparameter.setChecked(False)
-        self.dlg.cb_init_regenschreiber.setChecked(False)
-        self.dlg.cb_init_rohrprofile.setChecked(False)
-        self.dlg.cb_init_speicherkennlinien.setChecked(False)
-        self.dlg.cb_init_bodenklassen.setChecked(False)
 
     # -------------------------------------------------------------------------
     # Formularfunktionen
@@ -574,6 +504,14 @@ class ExportToHE:
         self.dlg.lw_teilgebiete.itemClicked.connect(self.countselection)
         self.countselection()
 
+        # Autokorrektur
+
+        if 'autokorrektur' in self.config:
+            autokorrektur = self.config['autokorrektur']
+        else:
+            autokorrektur = True
+        self.dlg.cb_autokorrektur.setChecked(autokorrektur)
+
         # Formular anzeigen
 
         self.dlg.show()
@@ -590,6 +528,7 @@ class ExportToHE:
             database_HE = self.dlg.tf_heDB_dest.text()
             dbtemplate_HE = self.dlg.tf_heDB_template.text()
             datenbanktyp = 'spatialite'
+            autokorrektur = self.dlg.cb_autokorrektur.isChecked()
 
             check_export = {}
             check_export['export_schaechte'] = self.dlg.cb_export_schaechte.isChecked()
@@ -599,7 +538,6 @@ class ExportToHE:
             check_export['export_pumpen'] = self.dlg.cb_export_pumpen.isChecked()
             check_export['export_wehre'] = self.dlg.cb_export_wehre.isChecked()
             check_export['export_flaechenrw'] = self.dlg.cb_export_flaechenrw.isChecked()
-            check_export['export_einleitew'] = self.dlg.cb_export_einleitew.isChecked()
             check_export['export_einleitdirekt'] = self.dlg.cb_export_einleitdirekt.isChecked()
             check_export['export_abflussparameter'] = self.dlg.cb_export_abflussparameter.isChecked()
             check_export['export_regenschreiber'] = self.dlg.cb_export_regenschreiber.isChecked()
@@ -614,7 +552,6 @@ class ExportToHE:
             check_export['modify_pumpen'] = self.dlg.cb_modify_pumpen.isChecked()
             check_export['modify_wehre'] = self.dlg.cb_modify_wehre.isChecked()
             check_export['modify_flaechenrw'] = self.dlg.cb_modify_flaechenrw.isChecked()
-            check_export['modify_einleitew'] = self.dlg.cb_modify_einleitew.isChecked()
             check_export['modify_einleitdirekt'] = self.dlg.cb_modify_einleitdirekt.isChecked()
             check_export['modify_abflussparameter'] = self.dlg.cb_modify_abflussparameter.isChecked()
             check_export['modify_regenschreiber'] = self.dlg.cb_modify_regenschreiber.isChecked()
@@ -622,24 +559,8 @@ class ExportToHE:
             check_export['modify_speicherkennlinien'] = self.dlg.cb_modify_speicherkennlinien.isChecked()
             check_export['modify_bodenklassen'] = self.dlg.cb_modify_bodenklassen.isChecked()
 
-            check_export['init_schaechte'] = self.dlg.cb_init_schaechte.isChecked()
-            check_export['init_auslaesse'] = self.dlg.cb_init_auslaesse.isChecked()
-            check_export['init_speicher'] = self.dlg.cb_init_speicher.isChecked()
-            check_export['init_haltungen'] = self.dlg.cb_init_haltungen.isChecked()
-            check_export['init_pumpen'] = self.dlg.cb_init_pumpen.isChecked()
-            check_export['init_wehre'] = self.dlg.cb_init_wehre.isChecked()
-            check_export['init_flaechenrw'] = self.dlg.cb_init_flaechenrw.isChecked()
-            check_export['init_einleitew'] = self.dlg.cb_init_einleitew.isChecked()
-            check_export['init_einleitdirekt'] = self.dlg.cb_init_einleitdirekt.isChecked()
-            check_export['init_abflussparameter'] = self.dlg.cb_init_abflussparameter.isChecked()
-            check_export['init_regenschreiber'] = self.dlg.cb_init_regenschreiber.isChecked()
-            check_export['init_rohrprofile'] = self.dlg.cb_init_rohrprofile.isChecked()
-            check_export['init_speicherkennlinien'] = self.dlg.cb_init_speicherkennlinien.isChecked()
-            check_export['init_bodenklassen'] = self.dlg.cb_init_bodenklassen.isChecked()
-
             check_export['combine_flaechenrw'] = self.dlg.cb_combine_flaechenrw.isChecked()
             check_export['combine_einleitdirekt'] = self.dlg.cb_combine_einleitdirekt.isChecked()
-            check_export['combine_einleitew'] = self.dlg.cb_combine_einleitew.isChecked()
 
             # Konfigurationsdaten schreiben
             self.config['database_HE'] = database_HE
@@ -647,6 +568,7 @@ class ExportToHE:
             self.config['database_Qkan'] = database_Qkan
             self.config['datenbanktyp'] = datenbanktyp
             self.config['liste_teilgebiete'] = liste_teilgebiete
+            self.config['autokorrektur'] = autokorrektur
             for el in check_export:
                 self.config[el] = check_export[el]
 
@@ -654,5 +576,5 @@ class ExportToHE:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
-            exportKanaldaten(iface, database_HE, dbtemplate_HE, database_Qkan, liste_teilgebiete,
+            exportKanaldaten(iface, database_HE, dbtemplate_HE, self.dbQK, liste_teilgebiete, autokorrektur, 
                              0.1, datenbanktyp, check_export)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>317</width>
-    <height>480</height>
+    <width>313</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>410</y>
+     <x>70</x>
+     <y>460</y>
      <width>181</width>
      <height>32</height>
     </rect>
@@ -48,7 +48,7 @@
      <x>20</x>
      <y>40</y>
      <width>271</width>
-     <height>341</height>
+     <height>401</height>
     </rect>
    </property>
    <property name="font">
@@ -145,12 +145,100 @@
      <string>zuordnen:</string>
     </property>
    </widget>
+   <widget class="QLineEdit" name="tf_bufferradius">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>330</y>
+      <width>61</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nur bei Auswahl &amp;quot;innerhalb&amp;quot;: die Fläche der Teilgebiete wird bei der Suche um die Pufferbreite vergrößert, um kleine Ungenauigkeiten zu berücksichtigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nur bei Auswahl &amp;quot;innerhalb&amp;quot;: die Fläche der Teilgebiete wird bei der Suche um die Pufferbreite vergrößert, um kleine Ungenauigkeiten zu berücksichtigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_bufferradius">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>330</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nur bei Auswahl &amp;quot;innerhalb&amp;quot;: die Fläche der Teilgebiete wird bei der Suche um die Pufferbreite vergrößert, um kleine Ungenauigkeiten zu berücksichtigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nur bei Auswahl &amp;quot;innerhalb&amp;quot;: die Fläche der Teilgebiete wird bei der Suche um die Pufferbreite vergrößert, um kleine Ungenauigkeiten zu berücksichtigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>Pufferbreite: </string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="unit_bufferradius">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>330</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_autokorrektur">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>360</y>
+      <width>211</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Falls in der Tabelle &amp;quot;tezg&amp;quot; leere oder doppelte Namen (flnam) vorkommen, werden diese mit &amp;quot;ft_nnnn&amp;quot; überschrieben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Falls in der Tabelle &amp;quot;tezg&amp;quot; leere oder doppelte Namen (flnam) vorkommen, werden diese mit &amp;quot;ft_nnnn&amp;quot; überschrieben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>Autokorrektur der TEZG-Namen</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QLabel" name="lb_version">
    <property name="geometry">
     <rect>
      <x>240</x>
-     <y>460</y>
+     <y>510</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -159,7 +247,7 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.1.2</string>
+    <string>Version 2.2.1</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

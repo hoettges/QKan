@@ -9,38 +9,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>655</width>
-    <height>378</height>
+    <width>625</width>
+    <height>399</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_20">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>60</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Rückgangskonstante</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>71</width>
+      <width>46</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Bezeichnung</string>
+     <string>Name</string>
     </property>
    </widget>
    <widget class="Line" name="line">
@@ -60,7 +47,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>210</y>
+      <y>230</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -72,48 +59,48 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>120</y>
-      <width>21</width>
+      <x>260</x>
+      <y>90</y>
+      <width>41</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>l/m²</string>
+     <string>m</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>120</y>
-      <width>111</width>
+      <y>180</y>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Minimum (Ende)</string>
+     <string>Deckelhöhe</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>260</x>
       <y>150</y>
-      <width>21</width>
+      <width>41</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>l/m²</string>
+     <string>m NhN</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_70">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>150</y>
-      <width>71</width>
+      <x>330</x>
+      <y>180</y>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
@@ -121,11 +108,37 @@
      <string>Erstelldatum</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>120</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Y-Koordinate</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_12">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>120</y>
+      <width>41</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
    <widget class="Line" name="line_2">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>180</y>
+      <y>200</y>
       <width>631</width>
       <height>31</height>
      </rect>
@@ -138,107 +151,104 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>150</y>
-      <width>121</width>
+      <y>90</y>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Bei Simulationsstart</string>
+     <string>X-Koordinate</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>90</y>
-      <width>21</width>
+      <x>260</x>
+      <y>180</y>
+      <width>41</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>l/m²</string>
+     <string>m NhN</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
       <x>20</x>
+      <y>150</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sohlhöhe</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_40">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
       <y>60</y>
-      <width>121</width>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Infiltrationsrate</string>
+     <string>Auslasstyp</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_21">
+   <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>90</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Regenerationskonstante</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_12">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>90</y>
-      <width>41</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>l/(m²·s)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_9">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
+      <x>330</x>
       <y>60</y>
-      <width>41</width>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>l/(m²·s)</string>
+     <string>Simulationsstatus</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_13">
+   <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>120</y>
-      <width>41</width>
+      <x>330</x>
+      <y>90</y>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>%</string>
+     <string>Entwässerungsart</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_22">
+   <widget class="QLabel" name="label_43">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>120</y>
-      <width>121</width>
+      <x>330</x>
+      <y>150</y>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Sättigungswassergehalt</string>
+     <string>Straße</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="bknam">
+   <widget class="QTextEdit" name="kommentar">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>250</y>
+      <width>581</width>
+      <height>71</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="schnam">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -248,104 +258,130 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="infiltrationsrateanfang">
+   <widget class="QComboBox" name="auslasstyp">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>110</x>
+      <y>60</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="xsch">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
       <y>90</y>
       <width>141</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="infiltrationsrateende">
+   <widget class="QLineEdit" name="ysch">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>110</x>
       <y>120</y>
       <width>141</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="infiltrationsratestart">
+   <widget class="QLineEdit" name="sohlhoehe">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>110</x>
       <y>150</y>
       <width>141</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="rueckgangskonstante">
+   <widget class="QLineEdit" name="deckelhoehe">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>180</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="simstatus">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>450</x>
       <y>60</y>
       <width>141</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="regenerationskonstante">
+   <widget class="QComboBox" name="entwart">
     <property name="geometry">
      <rect>
       <x>450</x>
       <y>90</y>
       <width>141</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="saettigungswassergehalt">
+   <widget class="QLineEdit" name="strasse">
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>120</y>
+      <y>150</y>
       <width>141</width>
       <height>20</height>
      </rect>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="kommentar">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>230</y>
-      <width>581</width>
-      <height>71</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>90</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Maximum (Anfang)</string>
     </property>
    </widget>
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>150</y>
+      <y>180</y>
       <width>141</width>
       <height>23</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_13">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>120</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Teilgebiet</string>
+    </property>
+    <property name="buddy">
+     <cstring>simstatus</cstring>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="teilgebiet">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>120</y>
+      <width>141</width>
+      <height>22</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="lb_version">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>320</y>
+      <x>550</x>
+      <y>340</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -366,7 +402,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>655</width>
+     <width>625</width>
      <height>21</height>
     </rect>
    </property>
@@ -381,13 +417,15 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>bknam</tabstop>
-  <tabstop>infiltrationsrateanfang</tabstop>
-  <tabstop>infiltrationsrateende</tabstop>
-  <tabstop>infiltrationsratestart</tabstop>
-  <tabstop>rueckgangskonstante</tabstop>
-  <tabstop>regenerationskonstante</tabstop>
-  <tabstop>saettigungswassergehalt</tabstop>
+  <tabstop>schnam</tabstop>
+  <tabstop>auslasstyp</tabstop>
+  <tabstop>xsch</tabstop>
+  <tabstop>ysch</tabstop>
+  <tabstop>sohlhoehe</tabstop>
+  <tabstop>deckelhoehe</tabstop>
+  <tabstop>simstatus</tabstop>
+  <tabstop>entwart</tabstop>
+  <tabstop>strasse</tabstop>
   <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>

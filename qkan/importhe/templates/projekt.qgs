@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="" version="2.18.11">
+<qgis projectname="" version="2.18.14">
   <title></title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
@@ -7,97 +7,94 @@
     <customproperties/>
     <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="Schächte">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" name="Auslässe">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" name="Auslässe">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Haltungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Sonderbauwerke">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
-        <customproperties/>
-      </layer-tree-layer>
-    </layer-tree-group>
-    <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="SW-Einleitungen">
-      <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="swref20170927083542529" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;swref&quot; (geom) sql=" name="swref">
-        <customproperties/>
-      </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindungen_SW_Punkte20170930153300986" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen SW-Punkte">
-        <customproperties/>
-      </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="swgebaeude20170927083539768" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;swgebaeude&quot; (geom) sql=" name="swgebaeude">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
-    <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="Flächen">
+    <layer-tree-group expanded="1" checked="Qt::Unchecked" name="SW-Einleitungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="teilgebiete">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="einleit20171004110830029" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;einleit&quot; (geom) sql=" name="Direkteinleitungen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="Anbindung20170920132347429" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;linkfl&quot; (glink) sql=" name="Anbindungen Flächen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen SW-Punkte">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20170508223029630" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;tezg&quot; (geom) sql=" name="tezg">
+    </layer-tree-group>
+    <layer-tree-group expanded="1" checked="Qt::Checked" name="Flächen">
+      <customproperties/>
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="teilgebiete">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="flaechen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindung20170920132347429" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;linkfl&quot; (glink) sql=" name="Anbindungen Flächen">
+        <customproperties/>
+      </layer-tree-layer>
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20170508223029630" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;tezg&quot; (geom) sql=" name="tezg">
+        <customproperties/>
+      </layer-tree-layer>
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="flaechen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Referenztabellen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;profile&quot; sql=" name="Profile">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;profile&quot; sql=" name="Profile">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
+      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Kennlinien">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/blueing/20170722_Bestand.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/nette_itwh/nette.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
@@ -106,10 +103,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>337583.96164878830313683</xmin>
-      <ymin>5726300.53491758741438389</ymin>
-      <xmax>337851.87261050706729293</xmax>
-      <ymax>5726483.17496914602816105</ymax>
+      <xmin>389293.88095375022385269</xmin>
+      <ymin>5710276.10786844696849585</ymin>
+      <xmax>389489.72277533507440239</xmax>
+      <ymax>5710532.03459770884364843</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -127,73 +124,92 @@
     </destinationsrs>
     <rendermaptile>0</rendermaptile>
     <layer_coordinate_transform_info>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="D6_dop20rgbi_32341_5726_1_nw20170805155526638"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="D6_dop20rgbi_32325_5726_1_nw20170805155526392"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="C6_dop20rgbi_32340_5726_1_nw20170805155524272"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Bauteil_Fläche20170805161040431"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_besondere_Gebäudelinie_Linie_dline20170805161040803"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Gebäude_Fläche_Basis_dtext20170805161041080"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="D5_dop20rgbi_32341_5725_1_nw20170805155526143"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161016203756252"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Auszug_Fach_Info_11001_bda_AP_LPO20170806161021634"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindung20170920132347429"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindungen_Flächen20170930123811298"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="C5_dop20rgbi_32340_5725_1_nw20170805155524040"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen20161016203756230"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen_Kopie20161016203906444"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Punkt_multipler_Punkt_Punkt_dline20170805161041417"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="A5_dop20rgbi_32338_5725_1_nw20170805155520731"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="wehre20161125174724734"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508223029630"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="B6_dop20rgbi_32339_5726_1_nw20170805155522683"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="76_dop20rgbi_32335_5726_1_nw20170805155516272"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20170504083519678"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4326" srcDatumTransform="-1" destDatumTransform="-1" layerid="Hofflächen20170901154327740"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="94_dop20rgbi_32337_5724_1_nw20170805155519055"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="teilgebiete20170214092005309"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="87_dop20rgbi_32336_5727_1_nw20170805155518032"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="84_dop20rgbi_32336_5724_1_nw20170805155517443"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Linie_multiple_Linie_Geometrie_darea20170805161041254"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="pumpen20161017080913064"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="85_dop20rgbi_32336_5725_1_nw20170805155517634"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Hafenbecken_Fläche_dline20170805161041160"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="A7_dop20rgbi_32338_5727_1_nw20170805155521168"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindungen_SW_Punkte20170930153300986"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="Speicher_Kopie20161221080207994"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="74_dop20rgbi_32335_5724_1_nw20170805155515909"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_besondere_Gebäudelinie_Linie20170805161040773"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt__Text__linienförmig__Linienposition20170805161041588"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Linie_multiple_Linie_Geometrie_dline20170805161041321"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Stehendes_Gewässer_Fläche20170805161041181"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Punkt_multipler_Punkt_Punkt_darea20170805161041372"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="86_dop20rgbi_32336_5726_1_nw20170805155517828"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Fliessgewässer_Fläche20170805161040847"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Stehendes_Gewässer_Fläche_dline20170805161041230"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161220162259105"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Punkt_Punkt_dline20170805161041511"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="B7_dop20rgbi_32339_5727_1_nw20170805155522914"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="75_dop20rgbi_32335_5725_1_nw20170805155516083"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Flurstück_Fläche_dline20170805161040900"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Gebäude_Fläche_Basis_dline20170805161041052"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Bauteil_Fläche_dline20170805161040740"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="97_dop20rgbi_32337_5727_1_nw20170805155519670"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="swref20170927083542529"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="95_dop20rgbi_32337_5725_1_nw20170805155519268"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="77_dop20rgbi_32335_5727_1_nw20170805155516462"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Stehendes_Gewässer_Fläche_darea20170805161041205"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="B4_dop20rgbi_32339_5724_1_nw20170805155522255"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:3044" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161221075653754"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Hafenbecken_Fläche20170805161041099"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="swgebaeude20170927083539768"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="B5_dop20rgbi_32339_5725_1_nw20170805155522470"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Gebäude_Fläche_Basis_darea20170805161040971"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4326" srcDatumTransform="-1" destDatumTransform="-1" layerid="Straßen20170807104136883"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="A4_dop20rgbi_32338_5724_1_nw20170805155520513"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Bauteil_Fläche_darea20170805161040697"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="96_dop20rgbi_32337_5726_1_nw20170805155519471"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="74_dop20rgbi_32335_5724_1_nw20170805155515909"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="einleit20171004110830029"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161221075653754"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="D5_dop20rgbi_32341_5725_1_nw20170805155526143"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Bauteil_Fläche20170805161040431"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="87_dop20rgbi_32336_5727_1_nw20170805155518032"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Speicher_Kopie20161221080207994"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_besondere_Gebäudelinie_Linie20170805161040773"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="B6_dop20rgbi_32339_5726_1_nw20170805155522683"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="wehre20161125174724734"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="94_dop20rgbi_32337_5724_1_nw20170805155519055"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Punkt_multipler_Punkt_Punkt_darea20170805161041372"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="pumpen20161017080913064"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="85_dop20rgbi_32336_5725_1_nw20170805155517634"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="einwohner20171004110833247"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="tezg20170508223029630"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Hafenbecken_Fläche_darea20170805161041140"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Punkt_Punkt_darea20170805161041469"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Auszug_Fach_Info_11001_bda_AP_LPO20170806161021634"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Punkt_Punkt_dline20170805161041511"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161016203756252"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4326" srcDatumTransform="-1" destDatumTransform="-1" layerid="Hofflächen20170901154327740"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4326" srcDatumTransform="-1" destDatumTransform="-1" layerid="einleit_odnrw20171017115149000"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="D6_dop20rgbi_32325_5726_1_nw20170805155526392"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="A5_dop20rgbi_32338_5725_1_nw20170805155520731"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="ew_nrw20171017151843470"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen_Kopie20161016203906444"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="gebaeude_ref20171017150103683"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Punkt_multipler_Punkt_Punkt_dline20170805161041417"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Hafenbecken_Fläche20170805161041099"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Stehendes_Gewässer_Fläche20170805161041181"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen20161016203756230"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Stehendes_Gewässer_Fläche_dline20170805161041230"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="gebaeude_ref20171017144519228"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="swref20170927083542529"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="C6_dop20rgbi_32340_5726_1_nw20170805155524272"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="75_dop20rgbi_32335_5725_1_nw20170805155516083"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Fliessgewässer_Fläche20170805161040847"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="einwohner20171017145439901"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="77_dop20rgbi_32335_5727_1_nw20170805155516462"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20170504083519678"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="ew_nrw20171017152402935"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="86_dop20rgbi_32336_5726_1_nw20170805155517828"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Flurstück_Fläche_dline20170805161040900"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Gebäude_Fläche_Basis_dtext20170805161041080"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="76_dop20rgbi_32335_5726_1_nw20170805155516272"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="gebaeude_ref20171017113422032"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Gebäude_Fläche_Basis_dline20170805161041052"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="B4_dop20rgbi_32339_5724_1_nw20170805155522255"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="ew_dpnrw20171017151721659"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="96_dop20rgbi_32337_5726_1_nw20170805155519471"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="teilgebiete20170214092005309"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="ew_dpnrw20171017150142571"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="B5_dop20rgbi_32339_5725_1_nw20170805155522470"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="einwohner_nrw20171017145038828"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Linie_multiple_Linie_Geometrie_darea20170805161041254"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="97_dop20rgbi_32337_5727_1_nw20170805155519670"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Hafenbecken_Fläche_dline20170805161041160"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Bauteil_Fläche_dline20170805161040740"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindungen_Flächen20170930123811298"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="swgebaeude20170927083539768"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="gebaeude_ref20171017111716659"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Stehendes_Gewässer_Fläche_darea20170805161041205"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="D6_dop20rgbi_32341_5726_1_nw20170805155526638"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="95_dop20rgbi_32337_5725_1_nw20170805155519268"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Gebäude_Fläche_Basis_darea20170805161040971"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_besondere_Gebäudelinie_Linie_dline20170805161040803"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindung20170920132347429"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindungen_SW_Punkte20170930153300986"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="B7_dop20rgbi_32339_5727_1_nw20170805155522914"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4326" srcDatumTransform="-1" destDatumTransform="-1" layerid="Straßen20170807104136883"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="A6_dop20rgbi_32338_5726_1_nw20170805155520946"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="84_dop20rgbi_32336_5724_1_nw20170805155517443"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindungen_SW_Punkte20171017125752772"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="ew_dpnrw20171017151447052"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="A7_dop20rgbi_32338_5727_1_nw20170805155521168"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="gebref_nrw20171017144916964"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen_odnrw20171017115238107"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Anbindungen_EW_bezogene_Einleitungen20171025225624806"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Linie_multiple_Linie_Geometrie_dline20170805161041321"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161220162259105"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="C5_dop20rgbi_32340_5725_1_nw20170805155524040"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt__Text__linienförmig__Linienposition20170805161041588"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Punkt_Punkt_darea20170805161041469"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen_odnrw20171017115513210"/>
     </layer_coordinate_transform_info>
   </mapcanvas>
   <layer-tree-canvas>
@@ -220,9 +236,8 @@
       <item>speicherkennlinien20161218110320415</item>
       <item>profildaten20161218110256525</item>
       <item>Anbindung20170920132347429</item>
-      <item>swgebaeude20170927083539768</item>
-      <item>swref20170927083542529</item>
-      <item>Anbindungen_SW_Punkte20170930153300986</item>
+      <item>einleit20171004110830029</item>
+      <item>Anbindungen_SW_Punkte20171017125752772</item>
     </custom-order>
   </layer-tree-canvas>
   <legend updateDrawingOrder="true">
@@ -277,32 +292,27 @@
         </filegroup>
       </legendlayer>
     </legendgroup>
-    <legendgroup open="true" checked="Qt::PartiallyChecked" name="SW-Einleitungen">
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="swref" showFeatureCount="0">
+    <legendgroup open="true" checked="Qt::Unchecked" name="SW-Einleitungen">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="Direkteinleitungen" showFeatureCount="0">
         <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="swref20170927083542529" visible="1"/>
+          <legendlayerfile isInOverview="0" layerid="einleit20171004110830029" visible="0"/>
         </filegroup>
       </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Anbindungen SW-Punkte" showFeatureCount="0">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="Anbindungen SW-Punkte" showFeatureCount="0">
         <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="Anbindungen_SW_Punkte20170930153300986" visible="1"/>
-        </filegroup>
-      </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="swgebaeude" showFeatureCount="0">
-        <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="swgebaeude20170927083539768" visible="0"/>
+          <legendlayerfile isInOverview="0" layerid="Anbindungen_SW_Punkte20171017125752772" visible="0"/>
         </filegroup>
       </legendlayer>
     </legendgroup>
-    <legendgroup open="true" checked="Qt::PartiallyChecked" name="Flächen">
+    <legendgroup open="true" checked="Qt::Checked" name="Flächen">
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="teilgebiete" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="teilgebiete20170214092005309" visible="1"/>
         </filegroup>
       </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="Anbindungen Flächen" showFeatureCount="0">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Anbindungen Flächen" showFeatureCount="0">
         <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="Anbindung20170920132347429" visible="0"/>
+          <legendlayerfile isInOverview="0" layerid="Anbindung20170920132347429" visible="1"/>
         </filegroup>
       </legendlayer>
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="tezg" showFeatureCount="0">
@@ -462,7 +472,7 @@
         <ymax>5726613.14849809743463993</ymax>
       </extent>
       <id>Anbindung20170920132347429</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="linkfl" (glink) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="linkfl" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -502,6 +512,9 @@
         <edittype widgetv2type="TextEdit" name="teilgebiet">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
+        <edittype widgetv2type="TextEdit" name="tezgnam">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
         <edittype widgetv2type="TextEdit" name="geom">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
@@ -512,6 +525,41 @@
       <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
         <symbols>
           <symbol alpha="1" clip_to_extent="1" type="line" name="0">
+            <layer pass="0" class="MarkerLine" locked="0">
+              <prop k="interval" v="3"/>
+              <prop k="interval_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="interval_unit" v="MM"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_along_line" v="0"/>
+              <prop k="offset_along_line_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_along_line_unit" v="MM"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="placement" v="centralpoint"/>
+              <prop k="rotate" v="1"/>
+              <symbol alpha="1" clip_to_extent="1" type="marker" name="@0@0">
+                <layer pass="0" class="SimpleMarker" locked="0">
+                  <prop k="angle" v="0"/>
+                  <prop k="color" v="255,0,0,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="filled_arrowhead"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="0,0,0,255"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="diameter"/>
+                  <prop k="size" v="2"/>
+                  <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                </layer>
+              </symbol>
+            </layer>
             <layer pass="0" class="SimpleLine" locked="0">
               <prop k="capstyle" v="square"/>
               <prop k="customdash" v="5;2"/>
@@ -519,7 +567,7 @@
               <prop k="customdash_unit" v="MM"/>
               <prop k="draw_inside_polygon" v="0"/>
               <prop k="joinstyle" v="bevel"/>
-              <prop k="line_color" v="48,0,240,255"/>
+              <prop k="line_color" v="0,0,0,255"/>
               <prop k="line_style" v="solid"/>
               <prop k="line_width" v="0.26"/>
               <prop k="line_width_unit" v="MM"/>
@@ -739,8 +787,9 @@
         <alias field="haltnam" index="2" name=""/>
         <alias field="aufteilen" index="3" name=""/>
         <alias field="teilgebiet" index="4" name=""/>
-        <alias field="geom" index="5" name=""/>
-        <alias field="gbuf" index="6" name=""/>
+        <alias field="tezgnam" index="5" name=""/>
+        <alias field="geom" index="6" name=""/>
+        <alias field="gbuf" index="7" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -791,14 +840,15 @@ def my_form_open(dialog, layer, feature):
         <default field="haltnam" expression=""/>
         <default field="aufteilen" expression=""/>
         <default field="teilgebiet" expression=""/>
+        <default field="tezgnam" expression=""/>
         <default field="geom" expression=""/>
         <default field="gbuf" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "pk", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <id>Anbindungen_SW_Punkte20170930153300986</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="linksw" (glink) sql=</datasource>
+      <id>Anbindungen_SW_Punkte20171017125752772</id>
+      <datasource>dbname='./nette.sqlite' table="linksw" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -835,6 +885,9 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="teilgebiet">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
+        <edittype widgetv2type="TextEdit" name="elnam">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
         <edittype widgetv2type="TextEdit" name="geom">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
@@ -852,7 +905,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="customdash_unit" v="MM"/>
               <prop k="draw_inside_polygon" v="0"/>
               <prop k="joinstyle" v="bevel"/>
-              <prop k="line_color" v="77,83,153,255"/>
+              <prop k="line_color" v="151,153,223,255"/>
               <prop k="line_style" v="solid"/>
               <prop k="line_width" v="0.26"/>
               <prop k="line_width_unit" v="MM"/>
@@ -900,22 +953,15 @@ def my_form_open(dialog, layer, feature):
         <alias field="pkswref" index="1" name=""/>
         <alias field="haltnam" index="2" name=""/>
         <alias field="teilgebiet" index="3" name=""/>
-        <alias field="geom" index="4" name=""/>
-        <alias field="gbuf" index="5" name=""/>
+        <alias field="elnam" index="4" name=""/>
+        <alias field="geom" index="5" name=""/>
+        <alias field="gbuf" index="6" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
       <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
-        <columns>
-          <column width="-1" hidden="0" type="field" name="pk"/>
-          <column width="-1" hidden="0" type="field" name="pkswref"/>
-          <column width="-1" hidden="0" type="field" name="haltnam"/>
-          <column width="-1" hidden="0" type="field" name="teilgebiet"/>
-          <column width="-1" hidden="0" type="field" name="geom"/>
-          <column width="-1" hidden="0" type="field" name="gbuf"/>
-          <column width="-1" hidden="1" type="actions"/>
-        </columns>
+        <columns/>
       </attributetableconfig>
       <editform>.</editform>
       <editforminit/>
@@ -934,10 +980,11 @@ def my_form_open(dialog, layer, feature):
         <default field="pkswref" expression=""/>
         <default field="haltnam" expression=""/>
         <default field="teilgebiet" expression=""/>
+        <default field="elnam" expression=""/>
         <default field="geom" expression=""/>
         <default field="gbuf" expression=""/>
       </defaults>
-      <previewExpression>COALESCE( "pk", '&lt;NULL>' )</previewExpression>
+      <previewExpression></previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <extent>
@@ -947,7 +994,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>5726953.28600000031292439</ymax>
       </extent>
       <id>Speicher_Kopie20161221080207994</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -955,10 +1002,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -1315,7 +1362,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/auslaesse.ui</editform>
+      <editform>../../../k_forms/eingabemasken/auslaesse.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1370,7 +1417,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>abflussparameter20161218110231636</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="abflussparameter" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="abflussparameter" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1467,7 +1514,7 @@ def my_form_open(dialog, layer, feature):
           <column width="267" hidden="0" type="field" name="apnam"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/abflussparameter.ui</editform>
+      <editform>../../../k_forms/eingabemasken/abflussparameter.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1512,7 +1559,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>auslasstypen20161201095045204</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="auslasstypen" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="auslasstypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1579,7 +1626,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/auslasstypen.ui</editform>
+      <editform>../../../k_forms/eingabemasken/auslasstypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1618,7 +1665,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>bodenklassen20170516122309914</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="bodenklassen" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="bodenklassen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1710,7 +1757,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/bodenklassen.ui</editform>
+      <editform>../../../k_forms/eingabemasken/bodenklassen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1762,30 +1809,25 @@ def my_form_open(dialog, layer, feature):
       </defaults>
       <previewExpression>COALESCE( "bknam", '&lt;NULL>' )</previewExpression>
     </maplayer>
-    <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
-      <id>entwaesserungsarten20161018090806784</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="entwaesserungsarten" sql=</datasource>
+    <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <id>einleit20171004110830029</id>
+      <datasource>dbname='./nette.sqlite' table="einleit" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>Entwässerungsarten</layername>
+      <layername>Direkteinleitungen</layername>
       <srs>
         <spatialrefsys>
-          <proj4></proj4>
-          <srsid>100009</srsid>
-          <srid>4326</srid>
-          <authid></authid>
-          <description></description>
-          <projectionacronym></projectionacronym>
-          <ellipsoidacronym></ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
-      <customproperties>
-        <property key="embeddedWidgets/count" value="0"/>
-        <property key="variableNames" value="_fields_"/>
-        <property key="variableValues" value=""/>
-      </customproperties>
       <provider encoding="UTF-8">spatialite</provider>
       <vectorjoins/>
       <layerDependencies/>
@@ -1797,155 +1839,17 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="pk">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="kuerzel">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="bezeichnung">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="bemerkung">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="he_nr">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-      </edittypes>
-      <annotationform>.</annotationform>
-      <aliases>
-        <alias field="pk" index="0" name=""/>
-        <alias field="kuerzel" index="1" name=""/>
-        <alias field="bezeichnung" index="2" name=""/>
-        <alias field="bemerkung" index="3" name=""/>
-        <alias field="he_nr" index="4" name=""/>
-      </aliases>
-      <excludeAttributesWMS/>
-      <excludeAttributesWFS/>
-      <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
-        <columns>
-          <column width="-1" hidden="0" type="field" name="pk"/>
-          <column width="-1" hidden="0" type="field" name="kuerzel"/>
-          <column width="-1" hidden="0" type="field" name="bezeichnung"/>
-          <column width="-1" hidden="0" type="field" name="bemerkung"/>
-          <column width="-1" hidden="0" type="field" name="he_nr"/>
-          <column width="-1" hidden="1" type="actions"/>
-        </columns>
-      </attributetableconfig>
-      <editform>./eingabemasken/entwaesserungsarten.ui</editform>
-      <editforminit/>
-      <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
-      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
-"""
-QGIS forms can have a Python function that is called when the form is
-opened.
-
-Use this function to add extra logic to your forms.
-
-Enter the name of the function in the "Python Init function"
-field.
-An example follows:
-"""
-from qgis.PyQt.QtWidgets import QWidget
-
-def my_form_open(dialog, layer, feature):
-	geom = feature.geometry()
-	control = dialog.findChild(QWidget, "MyLineEdit")
-]]></editforminitcode>
-      <featformsuppress>0</featformsuppress>
-      <editorlayout>uifilelayout</editorlayout>
-      <widgets/>
-      <conditionalstyles>
-        <rowstyles/>
-        <fieldstyles/>
-      </conditionalstyles>
-      <defaults>
-        <default field="pk" expression=""/>
-        <default field="kuerzel" expression=""/>
-        <default field="bezeichnung" expression=""/>
-        <default field="bemerkung" expression=""/>
-        <default field="he_nr" expression=""/>
-      </defaults>
-      <previewExpression>COALESCE("pk", '&lt;NULL>')</previewExpression>
-    </maplayer>
-    <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>338087.71711581997806206</xmin>
-        <ymin>5725915.39432945009320974</ymin>
-        <xmax>340742.35899999999674037</xmax>
-        <ymax>5726684.22599999979138374</ymax>
-      </extent>
-      <id>flaechen20170504083519678</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="flaechen" (geom) sql=</datasource>
-      <keywordList>
-        <value></value>
-      </keywordList>
-      <layername>flaechen</layername>
-      <srs>
-        <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
-          <geographicflag>false</geographicflag>
-        </spatialrefsys>
-      </srs>
-      <provider encoding="System">spatialite</provider>
-      <vectorjoins/>
-      <layerDependencies/>
-      <expressionfields/>
-      <map-layer-style-manager current="">
-        <map-layer-style name=""/>
-      </map-layer-style-manager>
-      <edittypes>
-        <edittype widgetv2type="TextEdit" name="pk">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="flnam">
+        <edittype widgetv2type="TextEdit" name="elnam">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="haltnam">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="haltnam" constraint="" Layer="haltungen_Kopie20161016203906444" Value="haltnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="haltnam" constraint="" Layer="haltungen20161016203756230" Value="haltnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="neigkl">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="ValueMap" name="he_typ">
-          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
-            <value key="Direktabfluss" value="0"/>
-            <value key="Fließzeiten" value="1"/>
-            <value key="Schwerpunktfließzeit" value="2"/>
-          </widgetv2config>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="speicherzahl">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="speicherkonst">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="fliesszeit">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="fliesszeitkanal">
+        <edittype widgetv2type="TextEdit" name="zufluss">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="teilgebiet">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="regenschreiber">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="einwohner">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="ValueRelation" name="abflussparameter">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="apnam" constraint="" Layer="abflussparameter20161218110231636" Value="apnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="CheckBox" name="aufteilen">
-          <widgetv2config fieldEditable="1" UncheckedState="" constraint="" CheckedState="ja" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="kommentar">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -1953,125 +1857,38 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="createdat">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
+        <edittype widgetv2type="TextEdit" name="ew">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="einzugsgebiet">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
       </edittypes>
-      <renderer-v2 attr="teilgebiet" forceraster="0" symbollevels="0" type="categorizedSymbol" enableorderby="0">
-        <categories>
-          <category render="true" symbol="0" value="" label=""/>
-          <category render="true" symbol="1" value="Dachflächen" label="Dachflächen"/>
-          <category render="true" symbol="2" value="Verkehrsflächen" label="Verkehrsflächen"/>
-          <category render="true" symbol="3" value="Hofflächen" label="Hofflächen"/>
-          <category render="true" symbol="4" value="aa" label="aa"/>
-          <category render="true" symbol="5" value="bb" label="bb"/>
-        </categories>
+      <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
         <symbols>
-          <symbol alpha="0.839216" clip_to_extent="1" type="fill" name="0">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="153,255,235,255"/>
+          <symbol alpha="1" clip_to_extent="1" type="marker" name="0">
+            <layer pass="0" class="SimpleMarker" locked="0">
+              <prop k="angle" v="0"/>
+              <prop k="color" v="133,171,192,255"/>
+              <prop k="horizontal_anchor_point" v="1"/>
               <prop k="joinstyle" v="bevel"/>
+              <prop k="name" v="circle"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="offset_unit" v="MM"/>
               <prop k="outline_color" v="0,0,0,255"/>
               <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.1"/>
+              <prop k="outline_width" v="0"/>
+              <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-          <symbol alpha="0.8" clip_to_extent="1" type="fill" name="1">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="199,77,79,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.26"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-          <symbol alpha="0.8" clip_to_extent="1" type="fill" name="2">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="183,183,183,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.26"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-          <symbol alpha="0.8" clip_to_extent="1" type="fill" name="3">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="224,212,186,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.26"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-          <symbol alpha="0.9" clip_to_extent="1" type="fill" name="4">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="255,181,199,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.1"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-          <symbol alpha="1" clip_to_extent="1" type="fill" name="5">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="255,250,151,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.26"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
+              <prop k="scale_method" v="diameter"/>
+              <prop k="size" v="2"/>
+              <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="size_unit" v="MM"/>
+              <prop k="vertical_anchor_point" v="1"/>
             </layer>
           </symbol>
         </symbols>
-        <source-symbol>
-          <symbol alpha="0.313725" clip_to_extent="1" type="fill" name="0">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="210,210,210,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.1"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-        </source-symbol>
         <rotation/>
         <sizescale scalemethod="diameter"/>
       </renderer-v2>
@@ -2101,8 +1918,8 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/dist" value="0"/>
         <property key="labeling/distInMapUnits" value="false"/>
         <property key="labeling/distMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/drawLabels" value="true"/>
-        <property key="labeling/enabled" value="true"/>
+        <property key="labeling/drawLabels" value="false"/>
+        <property key="labeling/enabled" value="false"/>
         <property key="labeling/fieldName" value=""/>
         <property key="labeling/fitInPolygonOnly" value="false"/>
         <property key="labeling/fontCapitals" value="0"/>
@@ -2131,7 +1948,7 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/maxNumLabels" value="2000"/>
         <property key="labeling/mergeLines" value="false"/>
         <property key="labeling/minFeatureSize" value="0"/>
-        <property key="labeling/multilineAlign" value="4294967295"/>
+        <property key="labeling/multilineAlign" value="3"/>
         <property key="labeling/multilineHeight" value="1"/>
         <property key="labeling/namedStyle" value="Normal"/>
         <property key="labeling/obstacle" value="true"/>
@@ -2139,7 +1956,7 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/obstacleType" value="0"/>
         <property key="labeling/offsetType" value="0"/>
         <property key="labeling/placeDirectionSymbol" value="0"/>
-        <property key="labeling/placement" value="1"/>
+        <property key="labeling/placement" value="6"/>
         <property key="labeling/placementFlags" value="10"/>
         <property key="labeling/plussign" value="false"/>
         <property key="labeling/predefinedPositionOrder" value="TR,TL,BR,BL,R,L,TSR,BSR"/>
@@ -2276,6 +2093,645 @@ def my_form_open(dialog, layer, feature):
       <annotationform>.</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
+        <alias field="elnam" index="1" name=""/>
+        <alias field="haltnam" index="2" name=""/>
+        <alias field="zufluss" index="3" name=""/>
+        <alias field="teilgebiet" index="4" name=""/>
+        <alias field="kommentar" index="5" name=""/>
+        <alias field="createdat" index="6" name=""/>
+        <alias field="ew" index="7" name=""/>
+        <alias field="einzugsgebiet" index="8" name=""/>
+      </aliases>
+      <excludeAttributesWMS/>
+      <excludeAttributesWFS/>
+      <attributeactions default="-1"/>
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+        <columns>
+          <column width="-1" hidden="0" type="field" name="pk"/>
+          <column width="-1" hidden="0" type="field" name="elnam"/>
+          <column width="-1" hidden="0" type="field" name="haltnam"/>
+          <column width="-1" hidden="0" type="field" name="zufluss"/>
+          <column width="120" hidden="0" type="field" name="teilgebiet"/>
+          <column width="-1" hidden="0" type="field" name="kommentar"/>
+          <column width="-1" hidden="0" type="field" name="createdat"/>
+          <column width="-1" hidden="1" type="actions"/>
+        </columns>
+      </attributetableconfig>
+      <editform>../../../k_forms/eingabemasken/einleit.ui</editform>
+      <editforminit/>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+"""
+QGIS forms can have a Python function that is called when the form is
+opened.
+
+Use this function to add extra logic to your forms.
+
+Enter the name of the function in the "Python Init function"
+field.
+An example follows:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+]]></editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>uifilelayout</editorlayout>
+      <widgets/>
+      <conditionalstyles>
+        <rowstyles/>
+        <fieldstyles/>
+      </conditionalstyles>
+      <defaults>
+        <default field="pk" expression=""/>
+        <default field="elnam" expression=""/>
+        <default field="haltnam" expression=""/>
+        <default field="zufluss" expression=""/>
+        <default field="teilgebiet" expression=""/>
+        <default field="kommentar" expression=""/>
+        <default field="createdat" expression=""/>
+        <default field="ew" expression=""/>
+        <default field="einzugsgebiet" expression=""/>
+      </defaults>
+      <previewExpression>COALESCE( "pk", '&lt;NULL>' )</previewExpression>
+    </maplayer>
+    <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
+      <id>entwaesserungsarten20161018090806784</id>
+      <datasource>dbname='./nette.sqlite' table="entwaesserungsarten" sql=</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>Entwässerungsarten</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4></proj4>
+          <srsid>100009</srsid>
+          <srid>4326</srid>
+          <authid></authid>
+          <description></description>
+          <projectionacronym></projectionacronym>
+          <ellipsoidacronym></ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <customproperties>
+        <property key="embeddedWidgets/count" value="0"/>
+        <property key="variableNames" value="_fields_"/>
+        <property key="variableValues" value=""/>
+      </customproperties>
+      <provider encoding="UTF-8">spatialite</provider>
+      <vectorjoins/>
+      <layerDependencies/>
+      <expressionfields/>
+      <map-layer-style-manager current="">
+        <map-layer-style name=""/>
+      </map-layer-style-manager>
+      <edittypes>
+        <edittype widgetv2type="TextEdit" name="pk">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="kuerzel">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="bezeichnung">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="bemerkung">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="he_nr">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+      </edittypes>
+      <annotationform>.</annotationform>
+      <aliases>
+        <alias field="pk" index="0" name=""/>
+        <alias field="kuerzel" index="1" name=""/>
+        <alias field="bezeichnung" index="2" name=""/>
+        <alias field="bemerkung" index="3" name=""/>
+        <alias field="he_nr" index="4" name=""/>
+      </aliases>
+      <excludeAttributesWMS/>
+      <excludeAttributesWFS/>
+      <attributeactions default="-1"/>
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+        <columns>
+          <column width="-1" hidden="0" type="field" name="pk"/>
+          <column width="-1" hidden="0" type="field" name="kuerzel"/>
+          <column width="-1" hidden="0" type="field" name="bezeichnung"/>
+          <column width="-1" hidden="0" type="field" name="bemerkung"/>
+          <column width="-1" hidden="0" type="field" name="he_nr"/>
+          <column width="-1" hidden="1" type="actions"/>
+        </columns>
+      </attributetableconfig>
+      <editform>../../../k_forms/eingabemasken/entwaesserungsarten.ui</editform>
+      <editforminit/>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+"""
+QGIS forms can have a Python function that is called when the form is
+opened.
+
+Use this function to add extra logic to your forms.
+
+Enter the name of the function in the "Python Init function"
+field.
+An example follows:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+]]></editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>uifilelayout</editorlayout>
+      <widgets/>
+      <conditionalstyles>
+        <rowstyles/>
+        <fieldstyles/>
+      </conditionalstyles>
+      <defaults>
+        <default field="pk" expression=""/>
+        <default field="kuerzel" expression=""/>
+        <default field="bezeichnung" expression=""/>
+        <default field="bemerkung" expression=""/>
+        <default field="he_nr" expression=""/>
+      </defaults>
+      <previewExpression>COALESCE("pk", '&lt;NULL>')</previewExpression>
+    </maplayer>
+    <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>338087.71711581997806206</xmin>
+        <ymin>5725915.39432945009320974</ymin>
+        <xmax>340742.35899999999674037</xmax>
+        <ymax>5726684.22599999979138374</ymax>
+      </extent>
+      <id>flaechen20170504083519678</id>
+      <datasource>dbname='./nette.sqlite' table="flaechen" (geom) sql=</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>flaechen</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <provider encoding="System">spatialite</provider>
+      <vectorjoins/>
+      <layerDependencies/>
+      <expressionfields/>
+      <map-layer-style-manager current="">
+        <map-layer-style name=""/>
+      </map-layer-style-manager>
+      <edittypes>
+        <edittype widgetv2type="TextEdit" name="pk">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="flnam">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="haltnam">
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="haltnam" constraint="" Layer="haltungen_Kopie20161016203906444" Value="haltnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="neigkl">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueMap" name="he_typ">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Direktabfluss" value="0"/>
+            <value key="Fließzeiten" value="1"/>
+            <value key="Schwerpunktfließzeit" value="2"/>
+          </widgetv2config>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="speicherzahl">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="speicherkonst">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="fliesszeit">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="fliesszeitkanal">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="teilgebiet">
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="CheckBox" name="aufteilen">
+          <widgetv2config fieldEditable="1" UncheckedState="" constraint="" CheckedState="ja" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="regenschreiber">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="abflussparameter">
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="apnam" constraint="" Layer="abflussparameter20161218110231636" Value="apnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="kommentar">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="createdat">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="einwohner">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+      </edittypes>
+      <renderer-v2 attr="abflussparameter" forceraster="0" symbollevels="0" type="categorizedSymbol" enableorderby="0">
+        <categories>
+          <category render="true" symbol="0" value="" label=""/>
+          <category render="true" symbol="1" value="EG belastet" label="EG belastet"/>
+          <category render="true" symbol="2" value="EG Dach" label="EG Dach"/>
+          <category render="true" symbol="3" value="EG sauber" label="EG sauber"/>
+          <category render="true" symbol="4" value="EG Verkehr" label="EG Verkehr"/>
+        </categories>
+        <symbols>
+          <symbol alpha="0.313725" clip_to_extent="1" type="fill" name="0">
+            <layer pass="0" class="SimpleFill" locked="0">
+              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="color" v="58,201,14,255"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="0,0,0,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0.1"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="style" v="solid"/>
+            </layer>
+          </symbol>
+          <symbol alpha="1" clip_to_extent="1" type="fill" name="1">
+            <layer pass="0" class="SimpleFill" locked="0">
+              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="color" v="241,244,199,255"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="175,179,138,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0.26"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="style" v="solid"/>
+            </layer>
+            <layer pass="0" class="PointPatternFill" locked="0">
+              <prop k="displacement_x" v="0"/>
+              <prop k="displacement_x_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="displacement_x_unit" v="MM"/>
+              <prop k="displacement_y" v="1"/>
+              <prop k="displacement_y_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="displacement_y_unit" v="MM"/>
+              <prop k="distance_x" v="1.5"/>
+              <prop k="distance_x_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="distance_x_unit" v="MM"/>
+              <prop k="distance_y" v="2"/>
+              <prop k="distance_y_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="distance_y_unit" v="MM"/>
+              <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <symbol alpha="1" clip_to_extent="1" type="marker" name="@1@1">
+                <layer pass="0" class="SimpleMarker" locked="0">
+                  <prop k="angle" v="0"/>
+                  <prop k="color" v="144,112,76,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="circle"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="0,0,0,0"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="area"/>
+                  <prop k="size" v="0.6"/>
+                  <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                </layer>
+              </symbol>
+            </layer>
+          </symbol>
+          <symbol alpha="1" clip_to_extent="1" type="fill" name="2">
+            <layer pass="0" class="SimpleFill" locked="0">
+              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="color" v="253,191,111,255"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="175,179,138,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0.26"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="style" v="solid"/>
+            </layer>
+            <layer pass="0" class="PointPatternFill" locked="0">
+              <prop k="displacement_x" v="0"/>
+              <prop k="displacement_x_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="displacement_x_unit" v="MM"/>
+              <prop k="displacement_y" v="1"/>
+              <prop k="displacement_y_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="displacement_y_unit" v="MM"/>
+              <prop k="distance_x" v="1.5"/>
+              <prop k="distance_x_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="distance_x_unit" v="MM"/>
+              <prop k="distance_y" v="2"/>
+              <prop k="distance_y_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="distance_y_unit" v="MM"/>
+              <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <symbol alpha="1" clip_to_extent="1" type="marker" name="@2@1">
+                <layer pass="0" class="SimpleMarker" locked="0">
+                  <prop k="angle" v="0"/>
+                  <prop k="color" v="150,147,142,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="circle"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="0,0,0,0"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="area"/>
+                  <prop k="size" v="0.6"/>
+                  <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                </layer>
+              </symbol>
+            </layer>
+          </symbol>
+          <symbol alpha="1" clip_to_extent="1" type="fill" name="3">
+            <layer pass="0" class="SimpleFill" locked="0">
+              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="color" v="241,244,199,255"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="175,179,138,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0.26"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="style" v="solid"/>
+            </layer>
+          </symbol>
+          <symbol alpha="0.313725" clip_to_extent="1" type="fill" name="4">
+            <layer pass="0" class="SimpleFill" locked="0">
+              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="color" v="106,108,108,255"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="0,0,0,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0.1"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="style" v="solid"/>
+            </layer>
+          </symbol>
+        </symbols>
+        <source-symbol>
+          <symbol alpha="0.313725" clip_to_extent="1" type="fill" name="0">
+            <layer pass="0" class="SimpleFill" locked="0">
+              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="color" v="210,210,210,255"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="0,0,0,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0.1"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="style" v="solid"/>
+            </layer>
+          </symbol>
+        </source-symbol>
+        <rotation/>
+        <sizescale scalemethod="diameter"/>
+      </renderer-v2>
+      <labeling type="simple"/>
+      <customproperties>
+        <property key="embeddedWidgets/count" value="0"/>
+        <property key="labeling" value="pal"/>
+        <property key="labeling/addDirectionSymbol" value="false"/>
+        <property key="labeling/angleOffset" value="0"/>
+        <property key="labeling/blendMode" value="0"/>
+        <property key="labeling/bufferBlendMode" value="0"/>
+        <property key="labeling/bufferColorA" value="255"/>
+        <property key="labeling/bufferColorB" value="255"/>
+        <property key="labeling/bufferColorG" value="255"/>
+        <property key="labeling/bufferColorR" value="255"/>
+        <property key="labeling/bufferDraw" value="true"/>
+        <property key="labeling/bufferJoinStyle" value="128"/>
+        <property key="labeling/bufferNoFill" value="false"/>
+        <property key="labeling/bufferSize" value="1"/>
+        <property key="labeling/bufferSizeInMapUnits" value="false"/>
+        <property key="labeling/bufferSizeMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/bufferTransp" value="0"/>
+        <property key="labeling/centroidInside" value="false"/>
+        <property key="labeling/centroidWhole" value="false"/>
+        <property key="labeling/decimals" value="3"/>
+        <property key="labeling/displayAll" value="false"/>
+        <property key="labeling/dist" value="0"/>
+        <property key="labeling/distInMapUnits" value="false"/>
+        <property key="labeling/distMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/drawLabels" value="false"/>
+        <property key="labeling/enabled" value="false"/>
+        <property key="labeling/fieldName" value="flnam"/>
+        <property key="labeling/fitInPolygonOnly" value="false"/>
+        <property key="labeling/fontCapitals" value="0"/>
+        <property key="labeling/fontFamily" value="MS Shell Dlg 2"/>
+        <property key="labeling/fontItalic" value="false"/>
+        <property key="labeling/fontLetterSpacing" value="0"/>
+        <property key="labeling/fontLimitPixelSize" value="false"/>
+        <property key="labeling/fontMaxPixelSize" value="10000"/>
+        <property key="labeling/fontMinPixelSize" value="3"/>
+        <property key="labeling/fontSize" value="10.25"/>
+        <property key="labeling/fontSizeInMapUnits" value="false"/>
+        <property key="labeling/fontSizeMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/fontStrikeout" value="false"/>
+        <property key="labeling/fontUnderline" value="false"/>
+        <property key="labeling/fontWeight" value="50"/>
+        <property key="labeling/fontWordSpacing" value="0"/>
+        <property key="labeling/formatNumbers" value="false"/>
+        <property key="labeling/isExpression" value="false"/>
+        <property key="labeling/labelOffsetInMapUnits" value="true"/>
+        <property key="labeling/labelOffsetMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/labelPerPart" value="false"/>
+        <property key="labeling/leftDirectionSymbol" value="&lt;"/>
+        <property key="labeling/limitNumLabels" value="false"/>
+        <property key="labeling/maxCurvedCharAngleIn" value="25"/>
+        <property key="labeling/maxCurvedCharAngleOut" value="-25"/>
+        <property key="labeling/maxNumLabels" value="2000"/>
+        <property key="labeling/mergeLines" value="false"/>
+        <property key="labeling/minFeatureSize" value="0"/>
+        <property key="labeling/multilineAlign" value="4294967295"/>
+        <property key="labeling/multilineHeight" value="1"/>
+        <property key="labeling/namedStyle" value="Normal"/>
+        <property key="labeling/obstacle" value="true"/>
+        <property key="labeling/obstacleFactor" value="1"/>
+        <property key="labeling/obstacleType" value="0"/>
+        <property key="labeling/offsetType" value="0"/>
+        <property key="labeling/placeDirectionSymbol" value="0"/>
+        <property key="labeling/placement" value="1"/>
+        <property key="labeling/placementFlags" value="10"/>
+        <property key="labeling/plussign" value="false"/>
+        <property key="labeling/predefinedPositionOrder" value="TR,TL,BR,BL,R,L,TSR,BSR"/>
+        <property key="labeling/preserveRotation" value="true"/>
+        <property key="labeling/previewBkgrdColor" value="#ffffff"/>
+        <property key="labeling/priority" value="5"/>
+        <property key="labeling/quadOffset" value="4"/>
+        <property key="labeling/repeatDistance" value="0"/>
+        <property key="labeling/repeatDistanceMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/repeatDistanceUnit" value="1"/>
+        <property key="labeling/reverseDirectionSymbol" value="false"/>
+        <property key="labeling/rightDirectionSymbol" value=">"/>
+        <property key="labeling/scaleMax" value="10000000"/>
+        <property key="labeling/scaleMin" value="1"/>
+        <property key="labeling/scaleVisibility" value="false"/>
+        <property key="labeling/shadowBlendMode" value="6"/>
+        <property key="labeling/shadowColorB" value="0"/>
+        <property key="labeling/shadowColorG" value="0"/>
+        <property key="labeling/shadowColorR" value="0"/>
+        <property key="labeling/shadowDraw" value="false"/>
+        <property key="labeling/shadowOffsetAngle" value="135"/>
+        <property key="labeling/shadowOffsetDist" value="1"/>
+        <property key="labeling/shadowOffsetGlobal" value="true"/>
+        <property key="labeling/shadowOffsetMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shadowOffsetUnits" value="1"/>
+        <property key="labeling/shadowRadius" value="1.5"/>
+        <property key="labeling/shadowRadiusAlphaOnly" value="false"/>
+        <property key="labeling/shadowRadiusMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shadowRadiusUnits" value="1"/>
+        <property key="labeling/shadowScale" value="100"/>
+        <property key="labeling/shadowTransparency" value="30"/>
+        <property key="labeling/shadowUnder" value="0"/>
+        <property key="labeling/shapeBlendMode" value="0"/>
+        <property key="labeling/shapeBorderColorA" value="255"/>
+        <property key="labeling/shapeBorderColorB" value="128"/>
+        <property key="labeling/shapeBorderColorG" value="128"/>
+        <property key="labeling/shapeBorderColorR" value="128"/>
+        <property key="labeling/shapeBorderWidth" value="0"/>
+        <property key="labeling/shapeBorderWidthMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shapeBorderWidthUnits" value="1"/>
+        <property key="labeling/shapeDraw" value="false"/>
+        <property key="labeling/shapeFillColorA" value="255"/>
+        <property key="labeling/shapeFillColorB" value="255"/>
+        <property key="labeling/shapeFillColorG" value="255"/>
+        <property key="labeling/shapeFillColorR" value="255"/>
+        <property key="labeling/shapeJoinStyle" value="64"/>
+        <property key="labeling/shapeOffsetMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shapeOffsetUnits" value="1"/>
+        <property key="labeling/shapeOffsetX" value="0"/>
+        <property key="labeling/shapeOffsetY" value="0"/>
+        <property key="labeling/shapeRadiiMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shapeRadiiUnits" value="1"/>
+        <property key="labeling/shapeRadiiX" value="0"/>
+        <property key="labeling/shapeRadiiY" value="0"/>
+        <property key="labeling/shapeRotation" value="0"/>
+        <property key="labeling/shapeRotationType" value="0"/>
+        <property key="labeling/shapeSVGFile" value=""/>
+        <property key="labeling/shapeSizeMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shapeSizeType" value="0"/>
+        <property key="labeling/shapeSizeUnits" value="1"/>
+        <property key="labeling/shapeSizeX" value="0"/>
+        <property key="labeling/shapeSizeY" value="0"/>
+        <property key="labeling/shapeTransparency" value="0"/>
+        <property key="labeling/shapeType" value="0"/>
+        <property key="labeling/substitutions" value="&lt;substitutions/>"/>
+        <property key="labeling/textColorA" value="255"/>
+        <property key="labeling/textColorB" value="229"/>
+        <property key="labeling/textColorG" value="53"/>
+        <property key="labeling/textColorR" value="150"/>
+        <property key="labeling/textTransp" value="0"/>
+        <property key="labeling/upsidedownLabels" value="0"/>
+        <property key="labeling/useSubstitutions" value="false"/>
+        <property key="labeling/wrapChar" value=""/>
+        <property key="labeling/xOffset" value="0"/>
+        <property key="labeling/yOffset" value="0"/>
+        <property key="labeling/zIndex" value="0"/>
+        <property key="variableNames"/>
+        <property key="variableValues"/>
+      </customproperties>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <layerTransparency>0</layerTransparency>
+      <displayfield>pk</displayfield>
+      <label>0</label>
+      <labelattributes>
+        <label fieldname="" text="Beschriftung"/>
+        <family fieldname="" name="MS Shell Dlg 2"/>
+        <size fieldname="" units="pt" value="12"/>
+        <bold fieldname="" on="0"/>
+        <italic fieldname="" on="0"/>
+        <underline fieldname="" on="0"/>
+        <strikeout fieldname="" on="0"/>
+        <color fieldname="" red="0" blue="0" green="0"/>
+        <x fieldname=""/>
+        <y fieldname=""/>
+        <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+        <angle fieldname="" value="0" auto="0"/>
+        <alignment fieldname="" value="center"/>
+        <buffercolor fieldname="" red="255" blue="255" green="255"/>
+        <buffersize fieldname="" units="pt" value="1"/>
+        <bufferenabled fieldname="" on=""/>
+        <multilineenabled fieldname="" on=""/>
+        <selectedonly on=""/>
+      </labelattributes>
+      <SingleCategoryDiagramRenderer diagramType="Histogram" sizeLegend="0" attributeLegend="1">
+        <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" sizeScale="0,0,0,0,0,0" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1e+08" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" lineSizeScale="0,0,0,0,0,0" sizeType="MM" lineSizeType="MM" minScaleDenominator="inf">
+          <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
+          <attribute field="" color="#000000" label=""/>
+        </DiagramCategory>
+        <symbol alpha="1" clip_to_extent="1" type="marker" name="sizeSymbol">
+          <layer pass="0" class="SimpleMarker" locked="0">
+            <prop k="angle" v="0"/>
+            <prop k="color" v="255,0,0,255"/>
+            <prop k="horizontal_anchor_point" v="1"/>
+            <prop k="joinstyle" v="bevel"/>
+            <prop k="name" v="circle"/>
+            <prop k="offset" v="0,0"/>
+            <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+            <prop k="offset_unit" v="MM"/>
+            <prop k="outline_color" v="0,0,0,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0"/>
+            <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="scale_method" v="diameter"/>
+            <prop k="size" v="2"/>
+            <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+            <prop k="size_unit" v="MM"/>
+            <prop k="vertical_anchor_point" v="1"/>
+          </layer>
+        </symbol>
+      </SingleCategoryDiagramRenderer>
+      <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
+      <annotationform>.</annotationform>
+      <aliases>
+        <alias field="pk" index="0" name=""/>
         <alias field="flnam" index="1" name=""/>
         <alias field="haltnam" index="2" name=""/>
         <alias field="neigkl" index="3" name=""/>
@@ -2285,12 +2741,12 @@ def my_form_open(dialog, layer, feature):
         <alias field="fliesszeit" index="7" name=""/>
         <alias field="fliesszeitkanal" index="8" name=""/>
         <alias field="teilgebiet" index="9" name=""/>
-        <alias field="regenschreiber" index="10" name=""/>
-        <alias field="einwohner" index="11" name=""/>
+        <alias field="aufteilen" index="10" name=""/>
+        <alias field="regenschreiber" index="11" name=""/>
         <alias field="abflussparameter" index="12" name=""/>
-        <alias field="aufteilen" index="13" name=""/>
-        <alias field="kommentar" index="14" name=""/>
-        <alias field="createdat" index="15" name=""/>
+        <alias field="kommentar" index="13" name=""/>
+        <alias field="createdat" index="14" name=""/>
+        <alias field="einwohner" index="15" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -2316,7 +2772,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="einwohner"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/flaechen.ui</editform>
+      <editform>../../../k_forms/eingabemasken/flaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2355,12 +2811,12 @@ def my_form_open(dialog, layer, feature):
         <default field="fliesszeit" expression=""/>
         <default field="fliesszeitkanal" expression=""/>
         <default field="teilgebiet" expression=""/>
-        <default field="regenschreiber" expression=""/>
-        <default field="einwohner" expression=""/>
-        <default field="abflussparameter" expression=""/>
         <default field="aufteilen" expression=""/>
+        <default field="regenschreiber" expression=""/>
+        <default field="abflussparameter" expression=""/>
         <default field="kommentar" expression=""/>
         <default field="createdat" expression=""/>
+        <default field="einwohner" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "flnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
@@ -2372,7 +2828,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>5726920.03500000014901161</ymax>
       </extent>
       <id>haltungen20161016203756230</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2380,10 +2836,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -2590,7 +3046,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="customdash_unit" v="MM"/>
               <prop k="draw_inside_polygon" v="0"/>
               <prop k="joinstyle" v="round"/>
-              <prop k="line_color" v="19,167,246,255"/>
+              <prop k="line_color" v="0,63,255,255"/>
               <prop k="line_style" v="solid"/>
               <prop k="line_width" v="1.76"/>
               <prop k="line_width_unit" v="MM"/>
@@ -2619,7 +3075,7 @@ def my_form_open(dialog, layer, feature):
               <symbol alpha="1" clip_to_extent="1" type="marker" name="@1@2">
                 <layer pass="0" class="SimpleMarker" locked="0">
                   <prop k="angle" v="0"/>
-                  <prop k="color" v="19,167,246,255"/>
+                  <prop k="color" v="0,63,255,255"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="bevel"/>
                   <prop k="name" v="filled_arrowhead"/>
@@ -3119,7 +3575,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/haltungen.ui</editform>
+      <editform>../../../k_forms/eingabemasken/haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -3181,7 +3637,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>5726920.03500000014901161</ymax>
       </extent>
       <id>haltungen_Kopie20161016203906444</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -3189,10 +3645,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -3600,7 +4056,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/haltungen.ui</editform>
+      <editform>../../../k_forms/eingabemasken/haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -3656,7 +4112,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profildaten20161218110256525</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="profildaten" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="profildaten" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -3718,7 +4174,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/profildaten.ui</editform>
+      <editform>../../../k_forms/eingabemasken/profildaten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -3756,7 +4212,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profile20161018090721921</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="profile" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="profile" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -3823,7 +4279,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/profile.ui</editform>
+      <editform>../../../k_forms/eingabemasken/profile.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -3869,7 +4325,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>5726825.74000000022351742</ymax>
       </extent>
       <id>pumpen20161017080913064</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="pumpen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="pumpen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -3877,10 +4333,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -4274,7 +4730,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="pnam"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/pumpen.ui</editform>
+      <editform>../../../k_forms/eingabemasken/pumpen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -4320,7 +4776,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>pumpentypen20161018090730556</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="pumpentypen" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="pumpentypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4377,7 +4833,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/pumpentypen.ui</editform>
+      <editform>../../../k_forms/eingabemasken/pumpentypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -4420,7 +4876,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>5726953.28600000031292439</ymax>
       </extent>
       <id>schaechte20161016203756252</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="schaechte" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4428,10 +4884,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -4781,7 +5237,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/schaechte.ui</editform>
+      <editform>../../../k_forms/eingabemasken/schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -4840,7 +5296,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>5726953.28600000031292439</ymax>
       </extent>
       <id>schaechte20161220162259105</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4848,10 +5304,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -5208,7 +5664,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/schaechte.ui</editform>
+      <editform>../../../k_forms/eingabemasken/schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5263,7 +5719,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte_Kopie20161204084617148</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="schaechte" (geop) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5271,10 +5727,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -5796,7 +6252,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/schaechte.ui</editform>
+      <editform>../../../k_forms/eingabemasken/schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -5855,7 +6311,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>5726953.28600000031292439</ymax>
       </extent>
       <id>schaechte_Kopie20161221075653754</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5863,10 +6319,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -6223,7 +6679,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/speicher.ui</editform>
+      <editform>../../../k_forms/eingabemasken/speicher.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -6278,7 +6734,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>simulationsstatus20161201095050780</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="simulationsstatus" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="simulationsstatus" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -6345,7 +6801,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/simulationsstatus.ui</editform>
+      <editform>../../../k_forms/eingabemasken/simulationsstatus.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -6384,7 +6840,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>speicherkennlinien20161218110320415</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="speicherkennlinien" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="speicherkennlinien" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -6446,7 +6902,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/speicherkennlinien.ui</editform>
+      <editform>../../../k_forms/eingabemasken/speicherkennlinien.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -6482,746 +6938,15 @@ def my_form_open(dialog, layer, feature):
       </defaults>
       <previewExpression>COALESCE("pk", '&lt;NULL>')</previewExpression>
     </maplayer>
-    <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <id>swgebaeude20170927083539768</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="swgebaeude" (geom) sql=</datasource>
-      <keywordList>
-        <value></value>
-      </keywordList>
-      <layername>swgebaeude</layername>
-      <srs>
-        <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
-          <geographicflag>false</geographicflag>
-        </spatialrefsys>
-      </srs>
-      <provider encoding="System">spatialite</provider>
-      <vectorjoins/>
-      <layerDependencies/>
-      <expressionfields/>
-      <map-layer-style-manager current="">
-        <map-layer-style name=""/>
-      </map-layer-style-manager>
-      <edittypes>
-        <edittype widgetv2type="TextEdit" name="pk">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="ags">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="strasse">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="hausnr">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="zusatz">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="wverbrauch">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-      </edittypes>
-      <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
-        <symbols>
-          <symbol alpha="1" clip_to_extent="1" type="fill" name="0">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="12,39,158,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.26"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-        </symbols>
-        <rotation/>
-        <sizescale scalemethod="diameter"/>
-      </renderer-v2>
-      <labeling type="simple"/>
-      <customproperties>
-        <property key="embeddedWidgets/count" value="0"/>
-        <property key="labeling" value="pal"/>
-        <property key="labeling/addDirectionSymbol" value="false"/>
-        <property key="labeling/angleOffset" value="0"/>
-        <property key="labeling/blendMode" value="0"/>
-        <property key="labeling/bufferBlendMode" value="0"/>
-        <property key="labeling/bufferColorA" value="255"/>
-        <property key="labeling/bufferColorB" value="255"/>
-        <property key="labeling/bufferColorG" value="255"/>
-        <property key="labeling/bufferColorR" value="255"/>
-        <property key="labeling/bufferDraw" value="false"/>
-        <property key="labeling/bufferJoinStyle" value="128"/>
-        <property key="labeling/bufferNoFill" value="false"/>
-        <property key="labeling/bufferSize" value="1"/>
-        <property key="labeling/bufferSizeInMapUnits" value="false"/>
-        <property key="labeling/bufferSizeMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/bufferTransp" value="0"/>
-        <property key="labeling/centroidInside" value="false"/>
-        <property key="labeling/centroidWhole" value="false"/>
-        <property key="labeling/decimals" value="3"/>
-        <property key="labeling/displayAll" value="false"/>
-        <property key="labeling/dist" value="0"/>
-        <property key="labeling/distInMapUnits" value="false"/>
-        <property key="labeling/distMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/drawLabels" value="false"/>
-        <property key="labeling/enabled" value="false"/>
-        <property key="labeling/fieldName" value=""/>
-        <property key="labeling/fitInPolygonOnly" value="false"/>
-        <property key="labeling/fontCapitals" value="0"/>
-        <property key="labeling/fontFamily" value="MS Shell Dlg 2"/>
-        <property key="labeling/fontItalic" value="false"/>
-        <property key="labeling/fontLetterSpacing" value="0"/>
-        <property key="labeling/fontLimitPixelSize" value="false"/>
-        <property key="labeling/fontMaxPixelSize" value="10000"/>
-        <property key="labeling/fontMinPixelSize" value="3"/>
-        <property key="labeling/fontSize" value="8.25"/>
-        <property key="labeling/fontSizeInMapUnits" value="false"/>
-        <property key="labeling/fontSizeMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/fontStrikeout" value="false"/>
-        <property key="labeling/fontUnderline" value="false"/>
-        <property key="labeling/fontWeight" value="50"/>
-        <property key="labeling/fontWordSpacing" value="0"/>
-        <property key="labeling/formatNumbers" value="false"/>
-        <property key="labeling/isExpression" value="true"/>
-        <property key="labeling/labelOffsetInMapUnits" value="true"/>
-        <property key="labeling/labelOffsetMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/labelPerPart" value="false"/>
-        <property key="labeling/leftDirectionSymbol" value="&lt;"/>
-        <property key="labeling/limitNumLabels" value="false"/>
-        <property key="labeling/maxCurvedCharAngleIn" value="25"/>
-        <property key="labeling/maxCurvedCharAngleOut" value="-25"/>
-        <property key="labeling/maxNumLabels" value="2000"/>
-        <property key="labeling/mergeLines" value="false"/>
-        <property key="labeling/minFeatureSize" value="0"/>
-        <property key="labeling/multilineAlign" value="4294967295"/>
-        <property key="labeling/multilineHeight" value="1"/>
-        <property key="labeling/namedStyle" value="Normal"/>
-        <property key="labeling/obstacle" value="true"/>
-        <property key="labeling/obstacleFactor" value="1"/>
-        <property key="labeling/obstacleType" value="0"/>
-        <property key="labeling/offsetType" value="0"/>
-        <property key="labeling/placeDirectionSymbol" value="0"/>
-        <property key="labeling/placement" value="1"/>
-        <property key="labeling/placementFlags" value="10"/>
-        <property key="labeling/plussign" value="false"/>
-        <property key="labeling/predefinedPositionOrder" value="TR,TL,BR,BL,R,L,TSR,BSR"/>
-        <property key="labeling/preserveRotation" value="true"/>
-        <property key="labeling/previewBkgrdColor" value="#ffffff"/>
-        <property key="labeling/priority" value="5"/>
-        <property key="labeling/quadOffset" value="4"/>
-        <property key="labeling/repeatDistance" value="0"/>
-        <property key="labeling/repeatDistanceMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/repeatDistanceUnit" value="1"/>
-        <property key="labeling/reverseDirectionSymbol" value="false"/>
-        <property key="labeling/rightDirectionSymbol" value=">"/>
-        <property key="labeling/scaleMax" value="10000000"/>
-        <property key="labeling/scaleMin" value="1"/>
-        <property key="labeling/scaleVisibility" value="false"/>
-        <property key="labeling/shadowBlendMode" value="6"/>
-        <property key="labeling/shadowColorB" value="0"/>
-        <property key="labeling/shadowColorG" value="0"/>
-        <property key="labeling/shadowColorR" value="0"/>
-        <property key="labeling/shadowDraw" value="false"/>
-        <property key="labeling/shadowOffsetAngle" value="135"/>
-        <property key="labeling/shadowOffsetDist" value="1"/>
-        <property key="labeling/shadowOffsetGlobal" value="true"/>
-        <property key="labeling/shadowOffsetMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shadowOffsetUnits" value="1"/>
-        <property key="labeling/shadowRadius" value="1.5"/>
-        <property key="labeling/shadowRadiusAlphaOnly" value="false"/>
-        <property key="labeling/shadowRadiusMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shadowRadiusUnits" value="1"/>
-        <property key="labeling/shadowScale" value="100"/>
-        <property key="labeling/shadowTransparency" value="30"/>
-        <property key="labeling/shadowUnder" value="0"/>
-        <property key="labeling/shapeBlendMode" value="0"/>
-        <property key="labeling/shapeBorderColorA" value="255"/>
-        <property key="labeling/shapeBorderColorB" value="128"/>
-        <property key="labeling/shapeBorderColorG" value="128"/>
-        <property key="labeling/shapeBorderColorR" value="128"/>
-        <property key="labeling/shapeBorderWidth" value="0"/>
-        <property key="labeling/shapeBorderWidthMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeBorderWidthUnits" value="1"/>
-        <property key="labeling/shapeDraw" value="false"/>
-        <property key="labeling/shapeFillColorA" value="255"/>
-        <property key="labeling/shapeFillColorB" value="255"/>
-        <property key="labeling/shapeFillColorG" value="255"/>
-        <property key="labeling/shapeFillColorR" value="255"/>
-        <property key="labeling/shapeJoinStyle" value="64"/>
-        <property key="labeling/shapeOffsetMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeOffsetUnits" value="1"/>
-        <property key="labeling/shapeOffsetX" value="0"/>
-        <property key="labeling/shapeOffsetY" value="0"/>
-        <property key="labeling/shapeRadiiMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeRadiiUnits" value="1"/>
-        <property key="labeling/shapeRadiiX" value="0"/>
-        <property key="labeling/shapeRadiiY" value="0"/>
-        <property key="labeling/shapeRotation" value="0"/>
-        <property key="labeling/shapeRotationType" value="0"/>
-        <property key="labeling/shapeSVGFile" value=""/>
-        <property key="labeling/shapeSizeMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeSizeType" value="0"/>
-        <property key="labeling/shapeSizeUnits" value="1"/>
-        <property key="labeling/shapeSizeX" value="0"/>
-        <property key="labeling/shapeSizeY" value="0"/>
-        <property key="labeling/shapeTransparency" value="0"/>
-        <property key="labeling/shapeType" value="0"/>
-        <property key="labeling/substitutions" value="&lt;substitutions/>"/>
-        <property key="labeling/textColorA" value="255"/>
-        <property key="labeling/textColorB" value="0"/>
-        <property key="labeling/textColorG" value="0"/>
-        <property key="labeling/textColorR" value="0"/>
-        <property key="labeling/textTransp" value="0"/>
-        <property key="labeling/upsidedownLabels" value="0"/>
-        <property key="labeling/useSubstitutions" value="false"/>
-        <property key="labeling/wrapChar" value=""/>
-        <property key="labeling/xOffset" value="0"/>
-        <property key="labeling/yOffset" value="0"/>
-        <property key="labeling/zIndex" value="0"/>
-        <property key="variableNames"/>
-        <property key="variableValues"/>
-      </customproperties>
-      <blendMode>0</blendMode>
-      <featureBlendMode>0</featureBlendMode>
-      <layerTransparency>0</layerTransparency>
-      <displayfield>id</displayfield>
-      <label>0</label>
-      <labelattributes>
-        <label fieldname="" text="Beschriftung"/>
-        <family fieldname="" name="MS Shell Dlg 2"/>
-        <size fieldname="" units="pt" value="12"/>
-        <bold fieldname="" on="0"/>
-        <italic fieldname="" on="0"/>
-        <underline fieldname="" on="0"/>
-        <strikeout fieldname="" on="0"/>
-        <color fieldname="" red="0" blue="0" green="0"/>
-        <x fieldname=""/>
-        <y fieldname=""/>
-        <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
-        <angle fieldname="" value="0" auto="0"/>
-        <alignment fieldname="" value="center"/>
-        <buffercolor fieldname="" red="255" blue="255" green="255"/>
-        <buffersize fieldname="" units="pt" value="1"/>
-        <bufferenabled fieldname="" on=""/>
-        <multilineenabled fieldname="" on=""/>
-        <selectedonly on=""/>
-      </labelattributes>
-      <SingleCategoryDiagramRenderer diagramType="Histogram" sizeLegend="0" attributeLegend="1">
-        <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" sizeScale="0,0,0,0,0,0" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1e+08" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" lineSizeScale="0,0,0,0,0,0" sizeType="MM" lineSizeType="MM" minScaleDenominator="inf">
-          <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
-          <attribute field="" color="#000000" label=""/>
-        </DiagramCategory>
-        <symbol alpha="1" clip_to_extent="1" type="marker" name="sizeSymbol">
-          <layer pass="0" class="SimpleMarker" locked="0">
-            <prop k="angle" v="0"/>
-            <prop k="color" v="255,0,0,255"/>
-            <prop k="horizontal_anchor_point" v="1"/>
-            <prop k="joinstyle" v="bevel"/>
-            <prop k="name" v="circle"/>
-            <prop k="offset" v="0,0"/>
-            <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-            <prop k="offset_unit" v="MM"/>
-            <prop k="outline_color" v="0,0,0,255"/>
-            <prop k="outline_style" v="solid"/>
-            <prop k="outline_width" v="0"/>
-            <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
-            <prop k="outline_width_unit" v="MM"/>
-            <prop k="scale_method" v="diameter"/>
-            <prop k="size" v="2"/>
-            <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
-            <prop k="size_unit" v="MM"/>
-            <prop k="vertical_anchor_point" v="1"/>
-          </layer>
-        </symbol>
-      </SingleCategoryDiagramRenderer>
-      <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
-      <aliases>
-        <alias field="pk" index="0" name=""/>
-        <alias field="ags" index="1" name=""/>
-        <alias field="strasse" index="2" name=""/>
-        <alias field="hausnr" index="3" name=""/>
-        <alias field="zusatz" index="4" name=""/>
-        <alias field="wverbrauch" index="5" name=""/>
-      </aliases>
-      <excludeAttributesWMS/>
-      <excludeAttributesWFS/>
-      <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
-        <columns>
-          <column width="-1" hidden="0" type="field" name="pk"/>
-          <column width="-1" hidden="0" type="field" name="ags"/>
-          <column width="-1" hidden="0" type="field" name="strasse"/>
-          <column width="-1" hidden="0" type="field" name="hausnr"/>
-          <column width="-1" hidden="0" type="field" name="zusatz"/>
-          <column width="-1" hidden="0" type="field" name="wverbrauch"/>
-          <column width="-1" hidden="1" type="actions"/>
-        </columns>
-      </attributetableconfig>
-      <editform>.</editform>
-      <editforminit/>
-      <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
-      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
-"""
-QGIS forms can have a Python function that is called when the form is
-opened.
-
-Use this function to add extra logic to your forms.
-
-Enter the name of the function in the "Python Init function"
-field.
-An example follows:
-"""
-from qgis.PyQt.QtWidgets import QWidget
-
-def my_form_open(dialog, layer, feature):
-	geom = feature.geometry()
-	control = dialog.findChild(QWidget, "MyLineEdit")
-]]></editforminitcode>
-      <featformsuppress>0</featformsuppress>
-      <editorlayout>generatedlayout</editorlayout>
-      <widgets/>
-      <conditionalstyles>
-        <rowstyles/>
-        <fieldstyles/>
-      </conditionalstyles>
-      <defaults>
-        <default field="pk" expression=""/>
-        <default field="ags" expression=""/>
-        <default field="strasse" expression=""/>
-        <default field="hausnr" expression=""/>
-        <default field="zusatz" expression=""/>
-        <default field="wverbrauch" expression=""/>
-      </defaults>
-      <previewExpression></previewExpression>
-    </maplayer>
-    <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>32325331.2069999985396862</xmin>
-        <ymin>5721417.70600000023841858</ymin>
-        <xmax>32341661.01799999922513962</xmax>
-        <ymax>5732550.05200000014156103</ymax>
-      </extent>
-      <id>swref20170927083542529</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="swref" (geom) sql=</datasource>
-      <keywordList>
-        <value></value>
-      </keywordList>
-      <layername>swref</layername>
-      <srs>
-        <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
-          <geographicflag>false</geographicflag>
-        </spatialrefsys>
-      </srs>
-      <provider encoding="System">spatialite</provider>
-      <vectorjoins/>
-      <layerDependencies/>
-      <expressionfields/>
-      <map-layer-style-manager current="">
-        <map-layer-style name=""/>
-      </map-layer-style-manager>
-      <edittypes>
-        <edittype widgetv2type="TextEdit" name="pk">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="NBA">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="oi">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Qualitaet">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Land">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Regbez">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Kreis">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Gemeinde">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Gemeindeteil">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Strasse">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="hausnummer">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="zusatz">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="rechtswert">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="hochwert">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="strassenname">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="wasserverbrauch">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="ValueRelation" name="teilgebiet">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="ValueRelation" name="haltnam">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="haltnam" constraint="" Layer="haltungen20161016203756230" Value="haltnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
-        </edittype>
-      </edittypes>
-      <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
-        <symbols>
-          <symbol alpha="1" clip_to_extent="1" type="marker" name="0">
-            <layer pass="0" class="SimpleMarker" locked="0">
-              <prop k="angle" v="0"/>
-              <prop k="color" v="17,186,133,255"/>
-              <prop k="horizontal_anchor_point" v="1"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="name" v="circle"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0"/>
-              <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="scale_method" v="diameter"/>
-              <prop k="size" v="2"/>
-              <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="size_unit" v="MM"/>
-              <prop k="vertical_anchor_point" v="1"/>
-            </layer>
-          </symbol>
-        </symbols>
-        <rotation/>
-        <sizescale scalemethod="diameter"/>
-      </renderer-v2>
-      <labeling type="simple"/>
-      <customproperties>
-        <property key="embeddedWidgets/count" value="0"/>
-        <property key="labeling" value="pal"/>
-        <property key="labeling/addDirectionSymbol" value="false"/>
-        <property key="labeling/angleOffset" value="0"/>
-        <property key="labeling/blendMode" value="0"/>
-        <property key="labeling/bufferBlendMode" value="0"/>
-        <property key="labeling/bufferColorA" value="255"/>
-        <property key="labeling/bufferColorB" value="255"/>
-        <property key="labeling/bufferColorG" value="255"/>
-        <property key="labeling/bufferColorR" value="255"/>
-        <property key="labeling/bufferDraw" value="false"/>
-        <property key="labeling/bufferJoinStyle" value="128"/>
-        <property key="labeling/bufferNoFill" value="false"/>
-        <property key="labeling/bufferSize" value="1"/>
-        <property key="labeling/bufferSizeInMapUnits" value="false"/>
-        <property key="labeling/bufferSizeMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/bufferTransp" value="0"/>
-        <property key="labeling/centroidInside" value="false"/>
-        <property key="labeling/centroidWhole" value="false"/>
-        <property key="labeling/decimals" value="3"/>
-        <property key="labeling/displayAll" value="false"/>
-        <property key="labeling/dist" value="0"/>
-        <property key="labeling/distInMapUnits" value="false"/>
-        <property key="labeling/distMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/drawLabels" value="false"/>
-        <property key="labeling/enabled" value="false"/>
-        <property key="labeling/fieldName" value=""/>
-        <property key="labeling/fitInPolygonOnly" value="false"/>
-        <property key="labeling/fontCapitals" value="0"/>
-        <property key="labeling/fontFamily" value="MS Shell Dlg 2"/>
-        <property key="labeling/fontItalic" value="false"/>
-        <property key="labeling/fontLetterSpacing" value="0"/>
-        <property key="labeling/fontLimitPixelSize" value="false"/>
-        <property key="labeling/fontMaxPixelSize" value="10000"/>
-        <property key="labeling/fontMinPixelSize" value="3"/>
-        <property key="labeling/fontSize" value="8.25"/>
-        <property key="labeling/fontSizeInMapUnits" value="false"/>
-        <property key="labeling/fontSizeMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/fontStrikeout" value="false"/>
-        <property key="labeling/fontUnderline" value="false"/>
-        <property key="labeling/fontWeight" value="50"/>
-        <property key="labeling/fontWordSpacing" value="0"/>
-        <property key="labeling/formatNumbers" value="false"/>
-        <property key="labeling/isExpression" value="true"/>
-        <property key="labeling/labelOffsetInMapUnits" value="true"/>
-        <property key="labeling/labelOffsetMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/labelPerPart" value="false"/>
-        <property key="labeling/leftDirectionSymbol" value="&lt;"/>
-        <property key="labeling/limitNumLabels" value="false"/>
-        <property key="labeling/maxCurvedCharAngleIn" value="25"/>
-        <property key="labeling/maxCurvedCharAngleOut" value="-25"/>
-        <property key="labeling/maxNumLabels" value="2000"/>
-        <property key="labeling/mergeLines" value="false"/>
-        <property key="labeling/minFeatureSize" value="0"/>
-        <property key="labeling/multilineAlign" value="3"/>
-        <property key="labeling/multilineHeight" value="1"/>
-        <property key="labeling/namedStyle" value="Normal"/>
-        <property key="labeling/obstacle" value="true"/>
-        <property key="labeling/obstacleFactor" value="1"/>
-        <property key="labeling/obstacleType" value="0"/>
-        <property key="labeling/offsetType" value="0"/>
-        <property key="labeling/placeDirectionSymbol" value="0"/>
-        <property key="labeling/placement" value="6"/>
-        <property key="labeling/placementFlags" value="10"/>
-        <property key="labeling/plussign" value="false"/>
-        <property key="labeling/predefinedPositionOrder" value="TR,TL,BR,BL,R,L,TSR,BSR"/>
-        <property key="labeling/preserveRotation" value="true"/>
-        <property key="labeling/previewBkgrdColor" value="#ffffff"/>
-        <property key="labeling/priority" value="5"/>
-        <property key="labeling/quadOffset" value="4"/>
-        <property key="labeling/repeatDistance" value="0"/>
-        <property key="labeling/repeatDistanceMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/repeatDistanceUnit" value="1"/>
-        <property key="labeling/reverseDirectionSymbol" value="false"/>
-        <property key="labeling/rightDirectionSymbol" value=">"/>
-        <property key="labeling/scaleMax" value="10000000"/>
-        <property key="labeling/scaleMin" value="1"/>
-        <property key="labeling/scaleVisibility" value="false"/>
-        <property key="labeling/shadowBlendMode" value="6"/>
-        <property key="labeling/shadowColorB" value="0"/>
-        <property key="labeling/shadowColorG" value="0"/>
-        <property key="labeling/shadowColorR" value="0"/>
-        <property key="labeling/shadowDraw" value="false"/>
-        <property key="labeling/shadowOffsetAngle" value="135"/>
-        <property key="labeling/shadowOffsetDist" value="1"/>
-        <property key="labeling/shadowOffsetGlobal" value="true"/>
-        <property key="labeling/shadowOffsetMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shadowOffsetUnits" value="1"/>
-        <property key="labeling/shadowRadius" value="1.5"/>
-        <property key="labeling/shadowRadiusAlphaOnly" value="false"/>
-        <property key="labeling/shadowRadiusMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shadowRadiusUnits" value="1"/>
-        <property key="labeling/shadowScale" value="100"/>
-        <property key="labeling/shadowTransparency" value="30"/>
-        <property key="labeling/shadowUnder" value="0"/>
-        <property key="labeling/shapeBlendMode" value="0"/>
-        <property key="labeling/shapeBorderColorA" value="255"/>
-        <property key="labeling/shapeBorderColorB" value="128"/>
-        <property key="labeling/shapeBorderColorG" value="128"/>
-        <property key="labeling/shapeBorderColorR" value="128"/>
-        <property key="labeling/shapeBorderWidth" value="0"/>
-        <property key="labeling/shapeBorderWidthMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeBorderWidthUnits" value="1"/>
-        <property key="labeling/shapeDraw" value="false"/>
-        <property key="labeling/shapeFillColorA" value="255"/>
-        <property key="labeling/shapeFillColorB" value="255"/>
-        <property key="labeling/shapeFillColorG" value="255"/>
-        <property key="labeling/shapeFillColorR" value="255"/>
-        <property key="labeling/shapeJoinStyle" value="64"/>
-        <property key="labeling/shapeOffsetMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeOffsetUnits" value="1"/>
-        <property key="labeling/shapeOffsetX" value="0"/>
-        <property key="labeling/shapeOffsetY" value="0"/>
-        <property key="labeling/shapeRadiiMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeRadiiUnits" value="1"/>
-        <property key="labeling/shapeRadiiX" value="0"/>
-        <property key="labeling/shapeRadiiY" value="0"/>
-        <property key="labeling/shapeRotation" value="0"/>
-        <property key="labeling/shapeRotationType" value="0"/>
-        <property key="labeling/shapeSVGFile" value=""/>
-        <property key="labeling/shapeSizeMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeSizeType" value="0"/>
-        <property key="labeling/shapeSizeUnits" value="1"/>
-        <property key="labeling/shapeSizeX" value="0"/>
-        <property key="labeling/shapeSizeY" value="0"/>
-        <property key="labeling/shapeTransparency" value="0"/>
-        <property key="labeling/shapeType" value="0"/>
-        <property key="labeling/substitutions" value="&lt;substitutions/>"/>
-        <property key="labeling/textColorA" value="255"/>
-        <property key="labeling/textColorB" value="0"/>
-        <property key="labeling/textColorG" value="0"/>
-        <property key="labeling/textColorR" value="0"/>
-        <property key="labeling/textTransp" value="0"/>
-        <property key="labeling/upsidedownLabels" value="0"/>
-        <property key="labeling/useSubstitutions" value="false"/>
-        <property key="labeling/wrapChar" value=""/>
-        <property key="labeling/xOffset" value="0"/>
-        <property key="labeling/yOffset" value="0"/>
-        <property key="labeling/zIndex" value="0"/>
-        <property key="variableNames"/>
-        <property key="variableValues"/>
-      </customproperties>
-      <blendMode>0</blendMode>
-      <featureBlendMode>0</featureBlendMode>
-      <layerTransparency>0</layerTransparency>
-      <displayfield>Strassenname</displayfield>
-      <label>0</label>
-      <labelattributes>
-        <label fieldname="" text="Beschriftung"/>
-        <family fieldname="" name="MS Shell Dlg 2"/>
-        <size fieldname="" units="pt" value="12"/>
-        <bold fieldname="" on="0"/>
-        <italic fieldname="" on="0"/>
-        <underline fieldname="" on="0"/>
-        <strikeout fieldname="" on="0"/>
-        <color fieldname="" red="0" blue="0" green="0"/>
-        <x fieldname=""/>
-        <y fieldname=""/>
-        <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
-        <angle fieldname="" value="0" auto="0"/>
-        <alignment fieldname="" value="center"/>
-        <buffercolor fieldname="" red="255" blue="255" green="255"/>
-        <buffersize fieldname="" units="pt" value="1"/>
-        <bufferenabled fieldname="" on=""/>
-        <multilineenabled fieldname="" on=""/>
-        <selectedonly on=""/>
-      </labelattributes>
-      <SingleCategoryDiagramRenderer diagramType="Histogram" sizeLegend="0" attributeLegend="1">
-        <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" sizeScale="0,0,0,0,0,0" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1e+08" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" lineSizeScale="0,0,0,0,0,0" sizeType="MM" lineSizeType="MM" minScaleDenominator="inf">
-          <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
-          <attribute field="" color="#000000" label=""/>
-        </DiagramCategory>
-        <symbol alpha="1" clip_to_extent="1" type="marker" name="sizeSymbol">
-          <layer pass="0" class="SimpleMarker" locked="0">
-            <prop k="angle" v="0"/>
-            <prop k="color" v="255,0,0,255"/>
-            <prop k="horizontal_anchor_point" v="1"/>
-            <prop k="joinstyle" v="bevel"/>
-            <prop k="name" v="circle"/>
-            <prop k="offset" v="0,0"/>
-            <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-            <prop k="offset_unit" v="MM"/>
-            <prop k="outline_color" v="0,0,0,255"/>
-            <prop k="outline_style" v="solid"/>
-            <prop k="outline_width" v="0"/>
-            <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
-            <prop k="outline_width_unit" v="MM"/>
-            <prop k="scale_method" v="diameter"/>
-            <prop k="size" v="2"/>
-            <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
-            <prop k="size_unit" v="MM"/>
-            <prop k="vertical_anchor_point" v="1"/>
-          </layer>
-        </symbol>
-      </SingleCategoryDiagramRenderer>
-      <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
-      <aliases>
-        <alias field="pk" index="0" name=""/>
-        <alias field="NBA" index="1" name=""/>
-        <alias field="oi" index="2" name=""/>
-        <alias field="Qualitaet" index="3" name=""/>
-        <alias field="Land" index="4" name=""/>
-        <alias field="Regbez" index="5" name=""/>
-        <alias field="Kreis" index="6" name=""/>
-        <alias field="Gemeinde" index="7" name=""/>
-        <alias field="Gemeindeteil" index="8" name=""/>
-        <alias field="Strasse" index="9" name=""/>
-        <alias field="hausnummer" index="10" name=""/>
-        <alias field="zusatz" index="11" name=""/>
-        <alias field="rechtswert" index="12" name=""/>
-        <alias field="hochwert" index="13" name=""/>
-        <alias field="strassenname" index="14" name=""/>
-        <alias field="wasserverbrauch" index="15" name=""/>
-        <alias field="teilgebiet" index="16" name=""/>
-        <alias field="haltnam" index="17" name=""/>
-      </aliases>
-      <excludeAttributesWMS/>
-      <excludeAttributesWFS/>
-      <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
-        <columns>
-          <column width="-1" hidden="0" type="field" name="pk"/>
-          <column width="-1" hidden="0" type="field" name="NBA"/>
-          <column width="-1" hidden="0" type="field" name="OI"/>
-          <column width="-1" hidden="0" type="field" name="Qualitaet"/>
-          <column width="-1" hidden="0" type="field" name="Land"/>
-          <column width="-1" hidden="0" type="field" name="Regbez"/>
-          <column width="-1" hidden="0" type="field" name="Kreis"/>
-          <column width="-1" hidden="0" type="field" name="Gemeinde"/>
-          <column width="-1" hidden="0" type="field" name="Gemeindeteil"/>
-          <column width="-1" hidden="0" type="field" name="Strasse"/>
-          <column width="-1" hidden="0" type="field" name="Hausnummer"/>
-          <column width="-1" hidden="0" type="field" name="Zusatz"/>
-          <column width="-1" hidden="0" type="field" name="Rechtswert"/>
-          <column width="-1" hidden="0" type="field" name="Hochwert"/>
-          <column width="-1" hidden="0" type="field" name="Strassenname"/>
-          <column width="-1" hidden="0" type="field" name="wasserverbrauch"/>
-          <column width="-1" hidden="0" type="field" name="teilgebiet"/>
-          <column width="-1" hidden="1" type="actions"/>
-          <column width="-1" hidden="0" type="field" name="haltnam"/>
-        </columns>
-      </attributetableconfig>
-      <editform>./eingabemasken/swref.ui</editform>
-      <editforminit/>
-      <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
-      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
-"""
-QGIS forms can have a Python function that is called when the form is
-opened.
-
-Use this function to add extra logic to your forms.
-
-Enter the name of the function in the "Python Init function"
-field.
-An example follows:
-"""
-from qgis.PyQt.QtWidgets import QWidget
-
-def my_form_open(dialog, layer, feature):
-	geom = feature.geometry()
-	control = dialog.findChild(QWidget, "MyLineEdit")
-]]></editforminitcode>
-      <featformsuppress>0</featformsuppress>
-      <editorlayout>uifilelayout</editorlayout>
-      <widgets/>
-      <conditionalstyles>
-        <rowstyles/>
-        <fieldstyles/>
-      </conditionalstyles>
-      <defaults>
-        <default field="pk" expression=""/>
-        <default field="NBA" expression=""/>
-        <default field="oi" expression=""/>
-        <default field="Qualitaet" expression=""/>
-        <default field="Land" expression=""/>
-        <default field="Regbez" expression=""/>
-        <default field="Kreis" expression=""/>
-        <default field="Gemeinde" expression=""/>
-        <default field="Gemeindeteil" expression=""/>
-        <default field="Strasse" expression=""/>
-        <default field="hausnummer" expression=""/>
-        <default field="zusatz" expression=""/>
-        <default field="rechtswert" expression=""/>
-        <default field="hochwert" expression=""/>
-        <default field="strassenname" expression=""/>
-        <default field="wasserverbrauch" expression=""/>
-        <default field="teilgebiet" expression=""/>
-        <default field="haltnam" expression=""/>
-      </defaults>
-      <previewExpression>COALESCE( "Strassenname", '&lt;NULL>' )</previewExpression>
-    </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>388231.97741332714213058</xmin>
+        <ymin>5709624.51992257870733738</ymin>
+        <xmax>389724.10557776765199378</xmax>
+        <ymax>5711574.43785973358899355</ymax>
+      </extent>
       <id>teilgebiete20170214092005309</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="teilgebiete" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="teilgebiete" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7229,10 +6954,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -7442,7 +7167,7 @@ def my_form_open(dialog, layer, feature):
       <blendMode>0</blendMode>
       <featureBlendMode>0</featureBlendMode>
       <layerTransparency>0</layerTransparency>
-      <displayfield>name</displayfield>
+      <displayfield>tgnam</displayfield>
       <label>0</label>
       <labelattributes>
         <label fieldname="" text="Beschriftung"/>
@@ -7522,7 +7247,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="tgnam"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/teilgebiete.ui</editform>
+      <editform>../../../k_forms/eingabemasken/teilgebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7571,7 +7296,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>5726946.53799999970942736</ymax>
       </extent>
       <id>tezg20170508223029630</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="tezg" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="tezg" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7579,10 +7304,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -7872,7 +7597,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/tezg.ui</editform>
+      <editform>../../../k_forms/eingabemasken/tezg.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7921,7 +7646,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>5725729.99299999978393316</ymax>
       </extent>
       <id>wehre20161125174724734</id>
-      <datasource>dbname='./20170722_Bestand.sqlite' table="wehre" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="wehre" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7929,10 +7654,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
+          <srsid>2105</srsid>
+          <srid>25832</srid>
+          <authid>EPSG:25832</authid>
+          <description>ETRS89 / UTM zone 32N</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -8381,7 +8106,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="wnam"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/wehre.ui</editform>
+      <editform>../../../k_forms/eingabemasken/wehre.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8493,8 +8218,8 @@ SET geom = &#xd;
       <DefaultSnapToleranceUnit type="int">1</DefaultSnapToleranceUnit>
       <LayerSnappingList type="QStringList">
         <value>Anbindung20170920132347429</value>
-        <value>Anbindungen_SW_Punkte20170930153300986</value>
         <value>Speicher_Kopie20161221080207994</value>
+        <value>einleit20171004110830029</value>
         <value>flaechen20170504083519678</value>
         <value>haltungen20161016203756230</value>
         <value>haltungen_Kopie20161016203906444</value>
@@ -8503,50 +8228,50 @@ SET geom = &#xd;
         <value>schaechte20161220162259105</value>
         <value>schaechte_Kopie20161204084617148</value>
         <value>schaechte_Kopie20161221075653754</value>
-        <value>swgebaeude20170927083539768</value>
-        <value>swref20170927083542529</value>
         <value>teilgebiete20170214092005309</value>
         <value>tezg20170508223029630</value>
         <value>wehre20161125174724734</value>
+        <value>Anbindungen_SW_Punkte20171017125752772</value>
+        <value>einwohner20171017145439901</value>
       </LayerSnappingList>
       <LayerSnappingEnabledList type="QStringList">
         <value>disabled</value>
-        <value>disabled</value>
-        <value>enabled</value>
-        <value>disabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
-        <value>enabled</value>
         <value>enabled</value>
         <value>disabled</value>
         <value>disabled</value>
         <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
+        <value>enabled</value>
         <value>disabled</value>
         <value>enabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
       </LayerSnappingEnabledList>
       <SnappingMode type="QString">all_layers</SnappingMode>
       <AvoidIntersectionsList type="QStringList"/>
       <IntersectionSnapping type="bool">true</IntersectionSnapping>
       <LayerSnappingToleranceUnitList type="QStringList">
         <value>2</value>
-        <value>2</value>
-        <value>1</value>
-        <value>2</value>
-        <value>1</value>
-        <value>1</value>
-        <value>1</value>
-        <value>1</value>
-        <value>1</value>
-        <value>1</value>
         <value>1</value>
         <value>2</value>
         <value>2</value>
         <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
         <value>2</value>
         <value>1</value>
+        <value>2</value>
+        <value>2</value>
       </LayerSnappingToleranceUnitList>
       <LayerSnapToList type="QStringList">
         <value>to_vertex_and_segment</value>
@@ -8570,21 +8295,21 @@ SET geom = &#xd;
       <DefaultSnapTolerance type="double">10</DefaultSnapTolerance>
       <LayerSnappingToleranceList type="QStringList">
         <value>0.000000</value>
-        <value>0.000000</value>
-        <value>5.000000</value>
-        <value>0.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
-        <value>5.000000</value>
         <value>5.000000</value>
         <value>0.000000</value>
         <value>0.000000</value>
         <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
+        <value>5.000000</value>
         <value>0.000000</value>
         <value>5.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
       </LayerSnappingToleranceList>
     </Digitizing>
     <Identify>

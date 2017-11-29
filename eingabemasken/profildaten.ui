@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>648</width>
-    <height>178</height>
+    <width>646</width>
+    <height>166</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,7 +53,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLineEdit" name="schnam">
+   <widget class="QLineEdit" name="profilnam">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -83,10 +83,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>Oberfläche</string>
+     <string>Wasserbreite</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="oberfl">
+   <widget class="QLineEdit" name="wbreite">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -99,8 +99,8 @@
    <widget class="QLabel" name="lb_version">
     <property name="geometry">
      <rect>
-      <x>560</x>
-      <y>120</y>
+      <x>570</x>
+      <y>110</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -121,7 +121,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>648</width>
+     <width>646</width>
      <height>21</height>
     </rect>
    </property>

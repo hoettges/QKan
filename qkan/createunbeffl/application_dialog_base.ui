@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
-    <height>419</height>
+    <width>695</width>
+    <height>447</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>360</y>
-     <width>171</width>
+     <x>250</x>
+     <y>380</y>
+     <width>161</width>
      <height>32</height>
     </rect>
    </property>
@@ -42,9 +42,9 @@
   <widget class="QTableWidget" name="tw_cnt_abflussparameter">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>180</y>
-     <width>401</width>
+     <x>20</x>
+     <y>140</y>
+     <width>651</width>
      <height>131</height>
     </rect>
    </property>
@@ -52,8 +52,10 @@
     <enum>QAbstractItemView::SelectRows</enum>
    </property>
    <property name="columnCount">
-    <number>3</number>
+    <number>5</number>
    </property>
+   <column/>
+   <column/>
    <column/>
    <column/>
    <column/>
@@ -62,9 +64,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>80</y>
-     <width>361</width>
-     <height>51</height>
+     <y>60</y>
+     <width>651</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
@@ -73,7 +75,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Die Abflussparameter werden dabei aus der Tabelle &quot;tezg&quot; übernommen. Zur Kontrolle sind die Abflussparameter in der nachstehenden Tabelle aufgelistet.</string>
+    <string>Die Abflussparameter für die erzeugten Flächenobjekte werden aus der Tabelle &quot;tezg&quot; übernommen. Zur Kontrolle sind die Abflussparameter in der nachstehenden Tabelle aufgelistet.</string>
    </property>
    <property name="textFormat">
     <enum>Qt::RichText</enum>
@@ -86,7 +88,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>40</y>
+     <y>20</y>
      <width>421</width>
      <height>41</height>
     </rect>
@@ -109,8 +111,8 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>150</y>
+     <x>20</x>
+     <y>110</y>
      <width>401</width>
      <height>31</height>
     </rect>
@@ -127,8 +129,8 @@
   <widget class="QLabel" name="lb_version">
    <property name="geometry">
     <rect>
-     <x>410</x>
-     <y>400</y>
+     <x>620</x>
+     <y>430</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -137,11 +139,135 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.1.2</string>
+    <string>Version 2.2.1</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>290</y>
+     <width>321</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Optionen</string>
+   </property>
+   <widget class="QCheckBox" name="cb_autokorrektur">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>301</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;1. Falls in der Tabelle &amp;quot;tezg&amp;quot; leere oder doppelte Namen (flnam) vorkommen, werden diese mit &amp;quot;ft_nnnn&amp;quot; überschrieben. &lt;/p&gt;&lt;p&gt;2. Falls in der Tabelle &amp;quot;abflussfaktoren&amp;quot; kein Datensatz für unbefestigte Flächen existiert (Kriterium: bodenklasse = NULL), wird ein entsprechender Datensatz '$Default_Bef' ergänzt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Automatische Korrektur von Datenfehlern in der Tabelle &quot;tezg&quot;</string>
+    </property>
+    <property name="text">
+     <string>Autokorrektur von Namen und Abflussfaktoren
+in den TEZG-Flächen</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>290</y>
+     <width>311</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Aktuell berücksichtigt</string>
+   </property>
+   <widget class="QLabel" name="lf_anzahl_tezg">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden ganzen Flächen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden ganzen Flächen"/>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Panel</enum>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>30</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden Flächen (mit und ohne Verschneidung)"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden Flächen (mit und ohne Verschneidung)"/>
+    </property>
+    <property name="text">
+     <string>TEZG-Flächen:</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
