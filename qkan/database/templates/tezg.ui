@@ -246,7 +246,7 @@ mklink /D eingabemasken C:\FHAC\jupiter\hoettges\team_data\Kanalprogramme\QKan\e
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.2.5</string>
+     <string>Version 2.2.6</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
