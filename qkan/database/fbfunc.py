@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
-
-import firebirdsql
-from qgis.gui import QgsMessageBar
-from qgis.utils import iface
-
 """
 
   Datenbankmanagement fuer Firebird-Datenbanken
@@ -33,6 +27,16 @@ __copyright__ = '(C) 2016, Joerg Hoettges'
 
 __revision__ = ':%H$'
 
+import logging
+import os
+
+import firebirdsql
+from qgis.gui import QgsMessageBar
+from qgis.utils import iface
+
+from qgis_utils import fortschritt, fehlermeldung
+
+logger = logging.getLogger(u'QKan')
 
 # Hauptprogramm ----------------------------------------------------------------
 
@@ -85,10 +89,17 @@ class FBConnection:
         lattr = [el[1] for el in daten]
         return lattr
 
-    def sql(self, sql):
+    def sql(self, sql, errormessage = u'allgemein'):
         """Fuehrt eine SQL-Abfrage aus."""
 
-        self.curfb.execute(sql)
+        try:
+            self.curfb.execute(sql)
+            return True
+        except BaseException as err:
+            fehlermeldung(u'SQL-Fehler in {e}'.format(e=errormessage), 
+                          u"{e}\n{s}".format(e=repr(err), s=sql))
+            self.__del__()
+            return False
 
     def fetchall(self):
         """Gibt alle Daten aus der vorher ausgefuehrten SQL-Abfrage zurueck"""

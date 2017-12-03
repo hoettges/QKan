@@ -217,7 +217,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QComboBox" name="he_typ">
+   <widget class="QComboBox" name="abflusstyp">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -237,7 +237,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Abfluss-Typ (HE)</string>
+     <string>Abflusstyp</string>
     </property>
    </widget>
    <widget class="Line" name="line_3">
@@ -452,7 +452,7 @@
   <tabstop>regenschreiber</tabstop>
   <tabstop>abflussparameter</tabstop>
   <tabstop>aufteilen</tabstop>
-  <tabstop>he_typ</tabstop>
+  <tabstop>abflusstyp</tabstop>
   <tabstop>speicherzahl</tabstop>
   <tabstop>speicherkonst</tabstop>
   <tabstop>kommentar</tabstop>

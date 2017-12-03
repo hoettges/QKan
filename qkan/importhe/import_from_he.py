@@ -41,7 +41,7 @@ import xml.etree.ElementTree as ET
 from PyQt4.QtCore import QFileInfo
 from qgis.core import QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem
 from qgis.gui import QgsMessageBar
-from qgis.utils import iface
+from qgis.utils import iface, pluginDirectory
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.fbfunc import FBConnection
@@ -271,8 +271,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                 deckeloben=deckeloben, deckelunten=deckelunten, teilgebiet=teilgebiet,
                 profilnam=profilnam, entwart=entwart, ks=ks, simstatus=simstatus, kommentar=kommentar,
                 createdat=createdat)
-        except BaseException as e:
-            fehlermeldung(u'SQL-Fehler', str(e))
+        except BaseException as err:
+            fehlermeldung(u'SQL-Fehler', repr(err))
             fehlermeldung(u"Fehler in QKan_Import_from_HE", u"\nFehler in sql INSERT INTO haltungen: \n" + \
                           str((geom, haltnam, schoben, schunten,
                                hoehe, breite, laenge, sohleoben, sohleunten,
@@ -373,8 +373,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                 kommentar=kommentar, createdat=createdat, geop=geop, geom=geom)
             if not dbQK.sql(sql, u'importkanaldaten_he (14)'):
                 return None
-        except BaseException as e:
-            fehlermeldung(u'SQL-Fehler', str(e))
+        except BaseException as err:
+            fehlermeldung(u'SQL-Fehler', repr(err))
             fehlermeldung(u"Fehler in QKan_Import_from_HE", u"\nSchächte: in sql: \n" + sql + u'\n\n')
 
     dbQK.commit()
@@ -643,8 +643,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                 einschalthoehe=einschalthoehe, ausschalthoehe=ausschalthoehe, simstatus=simstatus,
                 kommentar=kommentar, createdat=createdat, geom=geom)
 
-        except BaseException as e:
-            fehlermeldung(u'SQL-Fehler', str(e))
+        except BaseException as err:
+            fehlermeldung(u'SQL-Fehler', repr(err))
             fehlermeldung(u"Fehler in QKan_Import_from_HE",
                           u"\nFehler in sql INSERT INTO pumpen: \n" + str((pnam, schoben, \
                                                                            schunten, pumpentyp, steuersch,
@@ -743,8 +743,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                                   kammerhoehe=kammerhoehe, laenge=laenge, uebeiwert=uebeiwert, simstatus=simstatus,
                                   kommentar=kommentar, createdat=createdat, geom=geom)
             ok = True
-        except BaseException as e:
-            fehlermeldung(u'Fehler', str(e))
+        except BaseException as err:
+            fehlermeldung(u'Fehler', repr(err))
             ok = False
             fehlermeldung(u"Fehler in QKan_Import_from_HE",
                           u"\nFehler in sql INSERT INTO wehre: \n" + str((wnam, schoben, schunten,
@@ -803,8 +803,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                  """.format(tgnam=tgnam, ewdichte=ewdichte, wverbrauch=wverbrauch, stdmittel=stdmittel,
                             fremdwas=fremdwas, flaeche=flaeche, kommentar=kommentar, createdat=createdat)
             ok = True
-        except BaseException as e:
-            fehlermeldung(u'SQL-Fehler', str(e))
+        except BaseException as err:
+            fehlermeldung(u'SQL-Fehler', repr(err))
             fehlermeldung(u"Fehler in QKan_Import_from_HE", u"\nFehler in sql INSERT INTO Teilgebiete: \n" + \
                           str((tgnam, ewdichte, wverbrauch, stdmittel,
                                fremdwas, flaeche, kommentar, createdat)) + u'\n\n')
@@ -1080,15 +1080,15 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
              FROM SCHACHT'''
     try:
         dbHE.sql(sql)
-    except BaseException as e:
-        fehlermeldung(u'SQL-Fehler', str(e))
+    except BaseException as err:
+        fehlermeldung(u'SQL-Fehler', repr(err))
         fehlermeldung(u"Fehler in QKan_Import_from_HE", u"\nFehler in sql_zoom: \n" + sql + u'\n\n')
 
     daten = dbHE.fetchone()
     try:
         zoomxmin, zoomxmax, zoomymin, zoomymax = daten
-    except BaseException as e:
-        fehlermeldung(u'SQL-Fehler', str(e))
+    except BaseException as err:
+        fehlermeldung(u'SQL-Fehler', repr(err))
         fehlermeldung(u"Fehler in QKan_Import_from_HE", u"\nFehler in sql_zoom; daten= " + str(daten) + u'\n')
 
     # --------------------------------------------------------------------------
@@ -1111,11 +1111,11 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             ellipsoidacronym = crs.ellipsoidacronym()
         else:
             ellipsoidacronym = None
-    except BaseException as e:
+    except BaseException as err:
         srid, srsid, proj4text, description, projectionacronym, ellipsoidacronym = \
             u'dummy', u'dummy', u'dummy', u'dummy', u'dummy', u'dummy'
 
-        fehlermeldung(u'\nFehler in "daten"', str(e))
+        fehlermeldung(u'\nFehler in "daten"', repr(err))
         fehlermeldung(u"Fehler in QKan_Import_from_HE", u"\nFehler bei der Ermittlung der srid: \n" + str(daten))
 
     # --------------------------------------------------------------------------
@@ -1128,7 +1128,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
     # Projektdatei schreiben, falls ausgewählt
 
     if projectfile is not None and projectfile != u'':
-        templatepath = os.path.join(os.path.dirname(__file__), u"templates")
+        templatepath = os.path.join(pluginDirectory('qkan'), u"importhe/templates")
+        # templatepath = os.path.join(os.path.dirname(__file__), u"templates")
         projecttemplate = os.path.join(templatepath, u"projekt.qgs")
         projectpath = os.path.dirname(projectfile)
         if os.path.dirname(database_QKan) == projectpath:
@@ -1214,6 +1215,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                 os.mkdir(os.path.join(projectpath, u'eingabemasken'))
             formpath = os.path.join(projectpath, u'eingabemasken')
             formlist = os.listdir(formpath)
+            templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
+
+            logger.debug(u"Eingabeformulare kopieren: {} -> {}".format(formpath, templatepath))
+
             for formfile in glob.iglob(os.path.join(templatepath, u'*.ui')):
                 # Wenn Datei im Verzeichnis 'eingabemasken' noch nicht vorhanden ist
                 if formfile not in formlist:

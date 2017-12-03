@@ -32,7 +32,11 @@ from qgis.utils import iface
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.fbfunc import FBConnection
-from qkan.database.qgis_utils import fortschritt, fehlermeldung, checknames
+from qkan.database.qgis_utils import fortschritt, fehlermeldung, meldung, checknames
+
+# Referenzlisten
+from qkan.database.reflists import abflusstypen
+
 
 logger = logging.getLogger('QKan')
 
@@ -79,20 +83,22 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
+    # Referenzliste der Abflusstypen für HYSTEM-EXTRAN
+    he_fltyp_ref = abflusstypen('he')
+
     # ITWH-Datenbank aus gewählter Vorlage kopieren
     if os.path.exists(database_HE):
         try:
             os.remove(database_HE)
         except BaseException as err:
-            fehlermeldung(
-                u'Fehler (33) in QKan_Export: Die HE-Datenbank ist schon vorhanden und kann nicht ersetzt werden: ',
-                str(err))
+            fehlermeldung(u'Fehler (33) in QKan_Export', 
+                'Die HE-Datenbank ist schon vorhanden und kann nicht ersetzt werden: {}'.format(repr(err)))
             return False
     try:
         shutil.copyfile(dbtemplate_HE, database_HE)
     except BaseException as err:
-        fehlermeldung(u'Fehler (34) in QKan_Export: Kopieren der Vorlage HE-Datenbank fehlgeschlagen: ',
-                      str(err))
+        fehlermeldung(u'Fehler (34) in QKan_Export', 
+            'Kopieren der Vorlage HE-Datenbank fehlgeschlagen: {}\nVorlage: {}\nZiel: {}\n'.format(repr(err)), dbtemplate_HE, database_HE)
         return False
     fortschritt(u"Firebird-Datenbank aus Vorlage kopiert...", 0.01)
     progress_bar.setValue(1)
@@ -160,11 +166,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             FROM schaechte
             WHERE schaechte.schachttyp = 'Schacht'{}
             """.format(auswahl)
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(21) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_schaechte'):
             del dbHE
             return False
 
@@ -202,12 +205,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                            konstanterzufluss=u'0', gelaendehoehe=deckelhoehe, art=u'1', anzahlkanten=u'0',
                            scheitelhoehe=u'0', planungsstatus=u'0', name=schnam, lastmodified=createdat,
                            durchmesser=durchmesser)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(3a) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_schaechte (1)'):
                     del dbQK
-                    del dbHE
                     return False
 
             # Einfuegen in die Datenbank
@@ -229,12 +229,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                            konstanterzufluss=u'0', gelaendehoehe=deckelhoehe, art=u'1', anzahlkanten=u'0',
                            scheitelhoehe=u'0', planungsstatus=u'0', name=schnam, lastmodified=createdat,
                            id=nextid, durchmesser=durchmesser)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(3b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_schaechte (2)'):
                     del dbQK
-                    del dbHE
                     return False
 
                 nextid += 1
@@ -272,11 +269,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             FROM schaechte
             WHERE schaechte.schachttyp = 'Speicher'{}
             """.format(auswahl)
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_speicher'):
             del dbHE
             return False
 
@@ -319,12 +313,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                            konstanterzufluss=u'0', absetzwirkung=u'0', planungsstatus=u'0',
                            name=schnam, lastmodified=createdat, kommentar=kommentar,
                            durchmesser=durchmesser)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(4a) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_speicher (1)'):
                     del dbQK
-                    del dbHE
                     return False
 
             # Einfuegen in die Datenbank
@@ -354,12 +345,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                            konstanterzufluss=u'0', absetzwirkung=u'0', planungsstatus=u'0',
                            name=schnam, lastmodified=createdat, kommentar=kommentar,
                            durchmesser=durchmesser)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(4b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_speicher (2)'):
                     del dbQK
-                    del dbHE
                     return False
 
                 nextid += 1
@@ -379,11 +367,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                       JOIN schaechte AS sc ON sl.schnam = sc.schnam
                       ORDER BY sc.schnam, sl.wspiegel"""
 
-            try:
-                dbQK.sql(sql)
-            except BaseException as err:
-                fehlermeldung(u"(32) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-                del dbQK
+            if not dbQK.sql(sql, u'dbQK: k_qkhe.export_speicherkennlinien'):
                 del dbHE
                 return False
 
@@ -417,12 +401,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                             FROM RDB$DATABASE;
                         """.format(wtiefe=wtiefe, oberfl=oberfl, reihenfolge=reihenfolge, id=refid_speicher[schnam])
                         # print(sql)
-                        try:
-                            dbHE.sql(sql)
-                        except BaseException as err:
-                            fehlermeldung(u"(4d) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                        if not dbHE.sql(sql, u'dbHE: export_speicherkennlinien'):
                             del dbQK
-                            del dbHE
                             return False
 
             dbHE.commit()
@@ -453,11 +434,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             FROM schaechte
             WHERE schaechte.schachttyp = 'Auslass'{}
             """.format(auswahl)
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_auslaesse'):
             del dbHE
             return False
 
@@ -495,12 +473,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                            scheitelhoehe=deckelhoehe, konstanterzufluss=0, planungsstatus=u'0',
                            name=schnam, lastmodified=createdat, kommentar=kommentar,
                            durchmesser=durchmesser)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(31) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_auslaesse (1)'):
                     del dbQK
-                    del dbHE
                     return False
 
             # Einfuegen in die Datenbank
@@ -526,12 +501,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                            scheitelhoehe=deckelhoehe, konstanterzufluss=0, planungsstatus=u'0',
                            name=schnam, lastmodified=createdat, kommentar=kommentar,
                            durchmesser=durchmesser)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(31) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_auslaesse (2)'):
                     del dbQK
-                    del dbHE
                     return False
 
                 nextid += 1
@@ -576,11 +548,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
               WHERE (st.he_nr IN ('0', '1', '2') or st.he_nr IS NULL){:}
         """.format(auswahl)
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(5) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_haltungen'):
             del dbHE
             return False
 
@@ -652,12 +621,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                                  ereignisbilanzierung=0, ereignisgrenzwertende=0,
                                  ereignisgrenzwertanfang=0, ereignistrenndauer=0,
                                  ereignisindividuell=0)
-                    try:
-                        dbHE.sql(sql)
-                    except BaseException as err:
-                        fehlermeldung(u"(6b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                    if not dbHE.sql(sql, u'dbHE: export_haltungen (1)'):
                         del dbQK
-                        del dbHE
                         return False
 
             # Einfuegen in die Datenbank
@@ -701,12 +667,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                                  ereignisbilanzierung=0, ereignisgrenzwertende=0,
                                  ereignisgrenzwertanfang=0, ereignistrenndauer=0,
                                  ereignisindividuell=0, id=nextid)
-                    try:
-                        dbHE.sql(sql)
-                    except BaseException as err:
-                        fehlermeldung(u"(6b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                    if not dbHE.sql(sql, u'dbHE: export_haltungen (2)'):
                         del dbQK
-                        del dbHE
                         return False
 
                     nextid += 1
@@ -734,11 +697,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 kommentar AS kommentar
             FROM bodenklassen
             """.format(auswahl)
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_bodenklassen'):
             del dbHE
             return False
 
@@ -780,12 +740,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                                saettigungswassergehalt=saettigungswassergehalt,
                                name=bknam, lastmodified=createdat,
                                kommentar=kommentar)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(31) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_bodenklassen (1)'):
                     del dbQK
-                    del dbHE
                     return False
 
             # Einfuegen in die Datenbank
@@ -809,12 +766,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                                saettigungswassergehalt=saettigungswassergehalt,
                                name=bknam, lastmodified=createdat,
                                kommentar=kommentar, id=nextid)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(7) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_bodenklassen (2)'):
                     del dbQK
-                    del dbHE
                     return False
 
                 nextid += 1
@@ -842,11 +796,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 bodenklasse, kommentar, createdat
             FROM abflussparameter
             """.format(auswahl)
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(22) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_abflussparameter'):
             del dbHE
             return False
 
@@ -905,12 +856,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                            speicherkonstantemin2=0, speicherkonstantemax2=0,
                            bodenklasse=bodenklasse, charakteristischeregenspende=0, charakteristischeregenspende2=0,
                            typ=typ, jahresgangverluste=0, createdat=createdat, kommentar=kommentar)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(8a) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_abflussparameter (1)'):
                     del dbQK
-                    del dbHE
                     return False
 
             # Einfuegen in die Datenbank
@@ -940,12 +888,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                            speicherkonstantemin2=0, speicherkonstantemax2=0,
                            bodenklasse=bodenklasse, charakteristischeregenspende=0, charakteristischeregenspende2=0,
                            typ=typ, jahresgangverluste=0, createdat=createdat, kommentar=kommentar, id=nextid)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(8b) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_abflussparameter (2)'):
                     del dbQK
-                    del dbHE
                     return False
 
                 nextid += 1
@@ -973,11 +918,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         # Regenschreiber berücksichtigen nicht ausgewählte Teilgebiete
         sql = u"""SELECT regenschreiber FROM flaechen GROUP BY regenschreiber"""
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(5) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_regenschreiber'):
             del dbHE
             return False
 
@@ -999,7 +941,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             sql = u"""SELECT NAME FROM REGENSCHREIBER WHERE NAME NOT IN {})""".format(str(reglis)[:-2])
         else:
             sql = u"""SELECT NAME FROM REGENSCHREIBER WHERE NAME NOT IN {}""".format(str(reglis))
-        dbHE.sql(sql)
+
+        if not dbHE.sql(sql, u'dbHE: export_regenschreiber (1)'):
+            del dbQK
+            return False
 
         attr = dbHE.fetchall()
         logger.debug(u'Regenschreiber - attr: {}'.format(str(attr)))
@@ -1029,12 +974,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                              anzahlhaltungen=0, internenummer=0,
                              lastmodified=createdat, kommentar=u'Ergänzt durch QKan', id=nextid)
 
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(17) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+                if not dbHE.sql(sql, u'dbHE: export_regenschreiber (2)'):
                     del dbQK
-                    del dbHE
                     return False
 
                 logger.debug(u'In HE folgenden Regenschreiber ergänzt: {}'.format(sql))
@@ -1093,11 +1034,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 WHERE within(StartPoint(linkfl.glink),fl.geom))
             WHERE linkfl.pk IN missing"""
         logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"QKan_Export (24) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_flaechenrw (1)'):
             del dbHE
             return False
 
@@ -1115,11 +1053,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 WHERE intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
             WHERE linkfl.pk IN missing"""
         logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"QKan_Export (25) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_flaechenrw (2)'):
             del dbHE
             return False
 
@@ -1139,11 +1074,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 WHERE within(StartPoint(linkfl.glink),tg.geom))
             WHERE linkfl.pk IN missing"""
         logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"QKan_Export (25) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_flaechenrw (3)'):
             del dbHE
             return False
 
@@ -1158,7 +1090,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         if check_export['combine_flaechenrw']:
             sql = u"""
               WITH flintersect AS (
-                SELECT lf.pk AS pk, lf.flnam AS flnam, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.he_typ AS he_typ, 
+                SELECT lf.flnam AS flnam, lf.pk AS pl, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.abflusstyp AS abflusstyp, 
                 fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
                 fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
                 fl.regenschreiber AS regenschreiber,
@@ -1170,9 +1102,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 ON lf.flnam = fl.flnam
                 LEFT JOIN tezg AS tg
                 ON lf.tezgnam = tg.flnam
-                )
-              SELECT printf('fs_%d-%s', fi.pk, ha.haltnam) AS flnam, ha.haltnam AS haltnam, fi.neigkl AS neigkl,
-                fi.he_typ AS he_typ, fi.speicherzahl AS speicherzahl, avg(fi.speicherkonst) AS speicherkonst,
+                WHERE lf.geom IS NOT NULL)
+              SELECT substr(printf('%s-%d', fi.flnam, fi.pl),1,30) AS flnam, 
+                ha.haltnam AS haltnam, fi.neigkl AS neigkl,
+                fi.abflusstyp AS abflusstyp, fi.speicherzahl AS speicherzahl, avg(fi.speicherkonst) AS speicherkonst,
                 max(fi.fliesszeit) AS fliesszeit, max(fi.fliesszeitkanal) AS fliesszeitkanal,
                 sum(area(fi.geom)/10000) AS flaeche, fi.regenschreiber AS regenschreiber,
                 abflussparameter AS abflussparameter, max(fi.createdat) AS createdat,
@@ -1180,36 +1113,41 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               FROM flintersect AS fi
               INNER JOIN haltungen AS ha
               ON fi.haltnam = ha.haltnam
-              WHERE area(fi.geom) > 0.1
+              WHERE area(fi.geom) > 0.5{auswahl}
               GROUP BY ha.haltnam, fi.abflussparameter, fi.regenschreiber, 
                        fi.speicherzahl, 
-                       fi.he_typ, fi.neigkl""".format(auswahl=auswahl)
+                       fi.abflusstyp, fi.neigkl""".format(auswahl=auswahl)
             logger.debug(u'combine_flaechenrw = True')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         else:
             sql = u"""
-              SELECT printf('fs_%d-%s', lf.pk, ha.haltnam) AS flnam, ha.haltnam AS haltnam, fl.neigkl AS neigkl,
-                fl.he_typ AS he_typ, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
-                fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
-                CASE WHEN tg.flnam IS NULL THEN area(fl.geom)/10000 
-                ELSE area(CastToMultiPolygon(intersection(fl.geom,tg.geom)))/10000 END AS flaeche, 
-                fl.regenschreiber AS regenschreiber,
-                fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
-                fl.kommentar AS kommentar
-              FROM linkfl AS lf
-              INNER JOIN flaechen AS fl
-              ON lf.flnam = fl.flnam
-              INNER JOIN haltungen AS ha
-              ON lf.haltnam = ha.haltnam
-              LEFT JOIN tezg AS tg
-              ON lf.tezgnam = tg.flnam""".format(auswahl=auswahl)
+              WITH flintersect AS (
+                SELECT substr(printf('%s-%d', fl.flnam, lf.pk),1,30) AS flnam, 
+                  ha.haltnam AS haltnam, fl.neigkl AS neigkl,
+                  fl.abflusstyp AS abflusstyp, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
+                  fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
+                  CASE WHEN tg.flnam IS NULL THEN area(fl.geom)/10000 
+                  ELSE area(CastToMultiPolygon(intersection(fl.geom,tg.geom)))/10000 END AS flaeche, 
+                  fl.regenschreiber AS regenschreiber,
+                  fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
+                  fl.kommentar AS kommentar
+                FROM linkfl AS lf
+                INNER JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                INNER JOIN haltungen AS ha
+                ON lf.haltnam = ha.haltnam
+                LEFT JOIN tezg AS tg
+                ON lf.tezgnam = tg.flnam
+                WHERE lf.geom IS NOT NULL)
+              SELECT flnam, haltnam, neigkl, abflusstyp, speicherzahl, speicherkonst, 
+              fliesszeit, fliesszeitkanal, flaeche, regenschreiber, abflussparameter,
+              createdat, kommentar
+              FROM flintersect AS fi
+              WHERE flaeche > 0.5{auswahl}""".format(auswahl=auswahl)
             logger.debug(u'combine_flaechenrw = False')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"QKan_Export (23) SQL-Fehler in QKan-DB: \n{}\n".format(err), sql)
-            del dbQK
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_flaechenrw (4)'):
             del dbHE
             return False
 
@@ -1217,11 +1155,13 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         nr0 = nextid
 
+        fehler_abflusstyp = False               # Um wiederholte Fehlermeldung zu unterdrücken...
+
         for attr in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
             (flnam, haltnam, neigkl,
-             he_typ, speicherzahl, speicherkonst,
+             abflusstyp, speicherzahl, speicherkonst,
              fliesszeit, fliesszeitkanal,
              flaeche, regenschreiber,
              abflussparameter, createdat,
@@ -1232,40 +1172,60 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             if regenschreiber == u'NULL':
                 regenschreiber = u'Regenschreiber1'
 
-            if he_typ == u'NULL':
+            if abflusstyp in he_fltyp_ref:
+                he_typ = he_fltyp_ref[abflusstyp]
+            elif abflusstyp == u'NULL':
                 he_typ = 0  # Flächentyp 'Direkt'
+            else:
+                if not fehler_abflusstyp:
+                    meldung(u'Datenfehler in Tabelle "flaechen", Feld "abflusstyp"', 'Wert: {}'.format(abflusstyp))
+                    he_typ = 0  # Flächentyp 'Direkt'
+                    fehler_abflusstyp = True
 
-            if neigkl == u'NULL':
-                neigkl = 1
+            if flaeche != u'NULL':
+                flaeche = '{0:.4f}'.format(flaeche)
 
-            if speicherzahl == u'NULL':
-                speicherzahl = 3
+            if neigkl != u'NULL':
+                neigkl = '{0:.0f}'.format(neigkl)
+            else:
+                neigkl = 0
 
-            if speicherkonst == u'NULL':
-                speicherkonst = math.sqrt(flaeche) * 2.
+            if speicherzahl != u'NULL':
+                speicherzahl = '{0:.0f}'.format(speicherzahl)
+            else:
+                speicherzahl = '0'
 
-            if fliesszeit == u'NULL':
-                fliesszeit = math.sqrt(flaeche) * 6.
+            if speicherkonst != u'NULL':
+                speicherkonst = '{0:.3f}'.format(speicherkonst)
+            else:
+                speicherkonst = '0'
 
-            if fliesszeitkanal == u'NULL':
-                fliesszeitkanal = 0
+            if fliesszeit != u'NULL':
+                fliesszeit = '{0:.2f}'.format(fliesszeit)
+            else:
+                fliesszeit = '0'
 
+            if fliesszeitkanal != u'NULL':
+                fliesszeitkanal = '{0:.2f}'.format(fliesszeitkanal)
+            else:
+                fliesszeitkanal = '0'
+
+
+            # Standardwerte, falls keine Vorgaben
             if createdat == u'NULL':
                 createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
 
             if kommentar == u'NULL' or kommentar == u'':
                 kommentar = u'eingefuegt von k_qkhe'
 
-            fnam = (u'{}-{}'.format(flnam, nextid))[:30]
-
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export['modify_flaechenrw']:
                 sql = u"""
                   UPDATE FLAECHE SET
-                  GROESSE={flaeche:.4f}, REGENSCHREIBER='{regenschreiber}', HALTUNG='{haltnam}',
+                  GROESSE={flaeche}, REGENSCHREIBER='{regenschreiber}', HALTUNG='{haltnam}',
                   BERECHNUNGSPEICHERKONSTANTE={he_typ}, TYP={fltyp}, ANZAHLSPEICHER={speicherzahl},
-                  SPEICHERKONSTANTE={speicherkonst:.3f}, SCHWERPUNKTLAUFZEIT={fliesszeit1:.2f},
-                  FLIESSZEITOBERFLAECHE={fliesszeit2:.2f}, LAENGSTEFLIESSZEITKANAL={fliesszeitkanal:.2f},
+                  SPEICHERKONSTANTE={speicherkonst}, SCHWERPUNKTLAUFZEIT={fliesszeit1},
+                  FLIESSZEITOBERFLAECHE={fliesszeit2}, LAENGSTEFLIESSZEITKANAL={fliesszeitkanal},
                   PARAMETERSATZ='{abflussparameter}', NEIGUNGSKLASSE={neigkl},
                   NAME='{flnam}', LASTMODIFIED='{createdat}',
                   KOMMENTAR='{kommentar}', ZUORDNUNABHEZG={zuordnunabhezg}
@@ -1275,14 +1235,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                              speicherkonst=speicherkonst, fliesszeit1=fliesszeit,
                              fliesszeit2=fliesszeit, fliesszeitkanal=fliesszeitkanal,
                              abflussparameter=abflussparameter, neigkl=neigkl,
-                             flnam=fnam, createdat=createdat,
+                             flnam=flnam, createdat=createdat,
                              kommentar=kommentar, zuordnunabhezg=0)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(9c) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                if not dbHE.sql(sql, u'dbHE: export_flaechenrw (1)'):
                     del dbQK
-                    del dbHE
                     return False
 
             # Einfuegen in die Datenbank
@@ -1297,10 +1254,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                     NAME, LASTMODIFIED,
                     KOMMENTAR, ID, ZUORDNUNABHEZG)
                   SELECT
-                    {flaeche:.4f}, '{regenschreiber}', '{haltnam}',
+                    {flaeche}, '{regenschreiber}', '{haltnam}',
                     {he_typ}, {fltyp}, {speicherzahl},
-                    {speicherkonst:.3f}, {fliesszeit1:.2f},
-                    {fliesszeit2:.2f}, {fliesszeitkanal:.2f},
+                    {speicherkonst}, {fliesszeit1},
+                    {fliesszeit2}, {fliesszeitkanal},
                     '{abflussparameter}', {neigkl},
                     '{flnam}', '{createdat}',
                     '{kommentar}', {nextid}, {zuordnunabhezg}
@@ -1311,14 +1268,12 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                              speicherkonst=speicherkonst, fliesszeit1=fliesszeit,
                              fliesszeit2=fliesszeit, fliesszeitkanal=fliesszeitkanal,
                              abflussparameter=abflussparameter, neigkl=neigkl,
-                             flnam=fnam, createdat=createdat,
+                             flnam=flnam, createdat=createdat,
                              kommentar=kommentar, nextid=nextid, zuordnunabhezg=0)
-                try:
-                    dbHE.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(9d) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+                # logger.debug(u'Abfrage zum Export der Flächendaten in die ITWH-DB: \n{}'.format(sql))
+                if not dbHE.sql(sql, u'dbHE: export_flaechenrw (2)'):
                     del dbQK
-                    del dbHE
                     return False
 
                 nextid += 1
@@ -1366,7 +1321,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         """
 
         sql = u'SELECT count(*) AS anz FROM einzugsgebiete'
-        dbQK.sql(sql)
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (1)'):
+            del dbHE
+            return False
+
         anztgb = int(dbQK.fetchone()[0])
         if anztgb == 0:
             # 1 Kein Einzugsgebiet in QKan -----------------------------------------------------------------
@@ -1378,7 +1337,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 (einzugsgebiet <> 'NULL') AND
                 (einzugsgebiet <> '')
             """
-            dbQK.sql(sql)
+
+            if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (2)'):
+                del dbHE
+                return False
+
             anz = int(dbQK.fetchone()[0])
             if anz == 0:
                 # 1.1 Kein Einwohnerpunkt mit Einzugsgebiet ----------------------------------------------------
@@ -1389,17 +1352,21 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                    Values
                    ( 'einzugsgebiet1', 60, 120, 14, 100, '{createdat}',
                      'Automatisch durch  QKan hinzugefuegt')""".format(createdat=createdat)
-                try:
-                    dbQK.sql(sql)
-                except BaseException as err:
-                    fehlermeldung(u"(27) Fehler in SQL:\n{sql}\n", err)
+
+                if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (3)'):
+                    del dbHE
                     return False
+
                 dbQK.commit()
             else:
                 # 1.2 Einwohnerpunkte mit Einzugsgebiet ----------------------------------------------------
                 # Liste der in allen Einwohnerpunkten vorkommenden Einzugsgebiete
                 sql = u"""SELECT einzugsgebiet FROM einleit WHERE einzugsgebiet is not NULL GROUP BY einzugsgebiet"""
-                dbQK.sql(sql)
+
+                if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (4)'):
+                    del dbHE
+                    return False
+
                 listeilgeb = dbQK.fetchall()
                 for tgb in listeilgeb:
                     sql = u"""
@@ -1409,11 +1376,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                        Values
                        ( '{tgnam}', 60, 120, 14, 100, '{createdat}',
                          'Hinzugefuegt aus QKan')""".format(tgnam=tgb[0], createdat=createdat)
-                    try:
-                        dbQK.sql(sql)
-                    except BaseException as err:
-                        fehlermeldung(u"(28) Fehler in SQL:\n{sql}\n", err)
+
+                    if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (5)'):
+                        del dbHE
                         return False
+
                     dbQK.commit()
                     iface.messageBar().pushMessage(u"Tabelle 'einzugsgebiete':\n",
                                                    u"Es wurden {} Einzugsgebiete hinzugefügt".format(len(tgb)),
@@ -1426,7 +1393,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                     LEFT JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
                     WHERE einzugsgebiete.pk IS NULL
                 """
-                dbQK.sql(sql)
+
+                if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (6)'):
+                    del dbHE
+                    return False
+
                 anz = int(dbQK.fetchone()[0])
                 if anz > 0:
                     iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einleit':",
@@ -1439,18 +1410,22 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 FROM einleit
                 INNER JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
             """
-            dbQK.sql(sql)
+
+            if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (7)'):
+                del dbHE
+                return False
+
             anz = int(dbQK.fetchone()[0])
             if anz == 0:
                 # 2.1 Keine Einleitpunkte mit Einzugsgebiet ----------------------------------------------------
                 if anztgb == 1:
                     # 2.1.1 Es existiert genau ein Einzugsgebiet ---------------------------------------------
                     sql = u"""UPDATE einleit SET einzugsgebiet = (SELECT tgnam FROM einzugsgebiete GROUP BY tgnam)"""
-                    try:
-                        dbQK.sql(sql)
-                    except BaseException as err:
-                        fehlermeldung(u"(29) Fehler in SQL:\n{sql}\n", err)
+
+                    if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (8)'):
+                        del dbHE
                         return False
+
                     dbQK.commit()
                     iface.messageBar().pushMessage(u"Tabelle 'einleit':\n",
                                        u"Alle Einleitpunkte in der Tabelle 'einleit' wurden einem Einzugsgebiet zugeordnet",
@@ -1459,11 +1434,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                     # 2.1.2 Es existieren mehrere Einzugsgebiete ------------------------------------------
                     sql = u"""UPDATE einleit SET einzugsgebiet = (SELECT tgnam FROM einzugsgebiete
                           WHERE within(einleit.geom, einzugsgebiete.geom))"""
-                    try:
-                        dbQK.sql(sql)
-                    except BaseException as err:
-                        fehlermeldung(u"(30) Fehler in SQL:\n{sql}\n", err)
+
+                    if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (9)'):
+                        del dbHE
                         return False
+
                     dbQK.commit()
                     iface.messageBar().pushMessage(u"Tabelle 'einleit':\n",
                                        u"Alle Einleitpunkte in der Tabelle 'einleit' wurden dem Einzugsgebiet zugeordnet, in dem sie liegen.",
@@ -1476,7 +1451,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                         LEFT JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
                         WHERE einzugsgebiete.pk IS NULL
                     """
-                    dbQK.sql(sql)
+                    if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (10)'):
+                        del dbHE
+                        return False
+
                     anz = int(dbQK.fetchone()[0])
                     if anz > 0:
                         iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einleit':",
@@ -1491,7 +1469,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                     LEFT JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
                     WHERE einzugsgebiete.pk is NULL
                 """
-                dbQK.sql(sql)
+
+                if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (11)'):
+                    del dbHE
+                    return False
+
                 anz = int(dbQK.fetchone()[0])
                 if anz > 0:
                     iface.messageBar().pushMessage(u"Fehlerhafte Daten in Tabelle 'einleit':",
@@ -1538,12 +1520,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         # Abfrage ist identisch in k_link.py vorhanden
 
         # SpatialIndex anlegen
-        sqlindex = u"SELECT CreateSpatialIndex('einleit','geom')"
-        try:
-            dbQK.sql(sqlindex)
-        except BaseException as err:
-            fehlermeldung(u'In der Tabelle "einleit" konnte CreateSpatialIndex auf "geom" nicht durchgeführt werden', str(err))
-            del dbQK
+        sql = u"SELECT CreateSpatialIndex('einleit','geom')"
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (1)'):
+            del dbHE
             return False
 
         # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
@@ -1562,11 +1542,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
 
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(4a) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
-            del dbQK
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (2)'):
+            del dbHE
             return False
 
         # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
@@ -1585,11 +1562,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(4b) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
-            del dbQK
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (3)'):
+            del dbHE
             return False
 
         # 3. Haltungen in "einleit" eintragen (ohne Einschränkung auf auswahl)
@@ -1600,11 +1574,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
 
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(4c) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
-            del dbQK
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (4)'):
+            del dbHE
             return False
 
         # 3.2 Eintrag vornehmen
@@ -1623,11 +1594,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
 
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(4d) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
-            del dbQK
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (5)'):
+            del dbHE
             return False
 
         dbQK.commit()
@@ -1641,7 +1609,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         if check_export['combine_einleitdirekt']:
             sql = u"""SELECT
-              printf('ed-%d-%s',pk,haltnam) AS elnam,
+              elnam,
               avg(x(geom)) AS xel,
               avg(y(geom)) AS yel,
               haltnam AS haltnam,
@@ -1656,7 +1624,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               GROUP BY haltnam
           UNION
               SELECT
-              printf('ew_%d-%s', el.pk, el.haltnam) AS elnam,
+              el.elnam AS elnam,
               avg(x(el.geom)) AS xel,
               avg(y(el.geom)) AS yel,
               el.haltnam AS haltnam,
@@ -1678,7 +1646,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             """.format(auswahl=auswahl)
         else:
             sql = u"""SELECT
-              printf('ed-%d-%s',pk,haltnam) AS elnam,
+              elnam,
               x(geom) AS xel,
               y(geom) AS yel,
               haltnam AS haltnam,
@@ -1692,7 +1660,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               WHERE zufluss IS NOT NULL {auswahl}
           UNION
               SELECT
-              printf('ew_%d-%s', el.pk, el.elnam) AS elnam,
+              el.elnam AS elnam,
               x(el.geom) AS xel,
               y(el.geom) AS yel,
               el.haltnam AS haltnam,
@@ -1710,11 +1678,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         logger.debug(u'\nSQL-4e:\n{}\n'.format(sql))
 
-        try:
-            dbQK.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(4e) SQL-Fehler in QKan.k_qkhe: \n{}\n".format(err), sql)
-            del dbQK
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (6)'):
             del dbHE
             return False
 
@@ -1748,12 +1712,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                          zuflussmodell = 0, zuflussdirekt = zuflussdirekt, zufluss = 0, planungsstatus = 0, elnam = elnam[:27],
                          abrechnungszeitraum = 365, abzug = 0,
                          createdat = createdat, nextid = nextid)
-            try:
-                dbHE.sql(sql)
-            except BaseException as err:
-                fehlermeldung(u"(36) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+            if not dbHE.sql(sql, u'dbHE: export_einleitdirekt (1)'):
                 del dbQK
-                del dbHE
                 return False
 
             nextid += 1
@@ -1786,12 +1747,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             (SELECT ID FROM SCHACHT WHERE SCHACHT.NAME = ROHR.SCHACHTOBEN)
           WHERE EXISTS (SELECT ID FROM SCHACHT WHERE SCHACHT.NAME = ROHR.SCHACHTOBEN)
         """
-        try:
-            dbHE.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(13) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+        if not dbHE.sql(sql, u'dbHE: interne Referenz rohr (1)'):
             del dbQK
-            del dbHE
             return False
 
         sql = u"""
@@ -1800,12 +1758,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             (SELECT ID FROM SCHACHT WHERE SCHACHT.NAME = ROHR.SCHACHTUNTEN)
           WHERE EXISTS (SELECT ID FROM SCHACHT WHERE SCHACHT.NAME = ROHR.SCHACHTUNTEN)
         """
-        try:
-            dbHE.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(14) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+        if not dbHE.sql(sql, u'dbHE: interne Referenz rohr (2)'):
             del dbQK
-            del dbHE
             return False
 
             # --------------------------------------------------------------------------------------------------
@@ -1817,12 +1772,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             (SELECT ID FROM TEILEINZUGSGEBIET WHERE TEILEINZUGSGEBIET.NAME = ROHR.TEILEINZUGSGEBIET)
           WHERE EXISTS (SELECT ID FROM TEILEINZUGSGEBIET WHERE TEILEINZUGSGEBIET.NAME = ROHR.TEILEINZUGSGEBIET)
         """
-        try:
-            dbHE.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(15) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+        if not dbHE.sql(sql, u'dbHE: interne Referenz rohr (3)'):
             del dbQK
-            del dbHE
             return False
 
             # --------------------------------------------------------------------------------------------------
@@ -1834,12 +1786,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             (SELECT ID FROM BODENKLASSE WHERE BODENKLASSE.NAME = ABFLUSSPARAMETER.BODENKLASSE)
           WHERE EXISTS (SELECT ID FROM BODENKLASSE WHERE BODENKLASSE.NAME = ABFLUSSPARAMETER.BODENKLASSE)
         """
-        try:
-            dbHE.sql(sql)
-        except BaseException as err:
-            fehlermeldung(u"(16) SQL-Fehler in Firebird: \n{}\n".format(err), sql)
+
+        if not dbHE.sql(sql, u'dbHE: interne Referenz abflussparameter'):
             del dbQK
-            del dbHE
             return False
 
         dbHE.sql(u"UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))

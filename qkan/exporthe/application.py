@@ -46,6 +46,7 @@ from qkan.database.qgis_utils import get_database_QKan, get_editable_layers, for
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
 
+progress_bar = None
 
 class ExportToHE:
     """QGIS Plugin Implementation."""
@@ -495,7 +496,7 @@ class ExportToHE:
                 if elem[0] in liste_teilgebiete:
                     self.dlg.lw_teilgebiete.setCurrentRow(ielem)
             except BaseException as err:
-                fehlermeldung(u'QKan_ExportHE (6), Fehler in elem = {}\n'.format(str(elem)), err)
+                fehlermeldung(u'QKan_ExportHE (6), Fehler in elem = {}\n'.format(elem), repr(err))
                 # if len(daten) == 1:
                 # self.dlg.lw_teilgebiete.setCurrentRow(0)
 

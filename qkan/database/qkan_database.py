@@ -85,7 +85,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "Haltungen" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "Haltungen" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -95,7 +95,7 @@ def createdbtables(consl, cursl, epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -128,7 +128,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "Schaechte" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "Schaechte" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -159,7 +159,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "Profile" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "Profile" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -198,7 +198,7 @@ def createdbtables(consl, cursl, epsg=25832):
             cursl.execute(u'INSERT INTO profile (profilnam, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "Profile" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "Profile" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -215,7 +215,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "profildaten" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "profildaten" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -232,7 +232,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "entwaesserungsarten" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "entwaesserungsarten" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -247,7 +247,7 @@ def createdbtables(consl, cursl, epsg=25832):
                 u'INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -262,7 +262,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "pumpentypen" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "pumpentypen" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -278,7 +278,7 @@ def createdbtables(consl, cursl, epsg=25832):
             cursl.execute(u'INSERT INTO pumpentypen (bezeichnung, he_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -305,7 +305,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "pumpen" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "pumpen" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -315,7 +315,7 @@ def createdbtables(consl, cursl, epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -342,7 +342,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "wehre" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "wehre" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -352,7 +352,7 @@ def createdbtables(consl, cursl, epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -384,7 +384,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "Einzugsgebiete" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "Einzugsgebiete" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -394,7 +394,7 @@ def createdbtables(consl, cursl, epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "Einzugsgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "Einzugsgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -414,7 +414,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "Teilgebiete" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "Teilgebiete" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -424,7 +424,7 @@ def createdbtables(consl, cursl, epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -457,7 +457,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "gruppen" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "gruppen" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -469,6 +469,7 @@ def createdbtables(consl, cursl, epsg=25832):
     flnam TEXT,
     haltnam TEXT,
     neigkl INTEGER DEFAULT 0,
+    abflusstyp TEXT, 
     he_typ INTEGER DEFAULT 0,
     speicherzahl INTEGER DEFAULT 2,
     speicherkonst REAL,
@@ -484,7 +485,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "flaechen" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "flaechen" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -494,7 +495,7 @@ def createdbtables(consl, cursl, epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -517,7 +518,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "linkfl" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "linkfl" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -550,7 +551,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "linksw" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "linksw" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -588,7 +589,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "tezg" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "tezg" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -598,7 +599,7 @@ def createdbtables(consl, cursl, epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -615,13 +616,14 @@ def createdbtables(consl, cursl, epsg=25832):
     teilgebiet TEXT, 
     zufluss REAL,
     ew REAL,
+    einzugsgebiet TEXT,
     kommentar TEXT,
     createdat TEXT DEFAULT CURRENT_DATE)'''
 
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "einleit" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "einleit" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -631,7 +633,7 @@ def createdbtables(consl, cursl, epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -657,7 +659,7 @@ def createdbtables(consl, cursl, epsg=25832):
     # try:
         # cursl.execute(sql)
     # except BaseException as err:
-        # fehlermeldung(u'Tabelle "swref" konnte nicht erstellt werden', str(err))
+        # fehlermeldung(u'Tabelle "swref" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         # consl.close()
         # return False
 
@@ -667,7 +669,7 @@ def createdbtables(consl, cursl, epsg=25832):
         # cursl.execute(sql)
         # cursl.execute(sqlindex)
     # except BaseException as err:
-        # fehlermeldung(u'In der Tabelle "swref" konnte das Attribut "geom" nicht hinzugefuegt werden', str(err))
+        # fehlermeldung(u'In der Tabelle "swref" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         # consl.close()
         # return False
     # consl.commit()
@@ -685,7 +687,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "simulationsstatus" konnte nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "simulationsstatus" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -702,7 +704,7 @@ def createdbtables(consl, cursl, epsg=25832):
             cursl.execute(u'INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -719,7 +721,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "auslasstypen" konnten nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "auslasstypen" konnten nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -735,7 +737,7 @@ def createdbtables(consl, cursl, epsg=25832):
             cursl.execute(u'INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -758,7 +760,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "abflussparameter" konnten nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "abflussparameter" konnten nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -774,7 +776,7 @@ def createdbtables(consl, cursl, epsg=25832):
             cursl.execute(sql)
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden', str(err))
+        fehlermeldung(u'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -796,7 +798,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "bodenklassen" konnten nicht erstellt werden', str(err))
+        fehlermeldung(u'Tabelle "bodenklassen" konnten nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
@@ -833,7 +835,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Fehler beim Erzeugen der Tabelle "Speicherkennlinien": ', str(err))
+        fehlermeldung(u'Fehler beim Erzeugen der Tabelle "Speicherkennlinien": : \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
@@ -849,7 +851,7 @@ def createdbtables(consl, cursl, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Fehler beim Erzeugen der Tabelle "Info": ', str(err))
+        fehlermeldung(u'Fehler beim Erzeugen der Tabelle "Info": : \n{}'.format(repr(err)))
         consl.close()
         return False
     consl.commit()
