@@ -38,7 +38,6 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 import pyspatialite.dbapi2 as splite
-from qgis.gui import QgsMessageBar
 from qgis.utils import iface, pluginDirectory
 
 from PyQt4.QtGui import QProgressBar
@@ -718,8 +717,8 @@ class DBConnection:
             progress_bar.setValue(100)
             status_message.setText(u"Achtung! Benutzerhinweis: Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
             status_message.setLevel(QgsMessageBar.WARNING)
-            # iface.messageBar().pushMessage(u"Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...",
-                                               # level=QgsMessageBar.WARNING, duration=0)
+            iface.messageBar().pushMessage(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...",
+                                               level=QgsMessageBar.WARNING, duration=0)
                 
             # Versionsnummer hochsetzen
 
