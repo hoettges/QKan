@@ -187,7 +187,7 @@ class DBConnection:
 
     # Versionskontrolle der QKan-Datenbank
 
-    def version(self, actversion = u'2.2.7'):
+    def version(self, actversion = u'2.2.8'):
         """Checks database version. Database is just connected by the calling procedure.
 
             :param actversion: aktuelle Version

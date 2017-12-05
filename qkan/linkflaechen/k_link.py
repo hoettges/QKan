@@ -38,13 +38,17 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 # Progress bar
-from qgis.PyQt.QtGui import *
-from qgis.PyQt.QtWidgets import *
+# from qgis.PyQt.QtGui import *
+# from qgis.PyQt.QtWidgets import *
+
+# from PyQt4.QtGui import QProgressBar
+from qgis.PyQt.QtGui import QProgressBar
 
 from qkan.database.qgis_utils import fehlermeldung, checknames
 
 logger = logging.getLogger(u'QKan')
 
+progress_bar = None
 
 # ------------------------------------------------------------------------------
 # Erzeugung der graphischen Verknüpfungen für Flächen
@@ -96,10 +100,14 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     # Flächen, bei denen im Feld "haltungen" bereits eine Eintragung vorhanden ist, 
     # werden nicht bearbeitet. Damit ist eine manuelle Zuordnung möglich. 
 
-    # Progress Bar
-    bar = QProgressDialog()
-    bar.setRange(0,0)
-    bar.show()
+    # Statusmeldung in der Anzeige
+    global progress_bar
+    progress_bar = QProgressBar(iface.messageBar())
+    progress_bar.setRange(0, 100)
+    status_message = iface.messageBar().createMessage(u"", 
+            u"Verknüpfungen zwischen Flächen und Haltungen werden hergestellt. Bitte warten...")
+    status_message.layout().addWidget(progress_bar)
+    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
     if len(liste_flaechen_abflussparam) == 0:
@@ -149,6 +157,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     if not dbQK.sql(sql, u"QKan_LinkFlaechen (4a) SQL-Fehler in SpatiaLite"):
         return False
 
+    progress_bar.setValue(20)
+
     # Jetzt werden die Flächenobjekte mit einem Buffer erweitert und jeweils neu 
     # hinzugekommmene mögliche Zuordnungen eingetragen.
     # Wenn das Attribut "haltnam" vergeben ist, gilt die Fläche als zugeordnet.
@@ -167,7 +177,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     else:
         auswha = u" AND ha.entwart in ('{}')".format(u"', '".join(liste_hal_entw))
 
-    if len(liste_teilgebiete) != 0:
+    if len(liste_teilgebiete) == 0:
+        auswlinkfl = u""
+    else:
         auswha += u" AND  ha.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
         auswlinkfl = u" AND  linkfl.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
 
@@ -215,6 +227,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     if not dbQK.sql(sql, u"createlinkfl (5)"):
         return False
 
+    progress_bar.setValue(40)
+
     # Löschen der Datensätze in linkfl, bei denen keine Verbindung erstellt wurde, weil die 
     # nächste Haltung zu weit entfernt ist.
 
@@ -244,11 +258,13 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         (   SELECT flnam
             FROM flaechen AS fl
             WHERE within(StartPoint(linkfl.glink),fl.geom))
-        WHERE linkfl.pk IN missing"""
+        WHERE linkfl.pk IN missing""".format(auswfl=auswfl)
     # logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
 
     if not dbQK.sql(sql, u"QKan_Export (24)"):
         return False
+
+    progress_bar.setValue(60)
 
     # 2. Haltungen in "linkfl" eintragen
 
@@ -271,11 +287,13 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         (   SELECT haltnam
             FROM haltungen AS ha
             WHERE intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
-        WHERE linkfl.pk IN missing"""
+        WHERE linkfl.pk IN missing""".format(auswha=auswha)
     # logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
 
     if not dbQK.sql(sql, u"QKan_Export (25)"):
         return False
+
+    progress_bar.setValue(80)
 
         # 3. TEZG-Flächen in "linkfl" eintragen, nur für aufteilen = 'ja'
 
@@ -297,7 +315,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             INNER JOIN (SELECT flnam FROM flaechen WHERE fl.aufteilen = 'ja') as fl
             ON linkfl.flnam = fl.flnam
             WHERE within(StartPoint(linkfl.glink),tg.geom))
-        WHERE linkfl.pk IN missing"""
+        WHERE linkfl.pk IN missing""".format(auswtg=auswtg)
     # logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
 
     if not dbQK.sql(sql, u"QKan_Export (26)"):
@@ -305,11 +323,15 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     dbQK.commit()
 
+    progress_bar.setValue(100)
+    status_message.setText(u"Fertig!")
+    status_message.setLevel(QgsMessageBar.SUCCESS)
+
     # Karte aktualisieren
     iface.mapCanvas().refreshAllLayers()
 
-    iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage(u"Information", u"Verknüpfungen sind erstellt!", level=QgsMessageBar.INFO)
+    # iface.mainWindow().statusBar().clearMessage()
+    # iface.messageBar().pushMessage(u"Information", u"Verknüpfungen sind erstellt!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
 
     return True
@@ -354,11 +376,15 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
     # Kopieren der Direkteinleitungen-Punkte in die Tabelle linksw. Dabei wird aus dem Punktobjekt
     # aus einleit ein Flächenobjekt, damit ein Spatialindex verwendet werden kann 
     # (für POINT gibt es keinen MBR?)
-    
-    # Progress Bar
-    bar = QProgressDialog()
-    bar.setRange(0,0)
-    bar.show()
+
+    # Statusmeldung in der Anzeige
+    global progress_bar
+    progress_bar = QProgressBar(iface.messageBar())
+    progress_bar.setRange(0, 100)
+    status_message = iface.messageBar().createMessage(u"", 
+            u"Verknüpfungen zwischen Einleitpunkten und Haltungen werden hergestellt. Bitte warten...")
+    status_message.layout().addWidget(progress_bar)
+    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
     if len(liste_teilgebiete) != 0:
         auswahl = u" AND einleit.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
@@ -376,6 +402,8 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
 
     if not dbQK.sql(sql, u"QKan_LinkSW (4a) SQL-Fehler in SpatiaLite"):
         return False
+
+    progress_bar.setValue(25)
 
     # Jetzt werden die Direkteinleitungen-Punkte mit einem Buffer erweitert und jeweils neu 
     # hinzugekommmene mögliche Zuordnungen eingetragen.
@@ -437,6 +465,8 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
     if not dbQK.sql(sql, u"QKan_LinkSW (5) SQL-Fehler in SpatiaLite"):
         return False
 
+    progress_bar.setValue(50)
+
     # Löschen der Datensätze in linksw, bei denen keine Verbindung erstellt wurde, weil die 
     # nächste Haltung zu weit entfernt ist.
 
@@ -463,12 +493,14 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
         (   SELECT elnam
             FROM einleit AS el
             WHERE contains(buffer(StartPoint(linksw.glink),0.1),el.geom))
-        WHERE linksw.pk IN missing"""
+        WHERE linksw.pk IN missing""".format(auswel=auswel)
 
     # logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
 
     if not dbQK.sql(sql, u"QKan.k_qkhe (4a) SQL-Fehler in SpatiaLite"):
         return False
+
+    progress_bar.setValue(75)
 
     # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
 
@@ -492,7 +524,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
         (   SELECT haltnam
             FROM haltungen AS ha
             WHERE intersects(buffer(EndPoint(linksw.glink),0.1),ha.geom))
-        WHERE linksw.pk IN missing"""
+        WHERE linksw.pk IN missing""".format(auswha=auswha)
 
     # logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
@@ -501,11 +533,15 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
 
     dbQK.commit()
 
+    progress_bar.setValue(100)
+    status_message.setText(u"Fertig!")
+    status_message.setLevel(QgsMessageBar.SUCCESS)
+
     # Karte aktualisieren
     iface.mapCanvas().refreshAllLayers()
 
-    iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage(u"Information", u"Verknüpfungen sind erstellt!", level=QgsMessageBar.INFO)
+    # iface.mainWindow().statusBar().clearMessage()
+    # iface.messageBar().pushMessage(u"Information", u"Verknüpfungen sind erstellt!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nVerknüpfungen sind erstellt!", level=QgsMessageLog.INFO)
 
     return True
@@ -538,10 +574,14 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, buff
     :returns:               void
     '''
 
-    # Progress Bar
-    bar = QProgressDialog()
-    bar.setRange(0,0)
-    bar.show()
+    # Statusmeldung in der Anzeige
+    global progress_bar
+    progress_bar = QProgressBar(iface.messageBar())
+    progress_bar.setRange(0, 100)
+    status_message = iface.messageBar().createMessage(u"", 
+            u"Teilgebiete werden zugeordnet. Bitte warten...")
+    status_message.layout().addWidget(progress_bar)
+    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
     # logger.debug(u'\nbetroffene Tabellen (1):\n{}\n'.format(str(tablist)))
 
@@ -612,11 +652,15 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, buff
 
         dbQK.commit()
 
+    progress_bar.setValue(100)
+    status_message.setText(u"Fertig!")
+    status_message.setLevel(QgsMessageBar.SUCCESS)
+
     # Karte aktualisieren
     iface.mapCanvas().refreshAllLayers()
 
-    iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage(u"Information", u"Zuordnung von Haltungen und Flächen ist fertig!", level=QgsMessageBar.INFO)
+    # iface.mainWindow().statusBar().clearMessage()
+    # iface.messageBar().pushMessage(u"Information", u"Zuordnung von Haltungen und Flächen ist fertig!", level=QgsMessageBar.INFO)
     QgsMessageLog.logMessage(u"\nZuordnung von Haltungen und Flächen ist fertig!", level=QgsMessageLog.INFO)
 
     return True
@@ -640,10 +684,14 @@ def reloadgroup(dbQK, gruppenname, dbtyp = u'SpatiaLite'):
     :returns: void
     '''
 
-    # Progress Bar
-    bar = QProgressDialog()
-    bar.setRange(0,0)
-    bar.show()
+    # Statusmeldung in der Anzeige
+    global progress_bar
+    progress_bar = QProgressBar(iface.messageBar())
+    progress_bar.setRange(0, 100)
+    status_message = iface.messageBar().createMessage(u"", 
+            u"Teilgebiete werden aus der gewählten Gruppe wiederhergestellt. Bitte warten...")
+    status_message.layout().addWidget(progress_bar)
+    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
     tablist = [u"haltungen", u"schaechte", u"flaechen", u"linkfl", u"linksw", u"tezg", u"einleit"]
 
@@ -668,6 +716,10 @@ def reloadgroup(dbQK, gruppenname, dbtyp = u'SpatiaLite'):
 
     dbQK.commit()
 
+    progress_bar.setValue(100)
+    status_message.setText(u"Fertig!")
+    status_message.setLevel(QgsMessageBar.SUCCESS)
+
     return True
 
 
@@ -690,6 +742,15 @@ def storegroup(dbQK, gruppenname, kommentar, dbtyp = u'SpatiaLite'):
     
     :returns: void
     '''
+
+    # Statusmeldung in der Anzeige
+    global progress_bar
+    progress_bar = QProgressBar(iface.messageBar())
+    progress_bar.setRange(0, 100)
+    status_message = iface.messageBar().createMessage(u"", 
+            u"Teilgebiete werden in der angegebenen Gruppe gespeichert. Bitte warten...")
+    status_message.layout().addWidget(progress_bar)
+    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
     tablist = [u"haltungen", u"schaechte", u"flaechen", u"linkfl", u"linksw", u"tezg", u"einleit"]
 
@@ -728,5 +789,9 @@ def storegroup(dbQK, gruppenname, kommentar, dbtyp = u'SpatiaLite'):
         return False
 
     dbQK.commit()
+
+    progress_bar.setValue(100)
+    status_message.setText(u"Fertig!")
+    status_message.setLevel(QgsMessageBar.SUCCESS)
 
     return True
