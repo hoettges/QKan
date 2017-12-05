@@ -25,7 +25,9 @@ import os
 import shutil
 import time
 
-from PyQt4.QtGui import QProgressBar
+# from PyQt4.QtGui import QProgressBar
+from qgis.PyQt.QtGui import QProgressBar
+
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
@@ -76,6 +78,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
     :returns: void
     '''
 
+    # Statusmeldung in der Anzeige
     global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
