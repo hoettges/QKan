@@ -753,7 +753,7 @@ class LinkFl:
         """Öffnen des Formulars zur Zuordnung von Teilgebieten auf Haltungen und Flächen"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'teilgebiete', 
+        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'teilgebiete', u'einzugsgebiete', 
                  u'einleit'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ", 
                    u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
@@ -876,7 +876,7 @@ class LinkFl:
 
         # Check, ob die relevanten Layer nicht editable sind.
         if len({u'flaechen', u'haltungen', u'schaechte', u'linksw', u'einleit', 
-                 u'linkfl', u'teilgebiete'} & get_editable_layers()) > 0:
+                 u'linkfl', u'teilgebiete', u'einzugsgebiete'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                                            level=QgsMessageBar.CRITICAL)

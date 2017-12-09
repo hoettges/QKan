@@ -384,10 +384,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
 
 
     # Tabelle in QKan-Datenbank leeren
-    if check_tabinit:
-        sql = u'DELETE FROM speicherschaechte'
-        if not dbQK.sql(sql, u'importkanaldaten_he (15)'):
-            return None
+    # if check_tabinit:
+        # sql = u'DELETE FROM speicherschaechte'
+        # if not dbQK.sql(sql, u'importkanaldaten_he (15)'):
+            # return None
 
     # Daten aUS ITWH-Datenbank abfragen
     sql = u'''
@@ -462,10 +462,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
 
 
     # Tabelle in QKan-Datenbank leeren
-    if check_tabinit:
-        sql = u'DELETE FROM auslaesse'
-        if not dbQK.sql(sql, u'importkanaldaten_he (18)'):
-            return None
+    # if check_tabinit:
+        # sql = u'DELETE FROM auslaesse'
+        # if not dbQK.sql(sql, u'importkanaldaten_he (18)'):
+            # return None
 
     # Daten aUS ITWH-Datenbank abfragen
     sql = u'''
@@ -757,13 +757,13 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
     dbQK.commit()
 
     # ------------------------------------------------------------------------------
-    # Teinleinzugsgebiete
+    # Einzugsgebiete
 
     # Tabelle in QKan-Datenbank bleibt bestehen, damit gegebenenfalls erstellte 
     # Teileinzugsgebiete, deren Geo-Objekte ja in HYSTEM-EXTRAN nicht verwaltet
     # werden können, erhalten bleiben. Deshalb wird beim Import geprüft, ob das
     # jeweilige Objekt schon vorhanden ist.
-    # sql = u'DELETE FROM teilgebiete'
+    # sql = u'DELETE FROM einzugsgebiete'
     # if not dbQK.sql(sql, u'importkanaldaten_he (29)'):
     #     return None
 
@@ -796,18 +796,18 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
 
         try:
             sql = u"""
-              INSERT INTO teilgebiete (tgnam, ewdichte, wverbrauch, stdmittel,
-                fremdwas, flaeche, kommentar, createdat) 
+              INSERT INTO einzugsgebiete (tgnam, ewdichte, wverbrauch, stdmittel,
+                fremdwas, kommentar, createdat) 
               VALUES ('{tgnam}', {ewdichte}, {wverbrauch}, {stdmittel}, {fremdwas},
-                {flaeche}, '{kommentar}', '{createdat}')
+                '{kommentar}', '{createdat}')
                  """.format(tgnam=tgnam, ewdichte=ewdichte, wverbrauch=wverbrauch, stdmittel=stdmittel,
-                            fremdwas=fremdwas, flaeche=flaeche, kommentar=kommentar, createdat=createdat)
+                            fremdwas=fremdwas, kommentar=kommentar, createdat=createdat)
             ok = True
         except BaseException as err:
             fehlermeldung(u'SQL-Fehler', repr(err))
-            fehlermeldung(u"Fehler in QKan_Import_from_HE", u"\nFehler in sql INSERT INTO Teilgebiete: \n" + \
-                          str((tgnam, ewdichte, wverbrauch, stdmittel,
-                               fremdwas, flaeche, kommentar, createdat)) + u'\n\n')
+            fehlermeldung(u"Fehler in QKan_Import_from_HE", u"\nFehler in sql INSERT INTO einzugsgebiete: \n" + \
+                          repr((tgnam, ewdichte, wverbrauch, stdmittel,
+                               fremdwas, kommentar, createdat)) + u'\n\n')
             ok = False
 
         if ok:
@@ -1128,7 +1128,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
     # Projektdatei schreiben, falls ausgewählt
 
     if projectfile is not None and projectfile != u'':
-        templatepath = os.path.join(pluginDirectory('qkan'), u"importhe/templates")
+        templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
         # templatepath = os.path.join(os.path.dirname(__file__), u"templates")
         projecttemplate = os.path.join(templatepath, u"projekt.qgs")
         projectpath = os.path.dirname(projectfile)
@@ -1138,8 +1138,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             datasource = database_QKan
 
         # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
-        tabliste = ['schaechte', u'haltungen', u'pumpen', u'teilgebiete', u'wehre', u'flaechen',
-                    u'tezg']
+        tabliste = ['schaechte', u'haltungen', u'pumpen', u'teilgebiete', u'einzugsgebiete', u'wehre', 
+                     u'flaechen', u'tezg']
 
         # Lesen der Projektdatei ------------------------------------------------------------------
         qgsxml = ET.parse(projecttemplate)
