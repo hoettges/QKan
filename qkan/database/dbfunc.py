@@ -32,6 +32,7 @@ import logging
 import os
 import shutil
 import glob
+import datetime
 
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
@@ -71,12 +72,22 @@ class DBConnection:
         self.epsg = epsg
         self.dbname = dbname
 
+        # Die nachfolgenden Klassenobjekte dienen dazu, gleichartige (sqlidtext) SQL-Debug-Meldungen 
+        # nur einmal pro Sekunde zu erzeugen. 
+        self.sqltime = datetime.datetime(2017,1,1,1,0,0)
+        self.sqltime = self.sqltime.now()
+        self.sqltext = ''
+        self.sqlcount = 0
+        self.actversion = '2.2.9'
+        self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
+
         if dbname is not None:
             # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
             if os.path.exists(dbname):
                 self.consl = splite.connect(database=dbname, check_same_thread=False)
                 self.cursl = self.consl.cursor()
 
+                logger.debug(u'dbfund.__init__: Datenbank existiert und Verbindung hergestellt:\n{}'.format(dbname))
                 # Versionsprüfung
                 if not self.version():
                     self.consl.close()
@@ -86,18 +97,17 @@ class DBConnection:
                 iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank wird erstellt. Bitte waren...",
                                                level=QgsMessageBar.INFO)
 
-                datenbank_QKan_Template = os.path.join(os.path.dirname(__file__), u"templates", u"qkan.sqlite")
-                shutil.copyfile(datenbank_QKan_Template, dbname)
+                shutil.copyfile(self.templatepath, dbname)
 
                 self.consl = splite.connect(database=dbname)
                 self.cursl = self.consl.cursor()
 
-                sql = u'SELECT InitSpatialMetadata()'
-                self.cursl.execute(sql)
+                # sql = u'SELECT InitSpatialMetadata()'
+                # self.cursl.execute(sql)
 
                 iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank ist erstellt!",
                                                level=QgsMessageBar.INFO)
-                if not createdbtables(self.consl, self.cursl, epsg):
+                if not createdbtables(self.consl, self.cursl, self.actversion, epsg):
                     iface.messageBar().pushMessage(u"Fehler",
                                                    u"SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
                                                    level=QgsMessageBar.CRITICAL)
@@ -139,7 +149,7 @@ class DBConnection:
         """Gibt Spaltenliste zurück."""
 
         sql = u'PRAGMA table_info("{0:s}")'.format(tablenam)
-        if not self.sql(sql, u'dbfunc.attrlist'):
+        if not self.sql(sql, u'dbfunc.attrlist fuer {}'.format(tablenam)):
             return False
 
         daten = self.cursl.fetchall()
@@ -152,10 +162,20 @@ class DBConnection:
 
         try:
             self.cursl.execute(sql)
-            logger.debug(u'dbfunc.sql: {}\n{}\n'.format(errormessage,sql))
+            if self.sqltext == errormessage:
+                if (self.sqltime.now() - self.sqltime).seconds <2:
+                    self.sqlcount += 1
+                    return True
+            self.sqltext = errormessage
+            self.sqltime = self.sqltime.now()
+            if self.sqlcount == 0:
+                logger.debug(u'dbfunc.sql: {}\n{}\n'.format(errormessage,sql))
+            else:
+                logger.debug(u'dbfunc.sql (Nr. {}): {}\n{}\n'.format(self.sqlcount, errormessage, sql))
+            self.sqlcount = 0
             return True
         except BaseException as err:
-            fehlermeldung(u'SQL-Fehler in {e}'.format(e=errormessage), 
+            fehlermeldung(u'dbfunc.sql: SQL-Fehler in {e}'.format(e=errormessage), 
                           u"{e}\n{s}".format(e=repr(err), s=sql))
             # if transaction:
                 # self.cursl.commit("ROLLBACK;")
@@ -187,17 +207,14 @@ class DBConnection:
 
     # Versionskontrolle der QKan-Datenbank
 
-    def version(self, actversion = u'2.2.8'):
+    def version(self):
         """Checks database version. Database is just connected by the calling procedure.
-
-            :param actversion: aktuelle Version
-            :type actversion: text
 
             :returns: Anpassung erfolgreich: True = alles o.k.
             :rtype: logical
         """
 
-        logger.debug('0 - actversion = {}'.format(actversion))
+        logger.debug('0 - actversion = {}'.format(self.actversion))
 
         # ---------------------------------------------------------------------------------------------
         # Aktuelle Version abfragen
@@ -212,6 +229,7 @@ class DBConnection:
         data = self.cursl.fetchone()
         if data is not None:
             versiondbQK = data[0]
+            logger.debug('dbfunc.version: Aktuelle Version der qkan-Datenbank ist {}'.format(versiondbQK))
         else:
             sql = u"""INSERT INTO info (subject, value) Values ('version', '1.9.9')"""
             if not self.sql(sql, u'dbfunc.version (2)'):
@@ -290,6 +308,7 @@ class DBConnection:
 
             attrlis = self.attrlist(u'linksw')
             if not attrlis:
+                fehlermeldung(u'dbfunc.version (2.0.2):', u'attrlis für linksw ist leer')
                 return False
             elif u'elnam' not in attrlis:
                 logger.debug(u'linksw.elnam ist nicht in: {}'.format(str(attrlis)))
@@ -298,18 +317,9 @@ class DBConnection:
                     return False
                 self.commit()
 
-            attrlis = self.attrlist(u'linkew')
-            if not attrlis:
-                return False
-            elif u'elnam' not in attrlis:
-                logger.debug(u'linkew.elnam ist nicht in: {}'.format(str(attrlis)))
-                sql = u"""ALTER TABLE linkew ADD COLUMN elnam TEXT"""
-                if not self.sql(sql, u'dbfunc.version (2.0.2-2)'):
-                    return False
-                self.commit()
-
             attrlis = self.attrlist(u'linkfl')
             if not attrlis:
+                fehlermeldung(u'dbfunc.version (2.0.2):', u'attrlis für linkfl ist leer')
                 return False
             elif u'tezgnam' not in attrlis:
                 logger.debug(u'linkfl.tezgnam ist nicht in: {}'.format(str(attrlis)))
@@ -728,7 +738,7 @@ class DBConnection:
         logger.debug('1 - versiondbQK = {}'.format(versiondbQK))
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK < actversion:
+        if versiondbQK < self.actversion:
 
             # Formulare aktualisieren ----------------------------------------------------------
             # Spielregel: QKan-Formulare werden ohne Rückfrage aktualisiert. 
@@ -744,16 +754,15 @@ class DBConnection:
                     os.mkdir(os.path.join(projectpath, u'eingabemasken'))
                 formpath = os.path.join(projectpath, u'eingabemasken')
                 formlist = os.listdir(formpath)
-                templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
                 logger.debug(u"\nEingabeformulare aktualisieren: \n" + 
                               "projectpath = {projectpath}\n".format(projectpath=projectpath) + 
                               "formpath = {formpath}\n".format(formpath=formpath) + 
                               "formlist = {formlist}\n".format(formlist=formlist) + 
-                              "templatepath = {templatepath}".format(templatepath=templatepath)
+                              "templatepath = {templatepath}".format(templatepath=self.templatepath)
                               )
 
-                for formfile in glob.iglob(os.path.join(templatepath, u'*.ui')):
+                for formfile in glob.iglob(os.path.join(self.templatepath, u'*.ui')):
                     logger.debug(u"Eingabeformular aktualisieren: {} -> {}".format(formfile, formpath))
                     shutil.copy2(formfile, formpath)
             except BaseException as err:
@@ -761,7 +770,7 @@ class DBConnection:
                               u"{e}".format(e=repr(err)))
 
 
-            sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version' and value = '{}';""".format(actversion, versiondbQK)
+            sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version' and value = '{}';""".format(self.actversion, versiondbQK)
             if not self.sql(sql, u'dbfunc.version (aktuell)'):
                 return False
 

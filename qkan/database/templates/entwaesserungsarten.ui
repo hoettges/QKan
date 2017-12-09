@@ -155,7 +155,7 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.2.8</string>
+     <string>Version 2.2.9</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

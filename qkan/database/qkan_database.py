@@ -22,7 +22,7 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__version__ = '2.1.6'
+__version__ = '2.2.8'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -40,7 +40,7 @@ from qgis_utils import fortschritt, fehlermeldung
 logger = logging.getLogger(u'QKan')
 
 
-def createdbtables(consl, cursl, epsg=25832):
+def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     ''' Erstellt fuer eine neue QKan-Datenbank die zum Import aus Hystem-Extran
         benötigten Referenztabellen.
 
@@ -856,7 +856,7 @@ def createdbtables(consl, cursl, epsg=25832):
         return False
     consl.commit()
 
-    sql = u"INSERT INTO info (subject, value) VALUES ('Version', '{}'); \n".format(__version__)
+    sql = u"INSERT INTO info (subject, value) VALUES ('Version', '{}'); \n".format(version)
 
     fortschritt(u'Tabellen erstellt...', 0.01)
 
@@ -901,5 +901,5 @@ if __name__ in ('__main__', '__console__', '__builtin__'):
 
     iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank ist erstellt!", level=QgsMessageBar.INFO)
 
-    createdbtables(consl, cursl)
+    createdbtables(consl, cursl, version='1.0.0')
     consl.close()

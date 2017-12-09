@@ -31,7 +31,7 @@ from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt4.QtGui import QFileDialog, QListWidgetItem
 from qgis.core import QgsProject, QgsMessageLog
 from qgis.gui import QgsMessageBar
-from qgis.utils import iface
+from qgis.utils import iface, pluginDirectory
 
 # noinspection PyUnresolvedReferences
 import resources
@@ -59,6 +59,9 @@ class ExportToHE:
             application at run time.
         :type iface: QgsInterface
         """
+
+        self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
+
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
@@ -132,6 +135,7 @@ class ExportToHE:
             dbtemplate_HE = ''
         self.dlg.tf_heDB_template.setText(dbtemplate_HE)
         self.dlg.pb_selectHeDB_template.clicked.connect(self.selectFile_HeDB_template)
+        self.dlg.pb_selectHeDB_emptytemplate.clicked.connect(self.selectFile_HeDB_emptytemplate)
 
         if 'datenbanktyp' in self.config:
             datenbanktyp = self.config['datenbanktyp']
@@ -233,8 +237,17 @@ class ExportToHE:
     def selectFile_HeDB_template(self):
         """Vorlage-HE-Datenbank (Firebird) auswaehlen."""
 
-        filename = QFileDialog.getOpenFileName(self.dlg, u"Dateinamen der Vorlage-HE-Datenbank eingeben",
+        filename = QFileDialog.getOpenFileName(self.dlg, u"Vorlage-HE-Datenbank auswählen",
                                                self.default_dir, "*.idbf")
+        # if os.path.dirname(filename) != '':
+        # os.chdir(os.path.dirname(filename))
+        self.dlg.tf_heDB_template.setText(filename)
+
+    def selectFile_HeDB_emptytemplate(self):
+        """Vorlage-HE-Datenbank (Firebird) auswaehlen."""
+
+        filename = QFileDialog.getOpenFileName(self.dlg, u"Leere Vorlage-HE-Datenbank auswählen",
+                                               self.templatepath, "*.idbf")
         # if os.path.dirname(filename) != '':
         # os.chdir(os.path.dirname(filename))
         self.dlg.tf_heDB_template.setText(filename)
