@@ -85,7 +85,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "Haltungen" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "Haltungen" konnte nicht erstellt werden')
         consl.close()
         return False
 
@@ -95,7 +96,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -128,7 +130,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "Schaechte" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "Schaechte" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -140,8 +143,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql2)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden',
-                      str(err))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
 
@@ -159,7 +162,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "Profile" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "Profile" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -198,7 +202,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
             cursl.execute(u'INSERT INTO profile (profilnam, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "Profile" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabellendaten "Profile" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
 
@@ -215,7 +220,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "profildaten" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "profildaten" konnte nicht erstellt werden.')
         consl.close()
         return False
     consl.commit()
@@ -232,7 +238,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "entwaesserungsarten" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "entwaesserungsarten" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -247,7 +254,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
                 u'INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -262,7 +270,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "pumpentypen" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "pumpentypen" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -278,7 +287,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
             cursl.execute(u'INSERT INTO pumpentypen (bezeichnung, he_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
 
@@ -305,7 +315,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "pumpen" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "pumpen" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -315,7 +326,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
 
@@ -342,7 +354,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "wehre" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "wehre" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -352,7 +365,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
 
@@ -384,7 +398,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "Einzugsgebiete" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "Einzugsgebiete" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -394,7 +409,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "Einzugsgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'In der Tabelle "Einzugsgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -414,7 +430,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "Teilgebiete" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "Teilgebiete" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -424,7 +441,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -457,7 +475,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "gruppen" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "gruppen" konnte nicht erstellt werden.')
         consl.close()
         return False
     consl.commit()
@@ -485,7 +504,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "flaechen" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "flaechen" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -495,7 +515,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -518,7 +539,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "linkfl" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "linkfl" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -532,7 +554,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql3)
         cursl.execute(sqlindex)
     except:
-        fehlermeldung(u"QKan_Database (1) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u"QKan_Database (1) SQL-Fehler in SpatiaLite: \n", sql)
         consl.close()
         return False
     consl.commit()
@@ -551,7 +574,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "linksw" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "linksw" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -565,7 +589,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql3)
         cursl.execute(sqlindex)
     except:
-        fehlermeldung(u"QKan_Database (2) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u"QKan_Database (2) SQL-Fehler in SpatiaLite: \n", sql)
         consl.close()
         return False
     consl.commit()
@@ -589,7 +614,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "tezg" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "tezg" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -599,7 +625,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -623,7 +650,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "einleit" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "einleit" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -633,7 +661,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -687,7 +716,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "simulationsstatus" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "simulationsstatus" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -704,7 +734,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
             cursl.execute(u'INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -721,7 +752,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "auslasstypen" konnten nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "auslasstypen" konnten nicht erstellt werden.')
         consl.close()
         return False
 
@@ -737,7 +769,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
             cursl.execute(u'INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -760,7 +793,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "abflussparameter" konnten nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "abflussparameter" konnten nicht erstellt werden.')
         consl.close()
         return False
 
@@ -776,7 +810,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
             cursl.execute(sql)
 
     except BaseException as err:
-        fehlermeldung(u'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -798,7 +833,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "bodenklassen" konnten nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "bodenklassen" konnten nicht erstellt werden.')
         consl.close()
         return False
 
@@ -819,7 +855,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
             cursl.execute(sql)
 
         except BaseException as err:
-            fehlermeldung(u'Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
+            fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
             consl.close()
             return False
     consl.commit()
@@ -835,7 +872,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Fehler beim Erzeugen der Tabelle "Speicherkennlinien": : \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Fehler beim Erzeugen der Tabelle "Speicherkennlinien": .')
         consl.close()
         return False
     consl.commit()
@@ -851,12 +889,22 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Fehler beim Erzeugen der Tabelle "Info": : \n{}'.format(repr(err)))
+        fehlermeldung(u'qkan_database.version: Fehler {}'.format(err), 
+                      u'Fehler beim Erzeugen der Tabelle "Info": .')
+        consl.close()
+        return False
+
+    # Aktuelle Version eintragen
+    sql = u"""INSERT INTO info (subject, value) VALUES ('version', '{}'); \n""".format(version)
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Fehler beim Erzeugen der Tabelle "Info": .')
         consl.close()
         return False
     consl.commit()
 
-    sql = u"INSERT INTO info (subject, value) VALUES ('Version', '{}'); \n".format(version)
 
     fortschritt(u'Tabellen erstellt...', 0.01)
 

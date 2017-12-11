@@ -78,7 +78,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.2.9'
+        self.actversion = '2.2.10'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
         if dbname is not None:
@@ -97,7 +97,13 @@ class DBConnection:
                 iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank wird erstellt. Bitte waren...",
                                                level=QgsMessageBar.INFO)
 
-                shutil.copyfile(self.templatepath, dbname)
+                datenbank_QKan_Template = os.path.join(self.templatepath, u"qkan.sqlite")
+                try:
+                    shutil.copyfile(datenbank_QKan_Template, dbname)
+                except BaseException as err:
+                    fehlermeldung(u'Fehler in dbfunc.DBConnection:\n{}\n'.format(err), 
+                                  u'Kopieren von: {}\nnach: {}\n nicht möglich'.format(self.templatepath, dbname))
+                    return None
 
                 self.consl = splite.connect(database=dbname)
                 self.cursl = self.consl.cursor()
@@ -231,6 +237,7 @@ class DBConnection:
             versiondbQK = data[0]
             logger.debug('dbfunc.version: Aktuelle Version der qkan-Datenbank ist {}'.format(versiondbQK))
         else:
+            logger.debug('dbfunc.version: Keine Versionsnummer vorhanden. data = {}'.format(repr(data)))
             sql = u"""INSERT INTO info (subject, value) Values ('version', '1.9.9')"""
             if not self.sql(sql, u'dbfunc.version (2)'):
                 return False
@@ -770,7 +777,7 @@ class DBConnection:
                               u"{e}".format(e=repr(err)))
 
 
-            sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version' and value = '{}';""".format(self.actversion, versiondbQK)
+            sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version';""".format(self.actversion)
             if not self.sql(sql, u'dbfunc.version (aktuell)'):
                 return False
 
