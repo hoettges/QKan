@@ -350,10 +350,10 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
 
         if dbtyp == u'SpatiaLite':
             geop = u'MakePoint({0:},{1:},{2:})'.format(xsch, ysch, epsg)
-            geom = u'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))'.format(xsch, ysch, durchm / 1000.,
-                                                                                             epsg)
+            geom = u'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))'.format(xsch, ysch, 
+                                             (1. if durchm == 'NULL' else durchm/ 1000.) , epsg)
         elif dbtyp == u'postgis':
-            geop = u'ST_SetSRID(ST_MakePoint({0:},),{2:})'.format(xsch, ysch, epsg)
+            geop = u'ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})'.format(xsch, ysch, epsg)
         else:
             raise RuntimeError(u'Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,
                                                                                                             dbdatabase[
@@ -375,7 +375,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                 return None
         except BaseException as err:
             fehlermeldung(u'SQL-Fehler', repr(err))
-            fehlermeldung(u"Fehler in QKan_Import_from_HE", u"\nSchächte: in sql: \n" + sql + u'\n\n')
+            fehlermeldung(u"Fehler in QKan_Import_from_HE (14)", u"\nSchächte: in sql: \n" + sql + u'\n\n')
 
     dbQK.commit()
 
@@ -430,8 +430,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
 
         if dbtyp == u'SpatiaLite':
             geop = u'MakePoint({0:},{1:},{2:})'.format(xsch, ysch, epsg)
-            geom = u'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))'.format(xsch, ysch, durchm / 1000.,
-                                                                                             epsg)
+            geom = u'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))'.format(xsch, ysch, 
+                                             (1. if durchm == 'NULL' else durchm/ 1000.) , epsg)
         elif dbtyp == u'postgis':
             geop = u'ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})'.format(xsch, ysch, epsg)
         else:

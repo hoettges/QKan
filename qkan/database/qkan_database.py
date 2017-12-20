@@ -233,7 +233,8 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     kuerzel TEXT, 
     bezeichnung TEXT, 
     bemerkung TEXT, 
-    he_nr INTEGER)'''
+    he_nr INTEGER, 
+    kp_nr INTEGER)'''
 
     try:
         cursl.execute(sql)
@@ -245,13 +246,13 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
 
     try:
 
-        daten = [u"'MW', 'Mischwasser', NULL, 0",
-                 u"'RW', 'Regenwasser', NULL, 1",
-                 u"'SW', 'Schmutzwasser', NULL, 2"]
+        daten = [u"'MW', 'Mischwasser', NULL, 0, 0",
+                 u"'RW', 'Regenwasser', NULL, 1, 2",
+                 u"'SW', 'Schmutzwasser', NULL, 2, 1"]
 
         for ds in daten:
             cursl.execute(
-                u'INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr) VALUES ({})'.format(ds))
+                u'INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
         fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
@@ -723,12 +724,14 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
 
     try:
 
-        daten = [u"'keine Angabe', 0, NULL, NULL",
-                 u"'vorhanden', 1, NULL, NULL",
-                 u"'geplant', 2, NULL, NULL",
-                 u"'fiktiv', 3, NULL, NULL",
-                 u"'außer Betrieb (keine Sim.)', 4, NULL, NULL",
-                 u"'verfüllt (keine Sim.)', 5, NULL, NULL"]
+        daten = [u"'keine Angabe', 0, NULL, 5",
+                 u"'vorhanden', 1, NULL, 0",
+                 u"'geplant', 2, NULL, 1",
+                 u"'fiktiv', 3, NULL, 2",
+                 u"'außer Betrieb (keine Sim.)', 4, NULL, 3",
+                 u"'verfüllt (keine Sim.)', 5, NULL, NULL",
+                 u"'stillgelegt', NULL, NULL, 4",
+                 u"'rückgebaut', NULL, NULL, 6"]
 
         for ds in daten:
             cursl.execute(u'INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
