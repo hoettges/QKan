@@ -480,6 +480,14 @@ class LinkFl:
 
         # config in Dialog übernehmen
 
+        # Autokorrektur
+
+        if 'autokorrektur' in self.config:
+            autokorrektur = self.config['autokorrektur']
+        else:
+            autokorrektur = True
+        self.dlg_cl.cb_autokorrektur.setChecked(autokorrektur)
+
         # Suchradius
         if 'suchradius' in self.config:
             suchradius = self.config['suchradius']
@@ -531,6 +539,8 @@ class LinkFl:
                 fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
                 return False
 
+            autokorrektur = self.dlg_cl.cb_autokorrektur.isChecked()
+
                 # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
                 # iface.messageBar().pushMessage(u"Bedienerfehler: ", 
                 # u'Bitte in beiden Tabellen mindestens ein Element auswählen!',
@@ -545,6 +555,7 @@ class LinkFl:
             self.config['liste_flaechen_abflussparam'] = liste_flaechen_abflussparam
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['epsg'] = epsg
+            self.config['autokorrektur'] = autokorrektur
 
             with codecs.open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
@@ -552,7 +563,7 @@ class LinkFl:
             # Start der Verarbeitung
 
             createlinkfl(self.dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                        liste_teilgebiete, suchradius, bezug_abstand, epsg)
+                        liste_teilgebiete, autokorrektur, suchradius, bezug_abstand, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()

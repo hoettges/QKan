@@ -54,7 +54,7 @@ progress_bar = None
 # Erzeugung der graphischen Verknüpfungen für Flächen
 
 def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                liste_teilgebiete, suchradius=50, bezug_abstand=u'kante', 
+                liste_teilgebiete, autokorrektur, suchradius=50, bezug_abstand=u'kante', 
                 epsg=u'25832', fangradius=0.1, dbtyp=u'SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -108,6 +108,11 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             u"Verknüpfungen zwischen Flächen und Haltungen werden hergestellt. Bitte warten...")
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+
+    # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
+    if not checknames(dbQK, u'flaechen', u'flnam', u'f_', autokorrektur):
+        del dbQK
+        return False
 
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
     if len(liste_flaechen_abflussparam) == 0:
@@ -261,7 +266,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         WHERE linkfl.pk IN missing""".format(auswfl=auswfl)
     # logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
 
-    if not dbQK.sql(sql, u"QKan_Export (24)"):
+    if not dbQK.sql(sql, u"QKan_LinkFlaechen (24)"):
         return False
 
     progress_bar.setValue(60)
@@ -290,7 +295,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         WHERE linkfl.pk IN missing""".format(auswha=auswha)
     # logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
 
-    if not dbQK.sql(sql, u"QKan_Export (25)"):
+    if not dbQK.sql(sql, u"QKan_LinkFlaechen (25)"):
         return False
 
     progress_bar.setValue(80)
@@ -312,13 +317,13 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         UPDATE linkfl SET tezgnam =
         (   SELECT tg.flnam
             FROM tezg AS tg
-            INNER JOIN (SELECT flnam FROM flaechen WHERE fl.aufteilen = 'ja') as fl
+            INNER JOIN (SELECT flnam FROM flaechen WHERE aufteilen = 'ja') as fl
             ON linkfl.flnam = fl.flnam
             WHERE within(StartPoint(linkfl.glink),tg.geom))
         WHERE linkfl.pk IN missing""".format(auswtg=auswtg)
     # logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
 
-    if not dbQK.sql(sql, u"QKan_Export (26)"):
+    if not dbQK.sql(sql, u"QKan_LinkFlaechen (26)"):
         return False
 
     dbQK.commit()
@@ -528,7 +533,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
 
     # logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
-    if not dbQK.sql(sql, u"QKan.k_qkhe (4b) SQL-Fehler in SpatiaLite"):
+    if not dbQK.sql(sql, u"QKan.k_link (4b) SQL-Fehler in SpatiaLite"):
         return False
 
     dbQK.commit()

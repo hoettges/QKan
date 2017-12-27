@@ -252,9 +252,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             geom = u'ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:s}),ST_SetSRID(ST_MakePoint({2:},{3:}),{4:}))'.format(
                 xob, yob, xun, yun, epsg)
         else:
-            raise RuntimeError(u'Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,
-                                                                                                            dbdatabase[
-                                                                                                            -7:].lower()))
+            fehlermeldung('Programmfehler!', 
+                'Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
 
         # Datensatz aufbereiten in die QKan-DB schreiben
 
@@ -355,9 +354,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         elif dbtyp == u'postgis':
             geop = u'ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})'.format(xsch, ysch, epsg)
         else:
-            raise RuntimeError(u'Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,
-                                                                                                            dbdatabase[
-                                                                                                            -7:].lower()))
+            fehlermeldung('Programmfehler!', 
+                'Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
 
         # Datensatz in die QKan-DB schreiben
 
@@ -435,9 +433,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         elif dbtyp == u'postgis':
             geop = u'ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})'.format(xsch, ysch, epsg)
         else:
-            raise RuntimeError(u'Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,
-                                                                                                            dbdatabase[
-                                                                                                            -7:].lower()))
+            fehlermeldung('Programmfehler!', 
+                'Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
 
         # Datensatz in die QKan-DB schreiben
 
@@ -523,9 +520,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         elif dbtyp == u'postgis':
             geop = u'ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})'.format(xsch, ysch, epsg)
         else:
-            raise RuntimeError(u'Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,
-                                                                                                            dbdatabase[
-                                                                                                            -7:].lower()))
+            fehlermeldung('Programmfehler!', 
+                'Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
 
         # Datensatz in die QKan-DB schreiben
 
@@ -627,9 +623,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             geom = u'''ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:}),
                       ST_SetSRID(ST_MakePoint({2:},{3:}),{4:}))'''.format(xob, yob, xun, yun, epsg)
         else:
-            raise RuntimeError(u'Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,
-                                                                                                            dbdatabase[
-                                                                                                            -7:].lower()))
+            fehlermeldung('Programmfehler!', 
+                'Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
 
         # Datensatz aufbereiten und in die QKan-DB schreiben
 
@@ -727,9 +722,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             geom = u'ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:}),ST_SetSRID(ST_MakePoint({2:},{3:}),{4:}))'.format(
                 xob, yob, xun, yun, epsg)
         else:
-            raise RuntimeError(u'Fehler: Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,
-                                                                                                            dbdatabase[
-                                                                                                            -7:].lower()))
+            fehlermeldung('Programmfehler!', 
+                'Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
 
         # Datensatz aufbereiten und in die QKan-DB schreiben
 
