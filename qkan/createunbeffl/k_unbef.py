@@ -117,7 +117,7 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
             WHERE te.abflussparameter ISNULL OR
                   bk.infiltrationsrateanfang ISNULL OR
                   bk.infiltrationsrateanfang < 0.00001"""
-        if not dbQK.sql(sql, u'QKan.CreateUnbefFl (1)'):
+        if not dbQK.sql(sql, u'QKan.CreateUnbefFlaechen (1)'):
             return False
         data = dbQK.fetchall()
         if len(data) > 0:
@@ -177,7 +177,7 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
             kommentar, CastToMultiPolygon(Difference(geot,geob)) AS geom FROM flbef""".format(auswahl=auswahl)
 
     logger.debug(u'QKan.k_unbef (3) - liste_abflussparam = \n{}'.format(str(liste_abflussparam)))
-    if not dbQK.sql(sql, u"QKan.CreateUnbefFl (4)"):
+    if not dbQK.sql(sql, u"QKan.CreateUnbefFlaechen (4)"):
         return False
 
     # status_message.setText(u"Erstellen der Anbindungen für die unbefestigten Flächen")
@@ -199,7 +199,7 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
                 WHERE fl.flnam NOT IN
                 (   SELECT flnam FROM linkfl WHERE flnam IS NOT NULL)"""
 
-    if not dbQK.sql(sql, u"QKan.Createunbefl (5)"):
+    if not dbQK.sql(sql, u"QKan.CreateUnbefFlaechen (5)"):
         return False
 
     # status_message.setText(u"Nachbearbeitung")

@@ -159,7 +159,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
 
-    if not dbQK.sql(sql, u"QKan_LinkFlaechen (4a) SQL-Fehler in SpatiaLite"):
+    if not dbQK.sql(sql, u"QKan_LinkFlaechen (4a)"):
         return False
 
     progress_bar.setValue(20)
@@ -239,7 +239,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     sql = u"""DELETE FROM linkfl WHERE glink IS NULL"""
 
-    if not dbQK.sql(sql, u"QKan_LinkFlaechen (7) SQL-Fehler in SpatiaLite"):
+    if not dbQK.sql(sql, u"QKan_LinkFlaechen (7)"):
         return False
 
     # Verknüpfen von linkfl mit Haltungen, Flächen und tezg-Flächen. Dabei wird die Auswahl berücksichtigt, 
@@ -258,7 +258,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             FROM linkfl AS lf
             LEFT JOIN flaechen AS fl
             ON lf.flnam = fl.flnam
-            WHERE {auswfl}(fl.pk IS NULL OR NOT within(StartPoint(linkfl.glink),fl.geom)))
+            WHERE {auswfl}(fl.pk IS NULL OR NOT within(StartPoint(lf.glink),fl.geom)))
         UPDATE linkfl SET flnam =
         (   SELECT flnam
             FROM flaechen AS fl
@@ -287,7 +287,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             FROM linkfl AS lf
             LEFT JOIN haltungen AS ha
             ON lf.haltnam = ha.haltnam
-            WHERE {auswha}(ha.pk IS NULL OR NOT intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom)))
+            WHERE {auswha}(ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom)))
         UPDATE linkfl SET haltnam =
         (   SELECT haltnam
             FROM haltungen AS ha
@@ -313,7 +313,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             FROM linkfl AS lf
             LEFT JOIN tezg AS tg
             ON lf.flnam = tg.flnam
-            WHERE {auswtg}(tg.pk IS NULL OR NOT within(StartPoint(linkfl.glink),tg.geom)))
+            WHERE {auswtg}(tg.pk IS NULL OR NOT within(StartPoint(lf.glink),tg.geom)))
         UPDATE linkfl SET tezgnam =
         (   SELECT tg.flnam
             FROM tezg AS tg
@@ -405,7 +405,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
 
     # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
 
-    if not dbQK.sql(sql, u"QKan_LinkSW (4a) SQL-Fehler in SpatiaLite"):
+    if not dbQK.sql(sql, u"QKan_LinkSW (4a)"):
         return False
 
     progress_bar.setValue(25)
@@ -417,7 +417,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
     sql = u"""UPDATE linksw SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linksw.glink IS NULL""".format(
         suchradius)
 
-    if not dbQK.sql(sql, u"QKan_LinkSW (2) SQL-Fehler in SpatiaLite"):
+    if not dbQK.sql(sql, u"QKan_LinkSW (2)"):
         return False
 
     # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche. 
@@ -467,7 +467,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
 
     # logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
-    if not dbQK.sql(sql, u"QKan_LinkSW (5) SQL-Fehler in SpatiaLite"):
+    if not dbQK.sql(sql, u"QKan_LinkSW (5)"):
         return False
 
     progress_bar.setValue(50)
@@ -477,7 +477,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
 
     sql = u"""DELETE FROM linksw WHERE glink IS NULL"""
 
-    if not dbQK.sql(sql, u"QKan_LinkSW (7) SQL-Fehler in SpatiaLite"):
+    if not dbQK.sql(sql, u"QKan_LinkSW (7)"):
         return False
 
     # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
@@ -502,7 +502,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
 
     # logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
 
-    if not dbQK.sql(sql, u"QKan.k_qkhe (4a) SQL-Fehler in SpatiaLite"):
+    if not dbQK.sql(sql, u"QKan.k_qkhe (4a)"):
         return False
 
     progress_bar.setValue(75)
@@ -533,7 +533,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
 
     # logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
-    if not dbQK.sql(sql, u"QKan.k_link (4b) SQL-Fehler in SpatiaLite"):
+    if not dbQK.sql(sql, u"QKan.k_link (4b)"):
         return False
 
     dbQK.commit()
@@ -716,7 +716,7 @@ def reloadgroup(dbQK, gruppenname, dbtyp = u'SpatiaLite'):
             g.tabelle = '{table}')""".format(table=table, gruppenname=gruppenname)
         # logger.debug(u'reloadgroup.sql: \n{}'.format(sql))
 
-        if dbQK.sql(sql, u"QKan_LinkFlaechen.reloadgroup (9) SQL-Fehler in SpatiaLite: \n"):
+        if dbQK.sql(sql, u"QKan_LinkFlaechen.reloadgroup (9): \n"):
             return False
 
     dbQK.commit()
@@ -790,7 +790,7 @@ def storegroup(dbQK, gruppenname, kommentar, dbtyp = u'SpatiaLite'):
     # logger.debug(u'\nSQL-4:\n{}\n'.format(sql))
     # Zusammengesetzte SQL-Abfrage ausführen...
 
-    if not dbQK.sql(sql, u"QKan_LinkFlaechen.savegroup (10) SQL-Fehler in SpatiaLite"):
+    if not dbQK.sql(sql, u"QKan_LinkFlaechen.savegroup (10)"):
         return False
 
     dbQK.commit()
