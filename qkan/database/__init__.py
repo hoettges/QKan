@@ -22,40 +22,6 @@
  This script initializes the plugin, making it known to QGIS.
 """
 
-import logging
-import os.path
-import tempfile
-from datetime import datetime as dt
-
-# Aufsetzen des Logging-Systems
-logger = logging.getLogger('QKan')
-
-if not logger.handlers:
-    formatter = logging.Formatter('%(asctime)s %(name)s-%(levelname)s: %(message)s')
-
-    # Consolen-Handler
-    ch = logging.StreamHandler()
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-    # File-Handler
-    dnam = dt.today().strftime("%Y%m%d")
-    fnam = os.path.join(tempfile.gettempdir(), 'QKan{}.log'.format(dnam))
-    fh = logging.FileHandler(fnam)
-    fh.setFormatter(formatter)
-    logger.addHandler(fh)
-
-    # Warnlevel des Logging-Systems setzten
-    logger.setLevel(logging.DEBUG)
-
-    # Warnlever der Logging-Protokolle setzen
-    ch.setLevel(logging.ERROR)
-    fh.setLevel(logging.DEBUG)
-
-    logger.info('Initialisierung logger erfolgreich!')
-else:
-    logger.info('Logger ist schon initialisiert')
-
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name

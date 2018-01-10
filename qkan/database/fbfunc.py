@@ -95,6 +95,10 @@ class FBConnection:
         try:
             self.curfb.execute(sql)
             return True
+        except AttributeError:
+            fehlermeldung(u'QKan.FBConnection: Datenbankzugriff geperrt, moeglicherweise durch eine andere Anwendung?')
+            self.__del__()
+            return False
         except BaseException as err:
             fehlermeldung(u'SQL-Fehler in {e}'.format(e=errormessage), 
                           u"{e}\n{s}".format(e=repr(err), s=sql))

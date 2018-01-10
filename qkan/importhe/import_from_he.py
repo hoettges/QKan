@@ -295,7 +295,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         if not dbQK.sql(sql, u'importkanaldaten_he (11)'):
             return None
 
-    # Daten aUS ITWH-Datenbank abfragen
+    # Daten aus ITWH-Datenbank abfragen
     sql = u'''
     SELECT 
         NAME AS schnam,
@@ -387,7 +387,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         # if not dbQK.sql(sql, u'importkanaldaten_he (15)'):
             # return None
 
-    # Daten aUS ITWH-Datenbank abfragen
+    # Daten aus ITWH-Datenbank abfragen
     sql = u'''
     SELECT NAME AS schnam, 
         GELAENDEHOEHE AS deckelhoehe, 
@@ -480,7 +480,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
     dbHE.sql(sql)
     daten = dbHE.fetchall()
 
-    # Speicherschachtdaten aufbereiten und in die QKan-DB schreiben
+    # Daten aufbereiten und in die QKan-DB schreiben
 
     for attr in daten:
         (schnam_ansi, xsch, ysch, sohlhoehe, deckelhoehe, typ_he, simstat_he, kommentar_ansi, createdat) = \

@@ -200,7 +200,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                     SOHLHOEHE={sohlhoehe}, XKOORDINATE={xkoordinate}, YKOORDINATE={ykoordinate},
                     KONSTANTERZUFLUSS={konstanterzufluss}, GELAENDEHOEHE={gelaendehoehe},
                     ART={art}, ANZAHLKANTEN={anzahlkanten}, SCHEITELHOEHE={scheitelhoehe},
-                    PLANUNGSSTATUS='{planungsstatus}', NAME='{name}', LASTMODIFIED='{lastmodified}',
+                    PLANUNGSSTATUS='{planungsstatus}', LASTMODIFIED='{lastmodified}',
                     DURCHMESSER={durchmesser}
                     WHERE NAME = '{name}';
                 """.format(deckelhoehe=deckelhoehe, kanalart=u'0', druckdichterdeckel=u'0',
@@ -307,7 +307,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                       SCHEITELHOEHE={scheitelhoehe}, HOEHEVOLLFUELLUNG={hoehevollfuellung},
                       KONSTANTERZUFLUSS={konstanterzufluss}, ABSETZWIRKUNG={absetzwirkung}, 
                       PLANUNGSSTATUS='{planungsstatus}',
-                      NAME='{name}', LASTMODIFIED='{lastmodified}', KOMMENTAR='{kommentar}'
+                      LASTMODIFIED='{lastmodified}', KOMMENTAR='{kommentar}'
                       WHERE NAME='{name}';
                 """.format(typ=u'1', sohlhoehe=sohlhoehe,
                            xkoordinate=xsch, ykoordinate=ysch,
@@ -467,7 +467,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                     SOHLHOEHE={sohlhoehe}, XKOORDINATE={xkoordinate}, YKOORDINATE={ykoordinate},
                     GELAENDEHOEHE={gelaendehoehe}, ART={art}, ANZAHLKANTEN={anzahlkanten},
                     SCHEITELHOEHE={scheitelhoehe}, KONSTANTERZUFLUSS={konstanterzufluss},
-                    PLANUNGSSTATUS='{planungsstatus}', NAME='{name}',
+                    PLANUNGSSTATUS='{planungsstatus}',
                     LASTMODIFIED='{lastmodified}', KOMMENTAR='{kommentar}'
                     WHERE NAME = '{name}';
                 """.format(typ=u'1', rueckschlagklappe=0, sohlhoehe=sohlhoehe,
@@ -590,7 +590,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 if int(h_profil) > 0:
                     sql = u"""
                       UPDATE ROHR SET
-                      NAME='{name}', SCHACHTOBEN='{schachtoben}', SCHACHTUNTEN='{schachtunten}',
+                      SCHACHTOBEN='{schachtoben}', SCHACHTUNTEN='{schachtunten}',
                       LAENGE={laenge}, SOHLHOEHEOBEN={sohlhoeheoben},
                       SOHLHOEHEUNTEN={sohlhoeheunten}, PROFILTYP='{profiltyp}', 
                       SONDERPROFILBEZEICHNUNG='{sonderprofilbezeichnung}',
@@ -732,7 +732,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                     RUECKGANGSKONSTANTE={rueckgangskonstante},
                     REGENERATIONSKONSTANTE={regenerationskonstante},
                     SAETTIGUNGSWASSERGEHALT={saettigungswassergehalt},
-                    NAME='{name}', LASTMODIFIED='{lastmodified}',
+                    LASTMODIFIED='{lastmodified}',
                     KOMMENTAR='{kommentar}'
                     WHERE NAME = '{name}';
                     """.format(infiltrationsrateanfang=infiltrationsrateanfang,
@@ -837,7 +837,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             if check_export['modify_auslaesse']:
                 sql = u"""
                   UPDATE ABFLUSSPARAMETER SET
-                  NAME='{apnam}', ABFLUSSBEIWERTANFANG={anfangsabflussbeiwert},
+                  ABFLUSSBEIWERTANFANG={anfangsabflussbeiwert},
                   ABFLUSSBEIWERTENDE={endabflussbeiwert}, BENETZUNGSVERLUST={benetzungsverlust},
                   MULDENVERLUST={muldenverlust}, BENETZUNGSPEICHERSTART={benetzung_startwert},
                   MULDENAUFFUELLGRADSTART={mulden_startwert},
@@ -1104,8 +1104,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 INNER JOIN flaechen AS fl
                 ON lf.flnam = fl.flnam
                 LEFT JOIN tezg AS tg
-                ON lf.tezgnam = tg.flnam
-                WHERE lf.geom IS NOT NULL)
+                ON lf.tezgnam = tg.flnam)
               SELECT substr(printf('%s-%d', fi.flnam, fi.pl),1,30) AS flnam, 
                 ha.haltnam AS haltnam, fi.neigkl AS neigkl,
                 fi.abflusstyp AS abflusstyp, fi.speicherzahl AS speicherzahl, avg(fi.speicherkonst) AS speicherkonst,
@@ -1116,7 +1115,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               FROM flintersect AS fi
               INNER JOIN haltungen AS ha
               ON fi.haltnam = ha.haltnam
-              WHERE area(fi.geom) > 0.5{auswahl}
+              WHERE area(fi.geom) > 0.1{auswahl}
               GROUP BY ha.haltnam, fi.abflussparameter, fi.regenschreiber, 
                        fi.speicherzahl, 
                        fi.abflusstyp, fi.neigkl""".format(auswahl=auswahl)
@@ -1140,13 +1139,12 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 INNER JOIN haltungen AS ha
                 ON lf.haltnam = ha.haltnam
                 LEFT JOIN tezg AS tg
-                ON lf.tezgnam = tg.flnam
-                WHERE lf.geom IS NOT NULL)
+                ON lf.tezgnam = tg.flnam)
               SELECT flnam, haltnam, neigkl, abflusstyp, speicherzahl, speicherkonst, 
               fliesszeit, fliesszeitkanal, flaeche, regenschreiber, abflussparameter,
               createdat, kommentar
               FROM flintersect AS fi
-              WHERE flaeche > 0.5{auswahl}""".format(auswahl=auswahl)
+              WHERE flaeche > 0.00001{auswahl}""".format(auswahl=auswahl)
             logger.debug(u'combine_flaechenrw = False')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
 
@@ -1213,7 +1211,14 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             else:
                 fliesszeitkanal = '0'
 
-
+            # Feld "fliesszeit" in QKan entspricht je nach he_typ zwei unterschiedlichen Feldern in HE, s.o.
+            if he_typ == 1:
+                fliesszeitoberfl = fliesszeit
+                fliesszeitschwerp = 0.
+            elif he_typ == 2:
+                fliesszeitoberfl = 0.
+                fliesszeitschwerp = fliesszeit
+                
             # Standardwerte, falls keine Vorgaben
             if createdat == u'NULL':
                 createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
@@ -1227,16 +1232,16 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                   UPDATE FLAECHE SET
                   GROESSE={flaeche}, REGENSCHREIBER='{regenschreiber}', HALTUNG='{haltnam}',
                   BERECHNUNGSPEICHERKONSTANTE={he_typ}, TYP={fltyp}, ANZAHLSPEICHER={speicherzahl},
-                  SPEICHERKONSTANTE={speicherkonst}, SCHWERPUNKTLAUFZEIT={fliesszeit1},
-                  FLIESSZEITOBERFLAECHE={fliesszeit2}, LAENGSTEFLIESSZEITKANAL={fliesszeitkanal},
+                  SPEICHERKONSTANTE={speicherkonst}, SCHWERPUNKTLAUFZEIT={fliesszeitschwerp},
+                  FLIESSZEITOBERFLAECHE={fliesszeitoberfl}, LAENGSTEFLIESSZEITKANAL={fliesszeitkanal},
                   PARAMETERSATZ='{abflussparameter}', NEIGUNGSKLASSE={neigkl},
-                  NAME='{flnam}', LASTMODIFIED='{createdat}',
+                  LASTMODIFIED='{createdat}',
                   KOMMENTAR='{kommentar}', ZUORDNUNABHEZG={zuordnunabhezg}
                   WHERE NAME = '{flnam}';
                   """.format(flaeche=flaeche, regenschreiber=regenschreiber, haltnam=haltnam,
                              he_typ=he_typ, fltyp=0, speicherzahl=speicherzahl,
-                             speicherkonst=speicherkonst, fliesszeit1=fliesszeit,
-                             fliesszeit2=fliesszeit, fliesszeitkanal=fliesszeitkanal,
+                             speicherkonst=speicherkonst, fliesszeitschwerp=fliesszeitschwerp,
+                             fliesszeitoberfl=fliesszeitoberfl, fliesszeitkanal=fliesszeitkanal,
                              abflussparameter=abflussparameter, neigkl=neigkl,
                              flnam=flnam, createdat=createdat,
                              kommentar=kommentar, zuordnunabhezg=0)
@@ -1259,8 +1264,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                   SELECT
                     {flaeche}, '{regenschreiber}', '{haltnam}',
                     {he_typ}, {fltyp}, {speicherzahl},
-                    {speicherkonst}, {fliesszeit1},
-                    {fliesszeit2}, {fliesszeitkanal},
+                    {speicherkonst}, {fliesszeitschwerp},
+                    {fliesszeitoberfl}, {fliesszeitkanal},
                     '{abflussparameter}', {neigkl},
                     '{flnam}', '{createdat}',
                     '{kommentar}', {nextid}, {zuordnunabhezg}
@@ -1268,8 +1273,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                   WHERE '{flnam}' NOT IN (SELECT NAME FROM FLAECHE);
                   """.format(flaeche=flaeche, regenschreiber=regenschreiber, haltnam=haltnam,
                              he_typ=he_typ, fltyp=0, speicherzahl=speicherzahl,
-                             speicherkonst=speicherkonst, fliesszeit1=fliesszeit,
-                             fliesszeit2=fliesszeit, fliesszeitkanal=fliesszeitkanal,
+                             speicherkonst=speicherkonst, fliesszeitschwerp=fliesszeitschwerp,
+                             fliesszeitoberfl=fliesszeitoberfl, fliesszeitkanal=fliesszeitkanal,
                              abflussparameter=abflussparameter, neigkl=neigkl,
                              flnam=flnam, createdat=createdat,
                              kommentar=kommentar, nextid=nextid, zuordnunabhezg=0)
@@ -1694,21 +1699,52 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             elnam, xel, yel, haltnam, wverbrauch, stdmittel, fremdwas, einwohner, zuflussdirekt, herkunft = \
                 (u'NULL' if el is None else el for el in b)
 
+            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+            if check_export['modify_einleitdirekt']:
+                sql = u"""
+                    UPDATE EINZELEINLEITER SET
+                    XKOORDINATE={xel}, YKOORDINATE={yel}, ZUORDNUNGGESPERRT={zuordnunggesperrt}, 
+                    ZUORDNUNABHEZG={zuordnunabhezg}, ROHR='{haltnam}',
+                    ABWASSERART={abwasserart}, EINWOHNER={einwohner}, WASSERVERBRAUCH={wverbrauch}, 
+                    HERKUNFT={herkunft},
+                    STUNDENMITTEL={stdmittel}, FREMDWASSERZUSCHLAG={fremdwas}, FAKTOR={faktor}, 
+                    GESAMTFLAECHE={flaeche},
+                    ZUFLUSSMODELL={zuflussmodell}, ZUFLUSSDIREKT={zuflussdirekt}, 
+                    ZUFLUSS={zufluss}, PLANUNGSSTATUS={planungsstatus},
+                    ABRECHNUNGSZEITRAUM={abrechnungszeitraum}, ABZUG={abzug},
+                    LASTMODIFIED='{createdat}'
+                    WHERE NAME='{elnam}';
+                    """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
+                             abwasserart = 0, einwohner = einwohner, wverbrauch = wverbrauch, herkunft = herkunft,
+                             stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, 
+                             zuflussmodell = 0, zuflussdirekt = zuflussdirekt, zufluss = 0, planungsstatus = 0, elnam = elnam[:27],
+                             abrechnungszeitraum = 365, abzug = 0,
+                             createdat = createdat)
+
+
+                if not dbHE.sql(sql, u'dbHE: export_einleitdirekt (1)'):
+                    del dbQK
+                    return False
+
             # Einfuegen in die Datenbank
-            sql = u"""
-              INSERT INTO EINZELEINLEITER
-              ( XKOORDINATE, YKOORDINATE, ZUORDNUNGGESPERRT, ZUORDNUNABHEZG, ROHR,
-                ABWASSERART, EINWOHNER, WASSERVERBRAUCH, HERKUNFT,
-                STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE,
-                ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME,
-                ABRECHNUNGSZEITRAUM, ABZUG,
-                LASTMODIFIED, ID) VALUES
-              ( {xel}, {yel}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
-                {abwasserart}, {einwohner}, {wverbrauch}, {herkunft},
-                {stdmittel}, {fremdwas}, {faktor}, {flaeche},
-                {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}',
-                {abrechnungszeitraum}, {abzug},
-                '{createdat}', {nextid});
+            if check_export['export_einleitdirekt']:
+                sql = u"""
+                  INSERT INTO EINZELEINLEITER
+                  ( XKOORDINATE, YKOORDINATE, ZUORDNUNGGESPERRT, ZUORDNUNABHEZG, ROHR,
+                    ABWASSERART, EINWOHNER, WASSERVERBRAUCH, HERKUNFT,
+                    STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE,
+                    ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME,
+                    ABRECHNUNGSZEITRAUM, ABZUG,
+                    LASTMODIFIED, ID) 
+                  SELECT
+                    {xel}, {yel}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
+                    {abwasserart}, {einwohner}, {wverbrauch}, {herkunft},
+                    {stdmittel}, {fremdwas}, {faktor}, {flaeche},
+                    {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}',
+                    {abrechnungszeitraum}, {abzug},
+                    '{createdat}', {nextid}
+                  FROM RDB$DATABASE
+                  WHERE '{elnam}' NOT IN (SELECT NAME FROM EINZELEINLEITER);
               """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
                          abwasserart = 0, einwohner = einwohner, wverbrauch = wverbrauch, herkunft = herkunft,
                          stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, 
@@ -1716,7 +1752,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                          abrechnungszeitraum = 365, abzug = 0,
                          createdat = createdat, nextid = nextid)
 
-            if not dbHE.sql(sql, u'dbHE: export_einleitdirekt (1)'):
+            if not dbHE.sql(sql, u'dbHE: export_einleitdirekt (2)'):
                 del dbQK
                 return False
 
