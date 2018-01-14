@@ -101,7 +101,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         shutil.copyfile(dbtemplate_HE, database_HE)
     except BaseException as err:
         fehlermeldung(u'Fehler (34) in QKan_Export', 
-            'Kopieren der Vorlage HE-Datenbank fehlgeschlagen: {}\nVorlage: {}\nZiel: {}\n'.format(repr(err)), dbtemplate_HE, database_HE)
+            'Kopieren der Vorlage HE-Datenbank fehlgeschlagen: {}\nVorlage: {}\nZiel: {}\n'.format(repr(err), dbtemplate_HE, database_HE))
         return False
     fortschritt(u"Firebird-Datenbank aus Vorlage kopiert...", 0.01)
     progress_bar.setValue(1)
@@ -1212,11 +1212,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 fliesszeitkanal = '0'
 
             # Feld "fliesszeit" in QKan entspricht je nach he_typ zwei unterschiedlichen Feldern in HE, s.o.
+            fliesszeitschwerp = 0.
+            fliesszeitoberfl = 0.
             if he_typ == 1:
                 fliesszeitoberfl = fliesszeit
-                fliesszeitschwerp = 0.
             elif he_typ == 2:
-                fliesszeitoberfl = 0.
                 fliesszeitschwerp = fliesszeit
                 
             # Standardwerte, falls keine Vorgaben

@@ -331,7 +331,7 @@ class CreateUnbefFl:
 
             self.config['autokorrektur'] = autokorrektur
 
-            with codecs.open(self.configfil,'w') as fileconfig:
+            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur)
