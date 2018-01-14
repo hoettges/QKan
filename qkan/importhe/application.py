@@ -261,7 +261,7 @@ class ImportFromHE:
             self.config['check_copy_forms'] = check_copy_forms
             self.config['check_inittab'] = check_inittab
 
-            with codecs.open(self.configfil, 'w') as fileconfig:
+            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung

@@ -586,7 +586,7 @@ class ExportToHE:
             for el in check_export:
                 self.config[el] = check_export[el]
 
-            with codecs.open(self.configfil, 'w') as fileconfig:
+            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
