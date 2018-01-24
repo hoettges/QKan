@@ -25,11 +25,11 @@ import os
 
 from PyQt4 import QtGui, uic
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'application_dialog_base.ui'))
+FORM_CLASS_importhe, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'resources', 'application_importhe.ui'))
 
 
-class ImportFromHEDialog(QtGui.QDialog, FORM_CLASS):
+class ImportFromHEDialog(QtGui.QDialog, FORM_CLASS_importhe):
     def __init__(self, parent=None):
         """Constructor."""
         super(ImportFromHEDialog, self).__init__(parent)
