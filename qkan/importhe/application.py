@@ -33,9 +33,9 @@ from qgis.gui import QgsGenericProjectionSelector
 
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
-from application_dialog import ImportFromHEDialog
+from application_dialog import ImportFromHEDialog, ResultsFromHEDialog
 # from qgis.utils import iface
-from import_from_he import importKanaldaten
+from import_from_he import importKanaldaten, importResults
 # Anbindung an Logging-System (Initialisierung in __init__)
 from qkan import Dummy
 # noinspection PyUnresolvedReferences
@@ -105,48 +105,6 @@ class ImportFromHE:
         project = QgsProject.instance()
         self.default_dir = os.path.dirname(project.fileName())
 
-        if 'database_QKan' in self.config:
-            database_QKan = self.config['database_QKan']
-        else:
-            database_QKan = ''
-        self.dlg.tf_qkanDB.setText(database_QKan)
-        self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
-
-        if 'database_HE' in self.config:
-            database_HE = self.config['database_HE']
-        else:
-            database_HE = ''
-        self.dlg.tf_heDB.setText(database_HE)
-        self.dlg.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
-
-        if 'epsg' in self.config:
-            self.epsg = self.config['epsg']
-        else:
-            self.epsg = '25832'
-        self.dlg.tf_epsg.setText(self.epsg)
-        self.dlg.pb_selectKBS.clicked.connect(self.selectKBS)
-
-        if 'projectfile' in self.config:
-            projectfile = self.config['projectfile']
-        else:
-            projectfile = ''
-        self.dlg.tf_projectFile.setText(projectfile)
-        self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
-
-        if 'check_copy_forms' in self.config:
-            check_copy_forms = self.config['check_copy_forms']
-        else:
-            check_copy_forms = True
-        self.dlg.cb_copy_forms.setChecked(check_copy_forms)
-
-        if 'check_inittab' in self.config:
-            check_inittab = self.config['check_inittab']
-        else:
-            check_inittab = True
-        self.dlg.cb_import_tabinit.setChecked(check_inittab)
-
-        # Ende Eigene Funktionen ---------------------------------------------------
-
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -172,12 +130,12 @@ class ImportFromHE:
             callback=self.run_import,
             parent=self.iface.mainWindow())
 
-        # icon_resultshe_path = ':/plugins/qkan/importhe/resources/icon_results.png'
-        # Dummy.instance.add_action(
-            # icon_results_path,
-            # text=self.tr(u'Ergebnisse aus Hystem-Extran einlesen'),
-            # callback=self.run_results,
-            # parent=self.iface.mainWindow())
+        icon_resultshe_path = ':/plugins/qkan/importhe/resources/icon_results.png'
+        Dummy.instance.add_action(
+            icon_results_path,
+            text=self.tr(u'Ergebnisse aus Hystem-Extran einlesen'),
+            callback=self.run_results,
+            parent=self.iface.mainWindow())
 
     def unload(self):
         pass
@@ -234,10 +192,101 @@ class ImportFromHE:
         else:
             self.dlg.tf_epsg.setText(erg)
 
-            # Ende Eigene Funktionen ---------------------------------------------------
+        # Ende Eigene Funktionen ---------------------------------------------------
+
+    def run_results(self):
+        """Öffnen des Formulars zum Einlesen der Simulationsergebnisse aus HE"""
+
+        if 'database_QKan' in self.config:
+            database_QKan = self.config['database_QKan']
+        else:
+            database_QKan = ''
+        self.dlg.tf_qkanDB.setText(database_QKan)
+        self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
+
+        if 'database_ErgHE' in self.config:
+            database_ErgHE = self.config['database_ErgHE']
+        else:
+            database_ErgHE = ''
+        self.dlg.tf_heDB.setText(database_ErgHE)
+        self.dlg.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
+
+        # show the dialog
+        self.dlg.show()
+        # Run the dialog event loop
+        result = self.dlg.exec_()
+        # See if OK was pressed
+        if result:
+            # Do something useful here - delete the line containing pass and
+            # substitute with your code.
+            # pass
+
+            # (jh, 09.10.2016)
+
+            # Namen der Datenbanken uebernehmen
+
+            database_ErgHE = self.dlg.tf_heDB.text()
+            database_QKan = self.dlg.tf_qkanDB.text()
+
+            # Konfigurationsdaten schreiben
+
+            self.config['database_QKan'] = database_QKan
+            self.config['database_ErgHE'] = database_ErgHE
+
+            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+                fileconfig.write(json.dumps(self.config))
+
+            # Start der Verarbeitung
+
+            importResults(database_ErgHE, database_QKan)
+
 
     def run_import(self):
-        """Run method that performs all the real work"""
+        """Öffnen des Formulars zum Import aus HE"""
+
+        if 'database_QKan' in self.config:
+            database_QKan = self.config['database_QKan']
+        else:
+            database_QKan = ''
+        self.dlg.tf_qkanDB.setText(database_QKan)
+        self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
+
+        if 'database_HE' in self.config:
+            database_HE = self.config['database_HE']
+        else:
+            database_HE = ''
+        self.dlg.tf_heDB.setText(database_HE)
+        self.dlg.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
+
+        if 'epsg' in self.config:
+            self.epsg = self.config['epsg']
+        else:
+            self.epsg = '25832'
+        self.dlg.tf_epsg.setText(self.epsg)
+        self.dlg.pb_selectKBS.clicked.connect(self.selectKBS)
+
+        if 'projectfile' in self.config:
+            projectfile = self.config['projectfile']
+        else:
+            projectfile = ''
+        self.dlg.tf_projectFile.setText(projectfile)
+        self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
+
+        if 'check_copy_forms' in self.config:
+            check_copy_forms = self.config['check_copy_forms']
+        else:
+            check_copy_forms = True
+        self.dlg.cb_copy_forms.setChecked(check_copy_forms)
+
+        if 'check_inittab' in self.config:
+            check_inittab = self.config['check_inittab']
+        else:
+            check_inittab = True
+        self.dlg.cb_import_tabinit.setChecked(check_inittab)
+
+        # Ende Eigene Funktionen ---------------------------------------------------
+
+
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
