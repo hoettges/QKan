@@ -165,12 +165,19 @@ class ImportFromHE:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/qkan/importhe/icon.png'
+        icon_import_path = ':/plugins/qkan/importhe/resources/icon_import.png'
         Dummy.instance.add_action(
-            icon_path,
+            icon_import_path,
             text=self.tr(u'Import aus Hystem-Extran'),
-            callback=self.run,
+            callback=self.run_import,
             parent=self.iface.mainWindow())
+
+        # icon_resultshe_path = ':/plugins/qkan/importhe/resources/icon_results.png'
+        # Dummy.instance.add_action(
+            # icon_results_path,
+            # text=self.tr(u'Ergebnisse aus Hystem-Extran einlesen'),
+            # callback=self.run_results,
+            # parent=self.iface.mainWindow())
 
     def unload(self):
         pass
@@ -229,7 +236,7 @@ class ImportFromHE:
 
             # Ende Eigene Funktionen ---------------------------------------------------
 
-    def run(self):
+    def run_import(self):
         """Run method that performs all the real work"""
         # show the dialog
         self.dlg.show()
