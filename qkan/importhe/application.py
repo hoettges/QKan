@@ -35,7 +35,8 @@ from qgis.gui import QgsGenericProjectionSelector
 # Import the code for the dialog
 from application_dialog import ImportFromHEDialog, ResultsFromHEDialog
 # from qgis.utils import iface
-from import_from_he import importKanaldaten, importResults
+from import_from_he import importKanaldaten
+from results_from_he import importResults
 # Anbindung an Logging-System (Initialisierung in __init__)
 from qkan import Dummy
 # noinspection PyUnresolvedReferences
