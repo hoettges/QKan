@@ -1086,7 +1086,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
         if len(liste_teilgebiete) != 0:
-            auswahl = u" AND fl.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
+            auswahl = u" AND ha.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
         else:
             auswahl = u""
 
