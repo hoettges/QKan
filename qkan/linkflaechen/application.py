@@ -495,6 +495,13 @@ class LinkFl:
             suchradius = 50.
         self.dlg_cl.tf_suchradius.setText(str(suchradius))
 
+        # Mindestflächengröße
+        if 'mindestflaeche' in self.config:
+            mindestflaeche = self.config['mindestflaeche']
+        else:
+            mindestflaeche = 0.5
+        self.dlg_cl.tf_mindestflaeche.setText(str(mindestflaeche))
+
         # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
         if 'bezug_abstand' in self.config:
             bezug_abstand = self.config['bezug_abstand']
@@ -531,6 +538,7 @@ class LinkFl:
             liste_hal_entw = self.listselecteditems(self.dlg_cl.lw_hal_entw)
             liste_teilgebiete = self.listselecteditems(self.dlg_cl.lw_teilgebiete)
             suchradius = self.dlg_cl.tf_suchradius.text()
+            mindestflaeche = self.dlg_cl.tf_mindestflaeche.text()
             if self.dlg_cl.rb_abstandkante.isChecked():
                 bezug_abstand = 'kante'
             elif self.dlg_cl.rb_abstandmittelpunkt.isChecked():
@@ -550,6 +558,7 @@ class LinkFl:
             # Konfigurationsdaten schreiben
 
             self.config['suchradius'] = suchradius
+            self.config['mindestflaeche'] = mindestflaeche
             self.config['bezug_abstand'] = bezug_abstand
             self.config['liste_hal_entw'] = liste_hal_entw
             self.config['liste_flaechen_abflussparam'] = liste_flaechen_abflussparam
@@ -563,7 +572,7 @@ class LinkFl:
             # Start der Verarbeitung
 
             createlinkfl(self.dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                        liste_teilgebiete, autokorrektur, suchradius, bezug_abstand, epsg)
+                        liste_teilgebiete, autokorrektur, suchradius, mindestflaeche, bezug_abstand, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()
@@ -679,6 +688,13 @@ class LinkFl:
             suchradius = 50.
         self.dlg_sw.tf_suchradius.setText(str(suchradius))
 
+        # Mindestflächengröße
+        if 'mindestflaeche' in self.config:
+            mindestflaeche = self.config['mindestflaeche']
+        else:
+            mindestflaeche = 0.5
+        self.dlg_sw.tf_mindestflaeche.setText(str(mindestflaeche))
+
         # Haltungen direkt in einleit eintragen. Es kann wegen der längeren Zeitdauer sinnvoll
         # sein, dies erst am Schluss der Bearbeitung in einem eigenen Vorgang zu machen.
 
@@ -703,11 +719,13 @@ class LinkFl:
             liste_hal_entw = self.listselecteditems(self.dlg_sw.lw_hal_entw)
             liste_teilgebiete = self.listselecteditems(self.dlg_sw.lw_teilgebiete)
             suchradius = self.dlg_sw.tf_suchradius.text()
+            mindestflaeche = self.dlg_sw.tf_mindestflaeche.text()
 
 
             # Konfigurationsdaten schreiben
 
             self.config['suchradius'] = suchradius
+            self.config['mindestflaeche'] = mindestflaeche
             self.config['liste_hal_entw'] = liste_hal_entw
 
             self.config['liste_teilgebiete'] = liste_teilgebiete
@@ -718,7 +736,7 @@ class LinkFl:
 
             # Start der Verarbeitung
 
-            createlinksw(self.dbQK, liste_teilgebiete, suchradius, epsg)
+            createlinksw(self.dbQK, liste_teilgebiete, suchradius, mindestflaeche, epsg)
 
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen

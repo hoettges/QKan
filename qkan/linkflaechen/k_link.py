@@ -54,7 +54,7 @@ progress_bar = None
 # Erzeugung der graphischen Verknüpfungen für Flächen
 
 def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                liste_teilgebiete, autokorrektur, suchradius=50, bezug_abstand=u'kante', 
+                liste_teilgebiete, autokorrektur, suchradius=50, mindestflaeche=0.5, bezug_abstand=u'kante', 
                 epsg=u'25832', fangradius=0.1, dbtyp=u'SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -73,6 +73,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     :suchradius: Suchradius in der SQL-Abfrage
     :type suchradius: Real
 
+    :mindestflaeche: Mindestflächengröße bei Einzelflächen und Teilflächenstücken
+    :type mindestflaeche: Real
+    
     :bezug_abstand: Bestimmt, ob in der SQL-Abfrage der Mittelpunkt oder die nächste Kante der Fläche
                     berücksichtigt wird
     :type fangradius: Real
@@ -87,18 +90,26 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     :type dbtyp:    String
     
     :returns: void
-    '''
 
-    # ------------------------------------------------------------------------------
-    # Die Bearbeitung erfolgt in einer zusätzlichen Tabelle 'linkfl'
-    # Sie wird zunächst aus der Tabelle "flaechen" erstellt, und enthält zusätzlich
-    # zwei weitere Geo-Attribute: 
-    #  gbuf  - Buffer sind die mit einem Buffer erweiterten Flächen
-    #  glink - linkfl sind Verbindungslinien, die von der Fläche zur Haltung zeigen
-    # zusätzlich wird die zugeordnete Haltung im entsprechenden Attribut verwaltet. 
-    #
-    # Flächen, bei denen im Feld "haltungen" bereits eine Eintragung vorhanden ist, 
-    # werden nicht bearbeitet. Damit ist eine manuelle Zuordnung möglich. 
+    Die Bearbeitung erfolgt in einer zusätzlichen Tabelle 'linkfl'
+    Sie wird zunächst aus der Tabelle "flaechen" erstellt, und enthält zusätzlich
+    zwei weitere Geo-Attribute: 
+     gbuf  - Buffer sind die mit einem Buffer erweiterten Flächen
+     glink - linkfl sind Verbindungslinien, die von der Fläche zur Haltung zeigen
+    zusätzlich wird die zugeordnete Haltung im entsprechenden Attribut verwaltet. 
+    
+    Änderungen an der Zuordnung erfolgen ausschließlich über die Bearbeitung des 
+    Grafikobjektes, d.h. über die Verbindungslinie. Beim Export werden alle 
+    Verknüpfungen über die Attributfelder (!) geprüft und alle Unstimmigkeiten, die 
+    z. B. durch spätere Änderungen der Verbindungslinie entstanden sind, in den 
+    Attributfeldern aktualisiert. Grund dafür ist, dass nur in dieser Reihenfolge 
+    ein schneller Export möglich ist. Der "erste" Export kann dagegen viel mehr 
+    Zeit benötigen, wenn bei vielen (allen?) Verbindungslinien die Attribute erst 
+    eingetragen werden müssen. 
+    
+    Die Tabelle linkfl hat außer dem Primärschlüssel "pk" kein eindeutiges 
+    Primärschlüsselfeld. 
+    '''
 
     # Statusmeldung in der Anzeige
     global progress_bar
@@ -155,7 +166,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             FROM flges
             LEFT JOIN linkfl
             ON within(StartPoint(linkfl.glink),flges.geom)
-            WHERE linkfl.pk IS NULL""".format(auswahl=auswahl)
+            WHERE linkfl.pk IS NULL AND flges.geom > {minfl}""".format(auswahl=auswahl, minfl=mindestflaeche)
 
     # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
 

@@ -131,9 +131,9 @@ class ImportFromHE:
             callback=self.run_import,
             parent=self.iface.mainWindow())
 
-        icon_resultshe_path = ':/plugins/qkan/importhe/resources/icon_results.png'
+        icon_results_path = ':/plugins/qkan/importhe/resources/icon_results.png'
         Dummy.instance.add_action(
-            icon_resultshe_path,
+            icon_results_path,
             text=self.tr(u'Ergebnisse aus Hystem-Extran einlesen'),
             callback=self.run_results,
             parent=self.iface.mainWindow())
