@@ -78,7 +78,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.2.17'
+        self.actversion = '2.2.18'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
         if dbname is not None:
