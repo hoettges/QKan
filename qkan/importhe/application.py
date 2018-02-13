@@ -75,7 +75,8 @@ class ImportFromHE:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = ImportFromHEDialog()
+        self.dlg_he = ImportFromHEDialog()
+        self.dlg_lz = ResultsFromHEDialog()
 
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 09.10.2016)
@@ -141,44 +142,41 @@ class ImportFromHE:
     def unload(self):
         pass
 
-    # Anfang Eigene Funktionen -------------------------------------------------
-    # (jh, 09.10.2016)
 
+    # Formularfunktionen zum HE-Import -------------------------------------------------
 
     def selectFile_HeDB(self):
-        """Datenbankverbindung zur HE-Datenbank (Firebird) auswaehlen und gegebenenfalls die Zieldatenbank
-           erstellen, aber noch nicht verbinden."""
+        """Datenbankverbindung zur HE-Datenbank (Firebird) auswaehlen"""
 
-        filename = QFileDialog.getOpenFileName(self.dlg,
-                                               u"Dateinamen der zu lesenden HE-Datenbank eingeben",
+        filename = QFileDialog.getOpenFileName(self.dlg_he,
+                                               u"Dateinamen der zu lesenden HE-Datenbank auswählen",
                                                self.default_dir,
                                                u"*.idbf")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-        self.dlg.tf_heDB.setText(filename)
+        self.dlg_he.tf_heDB.setText(filename)
 
-    def selectFile_qkanDB(self):
-        """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen, aber noch nicht verbinden.
-           Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt. """
+    def selectFile_qkanDBHE(self):
+        """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen"""
 
-        filename = QFileDialog.getSaveFileName(self.dlg,
+        filename = QFileDialog.getSaveFileName(self.dlg_he,
                                                u"Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
                                                self.default_dir,
                                                u"*.sqlite")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-        self.dlg.tf_qkanDB.setText(filename)
+        self.dlg_he.tf_qkanDB.setText(filename)
 
     def selectProjectFile(self):
         """Zu erzeugende Projektdatei festlegen, falls ausgewählt."""
 
-        filename = QFileDialog.getSaveFileName(self.dlg,
+        filename = QFileDialog.getSaveFileName(self.dlg_he,
                                                u"Dateinamen der zu erstellenden Projektdatei eingeben",
                                                self.default_dir,
                                                u"*.qgs")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-        self.dlg.tf_projectFile.setText(filename)
+        self.dlg_he.tf_projectFile.setText(filename)
 
     def selectKBS(self):
         """KBS auswählen. Setzt das KBS für die weiteren Funktionen
@@ -189,58 +187,35 @@ class ImportFromHE:
         projSelector.exec_()
         erg = projSelector.selectedAuthId()
         if len(erg.split(u':')) == 2:
-            self.dlg.tf_epsg.setText(erg.split(u':')[1])
+            self.dlg_he.tf_epsg.setText(erg.split(u':')[1])
         else:
-            self.dlg.tf_epsg.setText(erg)
+            self.dlg_he.tf_epsg.setText(erg)
+
+    # Formularfunktionen zum Lesen der LZ-Ergebnisse ----------------------------------------------
+
+    def selectFile_HELZ(self):
+        """Datenbankverbindung zur HE-Datenbank (Firebird) auswaehlen"""
+
+        filename = QFileDialog.getOpenFileName(self.dlg_lz,
+                                               u"Dateinamen der HE-Datenbank mit den LZ-Ergebnissen auswählen",
+                                               self.default_dir,
+                                               u"*.idbf")
+        if os.path.dirname(filename) != '':
+            os.chdir(os.path.dirname(filename))
+        self.dlg_lz.tf_heDB.setText(filename)
+
+    def selectFile_qkanDBLZ(self):
+        """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen"""
+
+        filename = QFileDialog.getOpenFileName(self.dlg_lz,
+                                               u"Dateinamen der zu aktuellen SpatiaLite-Datenbank prüfen und ggfs. auswählen",
+                                               self.default_dir,
+                                               u"*.sqlite")
+        if os.path.dirname(filename) != '':
+            os.chdir(os.path.dirname(filename))
+        self.dlg_lz.tf_qkanDB.setText(filename)
 
         # Ende Eigene Funktionen ---------------------------------------------------
-
-    def run_results(self):
-        """Öffnen des Formulars zum Einlesen der Simulationsergebnisse aus HE"""
-
-        if 'database_QKan' in self.config:
-            database_QKan = self.config['database_QKan']
-        else:
-            database_QKan = ''
-        self.dlg.tf_qkanDB.setText(database_QKan)
-        self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
-
-        if 'database_ErgHE' in self.config:
-            database_ErgHE = self.config['database_ErgHE']
-        else:
-            database_ErgHE = ''
-        self.dlg.tf_heDB.setText(database_ErgHE)
-        self.dlg.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
-
-        # show the dialog
-        self.dlg.show()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            # pass
-
-            # (jh, 09.10.2016)
-
-            # Namen der Datenbanken uebernehmen
-
-            database_ErgHE = self.dlg.tf_heDB.text()
-            database_QKan = self.dlg.tf_qkanDB.text()
-
-            # Konfigurationsdaten schreiben
-
-            self.config['database_QKan'] = database_QKan
-            self.config['database_ErgHE'] = database_ErgHE
-
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
-
-            # Start der Verarbeitung
-
-            importResults(database_ErgHE, database_QKan)
-
 
     def run_import(self):
         """Öffnen des Formulars zum Import aus HE"""
@@ -249,49 +224,49 @@ class ImportFromHE:
             database_QKan = self.config['database_QKan']
         else:
             database_QKan = ''
-        self.dlg.tf_qkanDB.setText(database_QKan)
-        self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
+        self.dlg_he.tf_qkanDB.setText(database_QKan)
+        self.dlg_he.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDBHE)
 
         if 'database_HE' in self.config:
             database_HE = self.config['database_HE']
         else:
             database_HE = ''
-        self.dlg.tf_heDB.setText(database_HE)
-        self.dlg.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
+        self.dlg_he.tf_heDB.setText(database_HE)
+        self.dlg_he.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
 
         if 'epsg' in self.config:
             self.epsg = self.config['epsg']
         else:
             self.epsg = '25832'
-        self.dlg.tf_epsg.setText(self.epsg)
-        self.dlg.pb_selectKBS.clicked.connect(self.selectKBS)
+        self.dlg_he.tf_epsg.setText(self.epsg)
+        self.dlg_he.pb_selectKBS.clicked.connect(self.selectKBS)
 
         if 'projectfile' in self.config:
             projectfile = self.config['projectfile']
         else:
             projectfile = ''
-        self.dlg.tf_projectFile.setText(projectfile)
-        self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
+        self.dlg_he.tf_projectFile.setText(projectfile)
+        self.dlg_he.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
 
         if 'check_copy_forms' in self.config:
             check_copy_forms = self.config['check_copy_forms']
         else:
             check_copy_forms = True
-        self.dlg.cb_copy_forms.setChecked(check_copy_forms)
+        self.dlg_he.cb_copy_forms.setChecked(check_copy_forms)
 
         if 'check_inittab' in self.config:
             check_inittab = self.config['check_inittab']
         else:
             check_inittab = True
-        self.dlg.cb_import_tabinit.setChecked(check_inittab)
+        self.dlg_he.cb_import_tabinit.setChecked(check_inittab)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
 
         # show the dialog
-        self.dlg.show()
+        self.dlg_he.show()
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = self.dlg_he.exec_()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
@@ -302,12 +277,12 @@ class ImportFromHE:
 
             # Namen der Datenbanken uebernehmen
 
-            database_HE = self.dlg.tf_heDB.text()
-            database_QKan = self.dlg.tf_qkanDB.text()
-            projectfile = self.dlg.tf_projectFile.text()
-            self.epsg = self.dlg.tf_epsg.text()
-            check_copy_forms = self.dlg.cb_copy_forms.isChecked()
-            check_inittab = self.dlg.cb_import_tabinit.isChecked()
+            database_HE = self.dlg_he.tf_heDB.text()
+            database_QKan = self.dlg_he.tf_qkanDB.text()
+            projectfile = self.dlg_he.tf_projectFile.text()
+            self.epsg = self.dlg_he.tf_epsg.text()
+            check_copy_forms = self.dlg_he.cb_copy_forms.isChecked()
+            check_inittab = self.dlg_he.cb_import_tabinit.isChecked()
 
             # Konfigurationsdaten schreiben
 
@@ -324,3 +299,51 @@ class ImportFromHE:
             # Start der Verarbeitung
 
             importKanaldaten(database_HE, database_QKan, projectfile, self.epsg, check_copy_forms, check_inittab)
+
+
+
+    def run_results(self):
+        """Öffnen des Formulars zum Einlesen der Simulationsergebnisse aus HE"""
+
+        if 'database_QKan' in self.config:
+            database_QKan = self.config['database_QKan']
+        else:
+            database_QKan = ''
+        self.dlg_lz.tf_qkanDB.setText(database_QKan)
+        self.dlg_lz.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDBLZ)
+
+        if 'database_ErgHE' in self.config:
+            database_ErgHE = self.config['database_ErgHE']
+        else:
+            database_ErgHE = ''
+        self.dlg_lz.tf_heDB.setText(database_ErgHE)
+        self.dlg_lz.pb_selectHeDB.clicked.connect(self.selectFile_HELZ)
+
+        # show the dialog
+        self.dlg_lz.show()
+        # Run the dialog event loop
+        result = self.dlg_lz.exec_()
+        # See if OK was pressed
+        if result:
+            # Do something useful here - delete the line containing pass and
+            # substitute with your code.
+            # pass
+
+            # (jh, 09.10.2016)
+
+            # Namen der Datenbanken uebernehmen
+
+            database_ErgHE = self.dlg_lz.tf_heDB.text()
+            database_QKan = self.dlg_lz.tf_qkanDB.text()
+
+            # Konfigurationsdaten schreiben
+
+            self.config['database_QKan'] = database_QKan
+            self.config['database_ErgHE'] = database_ErgHE
+
+            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+                fileconfig.write(json.dumps(self.config))
+
+            # Start der Verarbeitung
+
+            importResults(database_ErgHE, database_QKan)
