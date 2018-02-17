@@ -20,7 +20,6 @@
   (at your option) any later version.                                  
 
 """
-import codecs
 import json
 import logging
 import os
@@ -30,14 +29,13 @@ from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt4.QtGui import QFileDialog  # (jh, 20.09.2016)
 from qgis.core import QgsProject
 from qgis.gui import QgsGenericProjectionSelector
+from qkan.database.qgis_utils import get_database_QKan
 
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
 from application_dialog import ImportFromHEDialog, ResultsFromHEDialog
-# from qgis.utils import iface
 from import_from_he import importKanaldaten
 from results_from_he import importResults
-# Anbindung an Logging-System (Initialisierung in __init__)
 from qkan import Dummy
 # noinspection PyUnresolvedReferences
 import resources
@@ -93,15 +91,15 @@ class ImportFromHE:
 
         self.configfil = os.path.join(wordir, 'qkan.json')
         if os.path.exists(self.configfil):
-            with codecs.open(self.configfil, 'r', 'utf-8') as fileconfig:
-                self.config = json.loads(fileconfig.read().replace('\\', '/'))
-        else:
-            self.config = {'epsg': '25832'}  # Projektionssystem
-            self.config['database_QKan'] = ''
-            self.config['database_HE'] = ''
-            self.config['projectfile'] = ''
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+            with open(self.configfil, 'r') as fileconfig:
+                self.config = json.loads(fileconfig.read())
+        # else:
+            # self.config = {'epsg': '25832'}  # Projektionssystem
+            # self.config['database_QKan'] = ''
+            # self.config['database_HE'] = ''
+            # self.config['projectfile'] = ''
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(self.config))
 
         # Standard für Suchverzeichnis festlegen
         project = QgsProject.instance()
@@ -204,17 +202,6 @@ class ImportFromHE:
             os.chdir(os.path.dirname(filename))
         self.dlg_lz.tf_heDB.setText(filename)
 
-    def selectFile_qkanDBLZ(self):
-        """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen"""
-
-        filename = QFileDialog.getOpenFileName(self.dlg_lz,
-                                               u"Dateinamen der zu aktuellen SpatiaLite-Datenbank prüfen und ggfs. auswählen",
-                                               self.default_dir,
-                                               u"*.sqlite")
-        if os.path.dirname(filename) != '':
-            os.chdir(os.path.dirname(filename))
-        self.dlg_lz.tf_qkanDB.setText(filename)
-
         # Ende Eigene Funktionen ---------------------------------------------------
 
     def run_import(self):
@@ -293,7 +280,7 @@ class ImportFromHE:
             self.config['check_copy_forms'] = check_copy_forms
             self.config['check_inittab'] = check_inittab
 
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
@@ -305,12 +292,7 @@ class ImportFromHE:
     def run_results(self):
         """Öffnen des Formulars zum Einlesen der Simulationsergebnisse aus HE"""
 
-        if 'database_QKan' in self.config:
-            database_QKan = self.config['database_QKan']
-        else:
-            database_QKan = ''
-        self.dlg_lz.tf_qkanDB.setText(database_QKan)
-        self.dlg_lz.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDBLZ)
+        database_QKan, epsg = get_database_QKan()
 
         if 'database_ErgHE' in self.config:
             database_ErgHE = self.config['database_ErgHE']
@@ -334,16 +316,15 @@ class ImportFromHE:
             # Namen der Datenbanken uebernehmen
 
             database_ErgHE = self.dlg_lz.tf_heDB.text()
-            database_QKan = self.dlg_lz.tf_qkanDB.text()
 
             # Konfigurationsdaten schreiben
 
             self.config['database_QKan'] = database_QKan
             self.config['database_ErgHE'] = database_ErgHE
 
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
 
-            importResults(database_ErgHE, database_QKan)
+            importResults(database_ErgHE, database_QKan, epsg)
