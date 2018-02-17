@@ -20,7 +20,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-import codecs
 # Ergaenzt (jh, 12.06.2017) -------------------------------------------------
 import json
 import logging
@@ -100,14 +99,14 @@ class LinkFl:
 
         self.configfil = os.path.join(wordir, 'qkan.json')
         if os.path.exists(self.configfil):
-            with codecs.open(self.configfil, 'r', 'utf-8') as fileconfig:
-                self.config = json.loads(fileconfig.read().replace('\\', '/'))
+            with open(self.configfil, 'r') as fileconfig:
+                self.config = json.loads(fileconfig.read())
         else:
             self.config = {'epsg': '25832'}  # Projektionssystem
             self.config['database_QKan'] = ''
             self.config['database_HE'] = ''
             self.config['projectfile'] = ''
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
         # Ende Eigene Funktionen ---------------------------------------------------
@@ -566,7 +565,7 @@ class LinkFl:
             self.config['epsg'] = epsg
             self.config['autokorrektur'] = autokorrektur
 
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
@@ -731,7 +730,7 @@ class LinkFl:
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['epsg'] = epsg
 
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
@@ -882,7 +881,7 @@ class LinkFl:
             self.config['bufferradius'] = bufferradius
             self.config['autokorrektur'] = autokorrektur
 
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung

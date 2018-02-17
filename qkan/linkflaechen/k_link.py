@@ -727,7 +727,7 @@ def reloadgroup(dbQK, gruppenname, dbtyp = u'SpatiaLite'):
             g.tabelle = '{table}')""".format(table=table, gruppenname=gruppenname)
         # logger.debug(u'reloadgroup.sql: \n{}'.format(sql))
 
-        if dbQK.sql(sql, u"QKan_LinkFlaechen.reloadgroup (9): \n"):
+        if not dbQK.sql(sql, u"QKan_LinkFlaechen.reloadgroup (9): \n"):
             return False
 
     dbQK.commit()

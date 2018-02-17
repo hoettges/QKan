@@ -34,7 +34,6 @@ from qgis.core import QgsProject
 # from qgis.utils import iface
 from qkan import Dummy
 from import_from_dyna import importKanaldaten
-import codecs
 import logging
 
 # Anbindung an Logging-System (Initialisierung in __init__)
@@ -97,14 +96,14 @@ class ImportFromDyna:
 
         self.configfil = os.path.join(wordir, u'qkan.json')
         if os.path.exists(self.configfil):
-            with codecs.open(self.configfil, 'r', 'utf-8') as fileconfig:
-                self.config = json.loads(fileconfig.read().replace('\\', '/'))
+            with open(self.configfil, 'r') as fileconfig:
+                self.config = json.loads(fileconfig.read())
         else:
             self.config = {'epsg': '25832'}                # Projektionssystem
             self.config['database_QKan'] = ''
             self.config['dynafile'] = ''
             self.config['projectfile'] = ''
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
         # Standard für Suchverzeichnis festlegen
@@ -272,7 +271,7 @@ class ImportFromDyna:
             self.config['check_copy_forms'] = check_copy_forms
             self.config['check_inittab'] = check_inittab
 
-            with codecs.open(self.configfil, 'w') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
 
