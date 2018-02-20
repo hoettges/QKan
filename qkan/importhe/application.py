@@ -20,7 +20,6 @@
   (at your option) any later version.                                  
 
 """
-import codecs
 import json
 import logging
 import os
@@ -30,13 +29,13 @@ from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt4.QtGui import QFileDialog  # (jh, 20.09.2016)
 from qgis.core import QgsProject
 from qgis.gui import QgsGenericProjectionSelector
+from qkan.database.qgis_utils import get_database_QKan
 
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
-from application_dialog import ImportFromHEDialog
-# from qgis.utils import iface
+from application_dialog import ImportFromHEDialog, ResultsFromHEDialog
 from import_from_he import importKanaldaten
-# Anbindung an Logging-System (Initialisierung in __init__)
+from results_from_he import importResults
 from qkan import Dummy
 # noinspection PyUnresolvedReferences
 import resources
@@ -74,7 +73,8 @@ class ImportFromHE:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = ImportFromHEDialog()
+        self.dlg_he = ImportFromHEDialog()
+        self.dlg_lz = ResultsFromHEDialog()
 
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 09.10.2016)
@@ -91,61 +91,29 @@ class ImportFromHE:
 
         self.configfil = os.path.join(wordir, 'qkan.json')
         if os.path.exists(self.configfil):
-            with codecs.open(self.configfil, 'r', 'utf-8') as fileconfig:
-                self.config = json.loads(fileconfig.read().replace('\\', '/'))
-        else:
-            self.config = {'epsg': '25832'}  # Projektionssystem
-            self.config['database_QKan'] = ''
-            self.config['database_HE'] = ''
-            self.config['projectfile'] = ''
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+            with open(self.configfil, 'r') as fileconfig:
+                self.config = json.loads(fileconfig.read())
 
         # Standard für Suchverzeichnis festlegen
         project = QgsProject.instance()
         self.default_dir = os.path.dirname(project.fileName())
 
-        if 'database_QKan' in self.config:
-            database_QKan = self.config['database_QKan']
-        else:
-            database_QKan = ''
-        self.dlg.tf_qkanDB.setText(database_QKan)
-        self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
+        # Formularereignisse run_import()
+        self.dlg_he.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDBHE)
+        self.dlg_he.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
+        self.dlg_he.pb_selectKBS.clicked.connect(self.selectKBS)
+        self.dlg_he.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
 
-        if 'database_HE' in self.config:
-            database_HE = self.config['database_HE']
-        else:
-            database_HE = ''
-        self.dlg.tf_heDB.setText(database_HE)
-        self.dlg.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
+        # Formularereignisse run_results()
 
-        if 'epsg' in self.config:
-            self.epsg = self.config['epsg']
-        else:
-            self.epsg = '25832'
-        self.dlg.tf_epsg.setText(self.epsg)
-        self.dlg.pb_selectKBS.clicked.connect(self.selectKBS)
+        self.dlg_lz.pb_selectqmlfile.clicked.connect(self.selectqmlfileResults)
 
-        if 'projectfile' in self.config:
-            projectfile = self.config['projectfile']
-        else:
-            projectfile = ''
-        self.dlg.tf_projectFile.setText(projectfile)
-        self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
-
-        if 'check_copy_forms' in self.config:
-            check_copy_forms = self.config['check_copy_forms']
-        else:
-            check_copy_forms = True
-        self.dlg.cb_copy_forms.setChecked(check_copy_forms)
-
-        if 'check_inittab' in self.config:
-            check_inittab = self.config['check_inittab']
-        else:
-            check_inittab = True
-        self.dlg.cb_import_tabinit.setChecked(check_inittab)
-
-        # Ende Eigene Funktionen ---------------------------------------------------
+        # Klick auf eine Option zum Layerstil aktiviert/deaktiviert das Textfeld und die Schaltfläche
+        self.dlg_lz.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
+        self.dlg_lz.rb_userqml.clicked.connect(self.enable_tf_qmlfile)
+        self.dlg_lz.rb_uebh.clicked.connect(self.disable_tf_qmlfile)
+        self.dlg_lz.rb_uebvol.clicked.connect(self.disable_tf_qmlfile)
+        self.dlg_lz.rb_none.clicked.connect(self.disable_tf_qmlfile)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -165,54 +133,58 @@ class ImportFromHE:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/qkan/importhe/icon.png'
+        icon_import_path = ':/plugins/qkan/importhe/resources/icon_import.png'
         Dummy.instance.add_action(
-            icon_path,
+            icon_import_path,
             text=self.tr(u'Import aus Hystem-Extran'),
-            callback=self.run,
+            callback=self.run_import,
+            parent=self.iface.mainWindow())
+
+        icon_results_path = ':/plugins/qkan/importhe/resources/icon_results.png'
+        Dummy.instance.add_action(
+            icon_results_path,
+            text=self.tr(u'Ergebnisse aus Hystem-Extran einlesen'),
+            callback=self.run_results,
             parent=self.iface.mainWindow())
 
     def unload(self):
         pass
 
-    # Anfang Eigene Funktionen -------------------------------------------------
-    # (jh, 09.10.2016)
 
+    # Formularfunktionen zum HE-Import -------------------------------------------------
 
     def selectFile_HeDB(self):
-        """Datenbankverbindung zur HE-Datenbank (Firebird) auswaehlen und gegebenenfalls die Zieldatenbank
-           erstellen, aber noch nicht verbinden."""
+        """Datenbankverbindung zur HE-Datenbank (Firebird) auswaehlen"""
 
-        filename = QFileDialog.getOpenFileName(self.dlg,
-                                               u"Dateinamen der zu lesenden HE-Datenbank eingeben",
+        filename = QFileDialog.getOpenFileName(self.dlg_he,
+                                               u"Dateinamen der zu lesenden HE-Datenbank auswählen",
                                                self.default_dir,
                                                u"*.idbf")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-        self.dlg.tf_heDB.setText(filename)
+        self.dlg_he.tf_heDB.setText(filename)
 
-    def selectFile_qkanDB(self):
-        """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen, aber noch nicht verbinden.
-           Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt. """
+    def selectFile_qkanDBHE(self):
+        """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen"""
 
-        filename = QFileDialog.getSaveFileName(self.dlg,
+        filename = QFileDialog.getSaveFileName(self.dlg_he,
                                                u"Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
                                                self.default_dir,
                                                u"*.sqlite")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-        self.dlg.tf_qkanDB.setText(filename)
+        self.dlg_he.tf_qkanDB.setText(filename)
 
     def selectProjectFile(self):
         """Zu erzeugende Projektdatei festlegen, falls ausgewählt."""
 
-        filename = QFileDialog.getSaveFileName(self.dlg,
+        filename = QFileDialog.getSaveFileName(self.dlg_he,
                                                u"Dateinamen der zu erstellenden Projektdatei eingeben",
                                                self.default_dir,
                                                u"*.qgs")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-        self.dlg.tf_projectFile.setText(filename)
+        self.dlg_he.tf_projectFile.setText(filename)
 
     def selectKBS(self):
         """KBS auswählen. Setzt das KBS für die weiteren Funktionen
@@ -223,18 +195,71 @@ class ImportFromHE:
         projSelector.exec_()
         erg = projSelector.selectedAuthId()
         if len(erg.split(u':')) == 2:
-            self.dlg.tf_epsg.setText(erg.split(u':')[1])
+            self.dlg_he.tf_epsg.setText(erg.split(u':')[1])
         else:
-            self.dlg.tf_epsg.setText(erg)
+            self.dlg_he.tf_epsg.setText(erg)
 
-            # Ende Eigene Funktionen ---------------------------------------------------
+    # Formularfunktionen zum Lesen der LZ-Ergebnisse ----------------------------------------------
 
-    def run(self):
-        """Run method that performs all the real work"""
+    def selectFile_HELZ(self):
+        """Datenbankverbindung zur HE-Datenbank (Firebird) auswaehlen"""
+
+        filename = QFileDialog.getOpenFileName(self.dlg_lz,
+                                               u"Dateinamen der HE-Datenbank mit den LZ-Ergebnissen auswählen",
+                                               self.default_dir,
+                                               u"*.idbf")
+        if os.path.dirname(filename) != '':
+            os.chdir(os.path.dirname(filename))
+        self.dlg_lz.tf_heDB.setText(filename)
+
+        # Ende Eigene Funktionen ---------------------------------------------------
+
+    def run_import(self):
+        """Öffnen des Formulars zum Import aus HE"""
+
+        if 'database_QKan' in self.config:
+            database_QKan = self.config['database_QKan']
+        else:
+            database_QKan = ''
+        self.dlg_he.tf_qkanDB.setText(database_QKan)
+
+        if 'database_HE' in self.config:
+            database_HE = self.config['database_HE']
+        else:
+            database_HE = ''
+        self.dlg_he.tf_heDB.setText(database_HE)
+
+        if 'epsg' in self.config:
+            self.epsg = self.config['epsg']
+        else:
+            self.epsg = u'25832'
+        self.dlg_he.tf_epsg.setText(self.epsg)
+
+        if 'projectfile' in self.config:
+            projectfile = self.config['projectfile']
+        else:
+            projectfile = ''
+        self.dlg_he.tf_projectFile.setText(projectfile)
+
+        if 'check_copy_forms' in self.config:
+            check_copy_forms = self.config['check_copy_forms']
+        else:
+            check_copy_forms = True
+        self.dlg_he.cb_copy_forms.setChecked(check_copy_forms)
+
+        if 'check_inittab' in self.config:
+            check_inittab = self.config['check_inittab']
+        else:
+            check_inittab = True
+        self.dlg_he.cb_import_tabinit.setChecked(check_inittab)
+
+        # Ende Eigene Funktionen ---------------------------------------------------
+
+
         # show the dialog
-        self.dlg.show()
+        self.dlg_he.show()
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = self.dlg_he.exec_()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
@@ -245,12 +270,12 @@ class ImportFromHE:
 
             # Namen der Datenbanken uebernehmen
 
-            database_HE = self.dlg.tf_heDB.text()
-            database_QKan = self.dlg.tf_qkanDB.text()
-            projectfile = self.dlg.tf_projectFile.text()
-            self.epsg = self.dlg.tf_epsg.text()
-            check_copy_forms = self.dlg.cb_copy_forms.isChecked()
-            check_inittab = self.dlg.cb_import_tabinit.isChecked()
+            database_HE = self.dlg_he.tf_heDB.text()
+            database_QKan = self.dlg_he.tf_qkanDB.text()
+            projectfile = self.dlg_he.tf_projectFile.text()
+            self.epsg = self.dlg_he.tf_epsg.text()
+            check_copy_forms = self.dlg_he.cb_copy_forms.isChecked()
+            check_inittab = self.dlg_he.cb_import_tabinit.isChecked()
 
             # Konfigurationsdaten schreiben
 
@@ -261,9 +286,113 @@ class ImportFromHE:
             self.config['check_copy_forms'] = check_copy_forms
             self.config['check_inittab'] = check_inittab
 
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
 
             importKanaldaten(database_HE, database_QKan, projectfile, self.epsg, check_copy_forms, check_inittab)
+
+    # Formularfunktionen -------------------------------------------------------
+
+    def enable_tf_qmlfile(self):
+        '''aktiviert das Textfeld für die qml-Stildatei'''
+        self.dlg_lz.tf_qmlfile.setEnabled(True)
+        self.dlg_lz.pb_selectqmlfile.setEnabled(True)
+
+    def disable_tf_qmlfile(self):
+        '''deaktiviert das Textfeld für die qml-Stildatei'''
+        self.dlg_lz.tf_qmlfile.setEnabled(False)
+        self.dlg_lz.pb_selectqmlfile.setEnabled(False)
+
+    def selectqmlfileResults(self):
+        """qml-Stildatei auswählen"""
+
+        filename = QFileDialog.getOpenFileName(self.dlg_lz,
+                                               u"Dateinamen der einzulesenen Stildatei auswählen",
+                                               self.default_dir,
+                                               u"*.qml")
+        if os.path.dirname(filename) != '':
+            os.chdir(os.path.dirname(filename))
+        self.dlg_lz.tf_qmlfile.setText(filename)
+
+    # Ende Formularfunktionen --------------------------------------------------
+
+    def run_results(self):
+        """Öffnen des Formulars zum Einlesen der Simulationsergebnisse aus HE"""
+
+        database_QKan, epsg = get_database_QKan()
+
+        # Auswahl der HE-Ergebnisdatenbank zum Laden
+        if 'database_ErgHE' in self.config:
+            database_ErgHE = self.config['database_ErgHE']
+        else:
+            database_ErgHE = ''
+        self.dlg_lz.tf_heDB.setText(database_ErgHE)
+
+        # Option für Stildatei
+        if 'qml_choice' in self.config:
+            qml_choice = self.config['qml_choice']
+        else:
+            qml_choice = u'uebh'
+
+        # Standard: User-qml-File ist deaktiviert
+        self.disable_tf_qmlfile()
+
+        if qml_choice == u'uebh':
+            self.dlg_lz.rb_uebh.setChecked(True)
+        elif qml_choice == u'uebvol':
+            self.dlg_lz.rb_uebvol.setChecked(True)
+        elif qml_choice == u'userqml':
+            self.dlg_lz.rb_userqml.setChecked(True)
+            # User-qml-File ist aktivieren
+            self.enable_tf_qmlfile()
+        elif qml_choice == u'none':
+            self.dlg_lz.rb_none.setChecked(True)
+        else:
+            fehlermeldung(u"Fehler im Programmcode (1)", u"Nicht definierte Option")
+            return False
+
+        # Individuelle Stildatei
+        if 'qmlfileResults' in self.config:
+            qmlfileResults = self.config['qmlfileResults']
+        else:
+            qmlfileResults = ''
+        self.dlg_lz.tf_qmlfile.setText(qmlfileResults)
+        
+        # show the dialog
+        self.dlg_lz.show()
+        # Run the dialog event loop
+        result = self.dlg_lz.exec_()
+        # See if OK was pressed
+        if result:
+            
+            # Daten aus Formular übernehmen
+
+            database_ErgHE = self.dlg_lz.tf_heDB.text()
+            qmlfileResults =  self.dlg_lz.tf_qmlfile.text()
+
+            if self.dlg_lz.rb_uebh.isChecked():
+                qml_choice = u'uebh'
+            elif self.dlg_lz.rb_uebvol.isChecked():
+                qml_choice = u'uebvol'
+            elif self.dlg_lz.rb_userqml.isChecked():
+                qml_choice = u'userqml'
+            elif self.dlg_lz.rb_none.isChecked():
+                qml_choice = u'none'
+            else:
+                fehlermeldung(u"Fehler im Programmcode (2)", u"Nicht definierte Option")
+                return False
+            # Konfigurationsdaten schreiben
+
+            self.config['database_QKan'] = database_QKan
+            self.config['database_ErgHE'] = database_ErgHE
+            self.config['qmlfileResults'] = qmlfileResults
+            self.config['qml_choice'] = qml_choice
+
+            with open(self.configfil, 'w') as fileconfig:
+                fileconfig.write(json.dumps(self.config))
+
+            # Start der Verarbeitung
+
+            importResults(database_ErgHE, database_QKan, qml_choice, qmlfileResults, epsg)

@@ -20,7 +20,6 @@
   (at your option) any later version.                                  
 
 """
-import codecs
 # Ergaenzt (jh, 08.02.2017) -------------------------------------------------
 import json
 import logging
@@ -101,14 +100,14 @@ class ExportToHE:
 
         self.configfil = os.path.join(wordir, 'qkan.json')
         if os.path.exists(self.configfil):
-            with codecs.open(self.configfil, 'r', 'utf-8') as fileconfig:
-                self.config = json.loads(fileconfig.read().replace('\\', '/'))
+            with open(self.configfil, 'r') as fileconfig:
+                self.config = json.loads(fileconfig.read())
         else:
             self.config['database_HE'] = ''
             # Vorlagedatenbank nur für den Fall, dass der Anwender keine eigene Vorlage erstellen will
             self.config['dbtemplate_HE'] = os.path.join(os.path.dirname(__file__), "templates", "itwh.idbf")
             self.config['database_QKan'] = ''
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
         # Standard für Suchverzeichnis festlegen
@@ -586,7 +585,7 @@ class ExportToHE:
             for el in check_export:
                 self.config[el] = check_export[el]
 
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 

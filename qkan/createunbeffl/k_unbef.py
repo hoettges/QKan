@@ -174,7 +174,8 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
             GROUP BY tezg.pk)
             INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, kommentar, geom) 
              SELECT flnam AS flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter,
-            kommentar, CastToMultiPolygon(Difference(geot,geob)) AS geom FROM flbef""".format(auswahl=auswahl)
+            kommentar, CastToMultiPolygon(Difference(geot,geob)) AS geof FROM flbef
+            WHERE area(geof) > 0.5 AND geof IS NOT NULL""".format(auswahl=auswahl)
 
     logger.debug(u'QKan.k_unbef (3) - liste_abflussparam = \n{}'.format(str(liste_abflussparam)))
     if not dbQK.sql(sql, u"QKan.CreateUnbefFlaechen (4)"):

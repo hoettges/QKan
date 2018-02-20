@@ -40,7 +40,7 @@ from qgis_utils import fortschritt, fehlermeldung
 logger = logging.getLogger(u'QKan')
 
 
-def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
+def createdbtables(consl, cursl, version='2.3.1', epsg=25832):
     ''' Erstellt fuer eine neue QKan-Datenbank die zum Import aus Hystem-Extran
         benötigten Referenztabellen.
 
@@ -157,7 +157,7 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
     profilnam TEXT,
     he_nr INTEGER,
     mu_nr INTEGER,
-    kp_nr INTEGER)'''
+    kp_key TEXT)'''
 
     try:
         cursl.execute(sql)
@@ -199,7 +199,7 @@ def createdbtables(consl, cursl, version='1.0.0', epsg=25832):
                  u"'Trapezquerschnitt', 68, NULL, NULL"]
 
         for ds in daten:
-            cursl.execute(u'INSERT INTO profile (profilnam, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
+            cursl.execute(u'INSERT INTO profile (profilnam, he_nr, mu_nr, kp_key) VALUES ({})'.format(ds))
 
     except BaseException as err:
         fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 

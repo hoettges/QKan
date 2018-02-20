@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/qkan/importdyna" >
+        <file>icon_ImportFromDyna.png</file>
+    </qresource>
+</RCC>

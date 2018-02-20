@@ -24,7 +24,6 @@ import logging
 import os.path
 # Ergaenzt (jh, 12.06.2017) -------------------------------------------------
 import site
-import codecs
 import json
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
@@ -96,14 +95,14 @@ class CreateUnbefFl:
 
         self.configfil = os.path.join(wordir, u'qkan.json')
         if os.path.exists(self.configfil):
-            with codecs.open(self.configfil, 'r', 'utf-8') as fileconfig:
-                self.config = json.loads(fileconfig.read().replace('\\', '/'))
+            with open(self.configfil, 'r') as fileconfig:
+                self.config = json.loads(fileconfig.read())
         else:
             self.config = {'epsg': '25832'}  # Projektionssystem
             self.config['database_QKan'] = ''
             self.config['database_HE'] = ''
             self.config['projectfile'] = ''
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
         # Ende Eigene Funktionen ---------------------------------------------------
@@ -331,7 +330,7 @@ class CreateUnbefFl:
 
             self.config['autokorrektur'] = autokorrektur
 
-            with codecs.open(self.configfil, 'w', 'utf-8') as fileconfig:
+            with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur)
