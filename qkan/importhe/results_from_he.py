@@ -49,7 +49,7 @@ logger = logging.getLogger(u'QKan')
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def importResults(database_HE, database_QKan, epsg=25832, dbtyp=u'SpatiaLite'):
+def importResults(database_HE, database_QKan, qml_choice, qmlfileResults, epsg=25832, dbtyp=u'SpatiaLite'):
     '''Importiert Simulationsergebnisse aus einer HE-Firebird-Datenbank und schreibt diese in Tabellen 
        der QKan-SpatiaLite-Datenbank.
 
@@ -82,32 +82,38 @@ def importResults(database_HE, database_QKan, epsg=25832, dbtyp=u'SpatiaLite'):
                       u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
         return None
 
-    # Vorbereiten der temporären Ergebnistabelle
-    sql = u'''CREATE TABLE IF NOT EXISTS heResultsLZ(
+    # Vorbereiten der temporären Ergebnistabellen
+    sqllist = [
+        u'''CREATE TABLE IF NOT EXISTS ResultsSch(
             pk INTEGER PRIMARY KEY AUTOINCREMENT,
             schnam TEXT,
             uebstauhaeuf REAL,
             uebstauanz REAL, 
             maxuebstauvol REAL,
             kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_DATE)'''
+            createdat TEXT DEFAULT CURRENT_DATE)''',
+        u"""SELECT AddGeometryColumn('ResultsSch','geom',{},'POINT',2)""".format(epsg), 
+        u'''DELETE FROM ResultsSch''']
+        # , u'''CREATE TABLE IF NOT EXISTS ResultsHal(
+            # pk INTEGER PRIMARY KEY AUTOINCREMENT,
+            # haltnam TEXT,
+            # uebstauhaeuf REAL,
+            # uebstauanz REAL, 
+            # maxuebstauvol REAL,
+            # kommentar TEXT,
+            # createdat TEXT DEFAULT CURRENT_DATE)''',
+        # u"""SELECT AddGeometryColumn('ResultsHal','geom',{},'LINESTRING',2)""".format(epsg)
+        # u'''DELETE FROM ResultsHal''']
 
-    if not dbQK.sql(sql, u"QKan_Import_Results (1)"):
-        return False
+    for sql in sqllist:
+        if not dbQK.sql(sql, u"QKan_Import_Results (1)"):
+            return False
 
-    sql = u'''DELETE FROM heResultsLZ'''
-
-    if not dbQK.sql(sql, u"QKan_Import_Results (2)"):
-        return False
-
-    # Ergänzen des Geoobjekts
-    sql = u"SELECT AddGeometryColumn('heResultsLZ','geom',{},'POINT',2)".format(epsg)
-    
-    if not dbQK.sql(sql, u"QKan_Import_Results (3): Erzeugung der Punktobjekte"):
-        return False
-
-    sql = u'''SELECT KNOTEN, HAEUFIGKEITUEBERSTAU, ANZAHLUEBERSTAU, MAXUEBERSTAUVOLUMEN
-            FROM LANGZEITKNOTEN
+    # Die folgende Abfrage gilt sowohl bei Einzel- als auch bei Seriensimulationen:
+    sql = u'''SELECT MR.KNOTEN, LZ.HAEUFIGKEITUEBERSTAU, LZ.ANZAHLUEBERSTAU, MR.UEBERSTAUVOLUMEN
+            FROM LAU_MAX_S AS MR
+            LEFT JOIN LANGZEITKNOTEN AS LZ
+            ON MR.KNOTEN = LZ.KNOTEN
             ORDER BY KNOTEN'''
 
     if not dbHE.sql(sql, u"QKan_Import_Results (4)"):
@@ -118,7 +124,7 @@ def importResults(database_HE, database_QKan, epsg=25832, dbtyp=u'SpatiaLite'):
         (schnam, uebstauhaeuf, uebstauanz, maxuebstauvol) = \
             (u'NULL' if el is None else el for el in attr)
 
-        sql = u'''INSERT INTO heResultsLZ
+        sql = u'''INSERT INTO ResultsSch
                 (schnam, uebstauhaeuf, uebstauanz, maxuebstauvol, kommentar)
                 VALUES ('{schnam}', {uebstauhaeuf}, {uebstauanz}, {maxuebstauvol}, '{kommentar}')'''.format(
                 schnam=schnam, uebstauhaeuf=uebstauhaeuf, uebstauanz=uebstauanz, 
@@ -127,11 +133,11 @@ def importResults(database_HE, database_QKan, epsg=25832, dbtyp=u'SpatiaLite'):
         if not dbQK.sql(sql, u'QKan_Import_Results (5)'):
             return False
 
-    sql = '''UPDATE heResultsLZ
+    sql = '''UPDATE ResultsSch
             SET geom = 
             (   SELECT geop
                 FROM schaechte
-                WHERE schaechte.schnam = heResultsLZ.schnam)'''
+                WHERE schaechte.schnam = ResultsSch.schnam)'''
     if not dbQK.sql(sql, u'QKan_Import_Results (6)'):
         return False
 
@@ -142,9 +148,32 @@ def importResults(database_HE, database_QKan, epsg=25832, dbtyp=u'SpatiaLite'):
     if u'Ergebnisse_LZ' not in [lay.name() for lay in layers]:
         uri = QgsDataSourceURI()
         uri.setDatabase(database_QKan)
-        uri.setDataSource(u'', u'heResultsLZ', u'geom')
-        vlayer = QgsVectorLayer(uri.uri(), u'Ergebnisse_LZ', u'spatialite')
+        uri.setDataSource(u'', u'ResultsSch', u'geom')
+        vlayer = QgsVectorLayer(uri.uri(), u'Überstau Schächte', u'spatialite')
         QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+
+        # Stilvorlage nach Benutzerwahl laden
+        templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
+        if qml_choice == 'uebh':
+            template = os.path.join(templatepath, u"Überstauhäufigkeit.qml")
+            try:
+                vlayer.loadNamedStyle(template)
+            except:
+                fehlermeldung(u"Fehler in QKan_Results_from_HE",
+                          u'Stildatei "Überstauhäufigkeit.qml" wurde nicht gefunden!\nAbbruch!')
+        elif qml_choice == 'uebvol':
+            template = os.path.join(templatepath, u"Überstauvolumen.qml")
+            try:
+                vlayer.loadNamedStyle(template)
+            except:
+                fehlermeldung(u"Fehler in QKan_Results_from_HE",
+                          u'Stildatei "Überstauvolumen.qml" wurde nicht gefunden!\nAbbruch!')
+        elif qml_choice == 'userqml':
+            try:
+                vlayer.loadNamedStyle(qmlfileResults)
+            except:
+                fehlermeldung(u"Fehler in QKan_Results_from_HE",
+                          u'Benutzerdefinierte Stildatei {:s} wurde nicht gefunden!\nAbbruch!'.format(qml_choice))
 
     del dbQK
     del dbHE

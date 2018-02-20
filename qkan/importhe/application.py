@@ -93,17 +93,27 @@ class ImportFromHE:
         if os.path.exists(self.configfil):
             with open(self.configfil, 'r') as fileconfig:
                 self.config = json.loads(fileconfig.read())
-        # else:
-            # self.config = {'epsg': '25832'}  # Projektionssystem
-            # self.config['database_QKan'] = ''
-            # self.config['database_HE'] = ''
-            # self.config['projectfile'] = ''
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
 
         # Standard für Suchverzeichnis festlegen
         project = QgsProject.instance()
         self.default_dir = os.path.dirname(project.fileName())
+
+        # Formularereignisse run_import()
+        self.dlg_he.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDBHE)
+        self.dlg_he.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
+        self.dlg_he.pb_selectKBS.clicked.connect(self.selectKBS)
+        self.dlg_he.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
+
+        # Formularereignisse run_results()
+
+        self.dlg_lz.pb_selectqmlfile.clicked.connect(self.selectqmlfileResults)
+
+        # Klick auf eine Option zum Layerstil aktiviert/deaktiviert das Textfeld und die Schaltfläche
+        self.dlg_lz.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
+        self.dlg_lz.rb_userqml.clicked.connect(self.enable_tf_qmlfile)
+        self.dlg_lz.rb_uebh.clicked.connect(self.disable_tf_qmlfile)
+        self.dlg_lz.rb_uebvol.clicked.connect(self.disable_tf_qmlfile)
+        self.dlg_lz.rb_none.clicked.connect(self.disable_tf_qmlfile)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -212,28 +222,24 @@ class ImportFromHE:
         else:
             database_QKan = ''
         self.dlg_he.tf_qkanDB.setText(database_QKan)
-        self.dlg_he.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDBHE)
 
         if 'database_HE' in self.config:
             database_HE = self.config['database_HE']
         else:
             database_HE = ''
         self.dlg_he.tf_heDB.setText(database_HE)
-        self.dlg_he.pb_selectHeDB.clicked.connect(self.selectFile_HeDB)
 
         if 'epsg' in self.config:
             self.epsg = self.config['epsg']
         else:
-            self.epsg = '25832'
+            self.epsg = u'25832'
         self.dlg_he.tf_epsg.setText(self.epsg)
-        self.dlg_he.pb_selectKBS.clicked.connect(self.selectKBS)
 
         if 'projectfile' in self.config:
             projectfile = self.config['projectfile']
         else:
             projectfile = ''
         self.dlg_he.tf_projectFile.setText(projectfile)
-        self.dlg_he.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
 
         if 'check_copy_forms' in self.config:
             check_copy_forms = self.config['check_copy_forms']
@@ -287,44 +293,106 @@ class ImportFromHE:
 
             importKanaldaten(database_HE, database_QKan, projectfile, self.epsg, check_copy_forms, check_inittab)
 
+    # Formularfunktionen -------------------------------------------------------
 
+    def enable_tf_qmlfile(self):
+        '''aktiviert das Textfeld für die qml-Stildatei'''
+        self.dlg_lz.tf_qmlfile.setEnabled(True)
+        self.dlg_lz.pb_selectqmlfile.setEnabled(True)
+
+    def disable_tf_qmlfile(self):
+        '''deaktiviert das Textfeld für die qml-Stildatei'''
+        self.dlg_lz.tf_qmlfile.setEnabled(False)
+        self.dlg_lz.pb_selectqmlfile.setEnabled(False)
+
+    def selectqmlfileResults(self):
+        """qml-Stildatei auswählen"""
+
+        filename = QFileDialog.getOpenFileName(self.dlg_lz,
+                                               u"Dateinamen der einzulesenen Stildatei auswählen",
+                                               self.default_dir,
+                                               u"*.qml")
+        if os.path.dirname(filename) != '':
+            os.chdir(os.path.dirname(filename))
+        self.dlg_lz.tf_qmlfile.setText(filename)
+
+    # Ende Formularfunktionen --------------------------------------------------
 
     def run_results(self):
         """Öffnen des Formulars zum Einlesen der Simulationsergebnisse aus HE"""
 
         database_QKan, epsg = get_database_QKan()
 
+        # Auswahl der HE-Ergebnisdatenbank zum Laden
         if 'database_ErgHE' in self.config:
             database_ErgHE = self.config['database_ErgHE']
         else:
             database_ErgHE = ''
         self.dlg_lz.tf_heDB.setText(database_ErgHE)
-        self.dlg_lz.pb_selectHeDB.clicked.connect(self.selectFile_HELZ)
 
+        # Option für Stildatei
+        if 'qml_choice' in self.config:
+            qml_choice = self.config['qml_choice']
+        else:
+            qml_choice = u'uebh'
+
+        # Standard: User-qml-File ist deaktiviert
+        self.disable_tf_qmlfile()
+
+        if qml_choice == u'uebh':
+            self.dlg_lz.rb_uebh.setChecked(True)
+        elif qml_choice == u'uebvol':
+            self.dlg_lz.rb_uebvol.setChecked(True)
+        elif qml_choice == u'userqml':
+            self.dlg_lz.rb_userqml.setChecked(True)
+            # User-qml-File ist aktivieren
+            self.enable_tf_qmlfile()
+        elif qml_choice == u'none':
+            self.dlg_lz.rb_none.setChecked(True)
+        else:
+            fehlermeldung(u"Fehler im Programmcode (1)", u"Nicht definierte Option")
+            return False
+
+        # Individuelle Stildatei
+        if 'qmlfileResults' in self.config:
+            qmlfileResults = self.config['qmlfileResults']
+        else:
+            qmlfileResults = ''
+        self.dlg_lz.tf_qmlfile.setText(qmlfileResults)
+        
         # show the dialog
         self.dlg_lz.show()
         # Run the dialog event loop
         result = self.dlg_lz.exec_()
         # See if OK was pressed
         if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            # pass
-
-            # (jh, 09.10.2016)
-
-            # Namen der Datenbanken uebernehmen
+            
+            # Daten aus Formular übernehmen
 
             database_ErgHE = self.dlg_lz.tf_heDB.text()
+            qmlfileResults =  self.dlg_lz.tf_qmlfile.text()
 
+            if self.dlg_lz.rb_uebh.isChecked():
+                qml_choice = u'uebh'
+            elif self.dlg_lz.rb_uebvol.isChecked():
+                qml_choice = u'uebvol'
+            elif self.dlg_lz.rb_userqml.isChecked():
+                qml_choice = u'userqml'
+            elif self.dlg_lz.rb_none.isChecked():
+                qml_choice = u'none'
+            else:
+                fehlermeldung(u"Fehler im Programmcode (2)", u"Nicht definierte Option")
+                return False
             # Konfigurationsdaten schreiben
 
             self.config['database_QKan'] = database_QKan
             self.config['database_ErgHE'] = database_ErgHE
+            self.config['qmlfileResults'] = qmlfileResults
+            self.config['qml_choice'] = qml_choice
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
 
-            importResults(database_ErgHE, database_QKan, epsg)
+            importResults(database_ErgHE, database_QKan, qml_choice, qmlfileResults, epsg)
