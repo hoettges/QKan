@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>532</width>
-    <height>167</height>
+    <width>502</width>
+    <height>295</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>120</y>
+     <x>120</x>
+     <y>240</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -44,8 +44,8 @@
     <rect>
      <x>20</x>
      <y>20</y>
-     <width>491</width>
-     <height>81</height>
+     <width>461</width>
+     <height>201</height>
     </rect>
    </property>
    <property name="font">
@@ -82,7 +82,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Einzlesende Ergebnis-Datenbank (*.idbf):</string>
+     <string>Einzulesende Ergebnis-Datenbank (*.idbf):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -120,12 +120,157 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>241</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Thematische Darstellung für die Ergebnisse:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_uebh">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>261</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>Überstauhäufigkeiten aus einer Seriensimulation farbig darstellen</string>
+    </property>
+    <property name="text">
+     <string>Überstauhäufigkeiten (nur für Seriensimulationen)</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_uebvol">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>130</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>Überstauvolumina farbig darstellen (für Einzel- und Seriensimulation)</string>
+    </property>
+    <property name="text">
+     <string>Überstauvolumina</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_userqml">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>150</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>Ausgewählte Stildatei verwenden</string>
+    </property>
+    <property name="text">
+     <string>eigene Stildatei:</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_none">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>170</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>Standarddarstellung verwenden</string>
+    </property>
+    <property name="text">
+     <string>ohne</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tf_qmlfile">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>150</y>
+      <width>281</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Stildatei zur thematischen Darstellung der Ergebnisse&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_selectqmlfile">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>150</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Stildatei zur thematischen Darstellung der Ergebnisse auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>...</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QLabel" name="lb_version">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>150</y>
+     <x>410</x>
+     <y>280</y>
      <width>91</width>
      <height>20</height>
     </rect>
@@ -134,7 +279,7 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.2.20</string>
+    <string>Version 2.3.1</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

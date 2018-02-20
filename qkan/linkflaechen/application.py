@@ -757,13 +757,13 @@ class LinkFl:
 
     # Hilfsfunktionen
 
-    def enable_bufferradius(self, on=True):
+    def enable_bufferradius(self, onoff=True):
         """Aktiviert/Deaktiviert die Eingabe der Pufferbreite abhängig von der 
         Auswahloption"""
 
-        self.dlg_at.lb_bufferradius.setEnabled(on)
-        self.dlg_at.tf_bufferradius.setEnabled(on)
-        self.dlg_at.unit_bufferradius.setEnabled(on)
+        self.dlg_at.lb_bufferradius.setEnabled(onoff)
+        self.dlg_at.tf_bufferradius.setEnabled(onoff)
+        self.dlg_at.unit_bufferradius.setEnabled(onoff)
 
 
     def select_within(self):
