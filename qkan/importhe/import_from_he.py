@@ -1123,7 +1123,6 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
 
     if projectfile is not None and projectfile != u'':
         templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
-        # templatepath = os.path.join(os.path.dirname(__file__), u"templates")
         projecttemplate = os.path.join(templatepath, u"projekt.qgs")
         projectpath = os.path.dirname(projectfile)
         if os.path.dirname(database_QKan) == projectpath:

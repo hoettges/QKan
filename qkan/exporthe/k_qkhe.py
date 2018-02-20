@@ -639,7 +639,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                         SOHLHOEHEUNTEN, PROFILTYP, SONDERPROFILBEZEICHNUNG, GEOMETRIE1,
                         GEOMETRIE2, KANALART, RAUIGKEITSBEIWERT, ANZAHL, TEILEINZUGSGEBIET,
                         RUECKSCHLAGKLAPPE, KONSTANTERZUFLUSS, EINZUGSGEBIET, KONSTANTERZUFLUSSTEZG,
-                        RAUIGKEITSANSATZ, GEFAELLE, GESAMTFLAECHE, ABFLUSSART,
+                        RAUIGKEITSANSATZ, GEFAELLE, GESAMTFLAECHE, ABFLUSSART, BEFESTIGTEFLAECHE, UNBEFESTIGTEFLAECHE,
                         INDIVIDUALKONZEPT, HYDRAULISCHERRADIUS, RAUHIGKEITANZEIGE, PLANUNGSSTATUS,
                         LASTMODIFIED, MATERIALART, EREIGNISBILANZIERUNG, EREIGNISGRENZWERTENDE,
                         EREIGNISGRENZWERTANFANG, EREIGNISTRENNDAUER, EREIGNISINDIVIDUELL, ID)
@@ -648,7 +648,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                         {sohlhoeheunten}, '{profiltyp}', '{sonderprofilbezeichnung}', {geometrie1},
                         {geometrie2}, '{kanalart}', {rauigkeitsbeiwert}, {anzahl}, '{teileinzugsgebiet}',
                         {rueckschlagklappe}, {konstanterzufluss}, {einzugsgebiet}, {konstanterzuflusstezg},
-                        {rauigkeitsansatz}, {gefaelle}, {gesamtflaeche}, {abflussart},
+                        {rauigkeitsansatz}, {gefaelle}, {gesamtflaeche}, {abflussart}, {befestigte_flaeche}, {unbefestigte_flaeche}, 
                         {individualkonzept}, {hydraulischerradius}, {rauhigkeitanzeige}, {planungsstatus},
                         '{lastmodified}', {materialart}, {ereignisbilanzierung}, {ereignisgrenzwertende},
                         {ereignisgrenzwertanfang}, {ereignistrenndauer}, {ereignisindividuell}, {id}
@@ -663,7 +663,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                                  rueckschlagklappe=0, konstanterzufluss=0,
                                  einzugsgebiet=0, konstanterzuflusstezg=0,
                                  rauigkeitsansatz=1, gefaelle=0,
-                                 gesamtflaeche=0, abflussart=0,
+                                 gesamtflaeche=0, abflussart=0, befestigte_flaeche=0, unbefestigte_flaeche=0, 
                                  individualkonzept=0, hydraulischerradius=0,
                                  rauhigkeitanzeige=1.5, planungsstatus=0,
                                  lastmodified=createdat, materialart=28,
@@ -1082,7 +1082,28 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             del dbHE
             return False
 
-        # Zu verschneidende und nicht zu Flächen exportieren
+        # Vor dem Export: Prüfung, ob die Verknüpfungen in Ordnung sind
+        # kommt in den nächsten Tagen
+        # sql = u'''
+            # SELECT 
+                # lf.flnam AS "linkfl_nam", 
+                # fl.flnam AS "flaech_nam",
+                # ha.haltnam AS "haltung_nam",
+                # tg.flnam AS "tezg_nam",
+                # fl.aufteilen = "ja" and fl.aufteilen IS NOT NULL AS "aufteilen", count(*) AS Anzahl
+            # FROM linkfl AS lf
+            # LEFT JOIN flaechen AS fl
+            # ON lf.flnam = fl.flnam
+            # LEFT JOIN tezg AS tg
+            # ON lf.tezgnam = tg.flnam
+            # LEFT JOIN haltungen AS ha
+            # ON lf.haltnam = ha.haltnam
+            # GROUP BY lf.flnam, fl.flnam, tg.flnam
+            # HAVING Anzahl > 1 or flaech_nam IS NULL or haltung_nam IS NULL
+            # ORDER BY Anzahl DESC'''
+
+
+        # Zu verschneidende zusammen mit nicht zu verschneidene Flächen exportieren
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
         if len(liste_teilgebiete) != 0:
@@ -1099,7 +1120,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 fl.regenschreiber AS regenschreiber,
                 fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
                 fl.kommentar AS kommentar, 
-                CASE WHEN tg.flnam IS NULL THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
                 FROM linkfl AS lf
                 INNER JOIN flaechen AS fl
                 ON lf.flnam = fl.flnam
@@ -1128,7 +1149,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                   ha.haltnam AS haltnam, fl.neigkl AS neigkl,
                   fl.abflusstyp AS abflusstyp, fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
                   fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
-                  CASE WHEN tg.flnam IS NULL THEN area(fl.geom)/10000 
+                  CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom)/10000 
                   ELSE area(CastToMultiPolygon(intersection(fl.geom,tg.geom)))/10000 END AS flaeche, 
                   fl.regenschreiber AS regenschreiber,
                   fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
