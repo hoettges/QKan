@@ -36,11 +36,12 @@ from qgis.utils import iface
 # noinspection PyUnresolvedReferences 
 import resources
 # Import the code for the dialog
-from application_dialog import CreatelineflDialog, CreatelineswDialog, AssigntgebDialog, ManagegroupsDialog
+from application_dialog import CreatelineflDialog, CreatelineswDialog, AssigntgebDialog, ManagegroupsDialog, UpdateLinksDialog
 from k_link import createlinkfl, createlinksw, assigntgeb, storegroup, reloadgroup
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qgis_utils import get_database_QKan, get_editable_layers, fehlermeldung
+from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u'QKan')
@@ -76,9 +77,10 @@ class LinkFl:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
+        self.dlg_at = AssigntgebDialog()
         self.dlg_cl = CreatelineflDialog()
         self.dlg_sw = CreatelineswDialog()
-        self.dlg_at = AssigntgebDialog()
+        self.dlg_ul = UpdateLinksDialog()
         self.dlg_mg = ManagegroupsDialog()
 
         # Anfang Eigene Funktionen -------------------------------------------------
@@ -148,6 +150,13 @@ class LinkFl:
             icon_createlinesw_path, 
             text=self.tr(u'Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen'), 
             callback=self.run_createlinesw, 
+            parent=self.iface.mainWindow())
+
+        icon_updatelinks_path = ':/plugins/qkan/linkflaechen/resources/icon_updatelinks.png'
+        Dummy.instance.add_action(
+            icon_updatelinks_path, 
+            text=self.tr(u'Verknüpfungen bereinigen'), 
+            callback=self.run_updatelinks, 
             parent=self.iface.mainWindow())
 
         icon_managegroups_path = ':/plugins/qkan/linkflaechen/resources/icon_managegroups.png'
@@ -491,14 +500,14 @@ class LinkFl:
         if 'suchradius' in self.config:
             suchradius = self.config['suchradius']
         else:
-            suchradius = 50.
+            suchradius = u'50'
         self.dlg_cl.tf_suchradius.setText(str(suchradius))
 
         # Mindestflächengröße
         if 'mindestflaeche' in self.config:
             mindestflaeche = self.config['mindestflaeche']
         else:
-            mindestflaeche = 0.5
+            mindestflaeche = u'0.5'
         self.dlg_cl.tf_mindestflaeche.setText(str(mindestflaeche))
 
         # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
@@ -684,15 +693,8 @@ class LinkFl:
         if 'suchradius' in self.config:
             suchradius = self.config['suchradius']
         else:
-            suchradius = 50.
+            suchradius = u'50'
         self.dlg_sw.tf_suchradius.setText(str(suchradius))
-
-        # Mindestflächengröße
-        if 'mindestflaeche' in self.config:
-            mindestflaeche = self.config['mindestflaeche']
-        else:
-            mindestflaeche = 0.5
-        self.dlg_sw.tf_mindestflaeche.setText(str(mindestflaeche))
 
         # Haltungen direkt in einleit eintragen. Es kann wegen der längeren Zeitdauer sinnvoll
         # sein, dies erst am Schluss der Bearbeitung in einem eigenen Vorgang zu machen.
@@ -713,18 +715,18 @@ class LinkFl:
 
             # Start der Verarbeitung
 
+            # Inhalte aus Formular lesen
+            suchradius = self.dlg_sw.tf_suchradius.text()
+
             # Abrufen der ausgewählten Elemente in beiden Listen
 
             liste_hal_entw = self.listselecteditems(self.dlg_sw.lw_hal_entw)
             liste_teilgebiete = self.listselecteditems(self.dlg_sw.lw_teilgebiete)
-            suchradius = self.dlg_sw.tf_suchradius.text()
-            mindestflaeche = self.dlg_sw.tf_mindestflaeche.text()
 
 
             # Konfigurationsdaten schreiben
 
             self.config['suchradius'] = suchradius
-            self.config['mindestflaeche'] = mindestflaeche
             self.config['liste_hal_entw'] = liste_hal_entw
 
             self.config['liste_teilgebiete'] = liste_teilgebiete
@@ -735,7 +737,7 @@ class LinkFl:
 
             # Start der Verarbeitung
 
-            createlinksw(self.dbQK, liste_teilgebiete, suchradius, mindestflaeche, epsg)
+            createlinksw(self.dbQK, liste_teilgebiete, suchradius, epsg)
 
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
@@ -872,6 +874,7 @@ class LinkFl:
                 return False
 
             autokorrektur = self.dlg_at.cb_autokorrektur.isChecked()
+            bufferradius = self.dlg_at.tf_bufferradius.text()
 
             # config schreiben
 
@@ -952,7 +955,77 @@ class LinkFl:
             # Start der Verarbeitung
             # Nur Formular schließen
 
-        # --------------------------------------------------------------------------
+        # ----------------------------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
 
         del self.dbQK
+
+
+    # ----------------------------------------------------------------------------------------------
+    # Logischen Cache der Verknüpfungen aktualisieren
+
+    def run_updatelinks(self):
+        '''Aktualisieren des logischen Verknüpfungscaches in linkfl und linksw'''
+
+        # Check, ob die relevanten Layer nicht editable sind.
+        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'einzugsgebiete', 
+                 u'einleit'} & get_editable_layers()) > 0:
+            iface.messageBar().pushMessage(u"Bedienerfehler: ", 
+                   u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
+                   level=QgsMessageBar.CRITICAL)
+            return False
+
+        database_QKan = u''
+
+        database_QKan, epsg = get_database_QKan()
+        if not database_QKan:
+            fehlermeldung(u"Fehler in k_link", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error(u"k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            return False
+
+        # Datenbankverbindung für Abfragen
+        self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if self.dbQK is None:
+            fehlermeldung(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+            iface.messageBar().pushMessage(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+                database_QKan), level=QgsMessageBar.CRITICAL)
+            return False
+
+        self.dlg_ul.tf_qkDB.setText(database_QKan)
+
+        # Festlegung des Fangradius
+        if 'fangradius' in self.config:
+            fangradius = self.config['fangradius']
+        else:
+            fangradius = u'0'
+        self.dlg_ul.tf_fangradius.setText(fangradius)
+
+        # show the dialog
+        self.dlg_ul.show()
+        # Run the dialog event loop
+        result = self.dlg_ul.exec_()
+        # See if OK was pressed
+        if result:
+
+            # Inhalte aus Formular lesen
+            fangradius = self.dlg_ul.tf_fangradius.text()
+
+            # config schreiben
+            self.config['fangradius'] = fangradius
+
+            with open(self.configfil, 'w') as fileconfig:
+                fileconfig.write(json.dumps(self.config))
+
+            # Start der Verarbeitung
+
+            if self.dlg_ul.cb_linkfl.isChecked():
+                updatelinkfl(self.dbQK, fangradius)
+
+            if self.dlg_ul.cb_linksw.isChecked():
+                updatelinksw(self.dbQK, fangradius)
+
+        # ----------------------------------------------------------------------------------------------
+        # Datenbankverbindungen schliessen
+
+        del self.dbQK
+
