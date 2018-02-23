@@ -25,7 +25,6 @@ import os
 import shutil
 import time
 
-# from PyQt4.QtGui import QProgressBar
 from qgis.PyQt.QtGui import QProgressBar
 
 from qgis.core import QgsMessageLog
@@ -35,6 +34,7 @@ from qgis.utils import iface
 from qkan.database.dbfunc import DBConnection
 from qkan.database.fbfunc import FBConnection
 from qkan.database.qgis_utils import fortschritt, fehlermeldung, meldung, checknames
+from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 # Referenzlisten
 from qkan.database.reflists import abflusstypen
@@ -1020,68 +1020,11 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             del dbHE
             return False
 
-        # Um eine manuelle Plausibiliätsprüfung zu ermöglichen (ansonsten überflüssig!), werden
-        # die mit "linkfl" verknüpften Flächen und Haltungen in "linkfl" eingetragen. 
-
-        # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
-
-        sql = u"""WITH missing AS
-            (   SELECT lf.pk
-                FROM linkfl AS lf
-                LEFT JOIN flaechen AS fl
-                ON lf.flnam = fl.flnam
-                WHERE fl.pk IS NULL OR NOT within(StartPoint(lf.glink),fl.geom))
-            UPDATE linkfl SET flnam =
-            (   SELECT flnam
-                FROM flaechen AS fl
-                WHERE within(StartPoint(linkfl.glink),fl.geom))
-            WHERE linkfl.pk IN missing"""
-        logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
-
-        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_flaechenrw (1)'):
-            del dbHE
-            return False
-
-        # 2. Haltungen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
-
-        sql = u"""WITH missing AS
-            (   SELECT lf.pk
-                FROM linkfl AS lf
-                LEFT JOIN haltungen AS ha
-                ON lf.haltnam = ha.haltnam
-                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom))
-            UPDATE linkfl SET haltnam =
-            (   SELECT haltnam
-                FROM haltungen AS ha
-                WHERE intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
-            WHERE linkfl.pk IN missing"""
-        logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
-
-        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_flaechenrw (2)'):
-            del dbHE
-            return False
-
-        # 3. TEZG-Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl), nur für aufteilen = 'ja'
-
-        sql = u"""WITH missing AS
-            (   SELECT lf.pk
-                FROM linkfl AS lf
-                LEFT JOIN tezg AS tg
-                ON lf.flnam = tg.flnam
-                WHERE tg.pk IS NULL OR NOT within(StartPoint(lf.glink),tg.geom))
-            UPDATE linkfl SET tezgnam =
-            (   SELECT tg.flnam
-                FROM tezg AS tg
-                INNER JOIN (SELECT flnam FROM flaechen AS fl WHERE fl.aufteilen = 'ja') as fl
-                ON linkfl.flnam = fl.flnam
-                WHERE within(StartPoint(linkfl.glink),tg.geom))
-            WHERE linkfl.pk IN missing"""
-        logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
-
-        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_flaechenrw (3)'):
-            del dbHE
-            return False
-
+        if not updatelinkfl(dbQK, fangradius):
+            del dbHE            # Im Fehlerfall wird dbQK in updatelinkfl geschlossen. 
+            fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen', 
+                          u'Der logische Cache konnte nicht aktualisiert werden.')
+        
         # Vor dem Export: Prüfung, ob die Verknüpfungen in Ordnung sind
         # kommt in den nächsten Tagen
         # sql = u'''
@@ -1543,91 +1486,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             del dbHE
             return False
 
-        # Datenvorbereitung: Verknüpfung von Einleitpunkt zu Haltung wird durch Tabelle "linksw"
-        # repräsentiert. Diese Zuordnung wird zunächst in "einleit.haltnam" übertragen.
-
-        # Abfrage ist identisch in k_link.py vorhanden
-
-        # SpatialIndex anlegen
-        sql = u"SELECT CreateSpatialIndex('einleit','geom')"
-
-        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (1)'):
-            del dbHE
-            return False
-
-        # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
-
-        sql = u"""WITH missing AS
-            (   SELECT lf.pk
-                FROM linksw AS lf
-                LEFT JOIN einleit AS el
-                ON lf.elnam = el.elnam
-                WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(lf.glink),0.1),el.geom))
-            UPDATE linksw SET elnam =
-            (   SELECT elnam
-                FROM einleit AS el
-                WHERE contains(buffer(StartPoint(linksw.glink),0.1),el.geom))
-            WHERE linksw.pk IN missing"""
-
-        logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
-
-        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (2)'):
-            del dbHE
-            return False
-
-        # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
-
-        sql = u"""WITH missing AS
-            (   SELECT lf.pk
-                FROM linksw AS lf
-                LEFT JOIN haltungen AS ha
-                ON lf.haltnam = ha.haltnam
-                WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom))
-            UPDATE linksw SET haltnam =
-            (   SELECT haltnam
-                FROM haltungen AS ha
-                WHERE intersects(buffer(EndPoint(linksw.glink),0.1),ha.geom))
-            WHERE linksw.pk IN missing"""
-
-        logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
-
-        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (3)'):
-            del dbHE
-            return False
-
-        # 3. Haltungen in "einleit" eintragen (ohne Einschränkung auf auswahl)
-
-        # 3.1 Index erzeugen
-
-        sql = u"""CREATE INDEX IF NOT EXISTS ind_einleit_elnam ON einleit (elnam)"""
-
-        logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
-
-        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (4)'):
-            del dbHE
-            return False
-
-        # 3.2 Eintrag vornehmen
-
-        sql = u"""WITH missing AS
-            (   SELECT el.pk
-                FROM einleit AS el
-                INNER JOIN linksw AS lf
-                ON el.elnam = lf.elnam
-                WHERE (el.haltnam IS NULL AND lf.haltnam IS NOT NULL) OR el.haltnam <> lf.haltnam)
-            UPDATE einleit SET haltnam =
-            (   SELECT haltnam
-                FROM linksw AS lf
-                WHERE einleit.elnam = lf.elnam)
-            WHERE einleit.pk IN missing"""
-
-        logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
-
-        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einleitdirekt (5)'):
-            del dbHE
-            return False
-
-        dbQK.commit()
+        if not updatelinksw(dbQK, fangradius):
+            del dbHE            # Im Fehlerfall wird dbQK in updatelinkfl geschlossen. 
+            fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen', 
+                          u'Der logische Cache konnte nicht aktualisiert werden.')
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
 
