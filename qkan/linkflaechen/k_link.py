@@ -37,14 +37,10 @@ from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-# Progress bar
-# from qgis.PyQt.QtGui import *
-# from qgis.PyQt.QtWidgets import *
-
-# from PyQt4.QtGui import QProgressBar
 from qgis.PyQt.QtGui import QProgressBar
 
 from qkan.database.qgis_utils import fehlermeldung, checknames
+from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 logger = logging.getLogger(u'QKan')
 
@@ -55,7 +51,7 @@ progress_bar = None
 
 def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 liste_teilgebiete, autokorrektur, suchradius=50, mindestflaeche=0.5, bezug_abstand=u'kante', 
-                epsg=u'25832', fangradius=0.1, dbtyp=u'SpatiaLite'):
+                epsg=u'25832', dbtyp=u'SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :dbQK: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -76,12 +72,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     :mindestflaeche: Mindestflächengröße bei Einzelflächen und Teilflächenstücken
     :type mindestflaeche: Real
     
-    :bezug_abstand: Bestimmt, ob in der SQL-Abfrage der Mittelpunkt oder die nächste Kante der Fläche
-                    berücksichtigt wird
-    :type fangradius: Real
-
-    :fangradius: Suchradius für den Endpunkt in der SQL-Abfrage
-    :type fangradius: Real
+    :bezug_abstand: Bestimmt, ob in der SQL-Abfrage der Mittelpunkt oder die 
+                    nächste Kante der Fläche berücksichtigt wird
+    :type bezug_abstand: String
 
     :epsg: Nummer des Projektionssystems
     :type epsg: String
@@ -125,6 +118,17 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         del dbQK
         return False
 
+    progress_bar.setValue(5)
+
+    # Aktualisierung des logischen Cache
+
+    if not updatelinkfl(dbQK):
+        fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen', 
+                      u'Der logische Cache konnte nicht aktualisiert werden.')
+        return False
+
+    progress_bar.setValue(20)
+
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
     if len(liste_flaechen_abflussparam) == 0:
         auswahl = ''
@@ -143,41 +147,36 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     if not dbQK.sql(sqlindex, u'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
         return False
 
-    sql = u"""WITH flges AS (
+    sql = u"""WITH linkadd AS (
                 SELECT
-                    flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
+                    linkfl.pk AS lpk, flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
                     flaechen.geom
                 FROM flaechen
+                LEFT JOIN linkfl
+                ON linkfl.flnam = flaechen.flnam
                 WHERE (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL){auswahl}
                 UNION
                 SELECT
-                    flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
+                    linkfl.pk AS lpk, flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
                     CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
                 FROM flaechen
                 INNER JOIN tezg
                 ON intersects(flaechen.geom,tezg.geom)
-                WHERE tezg.ROWID IN (
-                    SELECT ROWID FROM SpatialIndex
-                    WHERE f_table_name = 'tezg' AND
-                        search_frame = flaechen.geom) AND 
-                flaechen.aufteilen = 'ja'{auswahl})
+                LEFT JOIN linkfl
+                ON linkfl.flnam = flaechen.flnam AND linkfl.tezgnam = tezg.flnam
+                WHERE flaechen.aufteilen = 'ja'{auswahl})
             INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
-            SELECT flges.flnam, flges.aufteilen, flges.teilgebiet, flges.geom
-            FROM flges
-            LEFT JOIN linkfl
-            ON within(StartPoint(linkfl.glink),flges.geom)
-            WHERE linkfl.pk IS NULL AND flges.geom > {minfl}""".format(auswahl=auswahl, minfl=mindestflaeche)
-
-    # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
+            SELECT flnam, aufteilen, teilgebiet, geom
+            FROM linkadd
+            WHERE lpk IS NULL AND geom > {minfl}""".format(auswahl=auswahl, minfl=mindestflaeche)
 
     if not dbQK.sql(sql, u"QKan_LinkFlaechen (4a)"):
         return False
 
-    progress_bar.setValue(20)
+    progress_bar.setValue(60)
 
     # Jetzt werden die Flächenobjekte mit einem Buffer erweitert und jeweils neu 
     # hinzugekommmene mögliche Zuordnungen eingetragen.
-    # Wenn das Attribut "haltnam" vergeben ist, gilt die Fläche als zugeordnet.
 
     sql = u"""UPDATE linkfl SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linkfl.glink IS NULL""".format(
         suchradius)
@@ -200,9 +199,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         auswlinkfl = u" AND  linkfl.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
 
     if bezug_abstand == 'mittelpunkt':
-        bezug = u'fl.geom'
+        bezug = u'lf.geom'
     else:
-        bezug = u'PointonSurface(fl.geom)'
+        bezug = u'PointonSurface(lf.geom)'
 
     # Erläuterung zur nachfolgenden SQL-Abfrage:
     # tlink enthält alle potenziellen Verbindungen zwischen Flächen und Haltungen mit der jeweiligen Entfernung
@@ -218,32 +217,30 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         return False
 
     sql = u"""WITH tlink AS
-            (	SELECT fl.pk AS pk,
+            (	SELECT lf.pk AS pk,
+                    ha.haltnam, 
                     Distance(ha.geom,{bezug}) AS dist, 
-                    ha.geom AS geohal, fl.geom AS geofl
+                    ha.geom AS geohal, lf.geom AS geolf
                 FROM
                     haltungen AS ha
                 INNER JOIN
-                    linkfl AS fl
-                ON Intersects(ha.geom,fl.gbuf)
-                WHERE fl.glink IS NULL AND ha.ROWID IN
-                (   SELECT ROWID FROM SpatialIndex WHERE
-                    f_table_name = 'haltungen' AND
-                    search_frame = fl.gbuf){auswha})
-            UPDATE linkfl SET glink =  
-            (SELECT MakeLine(PointOnSurface(t1.geofl),Centroid(t1.geohal))
-            FROM tlink AS t1
-            INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
-            ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
-            WHERE linkfl.pk = t1.pk)
+                    linkfl AS lf
+                ON Intersects(ha.geom,lf.gbuf)
+                WHERE lf.glink IS NULL{auswha})
+            UPDATE linkfl SET (glink, haltnam) =  
+            (   SELECT MakeLine(PointOnSurface(t1.geolf),Centroid(t1.geohal)), t1.haltnam
+                FROM tlink AS t1
+                INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
+                ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
+                WHERE linkfl.pk = t1.pk)
             WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, auswha=auswha, auswlinkfl=auswlinkfl)
 
-    # logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
+    logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
     if not dbQK.sql(sql, u"createlinkfl (5)"):
         return False
 
-    progress_bar.setValue(40)
+    progress_bar.setValue(80)
 
     # Löschen der Datensätze in linkfl, bei denen keine Verbindung erstellt wurde, weil die 
     # nächste Haltung zu weit entfernt ist.
@@ -253,92 +250,13 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     if not dbQK.sql(sql, u"QKan_LinkFlaechen (7)"):
         return False
 
-    # Verknüpfen von linkfl mit Haltungen, Flächen und tezg-Flächen. Dabei wird die Auswahl berücksichtigt, 
-    # um die Abfrage zu beschleunigen. 
+    # Aktualisierung des logischen Cache
 
-    # 1. Flächen in "linkfl" eintragen
-
-    # Nur ausgewählte Flächen
-    if len(liste_hal_entw) == 0:
-        auswfl = ''
-    else:
-        auswfl = u"fl.teilgebiet in ('{}') AND ".format(u"', '".join(liste_teilgebiete))
-
-    sql = u"""WITH missing AS
-        (   SELECT lf.pk
-            FROM linkfl AS lf
-            LEFT JOIN flaechen AS fl
-            ON lf.flnam = fl.flnam
-            WHERE {auswfl}(fl.pk IS NULL OR NOT within(StartPoint(lf.glink),fl.geom)))
-        UPDATE linkfl SET flnam =
-        (   SELECT flnam
-            FROM flaechen AS fl
-            WHERE within(StartPoint(linkfl.glink),fl.geom))
-        WHERE linkfl.pk IN missing""".format(auswfl=auswfl)
-    # logger.debug(u'Eintragen der verknüpften Flächen in linkfl: \n{}'.format(sql))
-
-    if not dbQK.sql(sql, u"QKan_LinkFlaechen (24)"):
+    if not updatelinkfl(dbQK):
+        fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen', 
+                      u'Der logische Cache konnte nicht aktualisiert werden.')
         return False
-
-    progress_bar.setValue(60)
-
-    # 2. Haltungen in "linkfl" eintragen
-
-    # Nur ausgewählte Haltungen
-    if len(liste_hal_entw) == 0:
-        auswha = ''
-    else:
-        auswha = u"ha.teilgebiet in ('{}') AND ".format(u"', '".join(liste_teilgebiete))
-
-    if len(liste_hal_entw) <> 0:
-        auswha += u"ha.entwart in ('{}') AND ".format(u"', '".join(liste_hal_entw))
-
-    sql = u"""WITH missing AS
-        (   SELECT lf.pk
-            FROM linkfl AS lf
-            LEFT JOIN haltungen AS ha
-            ON lf.haltnam = ha.haltnam
-            WHERE {auswha}(ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom)))
-        UPDATE linkfl SET haltnam =
-        (   SELECT haltnam
-            FROM haltungen AS ha
-            WHERE intersects(buffer(EndPoint(linkfl.glink),0.1),ha.geom))
-        WHERE linkfl.pk IN missing""".format(auswha=auswha)
-    # logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
-
-    if not dbQK.sql(sql, u"QKan_LinkFlaechen (25)"):
-        return False
-
-    progress_bar.setValue(80)
-
-        # 3. TEZG-Flächen in "linkfl" eintragen, nur für aufteilen = 'ja'
-
-    # Nur ausgewählte tezg-Flächen
-    if len(liste_hal_entw) == 0:
-        auswtg = ''
-    else:
-        auswtg = u"tg.teilgebiet in ('{}') AND ".format(u"', '".join(liste_teilgebiete))
-
-    sql = u"""WITH missing AS
-        (   SELECT lf.pk
-            FROM linkfl AS lf
-            LEFT JOIN tezg AS tg
-            ON lf.flnam = tg.flnam
-            WHERE {auswtg}(tg.pk IS NULL OR NOT within(StartPoint(lf.glink),tg.geom)))
-        UPDATE linkfl SET tezgnam =
-        (   SELECT tg.flnam
-            FROM tezg AS tg
-            INNER JOIN (SELECT flnam FROM flaechen WHERE aufteilen = 'ja') as fl
-            ON linkfl.flnam = fl.flnam
-            WHERE within(StartPoint(linkfl.glink),tg.geom))
-        WHERE linkfl.pk IN missing""".format(auswtg=auswtg)
-    # logger.debug(u'Eintragen der verknüpften Haltungen in linkfl: \n{}'.format(sql))
-
-    if not dbQK.sql(sql, u"QKan_LinkFlaechen (26)"):
-        return False
-
-    dbQK.commit()
-
+        
     progress_bar.setValue(100)
     status_message.setText(u"Fertig!")
     status_message.setLevel(QgsMessageBar.SUCCESS)
@@ -356,7 +274,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 # ------------------------------------------------------------------------------
 # Erzeugung der graphischen Verknüpfungen für Direkteinleitungen
 
-def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradius=0.1,
+def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
                  dbtyp=u'SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -368,9 +286,6 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
 
     :suchradius: Suchradius in der SQL-Abfrage
     :type suchradius: Real
-
-    :fangradius: Suchradius für den Endpunkt in der SQL-Abfrage
-    :type fangradius: Real
 
     :epsg: Nummer des Projektionssystems
     :type epsg: String
@@ -401,6 +316,13 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
             u"Verknüpfungen zwischen Einleitpunkten und Haltungen werden hergestellt. Bitte warten...")
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+
+    # Aktualisierung des logischen Cache
+
+    if not updatelinksw(dbQK):
+        fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen', 
+                      u'Der logische Cache konnte nicht aktualisiert werden.')
+        return False
 
     if len(liste_teilgebiete) != 0:
         auswahl = u" AND einleit.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
@@ -491,63 +413,12 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832', fangradi
     if not dbQK.sql(sql, u"QKan_LinkSW (7)"):
         return False
 
-    # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
+    # Aktualisierung des logischen Cache
 
-    # Nur ausgewählte Haltungen
-    if len(liste_hal_entw) == 0:
-        auswel = ''
-    else:
-        auswel = u"el.teilgebiet in ('{}') AND ".format(u"', '".join(liste_teilgebiete))
-
-    sql = u"""WITH missing AS
-        (   SELECT lf.pk
-            FROM linksw AS lf
-            LEFT JOIN einleit AS el
-            ON lf.elnam = el.elnam
-            WHERE {auswel}(el.pk IS NULL OR NOT contains(buffer(StartPoint(lf.glink),0.1),el.geom)))
-        UPDATE linksw SET elnam =
-        (   SELECT elnam
-            FROM einleit AS el
-            WHERE contains(buffer(StartPoint(linksw.glink),0.1),el.geom))
-        WHERE linksw.pk IN missing""".format(auswel=auswel)
-
-    # logger.debug(u'\nSQL-4a:\n{}\n'.format(sql))
-
-    if not dbQK.sql(sql, u"QKan.k_qkhe (4a)"):
+    if not updatelinksw(dbQK):
+        fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen', 
+                      u'Der logische Cache konnte nicht aktualisiert werden.')
         return False
-
-    progress_bar.setValue(75)
-
-    # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
-
-    # Nur ausgewählte Haltungen
-
-    if len(liste_hal_entw) == 0:
-        auswha = ''
-    else:
-        auswha = u"ha.teilgebiet in ('{}') AND ".format(u"', '".join(liste_teilgebiete))
-
-    if len(liste_hal_entw) <> 0:
-        auswha += u"ha.entwart in ('{}') AND ".format(u"', '".join(liste_hal_entw))
-
-    sql = u"""WITH missing AS
-        (   SELECT lf.pk
-            FROM linksw AS lf
-            LEFT JOIN haltungen AS ha
-            ON lf.haltnam = ha.haltnam
-            WHERE {auswha}(ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),0.1),ha.geom)))
-        UPDATE linksw SET haltnam =
-        (   SELECT haltnam
-            FROM haltungen AS ha
-            WHERE intersects(buffer(EndPoint(linksw.glink),0.1),ha.geom))
-        WHERE linksw.pk IN missing""".format(auswha=auswha)
-
-    # logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
-
-    if not dbQK.sql(sql, u"QKan.k_link (4b)"):
-        return False
-
-    dbQK.commit()
 
     progress_bar.setValue(100)
     status_message.setText(u"Fertig!")

@@ -25,6 +25,22 @@ import os
 
 from PyQt4 import QtGui, uic
 
+FORM_CLASS_assigntgeb, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'resources', 'application_assigntgeb.ui'))
+
+
+class AssigntgebDialog(QtGui.QDialog, FORM_CLASS_assigntgeb):
+    def __init__(self, parent=None):
+        """Constructor."""
+        super(AssigntgebDialog, self).__init__(parent)
+        # Set up the user interface from Designer.
+        # After setupUI you can access any designer object by doing
+        # self.<objectname>, and you can use autoconnect slots - see
+        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
+        # #widgets-and-dialogs-with-auto-connect
+        self.setupUi(self)
+
+
 FORM_CLASS_createlinefl, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'resources', 'application_createlinefl.ui'))
 
@@ -57,14 +73,14 @@ class CreatelineswDialog(QtGui.QDialog, FORM_CLASS_createlinesw):
         self.setupUi(self)
 
 
-FORM_CLASS_assigntgeb, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'resources', 'application_assigntgeb.ui'))
+FORM_CLASS_updatelinks, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'resources', 'application_updatelinks.ui'))
 
 
-class AssigntgebDialog(QtGui.QDialog, FORM_CLASS_assigntgeb):
+class UpdateLinksDialog(QtGui.QDialog, FORM_CLASS_updatelinks):
     def __init__(self, parent=None):
         """Constructor."""
-        super(AssigntgebDialog, self).__init__(parent)
+        super(UpdateLinksDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
