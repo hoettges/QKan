@@ -40,7 +40,7 @@ from qgis_utils import fortschritt, fehlermeldung
 logger = logging.getLogger(u'QKan')
 
 
-def createdbtables(consl, cursl, version='2.3.3', epsg=25832):
+def createdbtables(consl, cursl, version='2.3.4', epsg=25832):
     ''' Erstellt fuer eine neue QKan-Datenbank die zum Import aus Hystem-Extran
         benötigten Referenztabellen.
 
