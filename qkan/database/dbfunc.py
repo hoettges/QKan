@@ -78,7 +78,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.3.2'
+        self.actversion = '2.3.3'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
         if dbname is not None:
@@ -163,12 +163,12 @@ class DBConnection:
         lattr = [el[1] for el in daten]
         return lattr
 
-    def sql(self, sql, errormessage = u'allgemein', transaction=False):
+    def sql(self, sql, errormessage = u'allgemein', repeatmessage=False, transaction=False):
         """Fuehrt eine SQL-Abfrage aus."""
 
         try:
             self.cursl.execute(sql)
-            if self.sqltext == errormessage:
+            if self.sqltext == errormessage and not repeatmessage:
                 if (self.sqltime.now() - self.sqltime).seconds <2:
                     self.sqlcount += 1
                     return True
