@@ -130,14 +130,23 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     progress_bar.setValue(20)
 
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
+
+    lis_einf = ['']      # einfache Flächen. Erstes Element leer, damit beim join ' and ' schon am Anfang eingefügt wird
+    lis_teil = ['']      # aufzuteilende Flächen. Erstes Element leer, damit beim join ' and ' schon am Anfang eingefügt wird
+
     if len(liste_flaechen_abflussparam) == 0:
-        auswahl = ''
+        pass
         # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
     else:
-        auswahl = u" and flaechen.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam))
+        lis_einf.append(u"flaechen.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam)))
+        lis_teil = lis_einf[:]          # hier ist ein deepcopy notwendig!
 
     if len(liste_teilgebiete) != 0:
-        auswahl += u" and flaechen.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
+        lis_einf.append(u"flaechen.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
+        lis_teil.append(u"tezg.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
+
+    ausw_einf = ' and '.join(lis_einf)
+    ausw_teil = ' and '.join(lis_teil)
 
     # Sowohl Flächen, die nicht als auch die, die verschnitten werden müssen
 
@@ -154,21 +163,21 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 FROM flaechen
                 LEFT JOIN linkfl
                 ON linkfl.flnam = flaechen.flnam
-                WHERE (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL){auswahl}
+                WHERE (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL){ausw_einf}
                 UNION
                 SELECT
-                    linkfl.pk AS lpk, flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
+                    linkfl.pk AS lpk, flaechen.flnam, flaechen.aufteilen, tezg.teilgebiet, 
                     CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
                 FROM flaechen
                 INNER JOIN tezg
                 ON intersects(flaechen.geom,tezg.geom)
                 LEFT JOIN linkfl
                 ON linkfl.flnam = flaechen.flnam AND linkfl.tezgnam = tezg.flnam
-                WHERE flaechen.aufteilen = 'ja'{auswahl})
+                WHERE flaechen.aufteilen = 'ja'{ausw_teil})
             INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
             SELECT flnam, aufteilen, teilgebiet, geom
             FROM linkadd
-            WHERE lpk IS NULL AND geom > {minfl}""".format(auswahl=auswahl, minfl=mindestflaeche)
+            WHERE lpk IS NULL AND geom > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
 
     if not dbQK.sql(sql, u"QKan_LinkFlaechen (4a)"):
         return False
