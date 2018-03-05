@@ -26,7 +26,7 @@ import os
 from PyQt4 import QtGui, uic
 
 FORM_CLASS_assigntgeb, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'resources', 'application_assigntgeb.ui'))
+    os.path.dirname(__file__), 'res', 'application_assigntgeb.ui'))
 
 
 class AssigntgebDialog(QtGui.QDialog, FORM_CLASS_assigntgeb):
@@ -42,7 +42,7 @@ class AssigntgebDialog(QtGui.QDialog, FORM_CLASS_assigntgeb):
 
 
 FORM_CLASS_createlinefl, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'resources', 'application_createlinefl.ui'))
+    os.path.dirname(__file__), 'res', 'application_createlinefl.ui'))
 
 
 class CreatelineflDialog(QtGui.QDialog, FORM_CLASS_createlinefl):
@@ -58,7 +58,7 @@ class CreatelineflDialog(QtGui.QDialog, FORM_CLASS_createlinefl):
 
 
 FORM_CLASS_createlinesw, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'resources', 'application_createlinesw.ui'))
+    os.path.dirname(__file__), 'res', 'application_createlinesw.ui'))
 
 
 class CreatelineswDialog(QtGui.QDialog, FORM_CLASS_createlinesw):
@@ -74,7 +74,7 @@ class CreatelineswDialog(QtGui.QDialog, FORM_CLASS_createlinesw):
 
 
 FORM_CLASS_updatelinks, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'resources', 'application_updatelinks.ui'))
+    os.path.dirname(__file__), 'res', 'application_updatelinks.ui'))
 
 
 class UpdateLinksDialog(QtGui.QDialog, FORM_CLASS_updatelinks):
@@ -90,7 +90,7 @@ class UpdateLinksDialog(QtGui.QDialog, FORM_CLASS_updatelinks):
 
 
 FORM_CLASS_managegroups, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'resources', 'application_managegroups.ui'))
+    os.path.dirname(__file__), 'res', 'application_managegroups.ui'))
 
 
 class ManagegroupsDialog(QtGui.QDialog, FORM_CLASS_managegroups):
