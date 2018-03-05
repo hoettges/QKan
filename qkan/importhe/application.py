@@ -33,12 +33,12 @@ from qkan.database.qgis_utils import get_database_QKan
 
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
+import resources
 from application_dialog import ImportFromHEDialog, ResultsFromHEDialog
 from import_from_he import importKanaldaten
 from results_from_he import importResults
 from qkan import Dummy
 # noinspection PyUnresolvedReferences
-import resources
 
 LOGGER = logging.getLogger(u'QKan')
 
@@ -133,14 +133,14 @@ class ImportFromHE:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_import_path = ':/plugins/qkan/importhe/resources/icon_import.png'
+        icon_import_path = ':/plugins/qkan/importhe/res/icon_import.png'
         Dummy.instance.add_action(
             icon_import_path,
             text=self.tr(u'Import aus Hystem-Extran'),
             callback=self.run_import,
             parent=self.iface.mainWindow())
 
-        icon_results_path = ':/plugins/qkan/importhe/resources/icon_results.png'
+        icon_results_path = ':/plugins/qkan/importhe/res/icon_results.png'
         Dummy.instance.add_action(
             icon_results_path,
             text=self.tr(u'Ergebnisse aus Hystem-Extran einlesen'),

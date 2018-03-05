@@ -131,35 +131,35 @@ class LinkFl:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_assigntgeb_path = ':/plugins/qkan/linkflaechen/resources/icon_assigntgeb.png'
+        icon_assigntgeb_path = ':/plugins/qkan/linkflaechen/res/icon_assigntgeb.png'
         Dummy.instance.add_action(
             icon_assigntgeb_path, 
             text=self.tr(u'Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen'), 
             callback=self.run_assigntgeb, 
             parent=self.iface.mainWindow())
 
-        icon_createlinefl_path = ':/plugins/qkan/linkflaechen/resources/icon_createlinefl.png'
+        icon_createlinefl_path = ':/plugins/qkan/linkflaechen/res/icon_createlinefl.png'
         Dummy.instance.add_action(
             icon_createlinefl_path, 
             text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'), 
             callback=self.run_createlinefl, 
             parent=self.iface.mainWindow())
 
-        icon_createlinesw_path = ':/plugins/qkan/linkflaechen/resources/icon_createlinesw.png'
+        icon_createlinesw_path = ':/plugins/qkan/linkflaechen/res/icon_createlinesw.png'
         Dummy.instance.add_action(
             icon_createlinesw_path, 
             text=self.tr(u'Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen'), 
             callback=self.run_createlinesw, 
             parent=self.iface.mainWindow())
 
-        icon_updatelinks_path = ':/plugins/qkan/linkflaechen/resources/icon_updatelinks.png'
+        icon_updatelinks_path = ':/plugins/qkan/linkflaechen/res/icon_updatelinks.png'
         Dummy.instance.add_action(
             icon_updatelinks_path, 
             text=self.tr(u'Verknüpfungen bereinigen'), 
             callback=self.run_updatelinks, 
             parent=self.iface.mainWindow())
 
-        icon_managegroups_path = ':/plugins/qkan/linkflaechen/resources/icon_managegroups.png'
+        icon_managegroups_path = ':/plugins/qkan/linkflaechen/res/icon_managegroups.png'
         Dummy.instance.add_action(
             icon_managegroups_path, 
             text=self.tr(u'Teilgebietszuordnungen als Gruppen verwalten'), 
@@ -193,11 +193,8 @@ class LinkFl:
 
         sql = u"""SELECT count(*) AS anzahl FROM flaechen
                 WHERE (aufteilen <> 'ja' OR aufteilen IS NULL){auswahl}""".format(auswahl=auswahl)
-        try:
-            self.dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen.countselectionfl (9) SQL-Fehler in SpatiaLite: \n", sql)
-            del self.dbQK
+
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.countselectionfl (1)"):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
@@ -210,11 +207,7 @@ class LinkFl:
         sql = u"""SELECT count(*) AS anzahl FROM flaechen
                 WHERE aufteilen = 'ja'{auswahl}""".format(auswahl=auswahl)
         logger.debug(u'sql Flaechen zu verschneiden:\n{}'.format(sql))
-        try:
-            self.dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen.countselectionfl (9) SQL-Fehler in SpatiaLite: \n", sql)
-            del self.dbQK
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.countselectionfl (2)"):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
@@ -235,11 +228,7 @@ class LinkFl:
                 auswahl += u" and haltungen.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
 
         sql = u"""SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(auswahl=auswahl)
-        try:
-            self.dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen.countselectionfl (10) SQL-Fehler in SpatiaLite: \n", sql)
-            del self.dbQK
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.countselectionfl (3)"):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
@@ -268,11 +257,7 @@ class LinkFl:
                 auswahl += u" and haltungen.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
 
         sql = u"""SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(auswahl=auswahl)
-        try:
-            self.dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen.countselectionsw (10) SQL-Fehler in SpatiaLite: \n", sql)
-            del self.dbQK
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.countselectionsw (1)"):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
@@ -288,11 +273,7 @@ class LinkFl:
             auswahl = u''
 
         sql = u"""SELECT count(*) AS anzahl FROM einleit{auswahl}""".format(auswahl=auswahl)
-        try:
-            self.dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen.countselectionsw (11) SQL-Fehler in SpatiaLite: \n", sql)
-            del self.dbQK
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.countselectionsw (2)"):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
@@ -325,7 +306,8 @@ class LinkFl:
         """Abfragen der Tabelle gruppen nach verwendeten vorhandenen Gruppen"""
 
         sql = u"""SELECT grnam FROM gruppen GROUP BY grnam"""
-        self.dbQK.sql(sql)
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.showgroups (1)"):
+            return False
         daten = self.dbQK.fetchall()
 
         self.dlg_mg.lw_gruppen.clear()
@@ -350,7 +332,8 @@ class LinkFl:
                 GROUP BY tabelle, teilgebiet
                 ORDER BY tabelle, teilgebiet
                 """.format(gruppe=self.gruppe)
-            self.dbQK.sql(sql)
+            if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.listGroupAttr (1)"):
+                return False
             daten = self.dbQK.fetchall()
             logger.debug(u'\ndaten: {}'.format(str(daten)))  # debug
             nzeilen = len(daten)
@@ -418,11 +401,7 @@ class LinkFl:
                 WHERE teilgebiet IS NOT NULL AND teilgebiet <> '' AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
-        try:
-            self.dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen (1) SQL-Fehler in SpatiaLite: \n", sql)
-            del self.dbQK
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen (1)"):
             return False
 
         sql = u"""INSERT INTO teilgebiete (tgnam)
@@ -430,18 +409,15 @@ class LinkFl:
                 WHERE teilgebiet IS NOT NULL AND teilgebiet <> '' AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
-        try:
-            self.dbQK.sql(sql)
-        except:
-            fehlermeldung(u"QKan_LinkFlaechen (1) SQL-Fehler in SpatiaLite: \n", sql)
-            del self.dbQK
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen (1)"):
             return False
 
         self.dbQK.commit()
 
         # Abfragen der Tabelle flaechen nach verwendeten Abflussparametern
         sql = u'SELECT abflussparameter FROM flaechen GROUP BY abflussparameter'
-        self.dbQK.sql(sql)
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinefl (1)"):
+            return False
         daten = self.dbQK.fetchall()
         # logger.debug(u'\ndaten: {}'.format(str(daten)))  # debug
         self.dlg_cl.lw_flaechen_abflussparam.clear()
@@ -460,7 +436,8 @@ class LinkFl:
 
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
         sql = u'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
-        self.dbQK.sql(sql)
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinefl (2)"):
+            return False
         daten = self.dbQK.fetchall()
         self.dlg_cl.lw_hal_entw.clear()
         for ielem, elem in enumerate(daten):
@@ -474,7 +451,8 @@ class LinkFl:
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-        self.dbQK.sql(sql)
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinefl (3)"):
+            return False
         daten = self.dbQK.fetchall()
         self.dlg_cl.lw_teilgebiete.clear()
         for ielem, elem in enumerate(daten):
@@ -637,11 +615,7 @@ class LinkFl:
                 WHERE teilgebiet IS NOT NULL AND teilgebiet <> '' AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
-        try:
-            self.dbQK.sql(sql)
-        except:
-            fehlermeldung(u"LinkFl.run_createlinesw (1) SQL-Fehler in SpatiaLite: \n", sql)
-            del self.dbQK
+        if not self.dbQK.sql(sql, u"LinkFl.run_createlinesw (1)"):
             return False
 
         sql = u"""INSERT INTO teilgebiete (tgnam)
@@ -649,11 +623,7 @@ class LinkFl:
                 WHERE teilgebiet IS NOT NULL AND teilgebiet <> '' AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
-        try:
-            self.dbQK.sql(sql)
-        except:
-            fehlermeldung(u"LinkFl.run_createlinesw (2) SQL-Fehler in SpatiaLite: \n", sql)
-            del self.dbQK
+        if not self.dbQK.sql(sql, u"LinkFl.run_createlinesw (2)"):
             return False
 
         self.dbQK.commit()
@@ -661,7 +631,8 @@ class LinkFl:
 
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
         sql = u'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
-        self.dbQK.sql(sql)
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinesw (1)"):
+            return False
         daten = self.dbQK.fetchall()
         self.dlg_sw.lw_hal_entw.clear()
         for ielem, elem in enumerate(daten):
@@ -675,7 +646,8 @@ class LinkFl:
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-        self.dbQK.sql(sql)
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinesw (2)"):
+            return False
         daten = self.dbQK.fetchall()
         self.dlg_sw.lw_teilgebiete.clear()
         for ielem, elem in enumerate(daten):
@@ -783,7 +755,7 @@ class LinkFl:
         """Öffnen des Formulars zur Zuordnung von Teilgebieten auf Haltungen und Flächen"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'teilgebiete', u'einzugsgebiete', 
+        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'tezg', 
                  u'einleit'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ", 
                    u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
@@ -821,7 +793,8 @@ class LinkFl:
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-        self.dbQK.sql(sql)
+        if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_assigntgeb (1)"):
+            return False
         daten = self.dbQK.fetchall()
         self.dlg_at.lw_teilgebiete.clear()
         for ielem, elem in enumerate(daten):
@@ -907,7 +880,7 @@ class LinkFl:
 
         # Check, ob die relevanten Layer nicht editable sind.
         if len({u'flaechen', u'haltungen', u'schaechte', u'linksw', u'einleit', 
-                 u'linkfl', u'teilgebiete', u'einzugsgebiete'} & get_editable_layers()) > 0:
+                 u'linkfl', u'teilgebiete', u'tezg'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                                            level=QgsMessageBar.CRITICAL)
@@ -968,7 +941,7 @@ class LinkFl:
         '''Aktualisieren des logischen Verknüpfungscaches in linkfl und linksw'''
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'einzugsgebiete', 
+        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'tezg', 
                  u'einleit'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ", 
                    u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
@@ -997,7 +970,7 @@ class LinkFl:
         if 'fangradius' in self.config:
             fangradius = self.config['fangradius']
         else:
-            fangradius = u'0'
+            fangradius = u'0.1'
         self.dlg_ul.tf_fangradius.setText(fangradius)
 
         # show the dialog

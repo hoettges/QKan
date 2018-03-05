@@ -51,6 +51,7 @@ class Dummy:
         from importhe import application as importhe
         from importdyna import application as importdyna
         from exporthe import application as exporthe
+        from exportdyna import application as exportdyna
         from ganglinienhe import application as ganglinienhe
         from linkflaechen import application as linkflaechen
         self.plugins = [
@@ -58,6 +59,7 @@ class Dummy:
             importhe.ImportFromHE(iface),
             importdyna.ImportFromDyna(iface),
             exporthe.ExportToHE(iface),
+            exportdyna.ExportToKP(iface),
             ganglinienhe.Application(iface),
             linkflaechen.LinkFl(iface)
         ]

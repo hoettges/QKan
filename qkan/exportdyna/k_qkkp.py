@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-  Export Kanaldaten nach HYSTEM-EXTRAN
+  Export Kanaldaten in eine DYNA-Datei (*.ein)
   ====================================
 
   Transfer von Kanaldaten aus einer QKan-Datenbank nach HYSTEM EXTRAN 7.6
@@ -36,23 +36,20 @@ from qkan.database.fbfunc import FBConnection
 from qkan.database.qgis_utils import fortschritt, fehlermeldung, meldung, checknames
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
-# Referenzlisten
-from qkan.database.reflists import abflusstypen
-
 
 logger = logging.getLogger('QKan')
 
 progress_bar = None
 
-def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autokorrektur, 
+def exportKanaldaten(iface, dynafile, template_dyna, dbQK, liste_teilgebiete, autokorrektur, 
                      fangradius=0.1, datenbanktyp=u'spatialite', check_export={}):
     '''Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE-Firebird-Datenbank.
 
-    :database_HE:           Pfad zur HE-Firebird-Datenbank
-    :type database_HE:      string
+    :dynafile:              Pfad zur HE-Firebird-Datenbank
+    :type dynafile:         string
 
-    :dbtemplate_HE:         Vorlage für die zu erstellende Firebird-Datenbank
-    :type dbtemplate_HE:    string
+    :template_dyna:         Vorlage für die zu erstellende Firebird-Datenbank
+    :type template_dyna:    string
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type dbQK:             DBConnection
@@ -65,15 +62,15 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                             abgebrochen.
     :type autokorrektur:    String
 
-    :fangradius:         Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine 
-                         Haltung bzw. ein Einleitpunkt zugeordnet wird. 
-    :type fangradius:    Float
+    :fangradius:            Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine 
+                            Haltung bzw. ein Einleitpunkt zugeordnet wird. 
+    :type fangradius:       Float
 
-    :datenbanktyp:       Typ der Datenbank (SpatiaLite, PostGIS)
-    :type datenbanktyp:  String
+    :datenbanktyp:          Typ der Datenbank (SpatiaLite, PostGIS)
+    :type datenbanktyp:     String
 
-    :check_export:       Liste von Export-Optionen
-    :type check_export:  Dictionary
+    :check_export:          Liste von Export-Optionen
+    :type check_export:     Dictionary
 
     :returns: void
     '''
@@ -86,34 +83,20 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
-    # Referenzliste der Abflusstypen für HYSTEM-EXTRAN
-    he_fltyp_ref = abflusstypen('he')
+    # DYNA-Vorlagedatei lesen. Dies geschieht zu Beginn, damit Zieldatei selbst Vorlage sein kann!
+    dynatemp = open(template_dyna).readlines()
 
-    # ITWH-Datenbank aus gewählter Vorlage kopieren
-    if os.path.exists(database_HE):
+    # DYNA-Datei löschen, falls schon vorhanden
+    if os.path.exists(dynafile):
         try:
-            os.remove(database_HE)
+            os.remove(dynafile)
         except BaseException as err:
-            fehlermeldung(u'Fehler (33) in QKan_Export', 
-                'Die HE-Datenbank ist schon vorhanden und kann nicht ersetzt werden: {}'.format(repr(err)))
+            fehlermeldung(u'Fehler (33) in QKan_ExportDYNA', 
+                'Die DYNA-Datei ist schon vorhanden und kann nicht ersetzt werden: {}'.format(repr(err)))
             return False
-    try:
-        shutil.copyfile(dbtemplate_HE, database_HE)
-    except BaseException as err:
-        fehlermeldung(u'Fehler (34) in QKan_Export', 
-            'Kopieren der Vorlage HE-Datenbank fehlgeschlagen: {}\nVorlage: {}\nZiel: {}\n'.format(repr(err), dbtemplate_HE, database_HE))
-        return False
-    fortschritt(u"Firebird-Datenbank aus Vorlage kopiert...", 0.01)
+
+    fortschritt(u"DYNA-Datei aus Vorlage kopiert...", 0.01)
     progress_bar.setValue(1)
-
-    # Verbindung zur Hystem-Extran-Datenbank
-
-    dbHE = FBConnection(database_HE)  # Datenbankobjekt der HE-Datenbank zum Schreiben
-
-    if dbHE is None:
-        fehlermeldung(u"(1) Fehler",
-                      u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_HE))
-        return None
 
     # --------------------------------------------------------------------------------------------------
     # Zur Abschaetzung der voraussichtlichen Laufzeit
@@ -131,14 +114,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
     fortschritt(u"Anzahl Flächen: {}".format(anzdata))
 
 
-    # --------------------------------------------------------------------------------------------
-    # Besonderes Gimmick des ITWH-Programmiers: Die IDs der Tabellen muessen sequentiell
-    # vergeben werden!!! Ein Grund ist, dass (u.a.?) die Tabelle "tabelleninhalte" mit verschiedenen
-    # Tabellen verknuepft ist und dieser ID eindeutig sein muss.
-
-    dbHE.sql(u"SELECT NEXTID FROM ITWH$PROGINFO")
-    nextid = int(dbHE.fetchone()[0])
-
+    
     # --------------------------------------------------------------------------------------------
     # Export der Schaechte
 

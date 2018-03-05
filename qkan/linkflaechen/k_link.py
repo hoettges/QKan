@@ -493,59 +493,59 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, buff
         auswahl_1 = ''
         auswahl_2 = ''
 
-        for table in tablist:
+    for table in tablist:
 
-            if auswahltyp == 'within':
-                if bufferradius == '0' or bufferradius.strip == '':
-                    sql = u"""
-                    UPDATE {table} SET teilgebiet = 
-                    (	SELECT teilgebiete.tgnam
-                        FROM teilgebiete
-                        INNER JOIN {table} AS tt
-                        ON within(tt.geom, teilgebiete.geom)
-                        WHERE tt.pk = {table}.pk{auswahl_1})
-                    WHERE {table}.pk IN
-                    (	SELECT {table}.pk
-                        FROM teilgebiete
-                        INNER JOIN {table}
-                        ON within({table}.geom, teilgebiete.geom){auswahl_2})
-                    """.format(table=table, bufferradius=bufferradius, auswahl_1=auswahl_1, auswahl_2=auswahl_2)
-                else:
-                    sql = u"""
-                    UPDATE {table} SET teilgebiet = 
-                    (	SELECT teilgebiete.tgnam
-                        FROM teilgebiete
-                        INNER JOIN {table} AS tt
-                        ON within(tt.geom, buffer(teilgebiete.geom, {bufferradius}))
-                        WHERE tt.pk = {table}.pk{auswahl_1})
-                    WHERE {table}.pk IN
-                    (	SELECT {table}.pk
-                        FROM teilgebiete
-                        INNER JOIN {table}
-                        ON within({table}.geom, buffer(teilgebiete.geom, {bufferradius})){auswahl_2})
-                    """.format(table=table, bufferradius=bufferradius, auswahl_1=auswahl_1, auswahl_2=auswahl_2)
-            elif auswahltyp == 'overlaps':
+        if auswahltyp == 'within':
+            if bufferradius == '0' or bufferradius.strip == '':
                 sql = u"""
                 UPDATE {table} SET teilgebiet = 
                 (	SELECT teilgebiete.tgnam
                     FROM teilgebiete
                     INNER JOIN {table} AS tt
-                    ON intersects(tt.geom,teilgebiete.geom)
+                    ON within(tt.geom, teilgebiete.geom)
                     WHERE tt.pk = {table}.pk{auswahl_1})
                 WHERE {table}.pk IN
                 (	SELECT {table}.pk
                     FROM teilgebiete
                     INNER JOIN {table}
-                    ON intersects({table}.geom,teilgebiete.geom){auswahl_2})
-                """.format(table=table, auswahl_1=auswahl_1, auswahl_2=auswahl_2)
+                    ON within({table}.geom, teilgebiete.geom){auswahl_2})
+                """.format(table=table, bufferradius=bufferradius, auswahl_1=auswahl_1, auswahl_2=auswahl_2)
             else:
-                fehlermeldung(u'Programmfehler', u'k_link.assigntgeb: auswahltyp hat unbekannten Fall {}'.format(str(auswahltyp)))
-                del dbQK
-                return False
+                sql = u"""
+                UPDATE {table} SET teilgebiet = 
+                (	SELECT teilgebiete.tgnam
+                    FROM teilgebiete
+                    INNER JOIN {table} AS tt
+                    ON within(tt.geom, buffer(teilgebiete.geom, {bufferradius}))
+                    WHERE tt.pk = {table}.pk{auswahl_1})
+                WHERE {table}.pk IN
+                (	SELECT {table}.pk
+                    FROM teilgebiete
+                    INNER JOIN {table}
+                    ON within({table}.geom, buffer(teilgebiete.geom, {bufferradius})){auswahl_2})
+                """.format(table=table, bufferradius=bufferradius, auswahl_1=auswahl_1, auswahl_2=auswahl_2)
+        elif auswahltyp == 'overlaps':
+            sql = u"""
+            UPDATE {table} SET teilgebiet = 
+            (	SELECT teilgebiete.tgnam
+                FROM teilgebiete
+                INNER JOIN {table} AS tt
+                ON intersects(tt.geom,teilgebiete.geom)
+                WHERE tt.pk = {table}.pk{auswahl_1})
+            WHERE {table}.pk IN
+            (	SELECT {table}.pk
+                FROM teilgebiete
+                INNER JOIN {table}
+                ON intersects({table}.geom,teilgebiete.geom){auswahl_2})
+            """.format(table=table, auswahl_1=auswahl_1, auswahl_2=auswahl_2)
+        else:
+            fehlermeldung(u'Programmfehler', u'k_link.assigntgeb: auswahltyp hat unbekannten Fall {}'.format(str(auswahltyp)))
+            del dbQK
+            return False
 
-            # logger.debug(u'\nSQL:\n{}\n'.format(sql))
-            if not dbQK.sql(sql, u"QKan.k_link.assigntgeb (8)"):
-                return False
+        # logger.debug(u'\nSQL:\n{}\n'.format(sql))
+        if not dbQK.sql(sql, u"QKan.k_link.assigntgeb (8)"):
+            return False
 
         dbQK.commit()
 

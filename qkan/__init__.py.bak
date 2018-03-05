@@ -49,12 +49,14 @@ class Dummy:
     def __init__(self, iface):
         from createunbeffl import application as createunbeffl
         from importhe import application as importhe
+        from importdyna import application as importdyna
         from exporthe import application as exporthe
         from ganglinienhe import application as ganglinienhe
         from linkflaechen import application as linkflaechen
         self.plugins = [
             createunbeffl.CreateUnbefFl(iface),
             importhe.ImportFromHE(iface),
+            importdyna.ImportFromDyna(iface),
             exporthe.ExportToHE(iface),
             ganglinienhe.Application(iface),
             linkflaechen.LinkFl(iface)
