@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/plugins/qkan/importhe" >
-        <file>resources/icon_import.png</file>
-        <file>resources/icon_results.png</file>
+        <file>res/icon_import.png</file>
+        <file>res/icon_results.png</file>
     </qresource>
 </RCC>
