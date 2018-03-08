@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/qkan/exportdyna" >
+        <file>resources/icon_qk2kp.png</file>
+    </qresource>
+</RCC>
