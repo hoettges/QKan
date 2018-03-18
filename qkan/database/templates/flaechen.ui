@@ -384,16 +384,6 @@
      <string>min</string>
     </property>
    </widget>
-   <widget class="QgsDateTimeEdit" name="createdat">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>120</y>
-      <width>141</width>
-      <height>23</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="aufteilen">
     <property name="geometry">
      <rect>
@@ -420,10 +410,26 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.3.6</string>
+     <string>Version 2.3.7</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QgsDateTimeEdit" name="createdat">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>120</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::DaySection</enum>
+    </property>
+    <property name="displayFormat">
+     <string>dd.MM.yyyy HH:mm</string>
     </property>
    </widget>
   </widget>
@@ -458,7 +464,6 @@
   <tabstop>kommentar</tabstop>
   <tabstop>haltnam</tabstop>
   <tabstop>teilgebiet</tabstop>
-  <tabstop>createdat</tabstop>
   <tabstop>fliesszeit</tabstop>
   <tabstop>fliesszeitkanal</tabstop>
  </tabstops>

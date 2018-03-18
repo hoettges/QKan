@@ -50,7 +50,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Ue-Beiwert</string>
+     <string>Überfallbeiwert</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_51">
@@ -247,7 +247,7 @@
      <rect>
       <x>110</x>
       <y>130</y>
-      <width>141</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -257,7 +257,7 @@
      <rect>
       <x>110</x>
       <y>160</y>
-      <width>141</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -267,7 +267,7 @@
      <rect>
       <x>110</x>
       <y>190</y>
-      <width>141</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -297,7 +297,7 @@
      <rect>
       <x>450</x>
       <y>130</y>
-      <width>141</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -307,7 +307,7 @@
      <rect>
       <x>450</x>
       <y>160</y>
-      <width>141</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -317,7 +317,7 @@
      <rect>
       <x>450</x>
       <y>100</y>
-      <width>141</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -352,16 +352,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QgsDateTimeEdit" name="createdat">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>220</y>
-      <width>141</width>
-      <height>23</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="lb_version">
     <property name="geometry">
      <rect>
@@ -375,10 +365,104 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.3.6</string>
+     <string>Version 2.3.7</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QgsDateTimeEdit" name="createdat">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>220</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::DaySection</enum>
+    </property>
+    <property name="displayFormat">
+     <string>dd.MM.yyyy HH:mm</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>130</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>mNHN</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>160</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>190</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>100</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>mNHN</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_13">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>130</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>mNHN</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>160</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m/s</string>
     </property>
    </widget>
   </widget>
@@ -414,7 +498,6 @@
   <tabstop>schieberhanf</tabstop>
   <tabstop>schiebergeschw</tabstop>
   <tabstop>aussentyp</tabstop>
-  <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>
