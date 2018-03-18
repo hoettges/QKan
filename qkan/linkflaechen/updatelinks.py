@@ -42,7 +42,7 @@ from qkan.database.qgis_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger(u'QKan')
 
-progress_bar = None
+# progress_bar = None
 
 def updatelinkfl(dbQK, radiusHal = u'0.1'):
     """Aktualisierung des logischen Cache für die Tabelle "linkfl"
@@ -64,15 +64,15 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
     """
 
     # Statusmeldung in der Anzeige
-    global progress_bar
-    progress_bar = QProgressBar(iface.messageBar())
-    progress_bar.setRange(0, 100)
-    status_message = iface.messageBar().createMessage(u"", 
-                    u"Bereinigung Flächenverknüpfungen in Arbeit. Bitte warten.")
-    status_message.layout().addWidget(progress_bar)
-    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+    # global progress_bar
+    # progress_bar = QProgressBar(iface.messageBar())
+    # progress_bar.setRange(0, 100)
+    # status_message = iface.messageBar().createMessage(u"", 
+                    # u"Bereinigung Flächenverknüpfungen in Arbeit. Bitte warten.")
+    # status_message.layout().addWidget(progress_bar)
+    # iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
-    progress_bar.setValue(1)
+    # progress_bar.setValue(1)
 
     # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
 
@@ -91,7 +91,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (1)'):
         return False
 
-    progress_bar.setValue(30)
+    # progress_bar.setValue(30)
 
     # 2. Haltungen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
 
@@ -110,7 +110,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (2)'):
         return False
 
-    progress_bar.setValue(65)
+    # progress_bar.setValue(65)
 
     # 3. TEZG-Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl), nur für aufteilen = 'ja'
 
@@ -134,9 +134,9 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
     dbQK.commit()
 
     fortschritt(u'Ende...', 1)
-    progress_bar.setValue(100)
-    status_message.setText(u"Bereinigung Flächenverknüpfungen abgeschlossen.")
-    status_message.setLevel(QgsMessageBar.SUCCESS)
+    # progress_bar.setValue(100)
+    # status_message.setText(u"Bereinigung Flächenverknüpfungen abgeschlossen.")
+    # status_message.setLevel(QgsMessageBar.SUCCESS)
 
     return True
 
@@ -146,15 +146,15 @@ def updatelinksw(dbQK, radiusHal = u'0.1'):
     # repräsentiert. Diese Zuordnung wird zunächst in "einleit.haltnam" übertragen.
 
     # Statusmeldung in der Anzeige
-    global progress_bar
-    progress_bar = QProgressBar(iface.messageBar())
-    progress_bar.setRange(0, 100)
-    status_message = iface.messageBar().createMessage(u"", 
-                u"Bereinigung Einzeleinleiter-Verknüpfungen in Arbeit. Bitte warten.")
-    status_message.layout().addWidget(progress_bar)
-    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+    # global progress_bar
+    # progress_bar = QProgressBar(iface.messageBar())
+    # progress_bar.setRange(0, 100)
+    # status_message = iface.messageBar().createMessage(u"", 
+                # u"Bereinigung Einzeleinleiter-Verknüpfungen in Arbeit. Bitte warten.")
+    # status_message.layout().addWidget(progress_bar)
+    # iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
-    progress_bar.setValue(1)
+    # progress_bar.setValue(1)
 
     # SpatialIndex anlegen
     sql = u"SELECT CreateSpatialIndex('einleit','geom')"
@@ -179,7 +179,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1'):
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (2)'):
         return False
 
-    progress_bar.setValue(30)
+    # progress_bar.setValue(30)
 
     # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
 
@@ -200,7 +200,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1'):
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (3)'):
         return False
 
-    progress_bar.setValue(60)
+    # progress_bar.setValue(60)
 
     # 3. Haltungen in "einleit" eintragen (ohne Einschränkung auf auswahl)
 
@@ -213,7 +213,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1'):
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (4)'):
         return False
 
-    progress_bar.setValue(80)
+    # progress_bar.setValue(80)
 
     # 3.2 Eintrag vornehmen
 
@@ -237,8 +237,8 @@ def updatelinksw(dbQK, radiusHal = u'0.1'):
     dbQK.commit()
 
     fortschritt(u'Ende...', 1)
-    progress_bar.setValue(100)
-    status_message.setText(u"Bereinigung Einzeleinleiter-Verknüpfungen abgeschlossen.")
-    status_message.setLevel(QgsMessageBar.SUCCESS)
+    # progress_bar.setValue(100)
+    # status_message.setText(u"Bereinigung Einzeleinleiter-Verknüpfungen abgeschlossen.")
+    # status_message.setLevel(QgsMessageBar.SUCCESS)
 
     return True

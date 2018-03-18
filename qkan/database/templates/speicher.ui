@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>636</width>
-    <height>420</height>
+    <height>418</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>m NhN</string>
+     <string>m NHN</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_11">
@@ -102,7 +102,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>m NhN</string>
+     <string>m NHN</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_9">
@@ -147,27 +147,14 @@
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>210</y>
+      <x>30</x>
+      <y>240</y>
       <width>81</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>Kommentar</string>
-    </property>
-   </widget>
-   <widget class="Line" name="line_2">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>220</y>
-      <width>631</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
     </property>
    </widget>
    <widget class="QLabel" name="label_20">
@@ -214,7 +201,7 @@
      <rect>
       <x>90</x>
       <y>20</y>
-      <width>511</width>
+      <width>151</width>
       <height>20</height>
      </rect>
     </property>
@@ -302,26 +289,6 @@
      <string>Straße</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="strasse">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>160</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QgsDateTimeEdit" name="createdat">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>190</y>
-      <width>141</width>
-      <height>23</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
@@ -361,10 +328,78 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.3.6</string>
+     <string>Version 2.3.7</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_21">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>20</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
+    </property>
+    <property name="text">
+     <string>Typ</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="schachttyp">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>20</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hier kann der Knotentyp geändert werden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Hier kann der Knotentyp geändert werden</string>
+    </property>
+    <property name="whatsThis">
+     <string>Hier kann der Knotentyp geändert werden</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="strasse">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>160</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QgsDateTimeEdit" name="createdat">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>190</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::DaySection</enum>
+    </property>
+    <property name="displayFormat">
+     <string>dd.MM.yyyy HH:mm</string>
     </property>
    </widget>
   </widget>
@@ -395,8 +430,6 @@
   <tabstop>ysch</tabstop>
   <tabstop>simstatus</tabstop>
   <tabstop>entwart</tabstop>
-  <tabstop>strasse</tabstop>
-  <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>
