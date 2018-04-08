@@ -78,7 +78,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.3.7'
+        self.actversion = '2.4.1'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
         if dbname is not None:
@@ -168,6 +168,8 @@ class DBConnection:
 
         try:
             self.cursl.execute(sql)
+
+            # Identische Protokollmeldungen werden für 2 Sekunden unterdrückt...
             if self.sqltext == errormessage and not repeatmessage:
                 if (self.sqltime.now() - self.sqltime).seconds <2:
                     self.sqlcount += 1
@@ -214,10 +216,19 @@ class DBConnection:
     # Versionskontrolle der QKan-Datenbank
 
     def version(self):
-        """Checks database version. Database is just connected by the calling procedure.
+        """Prüft die Version der Datenbank. 
 
             :returns: Anpassung erfolgreich: True = alles o.k.
             :rtype: logical
+            
+            Voraussetzungen: 
+             - Die aktuelle Datenbank ist bereits geöffnet. 
+
+            Die aktuelle Versionsnummer steht in der Datenbank: info.version
+            Diese wird mit dem Attribut self.actversion verglichen. Bei Differenz werden 
+            die nötigen Anpassungen vorgenommen und die Versionsnummer jeweils aktualisiert.
+            Falls Tabellenspalten umbenannt oder gelöscht wurden, wird eine Warnmeldung erzeugt
+            mit der Empfehlung, das aktuelle Projekt neu zu laden. 
         """
 
         logger.debug('0 - actversion = {}'.format(self.actversion))
@@ -249,7 +260,7 @@ class DBConnection:
         # ---------------------------------------------------------------------------------------------
         # Aktualisierung von Version 1.9.9 und früher
 
-        if versiondbQK == u'1.9.9':
+        if versiondbQK <= u'1.9.9':
 
             # Tabelle einwohner
             # sqllis = [u"""CREATE TABLE IF NOT EXISTS einwohner (
@@ -311,7 +322,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK == u'2.0.2':
+        if versiondbQK <= u'2.0.2':
 
             attrlis = self.attrlist(u'linksw')
             if not attrlis:
@@ -343,7 +354,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK == u'2.1.2':
+        if versiondbQK <= u'2.1.2':
             attrlis = self.attrlist(u'einleit')
             if not attrlis:
                 return False
@@ -387,7 +398,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK == u'2.2.0':
+        if versiondbQK <= u'2.2.0':
 
             attrlis = self.attrlist(u'flaechen')
             if not attrlis:
@@ -407,7 +418,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK == u'2.2.1':
+        if versiondbQK <= u'2.2.1':
 
             attrlis = self.attrlist(u'flaechen')
             if not attrlis:
@@ -427,7 +438,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK == u'2.2.2':
+        if versiondbQK <= u'2.2.2':
 
             global progress_bar
             progress_bar = QProgressBar(iface.messageBar())
@@ -740,6 +751,51 @@ class DBConnection:
             # Versionsnummer hochsetzen
 
             versiondbQK = u'2.2.3'
+
+
+        # ---------------------------------------------------------------------------------------------------------
+        if versiondbQK < u'2.4.1':
+
+            sql = u"""
+                CREATE TABLE IF NOT EXISTS dynahal (
+                    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                    haltnam TEXT,
+                    schoben TEXT,
+                    schunten TEXT,
+                    teilgebiet TEXT,
+                    kanalnummer TEXT,
+                    haltungsnummer TEXT,
+                    anzobob INTEGER,
+                    anzobun INTEGER,
+                    anzunun INTEGER,
+                    anzunob INTEGER)"""
+            if not self.sql(sql, u'dbfunc.version (2.4.1-1)'):
+                return False
+
+            # sql = u"""
+                # ALTER TABLE entwaesserungsarten ADD COLUMN kp_nr
+            # """
+            # if not self.sql(sql, u'dbfunc.version (2.4.1-2)'):
+                # return False
+
+            # sqllis = [u"""UPDATE entwaesserungsarten SET kp_nr = 0 WHERE bezeichnung = 'Mischwasser'""",
+                      # u"""UPDATE entwaesserungsarten SET kp_nr = 1 WHERE bezeichnung = 'Schmutzwasser'""",
+                      # u"""UPDATE entwaesserungsarten SET kp_nr = 2 WHERE bezeichnung = 'Regenwasser'"""]
+
+            # for sql in sqllis:
+                # if not self.sql(sql, u'dbfunc.version (2.4.1-3)'):
+                    # return False
+
+            self.commit()
+
+            sql = u"""UPDATE info SET value = '2.4.1' WHERE subject = 'version';"""
+            if not self.sql(sql, u'dbfunc.version (2.4.1-4)'):
+                return False
+
+            # Versionsnummer hochsetzen
+
+            versiondbQK = u'2.4.1'
+
 
 
         logger.debug('1 - versiondbQK = {}'.format(versiondbQK))

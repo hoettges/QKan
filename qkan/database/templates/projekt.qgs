@@ -1,6 +1,6 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
 <qgis projectname="QKan" version="2.18.16">
-  <title>QKan</title>
+  <title>QKan Version 2.4.1</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="">
@@ -809,7 +809,7 @@
           <column width="-1" hidden="0" type="field" name="tezgnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/anbindungflaechen.ui</editform>
+      <editform>./eingabemasken/anbindungflaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1141,7 +1141,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/anbindungeinleit.ui</editform>
+      <editform>./eingabemasken/anbindungeinleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1561,7 +1561,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/auslaesse.ui</editform>
+      <editform>./eingabemasken/auslaesse.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1713,7 +1713,7 @@ def my_form_open(dialog, layer, feature):
           <column width="267" hidden="0" type="field" name="apnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/abflussparameter.ui</editform>
+      <editform>./eingabemasken/abflussparameter.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1825,7 +1825,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/auslasstypen.ui</editform>
+      <editform>./eingabemasken/auslasstypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1956,7 +1956,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/bodenklassen.ui</editform>
+      <editform>./eingabemasken/bodenklassen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2316,7 +2316,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/einleit.ui</editform>
+      <editform>./eingabemasken/einleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2430,7 +2430,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/entwaesserungsarten.ui</editform>
+      <editform>./eingabemasken/entwaesserungsarten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -3036,7 +3036,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="abflusstyp"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/flaechen.ui</editform>
+      <editform>./eingabemasken/flaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -3832,7 +3832,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/haltungen.ui</editform>
+      <editform>./eingabemasken/haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -4307,7 +4307,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/haltungen.ui</editform>
+      <editform>./eingabemasken/haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -4425,7 +4425,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/profildaten.ui</editform>
+      <editform>./eingabemasken/profildaten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -4530,7 +4530,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/profile.ui</editform>
+      <editform>./eingabemasken/profile.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -4975,7 +4975,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="pnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/pumpen.ui</editform>
+      <editform>./eingabemasken/pumpen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5078,7 +5078,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/pumpentypen.ui</editform>
+      <editform>./eingabemasken/pumpentypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5488,7 +5488,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/schaechte.ui</editform>
+      <editform>./eingabemasken/schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -5921,7 +5921,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/schaechte.ui</editform>
+      <editform>./eingabemasken/schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -6521,7 +6521,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/schaechte.ui</editform>
+      <editform>./eingabemasken/schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -6954,7 +6954,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/speicher.ui</editform>
+      <editform>./eingabemasken/speicher.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7076,7 +7076,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/simulationsstatus.ui</editform>
+      <editform>./eingabemasken/simulationsstatus.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7177,7 +7177,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/speicherkennlinien.ui</editform>
+      <editform>./eingabemasken/speicherkennlinien.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7496,7 +7496,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="tgnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/teilgebiete.ui</editform>
+      <editform>./eingabemasken/teilgebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7835,7 +7835,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/tezg.ui</editform>
+      <editform>./eingabemasken/tezg.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8338,7 +8338,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="wnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../eingabemasken/wehre.ui</editform>
+      <editform>./eingabemasken/wehre.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>

@@ -40,7 +40,7 @@ from qgis_utils import fortschritt, fehlermeldung
 logger = logging.getLogger(u'QKan')
 
 
-def createdbtables(consl, cursl, version='2.3.7', epsg=25832):
+def createdbtables(consl, cursl, version='2.4.1', epsg=25832):
     ''' Erstellt fuer eine neue QKan-Datenbank die zum Import aus Hystem-Extran
         benötigten Referenztabellen.
 
@@ -880,6 +880,31 @@ def createdbtables(consl, cursl, version='2.3.7', epsg=25832):
         return False
     consl.commit()
 
+    # Hilfstabelle für den DYNA-Export -----------------------------------------
+
+    sql = u"""
+        CREATE TABLE IF NOT EXISTS dynahal (
+            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+            haltnam TEXT,
+            schoben TEXT,
+            schunten TEXT,
+            teilgebiet TEXT,
+            kanalnummer TEXT,
+            haltungsnummer TEXT,
+            anzobob INTEGER,
+            anzobun INTEGER,
+            anzunun INTEGER,
+            anzunob INTEGER)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Fehler beim Erzeugen der Tabelle "dynahal": .')
+        consl.close()
+        return False
+    consl.commit()
+    
     # Allgemeiner Informationen -----------------------------------------------
 
     sql = u'''CREATE TABLE info (
