@@ -503,7 +503,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>40</y>
+      <y>50</y>
       <width>291</width>
       <height>21</height>
      </rect>
@@ -540,7 +540,7 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatische Festlegung der DYNA-spezifischen Kanal- und Haltungsnummern. Bereits vorhandene Nummern werden überschrieben. Diese Option verändert nicht die Haltungsnamen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatische Festlegung der DYNA-spezifischen Kanal- und Haltungsnummern. Bereits vorhandene Nummern werden überschrieben. Diese Option verändert nicht die Haltungsnamen. &lt;/p&gt;&lt;p&gt;Ist die Option nicht aktiviert, wird versucht, Kanal- und Haltungsnummer aus dem Haltungsnamen zu ermitteln (KN(8) - HN(3)).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>Automatische Festlegung der DYNA-spezifischen Kanal- und Haltungsnummern. Bereits vorhandene Nummern werden überschrieben. Diese Option verändert nicht die Haltungsnamen.</string>

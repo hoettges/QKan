@@ -719,7 +719,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
         LEFT JOIN simulationsstatus
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
         LEFT JOIN entwaesserungsarten
-        ON dyna12.entwart_nr = entwaesserungsarten.kp_nr'''
+        ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
+        GROUP BY dyna12.schoben'''
 
     dbQK.sql(sql)
     daten = dbQK.fetchall()
@@ -797,8 +798,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
             dyna41.schnam as schnam,
             dyna41.xkoor as xsch, 
             dyna41.ykoor as ysch, 
-            dyna12.sohleoben as sohlhoehe, 
-            dyna12.deckeloben as deckelhoehe, 
+            dyna12.sohleunten as sohlhoehe, 
+            dyna41.deckelhoehe as deckelhoehe, 
             1000 as durchm, 
             0 as druckdicht, 
             entwaesserungsarten.bezeichnung as entwart, 
