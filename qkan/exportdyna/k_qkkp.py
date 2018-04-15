@@ -189,7 +189,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
             coalesce(h.sohleunten, su.sohlhoehe) AS sohleun,
             'O' AS material, 
             {sql_prof1}, 
-            h.hoehe AS profilhoehe, 
+            h.hoehe*1000. AS profilhoehe, 
             h.ks AS ks, 
             f.flbef AS flbef, 
             f.flges AS flges,
@@ -239,7 +239,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
         deckelhoehe_t = formf(deckelhoehe, 7)
         sohleob_t = formf(sohleob, 7)
         sohleun_t = formf(sohleun, 7)
-        profilhoehe_t = formf(profilhoehe, 4)
+        profilhoehe_t = '{:4d}'.format(int(profilhoehe))[:4]
         qzu_t = formf(qzu, 5)
         xob_t = formf(xob, 14)
         yob_t = formf(yob, 14)
@@ -438,7 +438,9 @@ def write16(dbQK, df, ausw_and, auswahl):
     ON han.schunten = s.schnam
     LEFT JOIN v_halab AS hab
     ON hab.schoben = s.schnam
-    WHERE anzab.anzahl <> 1 OR anzan.anzahl <> 1{ausw_and}{ausw_tab}{auswahl}
+    WHERE ((anzab.anzahl <> 1 OR anzab.anzahl IS NULL) OR
+           (anzan.anzahl <> 1 OR anzan.anzahl IS NULL) OR
+           (anzab.anzahl = 1 AND anzan.anzahl = 1 AND han.kanalnummer <> hab.kanalnummer)){ausw_and}{ausw_tab}{auswahl}
     ORDER BY s.schnam, han.kanalnummer, han.haltungsnummer
     """.format(ausw_and=ausw_and, ausw_tab=ausw_tab, auswahl=auswahl)
 
@@ -447,6 +449,8 @@ def write16(dbQK, df, ausw_and, auswahl):
 
     akt_schnam = ''             # Identifiziert Datensätze zum gleichen Knoten
     knotennr = 0                # Knotennummer
+    zeilan = ''
+    zeilab = ''
 
     for i, attr in enumerate(dbQK.fetchall()):
 
@@ -455,13 +459,16 @@ def write16(dbQK, df, ausw_and, auswahl):
 
         if schnam != akt_schnam:
             # Vorherigen Knoten schreiben. 
-            if i > 1: 
+            if i > 0: 
                 # Dies darf erst ab 2. gelesener Zeile geschehen...
 
                 df.write('{0:15s}{1:}{2:}\n'.format(zeilkn, zeilan, zeilab))
+                zeilan = ''
+                zeilab = ''
 
             # Nächsten Knoten initialisieren
 
+            akt_schnam = schnam
             knotennr += 1               # Knotennummer inkrementieren
             akt_i = i                   # Nummer aktualisieren
             # Datensatz Typ16 schreiben (Achtung: Letzter Datensatz wird nach Abschluss der Schleife geschrieben)
@@ -472,21 +479,24 @@ def write16(dbQK, df, ausw_and, auswahl):
             if an_anz > 0:
                 zeilan = ' 1{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
                         kanalnummer=an_kanalnummer, haltungsnummer=an_haltungsnummer)
-                zeilab = ''                 # Abgehende Haltungen zurücksetzen
             else:
                 zeilan = ''                 # Ankommende Haltungen zurücksetzen
-                if ab_anz > 0:
-                    zeilab = ' 2{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
-                            kanalnummer=ab_kanalnummer, haltungsnummer=ab_haltungsnummer)
-                else:
-                    logger.error(u'Fehler in k_qkkp.write16 (1):', 
-                                 u'Anzahl ankommende ({}) und abgehende ({}) Haltungen = 0?\n'.format(an_anz, ab_anz))
-                    return None
+
+            if ab_anz > 0:
+                zeilab = ' 2{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
+                        kanalnummer=ab_kanalnummer, haltungsnummer=ab_haltungsnummer)
+            else:
+                zeilab = ''                 # Abgehende Haltungen zurücksetzen
 
         else:
             # Folgedatensatz zum selben Knoten
-            akt_an = (i - akt_i) // an_anz               # Lfd. Nummer der ankommenden Haltung
-            akt_ab = (i - akt_i) % ab_anz
+
+            if ab_anz != 0:
+                akt_an = (i - akt_i) // ab_anz               # Lfd. Nummer der ankommenden Haltung
+                akt_ab = (i - akt_i) % ab_anz
+            else:
+                akt_an = 0
+                akt_ab = 0
 
             if akt_an == 0:
                 # abgehende Haltung übernehmen; nur im ersten Teilblock
@@ -557,7 +567,7 @@ def write41(dbQK, df, ausw_and, auswahl):
 
         df.write('41    {kanalnummer:>8s}{haltungsnummer:>3s}       '.format(
                     kanalnummer=kanalnummer, haltungsnummer=haltungsnummer) + \
-                '{deckelhoehe:7s}{xsch:14s}{ysch:14s}{schnam:>12s}'.format(
+                '{deckelhoehe:7s}{xsch:14s}{ysch:14s}{schnam:>12s}\n'.format(
                     deckelhoehe=deckelhoehe_t, xsch=xsch_t, ysch=ysch_t, schnam=schnam))
 
     return True
@@ -1058,7 +1068,8 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                         return False
                     typ16 = False
                     df.write(z)
-
+                elif z[6:8] != '  ':
+                    df.write(z)                             # Bauwerksverknüpfungen
             # Block Typ41
             elif typ41:
                 if z[:2] == '++':
