@@ -41,14 +41,14 @@ def fehlermeldung(title, text=''):
 
 # Allgemeine Funktionen
 
-def get_database_QKan():
+def get_database_QKan(silent = False):
     """Ermittlung der aktuellen QpatiaLite-Datenbank aus den geladenen Layern"""
     database_QKan = u''
     epsg = u''
     layers = iface.legendInterface().layers()
     # logger.debug(u'Layerliste erstellt')
-    if len(layers) == 0:
-        logger.error(u'Keine Layer vorhanden...')
+    logger.error(u'Keine Layer vorhanden...')
+    if len(layers) == 0 and not silent:
         iface.mainWindow().statusBar().clearMessage()
         iface.messageBar().pushMessage(u"Fehler: ", u"Kein QKan-Projekt geladen!", level=QgsMessageBar.CRITICAL)
         QgsMessageLog.logMessage(u"\nKein QKan-Projekt geladen!", level=QgsMessageLog.CRITICAL)
