@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import re
 
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
-
-import tempfile
-import os 
-import os.path
-from datetime import datetime as dt
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u'QKan')
@@ -60,19 +56,19 @@ def get_database_QKan():
         lyattr = {}
 
         # Attributstring für Layer splitten
-        for le in lay.source().split(u' '):
-            if u'=' in le:
-                key, value = le.split(u'=', 1)
-                lyattr[key] = value.strip(u'"').strip(u"'")
+        split = re.compile("['\"] ").split(lay.source())
+        for le in split:
+            if '=' in le:
+                key, value = le.split('=', 1)
+                lyattr[key] = value.strip('"').strip('\'')
 
         # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
-        if u'table' in lyattr and u'dbname' in lyattr:
-            if lyattr['table'] == u'flaechen':
-                if database_QKan == u'':
+        if 'table' in lyattr and 'dbname' in lyattr:
+            if lyattr['table'] == 'flaechen':
+                if database_QKan == '':
                     database_QKan = lyattr['dbname']
                     epsg = str(int(lay.crs().postgisSrid()))
                 elif database_QKan != lyattr['dbname']:
-                    database_QKan = u''
                     logger.warning(u'Abweichende Datenbankanbindung gefunden: {}'.format(lyattr['dbname']))
                     return False, False  # Im Projekt sind mehrere Sqlite-Datenbanken eingebungen...
     return database_QKan, epsg
