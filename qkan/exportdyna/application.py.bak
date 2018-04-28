@@ -413,7 +413,7 @@ class ExportToKP:
         elif dynabef_choice == u'tezg':
             self.dlg.rb_tezg.setChecked(True)
 
-        # Optionen zur Berechnung der befestigten Flächen
+        # Optionen zur Zuordnung des Profilschlüssels
         if 'dynaprof_choice' in self.config:
             dynaprof_choice = self.config['dynaprof_choice']
         else:
@@ -464,7 +464,7 @@ class ExportToKP:
             # Konfigurationsdaten schreiben
             self.config['dynafile'] = dynafile
             self.config['template_dyna'] = template_dyna
-            self.config['database_Qkan'] = database_Qkan
+            self.config['database_QKan'] = database_Qkan
             self.config['datenbanktyp'] = datenbanktyp
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['autokorrektur'] = autokorrektur

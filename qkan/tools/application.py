@@ -27,7 +27,7 @@ import os.path
 import site
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QListWidgetItem, QTableWidgetItem
+from PyQt4.QtGui import QFileDialog, QListWidgetItem, QTableWidgetItem
 from qgis.core import QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry, QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface, pluginDirectory
@@ -100,8 +100,6 @@ class QgsUpdate:
                 self.config = json.loads(fileconfig.read())
         else:
             self.config = {'epsg': '25832'}  # Projektionssystem
-            self.config['database_QKan'] = ''
-            self.config['projectfile'] = ''
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
@@ -144,37 +142,37 @@ class QgsUpdate:
     def selectFile_projectFile(self):
         """Zu erstellende Projektdatei festlegen"""
 
-        filename = QFileDialog.getSaveFileName(self.dlg,
+        filename = QFileDialog.getSaveFileName(self.dlg_pr,
                                                "Dateinamen der zu erstellenden Projektdatei eingeben",
                                                self.default_dir,
                                                "*.qgs")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-            self.dlg.tf_projectFile.setText(filename)
+            self.dlg_pr.tf_projectFile.setText(filename)
 
 
     def selectFile_qkanDB(self):
         """Anzubindende QKan-Datenbank festlegen"""
 
-        filename = QFileDialog.getOpenFileName(self.dlg,
+        filename = QFileDialog.getOpenFileName(self.dlg_pr,
                                                "QKan-Datenbank auswählen",
                                                self.default_dir,
                                                "*.sqlite")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-            self.dlg.tf_qkanDB.setText(filename)
+            self.dlg_pr.tf_qkanDB.setText(filename)
 
 
     def selectFile_projectTemplate(self):
         """DYNA (*.ein) -datei auswählen"""
 
-        filename = QFileDialog.getOpenFileName(self.dlg,
+        filename = QFileDialog.getOpenFileName(self.dlg_pr,
                                                "Vorlage für zu erstellende Projektdatei auswählen",
                                                self.templateDir,
                                                "*.qgs")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-            self.dlg.tf_projectTemplate.setText(filename)
+            self.dlg_pr.tf_projectTemplate.setText(filename)
 
 
     # ----------------------------------------------------------------------------------------------------------
@@ -208,10 +206,10 @@ class QgsUpdate:
             projectTemplate = ''
 
         # Formularfeld Projektdatei
-        if 'projectFile' in self.config:
-            projectFile = self.config['projectFile']
+        if 'projectfile' in self.config:
+            projectfile = self.config['projectfile']
         else:
-            projectFile = ''
+            projectfile = ''
 
         # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen 
         if 'setPathToTemplateDir' in self.config:
@@ -254,8 +252,8 @@ class QgsUpdate:
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
             projectTemplate = self.dlg_pr.tf_projectTemplate.text()
-            database_QKan = self.dlg_pr.tf_database_QKan.text()
-            projectFile = self.dlg_pr.tf_projectFile.text()
+            database_QKan = self.dlg_pr.tf_qkanDB.text()
+            projectfile = self.dlg_pr.tf_projectFile.text()
             setPathToTemplateDir = self.dlg_pr.cb_setPathToTemplateDir.isChecked()
             copy_forms = self.dlg_pr.cb_copy_forms.isChecked()
             qkanDBUpdate = self.dlg_pr.cb_qkanDBUpdate.isChecked()
@@ -265,7 +263,7 @@ class QgsUpdate:
 
             self.config['projectTemplate'] = projectTemplate
             self.config['database_QKan'] = database_QKan
-            self.config['projectFile'] = projectFile
+            self.config['projectfile'] = projectfile
             self.config['setPathToTemplateDir'] = setPathToTemplateDir
             self.config['copy_forms'] = copy_forms
             self.config['qkanDBUpdate'] = qkanDBUpdate
@@ -274,5 +272,5 @@ class QgsUpdate:
                 fileconfig.write(json.dumps(self.config))
 
 
-            qgsadapt(projectTemplate, database_QKan, projectFile, setPathToTemplateDir, 
-                    copy_forms, u'SpatiaLite')
+            qgsadapt(projectTemplate, database_QKan, epsg, projectfile, setPathToTemplateDir, 
+                    copy_forms, qkanDBUpdate, u'SpatiaLite')

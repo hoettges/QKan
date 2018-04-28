@@ -97,6 +97,22 @@ def formf(zahl, anz):
             erg = fmt.format(erg.rstrip('0'))
     return erg
 
+# Funktion zur Umwandlung der Neigungsklassen
+def fneigkl(neigung):
+    """Berechnung der Neigungsklasse aus Neigungswert (absolut)"""
+
+    if neigung is None:
+        return 0
+
+    neigungliste = [0., 0.01, 0.04, 0.1, 999.]
+    neigklliste = [0, 1, 2, 3, 4]
+    for neig, nkl in zip(neigungliste, neigklliste):
+        if neigung < neig:
+            return nkl
+    else:
+        fehlermeldung(u'Programmfehler in k_qkkp.fneigkl!', u'Neigungsklasse fehlerhaft')
+        return 0.
+
 
 # Funktionen zum Schreiben der DYNA-Daten. Werden aus exportKanaldaten aufgerufen 
 def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice, dynabef_choice, 
@@ -156,9 +172,20 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
     else:
         logger.error(u'Fehler in k_qkkp.write12: Unbekannte Option in dynaprof_choice: {}'.format(dynaprof_choice))
 
+    # wdistbef ist die mit der (Teil-) Fläche gewichtete Fließlänge zur Haltung für die befestigten Flächen zu 
+    # einer Haltung, 
+    # wdistdur entsprechend für die durchlässigen Flächen. 
+
     sql = u"""
         WITH flintersect AS (
-            SELECT lf.flnam AS flnam, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.abflussparameter AS abflussparameter, 
+            SELECT lf.flnam AS flnam, lf.haltnam AS haltnam, 
+                CASE fl.neigkl
+                    WHEN 0 THEN 0.5
+                    WHEN 1 THEN 2.5
+                    WHEN 2 THEN 7.0
+                    ELSE 12.0
+                    END AS neigung, 
+                fl.abflussparameter AS abflussparameter, 
                 area(tg.geom) AS fltezg,
                 CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
             FROM linkfl AS lf
@@ -172,14 +199,30 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                 sum(CASE ap.bodenklasse IS NULL 
                     WHEN 1 THEN area(fi.geom)/10000.
                     ELSE 0 END) AS flbef,
+                sum(CASE ap.bodenklasse IS NULL 
+                    WHEN 1 THEN 0
+                    ELSE area(fi.geom)/10000. END) AS fldur,
+                sum(CASE ap.bodenklasse IS NULL 
+                    WHEN 1 THEN distance(fi.geom,h.geom)*area(fi.geom)/10000.
+                           ELSE 0 END) AS wdistbef,
+                sum(CASE ap.bodenklasse IS NULL 
+                    WHEN 1 THEN 0
+                           ELSE distance(fi.geom,h.geom)*area(fi.geom)/10000. END) AS wdistdur,
                 sum(area(fi.geom)/10000.) AS flges,
                 fltezg,
-                max(neigkl) AS neigkl
+                sum(neigung*area(fi.geom)/10000.) AS wneigung
             FROM flintersect AS fi
             INNER JOIN abflussparameter AS ap
             ON fi.abflussparameter = ap.apnam
+            INNER JOIN haltungen AS h 
+            ON fi.haltnam = h.haltnam
             WHERE area(fi.geom) > {mindestflaeche}{ausw_and}{auswahl}
-            GROUP BY fi.haltnam)
+            GROUP BY fi.haltnam),
+        einleitsw AS (
+            SELECT haltnam, sum(zufluss) AS zufluss
+            FROM einleit
+            GROUP BY haltnam
+        )
         SELECT 
             d.kanalnummer AS kanalnummer,
             d.haltungsnummer AS haltungsnummer, 
@@ -193,12 +236,14 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
             h.ks AS ks, 
             f.flbef AS flbef, 
             f.flges AS flges,
+            f.wdistbef/(f.flbef + 0.00000001) AS distbef,
+            f.wdistdur/(f.fldur + 0.00000001) AS distdur,
             f.fltezg AS fltezg,
             3 AS abfltyp, 
             e.zufluss AS qzu, 
             0 AS ewdichte, 
             0 AS tgnr, 
-            f.neigkl AS neigkl,
+            f.wneigung/(f.flges + 0.00000001) AS neigung,
             a.kp_nr AS entwart, 
             0 AS haltyp,
             h.schoben AS schoben, 
@@ -214,7 +259,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
         ON h.schunten = su.schnam{sql_prof2}
         LEFT JOIN halflaech AS f
         ON h.haltnam = f.haltnam
-        LEFT JOIN einleit AS e
+        LEFT JOIN einleitsw AS e
         ON e.haltnam = h.haltnam
         LEFT JOIN entwaesserungsarten AS a
         ON h.entwart = a.bezeichnung
@@ -232,8 +277,8 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
 
         # Attribute in Variablen speichern
         (kanalnummer, haltungsnummer, laenge, deckelhoehe, sohleob, sohleun, material, 
-         profilid, profilhoehe, ks, flbef, flges, fltezg, abfltyp, qzu, ewdichte, tgnr, 
-         neigkl, entwart, haltyp, schoben, schunten, xob, yob) = attr
+         profilid, profilhoehe, ks, flbef, flges, distbef, distdur, fltezg, abfltyp, qzu, ewdichte, tgnr, 
+         neigung, entwart, haltyp, schoben, schunten, xob, yob) = attr
 
         laenge_t = formf(laenge, 7)
         deckelhoehe_t = formf(deckelhoehe, 7)
@@ -264,7 +309,10 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
             neigkl_t = ' '
             flges = 0
             befgrad = 0
-            neigkl = 0
+            neigkl_t = ' '
+            neigung_t
+            distbef_t = '       0'
+            distdur_t = '       0'
         elif dynabef_choice == u'flaechen':
             if flges == 0:
                 flges_t = '    0'
@@ -272,7 +320,8 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                 neigkl_t = ' '
                 flges = 0
                 befgrad = 0
-                neigkl = 0
+                distbef_t = '       0'
+                distdur_t = '       0'
             else:
                 befgrad = int(round(flbef / flges * 100.,0))
                 if befgrad < 0:
@@ -281,7 +330,10 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                     befgrad = 99
                 flges_t = formf(flges, 5)
                 befgrad_t = '{0:2d}'.format(befgrad)
+                
                 neigkl_t = '{0:1d}'.format(neigkl)
+                distbef_t = formf(distbef,8)
+                distdur_t = formf(distdur,8)
 
         elif dynabef_choice == u'tezg':
             if fltezg == 0:
@@ -291,6 +343,8 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                 flges = 0
                 befgrad = 0
                 neigkl = 0
+                distbef_t = '       0'
+                distdur_t = '       0'
             else:
                 befgrad = flbef / fltezg * 100.
                 if befgrad < 0:
@@ -300,6 +354,8 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                 flges_t = formf(flges, 5)
                 befgrad_t = '{0:2d}'.format(befgrad)
                 neigkl_t = '{0:1d}'.format(neigkl)
+                distbef_t = formf(distbef,8)
+                distdur_t = formf(distdur,8)
 
         # Auswahl dynaprof_choice
         if dynaprof_choice == u'profilname':

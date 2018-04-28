@@ -104,9 +104,11 @@ class LinkFl:
             with open(self.configfil, 'r') as fileconfig:
                 self.config = json.loads(fileconfig.read())
         else:
-            self.config = {'epsg': '25832'}  # Projektionssystem
-            self.config['database_QKan'] = ''
-            self.config['projectfile'] = ''
+            self.config = {'epsg': '25832'}                     # Projektionssystem
+            self.config['autokorrektur'] = False
+            self.config['suchradius'] = u'50'
+            self.config['mindestflaeche'] = u'0.5'
+            self.config['bezug_abstand'] = 'kante'
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 

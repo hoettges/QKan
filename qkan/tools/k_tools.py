@@ -32,21 +32,26 @@ __copyright__ = '(C) 2016, Joerg Hoettges'
 __revision__ = ':%H$'
 
 import logging
+import os
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem
 from qgis.gui import QgsMessageBar
-from qgis.utils import iface
+from qgis.utils import iface, pluginDirectory
 
 from qgis.PyQt.QtGui import QProgressBar
+from PyQt4.QtCore import QFileInfo
 
-from qkan.database.qgis_utils import fehlermeldung, checknames
+from qkan.database.dbfunc import DBConnection
+from qkan.database.qgis_utils import fortschritt, fehlermeldung
+
+import xml.etree.ElementTree as ET
 
 logger = logging.getLogger(u'QKan')
 
 progress_bar = None
 
 
-def qgsadapt(projectTemplate, qkanDB, projectFile, setPathToTemplateDir = True, 
+def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = True, 
               copy_forms = False, dbtyp = u'SpatiaLite'):
     '''Lädt eine (Vorlage-) Projektdatei (*.qgs) und adaptiert diese auf eine QKan-Datenbank an. 
     Anschließend wird dieses Projekt geladen. 
@@ -64,8 +69,8 @@ def qgsadapt(projectTemplate, qkanDB, projectFile, setPathToTemplateDir = True,
     :setPathToTemplateDir:      Option, ob das Suchverzeichnis auf das Template-Verzeichnis gesetzt werden soll. 
     :type setPathToTemplateDir: Boolean
 
-    :copy_forms:                Option, ob die Eingabeformulare kopiert oder, falls vorhanden, aktualisiert werden sollen. 
-    :type copy_forms:           Boolean
+    :copy_forms:          Option, ob die Eingabeformulare kopiert oder, falls vorhanden, aktualisiert werden sollen. 
+    :type copy_forms:     Boolean
 
     :dbtyp:                     Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:                String
@@ -143,7 +148,7 @@ def qgsadapt(projectTemplate, qkanDB, projectFile, setPathToTemplateDir = True,
     # --------------------------------------------------------------------------
     # Projektdatei schreiben, falls ausgewählt
 
-    if projectfile is None or projectfile == u'':
+    if projectFile is None or projectFile == u'':
         fehlermeldung(u'Bedienerfehler!', u'Es wurde keine Projektdatei ausgewählt')
         return False
 
@@ -151,6 +156,10 @@ def qgsadapt(projectTemplate, qkanDB, projectFile, setPathToTemplateDir = True,
         templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
     projectpath = os.path.dirname(projectFile)
+    if os.path.dirname(qkanDB) == projectpath:
+        datasource = qkanDB.replace(os.path.dirname(qkanDB), u'.')
+    else:
+        datasource = qkanDB
 
     # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
     tabliste = ['schaechte', u'haltungen', u'pumpen', u'teilgebiete', u'einzugsgebiete', u'wehre', 
@@ -221,11 +230,11 @@ def qgsadapt(projectTemplate, qkanDB, projectFile, setPathToTemplateDir = True,
         text = tag_datasource.text
         tag_datasource.text = u"dbname='" + datasource + u"' " + text[text.find(u'table='):]
 
-    qgsxml.write(projectfile)  # writing modified project file
-    logger.debug(u'Projektdatei: {}'.format(projectfile))
+    qgsxml.write(projectFile)  # writing modified project file
+    logger.debug(u'Projektdatei: {}'.format(projectFile))
     # logger.debug(u'encoded string: {}'.format(tex))
 
-    if check_copy_forms:
+    if copy_forms:
         if u'eingabemasken' not in os.listdir(projectpath):
             os.mkdir(os.path.join(projectpath, u'eingabemasken'))
         formpath = os.path.join(projectpath, u'eingabemasken')
@@ -245,11 +254,10 @@ def qgsadapt(projectTemplate, qkanDB, projectFile, setPathToTemplateDir = True,
 
     iface.mainWindow().statusBar().clearMessage()
     iface.messageBar().pushMessage("Information", "Datenimport ist fertig!", level=QgsMessageBar.INFO)
-    QgsMessageLog.logMessage("\nFertig: Datenimport erfolgreich!", level=QgsMessageLog.INFO)
+    # QgsMessageLog.logMessage("\nFertig: Datenimport erfolgreich!", level=QgsMessageLog.INFO)
 
     # Importiertes Projekt laden
     project = QgsProject.instance()
-    # project.read(QFileInfo(projectfile))
-    project.read(QFileInfo(projectfile))         # read the new project file
+    project.read(QFileInfo(projectFile))         # read the new project file
     logger.debug('Geladene Projektdatei: {}'.format(project.fileName()))
 

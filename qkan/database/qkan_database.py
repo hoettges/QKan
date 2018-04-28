@@ -22,7 +22,7 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__version__ = '2.2.8'
+__version__ = '2.4.2'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -40,7 +40,7 @@ from qgis_utils import fortschritt, fehlermeldung
 logger = logging.getLogger(u'QKan')
 
 
-def createdbtables(consl, cursl, version='2.4.2', epsg=25832):
+def createdbtables(consl, cursl, version=__version__, epsg=25832):
     ''' Erstellt fuer eine neue QKan-Datenbank die zum Import aus Hystem-Extran
         benötigten Referenztabellen.
 
@@ -875,7 +875,7 @@ def createdbtables(consl, cursl, version='2.4.2', epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
-                      u'Fehler beim Erzeugen der Tabelle "Speicherkennlinien": .')
+                      u'Fehler beim Erzeugen der Tabelle "Speicherkennlinien".')
         consl.close()
         return False
     consl.commit()
@@ -900,7 +900,7 @@ def createdbtables(consl, cursl, version='2.4.2', epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
-                      u'Fehler beim Erzeugen der Tabelle "dynahal": .')
+                      u'Fehler beim Erzeugen der Tabelle "dynahal".')
         consl.close()
         return False
     consl.commit()
@@ -917,9 +917,88 @@ def createdbtables(consl, cursl, version='2.4.2', epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(u'qkan_database.version: Fehler {}'.format(err), 
-                      u'Fehler beim Erzeugen der Tabelle "Info": .')
+                      u'Fehler beim Erzeugen der Tabelle "Info".')
         consl.close()
         return False
+
+    # Plausibilitätskontrollen --------------------------------------------------
+
+    # Prüfung der Anbindungen in "linkfl" auf eindeutige Zuordnung zu Flächen und Haltungen
+
+    sql = u'''CREATE VIEW IF NOT EXISTS "v_linkfl_check" AS 
+            WITH lfok AS
+            (   SELECT 
+                    lf.pk AS "pk",
+                    lf.flnam AS "linkfl_nam", 
+                    lf.haltnam AS "linkfl_haltnam", 
+                    fl.flnam AS "flaech_nam",
+                    tg.flnam AS "tezg_nam",
+                    min(lf.pk) AS pkmin, 
+                    max(lf.pk) AS pkmax,
+                    count(*) AS anzahl
+                FROM linkfl AS lf
+                LEFT JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                LEFT JOIN tezg AS tg
+                ON lf.tezgnam = tg.flnam
+                WHERE fl.aufteilen = "ja" and fl.aufteilen IS NOT NULL
+                GROUP BY fl.flnam, tg.flnam
+                UNION
+                SELECT 
+                    lf.pk AS "pk",
+                    lf.flnam AS "linkfl_nam", 
+                    lf.haltnam AS "linkfl_haltnam", 
+                    fl.flnam AS "flaech_nam",
+                    NULL AS "tezg_nam",
+                    min(lf.pk) AS pkmin, 
+                    max(lf.pk) AS pkmax,
+                    count(*) AS anzahl
+                FROM linkfl AS lf
+                LEFT JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                WHERE fl.aufteilen <> "ja" OR fl.aufteilen IS NULL
+                GROUP BY fl.flnam)
+            SELECT pk, anzahl, CASE WHEN anzahl > 1 THEN 'mehrfach vorhanden' WHEN flaech_nam IS NULL THEN 'Keine Fläche' WHEN linkfl_haltnam IS NULL THEN  'Keine Haltung' ELSE 'o.k.' END AS fehler
+            FROM lfok'''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.version: Fehler {}'.format(err), 
+                      u'Fehler beim Erzeugen der Plausibilitätskontrolle "v_linkfl_check".')
+        consl.close()
+        return False
+
+    # Feststellen der Flächen ohne Anbindung
+
+    sql = u'''CREATE VIEW IF NOT EXISTS "v_flaechen_ohne_linkfl" AS 
+            SELECT 
+                fl.pk, 
+                fl.flnam AS "flaech_nam",
+                fl.aufteilen AS "flaech_aufteilen", 
+                'Verbindung fehlt' AS "Fehler"
+            FROM flaechen AS fl
+            LEFT JOIN linkfl AS lf
+            ON lf.flnam = fl.flnam
+            LEFT JOIN tezg AS tg
+            ON tg.flnam = lf.tezgnam
+            WHERE ( (fl.aufteilen <> "ja" or fl.aufteilen IS NULL) AND
+                     lf.pk IS NULL) OR
+                  (  fl.aufteilen = "ja" AND fl.aufteilen IS NOT NULL AND 
+                     lf.pk IS NULL)
+            UNION
+            VALUES
+                (0, '', '', 'o.k.') '''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.version: Fehler {}'.format(err), 
+                      u'Fehler beim Erzeugen der Plausibilitätskontrolle "v_flaechen_ohne_linkfl".')
+        consl.close()
+        return False
+
+    # Abschluss --------------------------------------------------------------------
 
     # Aktuelle Version eintragen
     sql = u"""INSERT INTO info (subject, value) VALUES ('version', '{}'); \n""".format(version)
@@ -927,11 +1006,10 @@ def createdbtables(consl, cursl, version='2.4.2', epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
-                      u'Fehler beim Erzeugen der Tabelle "Info": .')
+                      u'Fehler beim Erzeugen der Tabelle "Info".')
         consl.close()
         return False
     consl.commit()
-
 
     fortschritt(u'Tabellen erstellt...', 0.01)
 

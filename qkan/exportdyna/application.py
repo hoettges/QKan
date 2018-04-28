@@ -437,7 +437,7 @@ class ExportToKP:
             liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
 
             # Eingaben aus Formular übernehmen
-            database_Qkan = self.dlg.tf_QKanDB.text()
+            database_QKan = self.dlg.tf_QKanDB.text()
             dynafile = self.dlg.tf_KP_dest.text()
             template_dyna = self.dlg.tf_KP_template.text()
             datenbanktyp = 'spatialite'
@@ -464,7 +464,7 @@ class ExportToKP:
             # Konfigurationsdaten schreiben
             self.config['dynafile'] = dynafile
             self.config['template_dyna'] = template_dyna
-            self.config['database_Qkan'] = database_Qkan
+            self.config['database_QKan'] = database_QKan
             self.config['datenbanktyp'] = datenbanktyp
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['autokorrektur'] = autokorrektur
