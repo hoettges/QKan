@@ -38,7 +38,7 @@ from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-from qkan.database.qgis_utils import fortschritt, fehlermeldung
+from qkan.database.qgis_utils import fortschritt, fehlermeldung, checknames
 
 logger = logging.getLogger(u'QKan')
 
@@ -73,6 +73,11 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
     # iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
     # progress_bar.setValue(1)
+
+    # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
+    if not checknames(dbQK, u'flaechen', u'flnam', u'f_', True):
+        del dbQK
+        return False
 
     # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
 

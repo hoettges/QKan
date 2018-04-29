@@ -209,7 +209,8 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                     WHEN 1 THEN 0
                            ELSE distance(fi.geom,h.geom)*area(fi.geom)/10000. END) AS wdistdur,
                 sum(area(fi.geom)/10000.) AS flges,
-                fltezg,
+                fi.fltezg AS fltezg,
+                distance(fi.geom,h.geom) AS disttezg, 
                 sum(neigung*area(fi.geom)/10000.) AS wneigung
             FROM flintersect AS fi
             INNER JOIN abflussparameter AS ap
@@ -239,6 +240,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
             f.wdistbef/(f.flbef + 0.00000001) AS distbef,
             f.wdistdur/(f.fldur + 0.00000001) AS distdur,
             f.fltezg AS fltezg,
+            f.disttezg AS disttezg,
             3 AS abfltyp, 
             e.zufluss AS qzu, 
             0 AS ewdichte, 
@@ -307,53 +309,41 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
             flges_t = '     '
             befgrad_t = '  '
             neigkl_t = ' '
-            flges = 0
-            befgrad = 0
-            neigkl_t = ' '
-            neigung_t
+            neigung_t = '       0'
             distbef_t = '       0'
             distdur_t = '       0'
-        elif dynabef_choice == u'flaechen':
+        else:
+            if dynabef_choice == u'flaechen':
+                if flges != 0:
+                    befgrad = flbef / flges * 100.
+                    befgrad = max(0,min(99,int(round(befgrad,0))))                # runden auf ganze Werte und Begrenzung auf 0 .. 99
+                    neigkl = fneigkl(neigung)
+
+            elif dynabef_choice == u'tezg':
+                if fltezg == 0:
+                    flges = 0
+                else:
+                    flges = fltezg
+                    befgrad = flbef / flges * 100.
+                    befgrad = max(0,min(99,int(round(befgrad,0))))                # runden auf ganze Werte und Begrenzung auf 0 .. 99
+                    neigkl = fneigkl(neigung)
+
+                    # Berechnungen der Fließlänge für die durchlässigen Flächen
+                    distdur = (disttezg*flges - wdistbef) / (flges - flbef)
+
+            # Vorbereitung der Ausgabefelder für DYNA
             if flges == 0:
                 flges_t = '    0'
                 befgrad_t = ' 0'
-                neigkl_t = ' '
-                flges = 0
-                befgrad = 0
+                neigkl_t = '0'
+                neigung_t = '       0'
                 distbef_t = '       0'
                 distdur_t = '       0'
             else:
-                befgrad = int(round(flbef / flges * 100.,0))
-                if befgrad < 0:
-                    befgrad = 0
-                elif befgrad > 99:
-                    befgrad = 99
-                flges_t = formf(flges, 5)
-                befgrad_t = '{0:2d}'.format(befgrad)
-                
-                neigkl_t = '{0:1d}'.format(neigkl)
-                distbef_t = formf(distbef,8)
-                distdur_t = formf(distdur,8)
-
-        elif dynabef_choice == u'tezg':
-            if fltezg == 0:
-                flges_t = '    0'
-                befgrad_t = ' 0'
-                neigkl_t = ' '
-                flges = 0
-                befgrad = 0
-                neigkl = 0
-                distbef_t = '       0'
-                distdur_t = '       0'
-            else:
-                befgrad = flbef / fltezg * 100.
-                if befgrad < 0:
-                    befgrad = 0
-                elif befgrad > 99:
-                    befgrad = 99
                 flges_t = formf(flges, 5)
                 befgrad_t = '{0:2d}'.format(befgrad)
                 neigkl_t = '{0:1d}'.format(neigkl)
+                neigung_t = formf(neigung,8)
                 distbef_t = formf(distbef,8)
                 distdur_t = formf(distdur,8)
 
@@ -382,8 +372,10 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                         qzu=qzu_t, ewdichte=ewdichte, tgnr=tgnr) + \
                     '{flges:5s}{neigkl:1s}{entwart:1d}{haltyp:1d}'.format(
                         flges=flges_t, neigkl=neigkl_t, entwart=entwart, haltyp=haltyp) + \
-                    '  {schoben:>12s} {schunten:>12s}{xob:14s}{yob:14s}\n'.format(
-                    schoben=schoben, schunten=schunten, xob=xob_t, yob=yob_t)
+                    '  {schoben:>12s} {schunten:>12s}{xob:14s}{yob:14s}'.format(
+                    schoben=schoben, schunten=schunten, xob=xob_t, yob=yob_t) + \
+                    '  {distbef:>8s} {distdur:>8s}{neigung:>8s}\n'.format(
+                    distbef=distbef_t, distdur=distdur_t, neigung=neigung_t)
 
             # logger.debug(
                 # 'material = {}\n'.format(material) + \
@@ -556,11 +548,11 @@ def write16(dbQK, df, ausw_and, auswahl):
 
             if akt_an == 0:
                 # abgehende Haltung übernehmen; nur im ersten Teilblock
-                zeilab += ' 2{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
+                zeilab += '02{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
                         kanalnummer=ab_kanalnummer, haltungsnummer=ab_haltungsnummer)
             if akt_ab == 0:
                 # ankommende Haltung übernehmen; jeweils zu Beginn jedes Teilblocks
-                zeilan += ' 1{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
+                zeilan += '51{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
                         kanalnummer=an_kanalnummer, haltungsnummer=an_haltungsnummer)
 
     else:

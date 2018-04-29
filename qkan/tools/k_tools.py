@@ -161,9 +161,10 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     else:
         datasource = qkanDB
 
-    # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
-    tabliste = ['schaechte', u'haltungen', u'pumpen', u'teilgebiete', u'einzugsgebiete', u'wehre', 
-                 u'flaechen', u'tezg']
+        # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
+        # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
+        tabliste = [u'einleit', u'einzugsgebiete', u'flaechen', u'haltungen', u'linkfl', u'linksw', 
+                    u'pumpen', u'schaechte', u'teilgebiete', u'tezg', u'wehre']
 
     # Lesen der Projektdatei ------------------------------------------------------------------
     qgsxml = ET.parse(projectTemplate)
@@ -259,5 +260,5 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     # Importiertes Projekt laden
     project = QgsProject.instance()
     project.read(QFileInfo(projectFile))         # read the new project file
-    logger.debug('Geladene Projektdatei: {}'.format(project.fileName()))
+    logger.debug(u'Geladene Projektdatei: {}'.format(project.fileName()))
 

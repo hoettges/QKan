@@ -773,13 +773,13 @@
     </font>
    </property>
    <property name="title">
-    <string>Berechnung des Befestigungsgrades</string>
+    <string>Berechnung des Befestigungsgrades aus ...</string>
    </property>
    <widget class="QRadioButton" name="rb_tezg">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>20</y>
+      <y>40</y>
       <width>281</width>
       <height>21</height>
      </rect>
@@ -791,20 +791,20 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Befestigungsgrad ist Quotient aus Summe der befestigten Flächen und der tezg-Fläche&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Befestigungsgrad ist Quotient aus Summe der befestigten Flächen und der Haltungsfläche (tezg)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Befestigungsgrad ist Quotient aus Summe der befestigten Flächen und der tezg-Fläche</string>
+     <string>Befestigungsgrad ist Quotient aus Summe der befestigten Flächen und der Haltungsfläche (tezg)</string>
     </property>
     <property name="text">
-     <string>Gesamtfläche aus tezg-Flächenobjekten berechnen</string>
+     <string>... Haltungsflächen (tezg) und befestigten Flächen</string>
     </property>
    </widget>
    <widget class="QRadioButton" name="rb_flaechen">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>40</y>
+      <y>20</y>
       <width>301</width>
       <height>21</height>
      </rect>
@@ -816,13 +816,13 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Befestigungsgrad ist Summe aus befestigten zu Summe aus befestigten und unbefestigten Flächen, wird also nur aus Tabelle &amp;quot;flaechen&amp;quot; ermittelt&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Befestigungsgrade werden aus den Quotienten der Summen der befestigten und der Summen der unbefestigten Flächen ermittelt. Es werden also nur die Daten aus Tabelle &amp;quot;flaechen&amp;quot; verwendet. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Befestigungsgrad ist Summe aus befestigten zu Summe aus befestigten und unbefestigten Flächen, wird also nur aus Tabelle &quot;flaechen&quot; ermittelt</string>
+     <string>Befestigungsgrad aus befestigten und unbefestigten Flächen ermitteln</string>
     </property>
     <property name="text">
-     <string>Gesamtfläche aus Summe der Flächenobjekte berechnen</string>
+     <string>... befestigten und unbefestigten Flächenobjekten</string>
     </property>
    </widget>
   </widget>

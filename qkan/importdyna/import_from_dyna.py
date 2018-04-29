@@ -1044,8 +1044,9 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
             datasource = database_QKan
 
         # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
-        tabliste = ['schaechte', u'haltungen', u'pumpen', u'teilgebiete', u'einzugsgebiete', u'wehre', 
-                     u'flaechen', u'tezg']
+        # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
+        tabliste = [u'einleit', u'einzugsgebiete', u'flaechen', u'haltungen', u'linkfl', u'linksw', 
+                    u'pumpen', u'schaechte', u'teilgebiete', u'tezg', u'wehre']
 
         # Lesen der Projektdatei ------------------------------------------------------------------
         qgsxml = ET.parse(projecttemplate)

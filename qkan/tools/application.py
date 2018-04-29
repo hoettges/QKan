@@ -273,4 +273,4 @@ class QgsUpdate:
 
 
             qgsadapt(projectTemplate, database_QKan, epsg, projectfile, setPathToTemplateDir, 
-                    copy_forms, qkanDBUpdate, u'SpatiaLite')
+                    copy_forms, u'SpatiaLite')
