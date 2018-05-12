@@ -78,7 +78,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.4.2'
+        self.actversion = '2.4.3'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
         if dbname is not None:
@@ -773,13 +773,13 @@ class DBConnection:
                 return False
 
             sql = u"""
-                ALTER TABLE profile ADD COLUMN kp_nr
+                ALTER TABLE profile ADD COLUMN kp_key TEXT
             """
             if not self.sql(sql, u'dbfunc.version (2.4.1-3)'):
                 return False
 
             sql = u"""
-                ALTER TABLE entwaesserungsarten ADD COLUMN kp_nr
+                ALTER TABLE entwaesserungsarten ADD COLUMN kp_nr INTEGER
             """
             if not self.sql(sql, u'dbfunc.version (2.4.1-2)'):
                 return False
@@ -875,7 +875,7 @@ class DBConnection:
 
             # Versionsnummer hochsetzen
 
-            versiondbQK = u'2.4.1'
+            versiondbQK = u'2.4.3'
 
 
         logger.debug('1 - versiondbQK = {}'.format(versiondbQK))

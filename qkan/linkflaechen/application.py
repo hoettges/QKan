@@ -468,12 +468,18 @@ class LinkFl:
         # config in Dialog übernehmen
 
         # Autokorrektur
-
         if 'autokorrektur' in self.config:
             autokorrektur = self.config['autokorrektur']
         else:
             autokorrektur = True
         self.dlg_cl.cb_autokorrektur.setChecked(autokorrektur)
+
+        # Verbindungslinien nur innerhalb tezg
+        if 'linksw_in_tezg' in self.config:
+            linksw_in_tezg = self.config['linksw_in_tezg']
+        else:
+            linksw_in_tezg = True
+        self.dlg_cl.cb_linkswInTezg.setChecked(linksw_in_tezg)
 
         # Suchradius
         if 'suchradius' in self.config:
@@ -535,6 +541,7 @@ class LinkFl:
                 return False
 
             autokorrektur = self.dlg_cl.cb_autokorrektur.isChecked()
+            linksw_in_tezg = self.dlg_cl.cb_linkswInTezg.isChecked()
 
                 # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
                 # iface.messageBar().pushMessage(u"Bedienerfehler: ", 
@@ -552,6 +559,7 @@ class LinkFl:
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['epsg'] = epsg
             self.config['autokorrektur'] = autokorrektur
+            self.config['linksw_in_tezg'] = linksw_in_tezg
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
@@ -559,7 +567,8 @@ class LinkFl:
             # Start der Verarbeitung
 
             createlinkfl(self.dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                        liste_teilgebiete, autokorrektur, suchradius, mindestflaeche, bezug_abstand, epsg)
+                        liste_teilgebiete, linksw_in_tezg, autokorrektur, suchradius, 
+                        mindestflaeche, bezug_abstand, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()

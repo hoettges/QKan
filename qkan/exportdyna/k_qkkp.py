@@ -48,18 +48,26 @@ def formf(zahl, anz):
     """Formatiert eine Fließkommazahl so, dass sie in einer vorgegebenen Anzahl von Zeichen
        mit maximaler Genauigkeit dargestellt werden kann.
     """
+    if anz == 0 or anz is None:
+        return ''
     if zahl is None:
         if anz == 1:
             erg = '.'
         else:
             erg = '{}0.'.format(' '*(anz-2))
         return erg
-
-    if zahl < 0:
+    elif zahl == 0:
+        return ' '*(anz - 1) + '0'
+    elif zahl < 0:
         logger.error(u'Fehler in k_qkkp.formf (2): Zahl ist negativ', u'zahl = {}\nanz = {}\n'.format(zahl, anz))
         return None
 
+    # try:
     nv = int(math.log10(zahl))          # Anzahl Stellen vor dem Komma.
+    # except BaseException as err:
+        # fehlermeldung(u'Fehler in k_qkkp.formf (1): {}'.format(err), 
+              # u'zahl = {}, anz = {}'.format(zahl, anz))
+
     dez = True                          # In der Zahl kommt ein Dezimalkomma vor. Wird benötigt wenn 
                                         # Nullen am Ende gelöscht werden sollen
 
@@ -165,7 +173,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
         sql_prof1 = u'h.profilnam AS profilid'
         sql_prof2 = ''
     elif dynaprof_choice == u'profilkey':
-        sql_prof1 = u'p.kp_nr AS profilid'
+        sql_prof1 = u'p.kp_key AS profilid'
         sql_prof2 = """
         INNER JOIN profile as p
         ON h.profilnam = p.profilnam"""
@@ -231,7 +239,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
             so.deckelhoehe AS deckelhoehe, 
             coalesce(h.sohleoben, so.sohlhoehe) AS sohleob,
             coalesce(h.sohleunten, su.sohlhoehe) AS sohleun,
-            'O' AS material, 
+            '0' AS material, 
             {sql_prof1}, 
             h.hoehe*1000. AS profilhoehe, 
             h.ks AS ks, 
@@ -279,8 +287,8 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
 
         # Attribute in Variablen speichern
         (kanalnummer, haltungsnummer, laenge, deckelhoehe, sohleob, sohleun, material, 
-         profilid, profilhoehe, ks, flbef, flges, distbef, distdur, fltezg, abfltyp, qzu, ewdichte, tgnr, 
-         neigung, entwart, haltyp, schoben, schunten, xob, yob) = attr
+         profilid, profilhoehe, ks, flbef, flges, distbef, distdur, fltezg, disttezg, 
+         abfltyp, qzu, ewdichte, tgnr, neigung, entwart, haltyp, schoben, schunten, xob, yob) = attr
 
         laenge_t = formf(laenge, 7)
         deckelhoehe_t = formf(deckelhoehe, 7)
@@ -374,7 +382,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                         flges=flges_t, neigkl=neigkl_t, entwart=entwart, haltyp=haltyp) + \
                     '  {schoben:>12s} {schunten:>12s}{xob:14s}{yob:14s}'.format(
                     schoben=schoben, schunten=schunten, xob=xob_t, yob=yob_t) + \
-                    '  {distbef:>8s} {distdur:>8s}{neigung:>8s}\n'.format(
+                    '{distbef:>8s}{distdur:>8s}{neigung:>8s}\n'.format(
                     distbef=distbef_t, distdur=distdur_t, neigung=neigung_t)
 
             # logger.debug(
@@ -1001,7 +1009,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
     fehler = 0
 
     if dynaprof_choice == u'profilname':
-        # Die DYNA-Schlüssel werden entsprechend der DYNA-Forlagedatei vergeben. Daher braucht 
+        # Die DYNA-Schlüssel werden entsprechend der DYNA-Vorlagedatei vergeben. Daher braucht 
         # nur das Vorhandensein der Profilnamen geprüft zu werden. 
         sql = u"""SELECT profilnam
                 FROM haltungen{ausw_where}{auswahl}
@@ -1019,36 +1027,41 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 logger.debug(u'k_qkkp.exportKanaldaten (1): dynaprof_nam = {}'.format(', '.join(dynaprof_nam)))
                 if autokorrektur:
                     sql = """INSERT INTO profile (profilnam)
-                            VALUES ({pn})""".format(pn=profil_new)
+                            VALUES ('{pn}')""".format(pn=profil_new)
                     if not dbQK.sql(sql, u'dbQK: k_qkkp.exportKanaldaten (1)'):
                         return False
+                    dbQK.commit()
                 fehler = 2
         if fehler == 2:
             fehlermeldung(u'Fehler in den Profildaten', u'Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage ')
+            del dbQK
             return False
 
     elif dynaprof_choice == u'profilkey':
-        sql = u"""SELECT p.kp_nr
+        sql = u"""SELECT p.kp_key, h.profilnam
                 FROM haltungen AS h
                 LEFT JOIN profile AS p
                 ON h.profilnam = p.profilnam{ausw_where}{auswahl}
-                GROUP BY p.kp_nr""".format(ausw_where=ausw_where, auswahl=auswahl)
+                GROUP BY p.kp_key""".format(ausw_where=ausw_where, auswahl=auswahl)
 
         if not dbQK.sql(sql, u'dbQK: QKan_ExportDYNA.k_qkkp.profile (2)'):
             return False
 
         daten = dbQK.fetchall()
         for profil in daten:
-            profil_key = profil[3]
+            profil_key, profilnam = profil
+            if profil_key is None:
+                profil_key = 'NULL'
             if profil_key not in dynaprof_key:
                 meldung(u'Fehlende Profildaten in DYNA-Vorlagedatei {fn}'.format(fn=template_dyna), 
                     u'{id}'.format(id=profil_key))
                 logger.debug(u'dynaprof_key = {}'.format(', '.join(dynaprof_key)))
                 if autokorrektur:
-                    sql = """INSERT INTO profile (profilnam, kp_nr)
-                            VALUES ({pn}, {id})""".format(pn=profil_new, id=profil_key)
+                    sql = """INSERT INTO profile (profilnam, kp_key)
+                            VALUES ('{pn}', '{id}')""".format(pn=profilnam, id=profil_key)
                     if not dbQK.sql(sql, u'dbQK: k_qkkp.exportKanaldaten (1)'):
                         return False
+                    dbQK.commit()
                 fehler = 2
             elif profil_key is None:
                 fehlermeldung(u'Fehlende ID in DYNA-Vorlagedatei {fn}'.format(fn=template_dyna), 
@@ -1056,11 +1069,13 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 fehler = max(fehler, 1)         # fehler = 2 hat Priorität
 
         if fehler == 1:
-            fehlermeldung(u'Fehler in den Profildaten', u'Es gibt Profile ohne eine DYNA-Nummer (kp_nr)')
+            fehlermeldung(u'Fehler in den Profildaten', u'Es gibt Profile ohne eine DYNA-Nummer (kp_key)')
+            del dbQK
             return False
         elif fehler == 2:
             fehlermeldung(u'Fehler in den Profildaten', 
                           u'Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage vorhanden sind')
+            del dbQK
             return False
 
     # Schreiben der DYNA-Datei ------------------------------------------------------------------------

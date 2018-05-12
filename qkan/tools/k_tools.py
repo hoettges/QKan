@@ -52,7 +52,7 @@ progress_bar = None
 
 
 def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = True, 
-              copy_forms = False, dbtyp = u'SpatiaLite'):
+              dbtyp = u'SpatiaLite'):
     '''Lädt eine (Vorlage-) Projektdatei (*.qgs) und adaptiert diese auf eine QKan-Datenbank an. 
     Anschließend wird dieses Projekt geladen. 
     Voraussetzungen: keine
@@ -69,8 +69,8 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     :setPathToTemplateDir:      Option, ob das Suchverzeichnis auf das Template-Verzeichnis gesetzt werden soll. 
     :type setPathToTemplateDir: Boolean
 
-    :copy_forms:          Option, ob die Eingabeformulare kopiert oder, falls vorhanden, aktualisiert werden sollen. 
-    :type copy_forms:     Boolean
+    :copy_forms:                Option, ob die Eingabeformulare kopiert oder, falls vorhanden, aktualisiert werden sollen. 
+    :type copy_forms:           Boolean
 
     :dbtyp:                     Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:                String
@@ -161,10 +161,10 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     else:
         datasource = qkanDB
 
-        # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
-        # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
-        tabliste = [u'einleit', u'einzugsgebiete', u'flaechen', u'haltungen', u'linkfl', u'linksw', 
-                    u'pumpen', u'schaechte', u'teilgebiete', u'tezg', u'wehre']
+    # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
+    # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
+    tabliste = [u'einleit', u'einzugsgebiete', u'flaechen', u'haltungen', u'linkfl', u'linksw', 
+                u'pumpen', u'schaechte', u'teilgebiete', u'tezg', u'wehre']
 
     # Lesen der Projektdatei ------------------------------------------------------------------
     qgsxml = ET.parse(projectTemplate)
@@ -235,30 +235,15 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     logger.debug(u'Projektdatei: {}'.format(projectFile))
     # logger.debug(u'encoded string: {}'.format(tex))
 
-    if copy_forms:
-        if u'eingabemasken' not in os.listdir(projectpath):
-            os.mkdir(os.path.join(projectpath, u'eingabemasken'))
-        formpath = os.path.join(projectpath, u'eingabemasken')
-        formlist = os.listdir(formpath)
-        templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
-
-        logger.debug(u"Eingabeformulare kopieren: {} -> {}".format(formpath, templatepath))
-
-        for formfile in glob.iglob(os.path.join(templatepath, u'*.ui')):
-            # Wenn Datei im Verzeichnis 'eingabemasken' noch nicht vorhanden ist
-            if formfile not in formlist:
-                shutil.copy2(formfile, formpath)
-
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
-
 
     iface.mainWindow().statusBar().clearMessage()
     iface.messageBar().pushMessage("Information", "Datenimport ist fertig!", level=QgsMessageBar.INFO)
     # QgsMessageLog.logMessage("\nFertig: Datenimport erfolgreich!", level=QgsMessageLog.INFO)
 
     # Importiertes Projekt laden
-    project = QgsProject.instance()
-    project.read(QFileInfo(projectFile))         # read the new project file
-    logger.debug(u'Geladene Projektdatei: {}'.format(project.fileName()))
+    # project = QgsProject.instance()
+    # project.read(QFileInfo(projectFile))         # read the new project file
+    # logger.debug(u'Geladene Projektdatei: {}   ({})'.format(project.fileName()))
 

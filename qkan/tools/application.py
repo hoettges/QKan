@@ -227,13 +227,6 @@ class QgsUpdate:
                              'database_QKan gesetzt werden.\n database_QKan = {}'.format(database_QKan))
                 self.templateDir = ''
 
-        # Option: Eingabeformulare kopieren bzw. aktualisieren
-        if 'copy_forms' in self.config:
-            copy_forms = self.config['copy_forms']
-        else:
-            copy_forms = True
-        self.dlg_pr.cb_copy_forms.setChecked(copy_forms)
-
         # Option: QKan-Datenbank aktualisieren
         if 'qkanDBUpdate' in self.config:
             qkanDBUpdate = self.config['qkanDBUpdate']
@@ -255,7 +248,6 @@ class QgsUpdate:
             database_QKan = self.dlg_pr.tf_qkanDB.text()
             projectfile = self.dlg_pr.tf_projectFile.text()
             setPathToTemplateDir = self.dlg_pr.cb_setPathToTemplateDir.isChecked()
-            copy_forms = self.dlg_pr.cb_copy_forms.isChecked()
             qkanDBUpdate = self.dlg_pr.cb_qkanDBUpdate.isChecked()
 
 
@@ -265,12 +257,9 @@ class QgsUpdate:
             self.config['database_QKan'] = database_QKan
             self.config['projectfile'] = projectfile
             self.config['setPathToTemplateDir'] = setPathToTemplateDir
-            self.config['copy_forms'] = copy_forms
             self.config['qkanDBUpdate'] = qkanDBUpdate
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-
-            qgsadapt(projectTemplate, database_QKan, epsg, projectfile, setPathToTemplateDir, 
-                    copy_forms, u'SpatiaLite')
+            qgsadapt(projectTemplate, database_QKan, epsg, projectfile, setPathToTemplateDir, u'SpatiaLite')

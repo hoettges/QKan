@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>493</width>
-    <height>416</height>
+    <height>386</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>350</y>
+     <y>320</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -43,7 +43,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>220</y>
+     <y>190</y>
      <width>451</width>
      <height>101</height>
     </rect>
@@ -158,7 +158,7 @@
      <x>20</x>
      <y>20</y>
      <width>451</width>
-     <height>181</height>
+     <height>161</height>
     </rect>
    </property>
    <property name="font">
@@ -236,7 +236,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_copy_forms">
+   <widget class="QCheckBox" name="cb_qkanDBUpdate">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -252,32 +252,7 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Formulare zur Dateneingabe werden in ein Unterverzeichnis &amp;quot;Eingabemasken&amp;quot; kopiert. Bereits vorhandene Formulare werden überschrieben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Eingabeformulare kopieren bzw. aktualisieren</string>
-    </property>
-    <property name="text">
-     <string>Eingabeformulare kopieren bzw. aktualisieren</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_qkanDBUpdate">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>150</y>
-      <width>241</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Struktur der QKan-Datenbank wird auf den aktuellen Stand angepasst.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Struktur der QKan-Datenbank wird auf den aktuellen Stand angepasst. Dabei werden auch die Eingabeformulare aktualisiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>Struktur der QKan-Datenbank wird auf den aktuellen Stand angepasst.</string>
@@ -351,7 +326,7 @@
    <property name="geometry">
     <rect>
      <x>400</x>
-     <y>400</y>
+     <y>370</y>
      <width>91</width>
      <height>20</height>
     </rect>
