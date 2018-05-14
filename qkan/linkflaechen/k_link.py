@@ -234,22 +234,35 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     # Varianten ohne und mit Beschränkung der Anbindungslinien auf die Haltungsfläche
 
     if linksw_in_tezg:
-        auswtezg = u"""
-                INNER JOIN tezg AS tg
-                ON tg.flnam = lf.tezgnam
-                WHERE within(centroid(ha.geom),tg.geom) and lf.glink IS NULL"""
-    else:
-        auswtezg = u"""
-                WHERE lf.glink IS NULL"""
-
-    sql = u"""WITH tlink AS
+        sql = u"""WITH tlink AS
             (	SELECT lf.pk AS pk,
                     ha.haltnam, 
                     Distance(ha.geom,{bezug}) AS dist, 
                     ha.geom AS geohal, lf.geom AS geolf
                 FROM haltungen AS ha
                 INNER JOIN linkfl AS lf
-                ON Intersects(ha.geom,lf.gbuf){auswtezg}{auswha})
+                ON Intersects(ha.geom,lf.gbuf)
+                INNER JOIN tezg AS tg
+                ON tg.flnam = lf.tezgnam
+                WHERE within(centroid(ha.geom),tg.geom) and lf.glink IS NULL{auswha})
+            UPDATE linkfl SET (glink, haltnam) = 
+            (   SELECT MakeLine(PointOnSurface(t1.geolf),Centroid(t1.geohal)), t1.haltnam
+                FROM tlink AS t1
+                INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
+                ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
+                WHERE linkfl.pk = t1.pk)
+            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, 
+                auswha=auswha, auswlinkfl=auswlinkfl)
+    else:
+        sql = u"""WITH tlink AS
+            (	SELECT lf.pk AS pk,
+                    ha.haltnam, 
+                    Distance(ha.geom,{bezug}) AS dist, 
+                    ha.geom AS geohal, lf.geom AS geolf
+                FROM haltungen AS ha
+                INNER JOIN linkfl AS lf
+                ON Intersects(ha.geom,lf.gbuf)
+                WHERE lf.glink IS NULL{auswha})
             UPDATE linkfl SET (glink, haltnam) =  
             (   SELECT MakeLine(PointOnSurface(t1.geolf),Centroid(t1.geohal)), t1.haltnam
                 FROM tlink AS t1
@@ -257,7 +270,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
                 WHERE linkfl.pk = t1.pk)
             WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, 
-                auswtezg=auswtezg, auswha=auswha, auswlinkfl=auswlinkfl)
+                auswha=auswha, auswlinkfl=auswlinkfl)
+
 
     logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
@@ -273,6 +287,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     if not dbQK.sql(sql, u"QKan_LinkFlaechen (7)"):
         return False
+
+    dbQK.commit()
 
     # Aktualisierung des logischen Cache
 

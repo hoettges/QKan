@@ -128,7 +128,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
         UPDATE linkfl SET tezgnam =
         (   SELECT tg.flnam
             FROM tezg AS tg
-            INNER JOIN (SELECT flnam FROM flaechen AS fl WHERE fl.aufteilen = 'ja') as fl
+            INNER JOIN (SELECT flnam FROM flaechen AS fl) as fl
             ON linkfl.flnam = fl.flnam
             WHERE within(StartPoint(linkfl.glink),tg.geom) AND tg.geom IS NOT NULL)
         WHERE linkfl.pk IN missing""".format(eps=radiusHal)
