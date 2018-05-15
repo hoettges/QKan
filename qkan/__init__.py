@@ -48,12 +48,13 @@ class Dummy:
 
     def __init__(self, iface):
         from createunbeffl import application as createunbeffl
-        from importhe import application as importhe
+        from importhe import application as importhe                # falls HE nicht benötigt: auskommentieren, dito bei nachfolgender Liste "self.plugins"
         from importdyna import application as importdyna
-        from exporthe import application as exporthe
+        from exporthe import application as exporthe                # falls HE nicht benötigt: auskommentieren, dito bei nachfolgender Liste "self.plugins"
         from exportdyna import application as exportdyna
-        from ganglinienhe import application as ganglinienhe
+        from ganglinienhe import application as ganglinienhe        # falls HE nicht benötigt: auskommentieren, dito bei nachfolgender Liste "self.plugins"
         from linkflaechen import application as linkflaechen
+        from tools import application as tools
         self.plugins = [
             createunbeffl.CreateUnbefFl(iface),
             importhe.ImportFromHE(iface),
@@ -61,7 +62,8 @@ class Dummy:
             exporthe.ExportToHE(iface),
             exportdyna.ExportToKP(iface),
             ganglinienhe.Application(iface),
-            linkflaechen.LinkFl(iface)
+            linkflaechen.LinkFl(iface),
+            tools.QgsUpdate(iface)
         ]
         Dummy.instance = self
 

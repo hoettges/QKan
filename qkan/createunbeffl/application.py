@@ -99,9 +99,6 @@ class CreateUnbefFl:
                 self.config = json.loads(fileconfig.read())
         else:
             self.config = {'epsg': '25832'}  # Projektionssystem
-            self.config['database_QKan'] = ''
-            self.config['database_HE'] = ''
-            self.config['projectfile'] = ''
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 

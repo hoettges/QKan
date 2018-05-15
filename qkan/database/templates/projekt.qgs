@@ -1,100 +1,100 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan" version="2.18.14">
-  <title>QKan</title>
+<qgis projectname="QKan Version 2.4.4" version="2.18.17">
+  <title>QKan Version 2.4.4</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="">
     <customproperties/>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Schächte">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" name="Auslässe">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" name="Auslässe">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Haltungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Sonderbauwerke">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Unchecked" name="SW-Einleitungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="einleit20171004110830029" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;einleit&quot; (geom) sql=" name="Direkteinleitungen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="einleit20171004110830029" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;einleit&quot; (geom) sql=" name="Direkteinleitungen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen SW-Punkte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen SW-Punkte">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Flächen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="teilgebiete">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="teilgebiete">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20171204105753202" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;tezg&quot; (geom) sql=" name="tezg">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20171204105753202" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;tezg&quot; (geom) sql=" name="tezg">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindung20170920132347429" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;linkfl&quot; (glink) sql=" name="Anbindungen Flächen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindung20170920132347429" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;linkfl&quot; (glink) sql=" name="Anbindungen Flächen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="flaechen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="flaechen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Referenztabellen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;profile&quot; sql=" name="Profile">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;profile&quot; sql=" name="Profile">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
+      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Kennlinien">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/linges_deng/test/test.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_link/beispiele/nette_klein/nette.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
@@ -103,22 +103,22 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>2538284.30272131180390716</xmin>
-      <ymin>5672383.84163934551179409</ymin>
-      <xmax>2539230.25272131199017167</xmax>
-      <ymax>5673207.30163934640586376</ymax>
+      <xmin>388825.35942146822344512</xmin>
+      <ymin>5709867.52366635669022799</ymin>
+      <xmax>388944.15117146819829941</xmax>
+      <ymax>5710001.0091663571074605</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
     <destinationsrs>
       <spatialrefsys>
-        <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-        <srsid>2646</srsid>
-        <srid>31466</srid>
-        <authid>EPSG:31466</authid>
-        <description>DHDN / Gauss-Kruger zone 2</description>
-        <projectionacronym>tmerc</projectionacronym>
-        <ellipsoidacronym>bessel</ellipsoidacronym>
+        <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+        <srsid>1009</srsid>
+        <srid>3044</srid>
+        <authid>EPSG:3044</authid>
+        <description>ETRS89 / ETRS-TM32</description>
+        <projectionacronym>utm</projectionacronym>
+        <ellipsoidacronym>GRS80</ellipsoidacronym>
         <geographicflag>false</geographicflag>
       </spatialrefsys>
     </destinationsrs>
@@ -151,8 +151,8 @@
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4326" srcDatumTransform="-1" destDatumTransform="-1" layerid="einleit_odnrw20171017115149000"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="D6_dop20rgbi_32325_5726_1_nw20170805155526392"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="A5_dop20rgbi_32338_5725_1_nw20170805155520731"/>
-      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="ew_nrw20171017151843470"/>
       <layer_coordinate_transform destAuthId="EPSG:31466" srcAuthId="EPSG:31466" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161204084617148"/>
+      <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="ew_nrw20171017151843470"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="haltungen_Kopie20161016203906444"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="gebaeude_ref20171017150103683"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Punkt_multipler_Punkt_Punkt_dline20170805161041417"/>
@@ -467,14 +467,8 @@
   </Composer>
   <projectlayers>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>340540.60197375970892608</xmin>
-        <ymin>5726564.52978335693478584</ymin>
-        <xmax>340741.69148749124724418</xmax>
-        <ymax>5726613.14849809743463993</ymax>
-      </extent>
       <id>Anbindung20170920132347429</id>
-      <datasource>dbname='./test.sqlite' table="linkfl" (glink) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="linkfl" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -482,10 +476,10 @@
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -505,11 +499,11 @@
         <edittype widgetv2type="TextEdit" name="flnam">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="ValueRelation" name="tezgnam">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="flnam" constraint="" Layer="tezg20170508223029630" Value="flnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
-        </edittype>
         <edittype widgetv2type="ValueRelation" name="haltnam">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="haltnam" constraint="" Layer="haltungen20161016203756230" Value="haltnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="tezgnam">
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="flnam" constraint="" Layer="tezg20171204105753202" Value="flnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="aufteilen">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -527,6 +521,23 @@
       <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
         <symbols>
           <symbol alpha="1" clip_to_extent="1" type="line" name="0">
+            <layer pass="0" class="SimpleLine" locked="0">
+              <prop k="capstyle" v="square"/>
+              <prop k="customdash" v="5;2"/>
+              <prop k="customdash_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="customdash_unit" v="MM"/>
+              <prop k="draw_inside_polygon" v="0"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="line_color" v="0,0,0,255"/>
+              <prop k="line_style" v="solid"/>
+              <prop k="line_width" v="0.5"/>
+              <prop k="line_width_unit" v="MM"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="use_custom_dash" v="0"/>
+              <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
+            </layer>
             <layer pass="0" class="MarkerLine" locked="0">
               <prop k="interval" v="3"/>
               <prop k="interval_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -539,10 +550,10 @@
               <prop k="offset_unit" v="MM"/>
               <prop k="placement" v="centralpoint"/>
               <prop k="rotate" v="1"/>
-              <symbol alpha="1" clip_to_extent="1" type="marker" name="@0@0">
+              <symbol alpha="1" clip_to_extent="1" type="marker" name="@0@1">
                 <layer pass="0" class="SimpleMarker" locked="0">
                   <prop k="angle" v="0"/>
-                  <prop k="color" v="255,0,0,255"/>
+                  <prop k="color" v="196,241,122,255"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="bevel"/>
                   <prop k="name" v="filled_arrowhead"/>
@@ -555,29 +566,47 @@
                   <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
                   <prop k="outline_width_unit" v="MM"/>
                   <prop k="scale_method" v="diameter"/>
-                  <prop k="size" v="2"/>
+                  <prop k="size" v="2.5"/>
                   <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
                   <prop k="size_unit" v="MM"/>
                   <prop k="vertical_anchor_point" v="1"/>
                 </layer>
               </symbol>
             </layer>
-            <layer pass="0" class="SimpleLine" locked="0">
-              <prop k="capstyle" v="square"/>
-              <prop k="customdash" v="5;2"/>
-              <prop k="customdash_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="customdash_unit" v="MM"/>
-              <prop k="draw_inside_polygon" v="0"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="line_color" v="0,0,0,255"/>
-              <prop k="line_style" v="solid"/>
-              <prop k="line_width" v="0.26"/>
-              <prop k="line_width_unit" v="MM"/>
+            <layer pass="0" class="MarkerLine" locked="0">
+              <prop k="interval" v="3"/>
+              <prop k="interval_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="interval_unit" v="MM"/>
               <prop k="offset" v="0"/>
+              <prop k="offset_along_line" v="0"/>
+              <prop k="offset_along_line_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_along_line_unit" v="MM"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="offset_unit" v="MM"/>
-              <prop k="use_custom_dash" v="0"/>
-              <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="placement" v="firstvertex"/>
+              <prop k="rotate" v="1"/>
+              <symbol alpha="1" clip_to_extent="1" type="marker" name="@0@2">
+                <layer pass="0" class="SimpleMarker" locked="0">
+                  <prop k="angle" v="0"/>
+                  <prop k="color" v="196,241,122,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="circle"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="0,0,0,255"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="area"/>
+                  <prop k="size" v="2"/>
+                  <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                </layer>
+              </symbol>
             </layer>
           </symbol>
         </symbols>
@@ -786,8 +815,8 @@
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="flnam" index="1" name=""/>
-        <alias field="tezgnam" index="2" name=""/>
-        <alias field="haltnam" index="3" name=""/>
+        <alias field="haltnam" index="2" name=""/>
+        <alias field="tezgnam" index="3" name=""/>
         <alias field="aufteilen" index="4" name=""/>
         <alias field="teilgebiet" index="5" name=""/>
         <alias field="geom" index="6" name=""/>
@@ -840,8 +869,8 @@ def my_form_open(dialog, layer, feature):
       <defaults>
         <default field="pk" expression=""/>
         <default field="flnam" expression=""/>
-        <default field="tezgnam" expression=""/>
         <default field="haltnam" expression=""/>
+        <default field="tezgnam" expression=""/>
         <default field="aufteilen" expression=""/>
         <default field="teilgebiet" expression=""/>
         <default field="geom" expression=""/>
@@ -851,7 +880,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Anbindungen_SW_Punkte20171017125752772</id>
-      <datasource>dbname='./test.sqlite' table="linksw" (glink) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="linksw" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -859,10 +888,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -1181,20 +1210,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Speicher_Kopie20161221080207994</id>
-      <datasource>dbname='./test.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Auslässe</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -1242,14 +1271,26 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="ValueRelation" name="teilgebiet">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="knotentyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="knotentyp">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Anfangsschacht" value="Anfangsschacht"/>
+            <value key="Einzelschacht" value="Einzelschacht"/>
+            <value key="Endschacht" value="Endschacht"/>
+            <value key="Hochpunkt" value="Hochpunkt"/>
+            <value key="Normalschacht" value="Normalschacht"/>
+            <value key="Tiefpunkt" value="Tiefpunkt"/>
+            <value key="Verzweigung" value="Verzweigung"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="auslasstyp">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="bezeichnung" constraint="" Layer="auslasstypen20161201095045204" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="schachttyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="schachttyp">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Auslass" value="Auslass"/>
+            <value key="Schacht" value="Schacht"/>
+            <value key="Speicher" value="Speicher"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="istspeicher">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -1264,7 +1305,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
-          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="0" display_format="yyyy-MM-dd" field_format="yyyy-MM-dd" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="geom">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -1590,21 +1631,21 @@ def my_form_open(dialog, layer, feature):
         <default field="entwart" expression=""/>
         <default field="strasse" expression=""/>
         <default field="teilgebiet" expression=""/>
-        <default field="knotentyp" expression=""/>
-        <default field="auslasstyp" expression=""/>
-        <default field="schachttyp" expression=""/>
+        <default field="knotentyp" expression="'Normalschacht'"/>
+        <default field="auslasstyp" expression="frei"/>
+        <default field="schachttyp" expression="'Auslass'"/>
         <default field="istspeicher" expression=""/>
         <default field="istauslass" expression=""/>
-        <default field="simstatus" expression=""/>
+        <default field="simstatus" expression="'vorhanden'"/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
         <default field="geom" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>abflussparameter20161218110231636</id>
-      <datasource>dbname='./test.sqlite' table="abflussparameter" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="abflussparameter" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1665,7 +1706,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
-          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="0" display_format="yyyy-MM-dd" field_format="yyyy-MM-dd" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <annotationform>.</annotationform>
@@ -1740,13 +1781,13 @@ def my_form_open(dialog, layer, feature):
         <default field="mulden_startwert" expression=""/>
         <default field="bodenklasse" expression=""/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
       </defaults>
       <previewExpression>COALESCE( "apnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>auslasstypen20161201095045204</id>
-      <datasource>dbname='./test.sqlite' table="auslasstypen" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="auslasstypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1852,7 +1893,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>bodenklassen20170516122309914</id>
-      <datasource>dbname='./test.sqlite' table="bodenklassen" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="bodenklassen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1909,8 +1950,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="kommentar">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="createdat">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="DateTime" name="createdat">
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <annotationform>.</annotationform>
@@ -1992,13 +2033,13 @@ def my_form_open(dialog, layer, feature):
         <default field="regenerationskonstante" expression=""/>
         <default field="saettigungswassergehalt" expression=""/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
       </defaults>
       <previewExpression>COALESCE( "bknam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>einleit20171004110830029</id>
-      <datasource>dbname='./test.sqlite' table="einleit" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="einleit" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2006,10 +2047,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -2047,8 +2088,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="kommentar">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="createdat">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="DateTime" name="createdat">
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
@@ -2341,13 +2382,13 @@ def my_form_open(dialog, layer, feature):
         <default field="ew" expression=""/>
         <default field="einzugsgebiet" expression=""/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
       </defaults>
       <previewExpression>COALESCE( "elnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>entwaesserungsarten20161018090806784</id>
-      <datasource>dbname='./test.sqlite' table="entwaesserungsarten" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="entwaesserungsarten" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2392,6 +2433,9 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="he_nr">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
+        <edittype widgetv2type="TextEdit" name="kp_nr">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
       </edittypes>
       <annotationform>.</annotationform>
       <aliases>
@@ -2400,6 +2444,7 @@ def my_form_open(dialog, layer, feature):
         <alias field="bezeichnung" index="2" name=""/>
         <alias field="bemerkung" index="3" name=""/>
         <alias field="he_nr" index="4" name=""/>
+        <alias field="kp_nr" index="5" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -2448,25 +2493,26 @@ def my_form_open(dialog, layer, feature):
         <default field="bezeichnung" expression=""/>
         <default field="bemerkung" expression=""/>
         <default field="he_nr" expression=""/>
+        <default field="kp_nr" expression=""/>
       </defaults>
       <previewExpression>COALESCE("pk", '&lt;NULL>')</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>flaechen20170504083519678</id>
-      <datasource>dbname='./test.sqlite' table="flaechen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="flaechen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>flaechen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -2497,12 +2543,8 @@ def my_form_open(dialog, layer, feature):
             <value key="Schwerpunktfließzeit" value="Schwerpunktfließzeit"/>
           </widgetv2config>
         </edittype>
-        <edittype widgetv2type="ValueMap" name="he_typ">
-          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
-            <value key="Direktabfluss" value="0"/>
-            <value key="Fließzeiten" value="1"/>
-            <value key="Schwerpunktfließzeit" value="2"/>
-          </widgetv2config>
+        <edittype widgetv2type="TextEdit" name="he_typ">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="speicherzahl">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -2531,8 +2573,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="kommentar">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="createdat">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="DateTime" name="createdat">
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 attr="abflussparameter" forceraster="0" symbollevels="0" type="categorizedSymbol" enableorderby="0">
@@ -3071,26 +3113,26 @@ def my_form_open(dialog, layer, feature):
         <default field="abflussparameter" expression=""/>
         <default field="aufteilen" expression=""/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
       </defaults>
       <previewExpression>COALESCE( "flnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="1" maximumScale="15000" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>haltungen20161016203756230</id>
-      <datasource>dbname='./test.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Haltungen nach Typ</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -3160,7 +3202,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
-          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="0" display_format="yyyy-MM-dd" field_format="yyyy-MM-dd" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="xschob">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -3864,13 +3906,13 @@ def my_form_open(dialog, layer, feature):
         <default field="deckelunten" expression=""/>
         <default field="teilgebiet" expression=""/>
         <default field="qzu" expression=""/>
-        <default field="profilnam" expression=""/>
+        <default field="profilnam" expression="'Kreisquerschnitt'"/>
         <default field="entwart" expression=""/>
         <default field="rohrtyp" expression=""/>
         <default field="ks" expression=""/>
-        <default field="simstatus" expression=""/>
+        <default field="simstatus" expression="'vorhanden'"/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
         <default field="xschob" expression=""/>
         <default field="yschob" expression=""/>
         <default field="xschun" expression=""/>
@@ -3880,20 +3922,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="15000" maximumScale="1.5e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>haltungen_Kopie20161016203906444</id>
-      <datasource>dbname='./test.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Haltungslinien</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -3962,8 +4004,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="ValueRelation" name="kommentar">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="bezeichnung" constraint="" Layer="simulationsstatus20161201095050780" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="createdat">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="DateTime" name="createdat">
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="xschob">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -4339,13 +4381,13 @@ def my_form_open(dialog, layer, feature):
         <default field="deckelunten" expression=""/>
         <default field="teilgebiet" expression=""/>
         <default field="qzu" expression=""/>
-        <default field="profilnam" expression=""/>
+        <default field="profilnam" expression="'Kreisquerschnitt'"/>
         <default field="entwart" expression=""/>
         <default field="rohrtyp" expression=""/>
         <default field="ks" expression=""/>
-        <default field="simstatus" expression=""/>
+        <default field="simstatus" expression="'vorhanden'"/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
         <default field="xschob" expression=""/>
         <default field="yschob" expression=""/>
         <default field="xschun" expression=""/>
@@ -4355,7 +4397,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profildaten20161218110256525</id>
-      <datasource>dbname='./test.sqlite' table="profildaten" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="profildaten" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4455,7 +4497,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profile20161018090721921</id>
-      <datasource>dbname='./test.sqlite' table="profile" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="profile" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4500,6 +4542,9 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="kp_nr">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
+        <edittype widgetv2type="TextEdit" name="kp_key">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
       </edittypes>
       <annotationform>.</annotationform>
       <aliases>
@@ -4508,6 +4553,7 @@ def my_form_open(dialog, layer, feature):
         <alias field="he_nr" index="2" name=""/>
         <alias field="mu_nr" index="3" name=""/>
         <alias field="kp_nr" index="4" name=""/>
+        <alias field="kp_key" index="5" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -4556,26 +4602,27 @@ def my_form_open(dialog, layer, feature):
         <default field="he_nr" expression=""/>
         <default field="mu_nr" expression=""/>
         <default field="kp_nr" expression=""/>
+        <default field="kp_key" expression=""/>
       </defaults>
       <previewExpression>COALESCE( format('%1',"he_nr"), '&lt;NULL>' ) + ' - '+&#xd;
  COALESCE( "profilnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>pumpen20161017080913064</id>
-      <datasource>dbname='./test.sqlite' table="pumpen" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="pumpen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Pumpen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -4627,7 +4674,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
-          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="0" display_format="yyyy-MM-dd" field_format="yyyy-MM-dd" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
@@ -5005,15 +5052,15 @@ def my_form_open(dialog, layer, feature):
         <default field="steuersch" expression=""/>
         <default field="einschalthoehe" expression=""/>
         <default field="ausschalthoehe" expression=""/>
-        <default field="simstatus" expression=""/>
+        <default field="simstatus" expression="'vorhanden'"/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
       </defaults>
       <previewExpression>COALESCE( "pnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>pumpentypen20161018090730556</id>
-      <datasource>dbname='./test.sqlite' table="pumpentypen" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="pumpentypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5107,20 +5154,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte20161016203756252</id>
-      <datasource>dbname='./test.sqlite' table="schaechte" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Knotenpunkte</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -5168,14 +5215,26 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="ValueRelation" name="teilgebiet">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="knotentyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="knotentyp">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Anfangsschacht" value="Anfangsschacht"/>
+            <value key="Einzelschacht" value="Einzelschacht"/>
+            <value key="Endschacht" value="Endschacht"/>
+            <value key="Hochpunkt" value="Hochpunkt"/>
+            <value key="Normalschacht" value="Normalschacht"/>
+            <value key="Tiefpunkt" value="Tiefpunkt"/>
+            <value key="Verzweigung" value="Verzweigung"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="auslasstyp">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="schachttyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="schachttyp">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Auslass" value="Auslass"/>
+            <value key="Schacht" value="Schacht"/>
+            <value key="Speicher" value="Speicher"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="istspeicher">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -5189,8 +5248,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="kommentar">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="createdat">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="DateTime" name="createdat">
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="geop">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -5507,34 +5566,34 @@ def my_form_open(dialog, layer, feature):
         <default field="entwart" expression=""/>
         <default field="strasse" expression=""/>
         <default field="teilgebiet" expression=""/>
-        <default field="knotentyp" expression=""/>
+        <default field="knotentyp" expression="'Normalschacht'"/>
         <default field="auslasstyp" expression=""/>
-        <default field="schachttyp" expression=""/>
+        <default field="schachttyp" expression="'Schacht'"/>
         <default field="istspeicher" expression=""/>
         <default field="istauslass" expression=""/>
-        <default field="simstatus" expression=""/>
+        <default field="simstatus" expression="'vorhanden'"/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
         <default field="geop" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte20161220162259105</id>
-      <datasource>dbname='./test.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Schächte</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -5582,14 +5641,26 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="ValueRelation" name="teilgebiet">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="knotentyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="knotentyp">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Anfangsschacht" value="Anfangsschacht"/>
+            <value key="Einzelschacht" value="Einzelschacht"/>
+            <value key="Endschacht" value="Endschacht"/>
+            <value key="Hochpunkt" value="Hochpunkt"/>
+            <value key="Normalschacht" value="Normalschacht"/>
+            <value key="Tiefpunkt" value="Tiefpunkt"/>
+            <value key="Verzweigung" value="Verzweigung"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="auslasstyp">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="schachttyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="schachttyp">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Auslass" value="Auslass"/>
+            <value key="Schacht" value="Schacht"/>
+            <value key="Speicher" value="Speicher"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="istspeicher">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -5604,7 +5675,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
-          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="0" display_format="yyyy-MM-dd" field_format="yyyy-MM-dd" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="geom">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -5930,34 +6001,34 @@ def my_form_open(dialog, layer, feature):
         <default field="entwart" expression=""/>
         <default field="strasse" expression=""/>
         <default field="teilgebiet" expression=""/>
-        <default field="knotentyp" expression=""/>
+        <default field="knotentyp" expression="'Normalschacht'"/>
         <default field="auslasstyp" expression=""/>
         <default field="schachttyp" expression="'Schacht'"/>
         <default field="istspeicher" expression=""/>
         <default field="istauslass" expression=""/>
-        <default field="simstatus" expression=""/>
+        <default field="simstatus" expression="'vorhanden'"/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
         <default field="geom" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte_Kopie20161204084617148</id>
-      <datasource>dbname='./test.sqlite' table="schaechte" (geop) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Knotentyp</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -6005,14 +6076,26 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="ValueRelation" name="teilgebiet">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="knotentyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="knotentyp">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Anfangsschacht" value="Anfangsschacht"/>
+            <value key="Einzelschacht" value="Einzelschacht"/>
+            <value key="Endschacht" value="Endschacht"/>
+            <value key="Hochpunkt" value="Hochpunkt"/>
+            <value key="Normalschacht" value="Normalschacht"/>
+            <value key="Tiefpunkt" value="Tiefpunkt"/>
+            <value key="Verzweigung" value="Verzweigung"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="auslasstyp">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="bezeichnung" constraint="" Layer="auslasstypen20161201095045204" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="schachttyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="schachttyp">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Auslass" value="Auslass"/>
+            <value key="Schacht" value="Schacht"/>
+            <value key="Speicher" value="Speicher"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="istspeicher">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -6026,8 +6109,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="kommentar">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="createdat">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="DateTime" name="createdat">
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="geom">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -6516,34 +6599,34 @@ def my_form_open(dialog, layer, feature):
         <default field="entwart" expression=""/>
         <default field="strasse" expression=""/>
         <default field="teilgebiet" expression=""/>
-        <default field="knotentyp" expression=""/>
+        <default field="knotentyp" expression="'Normalschacht'"/>
         <default field="auslasstyp" expression=""/>
-        <default field="schachttyp" expression=""/>
+        <default field="schachttyp" expression="'Schacht'"/>
         <default field="istspeicher" expression=""/>
         <default field="istauslass" expression=""/>
-        <default field="simstatus" expression=""/>
+        <default field="simstatus" expression="'vorhanden'"/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
         <default field="geom" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte_Kopie20161221075653754</id>
-      <datasource>dbname='./test.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
+      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Speicher</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -6591,14 +6674,26 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="ValueRelation" name="teilgebiet">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="knotentyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="knotentyp">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Anfangsschacht" value="Anfangsschacht"/>
+            <value key="Einzelschacht" value="Einzelschacht"/>
+            <value key="Endschacht" value="Endschacht"/>
+            <value key="Hochpunkt" value="Hochpunkt"/>
+            <value key="Normalschacht" value="Normalschacht"/>
+            <value key="Tiefpunkt" value="Tiefpunkt"/>
+            <value key="Verzweigung" value="Verzweigung"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="auslasstyp">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="schachttyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="schachttyp">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Auslass" value="Auslass"/>
+            <value key="Schacht" value="Schacht"/>
+            <value key="Speicher" value="Speicher"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="istspeicher">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -6613,7 +6708,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
-          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="0" display_format="yyyy-MM-dd" field_format="yyyy-MM-dd" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="geom">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -6939,21 +7034,21 @@ def my_form_open(dialog, layer, feature):
         <default field="entwart" expression=""/>
         <default field="strasse" expression=""/>
         <default field="teilgebiet" expression=""/>
-        <default field="knotentyp" expression=""/>
+        <default field="knotentyp" expression="'Normalschacht'"/>
         <default field="auslasstyp" expression=""/>
-        <default field="schachttyp" expression=""/>
+        <default field="schachttyp" expression="'Speicher'"/>
         <default field="istspeicher" expression=""/>
         <default field="istauslass" expression=""/>
-        <default field="simstatus" expression=""/>
+        <default field="simstatus" expression="'vorhanden'"/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
         <default field="geom" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>simulationsstatus20161201095050780</id>
-      <datasource>dbname='./test.sqlite' table="simulationsstatus" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="simulationsstatus" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7059,7 +7154,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>speicherkennlinien20161218110320415</id>
-      <datasource>dbname='./test.sqlite' table="speicherkennlinien" sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="speicherkennlinien" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7159,20 +7254,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>teilgebiete20170214092005309</id>
-      <datasource>dbname='./test.sqlite' table="teilgebiete" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="teilgebiete" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>teilgebiete</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -7190,11 +7285,26 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="tgnam">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
+        <edittype widgetv2type="TextEdit" name="ewdichte">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="wverbrauch">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="stdmittel">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="fremdwas">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="flaeche">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
         <edittype widgetv2type="TextEdit" name="kommentar">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="createdat">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="DateTime" name="createdat">
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
@@ -7420,8 +7530,13 @@ def my_form_open(dialog, layer, feature):
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="tgnam" index="1" name=""/>
-        <alias field="kommentar" index="2" name=""/>
-        <alias field="createdat" index="3" name=""/>
+        <alias field="ewdichte" index="2" name=""/>
+        <alias field="wverbrauch" index="3" name=""/>
+        <alias field="stdmittel" index="4" name=""/>
+        <alias field="fremdwas" index="5" name=""/>
+        <alias field="flaeche" index="6" name=""/>
+        <alias field="kommentar" index="7" name=""/>
+        <alias field="createdat" index="8" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -7471,27 +7586,32 @@ def my_form_open(dialog, layer, feature):
       <defaults>
         <default field="pk" expression=""/>
         <default field="tgnam" expression=""/>
+        <default field="ewdichte" expression=""/>
+        <default field="wverbrauch" expression=""/>
+        <default field="stdmittel" expression=""/>
+        <default field="fremdwas" expression=""/>
+        <default field="flaeche" expression=""/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
       </defaults>
       <previewExpression>COALESCE( "tgnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>tezg20171204105753202</id>
-      <datasource>dbname='./test.sqlite' table="tezg" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="tezg" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>tezg</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -7527,8 +7647,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="kommentar">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="createdat">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="DateTime" name="createdat">
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
@@ -7816,26 +7936,26 @@ def my_form_open(dialog, layer, feature):
         <default field="teilgebiet" expression=""/>
         <default field="abflussparameter" expression=""/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
       </defaults>
-      <previewExpression></previewExpression>
+      <previewExpression>COALESCE( "pk", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>wehre20161125174724734</id>
-      <datasource>dbname='./test.sqlite' table="wehre" (geom) sql=</datasource>
+      <datasource>dbname='./nette.sqlite' table="wehre" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Wehre</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
-          <srsid>2646</srsid>
-          <srid>31466</srid>
-          <authid>EPSG:31466</authid>
-          <description>DHDN / Gauss-Kruger zone 2</description>
-          <projectionacronym>tmerc</projectionacronym>
-          <ellipsoidacronym>bessel</ellipsoidacronym>
+          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -7887,7 +8007,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
-          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="0" display_format="yyyy-MM-dd" field_format="yyyy-MM-dd" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
@@ -8320,9 +8440,9 @@ def my_form_open(dialog, layer, feature):
         <default field="uebeiwert" expression=""/>
         <default field="aussentyp" expression=""/>
         <default field="aussenwsp" expression=""/>
-        <default field="simstatus" expression=""/>
+        <default field="simstatus" expression="'vorhanden'"/>
         <default field="kommentar" expression=""/>
-        <default field="createdat" expression=""/>
+        <default field="createdat" expression="now()"/>
       </defaults>
       <previewExpression>COALESCE( "wnam", '&lt;NULL>' )</previewExpression>
     </maplayer>

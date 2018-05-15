@@ -1054,12 +1054,12 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             sql = u"""
               WITH flintersect AS (
                 SELECT lf.flnam AS flnam, lf.pk AS pl, lf.haltnam AS haltnam, fl.neigkl AS neigkl, fl.abflusstyp AS abflusstyp, 
-                fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
-                fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
-                fl.regenschreiber AS regenschreiber,
-                fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
-                fl.kommentar AS kommentar, 
-                CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                  fl.speicherzahl AS speicherzahl, fl.speicherkonst AS speicherkonst,
+                  fl.fliesszeit AS fliesszeit, fl.fliesszeitkanal AS fliesszeitkanal,
+                  fl.regenschreiber AS regenschreiber,
+                  fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
+                  fl.kommentar AS kommentar, 
+                  CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
                 FROM linkfl AS lf
                 INNER JOIN flaechen AS fl
                 ON lf.flnam = fl.flnam
@@ -1076,9 +1076,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               INNER JOIN haltungen AS ha
               ON fi.haltnam = ha.haltnam
               WHERE area(fi.geom) > {mindestflaeche}{auswahl}
-              GROUP BY ha.haltnam, fi.abflussparameter, fi.regenschreiber, 
-                       fi.speicherzahl, 
-                       fi.abflusstyp, fi.neigkl""".format(mindestflaeche=mindestflaeche, auswahl=auswahl)
+              GROUP BY ha.haltnam, fi.abflussparameter, fi.regenschreiber, fi.speicherzahl, 
+                fi.abflusstyp, fi.neigkl""".format(mindestflaeche=mindestflaeche, auswahl=auswahl)
             logger.debug(u'combine_flaechenrw = True')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
         else:

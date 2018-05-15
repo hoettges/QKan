@@ -222,16 +222,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QgsDateTimeEdit" name="createdat">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>80</y>
-      <width>141</width>
-      <height>23</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="lb_version">
     <property name="geometry">
      <rect>
@@ -245,10 +235,26 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.3.6</string>
+     <string>Version 2.4.3</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QgsDateTimeEdit" name="createdat">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>80</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::DaySection</enum>
+    </property>
+    <property name="displayFormat">
+     <string>dd.MM.yyyy HH:mm</string>
     </property>
    </widget>
   </widget>
@@ -279,7 +285,6 @@
   <tabstop>abflussparameter</tabstop>
   <tabstop>kommentar</tabstop>
   <tabstop>haltnam</tabstop>
-  <tabstop>createdat</tabstop>
  </tabstops>
  <resources/>
  <connections/>

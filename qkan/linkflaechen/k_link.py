@@ -50,7 +50,8 @@ progress_bar = None
 # Erzeugung der graphischen Verknüpfungen für Flächen
 
 def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                liste_teilgebiete, autokorrektur, suchradius=50, mindestflaeche=0.5, bezug_abstand=u'kante', 
+                liste_teilgebiete, linksw_in_tezg=False, autokorrektur=True, suchradius=50, 
+                mindestflaeche=0.5, bezug_abstand=u'kante', 
                 epsg=u'25832', dbtyp=u'SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -102,6 +103,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     
     Die Tabelle linkfl hat außer dem Primärschlüssel "pk" kein eindeutiges 
     Primärschlüsselfeld. 
+    
+    Das Feld tezg.flnam enthält immer den Namen der betreffenden Haltungsfläche, 
+    unabhängig davon, ob es sich um eine aufzuteilende Fläche handelt.
     '''
 
     # Statusmeldung in der Anzeige
@@ -158,15 +162,17 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     sql = u"""WITH linkadd AS (
                 SELECT
-                    linkfl.pk AS lpk, flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
+                    linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
                     flaechen.geom
                 FROM flaechen
+                INNER JOIN tezg
+                ON within(centroid(flaechen.geom),tezg.geom)
                 LEFT JOIN linkfl
                 ON linkfl.flnam = flaechen.flnam
                 WHERE (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL){ausw_einf}
                 UNION
                 SELECT
-                    linkfl.pk AS lpk, flaechen.flnam, flaechen.aufteilen, tezg.teilgebiet, 
+                    linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, flaechen.aufteilen, tezg.teilgebiet, 
                     CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
                 FROM flaechen
                 INNER JOIN tezg
@@ -174,8 +180,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 LEFT JOIN linkfl
                 ON linkfl.flnam = flaechen.flnam AND linkfl.tezgnam = tezg.flnam
                 WHERE flaechen.aufteilen = 'ja'{ausw_teil})
-            INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom)
-            SELECT flnam, aufteilen, teilgebiet, geom
+            INSERT INTO linkfl (flnam, tezgnam, aufteilen, teilgebiet, geom)
+            SELECT flnam, tezgnam, aufteilen, teilgebiet, geom
             FROM linkadd
             WHERE lpk IS NULL AND geom > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
 
@@ -225,15 +231,36 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     if not dbQK.sql(sqlindex, u'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
         return False
 
-    sql = u"""WITH tlink AS
+    # Varianten ohne und mit Beschränkung der Anbindungslinien auf die Haltungsfläche
+
+    if linksw_in_tezg:
+        sql = u"""WITH tlink AS
             (	SELECT lf.pk AS pk,
                     ha.haltnam, 
                     Distance(ha.geom,{bezug}) AS dist, 
                     ha.geom AS geohal, lf.geom AS geolf
-                FROM
-                    haltungen AS ha
-                INNER JOIN
-                    linkfl AS lf
+                FROM haltungen AS ha
+                INNER JOIN linkfl AS lf
+                ON Intersects(ha.geom,lf.gbuf)
+                INNER JOIN tezg AS tg
+                ON tg.flnam = lf.tezgnam
+                WHERE within(centroid(ha.geom),tg.geom) and lf.glink IS NULL{auswha})
+            UPDATE linkfl SET (glink, haltnam) = 
+            (   SELECT MakeLine(PointOnSurface(t1.geolf),Centroid(t1.geohal)), t1.haltnam
+                FROM tlink AS t1
+                INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
+                ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
+                WHERE linkfl.pk = t1.pk)
+            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, 
+                auswha=auswha, auswlinkfl=auswlinkfl)
+    else:
+        sql = u"""WITH tlink AS
+            (	SELECT lf.pk AS pk,
+                    ha.haltnam, 
+                    Distance(ha.geom,{bezug}) AS dist, 
+                    ha.geom AS geohal, lf.geom AS geolf
+                FROM haltungen AS ha
+                INNER JOIN linkfl AS lf
                 ON Intersects(ha.geom,lf.gbuf)
                 WHERE lf.glink IS NULL{auswha})
             UPDATE linkfl SET (glink, haltnam) =  
@@ -242,7 +269,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
                 ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
                 WHERE linkfl.pk = t1.pk)
-            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, auswha=auswha, auswlinkfl=auswlinkfl)
+            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, 
+                auswha=auswha, auswlinkfl=auswlinkfl)
+
 
     logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
@@ -258,6 +287,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     if not dbQK.sql(sql, u"QKan_LinkFlaechen (7)"):
         return False
+
+    dbQK.commit()
 
     # Aktualisierung des logischen Cache
 

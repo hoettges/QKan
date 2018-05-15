@@ -92,7 +92,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>m NhN</string>
+     <string>m NHN</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_70">
@@ -170,7 +170,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>m NhN</string>
+     <string>m NHN</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -253,7 +253,7 @@
      <rect>
       <x>90</x>
       <y>10</y>
-      <width>511</width>
+      <width>161</width>
       <height>20</height>
      </rect>
     </property>
@@ -341,16 +341,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QgsDateTimeEdit" name="createdat">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>180</y>
-      <width>141</width>
-      <height>23</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
@@ -390,10 +380,68 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.3.6</string>
+     <string>Version 2.4.3</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="schachttyp">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>10</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hier kann der Knotentyp geändert werden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Hier kann der Knotentyp geändert werden</string>
+    </property>
+    <property name="whatsThis">
+     <string>Hier kann der Knotentyp geändert werden</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_21">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>10</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
+    </property>
+    <property name="text">
+     <string>Typ</string>
+    </property>
+   </widget>
+   <widget class="QgsDateTimeEdit" name="createdat">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>180</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::DaySection</enum>
+    </property>
+    <property name="displayFormat">
+     <string>dd.MM.yyyy HH:mm</string>
     </property>
    </widget>
   </widget>
@@ -426,7 +474,6 @@
   <tabstop>simstatus</tabstop>
   <tabstop>entwart</tabstop>
   <tabstop>strasse</tabstop>
-  <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>
