@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>773</width>
-    <height>577</height>
+    <height>606</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>280</x>
-     <y>520</y>
+     <y>540</y>
      <width>181</width>
      <height>32</height>
     </rect>
@@ -43,7 +43,7 @@
    <property name="geometry">
     <rect>
      <x>700</x>
-     <y>560</y>
+     <y>590</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -52,7 +52,7 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.3.7</string>
+    <string>Version 2.4.4</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -487,7 +487,7 @@
      <x>20</x>
      <y>400</y>
      <width>731</width>
-     <height>101</height>
+     <height>121</height>
     </rect>
    </property>
    <property name="font">
@@ -507,7 +507,7 @@
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>30</y>
+      <y>80</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -532,7 +532,7 @@
     <property name="geometry">
      <rect>
       <x>255</x>
-      <y>30</y>
+      <y>80</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -560,7 +560,7 @@
     <property name="geometry">
      <rect>
       <x>335</x>
-      <y>30</y>
+      <y>80</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -625,8 +625,8 @@
    <widget class="QCheckBox" name="cb_autokorrektur">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>60</y>
+      <x>260</x>
+      <y>40</y>
       <width>371</width>
       <height>31</height>
      </rect>
@@ -644,7 +644,7 @@
      <string>Automatische Korrektur von Namensfehlern in den Tabellen &quot;flaechen&quot; und &quot;einleitsw&quot;</string>
     </property>
     <property name="layoutDirection">
-     <enum>Qt::RightToLeft</enum>
+     <enum>Qt::LeftToRight</enum>
     </property>
     <property name="text">
      <string>Autokorrektur von Namen in Flächen und Einleitpunkten</string>
@@ -654,7 +654,7 @@
     <property name="geometry">
      <rect>
       <x>575</x>
-      <y>30</y>
+      <y>80</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -670,7 +670,7 @@
     <property name="geometry">
      <rect>
       <x>435</x>
-      <y>30</y>
+      <y>80</y>
       <width>131</width>
       <height>21</height>
      </rect>
@@ -698,7 +698,7 @@
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>30</y>
+      <y>80</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -717,6 +717,34 @@
     </property>
     <property name="text">
      <string>m²</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_linkswInTezg">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>20</y>
+      <width>371</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;1. Falls in den Tabellen &amp;quot;flaechen&amp;quot; und &amp;quot;einleitsw&amp;quot; leere oder doppelte Namen (flnam bzw. elnam) vorkommen, werden diese mit &amp;quot;f_nnnn&amp;quot; bzw. &amp;quot;e_nnnn&amp;quot; überschrieben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Automatische Korrektur von Namensfehlern in den Tabellen &quot;flaechen&quot; und &quot;einleitsw&quot;</string>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>Verbindungen nur innerhalb Haltungsfläche (tezg) erstellen</string>
     </property>
    </widget>
   </widget>

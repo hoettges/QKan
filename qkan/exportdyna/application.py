@@ -134,42 +134,12 @@ class ExportToKP:
             template_dyna = ''
         self.dlg.tf_KP_template.setText(template_dyna)
         self.dlg.pb_select_KP_template.clicked.connect(self.selectFile_kpDB_template)
-        self.dlg.pb_select_KP_emptytemplate.clicked.connect(self.selectFile_kpDB_emptytemplate)
 
         if 'datenbanktyp' in self.config:
             datenbanktyp = self.config['datenbanktyp']
         else:
             datenbanktyp = 'spatialite'
             pass  # Es gibt noch keine Wahlmöglichkeit
-
-        self.dlg.pb_exportall.clicked.connect(self.exportall)
-        self.dlg.pb_exportnone.clicked.connect(self.exportnone)
-
-        # Auswahl der zu exportierenden Tabellen ----------------------------------------------
-
-        # Eigene Funktion für die zahlreichen Checkboxen
-
-        def cb_set(name, cbox, default):
-            if name in self.config:
-                checked = self.config[name]
-            else:
-                checked = default
-            cbox.setChecked(checked)
-            return checked
-
-        export_schaechte = cb_set('export_schaechte', self.dlg.cb_export_schaechte, True)
-        export_auslaesse = cb_set('export_auslaesse', self.dlg.cb_export_auslaesse, True)
-        export_speicher = cb_set('export_speicher', self.dlg.cb_export_speicher, True)
-        export_haltungen = cb_set('export_haltungen', self.dlg.cb_export_haltungen, True)
-        export_pumpen = cb_set('export_pumpen', self.dlg.cb_export_pumpen, False)
-        export_wehre = cb_set('export_wehre', self.dlg.cb_export_wehre, False)
-        export_flaechenrw = cb_set('export_flaechenrw', self.dlg.cb_export_flaechenrw, True)
-        export_einleitdirekt = cb_set('export_einleitdirekt', self.dlg.cb_export_einleitdirekt, True)
-        export_abflussparameter = cb_set('export_abflussparameter', self.dlg.cb_export_abflussparameter, True)
-        export_regenschreiber = cb_set('export_regenschreiber', self.dlg.cb_export_regenschreiber, False)
-        export_rohrprofile = cb_set('export_rohrprofile', self.dlg.cb_export_rohrprofile, False)
-        export_speicherkennlinien = cb_set('export_speicherkennlinien', self.dlg.cb_export_speicherkennlinien, False)
-        export_bodenklassen = cb_set('export_bodenklassen', self.dlg.cb_export_bodenklassen, False)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -222,15 +192,6 @@ class ExportToKP:
         # os.chdir(os.path.dirname(filename))
         self.dlg.tf_KP_template.setText(filename)
 
-    def selectFile_kpDB_emptytemplate(self):
-        """Vorlage-DYNA-Datei auswaehlen."""
-
-        filename = QFileDialog.getOpenFileName(self.dlg, u"Leere Vorlage-DYNA-Datei auswählen",
-                                               self.templatepath, "*.ein")
-        # if os.path.dirname(filename) != '':
-        # os.chdir(os.path.dirname(filename))
-        self.dlg.tf_KP_template.setText(filename)
-
     def selectFile_QKanDB(self):
         """Datenbankverbindung zur QKan-Datenbank (SpatiLite) auswaehlen."""
 
@@ -240,39 +201,6 @@ class ExportToKP:
         # os.chdir(os.path.dirname(filename))
         self.dlg.tf_QKanDB.setText(filename)
 
-    def exportall(self):
-        """Aktiviert alle Checkboxen zm Export"""
-
-        self.dlg.cb_export_schaechte.setChecked(True)
-        self.dlg.cb_export_auslaesse.setChecked(True)
-        self.dlg.cb_export_speicher.setChecked(True)
-        self.dlg.cb_export_haltungen.setChecked(True)
-        self.dlg.cb_export_pumpen.setChecked(True)
-        self.dlg.cb_export_wehre.setChecked(True)
-        self.dlg.cb_export_flaechenrw.setChecked(True)
-        self.dlg.cb_export_einleitdirekt.setChecked(True)
-        self.dlg.cb_export_abflussparameter.setChecked(True)
-        self.dlg.cb_export_regenschreiber.setChecked(True)
-        self.dlg.cb_export_rohrprofile.setChecked(True)
-        self.dlg.cb_export_speicherkennlinien.setChecked(True)
-        self.dlg.cb_export_bodenklassen.setChecked(True)
-
-    def exportnone(self):
-        """Deaktiviert alle Checkboxen zm Export"""
-
-        self.dlg.cb_export_schaechte.setChecked(False)
-        self.dlg.cb_export_auslaesse.setChecked(False)
-        self.dlg.cb_export_speicher.setChecked(False)
-        self.dlg.cb_export_haltungen.setChecked(False)
-        self.dlg.cb_export_pumpen.setChecked(False)
-        self.dlg.cb_export_wehre.setChecked(False)
-        self.dlg.cb_export_flaechenrw.setChecked(False)
-        self.dlg.cb_export_einleitdirekt.setChecked(False)
-        self.dlg.cb_export_abflussparameter.setChecked(False)
-        self.dlg.cb_export_regenschreiber.setChecked(False)
-        self.dlg.cb_export_rohrprofile.setChecked(False)
-        self.dlg.cb_export_speicherkennlinien.setChecked(False)
-        self.dlg.cb_export_bodenklassen.setChecked(False)
 
     # -------------------------------------------------------------------------
     # Formularfunktionen
@@ -366,7 +294,7 @@ class ExportToKP:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            fehlermeldung(u"Fehler in k_link", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            fehlermeldung(u"Fehler in exportdyna.application", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             logger.error("k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
@@ -448,11 +376,54 @@ class ExportToKP:
             autokorrektur = True
         self.dlg.cb_autokorrektur.setChecked(autokorrektur)
 
+        if 'autonummerierung_dyna' in self.config:
+            autonummerierung_dyna = self.config['autonummerierung_dyna']
+        else:
+            autonummerierung_dyna = False
+        self.dlg.cb_autonummerierung_dyna.setChecked(autonummerierung_dyna)
+
         # Festlegung des Fangradius
         if 'fangradius' in self.config:
             fangradius = self.config['fangradius']
         else:
             fangradius = u'0.1'
+        self.dlg.tf_fangradius.setText(str(fangradius))
+
+        # Mindestflächengröße
+        if 'mindestflaeche' in self.config:
+            mindestflaeche = self.config['mindestflaeche']
+        else:
+            mindestflaeche = u'0.5'
+        self.dlg.tf_mindestflaeche.setText(str(mindestflaeche))
+
+        # Maximalzahl Schleifendurchläufe
+        if 'max_loops' in self.config:
+            max_loops = self.config['max_loops']
+        else:
+            max_loops = 1000
+
+        # Optionen zur Berechnung der befestigten Flächen
+        if 'dynabef_choice' in self.config:
+            dynabef_choice = self.config['dynabef_choice']
+        else:
+            dynabef_choice = u'flaechen'
+
+        if dynabef_choice == u'flaechen':
+            self.dlg.rb_flaechen.setChecked(True)
+        elif dynabef_choice == u'tezg':
+            self.dlg.rb_tezg.setChecked(True)
+
+        # Optionen zur Zuordnung des Profilschlüssels
+        if 'dynaprof_choice' in self.config:
+            dynaprof_choice = self.config['dynaprof_choice']
+        else:
+            dynaprof_choice = u'profilname'
+
+        if dynaprof_choice == u'profilname':
+            self.dlg.rb_profnam.setChecked(True)
+        elif dynaprof_choice == u'profilkey':
+            self.dlg.rb_profkey.setChecked(True)
+
 
         # Formular anzeigen
 
@@ -466,41 +437,48 @@ class ExportToKP:
             liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
 
             # Eingaben aus Formular übernehmen
-            database_Qkan = self.dlg.tf_QKanDB.text()
+            database_QKan = self.dlg.tf_QKanDB.text()
             dynafile = self.dlg.tf_KP_dest.text()
             template_dyna = self.dlg.tf_KP_template.text()
             datenbanktyp = 'spatialite'
             autokorrektur = self.dlg.cb_autokorrektur.isChecked()
+            autonummerierung_dyna = self.dlg.cb_autonummerierung_dyna.isChecked()
+            mindestflaeche = self.dlg.tf_mindestflaeche.text()
+            fangradius = self.dlg.tf_fangradius.text()
+            if self.dlg.rb_flaechen.isChecked():
+                dynabef_choice = u'flaechen'
+            elif self.dlg.rb_tezg.isChecked():
+                dynabef_choice = u'tezg'
+            else:
+                fehlermeldung(u"exportdyna.application.run", 
+                              u"Fehlerhafte Option: \ndynabef_choice = {}".format(repr(dynabef_choice)))
+            if self.dlg.rb_profnam.isChecked():
+                dynaprof_choice = u'profilname'
+            elif self.dlg.rb_profkey.isChecked():
+                dynaprof_choice = u'profilkey'
+            else:
+                fehlermeldung(u"exportdyna.application.run", 
+                              u"Fehlerhafte Option: \ndynaprof_choice = {}".format(repr(dynaprof_choice)))
 
-            check_export = {}
-            check_export['export_schaechte'] = self.dlg.cb_export_schaechte.isChecked()
-            check_export['export_auslaesse'] = self.dlg.cb_export_auslaesse.isChecked()
-            check_export['export_speicher'] = self.dlg.cb_export_speicher.isChecked()
-            check_export['export_haltungen'] = self.dlg.cb_export_haltungen.isChecked()
-            check_export['export_pumpen'] = self.dlg.cb_export_pumpen.isChecked()
-            check_export['export_wehre'] = self.dlg.cb_export_wehre.isChecked()
-            check_export['export_flaechenrw'] = self.dlg.cb_export_flaechenrw.isChecked()
-            check_export['export_einleitdirekt'] = self.dlg.cb_export_einleitdirekt.isChecked()
-            check_export['export_abflussparameter'] = self.dlg.cb_export_abflussparameter.isChecked()
-            check_export['export_regenschreiber'] = self.dlg.cb_export_regenschreiber.isChecked()
-            check_export['export_rohrprofile'] = self.dlg.cb_export_rohrprofile.isChecked()
-            check_export['export_speicherkennlinien'] = self.dlg.cb_export_speicherkennlinien.isChecked()
-            check_export['export_bodenklassen'] = self.dlg.cb_export_bodenklassen.isChecked()
 
             # Konfigurationsdaten schreiben
             self.config['dynafile'] = dynafile
             self.config['template_dyna'] = template_dyna
-            self.config['database_Qkan'] = database_Qkan
+            self.config['database_QKan'] = database_QKan
             self.config['datenbanktyp'] = datenbanktyp
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['autokorrektur'] = autokorrektur
+            self.config['autonummerierung_dyna'] = autonummerierung_dyna
             self.config['fangradius'] = fangradius
-            for el in check_export:
-                self.config[el] = check_export[el]
+            self.config['mindestflaeche'] = mindestflaeche
+            self.config['max_loops'] = max_loops
+            self.config['dynabef_choice'] = dynabef_choice
+            self.config['dynaprof_choice'] = dynaprof_choice
 
             with open(self.configfil, 'w') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
-            exportKanaldaten(iface, dynafile, template_dyna, self.dbQK, liste_teilgebiete, autokorrektur, 
-                             fangradius, datenbanktyp, check_export)
+            exportKanaldaten(iface, dynafile, template_dyna, self.dbQK, dynabef_choice, dynaprof_choice, 
+                             liste_teilgebiete, autokorrektur, autonummerierung_dyna, fangradius, 
+                             mindestflaeche, max_loops, datenbanktyp)

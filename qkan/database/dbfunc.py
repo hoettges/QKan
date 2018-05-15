@@ -78,7 +78,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.3.7'
+        self.actversion = '2.4.4'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
         if dbname is not None:
@@ -89,7 +89,7 @@ class DBConnection:
 
                 logger.debug(u'dbfund.__init__: Datenbank existiert und Verbindung hergestellt:\n{}'.format(dbname))
                 # Versionsprüfung
-                if not self.version():
+                if not self.updateVersion():
                     self.consl.close()
                     return None
 
@@ -168,6 +168,8 @@ class DBConnection:
 
         try:
             self.cursl.execute(sql)
+
+            # Identische Protokollmeldungen werden für 2 Sekunden unterdrückt...
             if self.sqltext == errormessage and not repeatmessage:
                 if (self.sqltime.now() - self.sqltime).seconds <2:
                     self.sqlcount += 1
@@ -213,11 +215,20 @@ class DBConnection:
 
     # Versionskontrolle der QKan-Datenbank
 
-    def version(self):
-        """Checks database version. Database is just connected by the calling procedure.
+    def updateVersion(self):
+        """Prüft die Version der Datenbank. 
 
             :returns: Anpassung erfolgreich: True = alles o.k.
             :rtype: logical
+            
+            Voraussetzungen: 
+             - Die aktuelle Datenbank ist bereits geöffnet. 
+
+            Die aktuelle Versionsnummer steht in der Datenbank: info.version
+            Diese wird mit dem Attribut self.actversion verglichen. Bei Differenz werden 
+            die nötigen Anpassungen vorgenommen und die Versionsnummer jeweils aktualisiert.
+            Falls Tabellenspalten umbenannt oder gelöscht wurden, wird eine Warnmeldung erzeugt
+            mit der Empfehlung, das aktuelle Projekt neu zu laden. 
         """
 
         logger.debug('0 - actversion = {}'.format(self.actversion))
@@ -249,7 +260,7 @@ class DBConnection:
         # ---------------------------------------------------------------------------------------------
         # Aktualisierung von Version 1.9.9 und früher
 
-        if versiondbQK == u'1.9.9':
+        if versiondbQK <= u'1.9.9':
 
             # Tabelle einwohner
             # sqllis = [u"""CREATE TABLE IF NOT EXISTS einwohner (
@@ -311,7 +322,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK == u'2.0.2':
+        if versiondbQK <= u'2.0.2':
 
             attrlis = self.attrlist(u'linksw')
             if not attrlis:
@@ -343,7 +354,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK == u'2.1.2':
+        if versiondbQK <= u'2.1.2':
             attrlis = self.attrlist(u'einleit')
             if not attrlis:
                 return False
@@ -387,7 +398,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK == u'2.2.0':
+        if versiondbQK <= u'2.2.0':
 
             attrlis = self.attrlist(u'flaechen')
             if not attrlis:
@@ -407,7 +418,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK == u'2.2.1':
+        if versiondbQK <= u'2.2.1':
 
             attrlis = self.attrlist(u'flaechen')
             if not attrlis:
@@ -427,7 +438,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK == u'2.2.2':
+        if versiondbQK <= u'2.2.2':
 
             global progress_bar
             progress_bar = QProgressBar(iface.messageBar())
@@ -725,11 +736,11 @@ class DBConnection:
                     # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
             # 4. Schritt: Transaction abschließen
-            self.commit()
-
             sql = u"""UPDATE info SET value = '2.2.3' WHERE subject = 'version' and value = '2.2.2';"""
             if not self.sql(sql, u'dbfunc.version (2.2.2-10)'):
                 return False
+
+            self.commit()
 
             progress_bar.setValue(100)
             status_message.setText(u"Achtung! Benutzerhinweis: Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
@@ -740,6 +751,131 @@ class DBConnection:
             # Versionsnummer hochsetzen
 
             versiondbQK = u'2.2.3'
+
+
+        # ---------------------------------------------------------------------------------------------------------
+        if versiondbQK < u'2.4.1':
+
+            sql = u"""
+                CREATE TABLE IF NOT EXISTS dynahal (
+                    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                    haltnam TEXT,
+                    schoben TEXT,
+                    schunten TEXT,
+                    teilgebiet TEXT,
+                    kanalnummer TEXT,
+                    haltungsnummer TEXT,
+                    anzobob INTEGER,
+                    anzobun INTEGER,
+                    anzunun INTEGER,
+                    anzunob INTEGER)"""
+            if not self.sql(sql, u'dbfunc.version (2.4.1-1)'):
+                return False
+
+            sql = u"""
+                ALTER TABLE profile ADD COLUMN kp_key TEXT
+            """
+            if not self.sql(sql, u'dbfunc.version (2.4.1-3)'):
+                return False
+
+            sql = u"""
+                ALTER TABLE entwaesserungsarten ADD COLUMN kp_nr INTEGER
+            """
+            if not self.sql(sql, u'dbfunc.version (2.4.1-2)'):
+                return False
+
+            sqllis = [u"""UPDATE entwaesserungsarten SET kp_nr = 0 WHERE bezeichnung = 'Mischwasser'""",
+                      u"""UPDATE entwaesserungsarten SET kp_nr = 1 WHERE bezeichnung = 'Schmutzwasser'""",
+                      u"""UPDATE entwaesserungsarten SET kp_nr = 2 WHERE bezeichnung = 'Regenwasser'"""]
+
+            for sql in sqllis:
+                if not self.sql(sql, u'dbfunc.version (2.4.1-4)'):
+                    return False
+
+            sql = u"""UPDATE info SET value = '2.4.1' WHERE subject = 'version';"""
+            if not self.sql(sql, u'dbfunc.version (2.4.1-5)'):
+                return False
+
+            self.commit()
+
+            # Versionsnummer hochsetzen
+
+            versiondbQK = u'2.4.1'
+
+        # ---------------------------------------------------------------------------------------------------------
+        if versiondbQK < u'2.4.3':
+
+            sql = u'''CREATE VIEW IF NOT EXISTS "v_linkfl_check" AS 
+                    WITH lfok AS
+                    (   SELECT 
+                            lf.pk AS "pk",
+                            lf.flnam AS "linkfl_nam", 
+                            lf.haltnam AS "linkfl_haltnam", 
+                            fl.flnam AS "flaech_nam",
+                            tg.flnam AS "tezg_nam",
+                            min(lf.pk) AS pkmin, 
+                            max(lf.pk) AS pkmax,
+                            count(*) AS anzahl
+                        FROM linkfl AS lf
+                        LEFT JOIN flaechen AS fl
+                        ON lf.flnam = fl.flnam
+                        LEFT JOIN tezg AS tg
+                        ON lf.tezgnam = tg.flnam
+                        WHERE fl.aufteilen = "ja" and fl.aufteilen IS NOT NULL
+                        GROUP BY fl.flnam, tg.flnam
+                        UNION
+                        SELECT 
+                            lf.pk AS "pk",
+                            lf.flnam AS "linkfl_nam", 
+                            lf.haltnam AS "linkfl_haltnam", 
+                            fl.flnam AS "flaech_nam",
+                            NULL AS "tezg_nam",
+                            min(lf.pk) AS pkmin, 
+                            max(lf.pk) AS pkmax,
+                            count(*) AS anzahl
+                        FROM linkfl AS lf
+                        LEFT JOIN flaechen AS fl
+                        ON lf.flnam = fl.flnam
+                        WHERE fl.aufteilen <> "ja" OR fl.aufteilen IS NULL
+                        GROUP BY fl.flnam)
+                    SELECT pk, anzahl, CASE WHEN anzahl > 1 THEN 'mehrfach vorhanden' WHEN flaech_nam IS NULL THEN 'Keine Fläche' WHEN linkfl_haltnam IS NULL THEN  'Keine Haltung' ELSE 'o.k.' END AS fehler
+                    FROM lfok'''
+
+            if not self.sql(sql, u'dbfunc.version (2.4.3-1)'):
+                return False
+
+            sql = u'''CREATE VIEW IF NOT EXISTS "v_flaechen_ohne_linkfl" AS 
+                    SELECT 
+                        fl.pk, 
+                        fl.flnam AS "flaech_nam",
+                        fl.aufteilen AS "flaech_aufteilen", 
+                        'Verbindung fehlt' AS "Fehler"
+                    FROM flaechen AS fl
+                    LEFT JOIN linkfl AS lf
+                    ON lf.flnam = fl.flnam
+                    LEFT JOIN tezg AS tg
+                    ON tg.flnam = lf.tezgnam
+                    WHERE ( (fl.aufteilen <> "ja" or fl.aufteilen IS NULL) AND
+                             lf.pk IS NULL) OR
+                          (  fl.aufteilen = "ja" AND fl.aufteilen IS NOT NULL AND 
+                             lf.pk IS NULL)
+                    UNION
+                    VALUES
+                        (0, '', '', 'o.k.') '''
+
+            if not self.sql(sql, u'dbfunc.version (2.4.3-2)'):
+                return False
+
+
+            sql = u"""UPDATE info SET value = '2.4.3' WHERE subject = 'version';"""
+            if not self.sql(sql, u'dbfunc.version (2.4.3-3)'):
+                return False
+
+            self.commit()
+
+            # Versionsnummer hochsetzen
+
+            versiondbQK = u'2.4.3'
 
 
         logger.debug('1 - versiondbQK = {}'.format(versiondbQK))

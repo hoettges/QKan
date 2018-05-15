@@ -151,10 +151,10 @@ class rahmen():
 
         # Anpassen der Koordinatengrenzen
 
-        self.xmin = self.min(self.xmin, x1, x2)
-        self.ymin = self.min(self.ymin, y1, y2)
-        self.xmax = self.max(self.xmax, x1, x2)
-        self.ymax = self.max(self.ymax, y1, y2)
+        self.xmin = min(self.xmin, x1, x2)
+        self.ymin = min(self.ymin, y1, y2)
+        self.xmax = max(self.xmax, x1, x2)
+        self.ymax = max(self.ymax, y1, y2)
 
         # Berücksichtung des äußeren Punktes der verbindenden Bogens
 
@@ -346,8 +346,9 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
 
     # Initialisierung von Parametern für die nachfolgende Leseschleife
 
-    kanalnummer_vor = ''            # um doppelte Datensätze mit Haltungen diese nur einmal zu lesen. 
-    haltungnummer_vor = ''
+    kanalnummer_vor = ''            # um bei doppelten Haltungsdatensätzen diese nur einmal zu lesen. 
+    haltungnummer_vor = ''          # Erläuterung: Die doppelten Haltungsdatensätze tauchen in DYNA immer dann
+                                    # auf, wenn mehrere Zuflüsse angegeben werden müssen. 
 
     # Initialisierungen für Profile
     profilmodus = -1       # -1: Nicht im Profilblock, Nächste Zeile ist bei:
@@ -356,12 +357,6 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
                            #  2: Profilnr.
                            #  3: Erste Koordinaten des Querprofils
 
-    scrheader = 'stil\nStandard\nArial\n50\n1\n0\nNein\nNein'
-    plheader = 'plinie\n'
-    dx = 5000   # Der Offset berechnet sich aus der Laufvariablen ipos und den Schrittweiten dx und dy,
-    dy = -5000   # wobei pro Zeile max nx Profile gezeichnet werden.
-    nx = 5
-    ipos = 0
     x1 = y1 = None   # markiert, dass noch kein Profil eingelesen wurde (s. u.)
 
     for zeile in open(dynafile):
@@ -377,11 +372,6 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
                 continue
             elif profilmodus == 2:
                 # Profilnr.
-
-                # Berechnung der Grafikposition
-                xpos = dx * (ipos % nx)
-                ypos = dy * (ipos // nx)
-                ipos += 1
 
                 profil_key = zeile.strip()
                 profilmodus = 3
@@ -494,8 +484,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
                     ks_key = zeile[52:53].strip();  n = 12
                     flaeche = zahl(zeile[71:76], 2) * 10000.;  n = 20
                     flaecheund = round(zahl(zeile[53:55]) / 100. * flaeche, 1);  n = 13
-                    qgewerbeind = int('0' + zeile[55:56].strip());  n = 14
-                    qfremdind = int('0' + zeile[56:57].strip());  n = 15
+                    qgewerbeind = zeile[55:56].strip();  n = 14
+                    qfremdind = zeile[56:57].strip();  n = 15
                     zuflussid = zeile[57:58];  n = 16
                     qzu = zahl(zeile[58:63], 1);  n = 17
                     if status_einw:
@@ -507,14 +497,16 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
                     entwart_nr = int('0' + zeile[77:78].strip());  n = 22
                     simstatus_nr = int('0' + zeile[78:79].strip());  n = 23
                     haeufigkeit = int('0' + zeile[80:81].strip());  n = 24
-                    schoben = zeile[81:93];  n = 25
-                    schunten = zeile[94:106];  n = 26
+                    schoben = zeile[81:93].strip();  n = 25
+                    schunten = zeile[94:106].strip();  n = 26
                     xob = zahl(zeile[106:120]);  n = 27
                     yob = zahl(zeile[120:134]);  n = 28
                     schdmoben = zahl(zeile[180:187])
                 except BaseException as err:
+                    fehlermeldung(u"Programmfehler",u"import_from_dyna.importKanaldaten (1)")
                     logger.error(u'12er: Wert Nr. {} - {}\nZeile: {}'.format(n, err, zeile))
-                    return False
+                    del dbQK
+                    return None
 
                 try:
                     sql = u"""INSERT INTO dyna12
@@ -525,7 +517,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
                       flaechenid, strschluessel, haeufigkeit, schdmoben)
                     VALUES ('{kanalnummer}', '{haltungsnummer}', '{schoben}', '{schunten}',
                       {xob}, {yob}, {laenge}, {deckeloben}, {sohleoben}, {sohleunten},
-                      '{material}', '{profil_key}', {hoehe}, {ks_key}, {flaeche}, {flaecheund}, {neigkl},
+                      '{material}', '{profil_key}', {hoehe}, '{ks_key}', {flaeche}, {flaecheund}, {neigkl},
                       {entwart_nr}, {simstatus_nr},
                       '{flaechenid}', '{strschluessel}', {haeufigkeit}, {schdmoben})""".format(
                         kanalnummer=kanalnummer, haltungsnummer=haltungsnummer,
@@ -547,12 +539,12 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
 
             try:
                 n = 1
-                kanalnummer = zeile[6:14].lstrip('0 ').replace(' ', '0');    n = 2  # wegen der merkwürdigen DYNA-Logik für Kanalnamen;
+                kanalnummer = zeile[6:14].lstrip('0 ').replace(' ', '0');    n = 2  # wegen der eigenwilligen DYNA-Logik für Kanalnamen;
                 haltungsnummer = zeile[14:17];    n = 3
                 deckelhoehe = zahl(zeile[24:31],3);    n = 4
                 xkoor = zahl(zeile[31:45],0);    n = 5
                 ykoor = zahl(zeile[45:59],0);    n = 6
-                schnam = zeile[59:71];    n = 7
+                schnam = zeile[59:71].strip();    n = 7
             except BaseException as err:
                 logger.error(u'16er: Wert Nr. {} - {}\nZeile: {}'.format(n, err, zeile))
                 return False
@@ -643,7 +635,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
         LEFT JOIN simulationsstatus
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
         LEFT JOIN entwaesserungsarten
-        ON dyna12.entwart_nr = entwaesserungsarten.kp_nr'''
+        ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
+        GROUP BY dyna12.kanalnummer, dyna12.haltungsnummer'''
 
     if not dbQK.sql(sql, 'importkanaldaten_dyna (7)'):
         return None
@@ -726,7 +719,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
         LEFT JOIN simulationsstatus
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
         LEFT JOIN entwaesserungsarten
-        ON dyna12.entwart_nr = entwaesserungsarten.kp_nr'''
+        ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
+        GROUP BY dyna12.schoben'''
 
     dbQK.sql(sql)
     daten = dbQK.fetchall()
@@ -804,8 +798,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
             dyna41.schnam as schnam,
             dyna41.xkoor as xsch, 
             dyna41.ykoor as ysch, 
-            dyna12.sohleoben as sohlhoehe, 
-            dyna12.deckeloben as deckelhoehe, 
+            dyna12.sohleunten as sohlhoehe, 
+            dyna41.deckelhoehe as deckelhoehe, 
             1000 as durchm, 
             0 as druckdicht, 
             entwaesserungsarten.bezeichnung as entwart, 
@@ -1050,8 +1044,9 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_copy_form
             datasource = database_QKan
 
         # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
-        tabliste = ['schaechte', u'haltungen', u'pumpen', u'teilgebiete', u'einzugsgebiete', u'wehre', 
-                     u'flaechen', u'tezg']
+        # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
+        tabliste = [u'einleit', u'einzugsgebiete', u'flaechen', u'haltungen', u'linkfl', u'linksw', 
+                    u'pumpen', u'schaechte', u'teilgebiete', u'tezg', u'wehre']
 
         # Lesen der Projektdatei ------------------------------------------------------------------
         qgsxml = ET.parse(projecttemplate)

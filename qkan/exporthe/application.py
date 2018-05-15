@@ -528,7 +528,7 @@ class ExportToHE:
             liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
 
             # Eingaben aus Formular übernehmen
-            database_Qkan = self.dlg.tf_QKanDB.text()
+            database_QKan = self.dlg.tf_QKanDB.text()
             database_HE = self.dlg.tf_heDB_dest.text()
             dbtemplate_HE = self.dlg.tf_heDB_template.text()
             datenbanktyp = 'spatialite'
@@ -572,7 +572,7 @@ class ExportToHE:
             # Konfigurationsdaten schreiben
             self.config['database_HE'] = database_HE
             self.config['dbtemplate_HE'] = dbtemplate_HE
-            self.config['database_Qkan'] = database_Qkan
+            self.config['database_QKan'] = database_QKan
             self.config['datenbanktyp'] = datenbanktyp
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['autokorrektur'] = autokorrektur
