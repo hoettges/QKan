@@ -48,7 +48,7 @@
      <x>20</x>
      <y>20</y>
      <width>461</width>
-     <height>181</height>
+     <height>171</height>
     </rect>
    </property>
    <property name="font">
@@ -113,8 +113,8 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>140</y>
+      <x>300</x>
+      <y>80</y>
       <width>131</width>
       <height>21</height>
      </rect>
@@ -138,8 +138,8 @@
    <widget class="QLineEdit" name="tf_fangradius">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>140</y>
+      <x>320</x>
+      <y>100</y>
       <width>61</width>
       <height>20</height>
      </rect>
@@ -148,8 +148,8 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>140</y>
+      <x>390</x>
+      <y>100</y>
       <width>21</width>
       <height>21</height>
      </rect>
@@ -206,6 +206,31 @@
     </property>
     <property name="text">
      <string>Einzeleinleitern-Verknüpfungen bereinigen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_deleteGeomNone">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>140</y>
+      <width>211</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sollen Datensätze in der Tabelle &amp;quot;linkfl&amp;quot;, die kein Linienobjekt haben, gelöscht werden?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Sollen Datensätze in der Tabelle &quot;linkfl&quot;, die kein Linienobjekt haben, gelöscht werden?</string>
+    </property>
+    <property name="text">
+     <string>Datensätze ohne Linienobjekt löschen</string>
     </property>
    </widget>
   </widget>

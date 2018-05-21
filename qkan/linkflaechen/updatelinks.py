@@ -44,7 +44,7 @@ logger = logging.getLogger(u'QKan')
 
 # progress_bar = None
 
-def updatelinkfl(dbQK, radiusHal = u'0.1'):
+def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkflGeomNone = True):
     """Aktualisierung des logischen Cache für die Tabelle "linkfl"
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -79,6 +79,13 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
         del dbQK
         return False
 
+    # Löschen von Datensätzen ohne Linienobjekt
+    if deletelinkflGeomNone:
+        sql = u"""DELETE FROM linkfl WHERE geom IS NULL"""
+
+        if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (1)'):
+            return False
+
     # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
 
     sql = u"""WITH missing AS
@@ -93,7 +100,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
             WHERE within(StartPoint(linkfl.glink),fl.geom) AND fl.geom IS NOT NULL)
         WHERE linkfl.pk IN missing""".format(eps=radiusHal)
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (1)'):
+    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (2)'):
         return False
 
     # progress_bar.setValue(30)
@@ -112,7 +119,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
             WHERE intersects(buffer(EndPoint(linkfl.glink),{eps}),ha.geom))
         WHERE linkfl.pk IN missing""".format(eps=radiusHal)
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (2)'):
+    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (3)'):
         return False
 
     # progress_bar.setValue(65)
@@ -133,7 +140,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
             WHERE within(StartPoint(linkfl.glink),tg.geom) AND tg.geom IS NOT NULL)
         WHERE linkfl.pk IN missing""".format(eps=radiusHal)
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (3)'):
+    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (4)'):
         return False
 
     dbQK.commit()
@@ -146,7 +153,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1'):
     return True
 
 
-def updatelinksw(dbQK, radiusHal = u'0.1'):
+def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkflGeomNone = True):
     # Datenvorbereitung: Verknüpfung von Einleitpunkt zu Haltung wird durch Tabelle "linksw"
     # repräsentiert. Diese Zuordnung wird zunächst in "einleit.haltnam" übertragen.
 
@@ -167,6 +174,13 @@ def updatelinksw(dbQK, radiusHal = u'0.1'):
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (1)'):
         return False
 
+    # Löschen von Datensätzen ohne Linienobjekt
+    if deletelinkflGeomNone:
+        sql = u"""DELETE FROM linkfl WHERE geom IS NULL"""
+
+        if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (2)'):
+            return False
+
     # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
 
     sql = u"""WITH missing AS
@@ -181,7 +195,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1'):
             WHERE contains(buffer(StartPoint(linksw.glink),{eps}),el.geom))
         WHERE linksw.pk IN missing""".format(eps=radiusHal)
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (2)'):
+    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (3)'):
         return False
 
     # progress_bar.setValue(30)
@@ -202,7 +216,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1'):
 
     logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (3)'):
+    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (4)'):
         return False
 
     # progress_bar.setValue(60)
@@ -215,7 +229,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1'):
 
     logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (4)'):
+    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (5)'):
         return False
 
     # progress_bar.setValue(80)
@@ -236,7 +250,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1'):
 
     logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (5)'):
+    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (6)'):
         return False
 
     dbQK.commit()
