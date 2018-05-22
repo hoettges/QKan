@@ -50,7 +50,7 @@ logger = logging.getLogger(u'QKan')
 
 progress_bar = None
 
-
+    
 # Hauptprogramm ----------------------------------------------------------------
 
 class DBConnection:
@@ -78,7 +78,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.4.4'
+        self.actversion = '2.4.5'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
         if dbname is not None:
@@ -150,6 +150,16 @@ class DBConnection:
         Beendet die Datenbankverbindung.
         """
         self.consl.close()
+
+    # Hilfsprogramm zum Versionscheck
+    def versionolder(self, verlis):
+        """Prüft ob die QKan-Datenbank upgedated werden muss"""
+        for v1, v2 in zip(self.versionlis, verlis):
+            if v1 < v2:
+                return True
+            elif v1 > v2:
+                return False
+        return False
 
     def attrlist(self, tablenam):
         """Gibt Spaltenliste zurück."""
@@ -257,10 +267,12 @@ class DBConnection:
 
         logger.debug('0 - versiondbQK = {}'.format(versiondbQK))
 
+        self.versionlis = [int(el) for el in versiondbQK.split('.')]
+
         # ---------------------------------------------------------------------------------------------
         # Aktualisierung von Version 1.9.9 und früher
 
-        if versiondbQK <= u'1.9.9':
+        if self.versionolder([2, 0, 2]):
 
             # Tabelle einwohner
             # sqllis = [u"""CREATE TABLE IF NOT EXISTS einwohner (
@@ -318,11 +330,11 @@ class DBConnection:
             if not self.sql(sql, u'dbfunc.version (3e)'):
                 return False
 
-            versiondbQK = u'2.0.2'
+            self.versionlis = [2, 0, 2]
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK <= u'2.0.2':
+        if self.versionolder([2, 1, 2]):
 
             attrlis = self.attrlist(u'linksw')
             if not attrlis:
@@ -350,11 +362,11 @@ class DBConnection:
             if not self.sql(sql, u'dbfunc.version (2.0.2-4)'):
                 return False
 
-            versiondbQK = u'2.1.2'
+            self.versionlis = [2, 1, 2]
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK <= u'2.1.2':
+        if self.versionolder([2, 2, 0]):
             attrlis = self.attrlist(u'einleit')
             if not attrlis:
                 return False
@@ -394,11 +406,11 @@ class DBConnection:
             if not self.sql(sql, u'dbfunc.version (2.1.2-6)'):
                 return False
 
-            versiondbQK = u'2.2.0'
+            self.versionlis = [2, 2, 0]
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK <= u'2.2.0':
+        if self.versionolder([2, 2, 1]):
 
             attrlis = self.attrlist(u'flaechen')
             if not attrlis:
@@ -414,11 +426,11 @@ class DBConnection:
             if not self.sql(sql, u'dbfunc.version (2.2.0-2)'):
                 return False
 
-            versiondbQK = u'2.2.1'
+            self.versionlis = [2, 2, 1]
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK <= u'2.2.1':
+        if self.versionolder([2, 2, 2]):
 
             attrlis = self.attrlist(u'flaechen')
             if not attrlis:
@@ -434,11 +446,11 @@ class DBConnection:
             if not self.sql(sql, u'dbfunc.version (2.2.1-2)'):
                 return False
 
-            versiondbQK = u'2.2.2'
+            self.versionlis = [2, 2, 2]
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK <= u'2.2.2':
+        if self.versionolder([2, 2, 3]):
 
             global progress_bar
             progress_bar = QProgressBar(iface.messageBar())
@@ -750,11 +762,10 @@ class DBConnection:
                 
             # Versionsnummer hochsetzen
 
-            versiondbQK = u'2.2.3'
-
+            self.versionlis = [2, 2, 3]
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK < u'2.4.1':
+        if self.versionolder([2, 2, 16]):
 
             sql = u"""
                 CREATE TABLE IF NOT EXISTS dynahal (
@@ -800,10 +811,10 @@ class DBConnection:
 
             # Versionsnummer hochsetzen
 
-            versiondbQK = u'2.4.1'
+            self.versionlis = [2, 2, 16]
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK < u'2.4.3':
+        if self.versionolder([2, 4, 3]):
 
             sql = u'''CREATE VIEW IF NOT EXISTS "v_linkfl_check" AS 
                     WITH lfok AS
@@ -875,13 +886,15 @@ class DBConnection:
 
             # Versionsnummer hochsetzen
 
-            versiondbQK = u'2.4.3'
+            self.versionlis = [2, 4, 3]
 
 
+        versiondbQK = '.'.join([str(el) for el in self.versionlis])
         logger.debug('1 - versiondbQK = {}'.format(versiondbQK))
 
         # ---------------------------------------------------------------------------------------------------------
-        if versiondbQK < self.actversion:
+        actverslis = [int(el) for el in self.actversion.split('.')]
+        if self.versionolder(actverslis):
 
             # Formulare aktualisieren ----------------------------------------------------------
             # Spielregel: QKan-Formulare werden ohne Rückfrage aktualisiert. 

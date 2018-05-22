@@ -983,6 +983,13 @@ class LinkFl:
             fangradius = u'0.1'
         self.dlg_ul.tf_fangradius.setText(fangradius)
 
+        # Löschen von Flächenverknüpfungen ohne Linienobjekt
+        if 'deletelinkflGeomNone' in self.config:
+            deletelinkflGeomNone = self.config['deletelinkflGeomNone']
+        else:
+            deletelinkflGeomNone = True
+        self.dlg_ul.cb_deleteGeomNone.setChecked(deletelinkflGeomNone)
+
         # show the dialog
         self.dlg_ul.show()
         # Run the dialog event loop
@@ -992,9 +999,11 @@ class LinkFl:
 
             # Inhalte aus Formular lesen
             fangradius = self.dlg_ul.tf_fangradius.text()
+            deletelinkflGeomNone = self.dlg_ul.cb_deleteGeomNone.isChecked()
 
             # config schreiben
             self.config['fangradius'] = fangradius
+            self.config['deletelinkflGeomNone'] = deletelinkflGeomNone
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
@@ -1002,10 +1011,10 @@ class LinkFl:
             # Start der Verarbeitung
 
             if self.dlg_ul.cb_linkfl.isChecked():
-                updatelinkfl(self.dbQK, fangradius)
+                updatelinkfl(self.dbQK, fangradius, deletelinkflGeomNone)
 
             if self.dlg_ul.cb_linksw.isChecked():
-                updatelinksw(self.dbQK, fangradius)
+                updatelinksw(self.dbQK, fangradius, deletelinkflGeomNone)
 
         # ----------------------------------------------------------------------------------------------
         # Datenbankverbindungen schliessen

@@ -239,7 +239,7 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
 
     iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage("Information", "Projektdatei ist angepasst und muss neu geladen werden!", level=QgsMessageBar.INFO)
+    iface.messageBar().pushMessage("Information", "Datenimport ist fertig!", level=QgsMessageBar.INFO)
     # QgsMessageLog.logMessage("\nFertig: Datenimport erfolgreich!", level=QgsMessageLog.INFO)
 
     # Importiertes Projekt laden
