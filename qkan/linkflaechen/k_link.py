@@ -369,11 +369,11 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
     else:
         auswahl = ''
 
-    sql = u"""INSERT INTO linksw (pkswref, teilgebiet, geom)
-            SELECT einleit.pk, einleit.teilgebiet,buffer(einleit.geom,{radius})
+    sql = u"""INSERT INTO linksw (elnam, teilgebiet, geom)
+            SELECT einleit.elnam, einleit.teilgebiet,buffer(einleit.geom,{radius})
             FROM einleit
             LEFT JOIN linksw
-            ON linksw.pkswref = einleit.pk
+            ON linksw.elnam = einleit.elnam
             WHERE linksw.pk IS NULL{auswahl}""".format(auswahl=auswahl, radius = 0.5)
 
     # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))

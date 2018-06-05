@@ -873,7 +873,7 @@ class LinkFl:
             # Start der Verarbeitung
 
             assigntgeb(self.dbQK, auswahltyp, liste_teilgebiete, 
-                       [u'haltungen', u'flaechen', u'schaechte', u'einleit', u'tezg'], 
+                       [u'haltungen', u'flaechen', u'schaechte', u'einleit', u'tezg', u'linksw', u'linkfl'], 
                        autokorrektur, bufferradius)
 
         # --------------------------------------------------------------------------
