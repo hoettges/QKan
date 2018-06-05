@@ -383,33 +383,6 @@
      <string>m</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_schreibe_haltungen">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>330</y>
-      <width>191</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="Die Bearbeitung dauert erheblich länger. Die Eintragung kann auch nachträglich für alle Verbindungslinien zusammen vorgenommen werden."/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="Die Bearbeitung dauert erheblich länger. Die Eintragung kann auch nachträglich für alle Verbindungslinien zusammen vorgenommen werden."/>
-    </property>
-    <property name="text">
-     <string>Haltungsnamen in 
-Direkteinleitungen eintragen</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QLabel" name="lb_version">
    <property name="geometry">
@@ -424,7 +397,7 @@ Direkteinleitungen eintragen</string>
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.4.5</string>
+    <string>Version 2.4.6</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
