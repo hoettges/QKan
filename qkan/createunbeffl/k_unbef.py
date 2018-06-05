@@ -181,27 +181,27 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
     if not dbQK.sql(sql, u"QKan.CreateUnbefFlaechen (4)"):
         return False
 
-    # status_message.setText(u"Erstellen der Anbindungen für die unbefestigten Flächen")
-    progress_bar.setValue(50)
+    # # status_message.setText(u"Erstellen der Anbindungen für die unbefestigten Flächen")
+    # progress_bar.setValue(50)
 
-    # Hinzufügen von Verknüpfungen in die Tabelle linkfl für die neu erstellten unbefestigten Flächen
-    sql = u"""INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom, glink)
-            SELECT
-                fl.flnam AS flnam, 
-                NULL AS aufteilen, 
-                fl.teilgebiet AS teilgebiet, 
-                NULL AS geom,
-                MakeLine(PointOnSurface(fl.geom),Centroid(ha.geom)) AS glink
-                FROM flaechen AS fl
-                LEFT JOIN haltungen AS ha
-                ON fl.haltnam = ha.haltnam
-                INNER JOIN tezg AS tg
-                ON 'fd_' || ltrim(tg.flnam, 'ft_') = fl.flnam
-                WHERE fl.flnam NOT IN
-                (   SELECT flnam FROM linkfl WHERE flnam IS NOT NULL)"""
+    # # Hinzufügen von Verknüpfungen in die Tabelle linkfl für die neu erstellten unbefestigten Flächen
+    # sql = u"""INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom, glink)
+            # SELECT
+                # fl.flnam AS flnam, 
+                # NULL AS aufteilen, 
+                # fl.teilgebiet AS teilgebiet, 
+                # NULL AS geom,
+                # MakeLine(PointOnSurface(fl.geom),Centroid(ha.geom)) AS glink
+                # FROM flaechen AS fl
+                # LEFT JOIN haltungen AS ha
+                # ON fl.haltnam = ha.haltnam
+                # INNER JOIN tezg AS tg
+                # ON 'fd_' || ltrim(tg.flnam, 'ft_') = fl.flnam
+                # WHERE fl.flnam NOT IN
+                # (   SELECT flnam FROM linkfl WHERE flnam IS NOT NULL)"""
 
-    if not dbQK.sql(sql, u"QKan.CreateUnbefFlaechen (5)"):
-        return False
+    # if not dbQK.sql(sql, u"QKan.CreateUnbefFlaechen (5)"):
+        # return False
 
     # status_message.setText(u"Nachbearbeitung")
     progress_bar.setValue(90)
