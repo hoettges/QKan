@@ -90,7 +90,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>diesen ausgewählten Teilgebieten</string>
+     <string>diesem ausgewählten Teilgebiet</string>
     </property>
    </widget>
    <widget class="QRadioButton" name="rb_within">

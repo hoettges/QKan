@@ -173,6 +173,17 @@ class LinkFl:
     # -------------------------------------------------------------------------
     # Formularfunktionen
 
+    def helpClick(self):
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        helpfile = os.path.join(self.plugin_dir, '..\doc', 'linkflaechen.html')
+        os.startfile(helpfile)
+
+    def tw_selAbflparamTeilgebClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlg.cb_selActive.setChecked(True)
+        self.countselection()
+
     def countselectionfl(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>872</width>
-    <height>625</height>
+    <height>656</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>570</y>
-     <width>171</width>
+     <x>300</x>
+     <y>590</y>
+     <width>261</width>
      <height>32</height>
     </rect>
    </property>
@@ -39,7 +39,10 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+   </property>
+   <property name="centerButtons">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QGroupBox" name="groupBox">
@@ -294,7 +297,7 @@
      <x>530</x>
      <y>30</y>
      <width>321</width>
-     <height>521</height>
+     <height>451</height>
     </rect>
    </property>
    <property name="font">
@@ -1159,7 +1162,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>410</y>
+      <y>400</y>
       <width>31</width>
       <height>20</height>
      </rect>
@@ -1185,7 +1188,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>129</x>
-      <y>410</y>
+      <y>400</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -1210,7 +1213,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>189</x>
-      <y>410</y>
+      <y>400</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -1235,7 +1238,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>129</x>
-      <y>430</y>
+      <y>420</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -1260,7 +1263,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>189</x>
-      <y>430</y>
+      <y>420</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -1285,7 +1288,7 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>430</y>
+      <y>420</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -1568,7 +1571,7 @@ fassen</string>
    <property name="geometry">
     <rect>
      <x>780</x>
-     <y>610</y>
+     <y>640</y>
      <width>91</width>
      <height>20</height>
     </rect>
@@ -1583,207 +1586,21 @@ fassen</string>
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>240</y>
-     <width>491</width>
-     <height>191</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="title">
-    <string>Nur ausgewählte Teilgebiete berücksichtigen:</string>
-   </property>
-   <widget class="QListWidget" name="lw_teilgebiete">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>211</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auswahl der zu bearbeitenden Teilgebiete. Wenn kein Teilgebiet ausgewählt ist, werden alle berücksichtigt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="selectionMode">
-     <enum>QAbstractItemView::ExtendedSelection</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>120</y>
-      <width>81</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Flächen</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_11">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>90</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Haltungen</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lf_anzahl_flaechen">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>120</y>
-      <width>61</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Panel</enum>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lf_anzahl_haltungen">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>90</y>
-      <width>61</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Panel</enum>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_12">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>30</y>
-      <width>121</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Aktuell berücksichtigt: </string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_32">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>60</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Schächte</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lf_anzahl_schaechte">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>60</y>
-      <width>61</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Panel</enum>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-  </widget>
   <widget class="QGroupBox" name="groupBox_5">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>440</y>
-     <width>491</width>
-     <height>111</height>
+     <y>490</y>
+     <width>831</width>
+     <height>81</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
    <property name="title">
     <string>Optionen</string>
@@ -1793,12 +1610,13 @@ fassen</string>
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>331</width>
+      <width>321</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <pointsize>8</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1813,20 +1631,21 @@ fassen</string>
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="text">
-     <string>Autokorrektur von Namen in Flächen und Einleitpunkten:       </string>
+     <string>Autokorrektur von Namen in Flächen und Einleitpunkten:</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>80</y>
+      <x>430</x>
+      <y>50</y>
       <width>201</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <pointsize>8</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1838,7 +1657,7 @@ fassen</string>
      <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
     </property>
     <property name="text">
-     <string>Suchradius fürAnbindung an Haltungen:</string>
+     <string>Suchradius fürAnbindung an Haltungen:  </string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1847,14 +1666,15 @@ fassen</string>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>50</y>
+      <x>515</x>
+      <y>20</y>
       <width>111</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <pointsize>8</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1875,14 +1695,15 @@ fassen</string>
    <widget class="QLabel" name="label_26">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>50</y>
+      <x>705</x>
+      <y>20</y>
       <width>31</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <pointsize>8</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1900,8 +1721,8 @@ fassen</string>
    <widget class="QLineEdit" name="tf_mindestflaeche">
     <property name="geometry">
      <rect>
-      <x>315</x>
-      <y>50</y>
+      <x>630</x>
+      <y>20</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -1916,8 +1737,8 @@ fassen</string>
    <widget class="QLineEdit" name="tf_fangradius">
     <property name="geometry">
      <rect>
-      <x>315</x>
-      <y>80</y>
+      <x>630</x>
+      <y>50</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -1932,14 +1753,15 @@ fassen</string>
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>80</y>
+      <x>706</x>
+      <y>50</y>
       <width>31</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <pointsize>8</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1954,6 +1776,203 @@ fassen</string>
      <string>m</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QCheckBox" name="cb_selActive">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>250</y>
+     <width>401</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Nur ausgewählte Teilgebiete berücksichtigen:</string>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="lw_teilgebiete">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>270</y>
+     <width>181</width>
+     <height>201</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auswahl Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="statusTip">
+    <string>Auswahl Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich</string>
+   </property>
+   <property name="selectionMode">
+    <enum>QAbstractItemView::ExtendedSelection</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_10">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>370</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Flächen</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lf_anzahl_flaechen">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>370</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Panel</enum>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_12">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>280</y>
+     <width>141</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Aktuell berücksichtigt: </string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lf_anzahl_haltungen">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>340</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Panel</enum>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_11">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>340</y>
+     <width>71</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Haltungen</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lf_anzahl_schaechte">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>310</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Panel</enum>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_32">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>310</y>
+     <width>71</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Schächte</string>
+   </property>
   </widget>
  </widget>
  <resources/>
