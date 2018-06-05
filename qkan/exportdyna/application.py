@@ -183,7 +183,7 @@ class ExportToKP:
         helpfile = os.path.join(self.plugin_dir, '..\doc', 'exportdyna.html')
         os.startfile(helpfile)
 
-    def tw_selAbflparamTeilgebClick(self):
+    def lw_teilgebieteClick(self):
         """Reaktion auf Klick in Tabelle"""
 
         self.dlg.cb_selActive.setChecked(True)
@@ -198,10 +198,10 @@ class ExportToKP:
             logger.debug('\nChecked = True')
         else:
             # Auswahl deaktivieren und Liste zurücksetzen
-            anz = self.dlg.tw_selAbflparamTeilgeb.rowCount()
-            range = QTableWidgetSelectionRange(0,0,anz-1,4)
-            self.dlg.tw_selAbflparamTeilgeb.setRangeSelected(range,False)
-            logger.debug('\nChecked = False\nQWidget: anzahl = {}'.format(anz))
+            anz = self.dlg.lw_teilgebiete.count()
+            for i in range(anz):
+                item = self.dlg.lw_teilgebiete.item(i)
+                self.dlg.lw_teilgebiete.setItemSelected(item, False)
 
             # Anzahl in der Anzeige aktualisieren
             self.countselection()
@@ -388,12 +388,12 @@ class ExportToKP:
 
             # Ereignis bei Auswahländerung in Liste Teilgebiete
 
-            self.dlg.lw_teilgebiete.itemClicked.connect(self.countselection)
-            self.countselection()
+        self.dlg.lw_teilgebiete.itemClicked.connect(self.lw_teilgebieteClick)
+        self.countselection()
 
-            self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
+        self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
 
-            self.dlg.button_box.helpRequested.connect(self.helpClick)
+        self.dlg.button_box.helpRequested.connect(self.helpClick)
 
         # Autokorrektur
 
