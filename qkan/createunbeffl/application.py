@@ -21,13 +21,13 @@
  ***************************************************************************/
 """
 import logging
-import os.path
+import os
 # Ergaenzt (jh, 12.06.2017) -------------------------------------------------
 import site
 import json
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QTableWidgetItem
+from PyQt4.QtGui import QTableWidgetItem, QTableWidgetSelectionRange
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
@@ -135,68 +135,141 @@ class CreateUnbefFl:
     # -------------------------------------------------------------------------
     # Formularfunktionen
 
+    def helpClick(self):
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        helpfile = os.path.join(self.plugin_dir, '..\doc', 'createunbeffl.html')
+        os.startfile(helpfile)
+
+    def tw_selAbflparamTeilgebClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlg.cb_selActive.setChecked(True)
+        self.countselection()
+
+    def selActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlg.cb_selActive.isChecked():
+            # Nix tun ...
+            logger.debug('\nChecked = True')
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlg.tw_selAbflparamTeilgeb.rowCount()
+            range = QTableWidgetSelectionRange(0,0,anz-1,4)
+            self.dlg.tw_selAbflparamTeilgeb.setRangeSelected(range,False)
+            logger.debug('\nChecked = False\nQWidget: anzahl = {}'.format(anz))
+
+            # Anzahl in der Anzeige aktualisieren
+            self.countselection()
+
     def countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen TEZG-Flächen"""
 
-        liste_selected = self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)
+        liste_selAbflparamTeilgeb = self.listselectedTabitems(self.dlg.tw_selAbflparamTeilgeb)
+
+        # logger.debug(u'QKan.createunbeffl.application.countselection (1)\nlen(liste_selAbflparamTeilgeb) = {}'.format(len(liste_selAbflparamTeilgeb)))
+        # logger.debug(u'QKan.createunbeffl.application.countselection (2)\nliste_selAbflparamTeilgeb = {}'.format(str(liste_selAbflparamTeilgeb)))
+
         # Aufbereiten für SQL-Abfrage
 
         # Unterschiedliches Vorgehen, je nachdem ob mindestens eine oder keine Zeile
         # ausgewählt wurde
 
-        if len(liste_selected) == 0:
-            anzahl = sum([int(attr[-2]) for attr in self.listetezg])
-        else:
-            anzahl = sum([int(attr[-2]) for attr in liste_selected])
+        # if len(liste_selAbflparamTeilgeb) == 0:
+            # anzahl = sum([int(attr[-2]) for attr in self.listetezg])
+        # else:
+            # anzahl = sum([int(attr[-2]) for attr in liste_selAbflparamTeilgeb])
 
-        if not (anzahl is None):
-            self.dlg.lf_anzahl_tezg.setText(u'{}'.format(anzahl))
+        # Vorbereitung des Auswahlkriteriums für die SQL-Abfrage: Kombination aus abflussparameter und teilgebiet
+        # Dieser Block ist identisch in k_unbef und in application enthalten
+
+        if len(liste_selAbflparamTeilgeb) == 0:
+            auswahl = u''
+        elif len(liste_selAbflparamTeilgeb) == 1:
+            auswahl = u' AND'
+        elif len(liste_selAbflparamTeilgeb) >= 2:
+            auswahl = u' AND ('
+        else:
+            fehlermeldung(u"Interner Fehler", u"Fehler in Fallunterscheidung!")
+            return False
+
+        # Anfang SQL-Krierien zur Auswahl der tezg-Flächen
+        first = True
+        for attr in liste_selAbflparamTeilgeb:
+            if attr[4] == u'None' or attr[1] == u'None':
+                fehlermeldung(u'Datenfehler: ', u'In den ausgewählten Daten sind noch Datenfelder nicht definiert ("NULL").')
+                return False
+            if first:
+                first = False
+                auswahl += u""" (tezg.abflussparameter = '{abflussparameter}' AND
+                                tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0], teilgebiet=attr[1])
+            else:
+                auswahl += u""" OR\n      (tezg.abflussparameter = '{abflussparameter}' AND
+                                tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0], teilgebiet=attr[1])
+
+        if len(liste_selAbflparamTeilgeb) >= 2:
+            auswahl += u")"
+        # Ende SQL-Krierien zur Auswahl der tezg-Flächen
+
+        # Ende SQL-Krierien zur Auswahl der tezg-Flächen
+
+        # Trick: Der Zusatz "WHERE 1" dient nur dazu, dass der Block zur Zusammenstellung von 'auswahl' identisch mit dem 
+        # Block in 'k_unbef.py' bleiben kann...
+        sql = u"""SELECT count(*) AS anz
+                FROM tezg WHERE 1{auswahl}
+        """.format(auswahl=auswahl)
+
+        if not self.dbQK.sql(sql, u"QKan.CreateUnbefFlaechen (5)"):
+            return False
+
+        data = self.dbQK.fetchone()
+
+        if not (data is None):
+            self.dlg.lf_anzahl_tezg.setText(u'{}'.format(data[0]))
         else:
             self.dlg.lf_anzahl_tezg.setText(u'0')
 
 
     # -------------------------------------------------------------------------
     # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
-    def listselectedTabitems(self, listWidget):
+    def listselectedTabitems(self, tableWidget, nCols = 5):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
-        :param listWidget: String for translation.
-        :type listWidget: QListWidgetItem
+        :param tableWidget: Tabelle zur Auswahl der Arten von Haltungsflächen.
+        :type tableWidget: QTableWidget
 
-        :returns: Tuple containing selected teilgebiete
+        :param nCols:       Anzahl Spalten des tableWidget-Elements
+        :type nCols:        integer
+
+        :returns: Tuple mit ausgewählten Abflussparametern
         :rtype: tuple
         """
-        items = listWidget.selectedItems()
-        liste = []
-        rowakt = None  # aktuelle Zeile
-        sel = []  # Liste mit in einer Zeile ausgewählten Attributen: ablussparameter, teilgebiet
-        for elem in items:
-            # Initialisierung
-            if rowakt is None:
-                rowakt = elem.row()
+        items = tableWidget.selectedItems()
+        anz = len(items)
+        nRows = anz // nCols
 
-            # Falls neue Zeile, vorherige in liste hinzufügen
-            if rowakt != elem.row():
-                liste.append(sel)
-                sel = []
-                rowakt = elem.row()
-
-            # Text hinzufügen, aber dabei Spalte "Anzahl" ignorieren
-            sel.append(elem.text())
-        # zum Schluss noch das letzte Element hinzufügen
-        if len(items) > 0:
-            liste.append(sel)
+        if len(items) > nCols:
+            # mehr als eine Zeile ausgewählt
+            if tableWidget.row(items[1]) == 1:
+                # Elemente wurden spaltenweise übergeben
+                liste = [[el.text() for el in items][i:anz:nRows] for i in range(nRows)]
+            else:
+                # Elemente wurden zeilenweise übergeben
+                liste = [[el.text() for el in items][i:i+5] for i in range(0,anz,5)]
+        else:
+            # Elemente wurden zeilenweise übergeben oder Liste ist leer
+            liste = [[el.text() for el in items][i:i+5] for i in range(0,anz,5)]
 
         return liste
+
 
     # ------------------------------------------------------------------------------------------------------------
     # Vorbereiten und Öffnen des Formulars
 
     def run(self):
         """Run method that performs all the real work"""
-
-        database_QKan = u''
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
@@ -206,9 +279,9 @@ class CreateUnbefFl:
             return False
 
         # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
-        dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+        self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
-        if dbQK is None:
+        if self.dbQK is None:
             fehlermeldung(u"Fehler in QKan_CreateUnbefFl",
                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
             iface.messageBar().pushMessage(u"Fehler in QKan_Import_from_HE",
@@ -223,10 +296,10 @@ class CreateUnbefFl:
             FROM abflussparameter
             WHERE bodenklasse IS NOT NULL AND trim(bodenklasse) <> ''"""
 
-        if not dbQK.sql(sql, u'createunbeffl.run (1)'):
+        if not self.dbQK.sql(sql, u'createunbeffl.run (1)'):
             return False
 
-        data = dbQK.fetchone()
+        data = self.dbQK.fetchone()
 
         if data is None:
             if autokorrektur:
@@ -237,7 +310,7 @@ class CreateUnbefFl:
                              ( 'apnam', 'kommentar', 'anfangsabflussbeiwert', 'endabflussbeiwert', 'benetzungsverlust', 
                                'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
                                'createdat') Values ({})""".format(ds)
-                    if not dbQK.sql(sql, u'createunbeffl.run (2)'):
+                    if not self.dbQK.sql(sql, u'createunbeffl.run (2)'):
                         return False
             else:
                 fehlermeldung(u'Datenfehler: ', u'Bitte ergänzen Sie in der Tabelle "abflussparameter" einen Datensatz für unbefestigte Flächen ("bodenklasse" darf nicht leer oder NULL sein)')
@@ -252,10 +325,10 @@ class CreateUnbefFl:
             # WHERE ap.bodenklasse IS NULL
             # GROUP BY abflussparameter, teilgebiet"""
 
-        # if not dbQK.sql(sql, u'createunbeffl.run (3)'):
+        # if not self.dbQK.sql(sql, u'createunbeffl.run (3)'):
             # return False
 
-        # data = dbQK.fetchall()
+        # data = self.dbQK.fetchall()
 
         # if len(data) > 0:
             # liste = [u'{}\t{}\t{}'.format(el1, el2, el3) for el1, el2, el3 in data]
@@ -278,24 +351,24 @@ class CreateUnbefFl:
                             LEFT JOIN bodenklassen AS bk
                             ON bk.bknam = ap.bodenklasse
                             GROUP BY abflussparameter, teilgebiet"""
-        if not dbQK.sql(sql, u'createunbeffl.run (4)'):
+        if not self.dbQK.sql(sql, u'createunbeffl.run (4)'):
             return None
 
-        self.listetezg = dbQK.fetchall()
+        self.listetezg = self.dbQK.fetchall()
         nzeilen = len(self.listetezg)
-        self.dlg.tw_cnt_abflussparameter.setRowCount(nzeilen)
-        self.dlg.tw_cnt_abflussparameter.setHorizontalHeaderLabels([u"Abflussparameter", u"Teilgebiet", 
+        self.dlg.tw_selAbflparamTeilgeb.setRowCount(nzeilen)
+        self.dlg.tw_selAbflparamTeilgeb.setHorizontalHeaderLabels([u"Abflussparameter", u"Teilgebiet", 
                                                                      u"Bodenklasse", u"Anzahl", u"Anmerkungen"])
-        self.dlg.tw_cnt_abflussparameter.setColumnWidth(0, 144)  # 17 Pixel für Rand und Nummernspalte (und je Spalte?)
-        self.dlg.tw_cnt_abflussparameter.setColumnWidth(1, 140)
-        self.dlg.tw_cnt_abflussparameter.setColumnWidth(2, 90)
-        self.dlg.tw_cnt_abflussparameter.setColumnWidth(3, 50)
-        self.dlg.tw_cnt_abflussparameter.setColumnWidth(4, 200)
+        self.dlg.tw_selAbflparamTeilgeb.setColumnWidth(0, 144)  # 17 Pixel für Rand und Nummernspalte (und je Spalte?)
+        self.dlg.tw_selAbflparamTeilgeb.setColumnWidth(1, 140)
+        self.dlg.tw_selAbflparamTeilgeb.setColumnWidth(2, 90)
+        self.dlg.tw_selAbflparamTeilgeb.setColumnWidth(3, 50)
+        self.dlg.tw_selAbflparamTeilgeb.setColumnWidth(4, 200)
         for i, elem in enumerate(self.listetezg):
             for j, item in enumerate(elem):
                 cell = u'{}'.format(elem[j])
-                self.dlg.tw_cnt_abflussparameter.setItem(i, j, QTableWidgetItem(cell))
-                self.dlg.tw_cnt_abflussparameter.setRowHeight(i, 20)
+                self.dlg.tw_selAbflparamTeilgeb.setItem(i, j, QTableWidgetItem(cell))
+                self.dlg.tw_selAbflparamTeilgeb.setRowHeight(i, 20)
 
         # config in Dialog übernehmen
 
@@ -307,13 +380,18 @@ class CreateUnbefFl:
             autokorrektur = True
         self.dlg.cb_autokorrektur.setChecked(autokorrektur)
 
-        self.dlg.tw_cnt_abflussparameter.itemClicked.connect(self.countselection)
+        self.dlg.tw_selAbflparamTeilgeb.itemClicked.connect(self.tw_selAbflparamTeilgebClick)
         self.countselection()
- 
+
+        self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
+
+        self.dlg.button_box.helpRequested.connect(self.helpClick)
+
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
         result = self.dlg.exec_()
+        logger.debug('\n\nresult = {}'.format(repr(result)))
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
@@ -321,8 +399,8 @@ class CreateUnbefFl:
             # pass
 
             # Start der Verarbeitung
-            liste_abflussparam = self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)
-            logger.debug(u'\nliste_abflussparam (1): {}'.format(liste_abflussparam))
+            liste_selAbflparamTeilgeb = self.listselectedTabitems(self.dlg.tw_selAbflparamTeilgeb)
+            logger.debug(u'\nliste_selAbflparamTeilgeb (1): {}'.format(liste_selAbflparamTeilgeb))
             autokorrektur = self.dlg.cb_autokorrektur.isChecked()
 
             self.config['autokorrektur'] = autokorrektur
@@ -330,8 +408,5 @@ class CreateUnbefFl:
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-            createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur)
+            createUnbefFlaechen(self.dbQK, liste_selAbflparamTeilgeb, autokorrektur)
 
-            # else:
-            # logger.debug(u'Selected: \n{}'.format(self.listselectedTabitems(self.dlg.tw_cnt_abflussparameter)))
-            # logger.debug(u'Methoden von QTableWidgetItem:\n{}'.format(str(dir(self.dlg.tw_cnt_abflussparameter))))

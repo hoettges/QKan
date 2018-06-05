@@ -114,33 +114,6 @@ class ExportToKP:
         project = QgsProject.instance()
         self.default_dir = os.path.dirname(project.fileName())
 
-        if 'database_QKan' in self.config:
-            database_QKan = self.config['database_QKan']
-        else:
-            database_QKan = ''
-        self.dlg.tf_QKanDB.setText(database_QKan)
-        self.dlg.pb_selectQKanDB.clicked.connect(self.selectFile_QKanDB)
-
-        if 'dynafile' in self.config:
-            dynafile = self.config['dynafile']
-        else:
-            dynafile = ''
-        self.dlg.tf_KP_dest.setText(dynafile)
-        self.dlg.pb_select_KP_dest.clicked.connect(self.selectFile_kpDB_dest)
-
-        if 'template_dyna' in self.config:
-            template_dyna = self.config['template_dyna']
-        else:
-            template_dyna = ''
-        self.dlg.tf_KP_template.setText(template_dyna)
-        self.dlg.pb_select_KP_template.clicked.connect(self.selectFile_kpDB_template)
-
-        if 'datenbanktyp' in self.config:
-            datenbanktyp = self.config['datenbanktyp']
-        else:
-            datenbanktyp = 'spatialite'
-            pass  # Es gibt noch keine Wahlmöglichkeit
-
         # Ende Eigene Funktionen ---------------------------------------------------
 
     # noinspection PyMethodMayBeStatic
@@ -204,6 +177,34 @@ class ExportToKP:
 
     # -------------------------------------------------------------------------
     # Formularfunktionen
+
+    def helpClick(self):
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        helpfile = os.path.join(self.plugin_dir, '..\doc', 'exportdyna.html')
+        os.startfile(helpfile)
+
+    def tw_selAbflparamTeilgebClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlg.cb_selActive.setChecked(True)
+        self.countselection()
+
+    def selActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlg.cb_selActive.isChecked():
+            # Nix tun ...
+            logger.debug('\nChecked = True')
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlg.tw_selAbflparamTeilgeb.rowCount()
+            range = QTableWidgetSelectionRange(0,0,anz-1,4)
+            self.dlg.tw_selAbflparamTeilgeb.setRangeSelected(range,False)
+            logger.debug('\nChecked = False\nQWidget: anzahl = {}'.format(anz))
+
+            # Anzahl in der Anzeige aktualisieren
+            self.countselection()
 
     def countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
@@ -294,79 +295,105 @@ class ExportToKP:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            fehlermeldung(u"Fehler in exportdyna.application", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            logger.error("k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            return False
-
-        if database_QKan != '':
-            self.dlg.tf_QKanDB.setText(database_QKan)
+            if 'database_QKan' in self.config:
+                database_QKan = self.config['database_QKan']
+            else:
+                database_QKan = ''
+        self.dlg.tf_QKanDB.setText(database_QKan)
 
         # Datenbankverbindung für Abfragen
-        self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
-        if self.dbQK is None:
-            fehlermeldung("Fehler in QKan_CreateUnbefFl",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE",
-                                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                                               database_QKan), level=QgsMessageBar.CRITICAL)
-            return None
+        if database_QKan != '':
+            self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+            if self.dbQK is None:
+                fehlermeldung("Fehler in QKan_CreateUnbefFl",
+                              u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+                iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE",
+                                               u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+                                                   database_QKan), level=QgsMessageBar.CRITICAL)
+                return None
+
+        if 'dynafile' in self.config:
+            dynafile = self.config['dynafile']
+        else:
+            dynafile = ''
+        self.dlg.tf_KP_dest.setText(dynafile)
+        self.dlg.pb_select_KP_dest.clicked.connect(self.selectFile_kpDB_dest)
+
+        if 'template_dyna' in self.config:
+            template_dyna = self.config['template_dyna']
+        else:
+            template_dyna = ''
+        self.dlg.tf_KP_template.setText(template_dyna)
+        self.dlg.pb_select_KP_template.clicked.connect(self.selectFile_kpDB_template)
+
+        if 'datenbanktyp' in self.config:
+            datenbanktyp = self.config['datenbanktyp']
+        else:
+            datenbanktyp = 'spatialite'
+            pass  # Es gibt noch keine Wahlmöglichkeit
 
         # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
 
-        sql = u"""INSERT INTO teilgebiete (tgnam)
-                SELECT teilgebiet FROM flaechen 
-                WHERE teilgebiet IS NOT NULL AND
-                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                GROUP BY teilgebiet"""
-        if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (1) "):
-            return False
+        if database_QKan != '':
+            # Nur wenn schon eine Projekt geladen oder eine QKan-Datenbank ausgewählt
+            sql = u"""INSERT INTO teilgebiete (tgnam)
+                    SELECT teilgebiet FROM flaechen 
+                    WHERE teilgebiet IS NOT NULL AND
+                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                    GROUP BY teilgebiet"""
+            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (1) "):
+                return False
 
-        sql = u"""INSERT INTO teilgebiete (tgnam)
-                SELECT teilgebiet FROM haltungen 
-                WHERE teilgebiet IS NOT NULL AND
-                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                GROUP BY teilgebiet"""
-        if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (2) "):
-            return False
+            sql = u"""INSERT INTO teilgebiete (tgnam)
+                    SELECT teilgebiet FROM haltungen 
+                    WHERE teilgebiet IS NOT NULL AND
+                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                    GROUP BY teilgebiet"""
+            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (2) "):
+                return False
 
-        sql = u"""INSERT INTO teilgebiete (tgnam)
-                SELECT teilgebiet FROM schaechte 
-                WHERE teilgebiet IS NOT NULL AND
-                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                GROUP BY teilgebiet"""
-        if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (3) "):
-            return False
+            sql = u"""INSERT INTO teilgebiete (tgnam)
+                    SELECT teilgebiet FROM schaechte 
+                    WHERE teilgebiet IS NOT NULL AND
+                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                    GROUP BY teilgebiet"""
+            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (3) "):
+                return False
 
-        self.dbQK.commit()
+            self.dbQK.commit()
 
-        # Anlegen der Tabelle zur Auswahl der Teilgebiete
+            # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
-        # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-        liste_teilgebiete = []
-        if 'liste_teilgebiete' in self.config:
-            liste_teilgebiete = self.config['liste_teilgebiete']
+            # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
+            liste_teilgebiete = []
+            if 'liste_teilgebiete' in self.config:
+                liste_teilgebiete = self.config['liste_teilgebiete']
 
-        # Abfragen der Tabelle teilgebiete nach Teilgebieten
-        sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-        if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (4) "):
-            return False
-        daten = self.dbQK.fetchall()
-        self.dlg.lw_teilgebiete.clear()
+            # Abfragen der Tabelle teilgebiete nach Teilgebieten
+            sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
+            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (4) "):
+                return False
+            daten = self.dbQK.fetchall()
+            self.dlg.lw_teilgebiete.clear()
 
-        for ielem, elem in enumerate(daten):
-            self.dlg.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-            try:
-                if elem[0] in liste_teilgebiete:
-                    self.dlg.lw_teilgebiete.setCurrentRow(ielem)
-            except BaseException as err:
-                fehlermeldung(u'QKan_ExportDYNA (6), Fehler in elem = {}\n'.format(elem), repr(err))
-                # if len(daten) == 1:
-                # self.dlg.lw_teilgebiete.setCurrentRow(0)
+            for ielem, elem in enumerate(daten):
+                self.dlg.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
+                try:
+                    if elem[0] in liste_teilgebiete:
+                        self.dlg.lw_teilgebiete.setCurrentRow(ielem)
+                except BaseException as err:
+                    fehlermeldung(u'QKan_ExportDYNA (6), Fehler in elem = {}\n'.format(elem), repr(err))
+                    # if len(daten) == 1:
+                    # self.dlg.lw_teilgebiete.setCurrentRow(0)
 
-        # Ereignis bei Auswahländerung in Liste Teilgebiete
+            # Ereignis bei Auswahländerung in Liste Teilgebiete
 
-        self.dlg.lw_teilgebiete.itemClicked.connect(self.countselection)
-        self.countselection()
+            self.dlg.lw_teilgebiete.itemClicked.connect(self.countselection)
+            self.countselection()
+
+            self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
+
+            self.dlg.button_box.helpRequested.connect(self.helpClick)
 
         # Autokorrektur
 

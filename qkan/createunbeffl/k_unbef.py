@@ -53,13 +53,14 @@ progress_bar = None
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLite'):
+def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type database:         DBConnection (geerbt von dbapi...)
 
-    :liste_abflussparam:    Liste der bei der Bearbeitung zu Abflussparameter in der Tabelle "tezg"
+    :liste_selAbflparamTeilgeb:    Liste der bei der Bearbeitung zu berücksichtigenden Kombinationen aus 
+                            Abflussparameter und Teilgebiet (Tabelle tezg)
     :type:                  list
 
     :autokorrektur:         Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
@@ -102,9 +103,9 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
 
 
     # Prüfung, ob unzulässige Kombinationen ausgewählt wurden
-    if len(liste_abflussparam) > 0:
-        logger.debug(u'\nliste_abflussparam (2): {}'.format(liste_abflussparam))
-        if False in [(attr[-1] == u'') for attr in liste_abflussparam]:
+    if len(liste_selAbflparamTeilgeb) > 0:
+        logger.debug(u'\nliste_selAbflparamTeilgeb (2): {}'.format(liste_selAbflparamTeilgeb))
+        if False in [(attr[-1] == u'') for attr in liste_selAbflparamTeilgeb]:
             fehlermeldung(u"Falsche Auswahl",u"Bitte nur zulässige Abflussparameter und Teilgebiete auswählen (siehe Spalte 'Anmerkungen')")
             return False
     else:
@@ -130,11 +131,14 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
     # status_message.setText(u"Erzeugung von unbefestigten Flächen")
     progress_bar.setValue(10)
 
-    if len(liste_abflussparam) == 0:
+    # Vorbereitung des Auswahlkriteriums für die SQL-Abfrage: Kombination aus abflussparameter und teilgebiet
+    # Dieser Block ist identisch in k_unbef und in application enthalten
+
+    if len(liste_selAbflparamTeilgeb) == 0:
         auswahl = u''
-    elif len(liste_abflussparam) == 1:
+    elif len(liste_selAbflparamTeilgeb) == 1:
         auswahl = u' AND'
-    elif len(liste_abflussparam) >= 2:
+    elif len(liste_selAbflparamTeilgeb) >= 2:
         auswahl = u' AND ('
     else:
         fehlermeldung(u"Interner Fehler", u"Fehler in Fallunterscheidung!")
@@ -142,7 +146,7 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
 
     # Anfang SQL-Krierien zur Auswahl der tezg-Flächen
     first = True
-    for attr in liste_abflussparam:
+    for attr in liste_selAbflparamTeilgeb:
         if attr[4] == u'None' or attr[1] == u'None':
             fehlermeldung(u'Datenfehler: ', u'In den ausgewählten Daten sind noch Datenfelder nicht definiert ("NULL").')
             return False
@@ -154,8 +158,8 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
             auswahl += u""" OR\n      (tezg.abflussparameter = '{abflussparameter}' AND
                             tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0], teilgebiet=attr[1])
 
-    if len(liste_abflussparam) == 2:
-        auswahl += u""")"""
+    if len(liste_selAbflparamTeilgeb) >= 2:
+        auswahl += u")"
     # Ende SQL-Krierien zur Auswahl der tezg-Flächen
 
     sql = u"""WITH flbef AS (
@@ -177,7 +181,7 @@ def createUnbefFlaechen(dbQK, liste_abflussparam, autokorrektur, dbtyp='SpatiaLi
             kommentar, CastToMultiPolygon(Difference(geot,geob)) AS geof FROM flbef
             WHERE area(geof) > 0.5 AND geof IS NOT NULL""".format(auswahl=auswahl)
 
-    logger.debug(u'QKan.k_unbef (3) - liste_abflussparam = \n{}'.format(str(liste_abflussparam)))
+    logger.debug(u'QKan.k_unbef (3) - liste_selAbflparamTeilgeb = \n{}'.format(str(liste_selAbflparamTeilgeb)))
     if not dbQK.sql(sql, u"QKan.CreateUnbefFlaechen (4)"):
         return False
 

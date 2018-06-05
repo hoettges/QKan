@@ -331,6 +331,34 @@ class ExportToHE:
     # -------------------------------------------------------------------------
     # Formularfunktionen
 
+    def helpClick(self):
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        helpfile = os.path.join(self.plugin_dir, '..\doc', 'exporthe.html')
+        os.startfile(helpfile)
+
+    def lw_teilgebieteClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlg.cb_selActive.setChecked(True)
+        self.countselection()
+
+    def selActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlg.cb_selActive.isChecked():
+            # Nix tun ...
+            logger.debug('\nChecked = True')
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlg.lw_teilgebiete.count()
+            for i in range(anz):
+                item = self.dlg.lw_teilgebiete.item(i)
+                self.dlg.lw_teilgebiete.setItemSelected(item, False)
+
+            # Anzahl in der Anzeige aktualisieren
+            self.countselection()
+
     def countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
@@ -386,7 +414,7 @@ class ExportToHE:
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
         :param listWidget: String for translation.
-        :type listWidget: QListWidgetItem
+        :type listWidget: QListWidget
 
         :returns: Tuple containing selected teilgebiete
         :rtype: tuple
@@ -397,8 +425,8 @@ class ExportToHE:
             liste.append(elem.text())
         return liste
 
-    # Ende Eigene Funktionen ---------------------------------------------------
 
+    # Ende Eigene Funktionen ---------------------------------------------------
 
     def run(self):
         """Run method that performs all the real work"""
@@ -515,6 +543,13 @@ class ExportToHE:
         else:
             mindestflaeche = u'0.5'
         self.dlg.tf_mindestflaeche.setText(str(mindestflaeche))
+
+        self.dlg.lw_teilgebiete.itemClicked.connect(self.lw_teilgebieteClick)
+        self.countselection()
+        
+        self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
+
+        self.dlg.button_box.helpRequested.connect(self.helpClick)
 
         # Formular anzeigen
 

@@ -114,33 +114,6 @@ class ExportToKP:
         project = QgsProject.instance()
         self.default_dir = os.path.dirname(project.fileName())
 
-        if 'database_QKan' in self.config:
-            database_QKan = self.config['database_QKan']
-        else:
-            database_QKan = ''
-        self.dlg.tf_QKanDB.setText(database_QKan)
-        self.dlg.pb_selectQKanDB.clicked.connect(self.selectFile_QKanDB)
-
-        if 'dynafile' in self.config:
-            dynafile = self.config['dynafile']
-        else:
-            dynafile = ''
-        self.dlg.tf_KP_dest.setText(dynafile)
-        self.dlg.pb_select_KP_dest.clicked.connect(self.selectFile_kpDB_dest)
-
-        if 'template_dyna' in self.config:
-            template_dyna = self.config['template_dyna']
-        else:
-            template_dyna = ''
-        self.dlg.tf_KP_template.setText(template_dyna)
-        self.dlg.pb_select_KP_template.clicked.connect(self.selectFile_kpDB_template)
-
-        if 'datenbanktyp' in self.config:
-            datenbanktyp = self.config['datenbanktyp']
-        else:
-            datenbanktyp = 'spatialite'
-            pass  # Es gibt noch keine Wahlmöglichkeit
-
         # Ende Eigene Funktionen ---------------------------------------------------
 
     # noinspection PyMethodMayBeStatic
@@ -204,6 +177,34 @@ class ExportToKP:
 
     # -------------------------------------------------------------------------
     # Formularfunktionen
+
+    def helpClick(self):
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        helpfile = os.path.join(self.plugin_dir, '..\doc', 'exportdyna.html')
+        os.startfile(helpfile)
+
+    def tw_selAbflparamTeilgebClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlg.cb_selActive.setChecked(True)
+        self.countselection()
+
+    def selActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlg.cb_selActive.isChecked():
+            # Nix tun ...
+            logger.debug('\nChecked = True')
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlg.tw_selAbflparamTeilgeb.rowCount()
+            range = QTableWidgetSelectionRange(0,0,anz-1,4)
+            self.dlg.tw_selAbflparamTeilgeb.setRangeSelected(range,False)
+            logger.debug('\nChecked = False\nQWidget: anzahl = {}'.format(anz))
+
+            # Anzahl in der Anzeige aktualisieren
+            self.countselection()
 
     def countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
@@ -294,12 +295,11 @@ class ExportToKP:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            fehlermeldung(u"Fehler in exportdyna.application", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            logger.error("k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
-            return False
-
-        if database_QKan != '':
-            self.dlg.tf_QKanDB.setText(database_QKan)
+            if 'database_QKan' in self.config:
+                database_QKan = self.config['database_QKan']
+            else:
+                database_QKan = ''
+        self.dlg.tf_QKanDB.setText(database_QKan)
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
@@ -310,6 +310,26 @@ class ExportToKP:
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
+
+        if 'dynafile' in self.config:
+            dynafile = self.config['dynafile']
+        else:
+            dynafile = ''
+        self.dlg.tf_KP_dest.setText(dynafile)
+        self.dlg.pb_select_KP_dest.clicked.connect(self.selectFile_kpDB_dest)
+
+        if 'template_dyna' in self.config:
+            template_dyna = self.config['template_dyna']
+        else:
+            template_dyna = ''
+        self.dlg.tf_KP_template.setText(template_dyna)
+        self.dlg.pb_select_KP_template.clicked.connect(self.selectFile_kpDB_template)
+
+        if 'datenbanktyp' in self.config:
+            datenbanktyp = self.config['datenbanktyp']
+        else:
+            datenbanktyp = 'spatialite'
+            pass  # Es gibt noch keine Wahlmöglichkeit
 
         # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -367,6 +387,10 @@ class ExportToKP:
 
         self.dlg.lw_teilgebiete.itemClicked.connect(self.countselection)
         self.countselection()
+
+        self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
+
+        self.dlg.button_box.helpRequested.connect(self.helpClick)
 
         # Autokorrektur
 
@@ -437,7 +461,7 @@ class ExportToKP:
             liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
 
             # Eingaben aus Formular übernehmen
-            database_Qkan = self.dlg.tf_QKanDB.text()
+            database_QKan = self.dlg.tf_QKanDB.text()
             dynafile = self.dlg.tf_KP_dest.text()
             template_dyna = self.dlg.tf_KP_template.text()
             datenbanktyp = 'spatialite'
@@ -464,7 +488,7 @@ class ExportToKP:
             # Konfigurationsdaten schreiben
             self.config['dynafile'] = dynafile
             self.config['template_dyna'] = template_dyna
-            self.config['database_QKan'] = database_Qkan
+            self.config['database_QKan'] = database_QKan
             self.config['datenbanktyp'] = datenbanktyp
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['autokorrektur'] = autokorrektur
