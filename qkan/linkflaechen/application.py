@@ -171,18 +171,81 @@ class LinkFl:
         pass
 
     # -------------------------------------------------------------------------
-    # Formularfunktionen
+    # Formularfunktionen linkfl
 
-    def helpClick(self):
+    def cl_helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
         helpfile = os.path.join(self.plugin_dir, '..\doc', 'linkflaechen.html')
         os.startfile(helpfile)
 
-    def tw_selAbflparamTeilgebClick(self):
+    def cl_lw_flaechen_abflussparamClick(self):
         """Reaktion auf Klick in Tabelle"""
 
-        self.dlg.cb_selActive.setChecked(True)
-        self.countselection()
+        self.dlg_cl.cb_selFlActive.setChecked(True)
+        self.countselectionfl()
+
+    def cl_lw_hal_entwClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlg_cl.cb_selHalActive.setChecked(True)
+        self.countselectionfl()
+
+    def cl_lw_teilgebieteClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlg_cl.cb_selTgbActive.setChecked(True)
+        self.countselectionfl()
+
+    def cl_selFlActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlg_cl.cb_selFlActive.isChecked():
+            # Nix tun ...
+            pass
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlg_cl.lw_flaechen_abflussparam.count()
+            for i in range(anz):
+                item = self.dlg_cl.lw_flaechen_abflussparam.item(i)
+                self.dlg_cl.lw_flaechen_abflussparam.setItemSelected(item, False)
+
+            # Anzahl in der Anzeige aktualisieren
+            self.countselectionfl()
+
+    def cl_selHalActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlg_cl.cb_selHalActive.isChecked():
+            # Nix tun ...
+            pass
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlg_cl.lw_hal_entw.count()
+            for i in range(anz):
+                item = self.dlg_cl.lw_hal_entw.item(i)
+                self.dlg_cl.lw_hal_entw.setItemSelected(item, False)
+
+            # Anzahl in der Anzeige aktualisieren
+            self.countselectionfl()
+
+    def cl_selTgbActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlg_cl.cb_selTgbActive.isChecked():
+            # Nix tun ...
+            pass
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlg_cl.lw_teilgebiete.count()
+            for i in range(anz):
+                item = self.dlg_cl.lw_teilgebiete.item(i)
+                self.dlg_cl.lw_teilgebiete.setItemSelected(item, False)
+
+            # Anzahl in der Anzeige aktualisieren
+            self.countselectionfl()
 
     def countselectionfl(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
@@ -248,6 +311,60 @@ class LinkFl:
         else:
             self.dlg_cl.lf_anzahl_haltungen.setText(u'0')
 
+
+    # -------------------------------------------------------------------------
+    # Formularfunktionen linksw
+
+    def sw_helpClick(self):
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        helpfile = os.path.join(self.plugin_dir, '..\doc', 'linksw.html')
+        os.startfile(helpfile)
+
+    def sw_lw_hal_entwClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlg_sw.cb_selHalActive.setChecked(True)
+        self.countselectionfl()
+
+    def sw_lw_teilgebieteClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlg_sw.cb_selTgbActive.setChecked(True)
+        self.countselectionfl()
+
+    def sw_selHalActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlg_sw.cb_selHalActive.isChecked():
+            # Nix tun ...
+            pass
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlg_sw.lw_hal_entw.count()
+            for i in range(anz):
+                item = self.dlg_sw.lw_hal_entw.item(i)
+                self.dlg_sw.lw_hal_entw.setItemSelected(item, False)
+
+            # Anzahl in der Anzeige aktualisieren
+            self.countselectionfl()
+
+    def sw_selTgbActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlg_sw.cb_selTgbActive.isChecked():
+            # Nix tun ...
+            pass
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlg_sw.lw_teilgebiete.count()
+            for i in range(anz):
+                item = self.dlg_sw.lw_teilgebiete.item(i)
+                self.dlg_sw.lw_teilgebiete.setItemSelected(item, False)
+
+            # Anzahl in der Anzeige aktualisieren
+            self.countselectionfl()
 
     def countselectionsw(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
@@ -440,6 +557,7 @@ class LinkFl:
                     try:
                         if elem[0] in self.config['liste_flaechen_abflussparam']:
                             self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
+                            self.dlg_cl.cb_selFlActive.setChecked(True)     # Auswahlcheckbox aktivieren
                     except BaseException as err:
                         del self.dbQK
                         # logger.debug(u'\nelem: {}'.format(str(elem)))  # debug
@@ -458,6 +576,7 @@ class LinkFl:
                 if 'liste_hal_entw' in self.config:
                     if elem[0] in self.config['liste_hal_entw']:
                         self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
+                        self.dlg_cl.cb_selHalActive.setChecked(True)     # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
                         # self.dlg_cl.lw_hal_entw.setCurrentRow(0)
 
@@ -473,6 +592,7 @@ class LinkFl:
                 if 'liste_teilgebiete' in self.config:
                     if elem[0] in self.config['liste_teilgebiete']:
                         self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
+                        self.dlg_cl.cb_selTgbActive.setChecked(True)     # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
                         # self.dlg_cl.lw_teilgebiete.setCurrentRow(0)
 
@@ -506,6 +626,12 @@ class LinkFl:
             mindestflaeche = u'0.5'
         self.dlg_cl.tf_mindestflaeche.setText(str(mindestflaeche))
 
+        # Fangradius für Anfang der Anbindungslinie
+        if 'fangradius' in self.config:
+            fangradius = self.config['fangradius']
+        else:
+            fangradius = u'0.1'
+
         # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
         if 'bezug_abstand' in self.config:
             bezug_abstand = self.config['bezug_abstand']
@@ -520,10 +646,16 @@ class LinkFl:
             fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
             return False
 
-        self.dlg_cl.lw_flaechen_abflussparam.itemClicked.connect(self.countselectionfl)
-        self.dlg_cl.lw_hal_entw.itemClicked.connect(self.countselectionfl)
-        self.dlg_cl.lw_teilgebiete.itemClicked.connect(self.countselectionfl)
+        self.dlg_cl.lw_flaechen_abflussparam.itemClicked.connect(self.cl_lw_flaechen_abflussparamClick)
+        self.dlg_cl.lw_hal_entw.itemClicked.connect(self.cl_lw_hal_entwClick)
+        self.dlg_cl.lw_teilgebiete.itemClicked.connect(self.cl_lw_teilgebieteClick)
         self.countselectionfl()
+
+        self.dlg_cl.cb_selFlActive.stateChanged.connect(self.cl_selFlActiveClick)
+        self.dlg_cl.cb_selHalActive.stateChanged.connect(self.cl_selHalActiveClick)
+        self.dlg_cl.cb_selTgbActive.stateChanged.connect(self.cl_selTgbActiveClick)
+
+        self.dlg_cl.button_box.helpRequested.connect(self.cl_helpClick)
 
         # show the dialog
         self.dlg_cl.show()
@@ -563,6 +695,7 @@ class LinkFl:
             # Konfigurationsdaten schreiben
 
             self.config['suchradius'] = suchradius
+            self.config['fangradius'] = fangradius
             self.config['mindestflaeche'] = mindestflaeche
             self.config['bezug_abstand'] = bezug_abstand
             self.config['liste_hal_entw'] = liste_hal_entw
@@ -579,7 +712,7 @@ class LinkFl:
 
             createlinkfl(self.dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                         liste_teilgebiete, linksw_in_tezg, autokorrektur, suchradius, 
-                        mindestflaeche, bezug_abstand, epsg)
+                        mindestflaeche, fangradius, bezug_abstand, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()
@@ -662,6 +795,7 @@ class LinkFl:
                 if 'liste_hal_entw' in self.config:
                     if elem[0] in self.config['liste_hal_entw']:
                         self.dlg_sw.lw_hal_entw.setCurrentRow(ielem)
+                        self.dlg_sw.cb_selHalActive.setChecked(True)     # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
                         # self.dlg_sw.lw_hal_entw.setCurrentRow(0)
 
@@ -677,6 +811,7 @@ class LinkFl:
                 if 'liste_teilgebiete' in self.config:
                     if elem[0] in self.config['liste_teilgebiete']:
                         self.dlg_sw.lw_teilgebiete.setCurrentRow(ielem)
+                        self.dlg_sw.cb_selTgbActive.setChecked(True)     # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
                         # self.dlg_sw.lw_teilgebiete.setCurrentRow(0)
 
@@ -692,9 +827,14 @@ class LinkFl:
         # Haltungen direkt in einleit eintragen. Es kann wegen der längeren Zeitdauer sinnvoll
         # sein, dies erst am Schluss der Bearbeitung in einem eigenen Vorgang zu machen.
 
-        self.dlg_sw.lw_hal_entw.itemClicked.connect(self.countselectionsw)
-        self.dlg_sw.lw_teilgebiete.itemClicked.connect(self.countselectionsw)
+        self.dlg_sw.lw_hal_entw.itemClicked.connect(self.sw_lw_hal_entwClick)
+        self.dlg_sw.lw_teilgebiete.itemClicked.connect(self.sw_lw_teilgebieteClick)
         self.countselectionsw()
+
+        self.dlg_sw.cb_selHalActive.stateChanged.connect(self.sw_selHalActiveClick)
+        self.dlg_sw.cb_selTgbActive.stateChanged.connect(self.sw_selTgbActiveClick)
+
+        self.dlg_sw.button_box.helpRequested.connect(self.sw_helpClick)
 
         # show the dialog
         self.dlg_sw.show()
