@@ -1400,7 +1400,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 else:
                     # 2.1.2 Es existieren mehrere Einzugsgebiete ------------------------------------------
                     sql = u"""UPDATE einleit SET einzugsgebiet = (SELECT tgnam FROM einzugsgebiete
-                          WHERE within(einleit.geom, einzugsgebiete.geom))"""
+                          WHERE within(einleit.geom, einzugsgebiete.geom) 
+                              and einleit.geom IS NOT NULL and einzugsgebiete.geom IS NOT NULL)"""
 
                     if not dbQK.sql(sql, u'dbQK: k_qkhe.export_einzugsgebiete (9)'):
                         del dbHE
