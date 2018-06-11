@@ -90,7 +90,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>diesem ausgewählten Teilgebieten</string>
+     <string>diesem ausgewählten Teilgebiet</string>
     </property>
    </widget>
    <widget class="QRadioButton" name="rb_within">
@@ -247,7 +247,7 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.4.7</string>
+    <string>Version 2.4.8</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

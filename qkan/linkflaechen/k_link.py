@@ -51,7 +51,7 @@ progress_bar = None
 
 def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 liste_teilgebiete, linksw_in_tezg=False, autokorrektur=True, suchradius=50, 
-                mindestflaeche=0.5, bezug_abstand=u'kante', 
+                mindestflaeche=0.5, fangradius=0.1, bezug_abstand=u'kante', 
                 epsg=u'25832', dbtyp=u'SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -160,6 +160,16 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     if not dbQK.sql(sqlindex, u'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
         return False
 
+    # if not checkgeom(dbQK, 'tezg', 'geom', autokorrektur, liste_teilgebiete):
+        # del dbQK
+        # progress_bar.reset()
+        # return False
+
+    # if not checkgeom(dbQK, 'flaechen', 'geom', autokorrektur, liste_teilgebiete):
+        # del dbQK
+        # progress_bar.reset()
+        # return False
+
     sql = u"""WITH linkadd AS (
                 SELECT
                     linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
@@ -169,7 +179,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 ON within(centroid(flaechen.geom),tezg.geom)
                 LEFT JOIN linkfl
                 ON linkfl.flnam = flaechen.flnam
-                WHERE (flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL){ausw_einf}
+                WHERE ((flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL) 
+                    and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_einf}
                 UNION
                 SELECT
                     linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, flaechen.aufteilen, tezg.teilgebiet, 
@@ -179,13 +190,16 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 ON intersects(flaechen.geom,tezg.geom)
                 LEFT JOIN linkfl
                 ON linkfl.flnam = flaechen.flnam AND linkfl.tezgnam = tezg.flnam
-                WHERE flaechen.aufteilen = 'ja'{ausw_teil})
+                WHERE (flaechen.aufteilen = 'ja'
+                    and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_teil})
             INSERT INTO linkfl (flnam, tezgnam, aufteilen, teilgebiet, geom)
             SELECT flnam, tezgnam, aufteilen, teilgebiet, geom
             FROM linkadd
             WHERE lpk IS NULL AND geom > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
 
     if not dbQK.sql(sql, u"QKan_LinkFlaechen (4a)"):
+        del dbQK
+        progress_bar.reset()
         return False
 
     progress_bar.setValue(60)
@@ -196,6 +210,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     sql = u"""UPDATE linkfl SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linkfl.glink IS NULL""".format(
         suchradius)
     if not dbQK.sql(sql, u"createlinkfl (2)"):
+        del dbQK
+        progress_bar.reset()
         return False
 
     # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche. 
@@ -229,9 +245,15 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     sqlindex = u"SELECT CreateSpatialIndex('haltungen','geom')"
 
     if not dbQK.sql(sqlindex, u'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
+        del dbQK
+        progress_bar.reset()
         return False
 
     # Varianten ohne und mit Beschränkung der Anbindungslinien auf die Haltungsfläche
+
+    # Tipp: within und intersects schließt Datensätze ohne Geoobjekt ein. Deshalb müssen 
+    # sie ausgeschlossen werden.
+    
 
     if linksw_in_tezg:
         sql = u"""WITH tlink AS
@@ -244,14 +266,15 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 ON Intersects(ha.geom,lf.gbuf)
                 INNER JOIN tezg AS tg
                 ON tg.flnam = lf.tezgnam
-                WHERE within(centroid(ha.geom),tg.geom) and lf.glink IS NULL{auswha})
+                WHERE (within(centroid(ha.geom),tg.geom) and lf.glink IS NULL 
+                    and ha.geom IS NOT NULL and lf.gbuf IS NOT NULL and tg.geom IS NOT NULL){auswha})
             UPDATE linkfl SET (glink, haltnam) = 
-            (   SELECT MakeLine(PointOnSurface(t1.geolf),Centroid(t1.geohal)), t1.haltnam
+            (   SELECT MakeLine(PointOnSurface(Buffer(t1.geolf, -1.1*{fangradius})),Centroid(t1.geohal)), t1.haltnam
                 FROM tlink AS t1
                 INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
                 ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
-                WHERE linkfl.pk = t1.pk)
-            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, 
+                WHERE linkfl.pk = t1.pk AND area(Buffer(t1.geolf, -1.1*{fangradius})) IS NOT NULL)
+            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, fangradius=fangradius, 
                 auswha=auswha, auswlinkfl=auswlinkfl)
     else:
         sql = u"""WITH tlink AS
@@ -262,20 +285,23 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 FROM haltungen AS ha
                 INNER JOIN linkfl AS lf
                 ON Intersects(ha.geom,lf.gbuf)
-                WHERE lf.glink IS NULL{auswha})
+                WHERE lf.glink IS NULL
+                    and ha.geom IS NOT NULL and lf.gbuf IS NOT NULL{auswha})
             UPDATE linkfl SET (glink, haltnam) =  
-            (   SELECT MakeLine(PointOnSurface(t1.geolf),Centroid(t1.geohal)), t1.haltnam
+            (   SELECT MakeLine(PointOnSurface(Buffer(t1.geolf, -1.1*{fangradius})),Centroid(t1.geohal)), t1.haltnam
                 FROM tlink AS t1
                 INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
                 ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
-                WHERE linkfl.pk = t1.pk)
-            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, 
+                WHERE linkfl.pk = t1.pk AND area(Buffer(t1.geolf, -1.1*{fangradius})) IS NOT NULL)
+            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, fangradius=fangradius, 
                 auswha=auswha, auswlinkfl=auswlinkfl)
 
 
     logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
     if not dbQK.sql(sql, u"createlinkfl (5)"):
+        del dbQK
+        progress_bar.reset()
         return False
 
     progress_bar.setValue(80)
@@ -286,6 +312,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     sql = u"""DELETE FROM linkfl WHERE glink IS NULL"""
 
     if not dbQK.sql(sql, u"QKan_LinkFlaechen (7)"):
+        del dbQK
+        progress_bar.reset()
         return False
 
     dbQK.commit()
@@ -295,6 +323,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     if not updatelinkfl(dbQK):
         fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
+        del dbQK
+        progress_bar.reset()
         return False
         
     progress_bar.setValue(100)
@@ -429,7 +459,8 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
                 WHERE sw.glink IS NULL AND hal.ROWID IN
                 (   SELECT ROWID FROM SpatialIndex WHERE
                     f_table_name = 'haltungen' AND
-                    search_frame = sw.gbuf){auswahl})
+                    search_frame = sw.gbuf)
+                    and hal.geom IS NOT NULL and sw.gbuf IS NOT NULL{auswahl})
             UPDATE linksw SET glink =  
             (SELECT MakeLine(PointOnSurface(t1.geosw),Centroid(t1.geohal))
             FROM tlink AS t1
@@ -534,13 +565,15 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, buff
                     FROM teilgebiete
                     INNER JOIN {table} AS tt
                     ON within(tt.geom, teilgebiete.geom)
-                    WHERE tt.pk = {table}.pk{auswahl_1})
+                    WHERE tt.pk = {table}.pk
+                        and tt.geom IS NOT NULL and teilgebiete.geom IS NOT NULL {auswahl_1})
                 WHERE {table}.pk IN
                 (	SELECT {table}.pk
                     FROM teilgebiete
                     INNER JOIN {table}
-                    ON within({table}.geom, teilgebiete.geom){auswahl_2})
-                """.format(table=table, bufferradius=bufferradius, auswahl_1=auswahl_1, auswahl_2=auswahl_2)
+                    ON within({table}.geom, teilgebiete.geom)
+                    WHERE {table}.geom IS NOT NULL and teilgebiete.geom IS NOT NULL {auswahl_1})
+                """.format(table=table, bufferradius=bufferradius, auswahl_1=auswahl_1)
             else:
                 sql = u"""
                 UPDATE {table} SET teilgebiet = 
@@ -548,13 +581,15 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, buff
                     FROM teilgebiete
                     INNER JOIN {table} AS tt
                     ON within(tt.geom, buffer(teilgebiete.geom, {bufferradius}))
-                    WHERE tt.pk = {table}.pk{auswahl_1})
+                    WHERE tt.pk = {table}.pk
+                        and tt.geom IS NOT NULL and teilgebiete.geom IS NOT NULL{auswahl_1})
                 WHERE {table}.pk IN
                 (	SELECT {table}.pk
                     FROM teilgebiete
                     INNER JOIN {table}
-                    ON within({table}.geom, buffer(teilgebiete.geom, {bufferradius})){auswahl_2})
-                """.format(table=table, bufferradius=bufferradius, auswahl_1=auswahl_1, auswahl_2=auswahl_2)
+                    ON within({table}.geom, buffer(teilgebiete.geom, {bufferradius}))
+                    WHERE {table}.geom IS NOT NULL and teilgebiete.geom IS NOT NULL{auswahl_1})
+                """.format(table=table, bufferradius=bufferradius, auswahl_1=auswahl_1)
         elif auswahltyp == 'overlaps':
             sql = u"""
             UPDATE {table} SET teilgebiet = 
@@ -562,13 +597,15 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, buff
                 FROM teilgebiete
                 INNER JOIN {table} AS tt
                 ON intersects(tt.geom,teilgebiete.geom)
-                WHERE tt.pk = {table}.pk{auswahl_1})
+                WHERE tt.pk = {table}.pk
+                    and tt.geom IS NOT NULL and teilgebiete.geom IS NOT NULL{auswahl_1})
             WHERE {table}.pk IN
             (	SELECT {table}.pk
                 FROM teilgebiete
                 INNER JOIN {table}
-                ON intersects({table}.geom,teilgebiete.geom){auswahl_2})
-            """.format(table=table, auswahl_1=auswahl_1, auswahl_2=auswahl_2)
+                ON intersects({table}.geom,teilgebiete.geom)
+                WHERE {table}.geom IS NOT NULL and teilgebiete.geom IS NOT NULL{auswahl_1})
+            """.format(table=table, auswahl_1=auswahl_1)
         else:
             fehlermeldung(u'Programmfehler', u'k_link.assigntgeb: auswahltyp hat unbekannten Fall {}'.format(str(auswahltyp)))
             del dbQK

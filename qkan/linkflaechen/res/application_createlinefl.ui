@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>773</width>
-    <height>577</height>
+    <height>597</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>520</y>
-     <width>181</width>
+     <x>220</x>
+     <y>540</y>
+     <width>331</width>
      <height>32</height>
     </rect>
    </property>
@@ -36,14 +36,17 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+   </property>
+   <property name="centerButtons">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="lb_version">
    <property name="geometry">
     <rect>
      <x>700</x>
-     <y>560</y>
+     <y>580</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -52,7 +55,7 @@
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.4.7</string>
+    <string>Version 2.4.8</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -81,9 +84,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>70</y>
+      <y>90</y>
       <width>211</width>
-      <height>171</height>
+      <height>201</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -112,35 +115,16 @@
      </font>
     </property>
     <property name="text">
-     <string>Tabelle Flächen:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>50</y>
-      <width>171</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Entwässerungssysteme</string>
+     <string>Tabelle Flächen</string>
     </property>
    </widget>
    <widget class="QListWidget" name="lw_hal_entw">
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>70</y>
+      <y>90</y>
       <width>211</width>
-      <height>171</height>
+      <height>201</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -151,34 +135,15 @@
     </property>
     <property name="selectionMode">
      <enum>QAbstractItemView::ExtendedSelection</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>510</x>
-      <y>50</y>
-      <width>91</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Teilgebiete</string>
     </property>
    </widget>
    <widget class="QListWidget" name="lw_teilgebiete">
     <property name="geometry">
      <rect>
-      <x>500</x>
-      <y>70</y>
-      <width>211</width>
-      <height>171</height>
+      <x>480</x>
+      <y>90</y>
+      <width>231</width>
+      <height>201</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -189,25 +154,6 @@
     </property>
     <property name="selectionMode">
      <enum>QAbstractItemView::ExtendedSelection</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_6">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>50</y>
-      <width>141</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Abflussparameter</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_7">
@@ -226,13 +172,13 @@
      </font>
     </property>
     <property name="text">
-     <string>Tabelle Haltungen:</string>
+     <string>Tabelle Haltungen</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>510</x>
+      <x>490</x>
       <y>30</y>
       <width>91</width>
       <height>20</height>
@@ -245,7 +191,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Allgemein:</string>
+     <string>Allgemein</string>
     </property>
    </widget>
    <widget class="QLabel" name="lf_anzahl_flaechen">
@@ -457,160 +403,64 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_flSelAll">
+   <widget class="QCheckBox" name="cb_selFlActive">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>250</y>
-      <width>101</width>
-      <height>23</height>
+      <x>30</x>
+      <y>50</y>
+      <width>201</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alle angezeigten Haltungsflächen zur Bearbeitung auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Alle angezeigten Haltungsflächen zur Bearbeitung auswählen</string>
-    </property>
     <property name="text">
-     <string>Alle auswählen</string>
+     <string>Nur ausgewählte Abfluss-
+parameter berücksichtigen</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_flNoSel">
+   <widget class="QCheckBox" name="cb_selHalActive">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>250</y>
-      <width>101</width>
-      <height>23</height>
+      <x>260</x>
+      <y>50</y>
+      <width>201</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alle Haltungsflächen bearbeiten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Alle Haltungsflächen bearbeiten</string>
-    </property>
     <property name="text">
-     <string>Keine Auswahl</string>
+     <string>Nur ausgewählte Entwässe-
+rungssysteme berücksichtigen</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_halNoSel">
+   <widget class="QCheckBox" name="cb_selTgbActive">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>250</y>
-      <width>101</width>
-      <height>23</height>
+      <x>490</x>
+      <y>50</y>
+      <width>201</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alle Haltungsflächen bearbeiten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Alle Haltungsflächen bearbeiten</string>
-    </property>
     <property name="text">
-     <string>Keine Auswahl</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_halSelAll">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>250</y>
-      <width>101</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alle angezeigten Haltungsflächen zur Bearbeitung auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Alle angezeigten Haltungsflächen zur Bearbeitung auswählen</string>
-    </property>
-    <property name="text">
-     <string>Alle auswählen</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_tezgSelAll">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>250</y>
-      <width>101</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alle angezeigten Haltungsflächen zur Bearbeitung auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Alle angezeigten Haltungsflächen zur Bearbeitung auswählen</string>
-    </property>
-    <property name="text">
-     <string>Alle auswählen</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_tezgNoSel">
-    <property name="geometry">
-     <rect>
-      <x>500</x>
-      <y>250</y>
-      <width>101</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alle Haltungsflächen bearbeiten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Alle Haltungsflächen bearbeiten</string>
-    </property>
-    <property name="text">
-     <string>Keine Auswahl</string>
+     <string>Nur ausgewählte Teilgebiete
+berücksichtigen</string>
     </property>
    </widget>
   </widget>
@@ -620,7 +470,7 @@
      <x>20</x>
      <y>380</y>
      <width>731</width>
-     <height>121</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="font">
@@ -640,7 +490,7 @@
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>80</y>
+      <y>90</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -665,7 +515,7 @@
     <property name="geometry">
      <rect>
       <x>255</x>
-      <y>80</y>
+      <y>90</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -693,7 +543,7 @@
     <property name="geometry">
      <rect>
       <x>335</x>
-      <y>80</y>
+      <y>90</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -760,7 +610,7 @@
      <rect>
       <x>260</x>
       <y>40</y>
-      <width>371</width>
+      <width>381</width>
       <height>31</height>
      </rect>
     </property>
@@ -771,10 +621,10 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;1. Falls in den Tabellen &amp;quot;flaechen&amp;quot; und &amp;quot;einleitsw&amp;quot; leere oder doppelte Namen (flnam bzw. elnam) vorkommen, werden diese mit &amp;quot;f_nnnn&amp;quot; bzw. &amp;quot;e_nnnn&amp;quot; überschrieben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Falls in den Tabellen &amp;quot;flaechen&amp;quot; und &amp;quot;einleitsw&amp;quot; leere oder doppelte Namen (flnam bzw. elnam) vorkommen, werden diese mit &amp;quot;f_nnnn&amp;quot; bzw. &amp;quot;e_nnnn&amp;quot; überschrieben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Automatische Korrektur von Namensfehlern in den Tabellen &quot;flaechen&quot; und &quot;einleitsw&quot;</string>
+     <string>Automatische Korrektur von Namensfehlern...</string>
     </property>
     <property name="layoutDirection">
      <enum>Qt::LeftToRight</enum>
@@ -787,7 +637,7 @@
     <property name="geometry">
      <rect>
       <x>575</x>
-      <y>80</y>
+      <y>90</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -803,7 +653,7 @@
     <property name="geometry">
      <rect>
       <x>435</x>
-      <y>80</y>
+      <y>90</y>
       <width>131</width>
       <height>21</height>
      </rect>
@@ -831,7 +681,7 @@
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>80</y>
+      <y>90</y>
       <width>31</width>
       <height>16</height>
      </rect>

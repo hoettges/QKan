@@ -160,7 +160,7 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'SpatiaLite'):
 
     # ----------------------------------------------------------------------------------------------------------------
     # Prüfung, ob Objektnamen mehrfach vergeben sind. 
-            
+
     sql = u"""SELECT {attr}, count(*) AS anzahl
             FROM {tab}
             GROUP BY {attr}
@@ -189,6 +189,67 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'SpatiaLite'):
         else:
             fehlermeldung(u'Datenfehler', 
                 u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}". Abbruch!'.format(tab=tab, attr=attr))
+            return False
+
+    return True
+
+
+def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp = u'SpatiaLite'):
+    """Prüft, ob in der Tabelle {tab} im Attribut {attrgeo} ein Geoobjekt vorhanden ist. 
+
+    :dbQK:              Typ der Datenbank (SpatiaLite, PostGIS)
+    :type dbQK:         Class FBConnection
+    
+    :tab:               Name der Tabelle
+    :type tab:          String
+    
+    :attrgeo:           Name des Geo-Attributs, das auf Existenz geprüft werden soll
+    :type attr:         String
+
+    :autokorrektur:        Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
+                        werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
+                        abgebrochen.
+    :type autokorrektur:   String
+    
+    :dbtyp:             Typ der Datenbank (SpatiaLite, PostGIS)
+    :type dbtyp:        String
+    
+    :returns:           Ergebnis der Prüfung bzw. Korrektur
+    :type returns:      Boolean
+    """
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # Prüfung, ob das Geoobjekt in Spalte attrgeo existiert
+
+    # Einschränkung auf ausgewähtle Teilgebiete
+    if len(liste_teilgebiete) != 0:
+        auswahl = u" AND {tab}.teilgebiet in ('{lis}')".format(lis=u"', '".join(liste_teilgebiete), tab=tab)
+    else:
+        auswahl = ''
+
+
+    sql = u"""SELECT count(*) AS anzahl
+            FROM {tab}
+            WHERE {tab}.{attrgeo} IS NULL{auswahl}""".format(tab=tab, attrgeo=attrgeo, auswahl = auswahl)
+    if not dbQK.sql(sql, u"QKan.qgis_utils.checkgeom (1)"):
+        return False
+
+    daten = dbQK.fetchone()
+
+    if daten[0] > 0:
+        if autokorrektur:
+            meldung(u'Automatische Korrektur von Daten: ', 
+                u'In der Tabelle "{tab}" wurden leere Geo-Objekte gefunden. Diese Datensätze wurden gelöscht'.format(tab=tab, attrgeo=attrgeo))
+
+            sql = u"""DELETE
+                FROM {tab}
+                WHERE {attrgeo} IS NULL{auswahl}""".format(tab=tab, attrgeo=attrgeo, auswahl = auswahl)
+
+            if not dbQK.sql(sql, u"QKan.qgis_utils.checkgeom (2)"):
+                return False
+        else:
+            fehlermeldung(u'Datenfehler', 
+                u'In der Tabelle "{tab}" gibt es leere Geoobjekte. Abbruch!'.format(tab=tab, attrgeo=attrgeo))
             return False
 
     return True

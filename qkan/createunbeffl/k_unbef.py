@@ -174,7 +174,8 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='S
             INNER JOIN flaechen
             ON Intersects(tezg.geom, flaechen.geom)
             WHERE 'fd_' || ltrim(tezg.flnam, 'ft_') not in 
-            (   SELECT flnam FROM flaechen WHERE flnam IS NOT NULL){auswahl}
+            (   SELECT flnam FROM flaechen WHERE flnam IS NOT NULL)
+                and tezg.geom IS NOT NULL and flaechen.geom IS NOT NULL{auswahl}
             GROUP BY tezg.pk)
             INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, kommentar, geom) 
              SELECT flnam AS flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter,
