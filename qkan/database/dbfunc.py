@@ -78,7 +78,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.4.8'
+        self.actversion = '2.4.9'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
         if dbname is not None:
@@ -326,7 +326,7 @@ class DBConnection:
                 if not self.sql(sql, u'dbfunc.version (3d)'):
                     return False
 
-            sql = u"""UPDATE info SET value = '2.0.2' WHERE subject = 'version' and value = '1.9.9';"""
+            sql = u"""UPDATE info SET value = '2.0.2' WHERE subject = 'version'"""
             if not self.sql(sql, u'dbfunc.version (3e)'):
                 return False
 
@@ -358,7 +358,7 @@ class DBConnection:
                     return False
                 self.commit()
 
-            sql = u"""UPDATE info SET value = '2.1.2' WHERE subject = 'version' and value = '2.0.2';"""
+            sql = u"""UPDATE info SET value = '2.1.2' WHERE subject = 'version'"""
             if not self.sql(sql, u'dbfunc.version (2.0.2-4)'):
                 return False
 
@@ -402,7 +402,7 @@ class DBConnection:
             if not self.sql(sql, u'dbfunc.version (2.1.2-5)'):
                 return False
 
-            sql = u"""UPDATE info SET value = '2.1.6' WHERE subject = 'version' and value = '2.1.2';"""
+            sql = u"""UPDATE info SET value = '2.1.6' WHERE subject = 'version'"""
             if not self.sql(sql, u'dbfunc.version (2.1.2-6)'):
                 return False
 
@@ -422,7 +422,7 @@ class DBConnection:
                     return False
                 self.commit()
 
-            sql = u"""UPDATE info SET value = '2.2.1' WHERE subject = 'version' and value = '2.2.0';"""
+            sql = u"""UPDATE info SET value = '2.2.1' WHERE subject = 'version'"""
             if not self.sql(sql, u'dbfunc.version (2.2.0-2)'):
                 return False
 
@@ -442,7 +442,7 @@ class DBConnection:
                     return False
                 self.commit()
 
-            sql = u"""UPDATE info SET value = '2.2.2' WHERE subject = 'version' and value = '2.2.1';"""
+            sql = u"""UPDATE info SET value = '2.2.2' WHERE subject = 'version'"""
             if not self.sql(sql, u'dbfunc.version (2.2.1-2)'):
                 return False
 
@@ -748,7 +748,7 @@ class DBConnection:
                     # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
             # 4. Schritt: Transaction abschließen
-            sql = u"""UPDATE info SET value = '2.2.3' WHERE subject = 'version' and value = '2.2.2';"""
+            sql = u"""UPDATE info SET value = '2.2.3' WHERE subject = 'version'"""
             if not self.sql(sql, u'dbfunc.version (2.2.2-10)'):
                 return False
 
@@ -814,7 +814,13 @@ class DBConnection:
             self.versionlis = [2, 2, 16]
 
         # ---------------------------------------------------------------------------------------------------------
-        if self.versionolder([2, 4, 3]):
+        if self.versionolder([2, 4, 9]):
+
+            sql = u'''DROP VIEW IF EXISTS "v_linkfl_check"'''
+
+            if not self.sql(sql, u'dbfunc.version (2.4.9-1)'):
+                return False
+
 
             sql = u'''CREATE VIEW IF NOT EXISTS "v_linkfl_check" AS 
                     WITH lfok AS
@@ -852,8 +858,14 @@ class DBConnection:
                     SELECT pk, anzahl, CASE WHEN anzahl > 1 THEN 'mehrfach vorhanden' WHEN flaech_nam IS NULL THEN 'Keine Fläche' WHEN linkfl_haltnam IS NULL THEN  'Keine Haltung' ELSE 'o.k.' END AS fehler
                     FROM lfok'''
 
-            if not self.sql(sql, u'dbfunc.version (2.4.3-1)'):
+            if not self.sql(sql, u'dbfunc.version (2.4.9-2)'):
                 return False
+
+            sql = u'''DROP VIEW IF EXISTS "v_flaechen_ohne_linkfl"'''
+
+            if not self.sql(sql, u'dbfunc.version (2.4.9-3)'):
+                return False
+
 
             sql = u'''CREATE VIEW IF NOT EXISTS "v_flaechen_ohne_linkfl" AS 
                     SELECT 
@@ -872,21 +884,21 @@ class DBConnection:
                              lf.pk IS NULL)
                     UNION
                     VALUES
-                        (0, '', '', 'o.k.') '''
+                        (0, '', '', 'o.k.')'''
 
-            if not self.sql(sql, u'dbfunc.version (2.4.3-2)'):
+            if not self.sql(sql, u'dbfunc.version (2.4.9-4)'):
                 return False
 
 
-            sql = u"""UPDATE info SET value = '2.4.3' WHERE subject = 'version';"""
-            if not self.sql(sql, u'dbfunc.version (2.4.3-3)'):
+            sql = u"""UPDATE info SET value = '2.4.9' WHERE subject = 'version'"""
+            if not self.sql(sql, u'dbfunc.version (2.4.9-5)'):
                 return False
 
             self.commit()
 
             # Versionsnummer hochsetzen
 
-            self.versionlis = [2, 4, 3]
+            self.versionlis = [2, 4, 9]
 
 
         versiondbQK = '.'.join([str(el) for el in self.versionlis])
@@ -926,7 +938,7 @@ class DBConnection:
                               u"{e}".format(e=repr(err)))
 
 
-            sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version';""".format(self.actversion)
+            sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version'""".format(self.actversion)
             if not self.sql(sql, u'dbfunc.version (aktuell)'):
                 return False
 

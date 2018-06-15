@@ -81,7 +81,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkflGeomNone = True):
 
     # Löschen von Datensätzen ohne Linienobjekt
     if deletelinkflGeomNone:
-        sql = u"""DELETE FROM linkfl WHERE geom IS NULL"""
+        sql = u"""DELETE FROM linkfl WHERE glink IS NULL"""
 
         if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (1)'):
             return False
@@ -176,7 +176,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkflGeomNone = True):
 
     # Löschen von Datensätzen ohne Linienobjekt
     if deletelinkflGeomNone:
-        sql = u"""DELETE FROM linkfl WHERE geom IS NULL"""
+        sql = u"""DELETE FROM linksw WHERE glink IS NULL"""
 
         if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (2)'):
             return False
