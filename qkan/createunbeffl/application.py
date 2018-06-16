@@ -22,8 +22,8 @@
 """
 import logging
 import os
-# Ergaenzt (jh, 12.06.2017) -------------------------------------------------
 import site
+import webbrowser
 import json
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
@@ -137,8 +137,8 @@ class CreateUnbefFl:
 
     def helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '..\doc', 'createunbeffl.html')
-        os.startfile(helpfile)
+        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#erzeugen-der-unbefestigten-flachen')
+        webbrowser.open_new_tab(helpfile)
 
     def tw_selAbflparamTeilgebClick(self):
         """Reaktion auf Klick in Tabelle"""

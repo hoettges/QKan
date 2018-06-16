@@ -126,7 +126,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinkfl(dbQK):
+    if not updatelinkfl(dbQK, deletelinkGeomNone = False):
         fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
         return False
@@ -320,7 +320,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinkfl(dbQK):
+    if not updatelinkfl(dbQK, deletelinkGeomNone = False):
         fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
         del dbQK
@@ -389,7 +389,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinksw(dbQK):
+    if not updatelinksw(dbQK, deletelinkGeomNone = False):
         fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
         return False
@@ -486,7 +486,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinksw(dbQK):
+    if not updatelinksw(dbQK, deletelinkGeomNone = False):
         fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
         return False
