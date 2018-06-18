@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>QKan - Kanaldaten aufbereiten mit QGIS &#8212; QKan 2.4.5 Dokumentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.4.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="1. Verarbeitung von befestigten und unbefestigten Flächen" href="Qkan_flaechen.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qkan-kanaldaten-aufbereiten-mit-qgis">
+<h1>QKan - Kanaldaten aufbereiten mit QGIS<a class="headerlink" href="#qkan-kanaldaten-aufbereiten-mit-qgis" title="Link zu dieser Überschrift">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">1. Verarbeitung von befestigten und unbefestigten Flächen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_flaechen.html#zuordnung-von-flachen-zu-haltungen">1.1. Zuordnung von Flächen zu Haltungen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_flaechen.html#grundprinzip">1.2. Grundprinzip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_flaechen.html#teilgebiete">1.3. Teilgebiete</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html#vorgehen-bei-der-flachenzuordnung">2. Vorgehen bei der Flächenzuordnung</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_flaechen.html#import-der-abflusswirksamen-flachen">2.1. Import der abflusswirksamen Flächen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_flaechen.html#erzeugen-der-unbefestigten-flachen">2.2. Erzeugen der unbefestigten Flächen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_flaechen.html#erzeugen-von-anbindungen-zwischen-flachen-und-haltungen">2.3. Erzeugen von Anbindungen zwischen Flächen und Haltungen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_flaechen.html#erzeugen-von-anbindungen-zwischen-einzeleinleitern-und-haltungen">2.4. Erzeugen von Anbindungen zwischen Einzeleinleitern und Haltungen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">3. QKan - Step by Step Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_aufsetzen.html#schritt-1-qgis-installieren">3.1. Schritt 1: QGIS Installieren</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_aufsetzen.html#schritt-2-firebird-installieren">3.2. Schritt 2: Firebird Installieren</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_aufsetzen.html#schritt-3-zusatzliche-python-module">3.3. Schritt 3: Zusätzliche Python-Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_aufsetzen.html#schritt-3-1-starten-der-osgeo4w-shell-mit-administrator-rechten">3.4. Schritt 3.1: Starten der &#8220;OSGeo4W Shell&#8221; mit Administrator-Rechten</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_aufsetzen.html#schritt-3-2-pyfirebirdsql">3.5. Schritt 3.2: pyfirebirdsql</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_aufsetzen.html#schritt-3-3-pip-und-matplotlib">3.6. Schritt 3.3: pip und matplotlib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_aufsetzen.html#schritt-4-qkan-plugins-fur-qgis">3.7. Schritt 4: QKan Plugins für QGIS</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="videoanleitungen">
+<h1>Videoanleitungen<a class="headerlink" href="#videoanleitungen" title="Link zu dieser Überschrift">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html">1. Allgemeine Funktionen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#anlegen-eines-neuen-qkan-projektes">2. Anlegen eines neuen QKan-Projektes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#ubertragen-einer-anderen-projektdatei-auf-eine-qkan-datenbank">3. Übertragen einer anderen Projektdatei auf eine QKan-Datenbank</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#einfugen-eines-zeichnungsrahmens-aus-einer-mit-autocad-erstellten-vorlage">4. Einfügen eines Zeichnungsrahmens aus einer mit Autocad erstellten Vorlage</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="qkan-formulare">
+<h1>QKan-Formulare<a class="headerlink" href="#qkan-formulare" title="Link zu dieser Überschrift">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">1. Automatisches Erzeugen von Anbindungen von Einzeleinleitern</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_Formulare.html#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">1.1. Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html#automatisches-erzeugen-von-flachenanbindungen">2. Automatisches Erzeugen von Flächenanbindungen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_Formulare.html#id1">2.1. Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html#erzeugen-der-unbefestigten-flachen">3. Erzeugen der unbefestigten Flächen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_Formulare.html#tabelle-zur-auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen">3.1. Tabelle zur Auswahl der zu bearbeitenden Arten von Haltungsflächen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html#export-nach-hystem-extran">4. Export nach HYSTEM/EXTRAN</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_Formulare.html#tabelle-zur-auswahl-der-zu-exportierenden-daten">4.1. Tabelle zur Auswahl der zu exportierenden Daten</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html#allgemeine-funktionselemente-in-formularen">5. Allgemeine Funktionselemente in Formularen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Qkan_Formulare.html#auswahl-in-listen">5.1. Auswahl in Listen</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="register-und-tabellen">
+<h1>Register und Tabellen<a class="headerlink" href="#register-und-tabellen" title="Link zu dieser Überschrift">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Stichwortverzeichnis</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Modulindex</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Suche</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Inhalt</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">QKan - Kanaldaten aufbereiten mit QGIS</a></li>
+<li><a class="reference internal" href="#videoanleitungen">Videoanleitungen</a></li>
+<li><a class="reference internal" href="#qkan-formulare">QKan-Formulare</a></li>
+<li><a class="reference internal" href="#register-und-tabellen">Register und Tabellen</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="Qkan_flaechen.html" title="nächstes Kapitel">1. Verarbeitung von befestigten und unbefestigten Flächen</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>Diese Seite</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Quellcode anzeigen</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Schnellsuche</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Los" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, 2018, Hoettges.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Verarbeitung von befestigten und unbefestigten Flächen &#8212; QKan 2.4.5 Dokumentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.4.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="3. QKan - Step by Step Installation" href="Qkan_aufsetzen.html" />
+    <link rel="prev" title="QKan - Kanaldaten aufbereiten mit QGIS" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="verarbeitung-von-befestigten-und-unbefestigten-flachen">
+<h1>1. Verarbeitung von befestigten und unbefestigten Flächen<a class="headerlink" href="#verarbeitung-von-befestigten-und-unbefestigten-flachen" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Abflusswirksame Flächen, z. B. Dachflächen, Parkplätze, Straßen, werden in QKan in der Tabelle &#8220;flaechen&#8221; verwaltet.
+Diese werden mit Hilfe des Attributs &#8220;abflussparameter&#8221; klassifiziert, und in der entsprechenden Tabelle
+&#8220;abflussparameter&#8221; sind die für die hydraulische
+Berechnung benötigten Parameter gespeichert. In dieser Tabelle ist wiederum ein Attribut &#8220;bodenklasse&#8221; enthalten,
+das für durchlässige Flächen die Versickerungsparameter enthält. Unbefestigte Flächen sind in QKan dadurch
+gekennzeichnet,
+dass entweder keine Bodenklasse oder aber eine Bodenklasse zugeordnet ist, deren Durchlässigkeit 0 ist.</p>
+<div class="section" id="zuordnung-von-flachen-zu-haltungen">
+<span id="createlinkfl"></span><h2>1.1. Zuordnung von Flächen zu Haltungen<a class="headerlink" href="#zuordnung-von-flachen-zu-haltungen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Die Zuordnung der abflusswirksamen Flächen zu den Haltungen des Kanalnetzes stellt bei der Vorbereitung
+einer hydrodynamischen Simulation einen aufwändigen Arbeitsschritt dar. Deshalb enthält QKan Funktionen
+zur automatischen Verknüpfung und zur Plausibilitäskontrolle.</p>
+<img alt="_images/qkan_linkfl.png" id="anbindungen-von-flachen-an-haltungen" src="_images/qkan_linkfl.png" />
+<p>Abbildung: Anbindungen von Flächen an Haltungen</p>
+</div>
+<div class="section" id="grundprinzip">
+<h2>1.2. Grundprinzip<a class="headerlink" href="#grundprinzip" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Die abflusswirksamen Flächen werden mittels Linien mit den Haltungen verbunden, die von einem Punkt innerhalb
+der jeweiligen Fläche zur Haltung führen und im Layer &#8220;Anbindungen Flächen&#8221; (QKan-Tabelle &#8220;linkfl&#8221;) gespeichert werden.
+Maßgebend für die Zuordnung der abflusswirksamen Flächen sind diese Verbindungslinien sowie die Haltungsflächen
+im Layer &#8220;Haltungsflächen&#8221; (QKan-Tabelle &#8220;tezg&#8221;).</p>
+<p>Es wird unterschieden zwischen Flächen, die als ganzes zugeordnet werden und großen Flächen, die sich über
+mehrere Haltungsflächen erstrecken und deshalb aufgeteilt
+werden müssen. Für diese muss der Anwender in der Tabelle &#8220;flaechen&#8221; das Attribut &#8220;aufteilen&#8221; aktivieren bzw. &#8220;ja&#8221;
+eintragen. In diesem Fall wird für jedes Teilstück, das in einer anderen Haltungsfläche liegt, eine eigene
+Verbindungslinie angelegt.</p>
+<img alt="_images/qkan_linkfl_aufteil.png" id="anbindung-einer-aufgeteilten-flache" src="_images/qkan_linkfl_aufteil.png" />
+<p>Abbildung: Anbindung einer aufgeteilten Fläche</p>
+<img alt="_images/Form_Flaechen_aufteil.png" id="formular-flachen" src="_images/Form_Flaechen_aufteil.png" />
+<p>Abbildung: Formular Flächen (hervorgehoben: Attribut &#8220;aufteilen&#8221;)</p>
+<p>Die Verbindungslinien können jederzeit manuell nachbearbeitet, ergänzt oder gelöscht werden.
+Maßgebend für den Anwender sind ausschließlich die sichtbaren Verbindungslinien!</p>
+<p>Der Algorithmus ist so angelegt, dass die abflusswirksamen Flächen nach dem Import aus einem externen
+Datenbestand während der gesamten Bearbeitung im Original erhalten bleiben. Sie brauchen also nicht vorher
+durch den Anwender aufgeteilt zu werden. Der Anwender sollte die Flächen lediglich so vorbereiten, dass keine
+Überschneidungen und &#8220;Löcher&#8221; mehr vorhanden sind, wozu QGIS mehrere Werkzeuge enthält.</p>
+<p>Erst beim Datenexport in das Simulationsprogramm wird die Aufteilung der mit dem Attribut &#8220;aufteilen&#8221; markierten
+Flächen mittels Verschneidung mit den Haltungsflächen vorgenommen. Das hat den Vorteil, dass der Anwender
+jederzeit Änderungen an den
+Flächen, Haltungsflächen oder Kanalnetzdaten vornehmen kann, um dann erneut die Daten in das Simulationsprogramm zu
+exportieren.</p>
+</div>
+<div class="section" id="teilgebiete">
+<span id="index-0"></span><span id="id1"></span><h2>1.3. Teilgebiete<a class="headerlink" href="#teilgebiete" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Bei größeren Entwässerungsnetzen ist es hilfreich, die Bearbeitung nacheinander für mehrere Teilgebiete vorzunehmen.
+In QKan dient dazu ein entsprechender Layer &#8220;Teilgebiete&#8221; (QKan-Tabelle &#8220;teilgebiete&#8221;). Alle für die Flächenaufteilung
+verwendeten Layer enthalten ein entsprechendes Attribut, mit dem die automatische Erzeugung der Verbindungslinien
+eines oder mehrere ausgewählte Teilgebiete beschränkt werden kann.</p>
+</div>
+</div>
+<div class="section" id="vorgehen-bei-der-flachenzuordnung">
+<h1>2. Vorgehen bei der Flächenzuordnung<a class="headerlink" href="#vorgehen-bei-der-flachenzuordnung" title="Link zu dieser Überschrift">¶</a></h1>
+<div class="section" id="import-der-abflusswirksamen-flachen">
+<h2>2.1. Import der abflusswirksamen Flächen<a class="headerlink" href="#import-der-abflusswirksamen-flachen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Ausgangspunkt für die nachfolgend beschriebenen Arbeitsschritte ist ein bestehendes QKan-Projekt. Empfehlenswert ist
+es, dieses durch Import aus einem der in QKan verfügbaren Datenformate (HYSTEM-EXTRAN, Kanal++) zu erzeugen. Die
+entsprechende Datei des Simulationsprogramms sollte bereits Kanaldaten enthalten; es ist aber auch möglich, eine leere
+Datei zu verwenden, die vorher mit dem gewünschten Simulationsprogramm angelegt wurde.</p>
+<p>Die abflusswirksamen Flächen können mit QGIS aus einer Vielzahl von Datenquellen übernommen werden. Empfehlenswert
+ist es dabei, zunächst die Daten mit QGIS in einen zusätzlichen Layer zu laden. Anschließend können die Flächen
+mit &#8220;Copy &amp; Paste&#8221; in den Layer &#8220;Flächen&#8221; übertragen und der zusätzliche Layer wieder entfernt werden.</p>
+</div>
+<div class="section" id="erzeugen-der-unbefestigten-flachen">
+<span id="createunbeffl"></span><span id="index-1"></span><h2>2.2. Erzeugen der unbefestigten Flächen<a class="headerlink" href="#erzeugen-der-unbefestigten-flachen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>In der Regel enthalten die Datenbestände der abflusswirksamen Flächen nur befestigte Flächen. Für die Verarbeitung in
+QKan ist es empfehlenswert auch für die unbefestigten Flächenanteile entsprechende Flächenobjekte anzulegen. Hierzu
+dient die Funktion &#8220;Erzeuge unbefestigte Flächen...&#8221;. Voraussetzung ist, dass im Layer &#8220;Haltungsflächen&#8221; Flächen
+vorhanden sind, die das Entwässerungsgebiet in Teilflächen unterteilen, die den einzelnen Haltungen zugeordnet sind.
+Diese Haltungsflächen beziehen sich ausschließlich auf den Niederschlagsabfluss, so dass bei der Erstellung nur
+das Mischwasser- und Regenwassernetz zu berücksichtigen ist.</p>
+<p>Die Haltungsflächen enthalten folgende Attribute, die bei der Erzeugung der unbefestigten Flächen übernommen werden,
+und deshalb vorher entsprechend bearbeitet werden sollten (aber nicht müssen):</p>
+<ul class="simple">
+<li>regenschreiber</li>
+<li>neigkl</li>
+<li>abflussparameter</li>
+<li>haltnam</li>
+<li>teilgebiet</li>
+</ul>
+<p>Teilgebiete dienen ausschließlich dazu, die Bearbeitung auf einen Teilbereich eines Gesamtprojektes zu beschränken,
+um einen besseren Überblick über den Bearbeitungsfortgang zu behalten. Außerdem beeinflusst die zu bearbeitende
+Anzahl an Objekten bei einigen Funktionen die Laufzeit. Näheres hierzu siehe <a class="reference internal" href="#teilgebiete"><span class="std std-ref">Details zu Teilgebieten</span></a></p>
+</div>
+<div class="section" id="erzeugen-von-anbindungen-zwischen-flachen-und-haltungen">
+<h2>2.3. Erzeugen von Anbindungen zwischen Flächen und Haltungen<a class="headerlink" href="#erzeugen-von-anbindungen-zwischen-flachen-und-haltungen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Vor dem Datentransfer in ein Simulationsprogramm wird durch QKan eine &#8220;Bereinigung&#8221; durchgeführt, bei der
+die Verbindungslinien in interne Zuordnungsspalten übertragen werden, die wie ein Cache wirken und eine erhebliche
+Beschleunigung bei der Verarbeitung bewirken.</p>
+</div>
+<div class="section" id="erzeugen-von-anbindungen-zwischen-einzeleinleitern-und-haltungen">
+<span id="createlinksw"></span><h2>2.4. Erzeugen von Anbindungen zwischen Einzeleinleitern und Haltungen<a class="headerlink" href="#erzeugen-von-anbindungen-zwischen-einzeleinleitern-und-haltungen" title="Link zu dieser Überschrift">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Inhalt</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. Verarbeitung von befestigten und unbefestigten Flächen</a><ul>
+<li><a class="reference internal" href="#zuordnung-von-flachen-zu-haltungen">1.1. Zuordnung von Flächen zu Haltungen</a></li>
+<li><a class="reference internal" href="#grundprinzip">1.2. Grundprinzip</a></li>
+<li><a class="reference internal" href="#teilgebiete">1.3. Teilgebiete</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vorgehen-bei-der-flachenzuordnung">2. Vorgehen bei der Flächenzuordnung</a><ul>
+<li><a class="reference internal" href="#import-der-abflusswirksamen-flachen">2.1. Import der abflusswirksamen Flächen</a></li>
+<li><a class="reference internal" href="#erzeugen-der-unbefestigten-flachen">2.2. Erzeugen der unbefestigten Flächen</a></li>
+<li><a class="reference internal" href="#erzeugen-von-anbindungen-zwischen-flachen-und-haltungen">2.3. Erzeugen von Anbindungen zwischen Flächen und Haltungen</a></li>
+<li><a class="reference internal" href="#erzeugen-von-anbindungen-zwischen-einzeleinleitern-und-haltungen">2.4. Erzeugen von Anbindungen zwischen Einzeleinleitern und Haltungen</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="vorheriges Kapitel">QKan - Kanaldaten aufbereiten mit QGIS</a></li>
+      <li>Next: <a href="Qkan_aufsetzen.html" title="nächstes Kapitel">3. QKan - Step by Step Installation</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>Diese Seite</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Qkan_flaechen.rst.txt"
+            rel="nofollow">Quellcode anzeigen</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Schnellsuche</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Los" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, 2018, Hoettges.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Qkan_flaechen.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

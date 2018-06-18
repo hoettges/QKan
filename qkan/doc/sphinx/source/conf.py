@@ -22,7 +22,7 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 import sys
-sys.path.insert(0,'C:/Users/hoettges/.qgis2/python/plugins/QKan')
+sys.path.insert(0,'../../..')
 sys.path.append('./QKan_Installation')
 
 import mock
