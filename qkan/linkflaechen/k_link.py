@@ -433,6 +433,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
         auswlin = u" AND  linksw.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
     else:
         auswahl = ''
+        auswlin = ''
 
     # Erläuterung zur nachfolgenden SQL-Abfrage:
     # tlink enthält alle potenziellen Verbindungen zwischen Flächen und Haltungen mit der jeweiligen Entfernung
