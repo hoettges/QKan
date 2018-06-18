@@ -25,6 +25,7 @@ import json
 import logging
 import os.path
 import site
+import webbrowser
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt4.QtGui import QListWidgetItem, QTableWidgetItem
@@ -175,8 +176,8 @@ class LinkFl:
 
     def cl_helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '..\doc', 'linkflaechen.html')
-        os.startfile(helpfile)
+        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#automatisches-erzeugen-von-flachenanbindungen')
+        webbrowser.open_new_tab(helpfile)
 
     def cl_lw_flaechen_abflussparamClick(self):
         """Reaktion auf Klick in Tabelle"""
@@ -317,8 +318,8 @@ class LinkFl:
 
     def sw_helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '..\doc', 'linksw.html')
-        os.startfile(helpfile)
+        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern')
+        webbrowser.open_new_tab(helpfile)
 
     def sw_lw_hal_entwClick(self):
         """Reaktion auf Klick in Tabelle"""
