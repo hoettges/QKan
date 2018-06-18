@@ -126,7 +126,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinkfl(dbQK):
+    if not updatelinkfl(dbQK, deletelinkGeomNone = False):
         fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
         return False
@@ -320,7 +320,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinkfl(dbQK):
+    if not updatelinkfl(dbQK, deletelinkGeomNone = False):
         fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
         del dbQK
@@ -389,7 +389,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinksw(dbQK):
+    if not updatelinksw(dbQK, deletelinkGeomNone = False):
         fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
         return False
@@ -433,6 +433,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
         auswlin = u" AND  linksw.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
     else:
         auswahl = ''
+        auswlin = ''
 
     # Erläuterung zur nachfolgenden SQL-Abfrage:
     # tlink enthält alle potenziellen Verbindungen zwischen Flächen und Haltungen mit der jeweiligen Entfernung
@@ -486,7 +487,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinksw(dbQK):
+    if not updatelinksw(dbQK, deletelinkGeomNone = False):
         fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
         return False

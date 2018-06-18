@@ -44,7 +44,7 @@ logger = logging.getLogger(u'QKan')
 
 # progress_bar = None
 
-def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkflGeomNone = True):
+def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     """Aktualisierung des logischen Cache für die Tabelle "linkfl"
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -80,7 +80,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkflGeomNone = True):
         return False
 
     # Löschen von Datensätzen ohne Linienobjekt
-    if deletelinkflGeomNone:
+    if deletelinkGeomNone:
         sql = u"""DELETE FROM linkfl WHERE glink IS NULL"""
 
         if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (1)'):
@@ -153,7 +153,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkflGeomNone = True):
     return True
 
 
-def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkflGeomNone = True):
+def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     # Datenvorbereitung: Verknüpfung von Einleitpunkt zu Haltung wird durch Tabelle "linksw"
     # repräsentiert. Diese Zuordnung wird zunächst in "einleit.haltnam" übertragen.
 
@@ -175,7 +175,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkflGeomNone = True):
         return False
 
     # Löschen von Datensätzen ohne Linienobjekt
-    if deletelinkflGeomNone:
+    if deletelinkGeomNone:
         sql = u"""DELETE FROM linksw WHERE glink IS NULL"""
 
         if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (2)'):
