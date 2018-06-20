@@ -1580,7 +1580,7 @@ fassen</string>
     <string>Version QKan Import</string>
    </property>
    <property name="text">
-    <string>Version 2.5.1</string>
+    <string>Version 2.5.2</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1657,7 +1657,7 @@ fassen</string>
      <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
     </property>
     <property name="text">
-     <string>Suchradius fürAnbindung an Haltungen:  </string>
+     <string>Fangradius fürAnbindung an Haltungen:  </string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1728,10 +1728,10 @@ fassen</string>
      </rect>
     </property>
     <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flächen unterhalb der angegebenen Größe werden nicht berücksichtigt&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Mindestgröße zur Berücksichtigung von Flächen</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="tf_fangradius">
@@ -1744,10 +1744,10 @@ fassen</string>
      </rect>
     </property>
     <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximaler Abstand vom Ende der Anbindungslinie zur Haltung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Maximaler Abstand vom Ende der Anbindungslinie zur Haltung</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_9">

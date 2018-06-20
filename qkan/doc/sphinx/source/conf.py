@@ -22,7 +22,7 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 import sys
-sys.path.insert(0,'../../..')
+sys.path.insert(0,'../../..')                 # Standort des Verzeichnisses qkan
 sys.path.append('./QKan_Installation')
 
 import mock
