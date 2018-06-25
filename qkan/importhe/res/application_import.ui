@@ -183,6 +183,12 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>EPSG-Nummer des Projektionssystems der Quelldaten</string>
+    </property>
+    <property name="statusTip">
+     <string>EPSG-Nummer des Projektionssystems der Quelldaten</string>
+    </property>
    </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
@@ -216,7 +222,10 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank auswählen und optional erstellen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektionssystem aus QGIS-Liste auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Projektionssystem aus QGIS-Liste auswählen</string>
     </property>
     <property name="text">
      <string>...</string>

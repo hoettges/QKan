@@ -531,18 +531,18 @@ class ExportToHE:
         self.dlg.cb_autokorrektur.setChecked(autokorrektur)
 
         # Festlegung des Fangradius
+        # Kann über Menü "Optionen" eingegeben werden
         if 'fangradius' in self.config:
             fangradius = self.config['fangradius']
         else:
             fangradius = u'0.1'
-        self.dlg.tf_fangradius.setText(str(fangradius))
 
         # Mindestflächengröße
+        # Kann über Menü "Optionen" eingegeben werden
         if 'mindestflaeche' in self.config:
             mindestflaeche = self.config['mindestflaeche']
         else:
             mindestflaeche = u'0.5'
-        self.dlg.tf_mindestflaeche.setText(str(mindestflaeche))
 
         self.dlg.lw_teilgebiete.itemClicked.connect(self.lw_teilgebieteClick)
         self.countselection()
@@ -568,9 +568,6 @@ class ExportToHE:
             dbtemplate_HE = self.dlg.tf_heDB_template.text()
             datenbanktyp = 'spatialite'
             autokorrektur = self.dlg.cb_autokorrektur.isChecked()
-
-            mindestflaeche = self.dlg.tf_mindestflaeche.text()
-            fangradius = self.dlg.tf_fangradius.text()
 
             check_export = {}
             check_export['export_schaechte'] = self.dlg.cb_export_schaechte.isChecked()

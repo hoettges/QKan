@@ -628,6 +628,7 @@ class LinkFl:
         self.dlg_cl.tf_mindestflaeche.setText(str(mindestflaeche))
 
         # Fangradius für Anfang der Anbindungslinie
+        # Kann über Menü "Optionen" eingegeben werden
         if 'fangradius' in self.config:
             fangradius = self.config['fangradius']
         else:
@@ -1129,11 +1130,11 @@ class LinkFl:
         self.dlg_ul.tf_qkDB.setText(database_QKan)
 
         # Festlegung des Fangradius
+        # Kann über Menü "Optionen" eingegeben werden
         if 'fangradius' in self.config:
             fangradius = self.config['fangradius']
         else:
             fangradius = u'0.1'
-        self.dlg_ul.tf_fangradius.setText(fangradius)
 
         # Löschen von Flächenverknüpfungen ohne Linienobjekt
         if 'deletelinkflGeomNone' in self.config:
@@ -1150,12 +1151,11 @@ class LinkFl:
         if result:
 
             # Inhalte aus Formular lesen
-            fangradius = self.dlg_ul.tf_fangradius.text()
             deletelinkflGeomNone = self.dlg_ul.cb_deleteGeomNone.isChecked()
 
             # config schreiben
-            self.config['fangradius'] = fangradius
             self.config['deletelinkflGeomNone'] = deletelinkflGeomNone
+            self.config['fangradius'] = fangradius
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))

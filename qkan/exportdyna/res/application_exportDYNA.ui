@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>692</width>
-    <height>706</height>
+    <width>673</width>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>640</y>
+     <x>200</x>
+     <y>560</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -50,7 +50,7 @@
     <rect>
      <x>20</x>
      <y>30</y>
-     <width>651</width>
+     <width>630</width>
      <height>71</height>
     </rect>
    </property>
@@ -97,7 +97,7 @@
    <widget class="QPushButton" name="pb_selectQKanDB">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>580</x>
       <y>40</y>
       <width>31</width>
       <height>21</height>
@@ -118,7 +118,7 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>561</width>
+      <width>550</width>
       <height>21</height>
      </rect>
     </property>
@@ -135,7 +135,7 @@
     <rect>
      <x>20</x>
      <y>110</y>
-     <width>651</width>
+     <width>630</width>
      <height>131</height>
     </rect>
    </property>
@@ -184,7 +184,7 @@
      <rect>
       <x>20</x>
       <y>90</y>
-      <width>561</width>
+      <width>550</width>
       <height>21</height>
      </rect>
     </property>
@@ -198,7 +198,7 @@
    <widget class="QPushButton" name="pb_select_KP_dest">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>580</x>
       <y>90</y>
       <width>31</width>
       <height>21</height>
@@ -217,7 +217,7 @@
    <widget class="QPushButton" name="pb_select_KP_template">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>580</x>
       <y>40</y>
       <width>31</width>
       <height>21</height>
@@ -260,7 +260,7 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>561</width>
+      <width>550</width>
       <height>21</height>
      </rect>
     </property>
@@ -275,8 +275,8 @@
   <widget class="QLabel" name="lb_version">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>690</y>
+     <x>580</x>
+     <y>620</y>
      <width>91</width>
      <height>20</height>
     </rect>
@@ -295,9 +295,9 @@
    <property name="geometry">
     <rect>
      <x>330</x>
-     <y>260</y>
+     <y>300</y>
      <width>321</width>
-     <height>151</height>
+     <height>71</height>
     </rect>
    </property>
    <property name="font">
@@ -313,7 +313,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>50</y>
+      <y>40</y>
       <width>291</width>
       <height>21</height>
      </rect>
@@ -359,150 +359,12 @@
      <string>Automatische Vergabe der Kanal- und Haltungsnummern</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_mindestflaeche">
-    <property name="geometry">
-     <rect>
-      <x>215</x>
-      <y>80</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>80</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="text">
-     <string>Mindestflächengröße:</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>110</y>
-      <width>201</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="text">
-     <string>Suchradius fürAnbindung an Haltungen:</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_26">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>80</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="text">
-     <string>m²</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="tf_fangradius">
-    <property name="geometry">
-     <rect>
-      <x>215</x>
-      <y>110</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_9">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>110</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="text">
-     <string>m</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_6">
    <property name="geometry">
     <rect>
      <x>330</x>
-     <y>430</y>
+     <y>380</y>
      <width>321</width>
      <height>71</height>
     </rect>
@@ -571,7 +433,7 @@
    <property name="geometry">
     <rect>
      <x>330</x>
-     <y>520</y>
+     <y>460</y>
      <width>321</width>
      <height>71</height>
     </rect>
@@ -642,7 +504,7 @@
      <x>40</x>
      <y>300</y>
      <width>251</width>
-     <height>201</height>
+     <height>161</height>
     </rect>
    </property>
    <property name="toolTip">
@@ -659,7 +521,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>560</y>
+     <y>510</y>
      <width>61</width>
      <height>20</height>
     </rect>
@@ -685,7 +547,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>540</y>
+     <y>490</y>
      <width>61</width>
      <height>20</height>
     </rect>
@@ -705,7 +567,7 @@
    <property name="geometry">
     <rect>
      <x>130</x>
-     <y>540</y>
+     <y>490</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -725,8 +587,8 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>520</y>
-     <width>121</width>
+     <y>470</y>
+     <width>141</width>
      <height>20</height>
     </rect>
    </property>
@@ -745,7 +607,7 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>560</y>
+     <y>510</y>
      <width>61</width>
      <height>20</height>
     </rect>
@@ -771,7 +633,7 @@
    <property name="geometry">
     <rect>
      <x>130</x>
-     <y>560</y>
+     <y>510</y>
      <width>61</width>
      <height>20</height>
     </rect>
@@ -797,7 +659,7 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>540</y>
+     <y>490</y>
      <width>61</width>
      <height>20</height>
     </rect>

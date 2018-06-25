@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>773</width>
-    <height>597</height>
+    <height>576</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>220</x>
-     <y>540</y>
+     <y>520</y>
      <width>331</width>
      <height>32</height>
     </rect>
@@ -46,7 +46,7 @@
    <property name="geometry">
     <rect>
      <x>700</x>
-     <y>580</y>
+     <y>560</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -470,7 +470,7 @@ berücksichtigen</string>
      <x>20</x>
      <y>380</y>
      <width>731</width>
-     <height>131</height>
+     <height>121</height>
     </rect>
    </property>
    <property name="font">
@@ -489,8 +489,8 @@ berücksichtigen</string>
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>90</y>
+      <x>200</x>
+      <y>80</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -514,8 +514,8 @@ berücksichtigen</string>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>255</x>
-      <y>90</y>
+      <x>40</x>
+      <y>80</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -542,17 +542,17 @@ berücksichtigen</string>
    <widget class="QLineEdit" name="tf_suchradius">
     <property name="geometry">
      <rect>
-      <x>335</x>
-      <y>90</y>
+      <x>125</x>
+      <y>80</y>
       <width>71</width>
       <height>20</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Radius, innerhalb dessen zu einer Fläche die nächste Haltung gesucht wird&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Maximaler Suchabstand zwischen Fläche und Haltung</string>
     </property>
    </widget>
    <widget class="QRadioButton" name="rb_abstandmittelpunkt">
@@ -608,9 +608,9 @@ berücksichtigen</string>
    <widget class="QCheckBox" name="cb_autokorrektur">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>350</x>
       <y>40</y>
-      <width>381</width>
+      <width>361</width>
       <height>31</height>
      </rect>
     </property>
@@ -633,81 +633,12 @@ berücksichtigen</string>
      <string>Autokorrektur von Namen in Flächen und Einleitpunkten</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_mindestflaeche">
-    <property name="geometry">
-     <rect>
-      <x>575</x>
-      <y>90</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>435</x>
-      <y>90</y>
-      <width>131</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="text">
-     <string>Mindestfläche: </string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_15">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>90</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
-    </property>
-    <property name="text">
-     <string>m²</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="cb_linkswInTezg">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>350</x>
       <y>20</y>
-      <width>371</width>
+      <width>361</width>
       <height>31</height>
      </rect>
     </property>
