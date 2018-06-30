@@ -113,7 +113,7 @@ class DBConnection:
 
                 iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank ist erstellt!",
                                                level=QgsMessageBar.INFO)
-                if not createdbtables(self.consl, self.cursl, self.actversion, epsg):
+                if not createdbtables(self.consl, self.cursl, self.actversion, self.epsg):
                     iface.messageBar().pushMessage(u"Fehler",
                                                    u"SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
                                                    level=QgsMessageBar.CRITICAL)
@@ -153,7 +153,11 @@ class DBConnection:
 
     # Hilfsprogramm zum Versionscheck
     def versionolder(self, verlis):
-        """Prüft ob die QKan-Datenbank upgedated werden muss"""
+        """Prüft ob die QKan-Datenbank upgedated werden muss
+
+        :param verlis: Liste von Versionsnummern, höchstwertige zuerst
+        :type verlis:  integer
+        """
         for v1, v2 in zip(self.versionlis, verlis):
             if v1 < v2:
                 return True
@@ -274,32 +278,6 @@ class DBConnection:
 
         if self.versionolder([2, 0, 2]):
 
-            # Tabelle einwohner
-            # sqllis = [u"""CREATE TABLE IF NOT EXISTS einwohner (
-                # pk INTEGER PRIMARY KEY AUTOINCREMENT, 
-                # elnam TEXT, 
-                # haltnam TEXT, 
-                # ew REAL, 
-                # teilgebiet TEXT, 
-                # kommentar TEXT, 
-                # createdat TEXT DEFAULT CURRENT_DATE)""", 
-            # u"""SELECT AddGeometryColumn('einwohner','geom',25832,'POINT',2)"""]
-            # for sql in sqllis:
-                # if not self.sql(sql, 'dbfunc.version (3a)'):
-                    # return False
-
-            # sqllis = [u"""CREATE TABLE IF NOT EXISTS linkew (
-                # pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                # elnam TEXT,
-                # haltnam TEXT,
-                # teilgebiet TEXT)""", 
-                # u"""SELECT AddGeometryColumn('linksw','geom',25832,'POLYGON',2)""", 
-                # u"""SELECT AddGeometryColumn('linksw','gbuf',25832,'MULTIPOLYGON',2)""", 
-                # u"""SELECT AddGeometryColumn('linksw','glink',25832,'LINESTRING',2)"""]
-            # for sql in sqllis:
-                # if not self.sql(sql, 'dbfunc.version (3b)'):
-                    # return False
-
             # Tabelle einleit
             sqllis = [u"""CREATE TABLE IF NOT EXISTS einleit(
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -309,7 +287,8 @@ class DBConnection:
                 zufluss REAL,
                 kommentar TEXT,
                 createdat TEXT DEFAULT CURRENT_DATE)""", 
-            u"""SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)""".format(self.epsg)]
+            u"""SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)""".format(self.epsg),
+            u"""SELECT CreateSpatialIndex('einleit','geom')"""]
             for sql in sqllis:
                 if not self.sql(sql, u'dbfunc.version (3c)'):
                     return False
@@ -321,14 +300,11 @@ class DBConnection:
                     teilgebiet TEXT)""", 
                     u"""SELECT AddGeometryColumn('linksw','geom',{},'POLYGON',2)""".format(self.epsg), 
                     u"""SELECT AddGeometryColumn('linksw','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg), 
-                    u"""SELECT AddGeometryColumn('linksw','glink',{},'LINESTRING',2)""".format(self.epsg)]
+                    u"""SELECT AddGeometryColumn('linksw','glink',{},'LINESTRING',2)""".format(self.epsg),
+                    u"""SELECT CreateSpatialIndex('linksw','geom')"""]
             for sql in sqllis:
                 if not self.sql(sql, u'dbfunc.version (3d)'):
                     return False
-
-            sql = u"""UPDATE info SET value = '2.0.2' WHERE subject = 'version'"""
-            if not self.sql(sql, u'dbfunc.version (3e)'):
-                return False
 
             self.versionlis = [2, 0, 2]
 
@@ -357,10 +333,6 @@ class DBConnection:
                 if not self.sql(sql, u'dbfunc.version (2.0.2-3)'):
                     return False
                 self.commit()
-
-            sql = u"""UPDATE info SET value = '2.1.2' WHERE subject = 'version'"""
-            if not self.sql(sql, u'dbfunc.version (2.0.2-4)'):
-                return False
 
             self.versionlis = [2, 1, 2]
 
@@ -402,10 +374,6 @@ class DBConnection:
             if not self.sql(sql, u'dbfunc.version (2.1.2-5)'):
                 return False
 
-            sql = u"""UPDATE info SET value = '2.1.6' WHERE subject = 'version'"""
-            if not self.sql(sql, u'dbfunc.version (2.1.2-6)'):
-                return False
-
             self.versionlis = [2, 2, 0]
 
 
@@ -422,10 +390,6 @@ class DBConnection:
                     return False
                 self.commit()
 
-            sql = u"""UPDATE info SET value = '2.2.1' WHERE subject = 'version'"""
-            if not self.sql(sql, u'dbfunc.version (2.2.0-2)'):
-                return False
-
             self.versionlis = [2, 2, 1]
 
 
@@ -441,10 +405,6 @@ class DBConnection:
                 if not self.sql(sql, u'dbfunc.version (2.2.1-1)'):
                     return False
                 self.commit()
-
-            sql = u"""UPDATE info SET value = '2.2.2' WHERE subject = 'version'"""
-            if not self.sql(sql, u'dbfunc.version (2.2.1-2)'):
-                return False
 
             self.versionlis = [2, 2, 2]
 
@@ -515,6 +475,7 @@ class DBConnection:
                         kommentar TEXT,
                         createdat TEXT DEFAULT CURRENT_DATE);""",
                       u"""SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2);""".format(self.epsg),
+                      u"""SELECT CreateSpatialIndex('flaechen','geom')""",
                       u"""INSERT INTO flaechen 
                         (      "flnam", "haltnam", "neigkl", "he_typ", "speicherzahl", "speicherkonst", "fliesszeit", "fliesszeitkanal",
                                "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom")
@@ -590,6 +551,7 @@ class DBConnection:
                       u"""SELECT AddGeometryColumn('linksw','geom',{},'POLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linksw','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linksw','glink',{},'LINESTRING',2)""".format(self.epsg),
+                      u"""SELECT CreateSpatialIndex('linksw','geom')""",
                       u"""INSERT INTO linksw 
                         (      "elnam", "haltnam", "teilgebiet", "geom", "gbuf", "glink")
                         SELECT "elnam", "haltnam", "teilgebiet", "geom", "gbuf", "glink"
@@ -659,6 +621,7 @@ class DBConnection:
                       u"""SELECT AddGeometryColumn('linkfl','geom',{},'MULTIPOLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linkfl','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linkfl','glink',{},'LINESTRING',2)""".format(self.epsg),
+                      u"""SELECT CreateSpatialIndex('linkfl','glink')""",
                       u"""INSERT INTO linkfl 
                         (      "flnam", "haltnam", "tezgnam", "aufteilen", "teilgebiet", "geom", "gbuf", "glink")
                         SELECT "flnam", "haltnam", "tezgnam", "aufteilen", "teilgebiet", "geom", "gbuf", "glink"
@@ -726,6 +689,7 @@ class DBConnection:
                         kommentar TEXT,
                         createdat TEXT DEFAULT CURRENT_DATE);""",
                       u"""SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)""".format(self.epsg),
+                      u"""SELECT CreateSpatialIndex('einleit','geom')""",
                       u"""INSERT INTO einleit 
                         (      "elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", "createdat", "geom")
                         SELECT "elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", "createdat", "geom"
@@ -748,9 +712,6 @@ class DBConnection:
                     # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
             # 4. Schritt: Transaction abschließen
-            sql = u"""UPDATE info SET value = '2.2.3' WHERE subject = 'version'"""
-            if not self.sql(sql, u'dbfunc.version (2.2.2-10)'):
-                return False
 
             self.commit()
 
@@ -802,10 +763,6 @@ class DBConnection:
             for sql in sqllis:
                 if not self.sql(sql, u'dbfunc.version (2.4.1-4)'):
                     return False
-
-            sql = u"""UPDATE info SET value = '2.4.1' WHERE subject = 'version';"""
-            if not self.sql(sql, u'dbfunc.version (2.4.1-5)'):
-                return False
 
             self.commit()
 
@@ -889,11 +846,6 @@ class DBConnection:
             if not self.sql(sql, u'dbfunc.version (2.4.9-4)'):
                 return False
 
-
-            sql = u"""UPDATE info SET value = '2.4.9' WHERE subject = 'version'"""
-            if not self.sql(sql, u'dbfunc.version (2.4.9-5)'):
-                return False
-
             self.commit()
 
             # Versionsnummer hochsetzen
@@ -903,6 +855,8 @@ class DBConnection:
 
         # ---------------------------------------------------------------------------------------------------------
         if self.versionolder([2, 5, 2]):
+
+            # Einleitungen aus Aussengebieten ----------------------------------------------------------------
 
             sql = u'''CREATE TABLE aussengebiete (
                 pk INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -926,6 +880,32 @@ class DBConnection:
             if not self.sql(sql, u'dbfunc.version (2.5.2-2)'):
                 return False
 
+            sql = u"""SELECT CreateSpatialIndex('aussengebiete','geom')"""
+
+            if not self.sql(sql, u'dbfunc.version (2.5.2-3)'):
+                return False
+
+            # Anbindung Aussengebiete -------------------------------------------------------------------------
+
+            sql = u"""CREATE TABLE linkageb (
+                pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                gebnam TEXT,
+                schnam TEXT,
+                teilgebiet TEXT)"""
+
+            if not self.sql(sql, u'dbfunc.version (2.5.2-4)'):
+                return False
+
+            sql = u"""SELECT AddGeometryColumn('linkageb','glink',{epsg},'LINESTRING',2)""".format(epsg=self.epsg)
+
+            if not self.sql(sql, u'dbfunc.version (2.5.2-5)'):
+                return False
+
+            sql = u"""SELECT CreateSpatialIndex('linkageb','glink')"""
+
+            if not self.sql(sql, u'dbfunc.version (2.5.2-6)'):
+                return False
+
             self.commit()
 
             # Versionsnummer hochsetzen
@@ -933,20 +913,14 @@ class DBConnection:
             self.versionlis = [2, 5, 2]
 
 
-        versiondbQK = '.'.join([str(el) for el in self.versionlis])
-        logger.debug('1 - versiondbQK = {}'.format(versiondbQK))
-
-        # ---------------------------------------------------------------------------------------------------------
-        actverslis = [int(el) for el in self.actversion.split('.')]
-        if self.versionolder(actverslis):
-
             # Formulare aktualisieren ----------------------------------------------------------
+            # 
+            # Dieser Block muss im letzten Update vorkommen, in dem auch Formulare geändert wurden...
+            # 
             # Spielregel: QKan-Formulare werden ohne Rückfrage aktualisiert. 
             # Falls eigene Formulare gewünscht sind, können diese im selben Verzeichnis liegen, 
             # die Eingabeformulare müssen jedoch andere Namen verwenden, auf die entsprechend 
             # in der Projektdatei verwiesen werden muss. 
-
-            logger.debug('2 - versiondbQK = {}'.format(versiondbQK))
 
             try:
                 projectpath = os.path.dirname(self.dbname)
@@ -969,10 +943,12 @@ class DBConnection:
                 fehlermeldung(u'Fehler beim Aktualisieren der Eingabeformulare\n', 
                               u"{e}".format(e=repr(err)))
 
+        # ------------------------------------------------------------------------------------------
+        # Aktuelle Version in Tabelle "info" schreiben
 
-            sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version'""".format(self.actversion)
-            if not self.sql(sql, u'dbfunc.version (aktuell)'):
-                return False
+        sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version'""".format(self.actversion)
+        if not self.sql(sql, u'dbfunc.version (aktuell)'):
+            return False
 
         self.commit()
         return True
