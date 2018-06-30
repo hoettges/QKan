@@ -668,41 +668,73 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     consl.commit()
 
 
-    # Einleitungen aus Wasserverbrauchstabellen ----------------------------------------------------------
-    # Die Tabelle wird individuell verwaltet und anschließend auf die Tabelle "einleit" übertragen
+    # Einleitungen aus Aussengebieten ----------------------------------------------------------------
+    # Erfasst alle Außengebiete
+    # Die Zuordnung zum Teilgebiet dient nur der Auswahl
 
-    # sql = u'''CREATE TABLE swref (
-        # pk INTEGER PRIMARY KEY AUTOINCREMENT, 
-        # oi TEXT, 
-        # gebnam TEXT, 
-        # ags TEXT, 
-        # strassenname TEXT, 
-        # hausnummer TEXT, 
-        # zusatz TEXT, 
-        # haltnam TEXT, 
-        # wasserverbrauch REAL, 
-        # teilgebiet TEXT, 
-        # kommentar TEXT, 
-        # createdat TEXT DEFAULT CURRENT_DATE)'''
+    sql = u'''CREATE TABLE aussengebiete (
+        pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+        gebnam TEXT, 
+        schnam TEXT, 
+        hoeheob REAL, 
+        hoeheun REAL, 
+        fliessweg REAL, 
+        basisabfluss REAL, 
+        cn REAL, 
+        regenschreiber TEXT, 
+        teilgebiet TEXT, 
+        kommentar TEXT, 
+        createdat TEXT DEFAULT CURRENT_DATE)'''
 
-    # try:
-        # cursl.execute(sql)
-    # except BaseException as err:
-        # fehlermeldung(u'Tabelle "swref" konnte nicht erstellt werden: \n{}'.format(repr(err)))
-        # consl.close()
-        # return False
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'Tabelle "aussengebiete" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        consl.close()
+        return False
 
-    # sql = u"SELECT AddGeometryColumn('swref','geom',{},'POINT',2)".format(epsg)
-    # sqlindex = u"SELECT CreateSpatialIndex('swref','geom')"
-    # try:
-        # cursl.execute(sql)
-        # cursl.execute(sqlindex)
-    # except BaseException as err:
-        # fehlermeldung(u'In der Tabelle "swref" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
-        # consl.close()
-        # return False
-    # consl.commit()
+    sql = u"""SELECT AddGeometryColumn('aussengebiete','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('aussengebiete','geom')"
+    try:
+        cursl.execute(sql)
+        cursl.execute(sqlindex)
+    except BaseException as err:
+        fehlermeldung(u'In der Tabelle "aussengebiete" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(repr(err)))
+        consl.close()
+        return False
+    consl.commit()
 
+
+    # Anbindung Aussengebiete -----------------------------------------------------------------------------
+    # Die Tabelle linkageb verwaltet die Anbindung von Aussengebieten an Schächte. Diese Anbindung
+    # wird anschließend in das Feld schnam eingetragen. Der Export erfolgt allerdings anhand
+    # der grafischen Verknüpfungen dieser Tabelle. 
+
+    sql = u"""CREATE TABLE linkageb (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    gebnam TEXT,
+    schnam TEXT,
+    teilgebiet TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "linkageb" konnte nicht erstellt werden.')
+        consl.close()
+        return False
+
+    sql = u"""SELECT AddGeometryColumn('linkageb','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    sqlindex = u"SELECT CreateSpatialIndex('linkageb','glink')"
+    try:
+        cursl.execute(sql)
+        cursl.execute(sqlindex)
+    except:
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u"QKan_Database (2) SQL-Fehler in SpatiaLite: \n", sql)
+        consl.close()
+        return False
+    consl.commit()
 
     # Simulationsstatus/Planungsstatus -----------------------------------------
 

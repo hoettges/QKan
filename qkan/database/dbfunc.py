@@ -901,6 +901,38 @@ class DBConnection:
             self.versionlis = [2, 4, 9]
 
 
+        # ---------------------------------------------------------------------------------------------------------
+        if self.versionolder([2, 5, 2]):
+
+            sql = u'''CREATE TABLE aussengebiete (
+                pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+                gebnam TEXT, 
+                schnam TEXT, 
+                hoeheob REAL, 
+                hoeheun REAL, 
+                fliessweg REAL, 
+                basisabfluss REAL, 
+                cn REAL, 
+                regenschreiber TEXT, 
+                teilgebiet TEXT, 
+                kommentar TEXT, 
+                createdat TEXT DEFAULT CURRENT_DATE)'''
+
+            if not self.sql(sql, u'dbfunc.version (2.5.2-1)'):
+                return False
+
+            sql = u"""SELECT AddGeometryColumn('aussengebiete','geom',{},'MULTIPOLYGON',2)""".format(self.epsg)
+
+            if not self.sql(sql, u'dbfunc.version (2.5.2-2)'):
+                return False
+
+            self.commit()
+
+            # Versionsnummer hochsetzen
+
+            self.versionlis = [2, 5, 2]
+
+
         versiondbQK = '.'.join([str(el) for el in self.versionlis])
         logger.debug('1 - versiondbQK = {}'.format(versiondbQK))
 

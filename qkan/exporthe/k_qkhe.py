@@ -986,6 +986,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         fortschritt(u'{} Regenschreiber eingefuegt'.format(nextid - nr0), 0.68)
     progress_bar.setValue(90)
 
+    # ------------------------------------------------------------------------------------------------
+    # Export der Flächen
+
     if check_export['export_flaechenrw'] or check_export['modify_flaechenrw']:
         """
         Export der Flaechendaten
@@ -1250,6 +1253,9 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         fortschritt(u'{} Flaechen eingefuegt'.format(nextid - nr0), 0.80)
     progress_bar.setValue(90)
+
+    # ------------------------------------------------------------------------------------------------
+    # Export der Direkteinleitungen
 
     if check_export['export_einleitdirekt'] or check_export['modify_einleitdirekt']:
         # Herkunft = 1 (Direkt) und 3 (Einwohnerbezogen)
@@ -1711,6 +1717,108 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         dbHE.sql(u"UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
+
+
+    # --------------------------------------------------------------------------------------------
+    # Export der Aussengebiete
+
+    if check_export['export_aussengebiete'] or check_export['modify_aussengebiete']:
+
+        # Nur Daten fuer ausgewaehlte Teilgebiete
+        if len(liste_teilgebiete) != 0:
+            auswahl = u" AND aussengebiete.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
+        else:
+            auswahl = u""
+
+        sql = u"""
+            SELECT
+                schaechte.schnam AS schnam,
+                schaechte.deckelhoehe AS deckelhoehe,
+                schaechte.sohlhoehe AS sohlhoehe,
+                schaechte.durchm AS durchmesser,
+                schaechte.xsch AS xsch,
+                schaechte.ysch AS ysch,
+                kommentar AS kommentar
+            FROM schaechte
+            WHERE schaechte.schachttyp = 'Auslass'{}
+            """.format(auswahl)
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_auslaesse'):
+            del dbHE
+            return False
+
+        nr0 = nextid
+
+        createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+
+        fortschritt(u'Export Auslässe...', 0.20)
+
+        for attr in dbQK.fetchall():
+
+            # In allen Feldern None durch NULL ersetzen
+            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t, kommentar) = \
+                (u'NULL' if el is None else el for el in attr)
+
+            # Formatierung der Zahlen
+            (deckelhoehe, sohlhoehe, durchmesser, xsch, ysch) = \
+                (u'NULL' if tt == u'NULL' else u'{:.3f}'.format(float(tt)) \
+                 for tt in (deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t))
+
+            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+            if check_export['modify_auslaesse']:
+                sql = u"""
+                    UPDATE AUSLASS SET
+                    TYP={typ}, RUECKSCHLAGKLAPPE={rueckschlagklappe},
+                    SOHLHOEHE={sohlhoehe}, XKOORDINATE={xkoordinate}, YKOORDINATE={ykoordinate},
+                    GELAENDEHOEHE={gelaendehoehe}, ART={art}, ANZAHLKANTEN={anzahlkanten},
+                    SCHEITELHOEHE={scheitelhoehe}, KONSTANTERZUFLUSS={konstanterzufluss},
+                    PLANUNGSSTATUS='{planungsstatus}',
+                    LASTMODIFIED='{lastmodified}', KOMMENTAR='{kommentar}'
+                    WHERE NAME = '{name}';
+                """.format(typ=u'1', rueckschlagklappe=0, sohlhoehe=sohlhoehe,
+                           xkoordinate=xsch, ykoordinate=ysch,
+                           gelaendehoehe=deckelhoehe, art=u'3', anzahlkanten=u'0',
+                           scheitelhoehe=deckelhoehe, konstanterzufluss=0, planungsstatus=u'0',
+                           name=schnam, lastmodified=createdat, kommentar=kommentar,
+                           durchmesser=durchmesser)
+
+                if not dbHE.sql(sql, u'dbHE: export_auslaesse (1)'):
+                    del dbQK
+                    return False
+
+            # Einfuegen in die Datenbank
+            if check_export['export_auslaesse']:
+                sql = u"""
+                    INSERT INTO AUSLASS
+                    ( ID, TYP, RUECKSCHLAGKLAPPE, SOHLHOEHE,
+                      XKOORDINATE, YKOORDINATE,
+                      GELAENDEHOEHE, ART, ANZAHLKANTEN,
+                      SCHEITELHOEHE, KONSTANTERZUFLUSS, PLANUNGSSTATUS,
+                      NAME, LASTMODIFIED, KOMMENTAR)
+                    SELECT
+                      {id}, {typ}, {rueckschlagklappe}, {sohlhoehe},
+                      {xkoordinate}, {ykoordinate},
+                      {gelaendehoehe}, {art}, {anzahlkanten},
+                      {scheitelhoehe}, {konstanterzufluss}, '{planungsstatus}',
+                      '{name}', '{lastmodified}', '{kommentar}'
+                    FROM RDB$DATABASE
+                    WHERE '{name}' NOT IN (SELECT NAME FROM AUSLASS);
+                """.format(id=nextid, typ=u'1', rueckschlagklappe=0, sohlhoehe=sohlhoehe,
+                           xkoordinate=xsch, ykoordinate=ysch,
+                           gelaendehoehe=deckelhoehe, art=u'3', anzahlkanten=u'0',
+                           scheitelhoehe=deckelhoehe, konstanterzufluss=0, planungsstatus=u'0',
+                           name=schnam, lastmodified=createdat, kommentar=kommentar,
+                           durchmesser=durchmesser)
+
+                if not dbHE.sql(sql, u'dbHE: export_auslaesse (2)'):
+                    del dbQK
+                    return False
+
+                nextid += 1
+
+        dbHE.sql(u"UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
+        dbHE.commit()
+
 
     # Zum Schluss: Schließen der Datenbankverbindungen
 
