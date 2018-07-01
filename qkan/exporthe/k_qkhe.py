@@ -34,7 +34,7 @@ from qgis.utils import iface
 from qkan.database.dbfunc import DBConnection
 from qkan.database.fbfunc import FBConnection
 from qkan.database.qgis_utils import fortschritt, fehlermeldung, meldung, checknames
-from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
+from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw, updatelinkageb
 
 # Referenzlisten
 from qkan.database.reflists import abflusstypen
@@ -140,7 +140,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
     # Tabellen verknuepft ist und dieser ID eindeutig sein muss.
 
     dbHE.sql(u"SELECT NEXTID FROM ITWH$PROGINFO")
-    nextid = int(dbHE.fetchone()[0])
+    nextid = int(dbHE.fetchone()[0]) + 1
 
     # --------------------------------------------------------------------------------------------
     # Export der Schaechte
@@ -1637,15 +1637,150 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                          abrechnungszeitraum = 365, abzug = 0,
                          createdat = createdat, nextid = nextid)
 
-            if not dbHE.sql(sql, u'dbHE: export_einleitdirekt (2)'):
-                del dbQK
-                return False
+                if not dbHE.sql(sql, u'dbHE: export_einleitdirekt (2)'):
+                    del dbQK
+                    return False
 
-            nextid += 1
+                nextid += 1
+
         dbHE.sql(u"UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
         dbHE.commit()
 
         fortschritt(u'{} Einzeleinleiter (direkt) eingefuegt'.format(nextid - nr0), 0.95)
+
+
+
+    # ------------------------------------------------------------------------------------------------
+    # Export der Aussengebiete
+
+    if check_export['export_aussengebiete'] or check_export['modify_aussengebiete']:
+
+        # Aktualisierung der Anbindungen, insbesondere wird der richtige Schacht in die 
+        # Tabelle "aussengebiete" eingetragen.
+
+        if not updatelinkageb(dbQK, fangradius):
+            del dbHE            # Im Fehlerfall wird dbQK in updatelinkageb geschlossen. 
+            fehlermeldung(u'Fehler beim Update der Außengebiete-Verknüpfungen', 
+                          u'Der logische Cache konnte nicht aktualisiert werden.')
+
+        # Nur Daten fuer ausgewaehlte Teilgebiete
+
+        if len(liste_teilgebiete) != 0:
+            auswahl = u" WHERE teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
+        else:
+            auswahl = u""
+
+        sql = u"""SELECT
+          gebnam,
+          x(centroid(geom)) AS xel,
+          y(centroid(geom)) AS yel,
+          schnam,
+          hoeheob, 
+          hoeheun, 
+          fliessweg, 
+          area(geom)/10000 AS gesflaeche, 
+          basisabfluss, 
+          cn, 
+          regenschreiber, 
+          kommentar, 
+          createdat
+          FROM aussengebiete{auswahl}
+        """.format(auswahl=auswahl)
+
+        logger.debug(u'\nSQL-4e:\n{}\n'.format(sql))
+
+        if not dbQK.sql(sql, u'dbQK: k_qkhe.export_aussengebiete (6)'):
+            del dbHE
+            return False
+
+        nr0 = nextid
+
+        fortschritt(u'Export Außengebiete...', 0.92)
+        for b in dbQK.fetchall():
+
+            # In allen Feldern None durch NULL ersetzen
+            gebnam, xel, yel, schnam, hoeheob, hoeheun, fliessweg, gesflaeche, basisabfluss, cn, \
+            regenschreiber, kommentar, createdat = \
+                (u'NULL' if el is None else el for el in b)
+
+            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+            if check_export['modify_aussengebiete']:
+                sql = u"""
+                    UPDATE AUSSENGEBIET SET
+                    NAME='{gebnam}', SCHACHT='{schnam}', HOEHEOBEN={hoeheob}, 
+                    HOEHEUNTEN={hoeheun}, XKOORDINATE={xel}, YKOORDINATE={yel}, 
+                    GESAMTFLAECHE={gesflaeche}, CNMITTELWERT={cn}, BASISZUFLUSS={basisabfluss}, 
+                    FLIESSLAENGE={fliessweg}, VERFAHREN={verfahren}, REGENSCHREIBER='{regenschreiber}', 
+                    LASTMODIFIED='{createdat}', KOMMENTAR='{kommentar}'
+                    WHERE NAME='{gebnam}';
+                    """.format(
+                    gebnam = gebnam, schnam = schnam, hoeheob = hoeheob, 
+                    hoeheun = hoeheun, xel = xel, yel = yel, 
+                    gesflaeche = gesflaeche, cn = cn, basisabfluss = basisabfluss, 
+                    fliessweg = fliessweg, verfahren = 0, regenschreiber = regenschreiber, 
+                    createdat = createdat, kommentar = kommentar)
+
+                if not dbHE.sql(sql, u'dbHE: export_aussengebiete (1)'):
+                    del dbQK
+                    return False
+
+                sql = u"""
+                    UPDATE TABELLENINHALTE 
+                    SET KEYWERT = {cn}, WERT = {gesflaeche}
+                    WHERE ID = (SELECT ID FROM AUSSENGEBIET WHERE NAME = '{gebnam}')
+                    """.format(cn=cn, gesflaeche=gesflaeche, gebnam=gebnam)
+
+                if not dbHE.sql(sql, u'dbHE: export_aussengebiete (2)'):
+                    del dbQK
+                    return False
+
+            # Einfuegen in die Datenbank
+            if check_export['export_aussengebiete']:
+                sql = u"""
+                    INSERT INTO AUSSENGEBIET
+                    ( NAME, SCHACHT, HOEHEOBEN, 
+                      HOEHEUNTEN, XKOORDINATE, YKOORDINATE, 
+                      GESAMTFLAECHE, CNMITTELWERT, BASISZUFLUSS, 
+                      FLIESSLAENGE, VERFAHREN, REGENSCHREIBER, 
+                      LASTMODIFIED, KOMMENTAR, ID) 
+                    SELECT
+                      '{gebnam}', '{schnam}', {hoeheob}, 
+                      {hoeheun}, {xel}, {yel}, 
+                      {gesflaeche}, {cn}, {basisabfluss}, 
+                      {fliessweg}, {verfahren}, '{regenschreiber}', 
+                      '{createdat}', '{kommentar}', {nextid}
+                    FROM RDB$DATABASE
+                    WHERE '{gebnam}' NOT IN (SELECT NAME FROM AUSSENGEBIET);
+                    """.format(
+                    gebnam = gebnam, schnam = schnam, hoeheob = hoeheob, 
+                    hoeheun = hoeheun, xel = xel, yel = yel, 
+                    gesflaeche = gesflaeche, cn = cn, basisabfluss = basisabfluss, 
+                    fliessweg = fliessweg, verfahren = 0, regenschreiber = regenschreiber, 
+                    createdat = createdat, kommentar = kommentar, nextid = nextid)
+
+                if not dbHE.sql(sql, u'dbHE: export_aussengebiete (2)'):
+                    del dbQK
+                    return False
+
+                sql = u"""
+                    INSERT INTO TABELLENINHALTE
+                    ( KEYWERT, WERT, REIHENFOLGE, ID)
+                    SELECT
+                      {cn}, {gesflaeche}, {reihenfolge}, {id}
+                    FROM RDB$DATABASE;
+                    """.format(cn=cn, gesflaeche=gesflaeche, reihenfolge=1, id=nextid)
+
+                if not dbHE.sql(sql, u'dbHE: export_aussengebiete (2)'):
+                    del dbQK
+                    return False
+
+                nextid += 1
+
+        dbHE.sql(u"UPDATE ITWH$PROGINFO SET NEXTID = {:d}".format(nextid))
+        dbHE.commit()
+
+        fortschritt(u'{} Aussengebiete eingefuegt'.format(nextid - nr0), 0.98)
+
 
 
     if False:

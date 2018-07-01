@@ -3,7 +3,7 @@
   <title>QKan Version 2.5.1</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
-  <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="">
+  <layer-tree-group expanded="1" checked="Qt::Checked" name="">
     <customproperties/>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Schächte">
       <customproperties/>
@@ -41,9 +41,9 @@
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
-    <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="SW-Einleitungen">
+    <layer-tree-group expanded="1" checked="Qt::Checked" name="SW-Einleitungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/itwh/muster.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen Direkteinleitungen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/itwh/muster.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen Direkteinleitungen">
         <customproperties/>
       </layer-tree-layer>
       <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="einleit20171004110830029" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/itwh/muster.sqlite' table=&quot;einleit&quot; (geom) sql=" name="Direkteinleitungen">
@@ -109,10 +109,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>3550395.54621211299672723</xmin>
-      <ymin>5799665.30303114280104637</ymin>
-      <xmax>3550572.75240800948813558</xmax>
-      <ymax>5799758.72928160056471825</ymax>
+      <xmin>3550324.66373375616967678</xmin>
+      <ymin>5799296.5244417255744338</ymin>
+      <xmax>3551033.48851734213531017</xmax>
+      <ymax>5799670.2294435566291213</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -321,10 +321,10 @@
         </filegroup>
       </legendlayer>
     </legendgroup>
-    <legendgroup open="true" checked="Qt::PartiallyChecked" name="SW-Einleitungen">
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="Anbindungen Direkteinleitungen" showFeatureCount="0">
+    <legendgroup open="true" checked="Qt::Checked" name="SW-Einleitungen">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Anbindungen Direkteinleitungen" showFeatureCount="0">
         <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="Anbindungen_SW_Punkte20171017125752772" visible="0"/>
+          <legendlayerfile isInOverview="0" layerid="Anbindungen_SW_Punkte20171017125752772" visible="1"/>
         </filegroup>
       </legendlayer>
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Direkteinleitungen" showFeatureCount="0">
@@ -565,9 +565,9 @@
               <prop k="customdash_unit" v="MM"/>
               <prop k="draw_inside_polygon" v="0"/>
               <prop k="joinstyle" v="bevel"/>
-              <prop k="line_color" v="0,0,0,255"/>
+              <prop k="line_color" v="128,128,128,255"/>
               <prop k="line_style" v="solid"/>
-              <prop k="line_width" v="0.5"/>
+              <prop k="line_width" v="0.3"/>
               <prop k="line_width_unit" v="MM"/>
               <prop k="offset" v="0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -625,7 +625,7 @@
               <symbol alpha="1" clip_to_extent="1" type="marker" name="@0@2">
                 <layer pass="0" class="SimpleMarker" locked="0">
                   <prop k="angle" v="0"/>
-                  <prop k="color" v="196,241,122,255"/>
+                  <prop k="color" v="128,128,128,255"/>
                   <prop k="horizontal_anchor_point" v="1"/>
                   <prop k="joinstyle" v="bevel"/>
                   <prop k="name" v="circle"/>
@@ -949,10 +949,10 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="haltnam">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="haltnam" constraint="" Layer="haltungen20161016203756230" Value="haltnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="haltnam" constraint="" Layer="haltungen20161016203756230" Value="haltnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="teilgebiet">
-          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="geom">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -966,20 +966,90 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="line" name="0">
             <layer pass="0" class="SimpleLine" locked="0">
               <prop k="capstyle" v="square"/>
-              <prop k="customdash" v="5;2"/>
+              <prop k="customdash" v="5;5"/>
               <prop k="customdash_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="customdash_unit" v="MM"/>
+              <prop k="customdash_unit" v="Pixel"/>
               <prop k="draw_inside_polygon" v="0"/>
               <prop k="joinstyle" v="bevel"/>
-              <prop k="line_color" v="151,153,223,255"/>
-              <prop k="line_style" v="solid"/>
-              <prop k="line_width" v="0.26"/>
+              <prop k="line_color" v="125,10,154,255"/>
+              <prop k="line_style" v="dash"/>
+              <prop k="line_width" v="0.3"/>
               <prop k="line_width_unit" v="MM"/>
               <prop k="offset" v="0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="offset_unit" v="MM"/>
-              <prop k="use_custom_dash" v="0"/>
+              <prop k="use_custom_dash" v="1"/>
               <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
+            </layer>
+            <layer pass="0" class="MarkerLine" locked="0">
+              <prop k="interval" v="3"/>
+              <prop k="interval_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="interval_unit" v="MM"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_along_line" v="0"/>
+              <prop k="offset_along_line_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_along_line_unit" v="MM"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="placement" v="centralpoint"/>
+              <prop k="rotate" v="1"/>
+              <symbol alpha="1" clip_to_extent="1" type="marker" name="@0@1">
+                <layer pass="0" class="SimpleMarker" locked="0">
+                  <prop k="angle" v="0"/>
+                  <prop k="color" v="125,10,154,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="filled_arrowhead"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="125,10,154,255"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="diameter"/>
+                  <prop k="size" v="2.5"/>
+                  <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                </layer>
+              </symbol>
+            </layer>
+            <layer pass="0" class="MarkerLine" locked="0">
+              <prop k="interval" v="3"/>
+              <prop k="interval_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="interval_unit" v="MM"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_along_line" v="0"/>
+              <prop k="offset_along_line_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_along_line_unit" v="MM"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="placement" v="firstvertex"/>
+              <prop k="rotate" v="1"/>
+              <symbol alpha="1" clip_to_extent="1" type="marker" name="@0@2">
+                <layer pass="0" class="SimpleMarker" locked="0">
+                  <prop k="angle" v="0"/>
+                  <prop k="color" v="125,10,154,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="circle"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="0,0,0,255"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="area"/>
+                  <prop k="size" v="1"/>
+                  <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                </layer>
+              </symbol>
             </layer>
           </symbol>
         </symbols>
@@ -1196,15 +1266,15 @@ def my_form_open(dialog, layer, feature):
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;teilgebiet&quot;" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="pk"/>
+          <column width="-1" hidden="0" type="field" name="teilgebiet"/>
+          <column width="-1" hidden="1" type="actions"/>
           <column width="-1" hidden="0" type="field" name="elnam"/>
           <column width="-1" hidden="0" type="field" name="haltnam"/>
-          <column width="-1" hidden="0" type="field" name="teilgebiet"/>
           <column width="-1" hidden="0" type="field" name="geom"/>
           <column width="-1" hidden="0" type="field" name="gbuf"/>
-          <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
       <editform>../../k_forms/eingabemasken/anbindungeinleit.ui</editform>
@@ -1243,7 +1313,7 @@ def my_form_open(dialog, layer, feature):
         <default field="geom" expression=""/>
         <default field="gbuf" expression=""/>
       </defaults>
-      <previewExpression> "elnam" || ' - ' ||  "haltnam" </previewExpression>
+      <previewExpression> "flnam" || ' - ' ||  "haltnam" </previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Speicher_Kopie20161221080207994</id>
@@ -1950,7 +2020,9 @@ def my_form_open(dialog, layer, feature):
       <provider encoding="UTF-8">spatialite</provider>
       <vectorjoins/>
       <layerDependencies/>
-      <expressionfields/>
+      <expressionfields>
+        <field typeName="FLOAT" precision="0" expression=" format_number(area($geometry)/10000,4)" length="0" type="6" comment="" name="flaeche"/>
+      </expressionfields>
       <map-layer-style-manager current="">
         <map-layer-style name=""/>
       </map-layer-style-manager>
@@ -1991,22 +2063,63 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="DateTime" name="createdat">
           <widgetv2config fieldEditable="1" calendar_popup="0" allow_null="0" display_format="yyyy-MM-dd HH:mm:ss" field_format="yyyy-MM-dd HH:mm:ss" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
+        <edittype widgetv2type="TextEdit" name="flaeche">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
       </edittypes>
       <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
         <symbols>
           <symbol alpha="1" clip_to_extent="1" type="fill" name="0">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="111,212,197,255"/>
+              <prop k="color" v="111,188,82,255"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
+              <prop k="outline_color" v="175,179,138,255"/>
               <prop k="outline_style" v="solid"/>
               <prop k="outline_width" v="0.26"/>
               <prop k="outline_width_unit" v="MM"/>
               <prop k="style" v="solid"/>
+            </layer>
+            <layer pass="0" class="PointPatternFill" locked="0">
+              <prop k="displacement_x" v="0"/>
+              <prop k="displacement_x_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="displacement_x_unit" v="MM"/>
+              <prop k="displacement_y" v="1"/>
+              <prop k="displacement_y_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="displacement_y_unit" v="MM"/>
+              <prop k="distance_x" v="1.5"/>
+              <prop k="distance_x_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="distance_x_unit" v="MM"/>
+              <prop k="distance_y" v="2"/>
+              <prop k="distance_y_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="distance_y_unit" v="MM"/>
+              <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <symbol alpha="1" clip_to_extent="1" type="marker" name="@0@1">
+                <layer pass="0" class="SimpleMarker" locked="0">
+                  <prop k="angle" v="0"/>
+                  <prop k="color" v="144,112,76,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="circle"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="0,0,0,0"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="area"/>
+                  <prop k="size" v="0.6"/>
+                  <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                </layer>
+              </symbol>
             </layer>
           </symbol>
         </symbols>
@@ -2224,6 +2337,7 @@ def my_form_open(dialog, layer, feature):
         <alias field="teilgebiet" index="9" name=""/>
         <alias field="kommentar" index="10" name=""/>
         <alias field="createdat" index="11" name=""/>
+        <alias field="flaeche" index="12" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -2243,9 +2357,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="kommentar"/>
           <column width="-1" hidden="0" type="field" name="createdat"/>
           <column width="-1" hidden="1" type="actions"/>
+          <column width="-1" hidden="0" type="field" name="flaeche"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/aussengebiete.ui</editform>
+      <editform>../../k_forms/eingabemasken/aussengebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath></editforminitfilepath>
@@ -2286,8 +2401,9 @@ def my_form_open(dialog, layer, feature):
         <default field="teilgebiet" expression=""/>
         <default field="kommentar" expression=""/>
         <default field="createdat" expression="to_datetime(now())"/>
+        <default field="flaeche" expression=""/>
       </defaults>
-      <previewExpression></previewExpression>
+      <previewExpression>COALESCE( "pk", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>bodenklassen20170516122309914</id>
@@ -4767,15 +4883,85 @@ def my_form_open(dialog, layer, feature):
               <prop k="customdash_unit" v="MM"/>
               <prop k="draw_inside_polygon" v="0"/>
               <prop k="joinstyle" v="bevel"/>
-              <prop k="line_color" v="145,80,105,255"/>
-              <prop k="line_style" v="solid"/>
-              <prop k="line_width" v="0.26"/>
+              <prop k="line_color" v="51,160,44,255"/>
+              <prop k="line_style" v="dash dot"/>
+              <prop k="line_width" v="0.5"/>
               <prop k="line_width_unit" v="MM"/>
-              <prop k="offset" v="0"/>
+              <prop k="offset" v="5.55112e-17"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="offset_unit" v="MM"/>
               <prop k="use_custom_dash" v="0"/>
               <prop k="width_map_unit_scale" v="0,0,0,0,0,0"/>
+            </layer>
+            <layer pass="0" class="MarkerLine" locked="0">
+              <prop k="interval" v="3"/>
+              <prop k="interval_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="interval_unit" v="MM"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_along_line" v="0"/>
+              <prop k="offset_along_line_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_along_line_unit" v="MM"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="placement" v="centralpoint"/>
+              <prop k="rotate" v="1"/>
+              <symbol alpha="1" clip_to_extent="1" type="marker" name="@0@1">
+                <layer pass="0" class="SimpleMarker" locked="0">
+                  <prop k="angle" v="0"/>
+                  <prop k="color" v="51,160,44,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="filled_arrowhead"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="51,160,44,255"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="diameter"/>
+                  <prop k="size" v="2.5"/>
+                  <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                </layer>
+              </symbol>
+            </layer>
+            <layer pass="0" class="MarkerLine" locked="0">
+              <prop k="interval" v="3"/>
+              <prop k="interval_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="interval_unit" v="MM"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_along_line" v="0"/>
+              <prop k="offset_along_line_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_along_line_unit" v="MM"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="placement" v="firstvertex"/>
+              <prop k="rotate" v="1"/>
+              <symbol alpha="1" clip_to_extent="1" type="marker" name="@0@2">
+                <layer pass="0" class="SimpleMarker" locked="0">
+                  <prop k="angle" v="0"/>
+                  <prop k="color" v="51,160,44,255"/>
+                  <prop k="horizontal_anchor_point" v="1"/>
+                  <prop k="joinstyle" v="bevel"/>
+                  <prop k="name" v="diamond"/>
+                  <prop k="offset" v="0,0"/>
+                  <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="offset_unit" v="MM"/>
+                  <prop k="outline_color" v="0,0,0,255"/>
+                  <prop k="outline_style" v="solid"/>
+                  <prop k="outline_width" v="0"/>
+                  <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="outline_width_unit" v="MM"/>
+                  <prop k="scale_method" v="area"/>
+                  <prop k="size" v="3"/>
+                  <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+                  <prop k="size_unit" v="MM"/>
+                  <prop k="vertical_anchor_point" v="1"/>
+                </layer>
+              </symbol>
             </layer>
           </symbol>
         </symbols>
@@ -4954,6 +5140,7 @@ def my_form_open(dialog, layer, feature):
       <SingleCategoryDiagramRenderer diagramType="Histogram" sizeLegend="0" attributeLegend="1">
         <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" sizeScale="0,0,0,0,0,0" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1e+08" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" lineSizeScale="0,0,0,0,0,0" sizeType="MM" lineSizeType="MM" minScaleDenominator="inf">
           <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
+          <attribute field="" color="#000000" label=""/>
         </DiagramCategory>
         <symbol alpha="1" clip_to_extent="1" type="marker" name="sizeSymbol">
           <layer pass="0" class="SimpleMarker" locked="0">
@@ -4979,7 +5166,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="2" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform></annotationform>
+      <annotationform>.</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="gebnam" index="1" name=""/>
@@ -4989,19 +5176,19 @@ def my_form_open(dialog, layer, feature):
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;teilgebiet&quot;" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="pk"/>
-          <column width="-1" hidden="0" type="field" name="gebnam"/>
-          <column width="-1" hidden="0" type="field" name="schnam"/>
           <column width="-1" hidden="0" type="field" name="teilgebiet"/>
           <column width="-1" hidden="1" type="actions"/>
+          <column width="-1" hidden="0" type="field" name="gebnam"/>
+          <column width="-1" hidden="0" type="field" name="schnam"/>
         </columns>
       </attributetableconfig>
-      <editform>./eingabemasken/anbindungageb.ui</editform>
+      <editform>../../k_forms/eingabemasken/anbindungageb.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath></editforminitfilepath>
+      <editforminitfilepath>.</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -5021,11 +5208,6 @@ def my_form_open(dialog, layer, feature):
 ]]></editforminitcode>
       <featformsuppress>0</featformsuppress>
       <editorlayout>uifilelayout</editorlayout>
-      <attributeEditorForm>
-        <attributeEditorField showLabel="1" index="2" name="schnam"/>
-        <attributeEditorField showLabel="1" index="1" name="gebnam"/>
-        <attributeEditorField showLabel="1" index="3" name="teilgebiet"/>
-      </attributeEditorForm>
       <widgets/>
       <conditionalstyles>
         <rowstyles/>
@@ -5037,7 +5219,7 @@ def my_form_open(dialog, layer, feature):
         <default field="schnam" expression=""/>
         <default field="teilgebiet" expression=""/>
       </defaults>
-      <previewExpression>COALESCE( "pk", '&lt;NULL>' )</previewExpression>
+      <previewExpression> "flnam" || ' - ' ||  "haltnam" </previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profildaten20161218110256525</id>
