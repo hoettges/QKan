@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>382</width>
-    <height>226</height>
+    <height>205</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,24 +33,11 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="flnam">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>30</y>
-      <width>201</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QLabel" name="lb_version">
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>190</y>
+      <y>170</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -59,7 +46,7 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.4.9</string>
+     <string>Version 2.5.2</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -111,7 +98,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Teieinzugsgebiet (TEZG)</string>
+     <string>Haltungsfläche (tezg)</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -121,7 +108,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>150</y>
+      <y>140</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -131,7 +118,7 @@
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>150</y>
+      <y>140</y>
       <width>61</width>
       <height>21</height>
      </rect>
@@ -143,17 +130,14 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QCheckBox" name="aufteilen">
+   <widget class="QComboBox" name="flnam">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>120</y>
-      <width>291</width>
-      <height>17</height>
+      <x>150</x>
+      <y>30</y>
+      <width>111</width>
+      <height>22</height>
      </rect>
-    </property>
-    <property name="text">
-     <string>auf mehrere TEZG-Flächen aufteilen (Verschneidung)</string>
     </property>
    </widget>
   </widget>

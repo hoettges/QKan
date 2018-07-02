@@ -2,15 +2,12 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="enabled">
-   <bool>true</bool>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>625</width>
-    <height>399</height>
+    <width>636</width>
+    <height>418</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>20</y>
       <width>46</width>
       <height>16</height>
      </rect>
@@ -30,38 +27,25 @@
      <string>Name</string>
     </property>
    </widget>
-   <widget class="Line" name="line">
+   <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>30</y>
-      <width>631</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_14">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>230</y>
-      <width>81</width>
-      <height>16</height>
+      <x>250</x>
+      <y>70</y>
+      <width>46</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Kommentar</string>
+     <string>m NHN</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>90</y>
-      <width>41</width>
+      <x>250</x>
+      <y>130</y>
+      <width>46</width>
       <height>21</height>
      </rect>
     </property>
@@ -73,8 +57,8 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>180</y>
-      <width>81</width>
+      <y>100</y>
+      <width>71</width>
       <height>21</height>
      </rect>
     </property>
@@ -82,51 +66,25 @@
      <string>Deckelhöhe</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>150</y>
-      <width>41</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>m NHN</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_70">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>180</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Erstelldatum</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_9">
+   <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>120</y>
-      <width>81</width>
+      <y>130</y>
+      <width>71</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Y-Koordinate</string>
+     <string>X-Koordinate</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>120</y>
-      <width>41</width>
+      <x>250</x>
+      <y>160</y>
+      <width>46</width>
       <height>21</height>
      </rect>
     </property>
@@ -134,11 +92,50 @@
      <string>m</string>
     </property>
    </widget>
-   <widget class="Line" name="line_2">
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>100</y>
+      <width>46</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m NHN</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>160</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Y-Koordinate</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>70</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sohlhöhe</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>200</y>
+      <y>40</y>
       <width>631</width>
       <height>31</height>
      </rect>
@@ -147,64 +144,25 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>90</y>
+      <x>30</x>
+      <y>240</y>
       <width>81</width>
-      <height>21</height>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>X-Koordinate</string>
+     <string>Kommentar</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>180</y>
-      <width>41</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>m NHN</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>150</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Sohlhöhe</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_40">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>60</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Auslasstyp</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="label_20">
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>60</y>
-      <width>91</width>
+      <y>70</y>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
@@ -212,78 +170,38 @@
      <string>Simulationsstatus</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="QLabel" name="label_71">
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>90</y>
-      <width>91</width>
+      <y>190</y>
+      <width>71</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Entwässerungsart</string>
+     <string>Erstelldatum</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_43">
+   <widget class="QLabel" name="label_40">
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>150</y>
-      <width>91</width>
+      <y>100</y>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Straße</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="kommentar">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>250</y>
-      <width>581</width>
-      <height>71</height>
-     </rect>
+     <string>Entwässerungssystem</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="schnam">
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>10</y>
-      <width>161</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="auslasstyp">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>60</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="xsch">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>90</y>
-      <width>141</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="ysch">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>120</y>
-      <width>141</width>
+      <y>20</y>
+      <width>151</width>
       <height>20</height>
      </rect>
     </property>
@@ -292,8 +210,8 @@
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>150</y>
-      <width>141</width>
+      <y>70</y>
+      <width>131</width>
       <height>20</height>
      </rect>
     </property>
@@ -302,20 +220,37 @@
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>180</y>
-      <width>141</width>
+      <y>100</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="xsch">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>130</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="ysch">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>160</y>
+      <width>131</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
    <widget class="QComboBox" name="simstatus">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>60</y>
+      <y>70</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -325,27 +260,40 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>90</y>
+      <y>100</y>
       <width>141</width>
       <height>22</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="strasse">
+   <widget class="QTextEdit" name="kommentar">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>150</y>
-      <width>141</width>
-      <height>20</height>
+      <x>20</x>
+      <y>260</y>
+      <width>581</width>
+      <height>71</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>160</y>
+      <width>46</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Straße</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>120</y>
+      <y>130</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -361,7 +309,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>120</y>
+      <y>130</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -370,8 +318,8 @@
    <widget class="QLabel" name="lb_version">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>340</y>
+      <x>560</x>
+      <y>360</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -380,17 +328,35 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.5.2</string>
+     <string>Version 2.4.9</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_21">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>20</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
+    </property>
+    <property name="text">
+     <string>Typ</string>
     </property>
    </widget>
    <widget class="QComboBox" name="schachttyp">
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>10</y>
+      <y>20</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -410,29 +376,21 @@
      <string>Hier kann der Knotentyp geändert werden</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_21">
+   <widget class="QLineEdit" name="strasse">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>10</y>
-      <width>31</width>
-      <height>21</height>
+      <x>450</x>
+      <y>160</y>
+      <width>141</width>
+      <height>20</height>
      </rect>
-    </property>
-    <property name="font">
-     <font>
-      <italic>true</italic>
-     </font>
-    </property>
-    <property name="text">
-     <string>Typ</string>
     </property>
    </widget>
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>180</y>
+      <y>190</y>
       <width>141</width>
       <height>23</height>
      </rect>
@@ -450,7 +408,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>625</width>
+     <width>636</width>
      <height>21</height>
     </rect>
    </property>
@@ -466,14 +424,12 @@
  </customwidgets>
  <tabstops>
   <tabstop>schnam</tabstop>
-  <tabstop>auslasstyp</tabstop>
-  <tabstop>xsch</tabstop>
-  <tabstop>ysch</tabstop>
   <tabstop>sohlhoehe</tabstop>
   <tabstop>deckelhoehe</tabstop>
+  <tabstop>xsch</tabstop>
+  <tabstop>ysch</tabstop>
   <tabstop>simstatus</tabstop>
   <tabstop>entwart</tabstop>
-  <tabstop>strasse</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>

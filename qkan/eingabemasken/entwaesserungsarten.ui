@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>298</width>
-    <height>129</height>
+    <width>386</width>
+    <height>266</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
+      <y>80</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -49,28 +49,15 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="bezeichnung">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>20</y>
-      <width>141</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="he_nr">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>50</y>
-      <width>141</width>
+      <y>80</y>
+      <width>31</width>
       <height>20</height>
      </rect>
     </property>
@@ -87,11 +74,79 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QLineEdit" name="bezeichnung">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>20</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Kürzel :</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="kuerzel">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>50</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Kommentar :</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="bemerkung">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>135</y>
+      <width>331</width>
+      <height>71</height>
+     </rect>
+    </property>
+   </widget>
    <widget class="QLabel" name="lb_version">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>90</y>
+      <x>310</x>
+      <y>230</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -100,7 +155,7 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.5.2</string>
+     <string>Version 2.4.9</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -109,6 +164,12 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>bezeichnung</tabstop>
+  <tabstop>kuerzel</tabstop>
+  <tabstop>he_nr</tabstop>
+  <tabstop>bemerkung</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

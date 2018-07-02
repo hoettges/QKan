@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>646</width>
-    <height>166</height>
+    <width>648</width>
+    <height>178</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,7 +53,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLineEdit" name="profilnam">
+   <widget class="QLineEdit" name="schnam">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -83,10 +83,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>Wasserbreite</string>
+     <string>Oberfläche</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="wbreite">
+   <widget class="QLineEdit" name="oberfl">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -99,8 +99,8 @@
    <widget class="QLabel" name="lb_version">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>110</y>
+      <x>560</x>
+      <y>120</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -109,7 +109,7 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.5.2</string>
+     <string>Version 2.4.9</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -121,7 +121,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>646</width>
+     <width>648</width>
      <height>21</height>
     </rect>
    </property>

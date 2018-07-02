@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>648</width>
-    <height>445</height>
+    <width>636</width>
+    <height>407</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,61 +30,61 @@
    <widget class="QLabel" name="label_20">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>130</y>
+      <x>20</x>
+      <y>190</y>
       <width>121</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Steuerschacht</string>
+     <string>Benetzungsverlust</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>130</y>
+      <y>160</y>
       <width>111</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Anfangsvolumen</string>
+     <string>Benetzungsstartwert</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>160</y>
+      <x>340</x>
+      <y>120</y>
       <width>91</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Gesamtvolumen</string>
+     <string>Muldenstartwert</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_18">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>70</y>
+      <x>340</x>
+      <y>90</y>
       <width>91</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Pumpentyp</string>
+     <string>Bodenklasse</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_70">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>220</y>
-      <width>71</width>
+      <x>340</x>
+      <y>180</y>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
@@ -109,7 +109,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>240</y>
+      <y>210</y>
       <width>631</width>
       <height>31</height>
      </rect>
@@ -122,7 +122,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>280</y>
+      <y>240</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -131,85 +131,79 @@
      <string>Kommentar</string>
     </property>
    </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>70</y>
+      <width>281</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Abflussbeiwert </string>
+    </property>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>20</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Anfang</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_13">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>50</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Ende</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="anfangsabflussbeiwert">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>20</y>
+       <width>131</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="endabflussbeiwert">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>50</y>
+       <width>131</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
    <widget class="QLabel" name="label_21">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>190</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Ausschalthöhe</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_22">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>100</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Simulationsstatus</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_7">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>100</y>
+      <x>340</x>
+      <y>150</y>
       <width>91</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Schacht unten</string>
+     <string>Muldenverlust</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>70</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Schacht oben</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_9">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>190</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Sohle</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_23">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>160</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Einschalthöhe</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="pnam">
+   <widget class="QLineEdit" name="apnam">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -219,102 +213,52 @@
      </rect>
     </property>
    </widget>
-   <widget class="QComboBox" name="schoben">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>70</y>
-      <width>131</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="schunten">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>100</y>
-      <width>131</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="volanf">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>130</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="volges">
+   <widget class="QLineEdit" name="benetzung_startwert">
     <property name="geometry">
      <rect>
       <x>130</x>
       <y>160</y>
-      <width>91</width>
+      <width>71</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sohle">
+   <widget class="QLineEdit" name="benetzungsverlust">
     <property name="geometry">
      <rect>
       <x>130</x>
       <y>190</y>
-      <width>91</width>
+      <width>71</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QComboBox" name="pumpentyp">
+   <widget class="QComboBox" name="bodenklasse">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>70</y>
+      <x>460</x>
+      <y>90</y>
       <width>131</width>
       <height>22</height>
      </rect>
     </property>
    </widget>
-   <widget class="QComboBox" name="simstatus">
+   <widget class="QLineEdit" name="mulden_startwert">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>100</y>
-      <width>131</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="steuersch">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>130</y>
-      <width>131</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="einschalthoehe">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>160</y>
-      <width>101</width>
+      <x>460</x>
+      <y>120</y>
+      <width>71</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="ausschalthoehe">
+   <widget class="QLineEdit" name="muldenverlust">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>190</y>
-      <width>101</width>
+      <x>460</x>
+      <y>150</y>
+      <width>71</width>
       <height>20</height>
      </rect>
     </property>
@@ -323,7 +267,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>300</y>
+      <y>260</y>
       <width>581</width>
       <height>71</height>
      </rect>
@@ -332,8 +276,8 @@
    <widget class="QLabel" name="lb_version">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>390</y>
+      <x>560</x>
+      <y>350</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -342,7 +286,7 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.5.2</string>
+     <string>Version 2.4.9</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -351,8 +295,8 @@
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>220</y>
+      <x>460</x>
+      <y>180</y>
       <width>141</width>
       <height>23</height>
      </rect>
@@ -367,66 +311,53 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>130</y>
+      <x>540</x>
+      <y>120</y>
       <width>21</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>m³</string>
+     <string>mm</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>230</x>
+      <x>540</x>
+      <y>150</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>mm</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
       <y>160</y>
       <width>21</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>m³</string>
+     <string>mm</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>230</x>
+      <x>210</x>
       <y>190</y>
-      <width>31</width>
+      <width>21</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>mNHN</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>580</x>
-      <y>160</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>mNHN</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_11">
-    <property name="geometry">
-     <rect>
-      <x>580</x>
-      <y>190</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>mNHN</string>
+     <string>mm</string>
     </property>
    </widget>
   </widget>
@@ -435,7 +366,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>648</width>
+     <width>636</width>
      <height>21</height>
     </rect>
    </property>
@@ -450,17 +381,14 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>pnam</tabstop>
-  <tabstop>schoben</tabstop>
-  <tabstop>schunten</tabstop>
-  <tabstop>volanf</tabstop>
-  <tabstop>volges</tabstop>
-  <tabstop>sohle</tabstop>
-  <tabstop>pumpentyp</tabstop>
-  <tabstop>simstatus</tabstop>
-  <tabstop>steuersch</tabstop>
-  <tabstop>einschalthoehe</tabstop>
-  <tabstop>ausschalthoehe</tabstop>
+  <tabstop>apnam</tabstop>
+  <tabstop>anfangsabflussbeiwert</tabstop>
+  <tabstop>endabflussbeiwert</tabstop>
+  <tabstop>benetzung_startwert</tabstop>
+  <tabstop>benetzungsverlust</tabstop>
+  <tabstop>bodenklasse</tabstop>
+  <tabstop>mulden_startwert</tabstop>
+  <tabstop>muldenverlust</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>

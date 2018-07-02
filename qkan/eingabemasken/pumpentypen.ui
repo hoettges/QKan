@@ -6,101 +6,92 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>646</width>
-    <height>166</height>
+    <width>298</width>
+    <height>129</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
-      <width>46</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Name</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_20">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>70</y>
+      <y>50</y>
       <width>121</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Wasserspiegel</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Hystem-Extran-Nr :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="Line" name="line">
+   <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>40</y>
-      <width>631</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="profilnam">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
+      <x>10</x>
       <y>20</y>
-      <width>511</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="wspiegel">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>70</y>
-      <width>131</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_21">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>70</y>
       <width>121</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Wasserbreite</string>
+     <string>Bezeichnung :</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="wbreite">
+   <widget class="QLineEdit" name="bezeichnung">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>70</y>
-      <width>131</width>
+      <x>150</x>
+      <y>20</y>
+      <width>141</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="he_nr">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>50</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::RightToLeft</enum>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="frame">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="lb_version">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>110</y>
+      <x>220</x>
+      <y>90</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -109,22 +100,12 @@
      <string>Version QKan Import</string>
     </property>
     <property name="text">
-     <string>Version 2.5.2</string>
+     <string>Version 2.4.9</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>646</width>
-     <height>21</height>
-    </rect>
-   </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
