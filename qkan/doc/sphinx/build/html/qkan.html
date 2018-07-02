@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Verarbeitung von befestigten und unbefestigten Flächen &#8212; QKan 2.4.5 Dokumentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.4.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="prev" title="QKan - Kanaldaten aufbereiten mit QGIS" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="verarbeitung-von-befestigten-und-unbefestigten-flachen">
+<h1>1. Verarbeitung von befestigten und unbefestigten Flächen<a class="headerlink" href="#verarbeitung-von-befestigten-und-unbefestigten-flachen" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Abflusswirksame Flächen, z. B. Dachflächen, Parkplätze, Straßen, werden in QKan in der Tabelle &#8220;flaechen&#8221; verwaltet.
+Diese werden mit Hilfe des Attributs &#8220;abflussparameter&#8221; klassifiziert, und in der entsprechenden Tabelle
+&#8220;abflussparameter&#8221; sind die für die hydraulische
+Berechnung benötigten Parameter gespeichert. In dieser Tabelle ist wiederum ein Attribut &#8220;bodenklasse&#8221; enthalten, das für
+durchlässige Flächen die Versickerungsparameter enthält. Unbefestigte Flächen sind in QKan dadurch gekennzeichnet,
+dass entweder keine Bodenklasse oder aber eine Bodenklasse zugeordnet ist, deren Durchlässigkeit 0 ist.</p>
+<div class="section" id="zuordnung-von-flachen-zu-haltungen">
+<h2>1.1. Zuordnung von Flächen zu Haltungen<a class="headerlink" href="#zuordnung-von-flachen-zu-haltungen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Die Zuordnung der abflusswirksamen Flächen zu den Haltungen des Kanalnetzes stellt bei der Vorbereitung
+einer hydrodynamischen Simulation einen aufwändigen Arbeitsschritt dar. Deshalb enthält QKan Funktionen
+zur automatischen Verknüpfung und zur Plausibilitäskontrolle.</p>
+</div>
+<div class="section" id="grundprinzip">
+<h2>1.2. Grundprinzip<a class="headerlink" href="#grundprinzip" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Die abflusswirksamen Flächen werden mittels Linien mit den Haltungen verbunden, die von einem Punkt innerhalb
+der jeweiligen Fläche zur Haltung führen und im Layer &#8220;Anbindungen Flächen&#8221; (QKan-Tabelle &#8220;linkfl&#8221;) gespeichert werden.
+Maßgebend für die Zuordnung der abflusswirksamen Flächen sind diese Verbindungslinien sowie die Haltungsflächen,
+die im Layer &#8220;Haltungsflächen&#8221; (QKan-Tabelle &#8220;tezg&#8221;) gespeichert werden.</p>
+<p>Es wird unterschieden zwischen Flächen, die als ganzes zugeordnet werden und großen Flächen, die sich über
+mehrere Haltungsflächen erstrecken und deshalb aufgeteilt
+werden müssen. Für diese muss der Anwender in der Tabelle &#8220;flaechen&#8221; das Attribut &#8220;aufteilen&#8221; aktivieren bzw. &#8220;ja&#8221;
+eintragen. In diesem Fall wird für jedes Teilstück, das in einer anderen Haltungsfläche liegt, eine eigene
+Verbindungslinie angelegt.</p>
+<p>Die Verbindungslinien können jederzeit manuell nachbearbeitet, ergänzt oder gelöscht werden.
+Maßgebend für den Anwender sind ausschließlich die sichtbaren Verbindungslinien!</p>
+<p>Der Algorithmus ist so angelegt, dass die abflusswirksamen Flächen nach dem Import aus einem externen
+Datenbestand während der gesamten Bearbeitung im Original erhalten bleiben. Sie brauchen also nicht vorher
+durch den Anwender aufgeteilt zu werden. Der Anwender sollte die Flächen lediglich so vorbereiten, dass keine
+Überschneidungen und &#8220;Löcher&#8221; mehr vorhanden sind, wozu QGIS mehrere Werkzeuge enthält.</p>
+<p>Erst beim Datenexport in das Simulationsprogramm wird die Aufteilung der mit dem Attribut &#8220;aufteilen&#8221; markierten
+Flächen mittels Verschneidung mit den Haltungsflächen vorgenommen. Das hat den Vorteil, dass der Anwender
+jederzeit Änderungen an den
+Flächen, Haltungsflächen oder Kanalnetzdaten vornehmen kann, um dann erneut die Daten in das Simulationsprogramm zu
+exportieren.</p>
+</div>
+<div class="section" id="teilgebiete">
+<h2>1.3. Teilgebiete<a class="headerlink" href="#teilgebiete" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Bei größeren Entwässerungsnetzen ist es hilfreich, die Bearbeitung nacheinander für mehrere Teilgebiete vorzunehmen.
+In QKan dient dazu ein entsprechender Layer &#8220;Teilgebiete&#8221; (QKan-Tabelle &#8220;teilgebiete&#8221;). Alle für die Flächenaufteilung
+verwendeten Layer enthalten ein entsprechendes Attribut, mit dem die automatische Erzeugung der Verbindungslinien
+eines oder mehrere ausgewählte Teilgebiete beschränkt werden kann.</p>
+</div>
+</div>
+<div class="section" id="vorgehen-bei-der-flachenzuordnung">
+<h1>2. Vorgehen bei der Flächenzuordnung<a class="headerlink" href="#vorgehen-bei-der-flachenzuordnung" title="Link zu dieser Überschrift">¶</a></h1>
+<div class="section" id="import-der-abflusswirksamen-flachen">
+<h2>2.1. Import der abflusswirksamen Flächen<a class="headerlink" href="#import-der-abflusswirksamen-flachen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Ausgangspunkt für die nachfolgend beschriebenen Arbeitsschritte ist ein bestehendes QKan-Projekt. Empfehlenswert ist
+es, dieses durch Import aus einem der in QKan verfügbaren Datenformate (HYSTEM-EXTRAN, Kanal++) zu erzeugen. Die
+entsprechende Datei des Simulationsprogramms sollte bereits Kanaldaten enthalten; es ist aber auch möglich, eine leere
+Datei zu verwenden, die vorher mit dem gewünschten Simulationsprogramm angelegt wurde.</p>
+<p>Die abflusswirksamen Flächen können mit QGIS aus einer Vielzahl von Datenquellen übernommen werden. Empfehlenswert
+ist es dabei, zunächst die Daten mit QGIS in einen zusätzlichen Layer zu laden. Anschließend können die Flächen
+mit &#8220;Copy &amp; Paste&#8221; in den Layer &#8220;Flächen&#8221; übertragen und der zusätzliche Layer wieder entfernt werden.</p>
+</div>
+<div class="section" id="erzeugen-der-unbefestigten-flachen">
+<h2>2.2. Erzeugen der unbefestigten Flächen<a class="headerlink" href="#erzeugen-der-unbefestigten-flachen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>In der Regel enthalten die Datenbestände der abflusswirksamen Flächen nur befestigte Flächen. Für die Verarbeitung in
+QKan ist es empfehlenswert auch für die unbefestigten Flächenanteile entsprechende Flächenobjekte anzulegen. Hierzu
+dient die Funktion &#8220;Erzeuge unbefestigte Flächen...&#8221;. Voraussetzung ist, dass im Layer &#8220;Haltungsflächen&#8221; Flächen
+vorhanden sind, die das Entwässerungsgebiet in Teilflächen unterteilen, die den einzelnen Haltungen zugeordnet sind.
+Diese Haltungsflächen beziehen sich ausschließlich auf den Niederschlagsabfluss, so dass bei der Erstellung nur
+das Mischwasser- und Regenwassernetz zu berücksichtigen ist.</p>
+<p>Die Haltungsflächen enthalten folgende Attribute, die bei der Erzeugung der unbefestigten Flächen übernommen werden,
+und deshalb vorher entsprechend bearbeitet werden sollten (aber nicht müssen):</p>
+<ul class="simple">
+<li>regenschreiber</li>
+<li>neigkl</li>
+<li>abflussparameter</li>
+<li>haltnam</li>
+<li>teilgebiet</li>
+</ul>
+</div>
+<div class="section" id="festlegung-eines-teilgebietes">
+<h2>2.3. Festlegung eines Teilgebietes<a class="headerlink" href="#festlegung-eines-teilgebietes" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Vor dem Datentransfer in ein Simulationsprogramm wird durch QKan eine &#8220;Bereinigung&#8221; durchgeführt, bei der die Verbindungslinien
+in interne Zuordnungsspalten übertragen werden, die wie ein Cache wirken und</p>
+</div>
+</div>
+<div class="section" id="qkan-step-by-step-installation">
+<h1>3. QKan - Step by Step Installation<a class="headerlink" href="#qkan-step-by-step-installation" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Willkommen beim Step by Step Tutorial zur Installation von QKan mit dem Betriebssystem Windows. QKan kann auch unter Linux verwendet werden, wo es teilweise
+entwickelt wurde. Die nachfolgenden Schritte sind dort in ähnlicher Weise durchzuführen.</p>
+<p>Um QKan auf einem Computer neu einzurichten sind einige Arbeitsschritte notwendig, welche Ihnen im Folgenden vorgestellt werden:</p>
+<div class="section" id="schritt-1-qgis-installieren">
+<h2>3.1. Schritt 1: QGIS Installieren<a class="headerlink" href="#schritt-1-qgis-installieren" title="Link zu dieser Überschrift">¶</a></h2>
+<p>QKan basiert auf dem Open-Source-Programm QGIS. Deshalb wird dieses als erstes benötigt.
+Die aktuelle Version von QGIS finden Sie hier: <a class="reference external" href="http://www.QGIS.org/de/site/forusers/download.html">QGIS</a> oder falls dieser Link nicht funktioniert könne Sie manuell www.QGIS.org aufrufen.</p>
+<p>Die aktuelle Version von QGIS (Stand Februar 2017) trägt die Versionsnummer 2.18.7. (Beachten Sie bitte den Hinweis zur Version unter Kap. 3.3.) Durch Klicken auf den
+&#8220;Jetzt herunterladen&#8221;-Button auf der Startseite werden Sie sofort
+zur Downloadseite weitergeleitet. Gehen Sie vorher sicher, dass Ihnen genügend freier Speicherplatz zur Verfügung steht, da die QGIS-Installation etwa 1,5 GB
+Speicherplatz einnehmen wird. Wählen Sie in Abhänigkeit von Ihrem Betriebssystem und Ihrer Betriebssystem-Version einen Downloadlink aus. In diesem Beispiel verwenden wir die
+unter dem Punkt &#8220;Für Windows herunterladen&#8221; zu findende Version &#8220;Eigenständige QGIS-Installation Version 2.18 (64bit)&#8221;:</p>
+<img alt="_images/QGIS_herunterladen.png" src="_images/QGIS_herunterladen.png" />
+<p>Wählen Sie ein entsprechendes Verzeichnis zum Speichern der Installationsdatei und führen Sie diese anschließend aus. Bestätigen Sie die Installation,
+aktzeptieren das Lizenzabkommen und wählen anschießend das Verzeichnis, in dem QGIS installiert werden soll. Sie können auch einfach auf den Weiter-Button
+klicken, um es im Standartverzeichnis &#8220;C:\Programme\QGIS 2.18&#8221; zu installieren. Als letzes wird QGIS Sie nach den zusätzlichen Komponenten, wie zum Beispiel
+dem North Carolina Data Set fragen:</p>
+<img alt="_images/QGIS_komponenten.png" src="_images/QGIS_komponenten.png" />
+<p>Für die Nutzung von QKan wird keine dieser zusätzlichen Komponenten benötigt. Sollte QGIS jedoch noch für andere Zwecke genutzt werden, können diese Komponenten
+noch Verwendung finden. Beachten Sie, dass sich der benötgte Speicherplatz entsprechend erhöht, wenn Sie sich dazu entscheiden, die zusätzlichen Komponenten zu
+installieren. Klicken Sie anschließend auf &#8220;Installieren&#8221;, um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.</p>
+<div class="line-block">
+<div class="line">Wenn Sie alles richtig gemacht haben, sollten Sie folgende Nachricht erhalten:</div>
+</div>
+<img alt="_images/QGIS_fertigstellen.png" src="_images/QGIS_fertigstellen.png" />
+</div>
+<div class="section" id="schritt-2-firebird-installieren">
+<h2>3.2. Schritt 2: Firebird Installieren<a class="headerlink" href="#schritt-2-firebird-installieren" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Vor der Installation der Plugins, die für QKan entwickelt wurden, muss zunächst die Datenbankanwendung Firebird installiert werden. Sie wird für den
+Zugriff auf die HYSTEM-EXTRAN-Dateien (*.idbf) benötigt. Einen Link zum Download finden sie hier: <a class="reference external" href="http://www.firebirdsql.org/en/firebird-2-5-6/">Firebird</a> oder Sie besuchen www.firebirdsql.org und
+wählen dort unter dem Reiter &#8220;Downloads&#8221; den Punkt Firebird 2.5 aus.</p>
+<p>Auf der Seite befinden sich änhlich wie bei der QGIS Installation wieder mehrere Downloadlinks. Benötigt wird der &#8220;Installer for Superclassic/Classic or
+Superserver&#8221;. Wählen Sie auch hier wieder den für Ihr Betriebssystem und Version passenden Link aus. In diesem Beispiel verwenden wir den &#8220;Windows executable
+installer for full Superclassic/Classic or Superserver, recommended for first-time users&#8221; für Windows 64-bit:</p>
+<img alt="_images/firebird_herunterladen.png" src="_images/firebird_herunterladen.png" />
+<p>Über diesen Link werden Sie zu einem Downloadportal namens sourceforge.net weitergeleitet, wo nach wenigen Sekunden der Download starten sollte. Sollte es
+Probleme mit dem Download geben, beachten Sie bitte die Hinweise auf der Seite. Anschließend starten Sie die heruntergeladene Datei Setup.exe. Aktzeptieren Sie auch
+hier wieder die Lizenzvereinbarungen. Wählen Sie ein Verzeichnis, um Firebird zu speichern oder verwenden Sie das Standartverzeichnis
+&#8220;C:\Program Files\Firebird\Firebird_2_5&#8221;. Gehen Sie nun sicher, dass Sie bei der Installation der Komponenten den Punkt &#8220;Super Server Binärdateien&#8221; ausgewählt
+haben.</p>
+<img alt="_images/firebird_komponenten.png" src="_images/firebird_komponenten.png" />
+<p>Als nächstes wird Firebird einen Startmenü-Ordner anlegen. Dieser wird nicht unbedingt benötigt und kann durch die Checkbox &#8220;Keinen Order im Startmenü erstellen&#8221;
+verhindert werden. Anschließend wird eine Abfrage über die zusätzlichen Aufgaben von Firebird erscheinen. Gehen Sie sicher, dass Ihre Auswahl wie folgt aussieht:</p>
+<img alt="_images/firebird_aufgaben_dienst.png" src="_images/firebird_aufgaben_dienst.png" />
+<p>Bevor die Installation fertiggestellt werden kann, werden noch zwei Checkboxen erscheinen:</p>
+<img alt="_images/firebird_fertigstellen.png" src="_images/firebird_fertigstellen.png" />
+<p>Der Punkt &#8220;After installation - What Next?&#8221; bringt Sie zurück auf die Firebirdseite und bietet weitere Informationen zur Nutzung von Firebird. Die zur Nutzung
+von QKan benötigten Informationen bekommen Sie jedoch hier. Um zu testen ob der Firebirdserver auch richitg auf Ihrem System läuft, öffnen Sie den Taskmanager
+und suchen unter dem Reiter Prozesse nach &#8220;fbserver.exe&#8221;.</p>
+</div>
+<div class="section" id="schritt-3-zusatzliche-python-module">
+<h2>3.3. Schritt 3: Zusätzliche Python-Module<a class="headerlink" href="#schritt-3-zusatzliche-python-module" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Nun müssen einige in QGIS enthaltene Module aktualisiert beziehungsweise ergänzt werden. Da Installationen nur mit Administrator-Rechten ausgeführt werden
+können, müssen Sie zunächst die &#8220;OSGeo4W Shell&#8221; als Administrator ausführen, um dort die weiteren Schritte vornehmen zu können. Falls Sie keinen
+Administrator-Zugang haben, wenden Sie sich an Ihren IT-Administrator, damit er die nachfolgenden Schritte ausführt.</p>
+</div>
+<div class="section" id="schritt-3-1-starten-der-osgeo4w-shell-mit-administrator-rechten">
+<h2>3.4. Schritt 3.1: Starten der &#8220;OSGeo4W Shell&#8221; mit Administrator-Rechten<a class="headerlink" href="#schritt-3-1-starten-der-osgeo4w-shell-mit-administrator-rechten" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Das Vorgehen unterscheidet sich etwas, je nachdem, welche Version von Windows Sie haben.</p>
+<p>Unter Windows 7 klicken Sie im Startmenü mit der rechten Maustaste auf &#8220;OSGeo4W Shell&#8221; und wählen &#8220;Als Administrator ausführen...&#8221;. Unter Windows 10 wählen
+Sie stattdessen unter &#8220;Mehr&#8221; die Zeile &#8220;Am Speicherort öffnen&#8221; und Klicken wieder mit der rechten Maustaste auf die Datei &#8220;OSGeo4W Shell&#8221;, wo Sie dann
+ebenfalls &#8220;Als Administrator ausführen...&#8221; wählen.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warnung</p>
+<p class="last">Achten Sie unbedingt darauf, die &#8220;OSGeo4W Shell&#8221; als Administrator auszuführen, da sonst kein Zugriff möglich ist!</p>
+</div>
+<img alt="_images/OSGeo4Wexe.png" src="_images/OSGeo4Wexe.png" />
+<p>Geöffnet sieht sie dann etwa so aus:</p>
+<img alt="_images/OSGeo4Wshell.png" src="_images/OSGeo4Wshell.png" />
+</div>
+<div class="section" id="schritt-3-2-pyfirebirdsql">
+<h2>3.5. Schritt 3.2: pyfirebirdsql<a class="headerlink" href="#schritt-3-2-pyfirebirdsql" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Dieses Modul wird von der Programmiersprache für die Kommunikation mit der Firebird-Datenbank benötigt. Einen Link dazu finden Sie hier: <a class="reference external" href="https://github.com/nakagami/pyfirebirdsql">pyfirebirdsql</a> oder
+besuchen Sie www.gihub.com/nakagami/pyfirebirdsql.</p>
+<p>Sie sollten sich nun auf der folgenden Seite befinden:</p>
+<img alt="_images/pyfirebird_herunterladen.png" src="_images/pyfirebird_herunterladen.png" />
+<p>Wenn Sie die Seite manuell öffnen, achten Sie unbedingt darauf, dass Sie das richtige Modul auswählen. Wenn Sie auf der weiter oben angegebenen Seite angekommen
+sind, können Sie durch den &#8220;clone or download&#8221;-Button die Datei herunterladen. Klicken Sie erst auf &#8220;clone or download&#8221; und anschließend auf &#8220;Dowload ZIP&#8221;. Dann
+führen Sie den Download entsprechend ihrem Browser durch.</p>
+<img alt="_images/pyfirebird_dwn.png" src="_images/pyfirebird_dwn.png" />
+<p>Sie erhalten nun eine .zip Datei mit dem Namen &#8220;pyfirebirdsql-master&#8221;. Der darin enthaltene Ordner kann jetzt entpackt und anschließend in ein beliebiges
+Verzeichnis verschoben werden. Um das Modul zu installieren, müssen Sie in der bereits geöffneten &#8220;OSGeo4W Shell&#8221; mit Hilfe der Befehle &#8220;cd&#8221; in das Verzeichnis
+wechseln, in das Sie im vorherigen Schritt die Installationsdateien entpackt hatten. In diesem Beispiel ist das:
+&#8220;C:\Users\Christian\Desktop\QKan\install\pyfirebirdsql-master&#8221;. Anschließend geben Sie den Befehl &#8220;python setup.py install&#8221; ein.</p>
+<img alt="_images/OSGeo4Wshellcd.png" src="_images/OSGeo4Wshellcd.png" />
+</div>
+<div class="section" id="schritt-3-3-pip-und-matplotlib">
+<h2>3.6. Schritt 3.3: pip und matplotlib<a class="headerlink" href="#schritt-3-3-pip-und-matplotlib" title="Link zu dieser Überschrift">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Bemerkung</p>
+<p class="last">Dieses Kapitel ist nur Für QGIS-Versionen vor 2.18.6 relevant, die noch eine ältere Version der Bibliothek &#8220;matplotlib&#8221; enhalten. Bei den neueren Versionen ist eine Aktualsierung von &#8220;matplotlib&#8221; nicht notwendig, so dass sie alle Schritte in diesem Kapitel überspringen und mit Kap. 4 fortfahren können.</p>
+</div>
+<p>Das Modul matplotlib wird für die grafische Darstellung benötigt. Zu seiner Aktualisierung müssen zusätzlich die Programme &#8220;pip&#8221; sowie &#8220;setuptools&#8221; aktualisiert werden.</p>
+<p>Geben Sie nacheinander im Fenster &#8220;OSGeo4W Shell&#8221; folgende Befehle ein:</p>
+<p>python -m pip install &#8211;upgrade pip</p>
+<p>python -m pip install -U pip setuptools</p>
+<p>pip install -U matplotlib</p>
+</div>
+<div class="section" id="schritt-4-qkan-plugins-fur-qgis">
+<h2>3.7. Schritt 4: QKan Plugins für QGIS<a class="headerlink" href="#schritt-4-qkan-plugins-fur-qgis" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Nachdem QGIS und Firebird erfolgreich auf Ihrem System installiert wurden, können nun die QKan spezifischen Erweiterungen für QGIS geladen werden.</p>
+<p>Als nächstes benötigen Sie die QKan spezifischen Plugins für QGIS. Diese erhalten Sie auf dem github Verzeichnis zu QKan. Einen Link dazu
+finden Sie hier: <a class="reference external" href="https://github.com/hoettges">Höttges</a> oder auf github.com/hoettges. Dort finden Sie zwei Repositories: &#8220;QKan&#8221; und &#8220;QKan_Doku&#8221;.</p>
+<img alt="_images/github_hoettges.png" src="_images/github_hoettges.png" />
+<p>Wenn Sie auf &#8220;QKan&#8221; klicken, erscheint eine Liste von Verzeichnissen und Dateien.</p>
+<img alt="_images/github_qkan.png" src="_images/github_qkan.png" />
+<p>Falls Sie die aktuelle Entwicklungsversion laden möchten, wechseln Sie zunächst in den entsprechenden Zweig (&#8220;Branch&#8221;). Unter der Schaltfläche
+&#8220;Branch&#8221; kann der gewünschte Zweig aufgewählt werden und anschließend mit der grünen Schaltfläche &#8220;Clone or download&#8221; heruntergeladen werden.</p>
+<p>In dem heruntergeladenen Zip-Archiv befindet sich im oberen Ordner (&#8220;QKan-master&#8221; oder &#8220;QKan-dev&#8221;) ein Unterordner &#8220;QKan&#8221;. Dieser muss in das
+Plugin-Verzeichnis von QGIS kopiert werden. Das Plugin-Verzeichnis unter dem Betriebssystem Windows ist üblicherweise
+&#8220;C:\{Benutzer}\Benutzername\.qgis2\python\plugins&#8221;. Dabei ist {Benutzer} der Name, unter dem Sie am Computer angemeldet sind. Sollte das
+Verzeichnis noch nicht existieren, müssen Sie es erstellen.</p>
+<img alt="_images/QKan_plugins.png" src="_images/QKan_plugins.png" />
+<p>Anschließend öffnen Sie QGIS mit Hilfe der &#8220;QGIS Desktop 2.18.x with GRASS 7.x&#8221; Verknüpfung, welche sich im QGIS Ordner auf Ihrem Desktop befinden sollte.
+Wenn Sie QGIS gestartet haben, wählen Sie in der Hauptmenüleiste unter dem Menüpunkt &#8220;Erweiterungen&#8221; den Unterpunkt
+&#8220;Erweiterungen verwalten und installieren...&#8221; aus um folgendes Fenster zu öffnen:</p>
+<img alt="_images/Qgis_erweiterungen.png" src="_images/Qgis_erweiterungen.png" />
+<p>Wählen Sie an der linken Seite den Reiter &#8220;Installiert&#8221; und setzen Sie den Haken vor dem Plugin &#8220;QKan&#8221;. Nach dem Schließen dieses Fensters stehen
+in QGIS ein Werkzeugkasten &#8220;QKan&#8221; mit mehreren Icons sowie ein Hauptmenü &#8220;QKan&#8221; mit mehreren Untermenüs zur Verfügung.</p>
+<img alt="_images/Qgis_menue.png" src="_images/Qgis_menue.png" />
+<p>Herzlichen Glückwunsch Sie haben QKan erfolgreich auf Ihren Computer installiert!</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warnung</p>
+<p class="last">Die ersten Anwender von QKan berichten davon, dass die Firebird-Datenbank in der hier verwendeten lizenzkostenfreien Version Probleme verursacht, wenn sich die Hystem-Extran-Datenbankdatei (Kanalnetz- oder Ergebnisdaten) in einem Netzwerk-Verzeichnis befindet. In diesem Fall hilft es, die Datei in ein lokales Verzeichnis (auf C:) zu verschieben, und später nach Beendigung der Arbeit wieder zurück zu verschieben.</p>
+</div>
+</div>
+</div>
+<div class="section" id="qkan-videoanleitungen">
+<h1>4. QKan - Videoanleitungen<a class="headerlink" href="#qkan-videoanleitungen" title="Link zu dieser Überschrift">¶</a></h1>
+<div class="section" id="verknupfung-von-flachen-zu-kanalhaltungen">
+<h2>4.1. Verknüpfung von Flächen zu Kanalhaltungen<a class="headerlink" href="#verknupfung-von-flachen-zu-kanalhaltungen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Eine Videoanleitung zum Verknüpfen von Flächen zu Haltungen eines Kanalnetzes finden Sie hier:</p>
+<p><a class="reference external" href="https://youtu.be/aKKnWhqcc9s">QKanFlaechenverknuepfung</a></p>
+</div>
+<div class="section" id="neues-projekt-und-flachen-importieren">
+<h2>4.2. Neues Projekt und Flächen Importieren<a class="headerlink" href="#neues-projekt-und-flachen-importieren" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Eine Videoanleitung zum Anlegen eines neuen QKan-Projektes aus einer bestehenden HYSTEM-EXTRAN-Datenbank und zum
+anschließenden Einbinden von Flächendaten finden Sie hier:</p>
+<p><a class="reference external" href="https://youtu.be/eUr5YeSrYHo">QKanKanaldatenflaechen</a></p>
+</div>
+<div class="section" id="laden-einer-vorlage-projektdatei-fur-ein-bestehendes-projekt">
+<h2>4.3. Laden einer Vorlage-Projektdatei für ein bestehendes Projekt<a class="headerlink" href="#laden-einer-vorlage-projektdatei-fur-ein-bestehendes-projekt" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Eine Videoanleitung, wie für eine bestehende QKan-Kanaldatenbank eine Vorlage-Projektdatei geladen werden kann:</p>
+<p><a class="reference external" href="https://youtu.be/CzBJkW0y1_U">QKanProjektladen</a></p>
+</div>
+<div class="section" id="einbinden-eines-mit-autocad-erstellten-zeichnungsrahmens-in-ein-qgis-layout">
+<h2>4.4. Einbinden eines mit AutoCAD erstellten Zeichnungsrahmens in ein QGIS-Layout<a class="headerlink" href="#einbinden-eines-mit-autocad-erstellten-zeichnungsrahmens-in-ein-qgis-layout" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Eine Videoanleitung, wie ein mit AutoCAD erstellter Zeichnungsrahmen in ein QGIS-Layout eingefügt wird,
+finden Sie hier:</p>
+<p><a class="reference external" href="https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/QKan/zeichnungsrahmen.mp4">QGISZeichnungsrahmen</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Inhalt</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. Verarbeitung von befestigten und unbefestigten Flächen</a><ul>
+<li><a class="reference internal" href="#zuordnung-von-flachen-zu-haltungen">1.1. Zuordnung von Flächen zu Haltungen</a></li>
+<li><a class="reference internal" href="#grundprinzip">1.2. Grundprinzip</a></li>
+<li><a class="reference internal" href="#teilgebiete">1.3. Teilgebiete</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vorgehen-bei-der-flachenzuordnung">2. Vorgehen bei der Flächenzuordnung</a><ul>
+<li><a class="reference internal" href="#import-der-abflusswirksamen-flachen">2.1. Import der abflusswirksamen Flächen</a></li>
+<li><a class="reference internal" href="#erzeugen-der-unbefestigten-flachen">2.2. Erzeugen der unbefestigten Flächen</a></li>
+<li><a class="reference internal" href="#festlegung-eines-teilgebietes">2.3. Festlegung eines Teilgebietes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#qkan-step-by-step-installation">3. QKan - Step by Step Installation</a><ul>
+<li><a class="reference internal" href="#schritt-1-qgis-installieren">3.1. Schritt 1: QGIS Installieren</a></li>
+<li><a class="reference internal" href="#schritt-2-firebird-installieren">3.2. Schritt 2: Firebird Installieren</a></li>
+<li><a class="reference internal" href="#schritt-3-zusatzliche-python-module">3.3. Schritt 3: Zusätzliche Python-Module</a></li>
+<li><a class="reference internal" href="#schritt-3-1-starten-der-osgeo4w-shell-mit-administrator-rechten">3.4. Schritt 3.1: Starten der &#8220;OSGeo4W Shell&#8221; mit Administrator-Rechten</a></li>
+<li><a class="reference internal" href="#schritt-3-2-pyfirebirdsql">3.5. Schritt 3.2: pyfirebirdsql</a></li>
+<li><a class="reference internal" href="#schritt-3-3-pip-und-matplotlib">3.6. Schritt 3.3: pip und matplotlib</a></li>
+<li><a class="reference internal" href="#schritt-4-qkan-plugins-fur-qgis">3.7. Schritt 4: QKan Plugins für QGIS</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#qkan-videoanleitungen">4. QKan - Videoanleitungen</a><ul>
+<li><a class="reference internal" href="#verknupfung-von-flachen-zu-kanalhaltungen">4.1. Verknüpfung von Flächen zu Kanalhaltungen</a></li>
+<li><a class="reference internal" href="#neues-projekt-und-flachen-importieren">4.2. Neues Projekt und Flächen Importieren</a></li>
+<li><a class="reference internal" href="#laden-einer-vorlage-projektdatei-fur-ein-bestehendes-projekt">4.3. Laden einer Vorlage-Projektdatei für ein bestehendes Projekt</a></li>
+<li><a class="reference internal" href="#einbinden-eines-mit-autocad-erstellten-zeichnungsrahmens-in-ein-qgis-layout">4.4. Einbinden eines mit AutoCAD erstellten Zeichnungsrahmens in ein QGIS-Layout</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="vorheriges Kapitel">QKan - Kanaldaten aufbereiten mit QGIS</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>Diese Seite</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/qkan.rst.txt"
+            rel="nofollow">Quellcode anzeigen</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Schnellsuche</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Los" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, 2018, Hoettges.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/qkan.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

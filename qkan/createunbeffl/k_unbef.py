@@ -162,6 +162,10 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='S
         auswahl += u")"
     # Ende SQL-Krierien zur Auswahl der tezg-Flächen
 
+    # Erläuterung zur nachfolgenden SQL-Abfrage:
+    # 1. aus der Abfrage werden alle Datensätze ohne geom-Objekte ausgeschlossen
+    # 2. Wenn in einer tezg-Fläche keine Fläche liegt, wird einfach die tezg-Fläche übernommen
+    
     sql = u"""WITH flbef AS (
             SELECT 'fd_' || ltrim(tezg.flnam, 'ft_') AS flnam, 
               tezg.haltnam AS haltnam, tezg.neigkl AS neigkl, 
@@ -170,16 +174,16 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='S
               'Erzeugt mit Plugin Erzeuge unbefestigte Flaechen' AS kommentar, 
               MakeValid(tezg.geom) AS geot, 
               ST_Union(MakeValid(flaechen.geom)) AS geob
-            FROM tezg
-            INNER JOIN flaechen
+            FROM (SELECT * FROM tezg WHERE geom IS NOT NULL) AS tezg
+            LEFT JOIN (SELECT * FROM flaechen WHERE geom IS NOT NULL) AS flaechen
             ON Intersects(tezg.geom, flaechen.geom)
             WHERE 'fd_' || ltrim(tezg.flnam, 'ft_') not in 
-            (   SELECT flnam FROM flaechen WHERE flnam IS NOT NULL)
-                and tezg.geom IS NOT NULL and flaechen.geom IS NOT NULL{auswahl}
+            (   SELECT flnam FROM flaechen WHERE flnam IS NOT NULL){auswahl}
             GROUP BY tezg.pk)
             INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, kommentar, geom) 
              SELECT flnam AS flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter,
-            kommentar, CastToMultiPolygon(Difference(geot,geob)) AS geof FROM flbef
+            kommentar, 
+            CASE WHEN geob IS NULL  THEN geot ELSE CastToMultiPolygon(Difference(geot,geob)) END AS geof FROM flbef
             WHERE area(geof) > 0.5 AND geof IS NOT NULL""".format(auswahl=auswahl)
 
     logger.debug(u'QKan.k_unbef (3) - liste_selAbflparamTeilgeb = \n{}'.format(str(liste_selAbflparamTeilgeb)))

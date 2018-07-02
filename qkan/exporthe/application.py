@@ -167,6 +167,7 @@ class ExportToHE:
         export_wehre = cb_set('export_wehre', self.dlg.cb_export_wehre, False)
         export_flaechenrw = cb_set('export_flaechenrw', self.dlg.cb_export_flaechenrw, True)
         export_einleitdirekt = cb_set('export_einleitdirekt', self.dlg.cb_export_einleitdirekt, True)
+        export_aussengebiete = cb_set('export_aussengebiete', self.dlg.cb_export_aussengebiete, True)
         export_abflussparameter = cb_set('export_abflussparameter', self.dlg.cb_export_abflussparameter, True)
         export_regenschreiber = cb_set('export_regenschreiber', self.dlg.cb_export_regenschreiber, False)
         export_rohrprofile = cb_set('export_rohrprofile', self.dlg.cb_export_rohrprofile, False)
@@ -181,6 +182,7 @@ class ExportToHE:
         modify_wehre = cb_set('modify_wehre', self.dlg.cb_modify_wehre, False)
         modify_flaechenrw = cb_set('modify_flaechenrw', self.dlg.cb_modify_flaechenrw, False)
         modify_einleitdirekt = cb_set('modify_einleitdirekt', self.dlg.cb_modify_einleitdirekt, False)
+        modify_aussengebiete = cb_set('modify_aussengebiete', self.dlg.cb_modify_aussengebiete, False)
         modify_abflussparameter = cb_set('modify_abflussparameter', self.dlg.cb_modify_abflussparameter, False)
         modify_regenschreiber = cb_set('modify_regenschreiber', self.dlg.cb_modify_regenschreiber, False)
         modify_rohrprofile = cb_set('modify_rohrprofile', self.dlg.cb_modify_rohrprofile, False)
@@ -271,6 +273,7 @@ class ExportToHE:
         self.dlg.cb_export_wehre.setChecked(True)
         self.dlg.cb_export_flaechenrw.setChecked(True)
         self.dlg.cb_export_einleitdirekt.setChecked(True)
+        self.dlg.cb_export_aussengebiete.setChecked(True)
         self.dlg.cb_export_abflussparameter.setChecked(True)
         self.dlg.cb_export_regenschreiber.setChecked(True)
         self.dlg.cb_export_rohrprofile.setChecked(True)
@@ -288,6 +291,7 @@ class ExportToHE:
         self.dlg.cb_modify_wehre.setChecked(True)
         self.dlg.cb_modify_flaechenrw.setChecked(True)
         self.dlg.cb_modify_einleitdirekt.setChecked(True)
+        self.dlg.cb_modify_aussengebiete.setChecked(True)
         self.dlg.cb_modify_abflussparameter.setChecked(True)
         self.dlg.cb_modify_regenschreiber.setChecked(True)
         self.dlg.cb_modify_rohrprofile.setChecked(True)
@@ -305,6 +309,7 @@ class ExportToHE:
         self.dlg.cb_export_wehre.setChecked(False)
         self.dlg.cb_export_flaechenrw.setChecked(False)
         self.dlg.cb_export_einleitdirekt.setChecked(False)
+        self.dlg.cb_export_aussengebiete.setChecked(False)
         self.dlg.cb_export_abflussparameter.setChecked(False)
         self.dlg.cb_export_regenschreiber.setChecked(False)
         self.dlg.cb_export_rohrprofile.setChecked(False)
@@ -322,6 +327,7 @@ class ExportToHE:
         self.dlg.cb_modify_wehre.setChecked(False)
         self.dlg.cb_modify_flaechenrw.setChecked(False)
         self.dlg.cb_modify_einleitdirekt.setChecked(False)
+        self.dlg.cb_modify_aussengebiete.setChecked(False)
         self.dlg.cb_modify_abflussparameter.setChecked(False)
         self.dlg.cb_modify_regenschreiber.setChecked(False)
         self.dlg.cb_modify_rohrprofile.setChecked(False)
@@ -531,18 +537,18 @@ class ExportToHE:
         self.dlg.cb_autokorrektur.setChecked(autokorrektur)
 
         # Festlegung des Fangradius
+        # Kann über Menü "Optionen" eingegeben werden
         if 'fangradius' in self.config:
             fangradius = self.config['fangradius']
         else:
             fangradius = u'0.1'
-        self.dlg.tf_fangradius.setText(str(fangradius))
 
         # Mindestflächengröße
+        # Kann über Menü "Optionen" eingegeben werden
         if 'mindestflaeche' in self.config:
             mindestflaeche = self.config['mindestflaeche']
         else:
             mindestflaeche = u'0.5'
-        self.dlg.tf_mindestflaeche.setText(str(mindestflaeche))
 
         self.dlg.lw_teilgebiete.itemClicked.connect(self.lw_teilgebieteClick)
         self.countselection()
@@ -569,9 +575,6 @@ class ExportToHE:
             datenbanktyp = 'spatialite'
             autokorrektur = self.dlg.cb_autokorrektur.isChecked()
 
-            mindestflaeche = self.dlg.tf_mindestflaeche.text()
-            fangradius = self.dlg.tf_fangradius.text()
-
             check_export = {}
             check_export['export_schaechte'] = self.dlg.cb_export_schaechte.isChecked()
             check_export['export_auslaesse'] = self.dlg.cb_export_auslaesse.isChecked()
@@ -581,6 +584,7 @@ class ExportToHE:
             check_export['export_wehre'] = self.dlg.cb_export_wehre.isChecked()
             check_export['export_flaechenrw'] = self.dlg.cb_export_flaechenrw.isChecked()
             check_export['export_einleitdirekt'] = self.dlg.cb_export_einleitdirekt.isChecked()
+            check_export['export_aussengebiete'] = self.dlg.cb_export_aussengebiete.isChecked()
             check_export['export_abflussparameter'] = self.dlg.cb_export_abflussparameter.isChecked()
             check_export['export_regenschreiber'] = self.dlg.cb_export_regenschreiber.isChecked()
             check_export['export_rohrprofile'] = self.dlg.cb_export_rohrprofile.isChecked()
@@ -595,6 +599,7 @@ class ExportToHE:
             check_export['modify_wehre'] = self.dlg.cb_modify_wehre.isChecked()
             check_export['modify_flaechenrw'] = self.dlg.cb_modify_flaechenrw.isChecked()
             check_export['modify_einleitdirekt'] = self.dlg.cb_modify_einleitdirekt.isChecked()
+            check_export['modify_aussengebiete'] = self.dlg.cb_modify_aussengebiete.isChecked()
             check_export['modify_abflussparameter'] = self.dlg.cb_modify_abflussparameter.isChecked()
             check_export['modify_regenschreiber'] = self.dlg.cb_modify_regenschreiber.isChecked()
             check_export['modify_rohrprofile'] = self.dlg.cb_modify_rohrprofile.isChecked()

@@ -168,12 +168,6 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
 
     # progress_bar.setValue(1)
 
-    # SpatialIndex anlegen
-    sql = u"SELECT CreateSpatialIndex('einleit','geom')"
-
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (1)'):
-        return False
-
     # Löschen von Datensätzen ohne Linienobjekt
     if deletelinkGeomNone:
         sql = u"""DELETE FROM linksw WHERE glink IS NULL"""
@@ -223,17 +217,6 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
 
     # 3. Haltungen in "einleit" eintragen (ohne Einschränkung auf auswahl)
 
-    # 3.1 Index erzeugen
-
-    sql = u"""CREATE INDEX IF NOT EXISTS ind_einleit_elnam ON einleit (elnam)"""
-
-    logger.debug(u'\nSQL-4c:\n{}\n'.format(sql))
-
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (5)'):
-        return False
-
-    # progress_bar.setValue(80)
-
     # 3.2 Eintrag vornehmen
 
     sql = u"""WITH missing AS
@@ -258,6 +241,88 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     fortschritt(u'Ende...', 1)
     # progress_bar.setValue(100)
     # status_message.setText(u"Bereinigung Einzeleinleiter-Verknüpfungen abgeschlossen.")
+    # status_message.setLevel(QgsMessageBar.SUCCESS)
+
+    return True
+
+
+def updatelinkageb(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
+    # Datenvorbereitung: Verknüpfung von Aussengebiet zu Schacht wird durch Tabelle "linkageb"
+    # repräsentiert. Diese Zuordnung wird zunächst in "aussengebiete.schnam" übertragen.
+
+    # Löschen von Datensätzen ohne Linienobjekt
+    if deletelinkGeomNone:
+        sql = u"""DELETE FROM linkageb WHERE glink IS NULL"""
+
+        if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkageb (2)'):
+            return False
+
+    # 1. Aussengebiet in "linkageb" eintragen (ohne Einschränkung auf auswahl)
+
+    sql = u"""WITH missing AS
+        (   SELECT lg.pk
+            FROM linkageb AS lg
+            LEFT JOIN aussengebiete AS ag
+            ON lg.gebnam = ag.gebnam
+            WHERE ag.pk IS NULL OR NOT within(StartPoint(lg.glink), ag.geom))
+        UPDATE linkageb SET gebnam =
+        (   SELECT gebnam
+            FROM aussengebiete AS ag
+            WHERE within(StartPoint(linkageb.glink),ag.geom))
+        WHERE linkageb.pk IN missing""".format(eps=radiusHal)
+
+    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkageb (3)'):
+        return False
+
+    # progress_bar.setValue(30)
+
+    # 2. Schächte in "linkageb" eintragen (ohne Einschränkung auf auswahl)
+
+    sql = u"""WITH missing AS
+        (   SELECT lg.pk
+            FROM linkageb AS lg
+            LEFT JOIN schaechte AS sc
+            ON lg.schnam = sc.schnam
+            WHERE sc.pk IS NULL OR NOT contains(buffer(EndPoint(lg.glink),{eps}),sc.geom))
+        UPDATE linkageb SET schnam =
+        (   SELECT schnam
+            FROM schaechte AS sc
+            WHERE contains(buffer(EndPoint(linkageb.glink),{eps}),sc.geom))
+        WHERE linkageb.pk IN missing""".format(eps=radiusHal)
+
+    logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
+
+    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkageb (4)'):
+        return False
+
+    # progress_bar.setValue(60)
+
+    # 3. Schächte in "aussengebiete" eintragen (ohne Einschränkung auf auswahl)
+
+    # 3.2 Eintrag vornehmen
+
+    sql = u"""WITH missing AS
+        (   SELECT ag.pk
+            FROM aussengebiete AS ag
+            INNER JOIN linkageb AS lg
+            ON ag.gebnam = lg.gebnam
+            WHERE (ag.schnam IS NULL AND lg.schnam IS NOT NULL) OR ag.schnam <> lg.schnam)
+        UPDATE aussengebiete SET schnam =
+        (   SELECT schnam
+            FROM linkageb AS lg
+            WHERE aussengebiete.gebnam = lg.gebnam)
+        WHERE aussengebiete.pk IN missing"""
+
+    logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
+
+    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkageb (6)'):
+        return False
+
+    dbQK.commit()
+
+    fortschritt(u'Ende...', 1)
+    # progress_bar.setValue(100)
+    # status_message.setText(u"Bereinigung Aussengebiete-Verknüpfungen abgeschlossen.")
     # status_message.setLevel(QgsMessageBar.SUCCESS)
 
     return True
