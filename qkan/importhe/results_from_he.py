@@ -41,7 +41,7 @@ from qgis.utils import iface, pluginDirectory
 from qkan.database.dbfunc import DBConnection
 from qkan.database.fbfunc import FBConnection
 
-from qkan.database.qgis_utils import fortschritt, fehlermeldung
+from qkan.database.qkan_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger(u'QKan')
 

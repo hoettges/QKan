@@ -39,7 +39,7 @@ from application_dialog import CreateUnbefFlDialog
 from k_unbef import createUnbefFlaechen
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qgis_utils import get_database_QKan, fortschritt, fehlermeldung
+from qkan.database.qkan_utils import get_database_QKan, fortschritt, fehlermeldung
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')

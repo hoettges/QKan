@@ -33,16 +33,19 @@ from qgis.utils import iface
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.fbfunc import FBConnection
-from qkan.database.qgis_utils import fortschritt, fehlermeldung, meldung, checknames
+from qkan.database.qkan_utils import fortschritt, fehlermeldung, meldung, checknames
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw, updatelinkageb
 
 # Referenzlisten
 from qkan.database.reflists import abflusstypen
-
+from qkan.database.qkan_utils import versionolder
 
 logger = logging.getLogger('QKan')
 
 progress_bar = None
+
+
+# Hauptprogramm ---------------------------------------------------------------------------------------------
 
 def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autokorrektur, 
                      fangradius=0.1, mindestflaeche=0.5 , datenbanktyp=u'spatialite', check_export={}):
@@ -139,8 +142,10 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
     # vergeben werden!!! Ein Grund ist, dass (u.a.?) die Tabelle "tabelleninhalte" mit verschiedenen
     # Tabellen verknuepft ist und dieser ID eindeutig sein muss.
 
-    dbHE.sql(u"SELECT NEXTID FROM ITWH$PROGINFO")
-    nextid = int(dbHE.fetchone()[0]) + 1
+    dbHE.sql(u"SELECT NEXTID, VERSION FROM ITWH$PROGINFO")
+    data = dbHE.fetchone()
+    nextid = int(data[0]) + 1
+    heDBVersion = data[1].split('.')
 
     # --------------------------------------------------------------------------------------------
     # Export der Schaechte
@@ -1578,6 +1583,18 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         nr0 = nextid
 
         fortschritt(u'Export Einzeleinleiter (direkt)...', 0.92)
+
+        # Varianten abhängig von HE-Version
+        if versionolder(heDBVersion[0:2], [7, 9], 2):
+            fieldsnew = ''
+            attrsnew = ''
+            valuesnew = ''
+        else:
+            fieldsnew = ', ZUFLUSSOBERERSCHACHT = 0'
+            attrsnew =  ', ZUFLUSSOBERERSCHACHT'
+            valuesnew = ', 0'
+
+
         for b in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
@@ -1597,14 +1614,14 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                     ZUFLUSSMODELL={zuflussmodell}, ZUFLUSSDIREKT={zuflussdirekt}, 
                     ZUFLUSS={zufluss}, PLANUNGSSTATUS={planungsstatus},
                     ABRECHNUNGSZEITRAUM={abrechnungszeitraum}, ABZUG={abzug},
-                    LASTMODIFIED='{createdat}'
+                    LASTMODIFIED='{createdat}'{fieldsnew}
                     WHERE NAME='{elnam}';
                     """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
                              abwasserart = 0, einwohner = einwohner, wverbrauch = wverbrauch, herkunft = herkunft,
                              stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, 
                              zuflussmodell = 0, zuflussdirekt = zuflussdirekt, zufluss = 0, planungsstatus = 0, elnam = elnam[:27],
                              abrechnungszeitraum = 365, abzug = 0,
-                             createdat = createdat)
+                             createdat = createdat, fieldsnew = fieldsnew)
 
 
                 if not dbHE.sql(sql, u'dbHE: export_einleitdirekt (1)'):
@@ -1620,14 +1637,14 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                     STUNDENMITTEL, FREMDWASSERZUSCHLAG, FAKTOR, GESAMTFLAECHE,
                     ZUFLUSSMODELL, ZUFLUSSDIREKT, ZUFLUSS, PLANUNGSSTATUS, NAME,
                     ABRECHNUNGSZEITRAUM, ABZUG,
-                    LASTMODIFIED, ID) 
+                    LASTMODIFIED, ID{attrsnew}) 
                   SELECT
                     {xel}, {yel}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
                     {abwasserart}, {einwohner}, {wverbrauch}, {herkunft},
                     {stdmittel}, {fremdwas}, {faktor}, {flaeche},
                     {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}',
                     {abrechnungszeitraum}, {abzug},
-                    '{createdat}', {nextid}
+                    '{createdat}', {nextid}{valuesnew}
                   FROM RDB$DATABASE
                   WHERE '{elnam}' NOT IN (SELECT NAME FROM EINZELEINLEITER);
               """.format(xel = xel, yel = yel, zuordnunggesperrt = 0, zuordnunabhezg = 1,  haltnam = haltnam,
@@ -1635,7 +1652,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                          stdmittel = stdmittel, fremdwas = fremdwas, faktor = 1, flaeche = 0, 
                          zuflussmodell = 0, zuflussdirekt = zuflussdirekt, zufluss = 0, planungsstatus = 0, elnam = elnam[:27],
                          abrechnungszeitraum = 365, abzug = 0,
-                         createdat = createdat, nextid = nextid)
+                         createdat = createdat, nextid = nextid, attrsnew = attrsnew, valuesnew = valuesnew)
 
                 if not dbHE.sql(sql, u'dbHE: export_einleitdirekt (2)'):
                     del dbQK

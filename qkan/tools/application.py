@@ -41,7 +41,7 @@ from application_dialog import QgsadaptDialog, QKanOptionsDialog
 from k_tools import qgsadapt
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qgis_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u'QKan')
@@ -172,7 +172,19 @@ class QgsUpdate:
 
 
     def selectFile_projectTemplate(self):
-        """DYNA (*.ein) -datei auswählen"""
+        """Vorlage-Projektdatei auswählen"""
+
+        self.setPathToTemplateDir = self.dlg_pr.cb_setPathToTemplateDir.isChecked()
+        if self.setPathToTemplateDir:
+            self.templateDir = os.path.join(pluginDirectory('qkan'), u"database/templates")
+        else:
+            try:
+                self.templateDir = os.path.dirname(self.database_QKan)
+            except:
+                logger.error('Programmfehler in tools.run_qgsadapt:\nPfad konnte nicht auf ' + \
+                             'database_QKan gesetzt werden.\n database_QKan = {}'.format(
+                               self.database_QKan))
+                self.templateDir = ''
 
         filename = QFileDialog.getOpenFileName(self.dlg_pr,
                                                "Vorlage für zu erstellende Projektdatei auswählen",
@@ -193,18 +205,18 @@ class QgsUpdate:
         # Formularfeld Datenbank
 
         # Falls eine Datenbank angebunden ist, wird diese zunächst in das Formular eingetragen.
-        database_QKan, epsg = get_database_QKan(silent = True)
+        self.database_QKan, epsg = get_database_QKan(silent = True)
 
-        if database_QKan:
-            self.default_dir = os.path.dirname(database_QKan)       # bereits geladene QKan-Datenbank übernehmen
+        if self.database_QKan:
+            self.default_dir = os.path.dirname(self.database_QKan)       # bereits geladene QKan-Datenbank übernehmen
         elif 'database_QKan' in self.config:
-            database_QKan = self.config['database_QKan']
-            self.dlg_pr.tf_qkanDB.setText(database_QKan)
-            self.default_dir = os.path.dirname(database_QKan)
+            self.database_QKan = self.config['database_QKan']
+            self.dlg_pr.tf_qkanDB.setText(self.database_QKan)
+            self.default_dir = os.path.dirname(self.database_QKan)
         else:
-            database_QKan = ''
+            self.database_QKan = ''
             self.default_dir = '.'
-        self.dlg_pr.tf_qkanDB.setText(database_QKan)
+        self.dlg_pr.tf_qkanDB.setText(self.database_QKan)
 
         # Formularfeld Vorlagedatei
         if 'projectTemplate' in self.config:
@@ -220,19 +232,10 @@ class QgsUpdate:
 
         # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen 
         if 'setPathToTemplateDir' in self.config:
-            setPathToTemplateDir = self.config['setPathToTemplateDir']
+            self.setPathToTemplateDir = self.config['setPathToTemplateDir']
         else:
-            setPathToTemplateDir = True
-        self.dlg_pr.cb_setPathToTemplateDir.setChecked(setPathToTemplateDir)
-        if setPathToTemplateDir:
-            self.templateDir = os.path.join(pluginDirectory('qkan'), u"database/templates")
-        else:
-            try:
-                self.templateDir = os.path.dirname(database_QKan)
-            except:
-                logger.error('Programmfehler in tools.run_qgsadapt:\nPfad konnte nicht auf ' + \
-                             'database_QKan gesetzt werden.\n database_QKan = {}'.format(database_QKan))
-                self.templateDir = ''
+            self.setPathToTemplateDir = True
+        self.dlg_pr.cb_setPathToTemplateDir.setChecked(self.setPathToTemplateDir)
 
         # Option: QKan-Datenbank aktualisieren
         if 'qkanDBUpdate' in self.config:
@@ -257,24 +260,25 @@ class QgsUpdate:
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
             projectTemplate = self.dlg_pr.tf_projectTemplate.text()
-            database_QKan = self.dlg_pr.tf_qkanDB.text()
+            self.database_QKan = self.dlg_pr.tf_qkanDB.text()
             projectfile = self.dlg_pr.tf_projectFile.text()
-            setPathToTemplateDir = self.dlg_pr.cb_setPathToTemplateDir.isChecked()
+            self.setPathToTemplateDir = self.dlg_pr.cb_setPathToTemplateDir.isChecked()
             qkanDBUpdate = self.dlg_pr.cb_qkanDBUpdate.isChecked()
 
 
             # Konfigurationsdaten schreiben -----------------------------------------------------------
 
             self.config['projectTemplate'] = projectTemplate
-            self.config['database_QKan'] = database_QKan
+            self.config['database_QKan'] = self.database_QKan
             self.config['projectfile'] = projectfile
-            self.config['setPathToTemplateDir'] = setPathToTemplateDir
+            self.config['setPathToTemplateDir'] = self.setPathToTemplateDir
             self.config['qkanDBUpdate'] = qkanDBUpdate
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-            qgsadapt(projectTemplate, database_QKan, epsg, projectfile, setPathToTemplateDir, u'SpatiaLite')
+            qgsadapt(projectTemplate, self.database_QKan, epsg, projectfile, self.setPathToTemplateDir, 
+                     u'SpatiaLite')
 
     # ----------------------------------------------------------------------------------------------------------
     # Allgemeine Optionen

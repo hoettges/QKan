@@ -29,7 +29,7 @@ from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt4.QtGui import QFileDialog  # (jh, 20.09.2016)
 from qgis.core import QgsProject
 from qgis.gui import QgsGenericProjectionSelector
-from qkan.database.qgis_utils import get_database_QKan
+from qkan.database.qkan_utils import get_database_QKan
 
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
@@ -241,12 +241,6 @@ class ImportFromHE:
             projectfile = ''
         self.dlg_he.tf_projectFile.setText(projectfile)
 
-        if 'check_copy_forms' in self.config:
-            check_copy_forms = self.config['check_copy_forms']
-        else:
-            check_copy_forms = True
-        self.dlg_he.cb_copy_forms.setChecked(check_copy_forms)
-
         if 'check_inittab' in self.config:
             check_inittab = self.config['check_inittab']
         else:
@@ -274,7 +268,6 @@ class ImportFromHE:
             database_QKan = self.dlg_he.tf_qkanDB.text()
             projectfile = self.dlg_he.tf_projectFile.text()
             self.epsg = self.dlg_he.tf_epsg.text()
-            check_copy_forms = self.dlg_he.cb_copy_forms.isChecked()
             check_inittab = self.dlg_he.cb_import_tabinit.isChecked()
 
             # Konfigurationsdaten schreiben
@@ -283,7 +276,6 @@ class ImportFromHE:
             self.config['database_QKan'] = database_QKan
             self.config['database_HE'] = database_HE
             self.config['projectfile'] = projectfile
-            self.config['check_copy_forms'] = check_copy_forms
             self.config['check_inittab'] = check_inittab
 
             with open(self.configfil, 'w') as fileconfig:
@@ -291,7 +283,7 @@ class ImportFromHE:
 
             # Start der Verarbeitung
 
-            importKanaldaten(database_HE, database_QKan, projectfile, self.epsg, check_copy_forms, check_inittab)
+            importKanaldaten(database_HE, database_QKan, projectfile, self.epsg, check_inittab)
 
     # Formularfunktionen -------------------------------------------------------
 

@@ -46,7 +46,7 @@ from qgis.utils import iface, pluginDirectory
 from qkan.database.dbfunc import DBConnection
 from qkan.database.fbfunc import FBConnection
 
-from qkan.database.qgis_utils import fortschritt, fehlermeldung
+from qkan.database.qkan_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger(u'QKan')
 
@@ -54,7 +54,7 @@ logger = logging.getLogger(u'QKan')
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_forms, check_tabinit,
+def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_tabinit,
                      dbtyp=u'SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -1135,15 +1135,26 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         tabliste = [u'einleit', u'einzugsgebiete', u'flaechen', u'haltungen', u'linkfl', u'linksw', 
                     u'pumpen', u'schaechte', u'teilgebiete', u'tezg', u'wehre']
 
+        # Liste der QKan-Formulare, um individuell erstellte Formulare von der Bearbeitung auszuschliessen
+        formsliste = ['qkan_abflussparameter.ui', 'qkan_anbindungageb.ui', 'qkan_anbindungeinleit.ui', 
+                      'qkan_anbindungflaechen.ui', 'qkan_auslaesse.ui', 'qkan_auslasstypen.ui', 
+                      'qkan_aussengebiete.ui', 'qkan_bodenklassen.ui', 'qkan_einleit.ui', 
+                      'qkan_einzugsgebiete.ui', 'qkan_entwaesserungsarten.ui', 'qkan_flaechen.ui', 
+                      'qkan_haltungen.ui', 'qkan_profildaten.ui', 'qkan_profile.ui', 'qkan_pumpen.ui', 
+                      'qkan_pumpentypen.ui', 'qkan_schaechte.ui', 'qkan_simulationsstatus.ui', 
+                      'qkan_speicher.ui', 'qkan_speicherkennlinien.ui', 'qkan_swref.ui', 
+                      'qkan_teilgebiete.ui', 'qkan_tezg.ui', 'qkan_wehre.ui']
+
         # Lesen der Projektdatei ------------------------------------------------------------------
         qgsxml = ET.parse(projecttemplate)
         root = qgsxml.getroot()
 
-        for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
+        # Projektionssystem anpassen --------------------------------------------------------------
 
-            # Nur QKan-Tabellen bearbeiten
+        for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
             tag_datasource = tag_maplayer.find(u"./datasource")
             tex = tag_datasource.text
+            # Nur QKan-Tabellen bearbeiten
             if tex[tex.index(u'table="') + 7:].split(u'" ')[0] in tabliste:
 
                 # <extend> löschen
@@ -1169,6 +1180,18 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                         elem = ET.SubElement(tag_spatialrefsys, u'ellipsoidacronym')
                         elem.text = ellipsoidacronym
 
+        # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
+
+        formspath =  os.path.join(pluginDirectory('qkan'), u"forms")
+        for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
+            tag_editform = tag_maplayer.find(u"./editform")
+            dateiname = os.path.basename(tag_editform.text)
+            if dateiname in formsliste:
+                # Nur QKan-Tabellen bearbeiten
+                tag_editform.text = os.path.join(formspath,dateiname)
+
+        # Zoom für Kartenfenster einstellen -------------------------------------------------------
+
         for tag_extent in root.findall(u".//mapcanvas/extent"):
             elem = tag_extent.find(u"./xmin")
             elem.text = u'{:.3f}'.format(zoomxmin)
@@ -1178,6 +1201,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
             elem.text = u'{:.3f}'.format(zoomxmax)
             elem = tag_extent.find(u"./ymax")
             elem.text = u'{:.3f}'.format(zoomymax)
+
+        # Projektionssystem anpassen --------------------------------------------------------------
 
         for tag_spatialrefsys in root.findall(u".//mapcanvas/destinationsrs/spatialrefsys"):
             tag_spatialrefsys.clear()
@@ -1196,6 +1221,8 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
                 elem = ET.SubElement(tag_spatialrefsys, u'ellipsoidacronym')
                 elem.text = ellipsoidacronym
 
+        # Pfad zur QKan-Datenbank anpassen
+
         for tag_datasource in root.findall(u".//projectlayers/maplayer/datasource"):
             text = tag_datasource.text
             tag_datasource.text = u"dbname='" + datasource + u"' " + text[text.find(u'table='):]
@@ -1203,20 +1230,6 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_copy_f
         qgsxml.write(projectfile)  # writing modified project file
         logger.debug(u'Projektdatei: {}'.format(projectfile))
         # logger.debug(u'encoded string: {}'.format(tex))
-
-        if check_copy_forms:
-            if u'eingabemasken' not in os.listdir(projectpath):
-                os.mkdir(os.path.join(projectpath, u'eingabemasken'))
-            formpath = os.path.join(projectpath, u'eingabemasken')
-            formlist = os.listdir(formpath)
-            templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
-
-            logger.debug(u"Eingabeformulare kopieren: {} -> {}".format(formpath, templatepath))
-
-            for formfile in glob.iglob(os.path.join(templatepath, u'*.ui')):
-                # Wenn Datei im Verzeichnis 'eingabemasken' noch nicht vorhanden ist
-                if formfile not in formlist:
-                    shutil.copy2(formfile, formpath)
 
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen

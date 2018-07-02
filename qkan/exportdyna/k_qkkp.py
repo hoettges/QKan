@@ -32,7 +32,7 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qgis_utils import fortschritt, fehlermeldung, meldung, checknames
+from qkan.database.qkan_utils import fortschritt, fehlermeldung, meldung, checknames
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 

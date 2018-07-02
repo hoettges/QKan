@@ -138,12 +138,6 @@ class ImportFromDyna:
         self.dlg.tf_projectFile.setText(projectfile)
         self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
 
-        if 'check_copy_forms' in self.config:
-            check_copy_forms = self.config['check_copy_forms']
-        else:
-            check_copy_forms = True
-        self.dlg.cb_copy_forms.setChecked(check_copy_forms)
-
         if 'check_inittab' in self.config:
             check_inittab = self.config['check_inittab']
         else:
@@ -258,7 +252,6 @@ class ImportFromDyna:
             database_QKan = self.dlg.tf_qkanDB.text()
             projectfile = self.dlg.tf_projectFile.text()
             self.epsg = self.dlg.tf_epsg.text()
-            check_copy_forms = self.dlg.cb_copy_forms.isChecked()
             check_inittab = self.dlg.cb_import_tabinit.isChecked()
 
 
@@ -268,7 +261,6 @@ class ImportFromDyna:
             self.config['database_QKan'] = database_QKan
             self.config['dynafile'] = dynafile
             self.config['projectfile'] = projectfile
-            self.config['check_copy_forms'] = check_copy_forms
             self.config['check_inittab'] = check_inittab
 
             with open(self.configfil, 'w') as fileconfig:
@@ -277,4 +269,4 @@ class ImportFromDyna:
 
             # Start der Verarbeitung
 
-            importKanaldaten(dynafile, database_QKan, projectfile, self.epsg, check_copy_forms, check_inittab)
+            importKanaldaten(dynafile, database_QKan, projectfile, self.epsg, check_inittab)

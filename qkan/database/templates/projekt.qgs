@@ -1,6 +1,6 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan Version 2.5.2" version="2.18.17">
-  <title>QKan Version 2.5.2</title>
+<qgis projectname="QKan Version 2.5.3" version="2.18.17">
+  <title>QKan Version 2.5.3</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <layer-tree-group expanded="1" checked="Qt::Checked" name="">
@@ -109,10 +109,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>3550324.66373375616967678</xmin>
-      <ymin>5799296.5244417255744338</ymin>
-      <xmax>3551033.48851734213531017</xmax>
-      <ymax>5799670.2294435566291213</ymax>
+      <xmin>3550311.87031083274632692</xmin>
+      <ymin>5799714.57499780505895615</ymin>
+      <xmax>3550489.07650672923773527</xmax>
+      <ymax>5799808.00124826282262802</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -533,8 +533,8 @@
         <edittype widgetv2type="TextEdit" name="pk">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="flnam">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueRelation" name="flnam">
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="flnam" constraint="" Layer="flaechen20170504083519678" Value="flnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="tezgnam">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="flnam" constraint="" Layer="tezg20171204105753202" Value="flnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
@@ -875,7 +875,7 @@
           <column width="-1" hidden="0" type="field" name="tezgnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/anbindungflaechen.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_anbindungflaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -945,8 +945,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="pk">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="elnam">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueRelation" name="elnam">
+          <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="elnam" constraint="" Layer="einleit20171004110830029" Value="elnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="haltnam">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="haltnam" constraint="" Layer="haltungen20161016203756230" Value="haltnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
@@ -1277,7 +1277,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="gbuf"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/anbindungeinleit.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_anbindungeinleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1697,7 +1697,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/auslaesse.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_auslaesse.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1766,7 +1766,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>false</geographicflag>
+          <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1849,7 +1849,7 @@ def my_form_open(dialog, layer, feature):
           <column width="267" hidden="0" type="field" name="apnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/abflussparameter.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_abflussparameter.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1908,7 +1908,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>false</geographicflag>
+          <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1961,7 +1961,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/auslasstypen.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_auslasstypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2298,6 +2298,7 @@ def my_form_open(dialog, layer, feature):
       <SingleCategoryDiagramRenderer diagramType="Histogram" sizeLegend="0" attributeLegend="1">
         <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" sizeScale="0,0,0,0,0,0" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1e+08" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" lineSizeScale="0,0,0,0,0,0" sizeType="MM" lineSizeType="MM" minScaleDenominator="inf">
           <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
+          <attribute field="" color="#000000" label=""/>
         </DiagramCategory>
         <symbol alpha="1" clip_to_extent="1" type="marker" name="sizeSymbol">
           <layer pass="0" class="SimpleMarker" locked="0">
@@ -2323,7 +2324,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform></annotationform>
+      <annotationform>.</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="gebnam" index="1" name=""/>
@@ -2360,10 +2361,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="flaeche"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/aussengebiete.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_aussengebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath></editforminitfilepath>
+      <editforminitfilepath>.</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -2499,7 +2500,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/bodenklassen.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_bodenklassen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2859,7 +2860,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/einleit.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_einleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2916,7 +2917,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>false</geographicflag>
+          <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -2973,7 +2974,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/entwaesserungsarten.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_entwaesserungsarten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -3508,7 +3509,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="abflusstyp"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/flaechen.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_flaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -4304,7 +4305,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/haltungen.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -4779,7 +4780,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/haltungen.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -5185,7 +5186,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="schnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/anbindungageb.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_anbindungageb.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5285,7 +5286,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/profildaten.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_profildaten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5390,7 +5391,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/profile.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_profile.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5835,7 +5836,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="pnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/pumpen.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_pumpen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5938,7 +5939,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/pumpentypen.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_pumpentypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -6348,7 +6349,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/schaechte.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -6781,7 +6782,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/schaechte.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7381,7 +7382,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/schaechte.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -7814,7 +7815,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/speicher.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_speicher.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7936,7 +7937,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/simulationsstatus.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_simulationsstatus.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8037,7 +8038,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/speicherkennlinien.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_speicherkennlinien.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8356,7 +8357,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="tgnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/teilgebiete.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_teilgebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8695,7 +8696,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/tezg.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_tezg.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -9198,7 +9199,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="wnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/wehre.ui</editform>
+      <editform>../../k_forms/eingabemasken/qkan_wehre.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>

@@ -41,7 +41,7 @@ from application_dialog import CreatelineflDialog, CreatelineswDialog, Assigntge
 from k_link import createlinkfl, createlinksw, assigntgeb, storegroup, reloadgroup
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qgis_utils import get_database_QKan, get_editable_layers, fehlermeldung
+from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 # Anbindung an Logging-System (Initialisierung in __init__)

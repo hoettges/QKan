@@ -22,7 +22,7 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__version__ = '2.5.2'
+__version__ = '2.5.3'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -35,7 +35,7 @@ import pyspatialite.dbapi2 as splite
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
-from qgis_utils import fortschritt, fehlermeldung
+from qkan_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger(u'QKan')
 
