@@ -31,12 +31,13 @@ from PyQt4.QtGui import QFileDialog, QListWidgetItem, QTableWidgetItem
 from qgis.core import QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry, QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface, pluginDirectory
+from qgis.gui import QgsGenericProjectionSelector
 
 # Initialize Qt resources from file resources.py
 # noinspection PyUnresolvedReferences 
 import resources
 # Import the code for the dialog
-from application_dialog import QgsadaptDialog
+from application_dialog import QgsadaptDialog, QKanOptionsDialog
 from k_tools import qgsadapt
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
@@ -77,6 +78,7 @@ class QgsUpdate:
 
         # Create the dialog (after translation) and keep reference
         self.dlg_pr = QgsadaptDialog()
+        self.dlg_op = QKanOptionsDialog()
 
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 12.06.2017)
@@ -102,10 +104,6 @@ class QgsUpdate:
             self.config = {'epsg': '25832'}  # Projektionssystem
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
-
-        self.dlg_pr.pb_selectProjectFile.clicked.connect(self.selectFile_projectFile)
-        self.dlg_pr.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
-        self.dlg_pr.pb_selectProjectTemplate.clicked.connect(self.selectFile_projectTemplate)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -134,10 +132,20 @@ class QgsUpdate:
             callback=self.run_qgsadapt, 
             parent=self.iface.mainWindow())
 
+        icon_qkanoptions_path = ':/plugins/qkan/tools/res/icon_qkanoptions.png'
+        Dummy.instance.add_action(
+            icon_qkanoptions_path, 
+            text=self.tr(u'Allgemeine Optionen'), 
+            callback=self.run_qkanoptions, 
+            parent=self.iface.mainWindow())
+
     def unload(self):
         pass
 
-    # Formularfunktionen --------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------------------------------
+    # Erstellen einer Projektdatei aus einer Vorlage
+
+    # 1. Formularfunktionen
 
     def selectFile_projectFile(self):
         """Zu erstellende Projektdatei festlegen"""
@@ -174,9 +182,8 @@ class QgsUpdate:
             os.chdir(os.path.dirname(filename))
             self.dlg_pr.tf_projectTemplate.setText(filename)
 
-
     # ----------------------------------------------------------------------------------------------------------
-    # Erstellen einer Projektdatei aus einer Vorlage
+    # 2. Aufruf des Formulars
 
     def run_qgsadapt(self):
         '''Erstellen einer Projektdatei aus einer Vorlage'''
@@ -234,6 +241,11 @@ class QgsUpdate:
             qkanDBUpdate = True
         self.dlg_pr.cb_qkanDBUpdate.setChecked(qkanDBUpdate)
 
+        # Ereignisse anbinden
+        self.dlg_pr.pb_selectProjectFile.clicked.connect(self.selectFile_projectFile)
+        self.dlg_pr.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
+        self.dlg_pr.pb_selectProjectTemplate.clicked.connect(self.selectFile_projectTemplate)
+
         # show the dialog
         self.dlg_pr.show()
         # Run the dialog event loop
@@ -263,3 +275,115 @@ class QgsUpdate:
                 fileconfig.write(json.dumps(self.config))
 
             qgsadapt(projectTemplate, database_QKan, epsg, projectfile, setPathToTemplateDir, u'SpatiaLite')
+
+    # ----------------------------------------------------------------------------------------------------------
+    # Allgemeine Optionen
+
+    # 1. Formularfunktionen
+
+    def selectKBS(self):
+        """KBS auswählen. Setzt das KBS für die weiteren Funktionen
+
+        :returns: void
+        """
+        projSelector = QgsGenericProjectionSelector()
+        projSelector.exec_()
+        erg = projSelector.selectedAuthId()
+        if len(erg.split(u':')) == 2:
+            self.dlg_op.tf_epsg.setText(erg.split(u':')[1])
+        else:
+            self.dlg_op.tf_epsg.setText(erg)
+
+    def fangradiusDefault(self):
+        self.dlg_op.tf_fangradius.setText('0.1')
+
+    def mindestflaecheDefault(self):
+        self.dlg_op.tf_mindestflaeche.setText('0.5')
+
+    def max_loopsDefault(self):
+        self.dlg_op.tf_max_loops.setText('1000')
+
+    # -----------------------------------------------------------------------------------------
+    # 2. Aufruf des Formulars
+
+    def run_qkanoptions(self):
+        '''Bearbeitung allgemeiner QKan-Optionen'''
+
+        # Formularfelder setzen -------------------------------------------------------------------------
+
+        # Fangradius für Anfang der Anbindungslinie
+        if 'fangradius' in self.config:
+            fangradius = self.config['fangradius']
+        else:
+            fangradius = u'0.1'
+        self.dlg_op.tf_fangradius.setText(str(fangradius))
+
+        # Mindestflächengröße
+        if 'mindestflaeche' in self.config:
+            mindestflaeche = self.config['mindestflaeche']
+        else:
+            mindestflaeche = u'0.5'
+        self.dlg_op.tf_mindestflaeche.setText(str(mindestflaeche))
+
+        # Maximalzahl Schleifendurchläufe
+        if 'max_loops' in self.config:
+            max_loops = self.config['max_loops']
+        else:
+            max_loops = '1000'
+        self.dlg_op.tf_max_loops.setText(str(max_loops))
+
+        # Optionen zum Typ der QKan-Datenbank
+        if 'datenbanktyp' in self.config:
+            datenbanktyp = self.config['datenbanktyp']
+        else:
+            datenbanktyp = u'spatialite'
+
+        if datenbanktyp == u'spatialite':
+            self.dlg_op.rb_spatialite.setChecked(True)
+        # elif datenbanktyp == u'postgis':
+            # self.dlg_op.rb_postgis.setChecked(True)
+
+        if 'epsg' in self.config:
+            self.epsg = self.config['epsg']
+        else:
+            self.epsg = u'25832'
+        self.dlg_op.tf_epsg.setText(self.epsg)
+
+        # Ereignisse anbinden
+
+        self.dlg_op.pb_fangradiusDefault.clicked.connect(self.fangradiusDefault)
+        self.dlg_op.pb_mindestflaecheDefault.clicked.connect(self.mindestflaecheDefault)
+        self.dlg_op.pb_max_loopsDefault.clicked.connect(self.max_loopsDefault)
+        self.dlg_op.pb_selectKBS.clicked.connect(self.selectKBS)
+
+        # show the dialog
+        self.dlg_op.show()
+        # Run the dialog event loop
+        result = self.dlg_op.exec_()
+
+        # See if OK was pressed
+        if result:
+
+            # Inhalte aus Formular lesen --------------------------------------------------------------
+
+            fangradius = self.dlg_op.tf_fangradius.text()
+            mindestflaeche = self.dlg_op.tf_mindestflaeche.text()
+            max_loops = self.dlg_op.tf_max_loops.text()
+            if self.dlg_op.rb_spatialite.isChecked():
+                datenbanktyp = u'spatialite'
+            # elif self.dlg_op.rb_postgis.isChecked():
+                # datenbanktyp = u'postgis'
+            else:
+                fehlermeldung(u"tools.application.run", 
+                              u"Fehlerhafte Option: \ndatenbanktyp = {}".format(repr(datenbanktyp)))
+            epsg = self.dlg_op.tf_epsg.text()
+
+            self.config['fangradius'] = fangradius
+            self.config['mindestflaeche'] = mindestflaeche
+            self.config['max_loops'] = max_loops
+            self.config['datenbanktyp'] = datenbanktyp
+            self.config['epsg'] = epsg
+
+            with open(self.configfil, 'w') as fileconfig:
+                # logger.debug(u"Config-Dictionary: {}".format(self.config))
+                fileconfig.write(json.dumps(self.config))

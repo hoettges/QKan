@@ -154,12 +154,6 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # Sowohl Flächen, die nicht als auch die, die verschnitten werden müssen
 
-    # SpatialIndex anlegen
-    sqlindex = u"SELECT CreateSpatialIndex('tezg','geom')"
-
-    if not dbQK.sql(sqlindex, u'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
-        return False
-
     # if not checkgeom(dbQK, 'tezg', 'geom', autokorrektur, liste_teilgebiete):
         # del dbQK
         # progress_bar.reset()
@@ -240,14 +234,6 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     # so dass in der Abfrage nach "update" nur die jeweils nächste Verbindung gefiltert wird. 
     # Da diese Abfrage nur für neu zu erstellende Verknüpfungen gelten soll (also noch kein Eintrag
     # im Feld "flaechen.haltnam" -> fl.haltnam -> tlink.linkhal -> t1.linkhal). 
-
-    # SpatialIndex anlegen
-    sqlindex = u"SELECT CreateSpatialIndex('haltungen','geom')"
-
-    if not dbQK.sql(sqlindex, u'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
-        del dbQK
-        progress_bar.reset()
-        return False
 
     # Varianten ohne und mit Beschränkung der Anbindungslinien auf die Haltungsfläche
 
@@ -441,12 +427,6 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
     # so dass in der Abfrage nach "update" nur die jeweils nächste Verbindung gefiltert wird. 
     # Da diese Abfrage nur für neu zu erstellende Verknüpfungen gelten soll (also noch kein Eintrag
     # im Feld "einleit.haltnam" -> sw.haltnam -> tlink.linkhal -> t1.linkhal). 
-
-    # SpatialIndex anlegen
-    sqlindex = u"SELECT CreateSpatialIndex('haltungen','geom')"
-
-    if not dbQK.sql(sqlindex, u'CreateSpatialIndex in der Tabelle "tezg" auf "geom"'):
-        return False
 
     sql = u"""WITH tlink AS
             (	SELECT sw.pk AS pk,

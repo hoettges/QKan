@@ -325,13 +325,13 @@ class LinkFl:
         """Reaktion auf Klick in Tabelle"""
 
         self.dlg_sw.cb_selHalActive.setChecked(True)
-        self.countselectionfl()
+        self.countselectionsw()
 
     def sw_lw_teilgebieteClick(self):
         """Reaktion auf Klick in Tabelle"""
 
         self.dlg_sw.cb_selTgbActive.setChecked(True)
-        self.countselectionfl()
+        self.countselectionsw()
 
     def sw_selHalActiveClick(self):
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
@@ -348,7 +348,7 @@ class LinkFl:
                 self.dlg_sw.lw_hal_entw.setItemSelected(item, False)
 
             # Anzahl in der Anzeige aktualisieren
-            self.countselectionfl()
+            self.countselectionsw()
 
     def sw_selTgbActiveClick(self):
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
@@ -365,7 +365,7 @@ class LinkFl:
                 self.dlg_sw.lw_teilgebiete.setItemSelected(item, False)
 
             # Anzahl in der Anzeige aktualisieren
-            self.countselectionfl()
+            self.countselectionsw()
 
     def countselectionsw(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
@@ -625,9 +625,9 @@ class LinkFl:
             mindestflaeche = self.config['mindestflaeche']
         else:
             mindestflaeche = u'0.5'
-        self.dlg_cl.tf_mindestflaeche.setText(str(mindestflaeche))
 
         # Fangradius für Anfang der Anbindungslinie
+        # Kann über Menü "Optionen" eingegeben werden
         if 'fangradius' in self.config:
             fangradius = self.config['fangradius']
         else:
@@ -675,7 +675,6 @@ class LinkFl:
             liste_hal_entw = self.listselecteditems(self.dlg_cl.lw_hal_entw)
             liste_teilgebiete = self.listselecteditems(self.dlg_cl.lw_teilgebiete)
             suchradius = self.dlg_cl.tf_suchradius.text()
-            mindestflaeche = self.dlg_cl.tf_mindestflaeche.text()
             if self.dlg_cl.rb_abstandkante.isChecked():
                 bezug_abstand = 'kante'
             elif self.dlg_cl.rb_abstandmittelpunkt.isChecked():
@@ -1129,11 +1128,11 @@ class LinkFl:
         self.dlg_ul.tf_qkDB.setText(database_QKan)
 
         # Festlegung des Fangradius
+        # Kann über Menü "Optionen" eingegeben werden
         if 'fangradius' in self.config:
             fangradius = self.config['fangradius']
         else:
             fangradius = u'0.1'
-        self.dlg_ul.tf_fangradius.setText(fangradius)
 
         # Löschen von Flächenverknüpfungen ohne Linienobjekt
         if 'deletelinkflGeomNone' in self.config:
@@ -1150,12 +1149,11 @@ class LinkFl:
         if result:
 
             # Inhalte aus Formular lesen
-            fangradius = self.dlg_ul.tf_fangradius.text()
             deletelinkflGeomNone = self.dlg_ul.cb_deleteGeomNone.isChecked()
 
             # config schreiben
-            self.config['fangradius'] = fangradius
             self.config['deletelinkflGeomNone'] = deletelinkflGeomNone
+            self.config['fangradius'] = fangradius
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))

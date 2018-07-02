@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/plugins/qkan/tools" >
         <file>res/icon_qgsadapt.png</file>
+        <file>res/icon_qkanoptions.png</file>
     </qresource>
 </RCC>

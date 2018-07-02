@@ -410,18 +410,18 @@ class ExportToKP:
         self.dlg.cb_autonummerierung_dyna.setChecked(autonummerierung_dyna)
 
         # Festlegung des Fangradius
+        # Kann über Menü "Optionen" eingegeben werden
         if 'fangradius' in self.config:
             fangradius = self.config['fangradius']
         else:
             fangradius = u'0.1'
-        self.dlg.tf_fangradius.setText(str(fangradius))
 
         # Mindestflächengröße
+        # Kann über Menü "Optionen" eingegeben werden
         if 'mindestflaeche' in self.config:
             mindestflaeche = self.config['mindestflaeche']
         else:
             mindestflaeche = u'0.5'
-        self.dlg.tf_mindestflaeche.setText(str(mindestflaeche))
 
         # Maximalzahl Schleifendurchläufe
         if 'max_loops' in self.config:
@@ -467,11 +467,8 @@ class ExportToKP:
             database_QKan = self.dlg.tf_QKanDB.text()
             dynafile = self.dlg.tf_KP_dest.text()
             template_dyna = self.dlg.tf_KP_template.text()
-            datenbanktyp = 'spatialite'
             autokorrektur = self.dlg.cb_autokorrektur.isChecked()
             autonummerierung_dyna = self.dlg.cb_autonummerierung_dyna.isChecked()
-            mindestflaeche = self.dlg.tf_mindestflaeche.text()
-            fangradius = self.dlg.tf_fangradius.text()
             if self.dlg.rb_flaechen.isChecked():
                 dynabef_choice = u'flaechen'
             elif self.dlg.rb_tezg.isChecked():
@@ -492,7 +489,6 @@ class ExportToKP:
             self.config['dynafile'] = dynafile
             self.config['template_dyna'] = template_dyna
             self.config['database_QKan'] = database_QKan
-            self.config['datenbanktyp'] = datenbanktyp
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['autokorrektur'] = autokorrektur
             self.config['autonummerierung_dyna'] = autonummerierung_dyna
