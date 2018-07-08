@@ -36,7 +36,6 @@ import datetime
 
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
-from qgis.utils import iface
 
 import pyspatialite.dbapi2 as splite
 from qgis.utils import iface, pluginDirectory
@@ -44,7 +43,7 @@ from qgis.utils import iface, pluginDirectory
 from PyQt4.QtGui import QProgressBar
 
 from qkan_database import createdbtables
-from qgis_utils import fortschritt, fehlermeldung
+from qkan_utils import fortschritt, fehlermeldung, versionolder
 
 logger = logging.getLogger(u'QKan')
 
@@ -78,7 +77,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.5.2'
+        self.actversion = '2.5.3'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
         if dbname is not None:
@@ -150,20 +149,6 @@ class DBConnection:
         Beendet die Datenbankverbindung.
         """
         self.consl.close()
-
-    # Hilfsprogramm zum Versionscheck
-    def versionolder(self, verlis):
-        """Prüft ob die QKan-Datenbank upgedated werden muss
-
-        :param verlis: Liste von Versionsnummern, höchstwertige zuerst
-        :type verlis:  integer
-        """
-        for v1, v2 in zip(self.versionlis, verlis):
-            if v1 < v2:
-                return True
-            elif v1 > v2:
-                return False
-        return False
 
     def attrlist(self, tablenam):
         """Gibt Spaltenliste zurück."""
@@ -276,7 +261,7 @@ class DBConnection:
         # ---------------------------------------------------------------------------------------------
         # Aktualisierung von Version 1.9.9 und früher
 
-        if self.versionolder([2, 0, 2]):
+        if versionolder(self.versionlis, [2, 0, 2]):
 
             # Tabelle einleit
             sqllis = [u"""CREATE TABLE IF NOT EXISTS einleit(
@@ -310,7 +295,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if self.versionolder([2, 1, 2]):
+        if versionolder(self.versionlis, [2, 1, 2]):
 
             attrlis = self.attrlist(u'linksw')
             if not attrlis:
@@ -338,7 +323,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if self.versionolder([2, 2, 0]):
+        if versionolder(self.versionlis, [2, 2, 0]):
             attrlis = self.attrlist(u'einleit')
             if not attrlis:
                 return False
@@ -378,7 +363,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if self.versionolder([2, 2, 1]):
+        if versionolder(self.versionlis, [2, 2, 1]):
 
             attrlis = self.attrlist(u'flaechen')
             if not attrlis:
@@ -394,7 +379,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if self.versionolder([2, 2, 2]):
+        if versionolder(self.versionlis, [2, 2, 2]):
 
             attrlis = self.attrlist(u'flaechen')
             if not attrlis:
@@ -410,7 +395,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if self.versionolder([2, 2, 3]):
+        if versionolder(self.versionlis, [2, 2, 3]):
 
             global progress_bar
             progress_bar = QProgressBar(iface.messageBar())
@@ -726,7 +711,7 @@ class DBConnection:
             self.versionlis = [2, 2, 3]
 
         # ---------------------------------------------------------------------------------------------------------
-        if self.versionolder([2, 2, 16]):
+        if versionolder(self.versionlis, [2, 2, 16]):
 
             sql = u"""
                 CREATE TABLE IF NOT EXISTS dynahal (
@@ -771,7 +756,7 @@ class DBConnection:
             self.versionlis = [2, 2, 16]
 
         # ---------------------------------------------------------------------------------------------------------
-        if self.versionolder([2, 4, 9]):
+        if versionolder(self.versionlis, [2, 4, 9]):
 
             sql = u'''DROP VIEW IF EXISTS "v_linkfl_check"'''
 
@@ -854,7 +839,7 @@ class DBConnection:
 
 
         # ---------------------------------------------------------------------------------------------------------
-        if self.versionolder([2, 5, 2]):
+        if versionolder(self.versionlis, [2, 5, 2]):
 
             # Einleitungen aus Aussengebieten ----------------------------------------------------------------
 

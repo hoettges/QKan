@@ -39,7 +39,7 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qgis_utils import checknames, fortschritt, fehlermeldung
+from qkan.database.qkan_utils import checknames, fortschritt, fehlermeldung
 
 # import tempfile
 

@@ -42,7 +42,7 @@ from qgis.PyQt.QtGui import QProgressBar
 from PyQt4.QtCore import QFileInfo
 
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qgis_utils import fortschritt, fehlermeldung
+from qkan.database.qkan_utils import fortschritt, fehlermeldung
 
 import xml.etree.ElementTree as ET
 
@@ -68,9 +68,6 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
 
     :setPathToTemplateDir:      Option, ob das Suchverzeichnis auf das Template-Verzeichnis gesetzt werden soll. 
     :type setPathToTemplateDir: Boolean
-
-    :copy_forms:                Option, ob die Eingabeformulare kopiert oder, falls vorhanden, aktualisiert werden sollen. 
-    :type copy_forms:           Boolean
 
     :dbtyp:                     Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:                String
@@ -166,15 +163,26 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     tabliste = [u'einleit', u'einzugsgebiete', u'flaechen', u'haltungen', u'linkfl', u'linksw', 
                 u'pumpen', u'schaechte', u'teilgebiete', u'tezg', u'wehre']
 
+    # Liste der QKan-Formulare, um individuell erstellte Formulare von der Bearbeitung auszuschliessen
+    formsliste = ['qkan_abflussparameter.ui', 'qkan_anbindungageb.ui', 'qkan_anbindungeinleit.ui', 
+                  'qkan_anbindungflaechen.ui', 'qkan_auslaesse.ui', 'qkan_auslasstypen.ui', 
+                  'qkan_aussengebiete.ui', 'qkan_bodenklassen.ui', 'qkan_einleit.ui', 
+                  'qkan_einzugsgebiete.ui', 'qkan_entwaesserungsarten.ui', 'qkan_flaechen.ui', 
+                  'qkan_haltungen.ui', 'qkan_profildaten.ui', 'qkan_profile.ui', 'qkan_pumpen.ui', 
+                  'qkan_pumpentypen.ui', 'qkan_schaechte.ui', 'qkan_simulationsstatus.ui', 
+                  'qkan_speicher.ui', 'qkan_speicherkennlinien.ui', 'qkan_swref.ui', 
+                  'qkan_teilgebiete.ui', 'qkan_tezg.ui', 'qkan_wehre.ui']
+
     # Lesen der Projektdatei ------------------------------------------------------------------
     qgsxml = ET.parse(projectTemplate)
     root = qgsxml.getroot()
 
-    for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
+    # Projektionssystem anpassen --------------------------------------------------------------
 
-        # Nur QKan-Tabellen bearbeiten
+    for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
         tag_datasource = tag_maplayer.find(u"./datasource")
         tex = tag_datasource.text
+        # Nur QKan-Tabellen bearbeiten
         if tex[tex.index(u'table="') + 7:].split(u'" ')[0] in tabliste:
 
             # <extend> löschen
@@ -200,6 +208,18 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
                     elem = ET.SubElement(tag_spatialrefsys, u'ellipsoidacronym')
                     elem.text = ellipsoidacronym
 
+    # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
+
+    formspath =  os.path.join(pluginDirectory('qkan'), u"forms")
+    for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
+        tag_editform = tag_maplayer.find(u"./editform")
+        dateiname = os.path.basename(tag_editform.text)
+        if dateiname in formsliste:
+            # Nur QKan-Tabellen bearbeiten
+            tag_editform.text = os.path.join(formspath,dateiname)
+
+    # Zoom für Kartenfenster einstellen -------------------------------------------------------
+
     for tag_extent in root.findall(u".//mapcanvas/extent"):
         elem = tag_extent.find(u"./xmin")
         elem.text = u'{:.3f}'.format(zoomxmin)
@@ -209,6 +229,8 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
         elem.text = u'{:.3f}'.format(zoomxmax)
         elem = tag_extent.find(u"./ymax")
         elem.text = u'{:.3f}'.format(zoomymax)
+
+    # Projektionssystem anpassen --------------------------------------------------------------
 
     for tag_spatialrefsys in root.findall(u".//mapcanvas/destinationsrs/spatialrefsys"):
         tag_spatialrefsys.clear()
@@ -226,6 +248,8 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
         if ellipsoidacronym is not None:
             elem = ET.SubElement(tag_spatialrefsys, u'ellipsoidacronym')
             elem.text = ellipsoidacronym
+
+    # Pfad zur QKan-Datenbank anpassen
 
     for tag_datasource in root.findall(u".//projectlayers/maplayer/datasource"):
         text = tag_datasource.text

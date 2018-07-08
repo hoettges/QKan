@@ -34,7 +34,7 @@ import firebirdsql
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-from qgis_utils import fortschritt, fehlermeldung
+from qkan_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger(u'QKan')
 
