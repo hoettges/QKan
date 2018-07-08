@@ -38,7 +38,7 @@ from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-from qkan.database.qgis_utils import fortschritt, fehlermeldung, checknames
+from qkan.database.qkan_utils import fortschritt, fehlermeldung, checknames
 
 logger = logging.getLogger(u'QKan')
 

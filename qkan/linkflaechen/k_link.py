@@ -39,7 +39,7 @@ from qgis.utils import iface
 
 from qgis.PyQt.QtGui import QProgressBar
 
-from qkan.database.qgis_utils import fehlermeldung, checknames
+from qkan.database.qkan_utils import fehlermeldung, checknames
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 logger = logging.getLogger(u'QKan')

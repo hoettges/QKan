@@ -41,7 +41,7 @@ from application_dialog import CreatelineflDialog, CreatelineswDialog, Assigntge
 from k_link import createlinkfl, createlinksw, assigntgeb, storegroup, reloadgroup
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qgis_utils import get_database_QKan, get_editable_layers, fehlermeldung
+from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 # Anbindung an Logging-System (Initialisierung in __init__)
@@ -395,7 +395,7 @@ class LinkFl:
         else:
             self.dlg_sw.lf_anzahl_haltungen.setText(u'0')
 
-        # Zu berücksichtigende SW-Punkte zählen
+        # Zu berücksichtigende Direkteinleitungen zählen
 
         if len(liste_teilgebiete) != 0:
             auswahl = u" WHERE einleit.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
@@ -875,11 +875,11 @@ class LinkFl:
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()
-            if u'Anbindungen SW-Punkte' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
+            if u'Anbindungen Direkteinleitungen' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
                 uri = QgsDataSourceURI()
                 uri.setDatabase(database_QKan)
                 uri.setDataSource(u'', u'linksw', u'glink')
-                vlayer = QgsVectorLayer(uri.uri(), u'Anbindungen SW-Punkte', u'spatialite')
+                vlayer = QgsVectorLayer(uri.uri(), u'Anbindungen Direkteinleitungen', u'spatialite')
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)
 
         # --------------------------------------------------------------------------
