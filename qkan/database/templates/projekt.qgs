@@ -109,10 +109,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>3550311.87031083274632692</xmin>
-      <ymin>5799714.57499780505895615</ymin>
-      <xmax>3550489.07650672923773527</xmax>
-      <ymax>5799808.00124826282262802</ymax>
+      <xmin>3550331.11804687464609742</xmin>
+      <ymin>5799567.03576895035803318</ymin>
+      <xmax>3550350.92195312539115548</xmax>
+      <ymax>5799583.18423105031251907</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -875,7 +875,7 @@
           <column width="-1" hidden="0" type="field" name="tezgnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_anbindungflaechen.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungflaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1277,7 +1277,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="gbuf"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_anbindungeinleit.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungeinleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1697,7 +1697,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_auslaesse.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_auslaesse.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1766,7 +1766,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1849,7 +1849,7 @@ def my_form_open(dialog, layer, feature):
           <column width="267" hidden="0" type="field" name="apnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_abflussparameter.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_abflussparameter.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1908,7 +1908,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1961,7 +1961,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_auslasstypen.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_auslasstypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2361,7 +2361,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="flaeche"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_aussengebiete.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_aussengebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2500,7 +2500,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_bodenklassen.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_bodenklassen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2553,6 +2553,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "bknam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550149.27095873979851604</xmin>
+        <ymin>5799817.94117263983935118</ymin>
+        <xmax>3550149.27095873979851604</xmax>
+        <ymax>5799817.94117263983935118</ymax>
+      </extent>
       <id>einleit20171004110830029</id>
       <datasource>dbname='./muster.sqlite' table="einleit" (geom) sql=</datasource>
       <keywordList>
@@ -2853,14 +2859,16 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="pk"/>
           <column width="-1" hidden="0" type="field" name="elnam"/>
           <column width="-1" hidden="0" type="field" name="haltnam"/>
-          <column width="-1" hidden="0" type="field" name="zufluss"/>
           <column width="120" hidden="0" type="field" name="teilgebiet"/>
+          <column width="100" hidden="0" type="field" name="zufluss"/>
+          <column width="-1" hidden="0" type="field" name="ew"/>
+          <column width="100" hidden="0" type="field" name="einzugsgebiet"/>
           <column width="-1" hidden="0" type="field" name="kommentar"/>
-          <column width="-1" hidden="0" type="field" name="createdat"/>
+          <column width="144" hidden="0" type="field" name="createdat"/>
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_einleit.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_einleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2917,7 +2925,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -2974,7 +2982,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_entwaesserungsarten.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_entwaesserungsarten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -3509,7 +3517,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="abflusstyp"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_flaechen.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_flaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -4305,7 +4313,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_haltungen.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -4780,7 +4788,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_haltungen.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -5186,7 +5194,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="schnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_anbindungageb.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungageb.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5286,7 +5294,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_profildaten.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_profildaten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5391,7 +5399,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_profile.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_profile.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5836,7 +5844,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="pnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_pumpen.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_pumpen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5939,7 +5947,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_pumpentypen.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_pumpentypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -6349,7 +6357,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_schaechte.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -6782,7 +6790,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_schaechte.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7382,7 +7390,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_schaechte.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -7815,7 +7823,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_speicher.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_speicher.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7937,7 +7945,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_simulationsstatus.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_simulationsstatus.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8038,7 +8046,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_speicherkennlinien.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_speicherkennlinien.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8357,7 +8365,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="tgnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_teilgebiete.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_teilgebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8696,7 +8704,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_tezg.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_tezg.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -9199,7 +9207,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="wnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../k_forms/eingabemasken/qkan_wehre.ui</editform>
+      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_wehre.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>

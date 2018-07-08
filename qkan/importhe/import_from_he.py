@@ -934,7 +934,7 @@ def importKanaldaten(database_HE, database_QKan, projectfile, epsg, check_tabini
                                            (apnam_ansi, bodenklasse_ansi, kommentar_ansi)]
 
         if aptyp == 0:
-            bodenklasse = u'Undurchlaessig'  # in QKan default für befestigte Flächen
+            bodenklasse = u'NULL'  # in QKan default für befestigte Flächen
 
         # Datensatz in die QKan-DB schreiben
 

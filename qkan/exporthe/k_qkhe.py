@@ -166,7 +166,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 schaechte.durchm AS durchmesser,
                 schaechte.strasse AS strasse,
                 schaechte.xsch AS xsch,
-                schaechte.ysch AS ysch
+                schaechte.ysch AS ysch, 
+                schaechte.createdat
             FROM schaechte
             WHERE schaechte.schachttyp = 'Schacht'{}
             """.format(auswahl)
@@ -179,19 +180,31 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         fortschritt(u'Export Schaechte Teil 1...', 0.1)
         progress_bar.setValue(15)
-        createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
 
         for attr in dbQK.fetchall():
             # progress_bar.setValue(progress_bar.value() + 1)
 
             # In allen Feldern None durch NULL ersetzen
-            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, xsch_t, ysch_t) = \
+            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, xsch_t, ysch_t, createdat_t) = \
                 (u'NULL' if el is None else el for el in attr)
 
             # Formatierung der Zahlen
             (deckelhoehe, sohlhoehe, durchmesser, xsch, ysch) = \
                 (u'NULL' if tt == u'NULL' else u'{:.3f}'.format(float(tt)) \
                  for tt in (deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t))
+
+            # Standardwerte, falls keine Vorgaben
+            if createdat_t == u'NULL':
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+            else:
+                try:
+                    if createdat_t.count(':') == 1:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
+                    else:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
+                except:
+                    createdat_s = time.localtime()
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', createdat_s)
 
             # Ändern vorhandener Datensätze
             if check_export['modify_schaechte']:
@@ -269,7 +282,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 schaechte.strasse AS strasse,
                 schaechte.xsch AS xsch,
                 schaechte.ysch AS ysch,
-                kommentar AS kommentar
+                kommentar AS kommentar,
+                createdat
             FROM schaechte
             WHERE schaechte.schachttyp = 'Speicher'{}
             """.format(auswahl)
@@ -281,19 +295,31 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         nr0 = nextid
         refid_speicher = {}
 
-        createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
         for attr in dbQK.fetchall():
             fortschritt(u'Export Speicherschaechte...', 0.35)
             progress_bar.setValue(35)
 
             # In allen Feldern None durch NULL ersetzen
-            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, xsch_t, ysch_t, kommentar) = \
+            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, xsch_t, ysch_t, kommentar, createdat_t) = \
                 (u'NULL' if el is None else el for el in attr)
 
             # Formatierung der Zahlen
             (deckelhoehe, sohlhoehe, durchmesser, xsch, ysch) = \
                 (u'NULL' if tt == u'NULL' else u'{:.3f}'.format(float(tt)) \
                  for tt in (deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t))
+
+            # Standardwerte, falls keine Vorgaben
+            if createdat_t == u'NULL':
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+            else:
+                try:
+                    if createdat_t.count(':') == 1:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
+                    else:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
+                except:
+                    createdat_s = time.localtime()
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', createdat_s)
 
             # Speichern der aktuellen ID zum Speicherbauwerk
             refid_speicher[schnam] = nextid
@@ -434,7 +460,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 schaechte.durchm AS durchmesser,
                 schaechte.xsch AS xsch,
                 schaechte.ysch AS ysch,
-                kommentar AS kommentar
+                kommentar AS kommentar,
+                createdat
             FROM schaechte
             WHERE schaechte.schachttyp = 'Auslass'{}
             """.format(auswahl)
@@ -445,20 +472,31 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         nr0 = nextid
 
-        createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
-
         fortschritt(u'Export Auslässe...', 0.20)
 
         for attr in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t, kommentar) = \
+            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t, kommentar, createdat_t) = \
                 (u'NULL' if el is None else el for el in attr)
 
             # Formatierung der Zahlen
             (deckelhoehe, sohlhoehe, durchmesser, xsch, ysch) = \
                 (u'NULL' if tt == u'NULL' else u'{:.3f}'.format(float(tt)) \
                  for tt in (deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t))
+
+            # Standardwerte, falls keine Vorgaben
+            if createdat_t == u'NULL':
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+            else:
+                try:
+                    if createdat_t.count(':') == 1:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
+                    else:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
+                except:
+                    createdat_s = time.localtime()
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', createdat_s)
 
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export['modify_auslaesse']:
@@ -565,14 +603,26 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
             # In allen Feldern None durch NULL ersetzen
             (haltnam, schoben, schunten, laenge_t, sohleoben_t, sohleunten_t, profilnam,
-             he_nr, hoehe_t, breite_t, entw_nr, rohrtyp, rauheit_t, teilgebiet, createdat) = \
+             he_nr, hoehe_t, breite_t, entw_nr, rohrtyp, rauheit_t, teilgebiet, createdat_t) = \
                 (u'NULL' if el is None else el for el in attr)
 
-            createdat = createdat[:19]
             # Datenkorrekturen
             (laenge, sohleoben, sohleunten, hoehe, breite) = \
                 (u'NULL' if tt == u'NULL' else u'{:.4f}'.format(float(tt)) \
                  for tt in (laenge_t, sohleoben_t, sohleunten_t, hoehe_t, breite_t))
+
+            # Standardwerte, falls keine Vorgaben
+            if createdat_t == u'NULL':
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+            else:
+                try:
+                    if createdat_t.count(':') == 1:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
+                    else:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
+                except:
+                    createdat_s = time.localtime()
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', createdat_s)
 
             if rauheit_t == u'NULL':
                 rauheit = u'1.5'
@@ -713,15 +763,25 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             # In allen Feldern None durch NULL ersetzen
             (bknam, infiltrationsrateanfang, infiltrationsrateende, infiltrationsratestart,
              rueckgangskonstante, regenerationskonstante, saettigungswassergehalt,
-             createdat, kommentar) = \
+             createdat_t, kommentar) = \
                 (u'NULL' if el is None else el for el in attr)
 
             # Der leere Satz Bodenklasse ist nur für interne QKan-Zwecke da. 
             if bknam == u'NULL':
                 continue
 
-            if createdat == u'NULL':
+            # Standardwerte, falls keine Vorgaben
+            if createdat_t == u'NULL':
                 createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+            else:
+                try:
+                    if createdat_t.count(':') == 1:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
+                    else:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
+                except:
+                    createdat_s = time.localtime()
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', createdat_s)
 
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export['modify_bodenklassen']:
@@ -807,9 +867,6 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         nr0 = nextid
 
-        if createdat == u'NULL':
-            createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
-
         fortschritt(u'Export Abflussparameter...', .7)
 
         for attr in dbQK.fetchall():
@@ -817,7 +874,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
             # In allen Feldern None durch NULL ersetzen
             (apnam, anfangsabflussbeiwert_t, endabflussbeiwert_t,
              benetzungsverlust_t, muldenverlust_t, benetzung_startwert_t,
-             mulden_startwert_t, bodenklasse, kommentar, createdat) = \
+             mulden_startwert_t, bodenklasse, kommentar, createdat_t) = \
                 (u'NULL' if el is None else el for el in attr)
 
             # Formatierung der Zahlen
@@ -827,6 +884,19 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                  for tt in (anfangsabflussbeiwert_t, endabflussbeiwert_t,
                             benetzungsverlust_t, muldenverlust_t, benetzung_startwert_t,
                             mulden_startwert_t))
+
+            # Standardwerte, falls keine Vorgaben
+            if createdat_t == u'NULL':
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+            else:
+                try:
+                    if createdat_t.count(':') == 1:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
+                    else:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
+                except:
+                    createdat_s = time.localtime()
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', createdat_s)
 
             if bodenklasse == u'NULL':
                 typ = 0  # undurchlässig
@@ -954,6 +1024,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         logger.debug(u'Regenschreiber - attr: {}'.format(str(attr)))
 
         nr0 = nextid
+
+        createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
 
         regschnr = 1
         for regenschreiber in reglis:
@@ -1111,7 +1183,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               fliesszeit, fliesszeitkanal, flaeche, regenschreiber, abflussparameter,
               createdat, kommentar
               FROM flintersect AS fi
-              WHERE flaeche > {mindestflaeche}{auswahl}""".format(mindestflaeche=mindestflaeche, auswahl=auswahl)
+              WHERE flaeche*10000 > {mindestflaeche}{auswahl}""".format(mindestflaeche=mindestflaeche, auswahl=auswahl)
             logger.debug(u'combine_flaechenrw = False')
             logger.debug(u'Abfrage zum Export der Flächendaten: \n{}'.format(sql))
 
@@ -1132,7 +1204,7 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
              abflusstyp, speicherzahl, speicherkonst,
              fliesszeit, fliesszeitkanal,
              flaeche, regenschreiber,
-             abflussparameter, createdat,
+             abflussparameter, createdat_t,
              kommentar) = \
                 (u'NULL' if el is None else el for el in attr)
 
@@ -1185,10 +1257,19 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 fliesszeitoberfl = fliesszeit
             elif he_typ == 2:
                 fliesszeitschwerp = fliesszeit
-                
+
             # Standardwerte, falls keine Vorgaben
-            if createdat == u'NULL':
+            if createdat_t == u'NULL':
                 createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+            else:
+                try:
+                    if createdat_t.count(':') == 1:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
+                    else:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
+                except:
+                    createdat_s = time.localtime()
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', createdat_s)
 
             if kommentar == u'NULL' or kommentar == u'':
                 kommentar = u'eingefuegt von k_qkhe'
@@ -1516,7 +1597,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               NULL AS fremdwas, 
               NULL AS einwohner,
               sum(zufluss) AS zuflussdirekt, 
-              1 AS herkunft
+              1 AS herkunft,
+              einleit.createdat AS createdat
               FROM einleit
               WHERE zufluss IS NOT NULL {auswahl}
               GROUP BY haltnam
@@ -1531,7 +1613,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               printf('%.3f',tg.fremdwas) AS fremdwas, 
               printf('%.6f',el.ew) AS einwohner,
               NULL AS zuflussdirekt, 
-              3 AS herkunft
+              3 AS herkunft,
+              el.createdat AS createdat
               FROM einleit AS el
               INNER JOIN einzugsgebiete AS tg
               ON el.einzugsgebiet = tg.tgnam
@@ -1553,7 +1636,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               NULL AS fremdwas, 
               NULL AS einwohner,
               zufluss AS zuflussdirekt, 
-              1 AS herkunft
+              1 AS herkunft,
+              einleit.createdat AS createdat
               FROM einleit
               WHERE zufluss IS NOT NULL {auswahl}
           UNION
@@ -1567,7 +1651,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
               tg.fremdwas AS fremdwas, 
               el.ew AS einwohner,
               NULL AS zuflussdirekt, 
-              3 AS herkunft
+              3 AS herkunft,
+              el.createdat AS createdat
               FROM einleit AS el
               INNER JOIN einzugsgebiete AS tg
               ON el.einzugsgebiet = tg.tgnam 
@@ -1598,8 +1683,20 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
         for b in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            elnam, xel, yel, haltnam, wverbrauch, stdmittel, fremdwas, einwohner, zuflussdirekt, herkunft = \
+            elnam, xel, yel, haltnam, wverbrauch, stdmittel, fremdwas, einwohner, zuflussdirekt, herkunft, createdat_t = \
                 (u'NULL' if el is None else el for el in b)
+
+            if createdat_t == u'NULL':
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+            else:
+                try:
+                    if createdat_t.count(':') == 1:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
+                    else:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
+                except:
+                    createdat_s = time.localtime()
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', createdat_s)
 
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export['modify_einleitdirekt']:
@@ -1717,8 +1814,20 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
             # In allen Feldern None durch NULL ersetzen
             gebnam, xel, yel, schnam, hoeheob, hoeheun, fliessweg, gesflaeche, basisabfluss, cn, \
-            regenschreiber, kommentar, createdat = \
+            regenschreiber, kommentar, createdat_t = \
                 (u'NULL' if el is None else el for el in b)
+
+            if createdat_t == u'NULL':
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+            else:
+                try:
+                    if createdat_t.count(':') == 1:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
+                    else:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
+                except:
+                    createdat_s = time.localtime()
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', createdat_s)
 
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export['modify_aussengebiete']:
@@ -1890,7 +1999,8 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
                 schaechte.durchm AS durchmesser,
                 schaechte.xsch AS xsch,
                 schaechte.ysch AS ysch,
-                kommentar AS kommentar
+                kommentar AS kommentar,
+                createdat
             FROM schaechte
             WHERE schaechte.schachttyp = 'Auslass'{}
             """.format(auswahl)
@@ -1901,20 +2011,30 @@ def exportKanaldaten(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete,
 
         nr0 = nextid
 
-        createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
-
         fortschritt(u'Export Auslässe...', 0.20)
 
         for attr in dbQK.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t, kommentar) = \
+            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t, kommentar, createdat_t) = \
                 (u'NULL' if el is None else el for el in attr)
 
             # Formatierung der Zahlen
             (deckelhoehe, sohlhoehe, durchmesser, xsch, ysch) = \
                 (u'NULL' if tt == u'NULL' else u'{:.3f}'.format(float(tt)) \
                  for tt in (deckelhoehe_t, sohlhoehe_t, durchmesser_t, xsch_t, ysch_t))
+
+            if createdat_t == u'NULL':
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+            else:
+                try:
+                    if createdat_t.count(':') == 1:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
+                    else:
+                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
+                except:
+                    createdat_s = time.localtime()
+                createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', createdat_s)
 
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export['modify_auslaesse']:
