@@ -142,11 +142,6 @@ class ExportToHE:
             datenbanktyp = 'spatialite'
             pass  # Es gibt noch keine Wahlmöglichkeit
 
-        self.dlg.pb_exportall.clicked.connect(self.exportall)
-        self.dlg.pb_modifyall.clicked.connect(self.modifyall)
-        self.dlg.pb_exportnone.clicked.connect(self.exportnone)
-        self.dlg.pb_modifynone.clicked.connect(self.modifynone)
-
         # Auswahl der zu exportierenden Tabellen ----------------------------------------------
 
         # Eigene Funktion für die zahlreichen Checkboxen
@@ -191,6 +186,18 @@ class ExportToHE:
 
         combine_flaechenrw = cb_set('combine_flaechenrw', self.dlg.cb_combine_flaechenrw, True)
         combine_einleitdirekt = cb_set('combine_einleitdirekt', self.dlg.cb_combine_einleitdirekt, True)
+
+        # Formularereignisse anbinden ----------------------------------------------
+
+        self.dlg.pb_exportall.clicked.connect(self.exportall)
+        self.dlg.pb_modifyall.clicked.connect(self.modifyall)
+        self.dlg.pb_exportnone.clicked.connect(self.exportnone)
+        self.dlg.pb_modifynone.clicked.connect(self.modifynone)
+
+        self.dlg.lw_teilgebiete.itemClicked.connect(self.countselection)
+        self.dlg.lw_teilgebiete.itemClicked.connect(self.lw_teilgebieteClick)
+        self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
+        self.dlg.button_box.helpRequested.connect(self.helpClick)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -525,7 +532,6 @@ class ExportToHE:
 
         # Ereignis bei Auswahländerung in Liste Teilgebiete
 
-        self.dlg.lw_teilgebiete.itemClicked.connect(self.countselection)
         self.countselection()
 
         # Autokorrektur
@@ -550,12 +556,7 @@ class ExportToHE:
         else:
             mindestflaeche = u'0.5'
 
-        self.dlg.lw_teilgebiete.itemClicked.connect(self.lw_teilgebieteClick)
         self.countselection()
-        
-        self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
-
-        self.dlg.button_box.helpRequested.connect(self.helpClick)
 
         # Formular anzeigen
 

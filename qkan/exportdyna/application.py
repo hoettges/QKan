@@ -114,6 +114,14 @@ class ExportToKP:
         project = QgsProject.instance()
         self.default_dir = os.path.dirname(project.fileName())
 
+        # Formularereignisse anbinden ----------------------------------------------
+
+        self.dlg.pb_select_KP_dest.clicked.connect(self.selectFile_kpDB_dest)
+        self.dlg.pb_select_KP_template.clicked.connect(self.selectFile_kpDB_template)
+        self.dlg.lw_teilgebiete.itemClicked.connect(self.lw_teilgebieteClick)
+        self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
+        self.dlg.button_box.helpRequested.connect(self.helpClick)
+
         # Ende Eigene Funktionen ---------------------------------------------------
 
     # noinspection PyMethodMayBeStatic
@@ -317,14 +325,12 @@ class ExportToKP:
         else:
             dynafile = ''
         self.dlg.tf_KP_dest.setText(dynafile)
-        self.dlg.pb_select_KP_dest.clicked.connect(self.selectFile_kpDB_dest)
 
         if 'template_dyna' in self.config:
             template_dyna = self.config['template_dyna']
         else:
             template_dyna = ''
         self.dlg.tf_KP_template.setText(template_dyna)
-        self.dlg.pb_select_KP_template.clicked.connect(self.selectFile_kpDB_template)
 
         if 'datenbanktyp' in self.config:
             datenbanktyp = self.config['datenbanktyp']
@@ -388,12 +394,7 @@ class ExportToKP:
 
             # Ereignis bei Auswahländerung in Liste Teilgebiete
 
-        self.dlg.lw_teilgebiete.itemClicked.connect(self.lw_teilgebieteClick)
         self.countselection()
-
-        self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
-
-        self.dlg.button_box.helpRequested.connect(self.helpClick)
 
         # Autokorrektur
 

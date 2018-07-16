@@ -113,6 +113,33 @@ class LinkFl:
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
+        # Formularereignisse anbinden ----------------------------------------------
+
+        # Dialog dlg_cl
+        self.dlg_cl.lw_flaechen_abflussparam.itemClicked.connect(self.cl_lw_flaechen_abflussparamClick)
+        self.dlg_cl.lw_hal_entw.itemClicked.connect(self.cl_lw_hal_entwClick)
+        self.dlg_cl.lw_teilgebiete.itemClicked.connect(self.cl_lw_teilgebieteClick)
+        self.dlg_cl.cb_selFlActive.stateChanged.connect(self.cl_selFlActiveClick)
+        self.dlg_cl.cb_selHalActive.stateChanged.connect(self.cl_selHalActiveClick)
+        self.dlg_cl.cb_selTgbActive.stateChanged.connect(self.cl_selTgbActiveClick)
+        self.dlg_cl.button_box.helpRequested.connect(self.cl_helpClick)
+
+        # Dialog dlg_sw
+        self.dlg_sw.lw_hal_entw.itemClicked.connect(self.sw_lw_hal_entwClick)
+        self.dlg_sw.lw_teilgebiete.itemClicked.connect(self.sw_lw_teilgebieteClick)
+        self.dlg_sw.cb_selHalActive.stateChanged.connect(self.sw_selHalActiveClick)
+        self.dlg_sw.cb_selTgbActive.stateChanged.connect(self.sw_selTgbActiveClick)
+        self.dlg_sw.button_box.helpRequested.connect(self.sw_helpClick)
+
+        # Dialog dlg_at
+        self.dlg_at.rb_within.clicked.connect(self.select_within)
+        self.dlg_at.rb_overlaps.clicked.connect(self.select_overlaps)
+
+        # Dialog dlg_mg
+        self.dlg_mg.lw_gruppen.itemClicked.connect(self.listGroupAttr)
+        self.dlg_mg.pb_storegroup.clicked.connect(self.storegrouptgb)
+        self.dlg_mg.pb_reloadgroup.clicked.connect(self.reloadgrouptgb)
+
         # Ende Eigene Funktionen ---------------------------------------------------
 
     # noinspection PyMethodMayBeStatic
@@ -647,16 +674,8 @@ class LinkFl:
             fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
             return False
 
-        self.dlg_cl.lw_flaechen_abflussparam.itemClicked.connect(self.cl_lw_flaechen_abflussparamClick)
-        self.dlg_cl.lw_hal_entw.itemClicked.connect(self.cl_lw_hal_entwClick)
-        self.dlg_cl.lw_teilgebiete.itemClicked.connect(self.cl_lw_teilgebieteClick)
         self.countselectionfl()
 
-        self.dlg_cl.cb_selFlActive.stateChanged.connect(self.cl_selFlActiveClick)
-        self.dlg_cl.cb_selHalActive.stateChanged.connect(self.cl_selHalActiveClick)
-        self.dlg_cl.cb_selTgbActive.stateChanged.connect(self.cl_selTgbActiveClick)
-
-        self.dlg_cl.button_box.helpRequested.connect(self.cl_helpClick)
 
         # show the dialog
         self.dlg_cl.show()
@@ -827,14 +846,8 @@ class LinkFl:
         # Haltungen direkt in einleit eintragen. Es kann wegen der längeren Zeitdauer sinnvoll
         # sein, dies erst am Schluss der Bearbeitung in einem eigenen Vorgang zu machen.
 
-        self.dlg_sw.lw_hal_entw.itemClicked.connect(self.sw_lw_hal_entwClick)
-        self.dlg_sw.lw_teilgebiete.itemClicked.connect(self.sw_lw_teilgebieteClick)
         self.countselectionsw()
 
-        self.dlg_sw.cb_selHalActive.stateChanged.connect(self.sw_selHalActiveClick)
-        self.dlg_sw.cb_selTgbActive.stateChanged.connect(self.sw_selTgbActiveClick)
-
-        self.dlg_sw.button_box.helpRequested.connect(self.sw_helpClick)
 
         # show the dialog
         self.dlg_sw.show()
@@ -939,8 +952,6 @@ class LinkFl:
                 database_QKan), level=QgsMessageBar.CRITICAL)
             return None
 
-        self.dlg_at.rb_within.clicked.connect(self.select_within)
-        self.dlg_at.rb_overlaps.clicked.connect(self.select_overlaps)
 
         # config in Dialog übernehmen
 
@@ -1068,9 +1079,6 @@ class LinkFl:
 
         self.showgroups()
 
-        self.dlg_mg.lw_gruppen.itemClicked.connect(self.listGroupAttr)
-        self.dlg_mg.pb_storegroup.clicked.connect(self.storegrouptgb)
-        self.dlg_mg.pb_reloadgroup.clicked.connect(self.reloadgrouptgb)
 
         self.dlg_mg.lw_gruppen.setCurrentRow(0)
         # Anzeige initialisieren

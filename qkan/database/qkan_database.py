@@ -22,7 +22,7 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__version__ = '2.5.3'
+__version__ = '2.5.4'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
