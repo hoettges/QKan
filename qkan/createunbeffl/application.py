@@ -102,6 +102,13 @@ class CreateUnbefFl:
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
+        # Formularereignisse anbinden ----------------------------------------------
+
+        self.dlg.tw_selAbflparamTeilgeb.itemClicked.connect(self.tw_selAbflparamTeilgebClick)
+        self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
+        self.dlg.button_box.helpRequested.connect(self.helpClick)
+
+        
         # Ende Eigene Funktionen ---------------------------------------------------
 
     # noinspection PyMethodMayBeStatic
@@ -380,12 +387,7 @@ class CreateUnbefFl:
             autokorrektur = True
         self.dlg.cb_autokorrektur.setChecked(autokorrektur)
 
-        self.dlg.tw_selAbflparamTeilgeb.itemClicked.connect(self.tw_selAbflparamTeilgebClick)
         self.countselection()
-
-        self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
-
-        self.dlg.button_box.helpRequested.connect(self.helpClick)
 
         # show the dialog
         self.dlg.show()
