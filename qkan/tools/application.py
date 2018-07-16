@@ -105,6 +105,20 @@ class QgsUpdate:
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
+        # Formularereignisse anbinden ----------------------------------------------
+
+        # Formular dlg_pr
+        self.dlg_pr.pb_selectProjectFile.clicked.connect(self.selectFile_projectFile)
+        self.dlg_pr.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
+        self.dlg_pr.pb_selectProjectTemplate.clicked.connect(self.selectFile_projectTemplate)
+
+        # Formular dlg_op
+        self.dlg_op.pb_fangradiusDefault.clicked.connect(self.fangradiusDefault)
+        self.dlg_op.pb_mindestflaecheDefault.clicked.connect(self.mindestflaecheDefault)
+        self.dlg_op.pb_max_loopsDefault.clicked.connect(self.max_loopsDefault)
+        self.dlg_op.pb_selectKBS.clicked.connect(self.selectKBS)
+
+
         # Ende Eigene Funktionen ---------------------------------------------------
 
     # noinspection PyMethodMayBeStatic
@@ -154,6 +168,8 @@ class QgsUpdate:
                                                "Dateinamen der zu erstellenden Projektdatei eingeben",
                                                self.default_dir,
                                                "*.qgs")
+        # logger.info('Dateiname wurde erkannt zu:\n{}'.format(filename))
+        
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
             self.dlg_pr.tf_projectFile.setText(filename)
@@ -243,11 +259,6 @@ class QgsUpdate:
         else:
             qkanDBUpdate = True
         self.dlg_pr.cb_qkanDBUpdate.setChecked(qkanDBUpdate)
-
-        # Ereignisse anbinden
-        self.dlg_pr.pb_selectProjectFile.clicked.connect(self.selectFile_projectFile)
-        self.dlg_pr.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
-        self.dlg_pr.pb_selectProjectTemplate.clicked.connect(self.selectFile_projectTemplate)
 
         # show the dialog
         self.dlg_pr.show()
@@ -353,12 +364,6 @@ class QgsUpdate:
             self.epsg = u'25832'
         self.dlg_op.tf_epsg.setText(self.epsg)
 
-        # Ereignisse anbinden
-
-        self.dlg_op.pb_fangradiusDefault.clicked.connect(self.fangradiusDefault)
-        self.dlg_op.pb_mindestflaecheDefault.clicked.connect(self.mindestflaecheDefault)
-        self.dlg_op.pb_max_loopsDefault.clicked.connect(self.max_loopsDefault)
-        self.dlg_op.pb_selectKBS.clicked.connect(self.selectKBS)
 
         # show the dialog
         self.dlg_op.show()

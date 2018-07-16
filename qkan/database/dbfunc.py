@@ -77,7 +77,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.5.3'
+        self.actversion = '2.5.4'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
 
         if dbname is not None:
@@ -256,7 +256,7 @@ class DBConnection:
 
         logger.debug('0 - versiondbQK = {}'.format(versiondbQK))
 
-        self.versionlis = [int(el) for el in versiondbQK.split('.')]
+        self.versionlis = [int(el.replace('a','').replace('b','').replace('c','')) for el in versiondbQK.split('.')]
 
         # ---------------------------------------------------------------------------------------------
         # Aktualisierung von Version 1.9.9 und früher
