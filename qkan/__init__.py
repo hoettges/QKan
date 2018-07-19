@@ -7,7 +7,6 @@ from datetime import datetime as dt
 # noinspection PyPep8Naming
 from PyQt4.QtGui import QIcon, QAction, QMenu
 
-
 # Aufsetzen des Logging-Systems
 logger = logging.getLogger('QKan')
 
@@ -48,24 +47,19 @@ class Dummy:
 
     def __init__(self, iface):
         from createunbeffl import application as createunbeffl
-        from importhe import application as importhe                # falls HE nicht benötigt: auskommentieren, dito bei nachfolgender Liste "self.plugins"
         from importdyna import application as importdyna
-        from exporthe import application as exporthe                # falls HE nicht benötigt: auskommentieren, dito bei nachfolgender Liste "self.plugins"
         from exportdyna import application as exportdyna
-        from ganglinienhe import application as ganglinienhe        # falls HE nicht benötigt: auskommentieren, dito bei nachfolgender Liste "self.plugins"
         from linkflaechen import application as linkflaechen
-        from tools import application as tools
         self.plugins = [
             createunbeffl.CreateUnbefFl(iface),
-            importhe.ImportFromHE(iface),
             importdyna.ImportFromDyna(iface),
-            exporthe.ExportToHE(iface),
             exportdyna.ExportToKP(iface),
-            ganglinienhe.Application(iface),
-            linkflaechen.LinkFl(iface),
-            tools.QgsUpdate(iface)
+            linkflaechen.LinkFl(iface)
         ]
         Dummy.instance = self
+
+        # Plugins
+        self.instances = []
 
         # QGIS
         self.iface = iface
@@ -96,12 +90,22 @@ class Dummy:
         for plugin in self.plugins:
             plugin.initGui()
 
+        self.sort_actions()
+
+    def sort_actions(self):
         # Finally sort all actions
         self.actions.sort(key=lambda x: x.text().lower())
         self.menu.clear()
         self.menu.addActions(self.actions)
 
     def unload(self):
+        from qgis.utils import unloadPlugin
+        # Unload all other instances
+        for instance in self.instances:
+            print('Unloading ', instance.name)
+            if not unloadPlugin(instance.name):
+                print('Failed to unload plugin!')
+
         # Remove entries from own menu
         for action in self.menu.actions():
             self.menu.removeAction(action)
@@ -119,6 +123,17 @@ class Dummy:
         # Call unload on all loaded plugins
         for plugin in self.plugins:
             plugin.unload()
+
+    def register(self, instance):
+        self.instances.append(instance)
+
+        self.plugins += instance.plugins
+
+    def unregister(self, instance):
+        self.instances.remove(instance)
+
+        for plugin in instance.plugins:
+            self.plugins.remove(plugin)
 
     def add_action(self, icon_path, text, callback, enabled_flag=True, add_to_menu=True, add_to_toolbar=True,
                    status_tip=None, whats_this=None, parent=None):
@@ -176,7 +191,6 @@ class Dummy:
             self.toolbar.addAction(action)
 
         if add_to_menu:
-            self.actions += [action]  # Append action
             self.menu.addAction(action)
 
         self.actions.append(action)
