@@ -121,6 +121,7 @@ class ExportToKP:
         self.dlg.lw_teilgebiete.itemClicked.connect(self.lw_teilgebieteClick)
         self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
         self.dlg.button_box.helpRequested.connect(self.helpClick)
+        self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -294,32 +295,6 @@ class ExportToKP:
                                            level=QgsMessageBar.CRITICAL)
             return False
 
-        # Übernahme der Quelldatenbank:
-        # Wenn ein Projekt geladen ist, wird die Quelldatenbank daraus übernommen.
-        # Wenn dies nicht der Fall ist, wird die Quelldatenbank aus der
-        # json-Datei übernommen.
-
-        database_QKan = ''
-
-        database_QKan, epsg = get_database_QKan()
-        if not database_QKan:
-            if 'database_QKan' in self.config:
-                database_QKan = self.config['database_QKan']
-            else:
-                database_QKan = ''
-        self.dlg.tf_QKanDB.setText(database_QKan)
-
-        # Datenbankverbindung für Abfragen
-        if database_QKan != '':
-            self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
-            if self.dbQK is None:
-                fehlermeldung("Fehler in QKan_CreateUnbefFl",
-                              u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-                iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE",
-                                               u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                                                   database_QKan), level=QgsMessageBar.CRITICAL)
-                return None
-
         if 'dynafile' in self.config:
             dynafile = self.config['dynafile']
         else:
@@ -338,10 +313,35 @@ class ExportToKP:
             datenbanktyp = 'spatialite'
             pass  # Es gibt noch keine Wahlmöglichkeit
 
-        # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
+        # Übernahme der Quelldatenbank:
+        # Wenn ein Projekt geladen ist, wird die Quelldatenbank daraus übernommen.
+        # Wenn dies nicht der Fall ist, wird die Quelldatenbank aus der
+        # json-Datei übernommen.
 
+        database_QKan = ''
+
+        database_QKan, epsg = get_database_QKan()
+        if not database_QKan:
+            if 'database_QKan' in self.config:
+                database_QKan = self.config['database_QKan']
+            else:
+                database_QKan = ''
+        self.dlg.tf_QKanDB.setText(database_QKan)
+
+        # Datenbankverbindung für Abfragen
         if database_QKan != '':
             # Nur wenn schon eine Projekt geladen oder eine QKan-Datenbank ausgewählt
+            self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+            if self.dbQK is None:
+                fehlermeldung("Fehler in QKan_CreateUnbefFl",
+                              u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+                iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE",
+                                               u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+                                                   database_QKan), level=QgsMessageBar.CRITICAL)
+                return None
+
+            # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
+
             sql = u"""INSERT INTO teilgebiete (tgnam)
                     SELECT teilgebiet FROM flaechen 
                     WHERE teilgebiet IS NOT NULL AND

@@ -367,25 +367,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="lb_version">
-    <property name="geometry">
-     <rect>
-      <x>550</x>
-      <y>340</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Version QKan Import</string>
-    </property>
-    <property name="text">
-     <string>Version 2.5.4</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
    <widget class="QComboBox" name="schachttyp">
     <property name="geometry">
      <rect>
@@ -397,6 +378,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <italic>true</italic>
      </font>
     </property>
@@ -421,6 +403,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <italic>true</italic>
      </font>
     </property>

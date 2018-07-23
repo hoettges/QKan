@@ -37,7 +37,7 @@ from qgis.gui import QgsGenericProjectionSelector
 # noinspection PyUnresolvedReferences 
 import resources
 # Import the code for the dialog
-from application_dialog import QgsadaptDialog, QKanOptionsDialog
+from application_dialog import QgsadaptDialog, QKanOptionsDialog, RunoffParamsDialog
 from k_tools import qgsadapt
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
@@ -47,7 +47,7 @@ from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 logger = logging.getLogger(u'QKan')
 
 
-class QgsUpdate:
+class QKanTools:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -77,8 +77,9 @@ class QgsUpdate:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg_pr = QgsadaptDialog()
-        self.dlg_op = QKanOptionsDialog()
+        self.dlgpr = QgsadaptDialog()
+        self.dlgop = QKanOptionsDialog()
+        self.dlgro = RunoffParamsDialog()
 
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 12.06.2017)
@@ -107,16 +108,22 @@ class QgsUpdate:
 
         # Formularereignisse anbinden ----------------------------------------------
 
-        # Formular dlg_pr
-        self.dlg_pr.pb_selectProjectFile.clicked.connect(self.selectFile_projectFile)
-        self.dlg_pr.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
-        self.dlg_pr.pb_selectProjectTemplate.clicked.connect(self.selectFile_projectTemplate)
+        # Formular dlgpr
+        self.dlgpr.pb_selectProjectFile.clicked.connect(self.dlgpr_selectFileProjectfile)
+        self.dlgpr.pb_selectqkanDB.clicked.connect(self.dlgpr_selectFile_qkanDB)
+        self.dlgpr.pb_selectProjectTemplate.clicked.connect(self.dlgpr_selectFileProjectTemplate)
 
-        # Formular dlg_op
-        self.dlg_op.pb_fangradiusDefault.clicked.connect(self.fangradiusDefault)
-        self.dlg_op.pb_mindestflaecheDefault.clicked.connect(self.mindestflaecheDefault)
-        self.dlg_op.pb_max_loopsDefault.clicked.connect(self.max_loopsDefault)
-        self.dlg_op.pb_selectKBS.clicked.connect(self.selectKBS)
+        # Formular dlgop
+        self.dlgop.pb_fangradiusDefault.clicked.connect(self.dlgop_fangradiusDefault)
+        self.dlgop.pb_mindestflaecheDefault.clicked.connect(self.dlgop_mindestflaecheDefault)
+        self.dlgop.pb_max_loopsDefault.clicked.connect(self.dlgop_maxLoopsDefault)
+        self.dlgop.pb_selectKBS.clicked.connect(self.dlgop_selectKBS)
+
+        # Formular dlgro
+        self.dlgro.lwTeilgebiete.itemClicked.connect(self.dlgro_lwTeilgebieteClick)
+        self.dlgro.cb_selActive.stateChanged.connect(self.dlgro_selActiveClick)
+        self.dlgro.button_box.helpRequested.connect(self.dlgro_helpClick)
+        self.dlgro.pb_selectqkanDB.clicked.connect(self.dlgro_selectFile_qkanDB)
 
 
         # Ende Eigene Funktionen ---------------------------------------------------
@@ -153,18 +160,25 @@ class QgsUpdate:
             callback=self.run_qkanoptions, 
             parent=self.iface.mainWindow())
 
+        icon_runoffparams_path = ':/plugins/qkan/tools/res/icon_runoffparams.png'
+        Dummy.instance.add_action(
+            icon_runoffparams_path, 
+            text=self.tr(u'Oberflächenabflussparameter eintragen'), 
+            callback=self.run_runoffparams, 
+            parent=self.iface.mainWindow())
+
     def unload(self):
         pass
 
-    # ----------------------------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------
     # Erstellen einer Projektdatei aus einer Vorlage
 
     # 1. Formularfunktionen
 
-    def selectFile_projectFile(self):
+    def dlgpr_selectFileProjectfile(self):
         """Zu erstellende Projektdatei festlegen"""
 
-        filename = QFileDialog.getSaveFileName(self.dlg_pr,
+        filename = QFileDialog.getSaveFileName(self.dlgpr,
                                                "Dateinamen der zu erstellenden Projektdatei eingeben",
                                                self.default_dir,
                                                "*.qgs")
@@ -172,25 +186,25 @@ class QgsUpdate:
         
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-            self.dlg_pr.tf_projectFile.setText(filename)
+            self.dlgpr.tf_projectFile.setText(filename)
 
 
-    def selectFile_qkanDB(self):
+    def dlgpr_selectFile_qkanDB(self):
         """Anzubindende QKan-Datenbank festlegen"""
 
-        filename = QFileDialog.getOpenFileName(self.dlg_pr,
+        filename = QFileDialog.getOpenFileName(self.dlgpr,
                                                "QKan-Datenbank auswählen",
                                                self.default_dir,
                                                "*.sqlite")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-            self.dlg_pr.tf_qkanDB.setText(filename)
+            self.dlgpr.tf_qkanDB.setText(filename)
 
 
-    def selectFile_projectTemplate(self):
+    def dlgpr_selectFileProjectTemplate(self):
         """Vorlage-Projektdatei auswählen"""
 
-        self.setPathToTemplateDir = self.dlg_pr.cb_setPathToTemplateDir.isChecked()
+        self.setPathToTemplateDir = self.dlgpr.cb_setPathToTemplateDir.isChecked()
         if self.setPathToTemplateDir:
             self.templateDir = os.path.join(pluginDirectory('qkan'), u"database/templates")
         else:
@@ -202,15 +216,15 @@ class QgsUpdate:
                                self.database_QKan))
                 self.templateDir = ''
 
-        filename = QFileDialog.getOpenFileName(self.dlg_pr,
+        filename = QFileDialog.getOpenFileName(self.dlgpr,
                                                "Vorlage für zu erstellende Projektdatei auswählen",
                                                self.templateDir,
                                                "*.qgs")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-            self.dlg_pr.tf_projectTemplate.setText(filename)
+            self.dlgpr.tf_projectTemplate.setText(filename)
 
-    # ----------------------------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------
     # 2. Aufruf des Formulars
 
     def run_qgsadapt(self):
@@ -227,12 +241,12 @@ class QgsUpdate:
             self.default_dir = os.path.dirname(self.database_QKan)       # bereits geladene QKan-Datenbank übernehmen
         elif 'database_QKan' in self.config:
             self.database_QKan = self.config['database_QKan']
-            self.dlg_pr.tf_qkanDB.setText(self.database_QKan)
+            self.dlgpr.tf_qkanDB.setText(self.database_QKan)
             self.default_dir = os.path.dirname(self.database_QKan)
         else:
             self.database_QKan = ''
             self.default_dir = '.'
-        self.dlg_pr.tf_qkanDB.setText(self.database_QKan)
+        self.dlgpr.tf_qkanDB.setText(self.database_QKan)
 
         # Formularfeld Vorlagedatei
         if 'projectTemplate' in self.config:
@@ -251,30 +265,30 @@ class QgsUpdate:
             self.setPathToTemplateDir = self.config['setPathToTemplateDir']
         else:
             self.setPathToTemplateDir = True
-        self.dlg_pr.cb_setPathToTemplateDir.setChecked(self.setPathToTemplateDir)
+        self.dlgpr.cb_setPathToTemplateDir.setChecked(self.setPathToTemplateDir)
 
         # Option: QKan-Datenbank aktualisieren
         if 'qkanDBUpdate' in self.config:
             qkanDBUpdate = self.config['qkanDBUpdate']
         else:
             qkanDBUpdate = True
-        self.dlg_pr.cb_qkanDBUpdate.setChecked(qkanDBUpdate)
+        self.dlgpr.cb_qkanDBUpdate.setChecked(qkanDBUpdate)
 
         # show the dialog
-        self.dlg_pr.show()
+        self.dlgpr.show()
         # Run the dialog event loop
-        result = self.dlg_pr.exec_()
+        result = self.dlgpr.exec_()
 
         # See if OK was pressed
         if result:
 
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
-            projectTemplate = self.dlg_pr.tf_projectTemplate.text()
-            self.database_QKan = self.dlg_pr.tf_qkanDB.text()
-            projectfile = self.dlg_pr.tf_projectFile.text()
-            self.setPathToTemplateDir = self.dlg_pr.cb_setPathToTemplateDir.isChecked()
-            qkanDBUpdate = self.dlg_pr.cb_qkanDBUpdate.isChecked()
+            projectTemplate = self.dlgpr.tf_projectTemplate.text()
+            self.database_QKan = self.dlgpr.tf_qkanDB.text()
+            projectfile = self.dlgpr.tf_projectFile.text()
+            self.setPathToTemplateDir = self.dlgpr.cb_setPathToTemplateDir.isChecked()
+            qkanDBUpdate = self.dlgpr.cb_qkanDBUpdate.isChecked()
 
 
             # Konfigurationsdaten schreiben -----------------------------------------------------------
@@ -291,12 +305,12 @@ class QgsUpdate:
             qgsadapt(projectTemplate, self.database_QKan, epsg, projectfile, self.setPathToTemplateDir, 
                      u'SpatiaLite')
 
-    # ----------------------------------------------------------------------------------------------------------
-    # Allgemeine Optionen
+    # ----------------------------------------------------------------------------------------------------
+    # Allgemeine QKan-Optionen bearbeiten
 
     # 1. Formularfunktionen
 
-    def selectKBS(self):
+    def dlgop_selectKBS(self):
         """KBS auswählen. Setzt das KBS für die weiteren Funktionen
 
         :returns: void
@@ -305,18 +319,18 @@ class QgsUpdate:
         projSelector.exec_()
         erg = projSelector.selectedAuthId()
         if len(erg.split(u':')) == 2:
-            self.dlg_op.tf_epsg.setText(erg.split(u':')[1])
+            self.dlgop.tf_epsg.setText(erg.split(u':')[1])
         else:
-            self.dlg_op.tf_epsg.setText(erg)
+            self.dlgop.tf_epsg.setText(erg)
 
-    def fangradiusDefault(self):
-        self.dlg_op.tf_fangradius.setText('0.1')
+    def dlgop_fangradiusDefault(self):
+        self.dlgop.tf_fangradius.setText('0.1')
 
-    def mindestflaecheDefault(self):
-        self.dlg_op.tf_mindestflaeche.setText('0.5')
+    def dlgop_mindestflaecheDefault(self):
+        self.dlgop.tf_mindestflaeche.setText('0.5')
 
-    def max_loopsDefault(self):
-        self.dlg_op.tf_max_loops.setText('1000')
+    def dlgop_maxLoopsDefault(self):
+        self.dlgop.tf_max_loops.setText('1000')
 
     # -----------------------------------------------------------------------------------------
     # 2. Aufruf des Formulars
@@ -331,21 +345,21 @@ class QgsUpdate:
             fangradius = self.config['fangradius']
         else:
             fangradius = u'0.1'
-        self.dlg_op.tf_fangradius.setText(str(fangradius))
+        self.dlgop.tf_fangradius.setText(str(fangradius))
 
         # Mindestflächengröße
         if 'mindestflaeche' in self.config:
             mindestflaeche = self.config['mindestflaeche']
         else:
             mindestflaeche = u'0.5'
-        self.dlg_op.tf_mindestflaeche.setText(str(mindestflaeche))
+        self.dlgop.tf_mindestflaeche.setText(str(mindestflaeche))
 
         # Maximalzahl Schleifendurchläufe
         if 'max_loops' in self.config:
             max_loops = self.config['max_loops']
         else:
             max_loops = '1000'
-        self.dlg_op.tf_max_loops.setText(str(max_loops))
+        self.dlgop.tf_max_loops.setText(str(max_loops))
 
         # Optionen zum Typ der QKan-Datenbank
         if 'datenbanktyp' in self.config:
@@ -354,38 +368,38 @@ class QgsUpdate:
             datenbanktyp = u'spatialite'
 
         if datenbanktyp == u'spatialite':
-            self.dlg_op.rb_spatialite.setChecked(True)
+            self.dlgop.rb_spatialite.setChecked(True)
         # elif datenbanktyp == u'postgis':
-            # self.dlg_op.rb_postgis.setChecked(True)
+            # self.dlgop.rb_postgis.setChecked(True)
 
         if 'epsg' in self.config:
             self.epsg = self.config['epsg']
         else:
             self.epsg = u'25832'
-        self.dlg_op.tf_epsg.setText(self.epsg)
+        self.dlgop.tf_epsg.setText(self.epsg)
 
 
         # show the dialog
-        self.dlg_op.show()
+        self.dlgop.show()
         # Run the dialog event loop
-        result = self.dlg_op.exec_()
+        result = self.dlgop.exec_()
 
         # See if OK was pressed
         if result:
 
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
-            fangradius = self.dlg_op.tf_fangradius.text()
-            mindestflaeche = self.dlg_op.tf_mindestflaeche.text()
-            max_loops = self.dlg_op.tf_max_loops.text()
-            if self.dlg_op.rb_spatialite.isChecked():
+            fangradius = self.dlgop.tf_fangradius.text()
+            mindestflaeche = self.dlgop.tf_mindestflaeche.text()
+            max_loops = self.dlgop.tf_max_loops.text()
+            if self.dlgop.rb_spatialite.isChecked():
                 datenbanktyp = u'spatialite'
-            # elif self.dlg_op.rb_postgis.isChecked():
+            # elif self.dlgop.rb_postgis.isChecked():
                 # datenbanktyp = u'postgis'
             else:
                 fehlermeldung(u"tools.application.run", 
                               u"Fehlerhafte Option: \ndatenbanktyp = {}".format(repr(datenbanktyp)))
-            epsg = self.dlg_op.tf_epsg.text()
+            epsg = self.dlgop.tf_epsg.text()
 
             self.config['fangradius'] = fangradius
             self.config['mindestflaeche'] = mindestflaeche
@@ -396,3 +410,223 @@ class QgsUpdate:
             with open(self.configfil, 'w') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
+
+
+    # ----------------------------------------------------------------------------------------------------
+    # Oberflächenabflussparameter in QKan-Tabellen eintragen, ggfs. nur für ausgewählte Teilgebiete
+
+    # 1. Formularfunktionen
+
+    def dlgro_selectFile_qkanDB(self):
+        """Datenbankverbindung zur QKan-Datenbank (SpatiLite) auswaehlen."""
+
+        filename = QFileDialog.getOpenFileName(self.dlgro, u"QKan-Datenbank auswählen",
+                                               self.default_dir, "*.sqlite")
+        # if os.path.dirname(filename) != '':
+        # os.chdir(os.path.dirname(filename))
+        self.dlgro.tf_QKanDB.setText(filename)
+
+    def dlgro_helpClick(self):
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        helpfile = os.path.join(self.plugin_dir, '..\doc', 'runoffparams.html')
+        os.startfile(helpfile)
+
+    def dlgro_lwTeilgebieteClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlgro.cb_selActive.setChecked(True)
+        self.dlgro_countselection()
+
+    def dlgro_selActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlgro.cb_selActive.isChecked():
+            # Nix tun ...
+            logger.debug('\nChecked = True')
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlgro.lw_teilgebiete.count()
+            for i in range(anz):
+                item = self.dlgro.lw_teilgebiete.item(i)
+                self.dlgro.lw_teilgebiete.setItemSelected(item, False)
+
+            # Anzahl in der Anzeige aktualisieren
+            self.dlgro_countselection()
+
+    def dlgro_countselection(self):
+        """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
+        der betroffenen Flächen und Haltungen"""
+        liste_teilgebiete = self.dlgro_listselecteditems(self.dlgro.lw_teilgebiete)
+
+        # Zu berücksichtigende Flächen zählen
+        auswahl = ''
+        if len(liste_teilgebiete) != 0:
+            auswahl = u" WHERE flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+
+        sql = u"""SELECT count(*) AS anzahl FROM flaechen{auswahl}""".format(auswahl=auswahl)
+
+        if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.dlgro_countselection (1)"):
+            return False
+        daten = self.dbQK.fetchone()
+        if not (daten is None):
+            self.dlgro.lf_anzahl_flaechen.setText(str(daten[0]))
+        else:
+            self.dlgro.lf_anzahl_flaechen.setText('0')
+
+
+    # -------------------------------------------------------------------------
+    # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
+
+    def dlgro_listselecteditems(self, listWidget):
+        """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
+
+        :param listWidget: String for translation.
+        :type listWidget: QListWidgetItem
+
+        :returns: Tuple containing selected teilgebiete
+        :rtype: tuple
+        """
+        items = listWidget.selectedItems()
+        liste = []
+        for elem in items:
+            liste.append(elem.text())
+        return liste
+
+    def run_runoffparams(self):
+        """Berechnen und Eintragen der Oberflächenabflussparameter in die Tabelle flaechen"""
+
+        # Check, ob die relevanten Layer nicht editable sind.
+        if len({'flaechen'} & get_editable_layers()) > 0:
+            iface.messageBar().pushMessage(u"Bedienerfehler: ",
+                                           u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
+                                           level=QgsMessageBar.CRITICAL)
+            return False
+
+        # Übernahme der Quelldatenbank:
+        # Wenn ein Projekt geladen ist, wird die Quelldatenbank daraus übernommen.
+        # Wenn dies nicht der Fall ist, wird die Quelldatenbank aus der
+        # json-Datei übernommen.
+
+        database_QKan = ''
+
+        database_QKan, epsg = get_database_QKan()
+        if not database_QKan:
+            if 'database_QKan' in self.config:
+                database_QKan = self.config['database_QKan']
+            else:
+                database_QKan = ''
+        self.dlgro.tf_QKanDB.setText(database_QKan)
+
+        # Datenbankverbindung für Abfragen
+        if database_QKan != '':
+            self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+            if self.dbQK is None:
+                fehlermeldung("Fehler in tools.runoffparams",
+                              u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+                iface.messageBar().pushMessage("Fehler in tools.runoffparams",
+                                               u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+                                                   database_QKan), level=QgsMessageBar.CRITICAL)
+                return None
+
+            # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
+
+            sql = u"""INSERT INTO teilgebiete (tgnam)
+                    SELECT teilgebiet FROM flaechen 
+                    WHERE teilgebiet IS NOT NULL AND
+                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                    GROUP BY teilgebiet"""
+            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (1) "):
+                return False
+
+            sql = u"""INSERT INTO teilgebiete (tgnam)
+                    SELECT teilgebiet FROM haltungen 
+                    WHERE teilgebiet IS NOT NULL AND
+                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                    GROUP BY teilgebiet"""
+            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (2) "):
+                return False
+
+            sql = u"""INSERT INTO teilgebiete (tgnam)
+                    SELECT teilgebiet FROM schaechte 
+                    WHERE teilgebiet IS NOT NULL AND
+                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                    GROUP BY teilgebiet"""
+            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (3) "):
+                return False
+
+            self.dbQK.commit()
+
+            # Anlegen der Tabelle zur Auswahl der Teilgebiete
+
+            # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
+            liste_teilgebiete = []
+            if 'liste_teilgebiete' in self.config:
+                liste_teilgebiete = self.config['liste_teilgebiete']
+
+            # Abfragen der Tabelle teilgebiete nach Teilgebieten
+            sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
+            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (4) "):
+                return False
+            daten = self.dbQK.fetchall()
+            self.dlgro.lw_teilgebiete.clear()
+
+            for ielem, elem in enumerate(daten):
+                self.dlgro.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
+                try:
+                    if elem[0] in liste_teilgebiete:
+                        self.dlgro.lw_teilgebiete.setCurrentRow(ielem)
+                except BaseException as err:
+                    fehlermeldung(u'QKan_ExportDYNA (6), Fehler in elem = {}\n'.format(elem), repr(err))
+                    # if len(daten) == 1:
+                    # self.dlgro.lw_teilgebiete.setCurrentRow(0)
+
+            # Ereignis bei Auswahländerung in Liste Teilgebiete
+
+        self.dlgro_countselection()
+
+        # Optionen zur Berechnung der befestigten Flächen
+        if 'runoffparams_choice' in self.config:
+            runoffparams_choice = self.config['runoffparams_choice']
+        else:
+            runoffparams_choice = u'itwh'
+
+        if runoffparams_choice == u'itwh':
+            self.dlgro.rb_runoffparamsdyna.setChecked(True)
+        elif runoffparams_choice == u'dyna':
+            self.dlgro.rb_runoffparamsitwh.setChecked(True)
+
+        # Formular anzeigen
+
+        self.dlgro.show()
+        # Run the dialog event loop
+        result = self.dlgro.exec_()
+        # See if OK was pressed
+        if result:
+
+            # Abrufen der ausgewählten Elemente in der Liste
+            liste_teilgebiete = self.listselecteditems(self.dlgro.lw_teilgebiete)
+
+            # Eingaben aus Formular übernehmen
+            database_QKan = self.dlgro.tf_QKanDB.text()
+            if self.dlgro.rb_runoffparamsitwh.isChecked():
+                runoffparams_choice = u'itwh'
+            elif self.dlgro.rb_runoffparamsdyna.isChecked():
+                runoffparams_choice = u'dyna'
+            else:
+                fehlermeldung(u"tools.runoffparams.run_runoffparams", 
+                              u"Fehlerhafte Option: \nrunoffparams_choice = {}".format(repr(runoffparams_choice)))
+
+
+            # Konfigurationsdaten schreiben
+            self.config['database_QKan'] = database_QKan
+            self.config['liste_teilgebiete'] = liste_teilgebiete
+            self.config['runoffparams_choice'] = runoffparams_choice
+
+            with open(self.configfil, 'w') as fileconfig:
+                # logger.debug(u"Config-Dictionary: {}".format(self.config))
+                fileconfig.write(json.dumps(self.config))
+
+            exportKanaldaten(iface, dynafile, template_dyna, self.dbQK, runoffparams_choice, dynaprof_choice, 
+                             liste_teilgebiete, autokorrektur, autonummerierung_dyna, fangradius, 
+                             mindestflaeche, max_loops, datenbanktyp)

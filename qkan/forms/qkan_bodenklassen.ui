@@ -331,25 +331,6 @@
      <string>Maximum (Anfang)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lb_version">
-    <property name="geometry">
-     <rect>
-      <x>580</x>
-      <y>320</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Version QKan Import</string>
-    </property>
-    <property name="text">
-     <string>Version 2.5.4</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
