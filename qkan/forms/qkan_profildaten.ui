@@ -96,25 +96,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="lb_version">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>110</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Version QKan Import</string>
-    </property>
-    <property name="text">
-     <string>Version 2.5.4</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Verbindungslinien erstellen</string>
+   <string>Allgmeine QKan-Optionen</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
@@ -24,6 +24,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -53,6 +54,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -72,6 +74,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -98,6 +101,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -143,6 +147,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>75</weight>
       <bold>true</bold>
@@ -169,6 +174,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -198,6 +204,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -224,6 +231,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>75</weight>
       <bold>true</bold>
@@ -256,25 +264,6 @@
     </property>
    </widget>
   </widget>
-  <widget class="QLabel" name="lb_version">
-   <property name="geometry">
-    <rect>
-     <x>410</x>
-     <y>470</y>
-     <width>71</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Version QKan Import</string>
-   </property>
-   <property name="text">
-    <string>Version 2.5.2</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
@@ -286,6 +275,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -321,6 +311,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>75</weight>
       <bold>true</bold>
@@ -347,6 +338,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -378,6 +370,7 @@ Haltungen pro Strang:</string>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -397,6 +390,7 @@ Haltungen pro Strang:</string>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -426,6 +420,7 @@ Haltungen pro Strang:</string>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -453,6 +448,7 @@ Haltungen pro Strang:</string>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -507,6 +503,7 @@ Haltungen pro Strang:</string>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>9</pointsize>
       <weight>50</weight>
       <bold>false</bold>

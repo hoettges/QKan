@@ -120,6 +120,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -162,6 +163,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -247,25 +249,6 @@
     </property>
     <property name="text">
      <string>Zusatz</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lb_version">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>170</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Version QKan Import</string>
-    </property>
-    <property name="text">
-     <string>Version 2.5.4</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
   </widget>
