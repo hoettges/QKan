@@ -151,6 +151,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>10</pointsize>
       <weight>75</weight>
       <bold>true</bold>
@@ -201,6 +202,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -221,6 +223,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -251,6 +254,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <pointsize>10</pointsize>
       <weight>75</weight>
       <bold>true</bold>
@@ -260,25 +264,6 @@
      <string>Neue Gruppe speichern</string>
     </property>
    </widget>
-  </widget>
-  <widget class="QLabel" name="lb_version">
-   <property name="geometry">
-    <rect>
-     <x>600</x>
-     <y>590</y>
-     <width>71</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Version QKan Import</string>
-   </property>
-   <property name="text">
-    <string>Version 2.5.4</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-   </property>
   </widget>
  </widget>
  <resources/>

@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/qkan/ganglinienhe">
-        <file>icon_gangl.png</file>
-        <file>icon_laengs.png</file>
-        <file>icon_forward.png</file>
-        <file>icon_backward.png</file>
-    </qresource>
-</RCC>

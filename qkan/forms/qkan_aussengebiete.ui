@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>574</width>
-    <height>430</height>
+    <height>377</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -168,25 +168,6 @@
      <string>CN-Wert</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lb_version">
-    <property name="geometry">
-     <rect>
-      <x>500</x>
-      <y>370</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Version QKan Import</string>
-    </property>
-    <property name="text">
-     <string>Version 2.5.4</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
@@ -214,6 +195,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>75</weight>
       <bold>true</bold>
      </font>
@@ -232,6 +214,7 @@
      </property>
      <property name="font">
       <font>
+       <family>Tahoma</family>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -251,6 +234,7 @@
      </property>
      <property name="font">
       <font>
+       <family>Tahoma</family>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -270,6 +254,7 @@
      </property>
      <property name="font">
       <font>
+       <family>Tahoma</family>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -309,6 +294,7 @@
      </property>
      <property name="font">
       <font>
+       <family>Tahoma</family>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -329,6 +315,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -358,6 +345,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -387,6 +375,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -406,6 +395,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -451,6 +441,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>75</weight>
       <bold>true</bold>
      </font>
@@ -472,6 +463,7 @@
      </property>
      <property name="font">
       <font>
+       <family>Tahoma</family>
        <weight>50</weight>
        <italic>true</italic>
        <bold>false</bold>
@@ -504,6 +496,7 @@
      </property>
      <property name="font">
       <font>
+       <family>Tahoma</family>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -523,6 +516,7 @@
      </property>
      <property name="font">
       <font>
+       <family>Tahoma</family>
        <weight>50</weight>
        <bold>false</bold>
       </font>
