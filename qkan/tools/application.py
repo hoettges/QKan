@@ -586,15 +586,15 @@ class QKanTools:
         self.dlgro_countselection()
 
         # Optionen zur Berechnung der befestigten Flächen
-        if 'runoffparams_choice' in self.config:
-            runoffparams_choice = self.config['runoffparams_choice']
+        if 'runoffparamstype_choice' in self.config:
+            runoffparamstype_choice = self.config['runoffparamstype_choice']
         else:
-            runoffparams_choice = u'itwh'
+            runoffparamstype_choice = u'itwh'
 
-        if runoffparams_choice == u'itwh':
-            self.dlgro.rb_runoffparamsdyna.setChecked(True)
-        elif runoffparams_choice == u'dyna':
+        if runoffparamstype_choice == u'itwh':
             self.dlgro.rb_runoffparamsitwh.setChecked(True)
+        elif runoffparamstype_choice == u'dyna':
+            self.dlgro.rb_runoffparamsdyna.setChecked(True)
 
         # Formular anzeigen
 
@@ -610,23 +610,21 @@ class QKanTools:
             # Eingaben aus Formular übernehmen
             database_QKan = self.dlgro.tf_QKanDB.text()
             if self.dlgro.rb_runoffparamsitwh.isChecked():
-                runoffparams_choice = u'itwh'
+                runoffparamstype_choice = u'itwh'
             elif self.dlgro.rb_runoffparamsdyna.isChecked():
-                runoffparams_choice = u'dyna'
+                runoffparamstype_choice = u'dyna'
             else:
                 fehlermeldung(u"tools.runoffparams.run_runoffparams", 
-                              u"Fehlerhafte Option: \nrunoffparams_choice = {}".format(repr(runoffparams_choice)))
+                              u"Fehlerhafte Option: \nrunoffparamstype_choice = {}".format(repr(runoffparamstype_choice)))
 
 
             # Konfigurationsdaten schreiben
             self.config['database_QKan'] = database_QKan
             self.config['liste_teilgebiete'] = liste_teilgebiete
-            self.config['runoffparams_choice'] = runoffparams_choice
+            self.config['runoffparamstype_choice'] = runoffparamstype_choice
 
             with open(self.configfil, 'w') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
-            exportKanaldaten(iface, dynafile, template_dyna, self.dbQK, runoffparams_choice, dynaprof_choice, 
-                             liste_teilgebiete, autokorrektur, autonummerierung_dyna, fangradius, 
-                             mindestflaeche, max_loops, datenbanktyp)
+            setRunoffparams(self.dbQK, runoffparamstype_choice, liste_teilgebiete, datenbanktyp)

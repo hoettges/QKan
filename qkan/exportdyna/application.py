@@ -121,7 +121,7 @@ class ExportToKP:
         self.dlg.lw_teilgebiete.itemClicked.connect(self.lw_teilgebieteClick)
         self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
         self.dlg.button_box.helpRequested.connect(self.helpClick)
-        self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
+        self.dlg.pb_selectQKanDB.clicked.connect(self.selectFile_QKanDB)
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
