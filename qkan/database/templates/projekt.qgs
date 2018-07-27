@@ -3061,9 +3061,9 @@ def my_form_open(dialog, layer, feature):
         </edittype>
         <edittype widgetv2type="ValueMap" name="abflusstyp">
           <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
-            <value key="Direktabfluss" value="Direktabfluss"/>
-            <value key="Fließzeiten" value="Fließzeiten"/>
-            <value key="Schwerpunktfließzeit" value="Schwerpunktfließzeit"/>
+            <value key="Speicherkaskade" value="Speicherkaskade"/>
+            <value key="Fliesszeiten" value="Fliesszeiten"/>
+            <value key="Schwerpunktlaufzeit" value="Schwerpunktlaufzeit"/>
           </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="speicherzahl">

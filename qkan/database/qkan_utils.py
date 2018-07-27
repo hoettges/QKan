@@ -276,3 +276,50 @@ def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp =
             return False
 
     return True
+
+
+def sqlconditions(keyword, attrlis, valuelis2):
+    """stellt Attribut- und Wertelisten zu einem SQL-String zusammen.
+    
+    :keywort:       logischer Operator, mit dem der SQL-Text an den vorhandenen
+                    SQL-Text angehängt werden soll
+    :type keyword:  string
+
+    :attrlis:       Liste von Attribunten, ggfs. mit Tabellennamen. Anzahl muss mit 
+                    valuelis2 korrespondieren
+    :type attrlis:  list of strings
+
+    :valuelis2:     Liste aus Listen mit Werten. Anzahl muss mit attrlis korrespondieren
+    :type valuelis2:list of lists
+
+    :returns:       Anhang zu einem SQL-Statement mit führendem Leerzeichen
+    
+    Example: sqlconditions('WHERE', ('flaechen.teilgebiet', 'flaechen.abflussparameter'), (liste_teilegebiete, liste_abflussparamerer)
+    """
+
+    # Falls keine Wertelisten gegeben oder alle Wertelisten leer sind, wird ein Leerstring zurückgeben
+    for el in valuelis2:
+        if len(el) > 0:
+            break
+    else:
+        return ''
+
+    if len(attrlis) != len(valuelis2):
+        fehlermeldung(u'Fehler in qkan_utils.sqlconditions:', 
+                u'Anzahl an Attributen und Wertlisten stimmt nicht ueberein: \n' + \
+                u'attrlis= {}\n'.format(attrlis) + \
+                u'valuelis2= {}\n'.format(valuelis2))
+
+    condlis = []        # Liste der einzelnen SQL-Conditions
+
+    for attr, valuelis in zip(attrlis, valuelis2):
+        if len(valuelis) != 0:
+            condlis.append("{attr} in ('{values}')".format(attr=attr, 
+                                                           values = "', '".join(valuelis)))
+    if len(condlis) != 0:
+        auswahl = ' {keyword} {conds}'.format(keyword=keyword, conds=' AND '.join(condlis))
+    else:
+        auswahl = ''
+
+    return auswahl
+
