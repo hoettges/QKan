@@ -6,8 +6,8 @@
 
 # flaechen.abflusstyp
 def abflusstypen(simprog):
-    abflusstypen =  {u'he': {u'Speicherkaskade': 0, u'Fliesszeiten': 1, u'Schwerpunktlaufzeit': 2},
-                      u'kp': {u'Speicherkaskade': 0, u'Fliesszeiten': 1, u'Schwerpunktlaufzeit': 2}
+    abflusstypen =  {u'he': {u'Speicherkaskade': 0, u'Fliesszeiten': 1, u'Schwerpunktlaufzeit': 2, u'Direktabfluss': 0, u'Schwerpunktflieﬂzeit': 2},
+                      u'kp': {u'Speicherkaskade': 0, u'Fliesszeiten': 1, u'Schwerpunktlaufzeit': 2, u'Direktabfluss': 0, u'Schwerpunktflieﬂzeit': 2}
                     }
 
     if simprog in abflusstypen:
