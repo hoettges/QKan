@@ -51,10 +51,7 @@ if (-not (Test-Path $PYRCC))
 $RESOURCE_FILES=@(
 	"../qkan/createunbeffl/resources.qrc"
 	"../qkan/exportdyna/resources.qrc"
-	"../qkan/exporthe/resources.qrc"
-	"../qkan/ganglinienhe/resources.qrc"
 	"../qkan/importdyna/resources.qrc"
-	"../qkan/importhe/resources.qrc"
 	"../qkan/linkflaechen/resources.qrc"
 	"../qkan/tools/resources.qrc"
 )

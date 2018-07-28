@@ -39,9 +39,10 @@ import resources
 # Import the code for the dialog
 from application_dialog import QgsadaptDialog, QKanOptionsDialog, RunoffParamsDialog
 from k_tools import qgsadapt
+from k_runoffparams import setRunoffparams
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung, sqlconditions
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u'QKan')
@@ -110,7 +111,7 @@ class QKanTools:
 
         # Formular dlgpr
         self.dlgpr.pb_selectProjectFile.clicked.connect(self.dlgpr_selectFileProjectfile)
-        self.dlgpr.pb_selectqkanDB.clicked.connect(self.dlgpr_selectFile_qkanDB)
+        self.dlgpr.pb_selectQKanDB.clicked.connect(self.dlgpr_selectFile_qkanDB)
         self.dlgpr.pb_selectProjectTemplate.clicked.connect(self.dlgpr_selectFileProjectTemplate)
 
         # Formular dlgop
@@ -120,10 +121,12 @@ class QKanTools:
         self.dlgop.pb_selectKBS.clicked.connect(self.dlgop_selectKBS)
 
         # Formular dlgro
-        self.dlgro.lwTeilgebiete.itemClicked.connect(self.dlgro_lwTeilgebieteClick)
-        self.dlgro.cb_selActive.stateChanged.connect(self.dlgro_selActiveClick)
+        self.dlgro.lw_teilgebiete.itemClicked.connect(self.dlgro_lwTeilgebieteClick)
+        self.dlgro.lw_abflussparameter.itemClicked.connect(self.dlgro_lwAbflussparamsClick)
+        self.dlgro.cb_selTgbActive.stateChanged.connect(self.dlgro_selTgbActiveClick)
+        self.dlgro.cb_selParActive.stateChanged.connect(self.dlgro_selParActiveClick)
         self.dlgro.button_box.helpRequested.connect(self.dlgro_helpClick)
-        self.dlgro.pb_selectqkanDB.clicked.connect(self.dlgro_selectFile_qkanDB)
+        self.dlgro.pb_selectQKanDB.clicked.connect(self.dlgro_selectFile_qkanDB)
 
 
         # Ende Eigene Funktionen ---------------------------------------------------
@@ -428,20 +431,26 @@ class QKanTools:
 
     def dlgro_helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '..\doc', 'runoffparams.html')
-        os.startfile(helpfile)
+        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#berechnung-von-oberflachenabflussparametern')
+        webbrowser.open_new_tab(helpfile)
 
     def dlgro_lwTeilgebieteClick(self):
         """Reaktion auf Klick in Tabelle"""
 
-        self.dlgro.cb_selActive.setChecked(True)
+        self.dlgro.cb_selTgbActive.setChecked(True)
         self.dlgro_countselection()
 
-    def dlgro_selActiveClick(self):
+    def dlgro_lwAbflussparamsClick(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.dlgro.cb_selParActive.setChecked(True)
+        self.dlgro_countselection()
+
+    def dlgro_selTgbActiveClick(self):
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
-        if self.dlgro.cb_selActive.isChecked():
+        if self.dlgro.cb_selTgbActive.isChecked():
             # Nix tun ...
             logger.debug('\nChecked = True')
         else:
@@ -454,19 +463,35 @@ class QKanTools:
             # Anzahl in der Anzeige aktualisieren
             self.dlgro_countselection()
 
+    def dlgro_selParActiveClick(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.dlgro.cb_selParActive.isChecked():
+            # Nix tun ...
+            logger.debug('\nChecked = True')
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.dlgro.lw_abflussparameter.count()
+            for i in range(anz):
+                item = self.dlgro.lw_abflussparameter.item(i)
+                self.dlgro.lw_abflussparameter.setItemSelected(item, False)
+
+            # Anzahl in der Anzeige aktualisieren
+            self.dlgro_countselection()
+
     def dlgro_countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
         liste_teilgebiete = self.dlgro_listselecteditems(self.dlgro.lw_teilgebiete)
+        liste_abflussparameter = self.dlgro_listselecteditems(self.dlgro.lw_abflussparameter)
 
-        # Zu berücksichtigende Flächen zählen
-        auswahl = ''
-        if len(liste_teilgebiete) != 0:
-            auswahl = u" WHERE flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+        # Auswahl der zu bearbeitenden Flächen
+        auswahl = sqlconditions('WHERE', ('teilgebiet', 'abflussparameter'), (liste_teilgebiete, liste_abflussparameter))
 
         sql = u"""SELECT count(*) AS anzahl FROM flaechen{auswahl}""".format(auswahl=auswahl)
 
-        if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.dlgro_countselection (1)"):
+        if not self.dbQK.sql(sql, u"QKan_Tools.application.dlgro_countselection (1)"):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
@@ -529,33 +554,28 @@ class QKanTools:
                                                    database_QKan), level=QgsMessageBar.CRITICAL)
                 return None
 
-            # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
+            # Check, ob alle Teilgebiete in Flächen auch in Tabelle "teilgebiete" enthalten
 
             sql = u"""INSERT INTO teilgebiete (tgnam)
                     SELECT teilgebiet FROM flaechen 
                     WHERE teilgebiet IS NOT NULL AND
                     teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                     GROUP BY teilgebiet"""
-            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (1) "):
+            if not self.dbQK.sql(sql, u"QKan_Tools.application.run (1) "):
                 return False
 
-            sql = u"""INSERT INTO teilgebiete (tgnam)
-                    SELECT teilgebiet FROM haltungen 
-                    WHERE teilgebiet IS NOT NULL AND
-                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                    GROUP BY teilgebiet"""
-            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (2) "):
-                return False
+            # Check, ob alle Abflussparameter in Flächen auch in Tabelle "abflussparameter" enthalten
 
-            sql = u"""INSERT INTO teilgebiete (tgnam)
-                    SELECT teilgebiet FROM schaechte 
-                    WHERE teilgebiet IS NOT NULL AND
-                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                    GROUP BY teilgebiet"""
-            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (3) "):
+            sql = u"""INSERT INTO abflussparameter (apnam)
+                    SELECT abflussparameter FROM flaechen 
+                    WHERE abflussparameter IS NOT NULL AND
+                    abflussparameter NOT IN (SELECT apnam FROM abflussparameter)
+                    GROUP BY abflussparameter"""
+            if not self.dbQK.sql(sql, u"QKan_Tools.application.run (2) "):
                 return False
 
             self.dbQK.commit()
+
 
             # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
@@ -565,8 +585,8 @@ class QKanTools:
                 liste_teilgebiete = self.config['liste_teilgebiete']
 
             # Abfragen der Tabelle teilgebiete nach Teilgebieten
-            sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-            if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.run (4) "):
+            sql = '''SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'''
+            if not self.dbQK.sql(sql, u"QKan_Tools.application.run (4) "):
                 return False
             daten = self.dbQK.fetchall()
             self.dlgro.lw_teilgebiete.clear()
@@ -577,11 +597,34 @@ class QKanTools:
                     if elem[0] in liste_teilgebiete:
                         self.dlgro.lw_teilgebiete.setCurrentRow(ielem)
                 except BaseException as err:
-                    fehlermeldung(u'QKan_ExportDYNA (6), Fehler in elem = {}\n'.format(elem), repr(err))
+                    fehlermeldung(u'QKan_Tools (6), Fehler in elem = {}\n'.format(elem), repr(err))
                     # if len(daten) == 1:
                     # self.dlgro.lw_teilgebiete.setCurrentRow(0)
 
-            # Ereignis bei Auswahländerung in Liste Teilgebiete
+
+            # Anlegen der Tabelle zur Auswahl der Abflussparameter
+
+            # Zunächst wird die Liste der beim letzten Mal gewählten Abflussparameter aus config gelesen
+            liste_abflussparameter = []
+            if 'liste_abflussparameter' in self.config:
+                liste_abflussparameter = self.config['liste_abflussparameter']
+
+            # Abfragen der Tabelle abflussparameter nach Abflussparametern
+            sql = '''SELECT "apnam" FROM "abflussparameter" GROUP BY "apnam"'''
+            if not self.dbQK.sql(sql, u"QKan_Tools.application.run (4) "):
+                return False
+            daten = self.dbQK.fetchall()
+            self.dlgro.lw_abflussparameter.clear()
+
+            for ielem, elem in enumerate(daten):
+                self.dlgro.lw_abflussparameter.addItem(QListWidgetItem(elem[0]))
+                try:
+                    if elem[0] in liste_abflussparameter:
+                        self.dlgro.lw_abflussparameter.setCurrentRow(ielem)
+                except BaseException as err:
+                    fehlermeldung(u'QKan_Tools (6), Fehler in elem = {}\n'.format(elem), repr(err))
+                    # if len(daten) == 1:
+                    # self.dlgro.lw_abflussparameter.setCurrentRow(0)
 
         self.dlgro_countselection()
 
@@ -596,6 +639,11 @@ class QKanTools:
         elif runoffparamstype_choice == u'dyna':
             self.dlgro.rb_runoffparamsdyna.setChecked(True)
 
+        if 'datenbanktyp' in self.config:
+            datenbanktyp = self.config['datenbanktyp']
+        else:
+            datenbanktyp = 'spatialite'
+
         # Formular anzeigen
 
         self.dlgro.show()
@@ -604,8 +652,9 @@ class QKanTools:
         # See if OK was pressed
         if result:
 
-            # Abrufen der ausgewählten Elemente in der Liste
-            liste_teilgebiete = self.listselecteditems(self.dlgro.lw_teilgebiete)
+            # Abrufen der ausgewählten Elemente in den Listen
+            liste_teilgebiete = self.dlgro_listselecteditems(self.dlgro.lw_teilgebiete)
+            liste_abflussparameter = self.dlgro_listselecteditems(self.dlgro.lw_abflussparameter)
 
             # Eingaben aus Formular übernehmen
             database_QKan = self.dlgro.tf_QKanDB.text()
@@ -621,10 +670,11 @@ class QKanTools:
             # Konfigurationsdaten schreiben
             self.config['database_QKan'] = database_QKan
             self.config['liste_teilgebiete'] = liste_teilgebiete
+            self.config['liste_abflussparameter'] = liste_abflussparameter
             self.config['runoffparamstype_choice'] = runoffparamstype_choice
 
             with open(self.configfil, 'w') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
-            setRunoffparams(self.dbQK, runoffparamstype_choice, liste_teilgebiete, datenbanktyp)
+            setRunoffparams(self.dbQK, runoffparamstype_choice, liste_teilgebiete, liste_abflussparameter, datenbanktyp)

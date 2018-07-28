@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1. Automatisches Erzeugen von Anbindungen von Einzeleinleitern &#8212; QKan 2.4.5 Dokumentation</title>
+    <title>1. Berechnung von Oberflächenabflussparametern &#8212; QKan 2.4.5 Dokumentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -43,13 +43,24 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="automatisches-erzeugen-von-anbindungen-von-einzeleinleitern">
-<span id="index-0"></span><h1>1. Automatisches Erzeugen von Anbindungen von Einzeleinleitern<a class="headerlink" href="#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern" title="Link zu dieser Überschrift">¶</a></h1>
+  <div class="section" id="berechnung-von-oberflachenabflussparametern">
+<span id="index-0"></span><h1>1. Berechnung von Oberflächenabflussparametern<a class="headerlink" href="#berechnung-von-oberflachenabflussparametern" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Für befestigte und unbefestigte Flächen werden die Oberflächenabflussparameter
+nach HYSTEM/EXTRAN (geplante Alternative: Kanal++) berechnet.</p>
+<div class="section" id="tabellen-zur-auswahl-der-zu-berucksichtigenden-flachen">
+<h2>1.1. Tabellen zur Auswahl der zu berücksichtigenden Flächen<a class="headerlink" href="#tabellen-zur-auswahl-der-zu-berucksichtigenden-flachen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
+auf Haltungen mit ausgewählten
+Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
+</div>
+</div>
+<div class="section" id="automatisches-erzeugen-von-anbindungen-von-einzeleinleitern">
+<span id="index-1"></span><h1>2. Automatisches Erzeugen von Anbindungen von Einzeleinleitern<a class="headerlink" href="#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern" title="Link zu dieser Überschrift">¶</a></h1>
 <p>Für jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), wird
 eine Linie erzeugt, die am Punkte des Einzeleinleiters beginnt und auf der damit verknüpften Haltung
 endet.</p>
 <div class="section" id="tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">
-<h2>1.1. Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen" title="Link zu dieser Überschrift">¶</a></h2>
+<h2>2.1. Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung
 auf Haltungen mit ausgewählten
 Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden.</p>
@@ -57,14 +68,14 @@ Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt wer
 </div>
 </div>
 <div class="section" id="automatisches-erzeugen-von-flachenanbindungen">
-<span id="index-1"></span><h1>2. Automatisches Erzeugen von Flächenanbindungen<a class="headerlink" href="#automatisches-erzeugen-von-flachenanbindungen" title="Link zu dieser Überschrift">¶</a></h1>
+<span id="index-2"></span><h1>3. Automatisches Erzeugen von Flächenanbindungen<a class="headerlink" href="#automatisches-erzeugen-von-flachenanbindungen" title="Link zu dieser Überschrift">¶</a></h1>
 <p>Für jede Fläche, für die noch keine Anbindung erstellt wurde (automatisch oder manuell), wird
 eine Linie erzeugt, die innerhalb der Fläche beginnt und auf der damit verknüpften Haltung
 endet.</p>
 <p>Abhängig von dem Flächenattribut &#8220;aufteilen&#8221; ist eine Anbindung pro Fläche oder pro Flächenteilstück
 und Haltungsfläche (Tabelle &#8220;tezg&#8221;) vorgesehen.</p>
 <div class="section" id="id1">
-<h2>2.1. Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen<a class="headerlink" href="#id1" title="Link zu dieser Überschrift">¶</a></h2>
+<h2>3.1. Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen<a class="headerlink" href="#id1" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung auf Flächen mit ausgewählten Abflussparametern,
 Haltungen mit ausgewählten Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt
 werden.</p>
@@ -72,28 +83,28 @@ werden.</p>
 </div>
 </div>
 <div class="section" id="erzeugen-der-unbefestigten-flachen">
-<span id="index-2"></span><h1>3. Erzeugen der unbefestigten Flächen<a class="headerlink" href="#erzeugen-der-unbefestigten-flachen" title="Link zu dieser Überschrift">¶</a></h1>
+<span id="index-3"></span><h1>4. Erzeugen der unbefestigten Flächen<a class="headerlink" href="#erzeugen-der-unbefestigten-flachen" title="Link zu dieser Überschrift">¶</a></h1>
 <p>Für jede Haltungsfläche (Tabelle tezg) wird aus dem Zwischenraum der befestigten Flächen ein Flächenobjekt angelegt.
 Dieses kann aus mehreren Flächenteilen bestehen.</p>
 <p>Die Attributdaten werden dabei aus den Haltungsflächen übernommen.</p>
 <div class="section" id="tabelle-zur-auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen">
-<h2>3.1. Tabelle zur Auswahl der zu bearbeitenden Arten von Haltungsflächen<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen" title="Link zu dieser Überschrift">¶</a></h2>
+<h2>4.1. Tabelle zur Auswahl der zu bearbeitenden Arten von Haltungsflächen<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung auf ausgewählte Haltungsflächen beschränkt werden. Aufgelistet sind alle Abflussparameter und Teilgebiete, die in den Haltungsflächen verwendet werden. Durch die Auswahl einer Zeile in der Tabelle werden alle Haltungsflächen mit der dargestellten Kombination aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_flaechen.html#createunbeffl"><span class="std std-ref">Erzeugen von unbefestigten Flächen</span></a></p>
 </div>
 </div>
 <div class="section" id="export-nach-hystem-extran">
-<span id="index-3"></span><h1>4. Export nach HYSTEM/EXTRAN<a class="headerlink" href="#export-nach-hystem-extran" title="Link zu dieser Überschrift">¶</a></h1>
+<span id="index-4"></span><h1>5. Export nach HYSTEM/EXTRAN<a class="headerlink" href="#export-nach-hystem-extran" title="Link zu dieser Überschrift">¶</a></h1>
 <p>Der Export funktioniert für Version 7.8 und 7.9.</p>
 <div class="section" id="tabelle-zur-auswahl-der-zu-exportierenden-daten">
-<h2>4.1. Tabelle zur Auswahl der zu exportierenden Daten<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten" title="Link zu dieser Überschrift">¶</a></h2>
+<h2>5.1. Tabelle zur Auswahl der zu exportierenden Daten<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann der Export auf ausgewählte Teilgebiete beschränkt werden.</p>
 </div>
 </div>
 <div class="section" id="allgemeine-funktionselemente-in-formularen">
-<h1>5. Allgemeine Funktionselemente in Formularen<a class="headerlink" href="#allgemeine-funktionselemente-in-formularen" title="Link zu dieser Überschrift">¶</a></h1>
+<h1>6. Allgemeine Funktionselemente in Formularen<a class="headerlink" href="#allgemeine-funktionselemente-in-formularen" title="Link zu dieser Überschrift">¶</a></h1>
 <div class="section" id="auswahl-in-listen">
-<span id="selectiontable"></span><h2>5.1. Auswahl in Listen<a class="headerlink" href="#auswahl-in-listen" title="Link zu dieser Überschrift">¶</a></h2>
+<span id="selectiontable"></span><h2>6.1. Auswahl in Listen<a class="headerlink" href="#auswahl-in-listen" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Für die Auswahl von Zeilen in der Tabelle stehen folgende Funktionen zur Verfügung:</p>
 <blockquote>
 <div><ul class="simple">
@@ -116,24 +127,28 @@ in der Auswahltabelle angeklickt wird, wird die Auswahl automatisch aktiviert</p
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Inhalt</a></h3>
   <ul>
-<li><a class="reference internal" href="#">1. Automatisches Erzeugen von Anbindungen von Einzeleinleitern</a><ul>
-<li><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">1.1. Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
+<li><a class="reference internal" href="#">1. Berechnung von Oberflächenabflussparametern</a><ul>
+<li><a class="reference internal" href="#tabellen-zur-auswahl-der-zu-berucksichtigenden-flachen">1.1. Tabellen zur Auswahl der zu berücksichtigenden Flächen</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#automatisches-erzeugen-von-flachenanbindungen">2. Automatisches Erzeugen von Flächenanbindungen</a><ul>
-<li><a class="reference internal" href="#id1">2.1. Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
+<li><a class="reference internal" href="#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern">2. Automatisches Erzeugen von Anbindungen von Einzeleinleitern</a><ul>
+<li><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-berucksichtigenden-flachen-haltungen-und-haltungsflachen">2.1. Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#erzeugen-der-unbefestigten-flachen">3. Erzeugen der unbefestigten Flächen</a><ul>
-<li><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen">3.1. Tabelle zur Auswahl der zu bearbeitenden Arten von Haltungsflächen</a></li>
+<li><a class="reference internal" href="#automatisches-erzeugen-von-flachenanbindungen">3. Automatisches Erzeugen von Flächenanbindungen</a><ul>
+<li><a class="reference internal" href="#id1">3.1. Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#export-nach-hystem-extran">4. Export nach HYSTEM/EXTRAN</a><ul>
-<li><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten">4.1. Tabelle zur Auswahl der zu exportierenden Daten</a></li>
+<li><a class="reference internal" href="#erzeugen-der-unbefestigten-flachen">4. Erzeugen der unbefestigten Flächen</a><ul>
+<li><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen">4.1. Tabelle zur Auswahl der zu bearbeitenden Arten von Haltungsflächen</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#allgemeine-funktionselemente-in-formularen">5. Allgemeine Funktionselemente in Formularen</a><ul>
-<li><a class="reference internal" href="#auswahl-in-listen">5.1. Auswahl in Listen</a></li>
+<li><a class="reference internal" href="#export-nach-hystem-extran">5. Export nach HYSTEM/EXTRAN</a><ul>
+<li><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten">5.1. Tabelle zur Auswahl der zu exportierenden Daten</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#allgemeine-funktionselemente-in-formularen">6. Allgemeine Funktionselemente in Formularen</a><ul>
+<li><a class="reference internal" href="#auswahl-in-listen">6.1. Auswahl in Listen</a></li>
 </ul>
 </li>
 </ul>
