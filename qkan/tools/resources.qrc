@@ -2,5 +2,6 @@
     <qresource prefix="/plugins/qkan/tools" >
         <file>res/icon_qgsadapt.png</file>
         <file>res/icon_qkanoptions.png</file>
+        <file>res/icon_runoffparams.png</file>
     </qresource>
 </RCC>

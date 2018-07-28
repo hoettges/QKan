@@ -1,3 +1,19 @@
+.. index:: Berechnung von Oberflächenabflussparametern (Menü)
+
+Berechnung von Oberflächenabflussparametern
+-----------------------------------------------------------
+
+Für befestigte und unbefestigte Flächen werden die Oberflächenabflussparameter
+nach HYSTEM/EXTRAN (geplante Alternative: Kanal++) berechnet. 
+
+Tabellen zur Auswahl der zu berücksichtigenden Flächen
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung 
+auf Haltungen mit ausgewählten 
+Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt werden. 
+
+
 .. index:: Anbindungen Einzeleinleiter (Menü)
 
 Automatisches Erzeugen von Anbindungen von Einzeleinleitern

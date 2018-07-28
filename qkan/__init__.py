@@ -50,11 +50,13 @@ class Dummy:
         from importdyna import application as importdyna
         from exportdyna import application as exportdyna
         from linkflaechen import application as linkflaechen
+        from tools import application as tools
         self.plugins = [
             createunbeffl.CreateUnbefFl(iface),
             importdyna.ImportFromDyna(iface),
             exportdyna.ExportToKP(iface),
-            linkflaechen.LinkFl(iface)
+            linkflaechen.LinkFl(iface),
+            tools.QKanTools(iface)
         ]
         Dummy.instance = self
 

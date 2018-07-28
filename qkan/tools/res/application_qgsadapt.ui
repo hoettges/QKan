@@ -265,7 +265,7 @@
      <string>QKan-Datenbank aktualisieren</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectqkanDB">
+   <widget class="QPushButton" name="pb_selectQKanDB">
     <property name="geometry">
      <rect>
       <x>410</x>
