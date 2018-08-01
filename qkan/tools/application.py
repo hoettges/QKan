@@ -543,6 +543,17 @@ class QKanTools:
                 database_QKan = ''
         self.dlgro.tf_QKanDB.setText(database_QKan)
 
+        if 'manningrauheit_bef' in self.config:
+            manningrauheit_bef = self.config['manningrauheit_bef']
+        else:
+            manningrauheit_bef = 0.02
+            self.config['manningrauheit_bef'] = manningrauheit_bef
+        if 'manningrauheit_dur' in self.config:
+            manningrauheit_dur = self.config['manningrauheit_dur']
+        else:
+            manningrauheit_dur = 0.10
+            self.config['manningrauheit_dur'] = manningrauheit_dur
+
         # Datenbankverbindung für Abfragen
         if database_QKan != '':
             self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
@@ -628,17 +639,50 @@ class QKanTools:
 
         self.dlgro_countselection()
 
-        # Optionen zur Berechnung der befestigten Flächen
+        # Funktionen zur Berechnung des Oberflächenabflusses
+        # Werden nur gelesen
+        if 'runoffparamsfunctions' in self.config:
+            runoffparamsfunctions = self.config['runoffparamsfunctions']
+        else:
+            runoffparamsfunctions = {
+                'itwh': [
+                    '0.8693*log(area(geom))+ 5.6317', 
+                    'pow(18.904*pow(neigkl,0.686)*area(geom), 0.2535*pow(neigkl,0.244))'], 
+                'dyna': [
+                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef}*fliesslaenge / SQRT(neigung), 0.467)', 
+                    'pow(2*{rauheit_dur} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'], 
+                'Maniak': [
+                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef}*fliesslaenge / SQRT(neigung), 0.467)', 
+                    'pow(2*{rauheit_dur} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'], 
+                }
+            self.config['runoffparamsfunctions'] = runoffparamsfunctions
+        
+        # Optionen zur Berechnung des Oberflächenabflusses
         if 'runoffparamstype_choice' in self.config:
             runoffparamstype_choice = self.config['runoffparamstype_choice']
         else:
             runoffparamstype_choice = u'itwh'
 
         if runoffparamstype_choice == u'itwh':
-            self.dlgro.rb_runoffparamsitwh.setChecked(True)
+            self.dlgro.rb_itwh.setChecked(True)
         elif runoffparamstype_choice == u'dyna':
-            self.dlgro.rb_runoffparamsdyna.setChecked(True)
+            self.dlgro.rb_dyna.setChecked(True)
+        elif runoffparamstype_choice == u'Maniak':
+            self.dlgro.rb_maniak.setChecked(True)
 
+        if 'runoffmodelltype_choice' in self.config:
+            runoffmodelltype_choice = self.config['runoffmodelltype_choice']
+        else:
+            runoffmodelltype_choice = u'Speicherkaskade'
+
+        if runoffmodelltype_choice == u'Speicherkaskade':
+            self.dlgro.rb_kaskade.setChecked(True)
+        elif runoffmodelltype_choice == u'Fliesszeiten':
+            self.dlgro.rb_fliesszeiten.setChecked(True)
+        elif runoffmodelltype_choice == u'Schwerpunktlaufzeit':
+            self.dlgro.rb_schwerpunktlaufzeit.setChecked(True)
+
+        # Datenbanktyp
         if 'datenbanktyp' in self.config:
             datenbanktyp = self.config['datenbanktyp']
         else:
@@ -658,13 +702,24 @@ class QKanTools:
 
             # Eingaben aus Formular übernehmen
             database_QKan = self.dlgro.tf_QKanDB.text()
-            if self.dlgro.rb_runoffparamsitwh.isChecked():
+            if self.dlgro.rb_itwh.isChecked():
                 runoffparamstype_choice = u'itwh'
-            elif self.dlgro.rb_runoffparamsdyna.isChecked():
+            elif self.dlgro.rb_dyna.isChecked():
                 runoffparamstype_choice = u'dyna'
+            elif self.dlgro.rb_maniak.isChecked():
+                runoffparamstype_choice = u'Maniak'
             else:
                 fehlermeldung(u"tools.runoffparams.run_runoffparams", 
                               u"Fehlerhafte Option: \nrunoffparamstype_choice = {}".format(repr(runoffparamstype_choice)))
+            if self.dlgro.rb_kaskade.isChecked():
+                runoffmodelltype_choice = u'Speicherkaskade'
+            elif self.dlgro.rb_fliesszeiten.isChecked():
+                runoffmodelltype_choice = u'Fliesszeiten'
+            elif self.dlgro.rb_schwerpunktlaufzeit.isChecked():
+                runoffmodelltype_choice = u'Schwerpunktlaufzeit'
+            else:
+                fehlermeldung(u"tools.runoffparams.run_runoffparams", 
+                              u"Fehlerhafte Option: \nrunoffmodelltype_choice = {}".format(repr(runoffmodelltype_choice)))
 
 
             # Konfigurationsdaten schreiben
@@ -672,9 +727,12 @@ class QKanTools:
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['liste_abflussparameter'] = liste_abflussparameter
             self.config['runoffparamstype_choice'] = runoffparamstype_choice
+            self.config['runoffmodelltype_choice'] = runoffmodelltype_choice
 
             with open(self.configfil, 'w') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
-            setRunoffparams(self.dbQK, runoffparamstype_choice, liste_teilgebiete, liste_abflussparameter, datenbanktyp)
+            setRunoffparams(self.dbQK, runoffparamstype_choice, runoffmodelltype_choice, runoffparamsfunctions, 
+                manningrauheit_bef, manningrauheit_dur, 
+                liste_teilgebiete, liste_abflussparameter, datenbanktyp)

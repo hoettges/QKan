@@ -49,7 +49,9 @@ progress_bar = None
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def setRunoffparams(dbQK, runoffparamstype_choice, liste_teilgebiete, liste_abflussparameter, datenbanktyp):
+def setRunoffparams(self.dbQK, runoffparamstype_choice, runoffmodelltype_choice, runoffparamsfunctions, 
+                    manningrauheit_bef, manningrauheit_dur, 
+                    liste_teilgebiete, liste_abflussparameter, datenbanktyp):
     '''Berechnet Oberlächenabflussparameter für HYSTEM/EXTRAN 7 und DYNA/Kanal++.
 
     :dbQK:                          Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -84,35 +86,105 @@ def setRunoffparams(dbQK, runoffparamstype_choice, liste_teilgebiete, liste_abfl
     # status_message.setText(u"Erzeugung von unbefestigten Flächen ist in Arbeit.")
     progress_bar.setValue(1)
 
-    # Auswahl der zu bearbeitenden Flächen
-    auswahl = sqlconditions('AND', ('teilgebiet', 'abflussparameter'), (liste_teilgebiete, liste_abflussparameter))
+    funlis = runoffparamsfunctions[runoffparamstype_choice]        # Beide Funktionen werden in einer for-Schleife abgearbeitet
 
-    if runoffparamstype_choice == 'itwh':
-        # befestigte Flächen
-        sql = u"""UPDATE flaechen
-            SET 
-                speicherkonst = max(0.003,round(0.8693 / 3*log(area(geom))+ 5.6317 / 3, 5)),
-                fliesszeit = max(1,round(0.8693*log(area(geom))+ 5.6317, 5))
-            WHERE abflussparameter IN
-            (   SELECT apnam 
-                FROM abflussparameter
-                WHERE bodenklasse IS NULL
-                GROUP BY apnam){auswahl}""".format(auswahl=auswahl)
-        if not dbQK.sql(sql, u'QKan.tools.setRunoffparams'):
+    if runoffmodelltype_choice == 'Speicherkaskade':
+
+        # Auswahl der zu bearbeitenden Flächen
+        auswahl = sqlconditions('WHERE', ('fl.teilgebiet', 'fl.abflussparameter'), (liste_teilgebiete, liste_abflussparameter))
+
+        # Abflusstyp
+        sql = """
+            UPDATE linkfl
+            SET abflusstyp = 'Speicherkaskade'
+            WHERE id IN (
+                SELECT linkfl.id
+                FROM linkfl AS lf
+                INNER JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam{auswahl}
+            )""".format(auswahl=auswahl)
+        if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (1)'):
             return False
 
-        # durchlässige Flächen
-        sql = u"""UPDATE flaechen
-            SET 
-                speicherkonst = pow(18.904*pow(neigkl,0.686)/3*area(geom), 0.2535*pow(neigkl,0.244)),
-                fliesszeit =    pow(18.904*pow(neigkl,0.686)*area(geom), 0.2535*pow(neigkl,0.244))
-            WHERE abflussparameter IN
-            (   SELECT apnam 
-                FROM abflussparameter
-                WHERE bodenklasse IS NOT NULL
-                GROUP BY apnam){auswahl}""".format(auswahl=auswahl)
-        if not dbQK.sql(sql, u'QKan.tools.setRunoffparams'):
+        # Speicherzahl
+        sql = """
+            UPDATE linkfl 
+            SET speicherzahl = 3
+            WHERE id IN (
+                SELECT linkfl.id
+                FROM linkfl AS lf
+                INNER JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam{auswahl}
+            )""".format(auswahl=auswahl)
+        if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (2)'):
             return False
+
+        # Speicherkennzahl
+
+        # Auswahl der zu bearbeitenden Flächen
+        auswahl = sqlconditions('AND', ('fl.teilgebiet', 'fl.abflussparameter'), (liste_teilgebiete, liste_abflussparameter))
+
+        # Befestigte Flächen. Kriterium: bodenklasse IS NULL
+        # Es werden sowohl aufzuteilende und nicht aufzuteilende Flächen berücksichtigt
+        # Schleife über befestigte und durchlässige Flächen
+        
+        kriterienlis = ['IS NULL', 'IS NOT NULL']
+        for fun, kriterium in zip(funlis, kriterienlis):
+        sql = """
+            WITH flintersect AS (
+                SELECT
+                    lf.flnam AS flnam 
+                    fl.neigkl AS neigkl
+                    fl.abflussparameter AS abflussparameter, 
+                    CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                FROM linkfl AS lf
+                INNER JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                LEFT JOIN tezg AS tg
+                ON lf.tezgnam = tg.flnam),
+            qdist AS (
+                SELECT 
+                    lf.pk,
+                    ST_Distance(fi.geom,ha.geom) AS "abstand",
+                    CASE WHEN Intersects(ha.geom,fi.geom) THEN
+                        HausdorffDistance(fi.geom,Intersection(ha.geom,fi.geom))
+                    ELSE 
+                        MaxDistance(fi.geom,ClosestPoint(ha.geom,fi.geom))-ST_Distance(fi.geom,ha.geom)
+                    END AS "fliesslaenge",
+                   fi.neigkl AS "neigkl", 
+                   CASE fi.neigkl WHEN 1 THEN 0.5 WHEN 2 THEN 2.5 WHEN 3 THEN 7.0 WHEN 4 THEN 12 WHEN 5 THEN 20 END AS "neigung",
+                   lf.speicherzahl AS speicherzahl
+                FROM linkfl AS lf
+                INNER JOIN flintersect AS fi
+                ON lf.flnam = fi.flnam
+                INNER JOIN haltungen AS ha
+                ON ha.haltnam = lf.haltnam
+                LEFT JOIN tezg AS tg
+                ON lf.tezgnam = tg.flnam
+                WHERE abflussparameter.bodenklasse {kriterium}{auswahl}
+            )
+            UPDATE linkfl 
+            SET speicherkonst = (
+                SELECT {fun}/speicherzahl
+                FROM qdist
+                WHERE qdist.pk = linkfl.pk)
+            WHERE pk IN (
+                SELECT linkfl.pk
+                FROM linkfl AS lf
+                INNER JOIN flintersect AS fi
+                ON lf.flnam = fi.flnam
+                INNER JOIN abflussparameter AS ap
+                ON fi.abflussparameter = abflussparameter.apnam
+                WHERE abflussparameter.bodenklasse IS NULL{auswahl}
+            )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium,
+                        rauheit_bef=manningrauheit_bef, rauheit_dur=manningrauheit_dur)
+        if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (3)'):
+            return False
+        
+    elif runoffmodelltype_choice == 'Fliesszeiten':
+        pass
+    elif runoffmodelltype_choice == 'Schwerpunktlaufzeit':
+        pass
 
     # status_message.setText(u"Erzeugung von unbefestigten Flächen")
     progress_bar.setValue(90)
