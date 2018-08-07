@@ -244,6 +244,9 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_tabinit, 
                     u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
             database_QKan), level=QgsMessageBar.CRITICAL)
         return None
+    elif not dbQK.status:
+        # Datenbank wurde geändert
+        return None
 
     # # Referenztabellen laden. 
 

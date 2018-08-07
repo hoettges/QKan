@@ -322,10 +322,8 @@ class ExportToKP:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            if 'database_QKan' in self.config:
-                database_QKan = self.config['database_QKan']
-            else:
-                database_QKan = ''
+            logger.error(u"exportdyna.application: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            return False
         self.dlg.tf_QKanDB.setText(database_QKan)
 
         # Datenbankverbindung für Abfragen
@@ -338,6 +336,9 @@ class ExportToKP:
                 iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE",
                                                u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                    database_QKan), level=QgsMessageBar.CRITICAL)
+                return None
+            elif not self.dbQK.status:
+                # Datenbank wurde geändert
                 return None
 
             # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
