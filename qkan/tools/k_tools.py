@@ -78,7 +78,7 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     # ------------------------------------------------------------------------------
     # Datenbankverbindungen
 
-    dbQK = DBConnection(dbname=qkanDB, epsg=epsg)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
+    dbQK = DBConnection(dbname=qkanDB)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
     if dbQK is None:
         fehlermeldung(u"Fehler in qgsadapt", 
@@ -86,6 +86,9 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
         iface.messageBar().pushMessage(u"Fehler in qgsadapt", 
                     u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
             qkanDB), level=QgsMessageBar.CRITICAL)
+        return None
+    elif not dbQK.status:
+        # Datenbank wurde geändert
         return None
 
     # --------------------------------------------------------------------------

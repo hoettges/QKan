@@ -280,8 +280,6 @@ class CreateUnbefFl:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            fehlermeldung(u"Fehler in CreateUnbefFl",
-                          u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             logger.error(u"CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
@@ -294,6 +292,9 @@ class CreateUnbefFl:
             iface.messageBar().pushMessage(u"Fehler in QKan_Import_from_HE",
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
+            return None
+        elif not self.dbQK.status:
+            # Datenbank wurde geändert
             return None
 
         # Kontrolle, ob in Tabelle "abflussparameter" ein Datensatz für unbefestigte Flächen vorhanden ist

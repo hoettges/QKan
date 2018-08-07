@@ -191,7 +191,8 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                     WHEN 0 THEN 0.5
                     WHEN 1 THEN 2.5
                     WHEN 2 THEN 7.0
-                    ELSE 12.0
+                    WHEN 3 THEN 12.0
+                    ELSE 20.0
                     END AS neigung, 
                 fl.abflussparameter AS abflussparameter, 
                 area(tg.geom) AS fltezg,
@@ -675,6 +676,15 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
     status_message = iface.messageBar().createMessage(u"", u"Export in Arbeit. Bitte warten.")
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+
+    # Aktualisierung der Verknüpfungen
+    if not updatelinkfl(dbQK, fangradius):
+        fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen (dyna.export 1)', 
+                      u'Der logische Cache konnte nicht aktualisiert werden.')
+
+    if not updatelinksw(dbQK, fangradius):
+        fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen (dyna.export 1)', 
+                      u'Der logische Cache konnte nicht aktualisiert werden.')
 
     # DYNA-Vorlagedatei lesen. Dies geschieht zu Beginn, damit Zieldatei selbst Vorlage sein kann!
     dynatemplate = open(template_dyna).readlines()

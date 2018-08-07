@@ -58,18 +58,21 @@ class DBConnection:
     def __init__(self, dbname=None, tabObject=None, epsg=25832):
         """Constructor.
 
-        :param dbname: Pfad zur SpatiaLite-Datenbankdatei. Falls nicht vorhanden, 
-               wird es angelegt.
-        :type tabObject: String
+        :param dbname:      Pfad zur SpatiaLite-Datenbankdatei. Falls nicht vorhanden, 
+                            wird es angelegt.
+        :type tabObject:    String
 
-        :param tabObject: Vectorlayerobjekt, aus dem die Parameter zum 
-            Zugriff auf die SpatiaLite-Tabelle ermittelt werden.
-        :type tabObject: QgsVectorLayer
+        :param tabObject:   Vectorlayerobjekt, aus dem die Parameter zum 
+                            Zugriff auf die SpatiaLite-Tabelle ermittelt werden.
+        :type tabObject:    QgsVectorLayer
+
+        :param epsg:        EPSG-Code aller Tabellen in einer neuen Datenbank
+        :type epsg:         string
         """
 
         # Übernahme einiger Attribute in die Klasse
-        self.epsg = epsg
         self.dbname = dbname
+        self.epsg = epsg
 
         # Die nachfolgenden Klassenobjekte dienen dazu, gleichartige (sqlidtext) SQL-Debug-Meldungen 
         # nur einmal pro Sekunde zu erzeugen. 
@@ -77,8 +80,9 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.5.5'
+        self.actversion = '2.5.7'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
+        self.status = True
 
         if dbname is not None:
             # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
@@ -86,8 +90,11 @@ class DBConnection:
                 self.consl = splite.connect(database=dbname, check_same_thread=False)
                 self.cursl = self.consl.cursor()
 
+                self.epsg = self.getepsg()
+
                 logger.debug(u'dbfund.__init__: Datenbank existiert und Verbindung hergestellt:\n{}'.format(dbname))
                 # Versionsprüfung
+                
                 if not self.updateVersion():
                     self.consl.close()
                     return None
@@ -132,6 +139,9 @@ class DBConnection:
                 try:
                     self.consl = splite.connect(database=dbname)
                     self.cursl = self.consl.cursor()
+
+                    self.epsg = self.getepsg()
+
                 except:
                     iface.messageBar().pushMessage(u"Fehler",
                                                    u'Fehler beim Öffnen der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(
@@ -142,6 +152,7 @@ class DBConnection:
                                            u'Fehler beim Anbinden der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(
                                                dbname), level=QgsMessageBar.CRITICAL)
             self.consl = None
+
 
     def __del__(self):
         """Destructor.
@@ -161,6 +172,23 @@ class DBConnection:
         # lattr = [el[1] for el in daten if el[2]  == u'TEXT']
         lattr = [el[1] for el in daten]
         return lattr
+
+
+    def getepsg(self):
+        """ Feststellen des EPSG-Codes der Datenbank"""
+
+        sql = u"""SELECT srid
+            FROM geom_cols_ref_sys
+            WHERE Lower(f_table_name) = Lower('haltungen')
+            AND Lower(f_geometry_column) = Lower('geom')"""
+        if not self.sql(sql, u'dbfunc.__init__ (1)'):
+            return None
+
+        data = self.fetchone()
+        if data is None:
+            fehlermeldung('Fehler in dbfunc.__init__', 'Konnte EPSG nicht ermitteln')
+        epsg = data[0]
+        return epsg
 
     def sql(self, sql, errormessage = u'allgemein', repeatmessage=False, transaction=False):
         """Fuehrt eine SQL-Abfrage aus."""
@@ -232,6 +260,8 @@ class DBConnection:
 
         logger.debug('0 - actversion = {}'.format(self.actversion))
 
+        # Status, wenn die Änderungen so gravierend waren, dass das Projekt neu geladen werden muss. 
+        status_neustart = False
         # ---------------------------------------------------------------------------------------------
         # Aktuelle Version abfragen
 
@@ -258,6 +288,16 @@ class DBConnection:
 
         self.versionlis = [int(el.replace('a','').replace('b','').replace('c','')) for el in versiondbQK.split('.')]
 
+        global progress_bar
+        progress_bar = QProgressBar(iface.messageBar())
+        progress_bar.setRange(0, 100)
+        if self.actversion != versiondbQK:
+            status_message = iface.messageBar().createMessage(u"", u"Die Datenbank wird an Version {ver} angepasst. Bitte warten...".format(ver=versiondbQK))
+            status_message.layout().addWidget(progress_bar)
+            iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+
+        progress_bar.setValue(0)
+
         # ---------------------------------------------------------------------------------------------
         # Aktualisierung von Version 1.9.9 und früher
 
@@ -281,8 +321,7 @@ class DBConnection:
             sqllis = [u"""CREATE TABLE IF NOT EXISTS linksw (
                     pk INTEGER PRIMARY KEY AUTOINCREMENT,
                     elnam TEXT,
-                    haltnam TEXT,
-                    teilgebiet TEXT)""", 
+                    haltnam TEXT)""", 
                     u"""SELECT AddGeometryColumn('linksw','geom',{},'POLYGON',2)""".format(self.epsg), 
                     u"""SELECT AddGeometryColumn('linksw','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg), 
                     u"""SELECT AddGeometryColumn('linksw','glink',{},'LINESTRING',2)""".format(self.epsg),
@@ -397,14 +436,6 @@ class DBConnection:
         # ---------------------------------------------------------------------------------------------------------
         if versionolder(self.versionlis, [2, 2, 3]):
 
-            global progress_bar
-            progress_bar = QProgressBar(iface.messageBar())
-            progress_bar.setRange(0, 100)
-            status_message = iface.messageBar().createMessage(u"", u"Die Datenbank wird an Version 2.2.3 angepasst. Bitte warten...")
-            status_message.layout().addWidget(progress_bar)
-            iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
-
-            progress_bar.setValue(80)
 
             # Tabelle flaechen -------------------------------------------------------------
 
@@ -416,7 +447,7 @@ class DBConnection:
 
             # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
             sqllis = [u"""BEGIN TRANSACTION;""",
-                      u"""CREATE TABLE flaechen_t (
+                      u"""CREATE TABLE IF NOT EXISTS flaechen_t (
                         pk INTEGER PRIMARY KEY AUTOINCREMENT,
                         flnam TEXT,
                         haltnam TEXT,
@@ -434,6 +465,7 @@ class DBConnection:
                         kommentar TEXT,
                         createdat TEXT DEFAULT CURRENT_DATE);""",
                       u"""SELECT AddGeometryColumn('flaechen_t','geom',{},'MULTIPOLYGON',2);""".format(self.epsg),
+                      u"""DELETE FROM flaechen_t""",
                       u"""INSERT INTO flaechen_t 
                         (      "flnam", "haltnam", "neigkl", "he_typ", "speicherzahl", "speicherkonst", "fliesszeit", "fliesszeitkanal",
                                "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom")
@@ -512,17 +544,17 @@ class DBConnection:
 
             # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
             sqllis = [u"""BEGIN TRANSACTION;""",
-                      u"""CREATE TABLE linksw_t (
+                      u"""CREATE TABLE IF NOT EXISTS linksw_t (
                         pk INTEGER PRIMARY KEY AUTOINCREMENT,
                         elnam TEXT,
-                        haltnam TEXT,
-                        teilgebiet TEXT)""",
+                        haltnam TEXT)""",
                       u"""SELECT AddGeometryColumn('linksw_t','geom',{},'POLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linksw_t','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linksw_t','glink',{},'LINESTRING',2)""".format(self.epsg),
+                      u"""DELETE FROM linksw_t""",
                       u"""INSERT INTO linksw_t 
-                        (      "elnam", "haltnam", "teilgebiet", "geom", "gbuf", "glink")
-                        SELECT "elnam", "haltnam", "teilgebiet", "geom", "gbuf", "glink"
+                        (      "elnam", "haltnam", "geom", "gbuf", "glink")
+                        SELECT "elnam", "haltnam", "geom", "gbuf", "glink"
                         FROM "linksw";""",
                       u"""SELECT DiscardGeometryColumn('linksw','geom')""",
                       u"""SELECT DiscardGeometryColumn('linksw','gbuf')""",
@@ -531,15 +563,14 @@ class DBConnection:
                       u"""CREATE TABLE linksw (
                         pk INTEGER PRIMARY KEY AUTOINCREMENT,
                         elnam TEXT,
-                        haltnam TEXT,
-                        teilgebiet TEXT)""",
+                        haltnam TEXT)""",
                       u"""SELECT AddGeometryColumn('linksw','geom',{},'POLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linksw','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linksw','glink',{},'LINESTRING',2)""".format(self.epsg),
                       u"""SELECT CreateSpatialIndex('linksw','geom')""",
                       u"""INSERT INTO linksw 
-                        (      "elnam", "haltnam", "teilgebiet", "geom", "gbuf", "glink")
-                        SELECT "elnam", "haltnam", "teilgebiet", "geom", "gbuf", "glink"
+                        (      "elnam", "haltnam", "geom", "gbuf", "glink")
+                        SELECT "elnam", "haltnam", "geom", "gbuf", "glink"
                         FROM "linksw_t";""",
                       u"""SELECT DiscardGeometryColumn('linksw_t','geom')""",
                       u"""SELECT DiscardGeometryColumn('linksw_t','gbuf')""",
@@ -578,19 +609,18 @@ class DBConnection:
             #             Tabelle löschen und wieder neu anlegen und Daten zurück kopieren
 
             sqllis = [u"""BEGIN TRANSACTION;""",
-                      u"""CREATE TABLE linkfl_t (
+                      u"""CREATE TABLE IF NOT EXISTS linkfl_t (
                         pk INTEGER PRIMARY KEY AUTOINCREMENT,
                         flnam TEXT,
                         haltnam TEXT,
-                        tezgnam TEXT,
-                        aufteilen TEXT,
-                        teilgebiet TEXT);""",
+                        tezgnam TEXT);""",
                       u"""SELECT AddGeometryColumn('linkfl_t','geom',{},'MULTIPOLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linkfl_t','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linkfl_t','glink',{},'LINESTRING',2)""".format(self.epsg),
+                      u"""DELETE FROM linkfl_t""",
                       u"""INSERT INTO linkfl_t 
-                        (      "flnam", "haltnam", "tezgnam", "aufteilen", "teilgebiet", "geom", "gbuf", "glink")
-                        SELECT "flnam", "haltnam", "tezgnam", "aufteilen", "teilgebiet", "geom", "gbuf", "glink"
+                        (      "flnam", "haltnam", "tezgnam", "geom", "gbuf", "glink")
+                        SELECT "flnam", "haltnam", "tezgnam", "geom", "gbuf", "glink"
                         FROM "linkfl";""",
                       u"""SELECT DiscardGeometryColumn('linkfl','geom')""",
                       u"""SELECT DiscardGeometryColumn('linkfl','gbuf')""",
@@ -600,16 +630,14 @@ class DBConnection:
                         pk INTEGER PRIMARY KEY AUTOINCREMENT,
                         flnam TEXT,
                         haltnam TEXT,
-                        tezgnam TEXT,
-                        aufteilen TEXT,
-                        teilgebiet TEXT);""",
+                        tezgnam TEXT);""",
                       u"""SELECT AddGeometryColumn('linkfl','geom',{},'MULTIPOLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linkfl','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
                       u"""SELECT AddGeometryColumn('linkfl','glink',{},'LINESTRING',2)""".format(self.epsg),
                       u"""SELECT CreateSpatialIndex('linkfl','glink')""",
                       u"""INSERT INTO linkfl 
-                        (      "flnam", "haltnam", "tezgnam", "aufteilen", "teilgebiet", "geom", "gbuf", "glink")
-                        SELECT "flnam", "haltnam", "tezgnam", "aufteilen", "teilgebiet", "geom", "gbuf", "glink"
+                        (      "flnam", "haltnam", "tezgnam", "geom", "gbuf", "glink")
+                        SELECT "flnam", "haltnam", "tezgnam", "geom", "gbuf", "glink"
                         FROM "linkfl_t";""",
                       u"""SELECT DiscardGeometryColumn('linkfl_t','geom')""",
                       u"""SELECT DiscardGeometryColumn('linkfl_t','gbuf')""",
@@ -646,7 +674,7 @@ class DBConnection:
 
             # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
             sqllis = [u"""BEGIN TRANSACTION;""",
-                      u"""CREATE TABLE einleit_t (
+                      u"""CREATE TABLE IF NOT EXISTS einleit_t (
                         pk INTEGER PRIMARY KEY AUTOINCREMENT,
                         elnam TEXT,
                         haltnam TEXT,
@@ -657,6 +685,7 @@ class DBConnection:
                         kommentar TEXT,
                         createdat TEXT DEFAULT CURRENT_DATE);""",
                       u"""SELECT AddGeometryColumn('einleit_t','geom',{},'POINT',2)""".format(self.epsg),
+                      u"""DELETE FROM einleit_t""",
                       u"""INSERT INTO einleit_t 
                         (      "elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", "createdat", "geom")
                         SELECT "elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", "createdat", "geom"
@@ -700,12 +729,10 @@ class DBConnection:
 
             self.commit()
 
-            progress_bar.setValue(100)
-            status_message.setText(u"Achtung! Benutzerhinweis: Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
-            status_message.setLevel(QgsMessageBar.WARNING)
-            iface.messageBar().pushMessage(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...",
-                                               level=QgsMessageBar.WARNING, duration=0)
-                
+            progress_bar.setValue(80)
+
+            status_neustart = True
+
             # Versionsnummer hochsetzen
 
             self.versionlis = [2, 2, 3]
@@ -843,7 +870,7 @@ class DBConnection:
 
             # Einleitungen aus Aussengebieten ----------------------------------------------------------------
 
-            sql = u'''CREATE TABLE aussengebiete (
+            sql = u'''CREATE TABLE IF NOT EXISTS aussengebiete (
                 pk INTEGER PRIMARY KEY AUTOINCREMENT, 
                 gebnam TEXT, 
                 schnam TEXT, 
@@ -872,11 +899,10 @@ class DBConnection:
 
             # Anbindung Aussengebiete -------------------------------------------------------------------------
 
-            sql = u"""CREATE TABLE linkageb (
+            sql = u"""CREATE TABLE IF NOT EXISTS linkageb (
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
                 gebnam TEXT,
-                schnam TEXT,
-                teilgebiet TEXT)"""
+                schnam TEXT)"""
 
             if not self.sql(sql, u'dbfunc.version (2.5.2-4)'):
                 return False
@@ -929,6 +955,157 @@ class DBConnection:
                               u"{e}".format(e=repr(err)))
 
         # ------------------------------------------------------------------------------------------
+        if versionolder(self.versionlis, [2, 5, 7]):
+
+            # Tabelle linkfl um die Felder [abflusstyp, speicherzahl, speicherkonst, fliesszeitkanal, fliesszeitflaeche]
+            # erweitern. Wegen der Probleme mit der Anzeige in QGIS wird die Tabelle dazu umgespeichert. 
+
+            # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
+            # sql = u"""SELECT type, sql FROM sqlite_master WHERE tbl_name='linkfl'"""
+            # if not self.sql(sql, u'dbfunc.version.pragma (5)'):
+                # return False
+            # triggers = self.fetchall()
+
+            # 2. Schritt: Temporäre Tabelle anlegen, Daten rüber kopieren, 
+            #             Tabelle löschen und wieder neu anlegen und Daten zurück kopieren
+
+            sqllis = [u"""BEGIN TRANSACTION;""",
+                      u"""CREATE TABLE IF NOT EXISTS linkfl_t (
+                        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                        flnam TEXT,
+                        haltnam TEXT,
+                        tezgnam TEXT);""",
+                      u"""SELECT AddGeometryColumn('linkfl_t','geom',{},'MULTIPOLYGON',2)""".format(self.epsg),
+                      u"""SELECT AddGeometryColumn('linkfl_t','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
+                      u"""SELECT AddGeometryColumn('linkfl_t','glink',{},'LINESTRING',2)""".format(self.epsg),
+                      u"""DELETE FROM linkfl_t""",
+                      u"""INSERT INTO linkfl_t 
+                        (      "flnam", "haltnam", "tezgnam", "geom", "gbuf", "glink")
+                        SELECT "flnam", "haltnam", "tezgnam", "geom", "gbuf", "glink"
+                        FROM "linkfl";""",
+                      u"""SELECT DiscardGeometryColumn('linkfl','geom')""",
+                      u"""SELECT DiscardGeometryColumn('linkfl','gbuf')""",
+                      u"""SELECT DiscardGeometryColumn('linkfl','glink')""",
+                      u"""DROP TABLE linkfl;""",
+                      u"""CREATE TABLE linkfl (
+                        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                        flnam TEXT,
+                        haltnam TEXT,
+                        tezgnam TEXT,
+                        abflusstyp TEXT,
+                        speicherzahl INTEGER,
+                        speicherkonst REAL,
+                        fliesszeitkanal REAL,
+                        fliesszeitflaeche REAL);""",
+                      u"""SELECT AddGeometryColumn('linkfl','geom',{},'MULTIPOLYGON',2)""".format(self.epsg),
+                      u"""SELECT AddGeometryColumn('linkfl','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
+                      u"""SELECT AddGeometryColumn('linkfl','glink',{},'LINESTRING',2)""".format(self.epsg),
+                      u"""SELECT CreateSpatialIndex('linkfl','glink')""",
+                      u"""INSERT INTO linkfl 
+                        (      "flnam", "haltnam", "tezgnam", "geom", "gbuf", "glink")
+                        SELECT "flnam", "haltnam", "tezgnam", "geom", "gbuf", "glink"
+                        FROM "linkfl_t";""",
+                      u"""SELECT DiscardGeometryColumn('linkfl_t','geom')""",
+                      u"""SELECT DiscardGeometryColumn('linkfl_t','gbuf')""",
+                      u"""SELECT DiscardGeometryColumn('linkfl_t','glink')""",
+                      u"""DROP TABLE linkfl_t;"""]
+
+            for sql in sqllis:
+                if not self.sql(sql, u'dbfunc.version (2.5.7-1)', transaction=True):
+                    return False
+
+            # 3. Schritt: Trigger wieder herstellen
+            # for el in triggers:
+                # if el[0] != 'table':
+                    # sql = el[1]
+                    # logger.debug(u"Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
+                    # if not self.sql(sql, u'dbfunc.version (2.2.2-7)', transaction=True):
+                        # return False
+                # else:
+                    # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
+
+            # 4. Schritt: Transaction abschließen
+            self.commit()
+
+            # Tabelle flaechen um die Felder [abflusstyp, speicherzahl, speicherkonst, fliesszeitkanal, fliesszeitflaeche]
+            # bereinigen. Wegen der Probleme mit der Anzeige in QGIS wird die Tabelle dazu umgespeichert. 
+
+            # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
+            # sql = u"""SELECT type, sql FROM sqlite_master WHERE tbl_name='flaechen'"""
+            # if not self.sql(sql, u'dbfunc.version.pragma (5)'):
+                # return False
+            # triggers = self.fetchall()
+
+            # 2. Schritt: Temporäre Tabelle anlegen, Daten rüber kopieren, 
+            #             Tabelle löschen und wieder neu anlegen und Daten zurück kopieren
+
+            sqllis = [u"""BEGIN TRANSACTION;""",
+                      u"""CREATE TABLE IF NOT EXISTS flaechen_t (
+                        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                        flnam TEXT,
+                        haltnam TEXT,
+                        neigkl INTEGER DEFAULT 0,
+                        teilgebiet TEXT,
+                        regenschreiber TEXT,
+                        abflussparameter TEXT,
+                        aufteilen TEXT DEFAULT 'nein',
+                        kommentar TEXT,
+                        createdat TEXT DEFAULT CURRENT_DATE);""",
+                      u"""SELECT AddGeometryColumn('flaechen_t','geom',{},'MULTIPOLYGON',2)""".format(self.epsg),
+                      u"""DELETE FROM flaechen_t""",
+                      u"""INSERT INTO flaechen_t 
+                        (      "flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom")
+                        SELECT "flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom"
+                        FROM "flaechen";""",
+                      u"""SELECT DiscardGeometryColumn('flaechen','geom')""",
+                      u"""DROP TABLE flaechen;""",
+                      u"""CREATE TABLE flaechen (
+                        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                        flnam TEXT,
+                        haltnam TEXT,
+                        neigkl INTEGER DEFAULT 0,
+                        teilgebiet TEXT,
+                        regenschreiber TEXT,
+                        abflussparameter TEXT,
+                        aufteilen TEXT DEFAULT 'nein',
+                        kommentar TEXT,
+                        createdat TEXT DEFAULT CURRENT_DATE);""",
+                      u"""SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)""".format(self.epsg),
+                      u"""SELECT CreateSpatialIndex('flaechen','geom')""",
+                      u"""INSERT INTO flaechen 
+                        (      "flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom")
+                        SELECT "flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom"
+                        FROM "flaechen_t";""",
+                      u"""SELECT DiscardGeometryColumn('flaechen_t','geom')""",
+                      u"""DROP TABLE flaechen_t;"""]
+
+            for sql in sqllis:
+                if not self.sql(sql, u'dbfunc.version (2.5.7-2)', transaction=True):
+                    return False
+
+            # 3. Schritt: Trigger wieder herstellen
+            # for el in triggers:
+                # if el[0] != 'table':
+                    # sql = el[1]
+                    # logger.debug(u"Trigger 'flaechen' verarbeitet:\n{}".format(el[1]))
+                    # if not self.sql(sql, u'dbfunc.version (2.2.2-7)', transaction=True):
+                        # return False
+                # else:
+                    # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
+
+            # 4. Schritt: Transaction abschließen
+            self.commit()
+
+            progress_bar.setValue(100)
+
+            status_neustart = True
+
+            # Versionsnummer hochsetzen
+
+            self.versionlis = [2, 5, 7]
+
+
+        # ---------------------------------------------------------------------------------------------------------
         # Aktuelle Version in Tabelle "info" schreiben
 
         sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version'""".format(self.actversion)
@@ -936,5 +1113,16 @@ class DBConnection:
             return False
 
         self.commit()
+
+        if status_neustart:
+            status_message.setText(u"Achtung! Benutzerhinweis: Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
+            status_message.setLevel(QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...",
+                                               level=QgsMessageBar.WARNING, duration=0)
+            self.status = False
+            return False
+
+        # Alles gut gelaufen...
+
         return True
 

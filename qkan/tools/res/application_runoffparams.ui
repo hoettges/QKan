@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>633</width>
-    <height>523</height>
+    <width>924</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>470</y>
+     <x>350</x>
+     <y>460</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -137,8 +137,8 @@
     <rect>
      <x>20</x>
      <y>110</y>
-     <width>591</width>
-     <height>341</height>
+     <width>881</width>
+     <height>331</height>
     </rect>
    </property>
    <property name="font">
@@ -180,46 +180,13 @@
 berücksichtigen:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lf_anzahl_flaechen">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>260</y>
-      <width>51</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>Anzahl der berücksichtigten Flächen</string>
-    </property>
-    <property name="statusTip">
-     <string>Anzahl der berücksichtigten Flächen</string>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Panel</enum>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
    <widget class="QListWidget" name="lw_teilgebiete">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>60</y>
       <width>251</width>
-      <height>161</height>
+      <height>251</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -232,34 +199,13 @@ berücksichtigen:</string>
      <enum>QAbstractItemView::ExtendedSelection</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_12">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>240</y>
-      <width>141</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Aktuell berücksichtigt: </string>
-    </property>
-   </widget>
    <widget class="QListWidget" name="lw_abflussparameter">
     <property name="geometry">
      <rect>
       <x>310</x>
       <y>60</y>
       <width>251</width>
-      <height>161</height>
+      <height>251</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -300,34 +246,13 @@ berücksichtigen:</string>
 berücksichtigen:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_14">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>260</y>
-      <width>51</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Flächen</string>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="groupBox_6">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>240</y>
+      <x>600</x>
+      <y>50</y>
       <width>251</width>
-      <height>71</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="font">
@@ -337,14 +262,14 @@ berücksichtigen:</string>
      </font>
     </property>
     <property name="title">
-     <string>Oberflächenabflussparameter für ...</string>
+     <string>Oberflächenabflussparameter ...</string>
     </property>
-    <widget class="QRadioButton" name="rb_runoffparamsitwh">
+    <widget class="QRadioButton" name="rb_itwh">
      <property name="geometry">
       <rect>
        <x>20</x>
        <y>20</y>
-       <width>161</width>
+       <width>181</width>
        <height>21</height>
       </rect>
      </property>
@@ -362,18 +287,18 @@ berücksichtigen:</string>
       <string>Die Berechnung von Fließzeit und Speicherkonstante orientiert sich an HYSTEM-EXTRAN ab Version 7.0</string>
      </property>
      <property name="text">
-      <string>... HYSTEM/EXTRAN</string>
+      <string>... wie HYSTEM/EXTRAN</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="rb_runoffparamsdyna">
+    <widget class="QRadioButton" name="rb_dyna">
      <property name="enabled">
       <bool>false</bool>
      </property>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>40</y>
-       <width>151</width>
+       <y>60</y>
+       <width>181</width>
        <height>21</height>
       </rect>
      </property>
@@ -391,7 +316,200 @@ berücksichtigen:</string>
       <string>Das Querprofil aus der QKan-Tabelle &quot;haltungen&quot; wird anhand der Profilnummer zu den in der DYNA-Vorlagedatei definierten Profilen zugeordnet</string>
      </property>
      <property name="text">
-      <string>... DYNA/Kanal++</string>
+      <string>... wie DYNA/Kanal++</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="rb_maniak">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>181</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Berechnung von Fließzeit und Speicherkonstante orientiert sich an HYSTEM-EXTRAN ab Version 7.0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Die Berechnung von Fließzeit und Speicherkonstante orientiert sich an HYSTEM-EXTRAN ab Version 7.0</string>
+     </property>
+     <property name="text">
+      <string>... nach Maniak</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_7">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>150</y>
+      <width>251</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="title">
+     <string>Berechnungsmodell</string>
+    </property>
+    <widget class="QRadioButton" name="rb_kaskade">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>181</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Berechnung von Fließzeit und Speicherkonstante orientiert sich an HYSTEM-EXTRAN ab Version 7.0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Die Berechnung von Fließzeit und Speicherkonstante orientiert sich an HYSTEM-EXTRAN ab Version 7.0</string>
+     </property>
+     <property name="text">
+      <string>Speicherkaskade</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="rb_schwerpunktlaufzeit">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>181</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Berechnung von Fließzeit und Speicherkonstante orientiert sich an HYSTEM-EXTRAN ab Version 7.0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Die Berechnung von Fließzeit und Speicherkonstante orientiert sich an HYSTEM-EXTRAN ab Version 7.0</string>
+     </property>
+     <property name="text">
+      <string>Schwerpunktlaufzeit</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="rb_fliesszeiten">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>181</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Berechnung von Fließzeit und Speicherkonstante orientiert sich an HYSTEM-EXTRAN ab Version 7.0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Die Berechnung von Fließzeit und Speicherkonstante orientiert sich an HYSTEM-EXTRAN ab Version 7.0</string>
+     </property>
+     <property name="text">
+      <string>Fließzeiten</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>250</y>
+      <width>251</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Aktuell berücksichtigt: </string>
+    </property>
+    <widget class="QLabel" name="label_14">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>30</y>
+       <width>51</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Flächen</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lf_anzahl_flaechen">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>51</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>Anzahl der berücksichtigten Flächen</string>
+     </property>
+     <property name="statusTip">
+      <string>Anzahl der berücksichtigten Flächen</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Panel</enum>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </widget>
