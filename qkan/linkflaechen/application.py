@@ -535,8 +535,6 @@ class LinkFl:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            fehlermeldung(u"Fehler in k_link", 
-                          u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             logger.error(u"k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
@@ -549,6 +547,9 @@ class LinkFl:
             iface.messageBar().pushMessage(u"Fehler in LinkFl.run_createlinefl",
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
+            return None
+        elif not self.dbQK.status:
+            # Datenbank wurde geändert
             return None
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
@@ -765,8 +766,6 @@ class LinkFl:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            fehlermeldung(u"Fehler in LinkFl.run_createlinesw", 
-                          u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             logger.error(u"LinkFl.run_createlinesw: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
@@ -779,6 +778,9 @@ class LinkFl:
             iface.messageBar().pushMessage(u"Fehler in LinkFl.run_createlinesw",
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
+            return None
+        elif not self.dbQK.status:
+            # Datenbank wurde geändert
             return None
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
@@ -940,7 +942,6 @@ class LinkFl:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            fehlermeldung(u"Fehler in k_link", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             logger.error(u"k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
@@ -950,6 +951,9 @@ class LinkFl:
             fehlermeldung(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
             iface.messageBar().pushMessage(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                 database_QKan), level=QgsMessageBar.CRITICAL)
+            return None
+        elif not self.dbQK.status:
+            # Datenbank wurde geändert
             return None
 
 
@@ -1062,8 +1066,6 @@ class LinkFl:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            fehlermeldung(u"Fehler in LinkFl.run_managegroups",
-                          u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             logger.error(u"CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
@@ -1075,6 +1077,9 @@ class LinkFl:
             iface.messageBar().pushMessage(u"Fehler in LinkFl.run_managegroups",
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
+            return None
+        elif not self.dbQK.status:
+            # Datenbank wurde geändert
             return None
 
         self.showgroups()
@@ -1121,7 +1126,6 @@ class LinkFl:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            fehlermeldung(u"Fehler in k_link", u"database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             logger.error(u"k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
@@ -1132,6 +1136,9 @@ class LinkFl:
             iface.messageBar().pushMessage(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                 database_QKan), level=QgsMessageBar.CRITICAL)
             return False
+        elif not self.dbQK.status:
+            # Datenbank wurde geändert
+            return None
 
         self.dlg_ul.tf_qkDB.setText(database_QKan)
 

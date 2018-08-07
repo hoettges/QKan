@@ -127,6 +127,8 @@ class QKanTools:
         self.dlgro.cb_selParActive.stateChanged.connect(self.dlgro_selParActiveClick)
         self.dlgro.button_box.helpRequested.connect(self.dlgro_helpClick)
         self.dlgro.pb_selectQKanDB.clicked.connect(self.dlgro_selectFile_qkanDB)
+        self.dlgro.rb_itwh.toggled.connect(self.dlgro_activateitwh)
+        # self.dlgop.rb_itwh.toggled.connect(self.dlgro_activatedyna)
 
 
         # Ende Eigene Funktionen ---------------------------------------------------
@@ -480,6 +482,17 @@ class QKanTools:
             # Anzahl in der Anzeige aktualisieren
             self.dlgro_countselection()
 
+    def dlgro_activateitwh(self):
+        """Reagiert auf Auswahl itwh und deaktiviert entsprechend die Option Fließzeiten"""
+
+        if self.dlgro.rb_itwh.isChecked():
+            if self.dlgro.rb_fliesszeiten.isChecked():
+                self.dlgro.rb_kaskade.setChecked(True)
+            self.dlgro.rb_fliesszeiten.setEnabled(False)
+        else:
+            self.dlgro.rb_fliesszeiten.setEnabled(True)
+            
+
     def dlgro_countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
@@ -537,10 +550,8 @@ class QKanTools:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            if 'database_QKan' in self.config:
-                database_QKan = self.config['database_QKan']
-            else:
-                database_QKan = ''
+            logger.error(u"tools.application: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            return False
         self.dlgro.tf_QKanDB.setText(database_QKan)
 
         if 'manningrauheit_bef' in self.config:
@@ -555,87 +566,91 @@ class QKanTools:
             self.config['manningrauheit_dur'] = manningrauheit_dur
 
         # Datenbankverbindung für Abfragen
-        if database_QKan != '':
-            self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
-            if self.dbQK is None:
-                fehlermeldung("Fehler in tools.runoffparams",
-                              u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-                iface.messageBar().pushMessage("Fehler in tools.runoffparams",
-                                               u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                                                   database_QKan), level=QgsMessageBar.CRITICAL)
-                return None
+        self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if self.dbQK is None or self.dbQK == False:
+            fehlermeldung("Fehler in tools.runoffparams",
+                          u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+            iface.messageBar().pushMessage("Fehler in tools.runoffparams",
+                                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+                                               database_QKan), level=QgsMessageBar.CRITICAL)
+            return None
+        elif not self.dbQK.status:
+            # Datenbank wurde geändert
+            return None
 
-            # Check, ob alle Teilgebiete in Flächen auch in Tabelle "teilgebiete" enthalten
+        # Check, ob alle Teilgebiete in Flächen auch in Tabelle "teilgebiete" enthalten
 
-            sql = u"""INSERT INTO teilgebiete (tgnam)
-                    SELECT teilgebiet FROM flaechen 
-                    WHERE teilgebiet IS NOT NULL AND
-                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                    GROUP BY teilgebiet"""
-            if not self.dbQK.sql(sql, u"QKan_Tools.application.run (1) "):
-                return False
+        sql = u"""INSERT INTO teilgebiete (tgnam)
+                SELECT teilgebiet FROM flaechen 
+                WHERE teilgebiet IS NOT NULL AND
+                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                GROUP BY teilgebiet"""
+        if not self.dbQK.sql(sql, u"QKan_Tools.application.run (1) "):
+            return False
 
-            # Check, ob alle Abflussparameter in Flächen auch in Tabelle "abflussparameter" enthalten
+        # Check, ob alle Abflussparameter in Flächen auch in Tabelle "abflussparameter" enthalten
 
-            sql = u"""INSERT INTO abflussparameter (apnam)
-                    SELECT abflussparameter FROM flaechen 
-                    WHERE abflussparameter IS NOT NULL AND
-                    abflussparameter NOT IN (SELECT apnam FROM abflussparameter)
-                    GROUP BY abflussparameter"""
-            if not self.dbQK.sql(sql, u"QKan_Tools.application.run (2) "):
-                return False
+        sql = u"""INSERT INTO abflussparameter (apnam)
+                SELECT abflussparameter FROM flaechen 
+                WHERE abflussparameter IS NOT NULL AND
+                abflussparameter NOT IN (SELECT apnam FROM abflussparameter)
+                GROUP BY abflussparameter"""
+        if not self.dbQK.sql(sql, u"QKan_Tools.application.run (2) "):
+            return False
 
-            self.dbQK.commit()
-
-
-            # Anlegen der Tabelle zur Auswahl der Teilgebiete
-
-            # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-            liste_teilgebiete = []
-            if 'liste_teilgebiete' in self.config:
-                liste_teilgebiete = self.config['liste_teilgebiete']
-
-            # Abfragen der Tabelle teilgebiete nach Teilgebieten
-            sql = '''SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'''
-            if not self.dbQK.sql(sql, u"QKan_Tools.application.run (4) "):
-                return False
-            daten = self.dbQK.fetchall()
-            self.dlgro.lw_teilgebiete.clear()
-
-            for ielem, elem in enumerate(daten):
-                self.dlgro.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                try:
-                    if elem[0] in liste_teilgebiete:
-                        self.dlgro.lw_teilgebiete.setCurrentRow(ielem)
-                except BaseException as err:
-                    fehlermeldung(u'QKan_Tools (6), Fehler in elem = {}\n'.format(elem), repr(err))
-                    # if len(daten) == 1:
-                    # self.dlgro.lw_teilgebiete.setCurrentRow(0)
+        self.dbQK.commit()
 
 
-            # Anlegen der Tabelle zur Auswahl der Abflussparameter
+        # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
-            # Zunächst wird die Liste der beim letzten Mal gewählten Abflussparameter aus config gelesen
-            liste_abflussparameter = []
-            if 'liste_abflussparameter' in self.config:
-                liste_abflussparameter = self.config['liste_abflussparameter']
+        # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
+        liste_teilgebiete = []
+        if 'liste_teilgebiete' in self.config:
+            liste_teilgebiete = self.config['liste_teilgebiete']
 
-            # Abfragen der Tabelle abflussparameter nach Abflussparametern
-            sql = '''SELECT "apnam" FROM "abflussparameter" GROUP BY "apnam"'''
-            if not self.dbQK.sql(sql, u"QKan_Tools.application.run (4) "):
-                return False
-            daten = self.dbQK.fetchall()
-            self.dlgro.lw_abflussparameter.clear()
+        # Abfragen der Tabelle teilgebiete nach Teilgebieten
+        sql = '''SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'''
+        if not self.dbQK.sql(sql, u"QKan_Tools.application.run (4) "):
+            return False
+        daten = self.dbQK.fetchall()
+        self.dlgro.lw_teilgebiete.clear()
 
-            for ielem, elem in enumerate(daten):
-                self.dlgro.lw_abflussparameter.addItem(QListWidgetItem(elem[0]))
-                try:
-                    if elem[0] in liste_abflussparameter:
-                        self.dlgro.lw_abflussparameter.setCurrentRow(ielem)
-                except BaseException as err:
-                    fehlermeldung(u'QKan_Tools (6), Fehler in elem = {}\n'.format(elem), repr(err))
-                    # if len(daten) == 1:
-                    # self.dlgro.lw_abflussparameter.setCurrentRow(0)
+        for ielem, elem in enumerate(daten):
+            self.dlgro.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
+            try:
+                if elem[0] in liste_teilgebiete:
+                    self.dlgro.lw_teilgebiete.setCurrentRow(ielem)
+                    self.dlgro.cb_selTgbActive.setChecked(True)
+            except BaseException as err:
+                fehlermeldung(u'QKan_Tools (6), Fehler in elem = {}\n'.format(elem), repr(err))
+                # if len(daten) == 1:
+                # self.dlgro.lw_teilgebiete.setCurrentRow(0)
+
+
+        # Anlegen der Tabelle zur Auswahl der Abflussparameter
+
+        # Zunächst wird die Liste der beim letzten Mal gewählten Abflussparameter aus config gelesen
+        liste_abflussparameter = []
+        if 'liste_abflussparameter' in self.config:
+            liste_abflussparameter = self.config['liste_abflussparameter']
+
+        # Abfragen der Tabelle abflussparameter nach Abflussparametern
+        sql = '''SELECT "apnam" FROM "abflussparameter" GROUP BY "apnam"'''
+        if not self.dbQK.sql(sql, u"QKan_Tools.application.run (4) "):
+            return False
+        daten = self.dbQK.fetchall()
+        self.dlgro.lw_abflussparameter.clear()
+
+        for ielem, elem in enumerate(daten):
+            self.dlgro.lw_abflussparameter.addItem(QListWidgetItem(elem[0]))
+            try:
+                if elem[0] in liste_abflussparameter:
+                    self.dlgro.lw_abflussparameter.setCurrentRow(ielem)
+                    self.dlgro.cb_selParActive.setChecked(True)
+            except BaseException as err:
+                fehlermeldung(u'QKan_Tools (6), Fehler in elem = {}\n'.format(elem), repr(err))
+                # if len(daten) == 1:
+                # self.dlgro.lw_abflussparameter.setCurrentRow(0)
 
         self.dlgro_countselection()
 
@@ -649,11 +664,15 @@ class QKanTools:
                     '0.8693*log(area(geom))+ 5.6317', 
                     'pow(18.904*pow(neigkl,0.686)*area(geom), 0.2535*pow(neigkl,0.244))'], 
                 'dyna': [
-                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef}*fliesslaenge / SQRT(neigung), 0.467)', 
-                    'pow(2*{rauheit_dur} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'], 
+                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(rauheit_bef=manningrauheit_bef), 
+                    'pow(2*{rauheit_dur} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(rauheit_dur=manningrauheit_dur)], 
                 'Maniak': [
-                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef}*fliesslaenge / SQRT(neigung), 0.467)', 
-                    'pow(2*{rauheit_dur} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'], 
+                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(rauheit_bef=manningrauheit_bef), 
+                    'pow(2*{rauheit_dur} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(rauheit_dur=manningrauheit_dur),
+                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * abstand / SQRT(neigung), 0.467)'.format(rauheit_bef=manningrauheit_bef), 
+                    'pow(2*{rauheit_dur} * abstand / SQRT(neigung), 0.467)'.format(rauheit_dur=manningrauheit_dur),
+                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * fliesslaenge / SQRT(neigung), 0.467)'.format(rauheit_bef=manningrauheit_bef), 
+                    'pow(2*{rauheit_dur} * fliesslaenge / SQRT(neigung), 0.467)'.format(rauheit_dur=manningrauheit_dur)]
                 }
             self.config['runoffparamsfunctions'] = runoffparamsfunctions
         
@@ -661,7 +680,7 @@ class QKanTools:
         if 'runoffparamstype_choice' in self.config:
             runoffparamstype_choice = self.config['runoffparamstype_choice']
         else:
-            runoffparamstype_choice = u'itwh'
+            runoffparamstype_choice = u'Maniak'
 
         if runoffparamstype_choice == u'itwh':
             self.dlgro.rb_itwh.setChecked(True)
@@ -682,6 +701,8 @@ class QKanTools:
         elif runoffmodelltype_choice == u'Schwerpunktlaufzeit':
             self.dlgro.rb_schwerpunktlaufzeit.setChecked(True)
 
+        # Status Radiobuttons initialisieren
+        self.dlgro_activateitwh()
         # Datenbanktyp
         if 'datenbanktyp' in self.config:
             datenbanktyp = self.config['datenbanktyp']
@@ -721,7 +742,6 @@ class QKanTools:
                 fehlermeldung(u"tools.runoffparams.run_runoffparams", 
                               u"Fehlerhafte Option: \nrunoffmodelltype_choice = {}".format(repr(runoffmodelltype_choice)))
 
-
             # Konfigurationsdaten schreiben
             self.config['database_QKan'] = database_QKan
             self.config['liste_teilgebiete'] = liste_teilgebiete
@@ -734,5 +754,4 @@ class QKanTools:
                 fileconfig.write(json.dumps(self.config))
 
             setRunoffparams(self.dbQK, runoffparamstype_choice, runoffmodelltype_choice, runoffparamsfunctions, 
-                manningrauheit_bef, manningrauheit_dur, 
                 liste_teilgebiete, liste_abflussparameter, datenbanktyp)

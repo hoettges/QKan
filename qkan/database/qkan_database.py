@@ -22,7 +22,7 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__version__ = '2.5.5'
+__version__ = '2.5.7'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -41,8 +41,7 @@ logger = logging.getLogger(u'QKan')
 
 
 def createdbtables(consl, cursl, version=__version__, epsg=25832):
-    ''' Erstellt fuer eine neue QKan-Datenbank die zum Import aus Hystem-Extran
-        benötigten Referenztabellen.
+    ''' Erstellt fuer eine neue QKan-Datenbank die benötigten Tabellen.
 
         :param consl: Datenbankobjekt der SpatiaLite-QKan-Datenbank
         :type consl: spatialite.dbapi2.Connection
@@ -489,11 +488,6 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     flnam TEXT,
     haltnam TEXT,
     neigkl INTEGER DEFAULT 0,
-    abflusstyp TEXT, 
-    speicherzahl INTEGER DEFAULT 3,
-    speicherkonst REAL,
-    fliesszeit REAL,
-    fliesszeitkanal REAL,
     teilgebiet TEXT,
     regenschreiber TEXT,
     abflussparameter TEXT,
@@ -509,8 +503,8 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
         consl.close()
         return False
 
-    sql = u"SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)".format(epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('flaechen','geom')"
+    sql = u"""SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)""".format(epsg)
+    sqlindex = u"""SELECT CreateSpatialIndex('flaechen','geom')"""
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
@@ -531,10 +525,13 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     sql = u"""CREATE TABLE linkfl (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     flnam TEXT,
-    tezgnam TEXT,
     haltnam TEXT,
-    aufteilen TEXT,
-    teilgebiet TEXT)"""
+    tezgnam TEXT,
+    abflusstyp TEXT,
+    speicherzahl INTEGER,
+    speicherkonst REAL,
+    fliesszeitkanal REAL,
+    fliesszeitflaeche REAL)"""
 
     try:
         cursl.execute(sql)
@@ -568,8 +565,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     sql = u"""CREATE TABLE linksw (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     elnam TEXT,
-    haltnam TEXT,
-    teilgebiet TEXT)"""
+    haltnam TEXT)"""
 
     try:
         cursl.execute(sql)
@@ -713,8 +709,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     sql = u"""CREATE TABLE linkageb (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     gebnam TEXT,
-    schnam TEXT,
-    teilgebiet TEXT)"""
+    schnam TEXT)"""
 
     try:
         cursl.execute(sql)

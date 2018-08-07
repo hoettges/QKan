@@ -49,8 +49,7 @@ progress_bar = None
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def setRunoffparams(self.dbQK, runoffparamstype_choice, runoffmodelltype_choice, runoffparamsfunctions, 
-                    manningrauheit_bef, manningrauheit_dur, 
+def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runoffparamsfunctions,
                     liste_teilgebiete, liste_abflussparameter, datenbanktyp):
     '''Berechnet Oberlächenabflussparameter für HYSTEM/EXTRAN 7 und DYNA/Kanal++.
 
@@ -87,104 +86,222 @@ def setRunoffparams(self.dbQK, runoffparamstype_choice, runoffmodelltype_choice,
     progress_bar.setValue(1)
 
     funlis = runoffparamsfunctions[runoffparamstype_choice]        # Beide Funktionen werden in einer for-Schleife abgearbeitet
+    # logger.debug(u"\nfunlis:\n{}".format(funlis))
+    kriterienlis = ['IS NULL', 'IS NOT NULL']
+
+    # Auswahl der zu bearbeitenden Flächen
+    auswahl = sqlconditions('AND', ('fl.teilgebiet', 'fl.abflussparameter'), (liste_teilgebiete, liste_abflussparameter))
 
     if runoffmodelltype_choice == 'Speicherkaskade':
 
-        # Auswahl der zu bearbeitenden Flächen
-        auswahl = sqlconditions('WHERE', ('fl.teilgebiet', 'fl.abflussparameter'), (liste_teilgebiete, liste_abflussparameter))
-
-        # Abflusstyp
-        sql = """
-            UPDATE linkfl
-            SET abflusstyp = 'Speicherkaskade'
-            WHERE id IN (
-                SELECT linkfl.id
-                FROM linkfl AS lf
-                INNER JOIN flaechen AS fl
-                ON lf.flnam = fl.flnam{auswahl}
-            )""".format(auswahl=auswahl)
-        if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (1)'):
-            return False
-
-        # Speicherzahl
-        sql = """
-            UPDATE linkfl 
-            SET speicherzahl = 3
-            WHERE id IN (
-                SELECT linkfl.id
-                FROM linkfl AS lf
-                INNER JOIN flaechen AS fl
-                ON lf.flnam = fl.flnam{auswahl}
-            )""".format(auswahl=auswahl)
-        if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (2)'):
-            return False
-
-        # Speicherkennzahl
-
-        # Auswahl der zu bearbeitenden Flächen
-        auswahl = sqlconditions('AND', ('fl.teilgebiet', 'fl.abflussparameter'), (liste_teilgebiete, liste_abflussparameter))
-
-        # Befestigte Flächen. Kriterium: bodenklasse IS NULL
         # Es werden sowohl aufzuteilende und nicht aufzuteilende Flächen berücksichtigt
-        # Schleife über befestigte und durchlässige Flächen
-        
-        kriterienlis = ['IS NULL', 'IS NOT NULL']
-        for fun, kriterium in zip(funlis, kriterienlis):
-        sql = """
-            WITH flintersect AS (
-                SELECT
-                    lf.flnam AS flnam 
-                    fl.neigkl AS neigkl
-                    fl.abflussparameter AS abflussparameter, 
-                    CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
-                FROM linkfl AS lf
-                INNER JOIN flaechen AS fl
-                ON lf.flnam = fl.flnam
-                LEFT JOIN tezg AS tg
-                ON lf.tezgnam = tg.flnam),
-            qdist AS (
-                SELECT 
-                    lf.pk,
-                    ST_Distance(fi.geom,ha.geom) AS "abstand",
-                    CASE WHEN Intersects(ha.geom,fi.geom) THEN
-                        HausdorffDistance(fi.geom,Intersection(ha.geom,fi.geom))
-                    ELSE 
-                        MaxDistance(fi.geom,ClosestPoint(ha.geom,fi.geom))-ST_Distance(fi.geom,ha.geom)
-                    END AS "fliesslaenge",
-                   fi.neigkl AS "neigkl", 
-                   CASE fi.neigkl WHEN 1 THEN 0.5 WHEN 2 THEN 2.5 WHEN 3 THEN 7.0 WHEN 4 THEN 12 WHEN 5 THEN 20 END AS "neigung",
-                   lf.speicherzahl AS speicherzahl
-                FROM linkfl AS lf
-                INNER JOIN flintersect AS fi
-                ON lf.flnam = fi.flnam
-                INNER JOIN haltungen AS ha
-                ON ha.haltnam = lf.haltnam
-                LEFT JOIN tezg AS tg
-                ON lf.tezgnam = tg.flnam
-                WHERE abflussparameter.bodenklasse {kriterium}{auswahl}
-            )
-            UPDATE linkfl 
-            SET speicherkonst = (
-                SELECT {fun}/speicherzahl
-                FROM qdist
-                WHERE qdist.pk = linkfl.pk)
-            WHERE pk IN (
-                SELECT linkfl.pk
-                FROM linkfl AS lf
-                INNER JOIN flintersect AS fi
-                ON lf.flnam = fi.flnam
-                INNER JOIN abflussparameter AS ap
-                ON fi.abflussparameter = abflussparameter.apnam
-                WHERE abflussparameter.bodenklasse IS NULL{auswahl}
-            )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium,
-                        rauheit_bef=manningrauheit_bef, rauheit_dur=manningrauheit_dur)
-        if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (3)'):
-            return False
-        
+        # Schleife über befestigte und durchlässige Flächen (Kriterium: bodenklasse IS NULL)
+        # dabei werden aus funlis und kriterienlis nacheinander zuerst die relevanten Inhalte für befestigte und anschließend
+        # für durchlässige Flächen genommen. 
+
+        for fun, kriterium in zip(funlis[:2], kriterienlis):
+            sql = """
+                WITH flintersect AS (
+                    SELECT
+                        lf.flnam AS flnam, 
+                        fl.neigkl AS neigkl,
+                        fl.abflussparameter AS abflussparameter, 
+                        CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                    FROM linkfl AS lf
+                    INNER JOIN flaechen AS fl
+                    ON lf.flnam = fl.flnam
+                    LEFT JOIN tezg AS tg
+                    ON lf.tezgnam = tg.flnam),
+                qdist AS (
+                    SELECT 
+                        lf.pk,
+                        ST_Distance(fl.geom,ha.geom) AS "abstand",
+                        CASE WHEN Intersects(ha.geom,fl.geom) THEN
+                            HausdorffDistance(fl.geom,Intersection(ha.geom,fl.geom))
+                        ELSE 
+                            MaxDistance(fl.geom,ClosestPoint(ha.geom,fl.geom))-ST_Distance(fl.geom,ha.geom)
+                        END AS "fliesslaenge",
+                       fl.neigkl AS "neigkl", 
+                       CASE fl.neigkl WHEN 1 THEN 0.5 WHEN 2 THEN 2.5 WHEN 3 THEN 7.0 WHEN 4 THEN 12 WHEN 5 THEN 20 END AS "neigung"
+                    FROM linkfl AS lf
+                    INNER JOIN flintersect AS fl
+                    ON lf.flnam = fl.flnam
+                    INNER JOIN haltungen AS ha
+                    ON ha.haltnam = lf.haltnam
+                    INNER JOIN abflussparameter AS ap
+                    ON fl.abflussparameter = ap.apnam
+                    WHERE ap.bodenklasse {kriterium}{auswahl}
+                )
+                UPDATE linkfl 
+                SET (abflusstyp, speicherzahl, speicherkonst) = (
+                    SELECT 'Speicherkaskade', 3, ({fun})/3
+                    FROM qdist
+                    WHERE qdist.pk = linkfl.pk)
+                WHERE pk IN (
+                    SELECT lf.pk
+                    FROM linkfl AS lf
+                    INNER JOIN flintersect AS fl
+                    ON lf.flnam = fl.flnam
+                    INNER JOIN abflussparameter AS ap
+                    ON fl.abflussparameter = ap.apnam
+                    WHERE ap.bodenklasse {kriterium}{auswahl}
+                )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
+            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (3)'):
+                return False
+
     elif runoffmodelltype_choice == 'Fliesszeiten':
-        pass
+         # Fließzeit Kanal
+        for fun, kriterium in zip(funlis[2:4], kriterienlis):
+            sql = """
+                WITH flintersect AS (
+                    SELECT
+                        lf.flnam AS flnam, 
+                        fl.neigkl AS neigkl,
+                        fl.abflussparameter AS abflussparameter, 
+                        CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                    FROM linkfl AS lf
+                    INNER JOIN flaechen AS fl
+                    ON lf.flnam = fl.flnam
+                    LEFT JOIN tezg AS tg
+                    ON lf.tezgnam = tg.flnam),
+                qdist AS (
+                    SELECT 
+                        lf.pk,
+                        ST_Distance(fl.geom,ha.geom) AS "abstand",
+                        CASE WHEN Intersects(ha.geom,fl.geom) THEN
+                            HausdorffDistance(fl.geom,Intersection(ha.geom,fl.geom))
+                        ELSE 
+                            MaxDistance(fl.geom,ClosestPoint(ha.geom,fl.geom))-ST_Distance(fl.geom,ha.geom)
+                        END AS "fliesslaenge",
+                       fl.neigkl AS "neigkl", 
+                       CASE fl.neigkl WHEN 1 THEN 0.5 WHEN 2 THEN 2.5 WHEN 3 THEN 7.0 WHEN 4 THEN 12 WHEN 5 THEN 20 END AS "neigung"
+                    FROM linkfl AS lf
+                    INNER JOIN flintersect AS fl
+                    ON lf.flnam = fl.flnam
+                    INNER JOIN haltungen AS ha
+                    ON ha.haltnam = lf.haltnam
+                    INNER JOIN abflussparameter AS ap
+                    ON fl.abflussparameter = ap.apnam
+                    WHERE ap.bodenklasse {kriterium}{auswahl}
+                )
+                UPDATE linkfl 
+                SET (abflusstyp, fliesszeitkanal) = (
+                    SELECT 'Fliesszeiten', {fun}
+                    FROM qdist
+                    WHERE qdist.pk = linkfl.pk)
+                WHERE pk IN (
+                    SELECT lf.pk
+                    FROM linkfl AS lf
+                    INNER JOIN flintersect AS fl
+                    ON lf.flnam = fl.flnam
+                    INNER JOIN abflussparameter AS ap
+                    ON fl.abflussparameter = ap.apnam
+                    WHERE ap.bodenklasse {kriterium}{auswahl}
+                )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
+            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (3)'):
+                return False
+
+           # Fließzeit Oberfläche
+        for fun, kriterium in zip(funlis[4:6], kriterienlis):
+            sql = """
+                WITH flintersect AS (
+                    SELECT
+                        lf.flnam AS flnam, 
+                        fl.neigkl AS neigkl,
+                        fl.abflussparameter AS abflussparameter, 
+                        CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                    FROM linkfl AS lf
+                    INNER JOIN flaechen AS fl
+                    ON lf.flnam = fl.flnam
+                    LEFT JOIN tezg AS tg
+                    ON lf.tezgnam = tg.flnam),
+                qdist AS (
+                    SELECT 
+                        lf.pk,
+                        ST_Distance(fl.geom,ha.geom) AS "abstand",
+                        CASE WHEN Intersects(ha.geom,fl.geom) THEN
+                            HausdorffDistance(fl.geom,Intersection(ha.geom,fl.geom))
+                        ELSE 
+                            MaxDistance(fl.geom,ClosestPoint(ha.geom,fl.geom))-ST_Distance(fl.geom,ha.geom)
+                        END AS "fliesslaenge",
+                       fl.neigkl AS "neigkl", 
+                       CASE fl.neigkl WHEN 1 THEN 0.5 WHEN 2 THEN 2.5 WHEN 3 THEN 7.0 WHEN 4 THEN 12 WHEN 5 THEN 20 END AS "neigung"
+                    FROM linkfl AS lf
+                    INNER JOIN flintersect AS fl
+                    ON lf.flnam = fl.flnam
+                    INNER JOIN haltungen AS ha
+                    ON ha.haltnam = lf.haltnam
+                    INNER JOIN abflussparameter AS ap
+                    ON fl.abflussparameter = ap.apnam
+                    WHERE ap.bodenklasse {kriterium}{auswahl}
+                )
+                UPDATE linkfl 
+                SET (abflusstyp, fliesszeitflaeche) = (
+                    SELECT 'Fliesszeiten', {fun}
+                    FROM qdist
+                    WHERE qdist.pk = linkfl.pk)
+                WHERE pk IN (
+                    SELECT lf.pk
+                    FROM linkfl AS lf
+                    INNER JOIN flintersect AS fl
+                    ON lf.flnam = fl.flnam
+                    INNER JOIN abflussparameter AS ap
+                    ON fl.abflussparameter = ap.apnam
+                    WHERE ap.bodenklasse {kriterium}{auswahl}
+                )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
+            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (3)'):
+                return False
+
     elif runoffmodelltype_choice == 'Schwerpunktlaufzeit':
-        pass
+        for fun, kriterium in zip(funlis[:2], kriterienlis):
+            sql = """
+                WITH flintersect AS (
+                    SELECT
+                        lf.flnam AS flnam, 
+                        fl.neigkl AS neigkl,
+                        fl.abflussparameter AS abflussparameter, 
+                        CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                    FROM linkfl AS lf
+                    INNER JOIN flaechen AS fl
+                    ON lf.flnam = fl.flnam
+                    LEFT JOIN tezg AS tg
+                    ON lf.tezgnam = tg.flnam),
+                qdist AS (
+                    SELECT 
+                        lf.pk,
+                        ST_Distance(fl.geom,ha.geom) AS "abstand",
+                        CASE WHEN Intersects(ha.geom,fl.geom) THEN
+                            HausdorffDistance(fl.geom,Intersection(ha.geom,fl.geom))
+                        ELSE 
+                            MaxDistance(fl.geom,ClosestPoint(ha.geom,fl.geom))-ST_Distance(fl.geom,ha.geom)
+                        END AS "fliesslaenge",
+                       fl.neigkl AS "neigkl", 
+                       CASE fl.neigkl WHEN 1 THEN 0.5 WHEN 2 THEN 2.5 WHEN 3 THEN 7.0 WHEN 4 THEN 12 WHEN 5 THEN 20 END AS "neigung"
+                    FROM linkfl AS lf
+                    INNER JOIN flintersect AS fl
+                    ON lf.flnam = fl.flnam
+                    INNER JOIN haltungen AS ha
+                    ON ha.haltnam = lf.haltnam
+                    INNER JOIN abflussparameter AS ap
+                    ON fl.abflussparameter = ap.apnam
+                    WHERE ap.bodenklasse {kriterium}{auswahl}
+                )
+                UPDATE linkfl 
+                SET (abflusstyp, fliesszeitflaeche) = (
+                    SELECT 'Schwerpunktlaufzeit', {fun}
+                    FROM qdist
+                    WHERE qdist.pk = linkfl.pk)
+                WHERE pk IN (
+                    SELECT lf.pk
+                    FROM linkfl AS lf
+                    INNER JOIN flintersect AS fl
+                    ON lf.flnam = fl.flnam
+                    INNER JOIN abflussparameter AS ap
+                    ON fl.abflussparameter = ap.apnam
+                    WHERE ap.bodenklasse {kriterium}{auswahl}
+                )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
+            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (3)'):
+                return False
 
     # status_message.setText(u"Erzeugung von unbefestigten Flächen")
     progress_bar.setValue(90)

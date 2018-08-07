@@ -69,8 +69,8 @@ def get_database_QKan(silent = False):
     logger.error(u'Keine Layer vorhanden...')
     if len(layers) == 0 and not silent:
         iface.mainWindow().statusBar().clearMessage()
-        iface.messageBar().pushMessage(u"Fehler: ", u"Kein QKan-Projekt geladen!", level=QgsMessageBar.CRITICAL)
-        QgsMessageLog.logMessage(u"\nKein QKan-Projekt geladen!", level=QgsMessageLog.CRITICAL)
+        iface.messageBar().pushMessage(u"Fehler: ", u"Kein QKan-Projekt geladen!", level=QgsMessageBar.WARNING)
+        QgsMessageLog.logMessage(u"\nKein QKan-Projekt geladen!", level=QgsMessageLog.WARNING)
 
         return False, False
 
