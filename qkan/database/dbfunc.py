@@ -1027,6 +1027,20 @@ class DBConnection:
             # 4. Schritt: Transaction abschließen
             self.commit()
 
+
+            # Oberflächenabflussdaten von Tabelle "flaechen" in Tabelle "linkfl" übertragen
+
+            sql = """
+            UPDATE linkfl SET 
+                (abflusstyp, speicherzahl, speicherkonst, fliesszeitkanal, fliesszeitflaeche) =
+            (SELECT abflusstyp, speicherzahl, speicherkonst, fliesszeitkanal, fliesszeit
+            FROM flaechen
+            WHERE linkfl.flnam = flaechen.flnam)
+            """
+            if not self.sql(sql, u'dbfunc.version (2.5.7-2)'):
+                return False
+            self.commit()
+
             # Tabelle flaechen um die Felder [abflusstyp, speicherzahl, speicherkonst, fliesszeitkanal, fliesszeitflaeche]
             # bereinigen. Wegen der Probleme mit der Anzeige in QGIS wird die Tabelle dazu umgespeichert. 
 
@@ -1080,7 +1094,7 @@ class DBConnection:
                       u"""DROP TABLE flaechen_t;"""]
 
             for sql in sqllis:
-                if not self.sql(sql, u'dbfunc.version (2.5.7-2)', transaction=True):
+                if not self.sql(sql, u'dbfunc.version (2.5.7-3)', transaction=True):
                     return False
 
             # 3. Schritt: Trigger wieder herstellen
@@ -1115,8 +1129,8 @@ class DBConnection:
         self.commit()
 
         if status_neustart:
-            status_message.setText(u"Achtung! Benutzerhinweis: Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
-            status_message.setLevel(QgsMessageBar.WARNING)
+            # status_message.setText(u"Achtung! Benutzerhinweis: Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
+            # status_message.setLevel(QgsMessageBar.WARNING)
             iface.messageBar().pushMessage(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...",
                                                level=QgsMessageBar.WARNING, duration=0)
             self.status = False

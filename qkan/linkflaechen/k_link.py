@@ -186,8 +186,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 ON linkfl.flnam = flaechen.flnam AND linkfl.tezgnam = tezg.flnam
                 WHERE (flaechen.aufteilen = 'ja'
                     and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_teil})
-            INSERT INTO linkfl (flnam, tezgnam, aufteilen, teilgebiet, geom)
-            SELECT flnam, tezgnam, aufteilen, teilgebiet, geom
+            INSERT INTO linkfl (flnam, tezgnam, geom)
+            SELECT flnam, tezgnam, geom
             FROM linkadd
             WHERE lpk IS NULL AND geom > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
 
