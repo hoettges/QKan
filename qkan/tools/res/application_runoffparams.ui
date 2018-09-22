@@ -190,10 +190,10 @@ berücksichtigen:</string>
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auswahl Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Liste der Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Auswahl Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich</string>
+     <string>Liste der Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich</string>
     </property>
     <property name="selectionMode">
      <enum>QAbstractItemView::ExtendedSelection</enum>

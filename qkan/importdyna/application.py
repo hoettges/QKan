@@ -138,12 +138,6 @@ class ImportFromDyna:
         self.dlg.tf_projectFile.setText(projectfile)
         self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
 
-        if 'check_inittab' in self.config:
-            check_inittab = self.config['check_inittab']
-        else:
-            check_inittab = True
-        self.dlg.cb_import_tabinit.setChecked(check_inittab)
-
         # Ende Eigene Funktionen ---------------------------------------------------
 
 
@@ -186,9 +180,11 @@ class ImportFromDyna:
                                                "Dateinamen der zu lesenden Kanal++-Datei eingeben",
                                                self.default_dir,
                                                "*.ein")
+        self.dlg.tf_dynaFile.setText(filename)
+
+        # Aktuelles Verzeichnis wechseln
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-        self.dlg.tf_dynaFile.setText(filename)
 
 
     def selectFile_qkanDB(self):
@@ -199,9 +195,11 @@ class ImportFromDyna:
                                                "Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
                                                self.default_dir,
                                                "*.sqlite")
+        self.dlg.tf_qkanDB.setText(filename)
+
+        # Aktuelles Verzeichnis wechseln
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-        self.dlg.tf_qkanDB.setText(filename)
 
 
     def selectProjectFile(self):
@@ -211,9 +209,11 @@ class ImportFromDyna:
                                                "Dateinamen der zu erstellenden Projektdatei eingeben",
                                                self.default_dir,
                                                "*.qgs")
+        self.dlg.tf_projectFile.setText(filename)
+
+        # Aktuelles Verzeichnis wechseln
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
-        self.dlg.tf_projectFile.setText(filename)
 
 
     def selectKBS(self):
@@ -252,7 +252,6 @@ class ImportFromDyna:
             database_QKan = self.dlg.tf_qkanDB.text()
             projectfile = self.dlg.tf_projectFile.text()
             self.epsg = self.dlg.tf_epsg.text()
-            check_inittab = self.dlg.cb_import_tabinit.isChecked()
 
 
             # Konfigurationsdaten schreiben
@@ -261,7 +260,6 @@ class ImportFromDyna:
             self.config['database_QKan'] = database_QKan
             self.config['dynafile'] = dynafile
             self.config['projectfile'] = projectfile
-            self.config['check_inittab'] = check_inittab
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
@@ -269,4 +267,4 @@ class ImportFromDyna:
 
             # Start der Verarbeitung
 
-            importKanaldaten(dynafile, database_QKan, projectfile, self.epsg, check_inittab)
+            importKanaldaten(dynafile, database_QKan, projectfile, self.epsg)

@@ -75,7 +75,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     ks REAL,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE,
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
     xschob REAL,
     yschob REAL,
     xschun REAL,
@@ -124,7 +124,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     istauslass INTEGER, 
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -310,7 +310,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     ausschalthoehe REAL,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -349,7 +349,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     aussenwsp REAL,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -393,7 +393,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     stdmittel REAL,
     fremdwas REAL,
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -425,7 +425,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     tgnam TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -470,7 +470,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     teilgebiet TEXT,
     tabelle TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -493,7 +493,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     abflussparameter TEXT,
     aufteilen TEXT DEFAULT 'nein',
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -605,7 +605,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     teilgebiet TEXT,
     abflussparameter TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -641,7 +641,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     ew REAL,
     einzugsgebiet TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -680,7 +680,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
         regenschreiber TEXT, 
         teilgebiet TEXT, 
         kommentar TEXT, 
-        createdat TEXT DEFAULT CURRENT_DATE)'''
+        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -817,7 +817,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     mulden_startwert REAL, 
     bodenklasse TEXT, 
     kommentar TEXT, 
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -857,7 +857,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     regenerationskonstante REAL,
     saettigungswassergehalt REAL,
     kommentar TEXT, 
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -938,7 +938,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     subject TEXT, 
     value TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)

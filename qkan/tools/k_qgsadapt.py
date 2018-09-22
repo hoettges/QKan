@@ -32,10 +32,10 @@ __copyright__ = '(C) 2016, Joerg Hoettges'
 __revision__ = ':%H$'
 
 import logging
-import os
+import os, time
 
 from qgis.core import QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem
-from qgis.gui import QgsMessageBar
+from qgis.gui import QgsMessageBar, QgsMapCanvas, QgsLayerTreeMapCanvasBridge
 from qgis.utils import iface, pluginDirectory
 
 from qgis.PyQt.QtGui import QProgressBar
@@ -270,7 +270,9 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     # QgsMessageLog.logMessage("\nFertig: Datenimport erfolgreich!", level=QgsMessageLog.INFO)
 
     # Importiertes Projekt laden
-    # project = QgsProject.instance()
-    # project.read(QFileInfo(projectFile))         # read the new project file
+    project = QgsProject.instance()
+    canvas = QgsMapCanvas(None)
+    bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), canvas)         #  synchronise the loaded project with the canvas
+    project.read(QFileInfo(projectFile))         # read the new project file
     # logger.debug(u'Geladene Projektdatei: {}   ({})'.format(project.fileName()))
 

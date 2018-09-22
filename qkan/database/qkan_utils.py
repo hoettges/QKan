@@ -60,8 +60,66 @@ def fehlermeldung(title, text=''):
 
 # Allgemeine Funktionen
 
+
+def isQkanLayer(database_QKan, source):
+    """Ermittelt, ob eine Layerquelle auf eine QKan-Tabelle verweist
+
+    :database_QKan: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :type database: DBConnection (geerbt von dbapi...)
+
+    :source:        Pfad zur QKan-Datenbank
+    :type source:   String
+
+    :returns:       Ergebnis der Prüfung
+    :rtype:         boolean
+    """
+
+    qkan_layers = [u' table="schaechte" (geop) sql=schachttyp = \'Schacht\'', u' table="schaechte" (geop) sql=schachttyp = \'Auslass\'', u' table="schaechte" (geop) sql=schachttyp = \'Speicher\'', u' table="schaechte" (geop) sql=', u' table="schaechte" (geom) sql=', u' table="haltungen" (geom) sql=', u' table="haltungen" (geom) sql=', u' table="wehre" (geom) sql=', u' table="pumpen" (geom) sql=', u' table="linksw" (glink) sql=', u' table="einleit" (geom) sql=', u' table="teilgebiete" (geom) sql=', u' table="tezg" (geom) sql=', u' table="linkfl" (glink) sql=', u' table="flaechen" (geom) sql=', u' table="linkageb" (glink) sql=', u' table="aussengebiete" (geom) sql=', u' table="entwaesserungsarten" sql=', u' table="pumpentypen" sql=', u' table="profile" sql=', u' table="auslasstypen" sql=', u' table="simulationsstatus" sql=', u' table="bodenklassen" sql=', u' table="abflussparameter" sql=', u' table="speicherkennlinien" sql=', u' table="profildaten" sql=']
+
+    tt = 'dbname=\'{}\''.format(database_QKan)
+    test = source.replace(tt, '') in qkan_layers
+    return test
+
+
+def get_qkanlayerAttributes(source):
+    """Ermittelt die Attribute eines QKan-Layers in einer SpatiaLite-Datenbank
+
+    :param source:  Source-String des QGIS-Layers
+    :type source:   string
+
+    :returns:       Attribute des Layers
+    :rtype:         tuple
+    """
+
+    posDbname = source.find(u'dbname=')
+    posTable = source.find(u' table=', posDbname + 1)
+    posGeomStart = source.find(u' (', posTable + 6)
+    posGeomEnd = source.find(u') ', posGeomStart + 2)
+    posSql = source.find(u' sql=', posGeomEnd + 1)
+
+    if posSql < 0:
+        return '', '', '', ''
+
+    dbname = source[posDbname + 8 : posTable - 1].strip()
+
+    if posGeomStart < 0 or posGeomStart > posSql:
+        geom = ''
+        posGeomStart = posSql
+    else:
+        geom = source[posGeomStart + 2 : posGeomEnd].strip()
+
+    table = source[posTable + 8 : posGeomStart - 1].strip()
+
+    if posSql < 0:
+        sql = ''
+    else:
+        sql = source[posSql + 5 :].strip()
+
+    return dbname, table, geom, sql
+
+
 def get_database_QKan(silent = False):
-    """Ermittlung der aktuellen QpatiaLite-Datenbank aus den geladenen Layern"""
+    """Ermittlung der aktuellen SpatiaLite-Datenbank aus den geladenen Layern"""
     database_QKan = u''
     epsg = u''
     layers = iface.legendInterface().layers()
@@ -76,24 +134,20 @@ def get_database_QKan(silent = False):
 
     # Über Layer iterieren
     for lay in layers:
-        lyattr = {}
+        dbname, table, geom, sql = get_qkanlayerAttributes(lay.source())
+        if ((table == 'flaechen' and geom == 'geom') or \
+            ( table == 'schaechte' and geom == 'geom') or \
+            ( table == 'haltungen' and geom == 'geom')):
+            # nur, wenn es sich um eine der drei QKan-Tabellen 'haltungen', 'schaechte' oder 'flaechen' handelt...
 
-        # Attributstring für Layer splitten
-        split = re.compile("['\"] ").split(lay.source())
-        for le in split:
-            if '=' in le:
-                key, value = le.split('=', 1)
-                lyattr[key] = value.strip('"').strip('\'')
-
-        # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
-        if 'table' in lyattr and 'dbname' in lyattr:
-            if lyattr['table'] == 'flaechen':
-                if database_QKan == '':
-                    database_QKan = lyattr['dbname']
-                    epsg = str(int(lay.crs().postgisSrid()))
-                elif database_QKan != lyattr['dbname']:
-                    logger.warning(u'Abweichende Datenbankanbindung gefunden: {}'.format(lyattr['dbname']))
-                    return False, False  # Im Projekt sind mehrere Sqlite-Datenbanken eingebungen...
+            if database_QKan == '':
+                # Datenbank wurde noch nicht festgelegt
+                database_QKan = dbname
+                epsg = str(int(lay.crs().postgisSrid()))
+            elif database_QKan != dbname:
+                # Datenbank wurde bereits festgelegt, weicht aber für einen weiteren QKan-Layer ab...
+                logger.warning(u'Abweichende Datenbankanbindung gefunden: {}'.format(dbname))
+                return False, False  # Im Projekt sind mehrere Sqlite-Datenbanken eingebungen...
     return database_QKan, epsg
 
 
@@ -124,11 +178,11 @@ def get_editable_layers():
     return elayers
 
 
-def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'SpatiaLite'):
+def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'spatialite'):
     """Prüft, ob in der Tabelle {tab} im Attribut {attr} eindeutige Namen enthalten sind. 
     Falls nicht, werden Namen vergeben, die sich aus {prefix} und ROWID zusammensetzen
 
-    :dbQK:              Typ der Datenbank (SpatiaLite, PostGIS)
+    :dbQK:              Typ der Datenbank (spatialite, postgis)
     :type dbQK:         Class FBConnection
     
     :tab:               Name der Tabelle
@@ -146,7 +200,7 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'SpatiaLite'):
                         abgebrochen.
     :type autokorrektur:   String
     
-    :dbtyp:             Typ der Datenbank (SpatiaLite, PostGIS)
+    :dbtyp:             Typ der Datenbank (spatialite, postgis)
     :type dbtyp:        String
     
     :returns:           Ergebnis der Prüfung bzw. Korrektur
@@ -217,10 +271,10 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'SpatiaLite'):
     return True
 
 
-def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp = u'SpatiaLite'):
+def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp = u'spatialite'):
     """Prüft, ob in der Tabelle {tab} im Attribut {attrgeo} ein Geoobjekt vorhanden ist. 
 
-    :dbQK:              Typ der Datenbank (SpatiaLite, PostGIS)
+    :dbQK:              Typ der Datenbank (spatialite, postgis)
     :type dbQK:         Class FBConnection
     
     :tab:               Name der Tabelle
@@ -234,7 +288,7 @@ def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp =
                         abgebrochen.
     :type autokorrektur:   String
     
-    :dbtyp:             Typ der Datenbank (SpatiaLite, PostGIS)
+    :dbtyp:             Typ der Datenbank (spatialite, postgis)
     :type dbtyp:        String
     
     :returns:           Ergebnis der Prüfung bzw. Korrektur
@@ -323,3 +377,101 @@ def sqlconditions(keyword, attrlis, valuelis2):
 
     return auswahl
 
+
+def evalNodeTypes(dbQK):
+    """Schachttypen auswerten. Dies geschieht ausschließlich mit SQL-Abfragen"""
+
+    # -- Anfangsschächte: Schächte ohne Haltung oben
+    sql_typAnf = u'''
+        UPDATE schaechte SET knotentyp = 'Anfangsschacht' WHERE schaechte.schnam IN
+        (SELECT t_sch.schnam
+        FROM schaechte AS t_sch 
+        LEFT JOIN haltungen AS t_hob
+        ON t_sch.schnam = t_hob.schoben
+        LEFT JOIN haltungen AS t_hun
+        ON t_sch.schnam = t_hun.schunten
+        WHERE t_hun.pk IS NULL)'''
+
+    # -- Endschächte: Schächte ohne Haltung unten
+    sql_typEnd = u'''
+        UPDATE schaechte SET knotentyp = 'Endschacht' WHERE schaechte.schnam IN
+        (SELECT t_sch.schnam
+        FROM schaechte AS t_sch 
+        LEFT JOIN haltungen AS t_hob
+        ON t_sch.schnam = t_hob.schunten
+        LEFT JOIN haltungen AS t_hun
+        ON t_sch.schnam = t_hun.schoben
+        WHERE t_hun.pk IS NULL)'''
+
+    # -- Hochpunkt: 
+    sql_typHoch = u'''
+        UPDATE schaechte SET knotentyp = 'Hochpunkt' WHERE schaechte.schnam IN
+        ( SELECT t_sch.schnam
+          FROM schaechte AS t_sch 
+          JOIN haltungen AS t_hob
+          ON t_sch.schnam = t_hob.schunten
+          JOIN haltungen AS t_hun
+          ON t_sch.schnam = t_hun.schoben
+          JOIN schaechte AS t_sun
+          ON t_sun.schnam = t_hun.schunten
+          JOIN schaechte AS t_sob
+          ON t_sob.schnam = t_hob.schunten
+          WHERE ifnull(t_hob.sohleunten,t_sch.sohlhoehe)>ifnull(t_hob.sohleoben,t_sob.sohlhoehe) AND 
+                ifnull(t_hun.sohleoben,t_sch.sohlhoehe)>ifnull(t_hun.sohleunten,t_sun.sohlhoehe))'''
+
+    # -- Tiefpunkt:
+    sql_typTief = u'''
+        UPDATE schaechte SET knotentyp = 'Tiefpunkt' WHERE schaechte.schnam IN
+        ( SELECT t_sch.schnam
+          FROM schaechte AS t_sch 
+          JOIN haltungen AS t_hob
+          ON t_sch.schnam = t_hob.schunten
+          JOIN haltungen AS t_hun
+          ON t_sch.schnam = t_hun.schoben
+          JOIN schaechte AS t_sun
+          ON t_sun.schnam = t_hun.schunten
+          JOIN schaechte AS t_sob
+          ON t_sob.schnam = t_hob.schunten
+          WHERE ifnull(t_hob.sohleunten,t_sch.sohlhoehe)<ifnull(t_hob.sohleoben,t_sob.sohlhoehe) AND 
+                ifnull(t_hun.sohleoben,t_sch.sohlhoehe)<ifnull(t_hun.sohleunten,t_sun.sohlhoehe))'''
+
+    # -- Verzweigung:
+    sql_typZweig = u'''
+        UPDATE schaechte SET knotentyp = 'Verzweigung' WHERE schaechte.schnam IN
+        ( SELECT t_sch.schnam
+          FROM schaechte AS t_sch 
+          JOIN haltungen AS t_hun
+          ON t_sch.schnam = t_hun.schoben
+          GROUP BY t_sch.pk
+          HAVING count(*) > 1)'''
+
+    # -- Einzelschacht:
+    sql_typEinzel = u'''
+        UPDATE schaechte SET knotentyp = 'Einzelschacht' WHERE schaechte.schnam IN
+        ( SELECT t_sch.schnam 
+          FROM schaechte AS t_sch 
+          LEFT JOIN haltungen AS t_hun
+          ON t_sch.schnam = t_hun.schoben
+          LEFT JOIN haltungen AS t_hob
+          ON t_sch.schnam = t_hob.schunten
+          WHERE t_hun.pk IS NULL AND t_hob.pk IS NULL)'''
+
+    if not dbQK.sql(sql_typAnf, u'importkanaldaten_he (39)'):
+        return None
+
+    if not dbQK.sql(sql_typEnd, u'importkanaldaten_he (40)'):
+        return None
+
+    if not dbQK.sql(sql_typHoch, u'importkanaldaten_he (41)'):
+        return None
+
+    if not dbQK.sql(sql_typTief, u'importkanaldaten_he (42)'):
+        return None
+
+    if not dbQK.sql(sql_typZweig, u'importkanaldaten_he (43)'):
+        return None
+
+    if not dbQK.sql(sql_typEinzel, u'importkanaldaten_he (44)'):
+        return None
+
+    dbQK.commit()
