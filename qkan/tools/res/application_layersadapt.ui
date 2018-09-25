@@ -423,7 +423,10 @@
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_3">
+  <widget class="QGroupBox" name="gb_projectTemplate">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -513,7 +516,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_setPathToTemplateDir">
+   <widget class="QCheckBox" name="cb_applyQKanTemplate">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -536,7 +539,7 @@
      <string>Projektionssystem für gewählte Layer anpassen</string>
     </property>
     <property name="text">
-     <string>QKan-Vorlagenverzeichnis verwenden</string>
+     <string>QKan-Standard verwenden</string>
     </property>
    </widget>
   </widget>

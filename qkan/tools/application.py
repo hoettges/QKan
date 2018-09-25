@@ -126,6 +126,7 @@ class QKanTools:
         self.dlgla.cb_adaptLayerThemes.clicked.connect(self.dlgla_cb_adaptLayerThemes)
         self.dlgla.cb_adaptTableLookups.clicked.connect(self.dlgla_cb_adaptTableLookups)
         self.dlgla.cb_adaptKBS.clicked.connect(self.dlgla_cb_adaptKBS)
+        self.dlgla.cb_applyQKanTemplate.clicked.connect(self.dlgla_cb_applyQKanTemplate)
 
         # Formular dlgop
         self.dlgop.pb_fangradiusDefault.clicked.connect(self.dlgop_fangradiusDefault)
@@ -827,8 +828,8 @@ class QKanTools:
 
         self.dlgla_cb_adaptKBS()            # Korrigiert ggfs. cb_adaptKBS
 
-    def dlgla_enableProjectTemplate(self):
-        """Aktiviert oder deaktiviert das Textfeld für das Projektdatei-Template
+    def dlgla_enableProjectTemplateGroup(self):
+        """Aktiviert oder deaktiviert die Groupbox für das Projektdatei-Template
             abhängig von den angeklickten Checkbuttons
         """
 
@@ -836,10 +837,11 @@ class QKanTools:
                     self.anpassen_Formulare or \
                     self.anpassen_Wertebeziehungen_in_Tabellen
 
-        self.dlgla.tf_projectTemplate.setEnabled(checked)
-        self.dlgla.pb_selectProjectTemplate.setEnabled(checked)
-        self.dlgla.cb_setPathToTemplateDir.setEnabled(checked)
-        self.dlgla.lb_projectTemplate.setEnabled(checked)
+        self.dlgla.gb_projectTemplate.setEnabled(checked)
+        # self.dlgla.tf_projectTemplate.setEnabled(checked)
+        # self.dlgla.pb_selectProjectTemplate.setEnabled(checked)
+        # self.dlgla.cb_applyQKanTemplate.setEnabled(checked)
+        # self.dlgla.lb_projectTemplate.setEnabled(checked)
 
         # logger.info('Status der 3 Checkboxen:\n' + \
                     # 'anpassen_Thematische_Layerdarstellungen: {}\n'.format(
@@ -852,15 +854,29 @@ class QKanTools:
 
     def dlgla_cb_adaptLayerThemes(self):
         self.anpassen_Thematische_Layerdarstellungen = self.dlgla.cb_adaptLayerThemes.isChecked()
-        self.dlgla_enableProjectTemplate()
+        self.dlgla_enableProjectTemplateGroup()
 
     def dlgla_cb_adaptForms(self):
         self.anpassen_Formulare = self.dlgla.cb_adaptForms.isChecked()
-        self.dlgla_enableProjectTemplate()
+        self.dlgla_enableProjectTemplateGroup()
 
     def dlgla_cb_adaptTableLookups(self):
         self.anpassen_Wertebeziehungen_in_Tabellen = self.dlgla.cb_adaptTableLookups.isChecked()
-        self.dlgla_enableProjectTemplate()
+        self.dlgla_enableProjectTemplateGroup()
+
+    def dlgla_enableProjectTemplateFile(self):
+        """Aktiviert oder deaktiviert das Textfeld für das Projektdatei-Template
+            abhängig vom angeklickten Checkbutton cb_applyQKanTemplate
+        """
+        checked = not self.applyQKanTemplate
+
+        self.dlgla.tf_projectTemplate.setEnabled(checked)
+        self.dlgla.pb_selectProjectTemplate.setEnabled(checked)
+        self.dlgla.lb_projectTemplate.setEnabled(checked)
+
+    def dlgla_cb_applyQKanTemplate(self):
+        self.applyQKanTemplate = self.dlgla.cb_applyQKanTemplate.isChecked()
+        self.dlgla_enableProjectTemplateFile()
 
     def dlgla_cb_adaptKBS(self):
         """Hält Checkbutton cb_adaptKBS aktiv, solange cb_adaptDB aktiv ist, weil bei 
@@ -873,8 +889,8 @@ class QKanTools:
     def dlgla_selectFileProjectTemplate(self):
         """Vorlage-Projektdatei auswählen"""
 
-        self.setPathToTemplateDir = self.dlgla.cb_setPathToTemplateDir.isChecked()
-        if self.setPathToTemplateDir:
+        self.applyQKanTemplate = self.dlgla.cb_applyQKanTemplate.isChecked()
+        if self.applyQKanTemplate:
             self.templateDir = os.path.join(pluginDirectory('qkan'), u"database/templates")
         else:
             try:
@@ -924,17 +940,17 @@ class QKanTools:
             projectFile = ''
 
         # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen 
-        if 'setPathToTemplateDir' in self.config:
-            self.setPathToTemplateDir = self.config['setPathToTemplateDir']
+        if 'QKan_Standard_anwenden' in self.config:
+            self.applyQKanTemplate = self.config['QKan_Standard_anwenden']
         else:
-            self.setPathToTemplateDir = True
-        self.dlgla.cb_setPathToTemplateDir.setChecked(self.setPathToTemplateDir)
+            self.applyQKanTemplate = True
+        self.dlgla.cb_applyQKanTemplate.setChecked(self.applyQKanTemplate)
 
         # GGfs. Standardvorlage schon eintragen
-        if self.setPathToTemplateDir:
+        if self.applyQKanTemplate:
             self.templateDir = os.path.join(pluginDirectory('qkan'), u"database/templates")
-            projectTemplate = os.path.join(self.templateDir,'Projekt.qgs')
-            self.dlgla.tf_projectTemplate.setText(projectTemplate)
+            self.projectTemplate = os.path.join(self.templateDir,'Projekt.qgs')
+            self.dlgla.tf_projectTemplate.setText(self.projectTemplate)
 
         # Groupbox "Themen anpassen" ---------------------------------------------------------------------------
 
@@ -1014,9 +1030,17 @@ class QKanTools:
             fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
             return False
 
+        # Checkbox: QKan-Standard anwenden
+        if 'QKan_Standard_anwenden' in self.config:
+            self.applyQKanTemplate = self.config['QKan_Standard_anwenden']
+        else:
+            self.applyQKanTemplate = True
+        self.dlgla.cb_applyQKanTemplate.setChecked(self.applyQKanTemplate)
+
         # Status enabled setzen
         self.dlgla_enableQkanDB()
-        self.dlgla_enableProjectTemplate()
+        self.dlgla_enableProjectTemplateGroup()
+        self.dlgla_enableProjectTemplateFile()
 
         # -----------------------------------------------------------------------------------------------------
         # show the dialog
@@ -1039,8 +1063,8 @@ class QKanTools:
             qkanDBUpdate = self.dlgla.cb_adaptDB.isChecked()
             aktualisieren_Schachttypen = self.dlgla.cb_updateNodetype.isChecked()
             zoom_alles = self.dlgla.cb_zoomAll.isChecked()
-            self.setPathToTemplateDir = self.dlgla.cb_setPathToTemplateDir.isChecked()
-            projectTemplate = self.dlgla.tf_projectTemplate.text()
+            self.applyQKanTemplate = self.dlgla.cb_applyQKanTemplate.isChecked()
+            self.projectTemplate = self.dlgla.tf_projectTemplate.text()
 
             # Optionen zur Berücksichtigung der vorhandenen Tabellen
             if self.dlgla.rb_adaptSelected.isChecked():
@@ -1069,11 +1093,12 @@ class QKanTools:
             self.config['qkanDBUpdate'] = qkanDBUpdate
             self.config['aktualisieren_Schachttypen'] = aktualisieren_Schachttypen
             self.config['zoom_alles'] = zoom_alles
+            self.config['QKan_Standard_anwenden'] = self.applyQKanTemplate
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-            layersadapt(self.database_QKan, projectFile, projectTemplate, 
+            layersadapt(self.database_QKan, projectFile, self.projectTemplate, 
                         self.anpassen_Datenbankanbindung, self.anpassen_Wertebeziehungen_in_Tabellen, 
                         self.anpassen_Formulare, self.anpassen_Thematische_Layerdarstellungen, 
                         self.anpassen_Projektionssystem, aktualisieren_Schachttypen, zoom_alles, 

@@ -93,6 +93,9 @@ def layersadapt(database_QKan, projectFile, projectTemplate,
     '''
 
     # -----------------------------------------------------------------------------------------------------
+    # Liste aller widgetv2type-Arten: 
+    widgetv2types = ['ValueRelation', 'ValueMap', 'DateTime', 'CheckBox']
+
     # Liste aller QKan-Layernamen: 
 
     templateDir = os.path.join(pluginDirectory('qkan'), u"database/templates")
@@ -223,46 +226,62 @@ def layersadapt(database_QKan, projectFile, projectTemplate,
 
 
         if anpassen_Thematische_Layerdarstellungen or anpassen_Formulare or anpassen_Wertebeziehungen_in_Tabellen:
-            datasource = qgslayer.findtext('./datasource')
+            datasource = qgslayer[0].findtext('./datasource')
             dbname, table, geom, sql = get_qkanlayerAttributes(datasource)
             # muss noch bearbeitet werden
 
-        if anpassen_Thematische_Layerdarstellungen:
-            node_maplayer = qgsxml.find(u"projectlayers/maplayer[layername='{layer}']".format(layer=layername))
-            nodes_edittype = node_maplayer.findall("./edittypes/edittype[@widgetv2type='ValueRelation']")
-            for node_edittype in nodes_edittype:
-                att = node_edittype.find('widgetv2config')
-                w_OrderByValue = att.attrib['OrderByValue']
-                w_AllowNull = att.attrib['AllowNull']
-                w_FilterExpression = att.attrib['FilterExpression']
-                w_UseCompleter = att.attrib['UseCompleter']
-                w_fieldEditable = att.attrib['fieldEditable']
-                w_Key = att.attrib['Key']
-                w_constraint = att.attrib['constraint']
-                w_Layer = att.attrib['Layer']
-                w_Value = att.attrib['Value']
-                w_labelOnTop = att.attrib['labelOnTop']
-                w_constraintDescription = att.attrib['constraintDescription']
-                w_AllowMulti = att.attrib['AllowMulti']
-                w_notNull = att.attrib['notNull']
+        if anpassen_Formulare:
+            formpath = qgslayer[0].findtext('./editform')
+            form = os.path.basename(formpath)
+            layer.setEditForm(form)
 
-                fieldname = node_edittype.attrib['name']
-                fieldIndex = layer.fieldNameIndex(fieldname)
-                layerId = layer.id()
 
-                editFormConfig = layer.editFormConfig()
-                widgetType = editFormConfig.widgetType(fieldIndex)
-                widgetConfig = editFormConfig.widgetConfig(fieldIndex)
 
-                editFormConfig.setWidgetType(fieldIndex, u'ValueRelation')
-                editFormConfig.setWidgetConfig(fieldIndex, {u'FilterExpression': w_FilterExpression, 
-                    u'Layer': layerId, u'UseCompleter': w_UseCompleter, 
-                    u'fieldEditable': w_fieldEditable, 
-                    u'AllowMulti': w_AllowMulti, u'AllowNull': w_AllowNull, 
-                    u'OrderByValue': w_OrderByValue, u'Value': w_Value, 
-                    u'Key': w_Key, u'constraint': w_constraint, 
-                    u'labelOnTop': w_labelOnTop, u'notNull': w_notNull, 
-                    u'constraintDescription': w_constraintDescription})
+
+
+
+
+
+        if anpassen_Wertebeziehungen_in_Tabellen:
+            # Schleife über alle widgetv2type-Arten (Liste s. o.)
+            for widgetv2type in widgetv2types:
+                node_maplayer = qgsxml.find(u"projectlayers/maplayer[layername='{ln}']".format(ln=layername))
+                nodes_edittype = node_maplayer.findall("./edittypes/edittype[@widgetv2type={wt}]".format(wt=widgetv2type))
+                for node_edittype in nodes_edittype:
+                    att = node_edittype.find('widgetv2config')
+                    w_OrderByValue = att.attrib['OrderByValue']
+                    w_AllowNull = att.attrib['AllowNull']
+                    w_FilterExpression = att.attrib['FilterExpression']
+                    w_UseCompleter = att.attrib['UseCompleter']
+                    w_fieldEditable = att.attrib['fieldEditable']
+                    w_Key = att.attrib['Key']
+                    w_constraint = att.attrib['constraint']
+                    w_Layer = att.attrib['Layer']
+                    w_Value = att.attrib['Value']
+                    w_labelOnTop = att.attrib['labelOnTop']
+                    w_constraintDescription = att.attrib['constraintDescription']
+                    w_AllowMulti = att.attrib['AllowMulti']
+                    w_notNull = att.attrib['notNull']
+
+                    fieldname = node_edittype.attrib['name']
+                    fieldIndex = layer.fieldNameIndex(fieldname)
+                    layerId = layer.id()
+
+                    editFormConfig = layer.editFormConfig()
+                    widgetType = editFormConfig.widgetType(fieldIndex)
+                    # widgetConfig = editFormConfig.widgetConfig(fieldIndex)
+
+                    editFormConfig.setWidgetType(fieldIndex, widgetv2type)
+                    widgetConfig = {u'FilterExpression': w_FilterExpression, 
+                        u'Layer': layerId, u'UseCompleter': w_UseCompleter, 
+                        u'fieldEditable': w_fieldEditable, 
+                        u'AllowMulti': w_AllowMulti, u'AllowNull': w_AllowNull, 
+                        u'OrderByValue': w_OrderByValue, u'Value': w_Value, 
+                        u'Key': w_Key, u'constraint': w_constraint, 
+                        u'labelOnTop': w_labelOnTop, u'notNull': w_notNull, 
+                        u'constraintDescription': w_constraintDescription}
+                    editFormConfig.setWidgetConfig(fieldIndex, widgetConfig)
+                    logger.debug('widgetConfig: \n{}\n'.format(widgetConfig))
 
 
     if aktualisieren_Schachttypen:
