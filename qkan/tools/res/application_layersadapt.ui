@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>458</width>
-    <height>619</height>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>570</y>
+     <y>590</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -48,7 +48,7 @@
      <x>20</x>
      <y>470</y>
      <width>420</width>
-     <height>80</height>
+     <height>100</height>
     </rect>
    </property>
    <property name="font">
@@ -71,11 +71,11 @@
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="lb_projectFile">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
+      <y>40</y>
       <width>301</width>
       <height>21</height>
      </rect>
@@ -88,7 +88,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Erzeugte Projektdatei speichern als ... (*.qgs):</string>
+     <string> Projektdatei auswählen ... (*.qgs):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -98,7 +98,7 @@
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>40</y>
+      <y>60</y>
       <width>30</width>
       <height>21</height>
      </rect>
@@ -117,7 +117,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
+      <y>60</y>
       <width>361</width>
       <height>21</height>
      </rect>
@@ -132,6 +132,32 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
+   <widget class="QCheckBox" name="cb_saveProjectFile">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>20</y>
+      <width>241</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektionssystem für gewählte Layer anpassen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Projektionssystem für gewählte Layer anpassen</string>
+    </property>
+    <property name="text">
+     <string>Erzeugte Projektdatei speichern</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_6">
    <property name="geometry">
@@ -139,7 +165,7 @@
      <x>20</x>
      <y>20</y>
      <width>420</width>
-     <height>51</height>
+     <height>71</height>
     </rect>
    </property>
    <property name="font">
@@ -183,8 +209,8 @@
    <widget class="QRadioButton" name="rb_adaptAll">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>20</y>
+      <x>30</x>
+      <y>40</y>
       <width>161</width>
       <height>20</height>
      </rect>
@@ -212,9 +238,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>80</y>
+     <y>100</y>
      <width>420</width>
-     <height>210</height>
+     <height>191</height>
     </rect>
    </property>
    <property name="font">
@@ -228,32 +254,6 @@
    <property name="title">
     <string>Themen anpassen</string>
    </property>
-   <widget class="QCheckBox" name="cb_adaptLayerThemes">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>150</y>
-      <width>371</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Thematische Darstellungen für die gewählten QKan-Layern gemäß Vorlage ergänzen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Thematische Darstellungen für die gewählten QKan-Layern gemäß Vorlage ergänzen</string>
-    </property>
-    <property name="text">
-     <string>Thematische Layerdarstellungen aus QKan-Vorlage anpassen</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="cb_adaptForms">
     <property name="geometry">
      <rect>
@@ -400,7 +400,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>180</y>
+      <y>160</y>
       <width>371</width>
       <height>20</height>
      </rect>
@@ -568,7 +568,7 @@
      <rect>
       <x>30</x>
       <y>20</y>
-      <width>300</width>
+      <width>221</width>
       <height>20</height>
      </rect>
     </property>

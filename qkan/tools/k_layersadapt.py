@@ -223,24 +223,10 @@ def layersadapt(database_QKan, projectFile, projectTemplate,
                 fehlermeldung(u'Fehler bei Festlegung des Koordinatensystems!', 
                 u'Layer {}'.format(layername))
 
-
-
-        if anpassen_Thematische_Layerdarstellungen or anpassen_Formulare or anpassen_Wertebeziehungen_in_Tabellen:
-            datasource = qgslayer[0].findtext('./datasource')
-            dbname, table, geom, sql = get_qkanlayerAttributes(datasource)
-            # muss noch bearbeitet werden
-
         if anpassen_Formulare:
             formpath = qgslayer[0].findtext('./editform')
             form = os.path.basename(formpath)
             layer.setEditForm(form)
-
-
-
-
-
-
-
 
         if anpassen_Wertebeziehungen_in_Tabellen:
             # Schleife über alle widgetv2type-Arten (Liste s. o.)
