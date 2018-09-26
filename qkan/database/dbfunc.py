@@ -95,7 +95,7 @@ class DBConnection:
                 logger.debug(u'dbfund.__init__: Datenbank existiert und Verbindung hergestellt:\n{}'.format(dbname))
                 # Versionsprüfung
                 
-                if not self.updateVersion():
+                if not self.checkVersion():
                     self.consl.close()
                     return None
 
@@ -242,7 +242,7 @@ class DBConnection:
 
     # Versionskontrolle der QKan-Datenbank
 
-    def updateVersion(self):
+    def checkVersion(self, verbose=True):
         """Prüft die Version der Datenbank. 
 
             :returns: Anpassung erfolgreich: True = alles o.k.
@@ -252,16 +252,10 @@ class DBConnection:
              - Die aktuelle Datenbank ist bereits geöffnet. 
 
             Die aktuelle Versionsnummer steht in der Datenbank: info.version
-            Diese wird mit dem Attribut self.actversion verglichen. Bei Differenz werden 
-            die nötigen Anpassungen vorgenommen und die Versionsnummer jeweils aktualisiert.
-            Falls Tabellenspalten umbenannt oder gelöscht wurden, wird eine Warnmeldung erzeugt
-            mit der Empfehlung, das aktuelle Projekt neu zu laden. 
-        """
+            Diese wird mit dem Attribut self.actversion verglichen.         """
 
         logger.debug('0 - actversion = {}'.format(self.actversion))
 
-        # Status, wenn die Änderungen so gravierend waren, dass das Projekt neu geladen werden muss. 
-        status_neustart = False
         # ---------------------------------------------------------------------------------------------
         # Aktuelle Version abfragen
 
@@ -274,28 +268,48 @@ class DBConnection:
 
         data = self.cursl.fetchone()
         if data is not None:
-            versiondbQK = data[0]
-            logger.debug('dbfunc.version: Aktuelle Version der qkan-Datenbank ist {}'.format(versiondbQK))
+            self.versiondbQK = data[0]
+            logger.debug('dbfunc.version: Aktuelle Version der qkan-Datenbank ist {}'.format(self.versiondbQK))
         else:
             logger.debug('dbfunc.version: Keine Versionsnummer vorhanden. data = {}'.format(repr(data)))
             sql = u"""INSERT INTO info (subject, value) Values ('version', '1.9.9')"""
             if not self.sql(sql, u'dbfunc.version (2)'):
                 return False
 
-            versiondbQK = u'1.9.9'
+            self.versiondbQK = u'1.9.9'
 
-        logger.debug('0 - versiondbQK = {}'.format(versiondbQK))
+        logger.debug('0 - versiondbQK = {}'.format(self.versiondbQK))
 
-        self.versionlis = [int(el.replace('a','').replace('b','').replace('c','')) for el in versiondbQK.split('.')]
+        if self.actversion != self.versiondbQK:
+            if verbose:
+                fehlermeldung(u"Projekt muss aktualisiert werden.", 
+                    u"Die QKan-Version der Datenbank {verDB} stimmt nicht mit der aktuellen QKan-Version {verCur} überein und muss aktualisiert werden!".format(verDB=self.versiondbQK, verCur=self.actversion))
+            return False
+        else:
+            return True
+
+    # Aktualisierung der QKan-Datenbank auf aktuellen Stand
+
+    def updateversion(self):
+        """Aktualisiert die QKan-Datenbank auf den aktuellen Stand. 
+
+           Es werden die nötigen Anpassungen vorgenommen und die Versionsnummer jeweils aktualisiert.
+           Falls Tabellenspalten umbenannt oder gelöscht wurden, wird eine Warnmeldung erzeugt
+           mit der Empfehlung, das aktuelle Projekt neu zu laden. 
+
+        """
+
+        # Stand der Datenbank lesen
+        self.checkVersion(False)
+
+        self.versionlis = [int(el.replace('a','').replace('b','').replace('c','')) for el in self.versiondbQK.split('.')]
+
+        # Status, wenn die Änderungen so gravierend waren, dass das Projekt neu geladen werden muss. 
+        status_neustart = False
 
         global progress_bar
         progress_bar = QProgressBar(iface.messageBar())
         progress_bar.setRange(0, 100)
-        if self.actversion != versiondbQK:
-            status_message = iface.messageBar().createMessage(u"", u"Die Datenbank wird an Version {ver} angepasst. Bitte warten...".format(ver=versiondbQK))
-            status_message.layout().addWidget(progress_bar)
-            iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
-
         progress_bar.setValue(0)
 
         # ---------------------------------------------------------------------------------------------

@@ -123,7 +123,6 @@ class QKanTools:
         self.dlgla.pb_selectProjectTemplate.clicked.connect(self.dlgla_selectFileProjectTemplate)
         self.dlgla.button_box.helpRequested.connect(self.dlgla_helpClick)
         self.dlgla.cb_adaptForms.clicked.connect(self.dlgla_cb_adaptForms)
-        self.dlgla.cb_adaptLayerThemes.clicked.connect(self.dlgla_cb_adaptLayerThemes)
         self.dlgla.cb_adaptTableLookups.clicked.connect(self.dlgla_cb_adaptTableLookups)
         self.dlgla.cb_adaptKBS.clicked.connect(self.dlgla_cb_adaptKBS)
         self.dlgla.cb_applyQKanTemplate.clicked.connect(self.dlgla_cb_applyQKanTemplate)
@@ -321,7 +320,7 @@ class QKanTools:
             qkanDBUpdate = self.config['qkanDBUpdate']
         else:
             qkanDBUpdate = True
-        self.dlgpr.cb_adaptDB.setChecked(qkanDBUpdate)
+        self.dlgpr.cb_qkanDBUpdate.setChecked(qkanDBUpdate)
 
         # show the dialog
         self.dlgpr.show()
@@ -337,7 +336,7 @@ class QKanTools:
             self.database_QKan = self.dlgpr.tf_qkanDB.text()
             projectfile = self.dlgpr.tf_projectFile.text()
             self.setPathToTemplateDir = self.dlgpr.cb_setPathToTemplateDir.isChecked()
-            qkanDBUpdate = self.dlgpr.cb_adaptDB.isChecked()
+            qkanDBUpdate = self.dlgpr.cb_qkanDBUpdate.isChecked()
 
 
             # Konfigurationsdaten schreiben -----------------------------------------------------------
@@ -820,15 +819,10 @@ class QKanTools:
             abhängig von den angeklickten Checkbuttons
         """
 
-        checked =   self.anpassen_Thematische_Layerdarstellungen or \
-                    self.anpassen_Formulare or \
+        checked =   self.anpassen_Formulare or \
                     self.anpassen_Wertebeziehungen_in_Tabellen
 
         self.dlgla.gb_projectTemplate.setEnabled(checked)
-
-    def dlgla_cb_adaptLayerThemes(self):
-        self.anpassen_Thematische_Layerdarstellungen = self.dlgla.cb_adaptLayerThemes.isChecked()
-        self.dlgla_enableProjectTemplateGroup()
 
     def dlgla_cb_adaptForms(self):
         self.anpassen_Formulare = self.dlgla.cb_adaptForms.isChecked()
@@ -889,11 +883,11 @@ class QKanTools:
         """Aktiviert oder deaktiviert das Textfeld für die zu Schreibende Projektdatei
             abhängig vom angeklickten Checkbutton cb_saveProjectFile
         """
-        checked = not self.saveProjectFile
+        checked = self.saveProjectFile
 
-        self.dlgla.tf_projectTemplate.setEnabled(checked)
-        self.dlgla.pb_selectProjectTemplate.setEnabled(checked)
-        self.dlgla.lb_projectTemplate.setEnabled(checked)
+        self.dlgla.tf_projectFile.setEnabled(checked)
+        self.dlgla.pb_selectProjectFile.setEnabled(checked)
+        self.dlgla.lb_projectFile.setEnabled(checked)
 
     def dlgla_cb_saveProjectFile(self):
         self.saveProjectFile = self.dlgla.cb_saveProjectFile.isChecked()
@@ -981,13 +975,6 @@ class QKanTools:
         self.dlgla.cb_adaptForms.setChecked(self.anpassen_Formulare)
 
         # Checkbox "Wertbeziehungungen in Tabellen"
-        if 'anpassen_Thematische_Layerdarstellungen' in self.config:
-            self.anpassen_Thematische_Layerdarstellungen = self.config['anpassen_Thematische_Layerdarstellungen']
-        else:
-            self.anpassen_Thematische_Layerdarstellungen = True
-        self.dlgla.cb_adaptLayerThemes.setChecked(self.anpassen_Thematische_Layerdarstellungen)
-
-        # Checkbox "Wertbeziehungungen in Tabellen"
         if 'anpassen_Projektionssystem' in self.config:
             self.anpassen_Projektionssystem = self.config['anpassen_Projektionssystem']
         else:
@@ -1065,7 +1052,6 @@ class QKanTools:
             self.anpassen_Datenbankanbindung = self.dlgla.cb_adaptDB.isChecked()
             self.anpassen_Wertebeziehungen_in_Tabellen = self.dlgla.cb_adaptTableLookups.isChecked()
             self.anpassen_Formulare = self.dlgla.cb_adaptForms.isChecked()
-            self.anpassen_Thematische_Layerdarstellungen = self.dlgla.cb_adaptLayerThemes.isChecked()
             self.anpassen_Projektionssystem = self.dlgla.cb_adaptKBS.isChecked()
             qkanDBUpdate = self.dlgla.cb_adaptDB.isChecked()
             aktualisieren_Schachttypen = self.dlgla.cb_updateNodetype.isChecked()
@@ -1092,7 +1078,6 @@ class QKanTools:
             self.config['anpassen_Datenbankanbindung'] = self.anpassen_Datenbankanbindung
             self.config['anpassen_Wertebeziehungen_in_Tabellen'] = self.anpassen_Wertebeziehungen_in_Tabellen
             self.config['anpassen_Formulare'] = self.anpassen_Formulare
-            self.config['anpassen_Thematische_Layerdarstellungen'] = self.anpassen_Thematische_Layerdarstellungen
             self.config['anpassen_Projektionssystem'] = self.anpassen_Projektionssystem
             self.config['anpassen_auswahl'] = anpassen_auswahl
             self.config['qkanDBUpdate'] = qkanDBUpdate
@@ -1106,7 +1091,7 @@ class QKanTools:
 
             layersadapt(self.database_QKan, projectFile, self.projectTemplate, 
                         self.anpassen_Datenbankanbindung, self.anpassen_Wertebeziehungen_in_Tabellen, 
-                        self.anpassen_Formulare, self.anpassen_Thematische_Layerdarstellungen, 
+                        self.anpassen_Formulare, 
                         self.anpassen_Projektionssystem, aktualisieren_Schachttypen, zoom_alles, 
                         anpassen_auswahl, u'SpatiaLite')
 

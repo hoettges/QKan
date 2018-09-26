@@ -50,7 +50,7 @@ progress_bar = None
 
 def layersadapt(database_QKan, projectFile, projectTemplate, 
                 anpassen_Datenbankanbindung, anpassen_Wertebeziehungen_in_Tabellen, 
-                anpassen_Formulare, anpassen_Thematische_Layerdarstellungen, 
+                anpassen_Formulare, 
                 anpassen_Projektionssystem, aktualisieren_Schachttypen, zoom_alles, 
                 anpassen_auswahl, dbtyp = u'spatialite'):
     '''Anpassen von Projektlayern an den QKan-Standard 
@@ -73,9 +73,6 @@ def layersadapt(database_QKan, projectFile, projectTemplate,
 
     :anpassen_Formulare:                            Formulare werden anpasst
     :type anpassen_Formulare:                       Boolean
-
-    :anpassen_Thematische_Layerdarstellungen:       Thematische Layerdarstellungen werden angepasst
-    :type anpassen_Thematische_Layerdarstellungen:  Boolean
 
     :anpassen_Projektionssystem:                    Projektionssystem wird angepasst
     :type anpassen_Wertebeziehungen_in_Tabellen:    Boolean
