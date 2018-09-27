@@ -233,6 +233,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
     # Datenbankverbindungen
 
     dbQK = DBConnection(dbname=database_QKan, epsg=epsg)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
+    if not dbQK.updatestatus:
+        return None
 
     if dbQK is None:
         fehlermeldung(u"Fehler in QKan_Import_from_KP", 

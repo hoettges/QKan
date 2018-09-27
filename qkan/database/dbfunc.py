@@ -43,7 +43,7 @@ from qgis.utils import iface, pluginDirectory
 from PyQt4.QtGui import QProgressBar
 
 from qkan_database import createdbtables
-from qkan_utils import fortschritt, fehlermeldung, versionolder
+from qkan_utils import fortschritt, fehlermeldung, meldung, versionolder
 
 logger = logging.getLogger(u'QKan')
 
@@ -82,7 +82,7 @@ class DBConnection:
         self.sqlcount = 0
         self.actversion = '2.5.7'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
-        self.status = True
+        self.updatestatus = True
 
         if dbname is not None:
             # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
@@ -97,6 +97,9 @@ class DBConnection:
                 
                 if not self.checkVersion():
                     self.consl.close()
+                    meldung(u"Projekt muss aktualisiert werden.", 
+                        u"Die QKan-Version der Datenbank {verDB} stimmt nicht mit der aktuellen QKan-Version {verCur} überein und muss aktualisiert werden!".format(verDB=self.versiondbQK, verCur=self.actversion))
+                    self.updatestatus = False
                     return None
 
             else:
@@ -242,7 +245,7 @@ class DBConnection:
 
     # Versionskontrolle der QKan-Datenbank
 
-    def checkVersion(self, verbose=True):
+    def checkVersion(self):
         """Prüft die Version der Datenbank. 
 
             :returns: Anpassung erfolgreich: True = alles o.k.
@@ -280,13 +283,8 @@ class DBConnection:
 
         logger.debug('0 - versiondbQK = {}'.format(self.versiondbQK))
 
-        if self.actversion != self.versiondbQK:
-            if verbose:
-                fehlermeldung(u"Projekt muss aktualisiert werden.", 
-                    u"Die QKan-Version der Datenbank {verDB} stimmt nicht mit der aktuellen QKan-Version {verCur} überein und muss aktualisiert werden!".format(verDB=self.versiondbQK, verCur=self.actversion))
-            return False
-        else:
-            return True
+        return (self.actversion == self.versiondbQK)
+
 
     # Aktualisierung der QKan-Datenbank auf aktuellen Stand
 
@@ -1145,9 +1143,7 @@ class DBConnection:
         if status_neustart:
             # status_message.setText(u"Achtung! Benutzerhinweis: Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
             # status_message.setLevel(QgsMessageBar.WARNING)
-            iface.messageBar().pushMessage(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...",
-                                               level=QgsMessageBar.WARNING, duration=0)
-            self.status = False
+            meldung(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
             return False
 
         # Alles gut gelaufen...

@@ -330,15 +330,14 @@ class ExportToKP:
         if database_QKan != '':
             # Nur wenn schon eine Projekt geladen oder eine QKan-Datenbank ausgewählt
             self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+            if not self.dbQK.updatestatus:
+                return None
             if self.dbQK is None:
                 fehlermeldung("Fehler in QKan_CreateUnbefFl",
                               u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-                iface.messageBar().pushMessage("Fehler in QKan_Import_from_HE",
+                iface.messageBar().pushMessage("Fehler in exportdyna",
                                                u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                    database_QKan), level=QgsMessageBar.CRITICAL)
-                return None
-            elif not self.dbQK.status:
-                # Datenbank wurde geändert
                 return None
 
             # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten

@@ -540,6 +540,8 @@ class LinkFl:
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if not self.dbQK.updatestatus:
+            return None
 
         if self.dbQK is None:
             fehlermeldung(u"Fehler in LinkFl.run_createlinefl",
@@ -771,6 +773,8 @@ class LinkFl:
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if not self.dbQK.updatestatus:
+            return None
 
         if self.dbQK is None:
             fehlermeldung(u"Fehler in LinkFl.run_createlinesw",
@@ -947,6 +951,8 @@ class LinkFl:
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if not self.dbQK.updatestatus:
+            return None
         if self.dbQK is None:
             fehlermeldung(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
             iface.messageBar().pushMessage(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
@@ -1070,6 +1076,8 @@ class LinkFl:
             return False
 
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if not self.dbQK.updatestatus:
+            return None
 
         if self.dbQK is None:
             fehlermeldung(u"Fehler in LinkFl.run_managegroups",
@@ -1131,6 +1139,8 @@ class LinkFl:
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if not self.dbQK.updatestatus:
+            return None
         if self.dbQK is None:
             fehlermeldung(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
             iface.messageBar().pushMessage(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \

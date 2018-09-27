@@ -135,6 +135,8 @@ def layersadapt(database_QKan, projectFile, projectTemplate,
     # Datenbankverbindungen
 
     dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank
+    if not dbQK.updatestatus:
+        return None
 
     if dbQK is None:
         fehlermeldung(u"Fehler in qgsadapt", 

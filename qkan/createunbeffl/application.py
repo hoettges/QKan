@@ -285,6 +285,8 @@ class CreateUnbefFl:
 
         # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if not self.dbQK.updatestatus:
+            return None
 
         if self.dbQK is None:
             fehlermeldung(u"Fehler in QKan_CreateUnbefFl",

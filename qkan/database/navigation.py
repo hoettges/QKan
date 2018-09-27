@@ -22,6 +22,8 @@ class Navigator:
         self.__error_msg = ""
         self.db = DBConnection(dbname)
         self.log = logging.getLogger("QKan.navigation.Navigator")
+        if not self.db.updatestatus:
+            return None
 
     def calculate_route_schacht(self, nodes):
         """
@@ -282,6 +284,8 @@ class Worker(QtCore.QRunnable):
         self.__startpoint = startpoint
         self.__nodes = nodes
         self.__db = DBConnection(dbname)
+        if not self.__db.updatestatus:
+            return None
         self.__parent = parent
 
     def run(self):

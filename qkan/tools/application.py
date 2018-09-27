@@ -592,7 +592,9 @@ class QKanTools:
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
-        if self.dbQK is None or self.dbQK == False:
+        if not self.dbQK.updatestatus:
+            return None
+        if self.dbQK is None:
             fehlermeldung("Fehler in tools.runoffparams",
                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
             iface.messageBar().pushMessage("Fehler in tools.runoffparams",
