@@ -550,9 +550,6 @@ class LinkFl:
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
-            return None
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -783,9 +780,6 @@ class LinkFl:
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
-            return None
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -958,9 +952,6 @@ class LinkFl:
             iface.messageBar().pushMessage(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                 database_QKan), level=QgsMessageBar.CRITICAL)
             return None
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
-            return None
 
 
         # config in Dialog übernehmen
@@ -1086,9 +1077,6 @@ class LinkFl:
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
-            return None
 
         self.showgroups()
 
@@ -1146,9 +1134,6 @@ class LinkFl:
             iface.messageBar().pushMessage(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                 database_QKan), level=QgsMessageBar.CRITICAL)
             return False
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
-            return None
 
         self.dlg_ul.tf_qkDB.setText(database_QKan)
 

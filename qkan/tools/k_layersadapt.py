@@ -48,7 +48,7 @@ logger = logging.getLogger(u'QKan')
 
 progress_bar = None
 
-def layersadapt(database_QKan, projectFile, projectTemplate, 
+def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate, 
                 anpassen_Datenbankanbindung, anpassen_Wertebeziehungen_in_Tabellen, 
                 anpassen_Formulare, 
                 anpassen_Projektionssystem, aktualisieren_Schachttypen, zoom_alles, 
@@ -135,8 +135,6 @@ def layersadapt(database_QKan, projectFile, projectTemplate,
     # Datenbankverbindungen
 
     dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank
-    if not dbQK.updatestatus:
-        return None
 
     if dbQK is None:
         fehlermeldung(u"Fehler in qgsadapt", 
@@ -145,9 +143,19 @@ def layersadapt(database_QKan, projectFile, projectTemplate,
                     u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
             database_QKan), level=QgsMessageBar.CRITICAL)
         return None
-    elif not dbQK.status:
-        # Datenbank wurde geändert
-        return None
+
+    # Status, wenn die Änderungen so gravierend waren, dass das Projekt neu geladen werden muss. 
+    status_neustart = False
+
+    if not dbQK.updatestatus:
+        # QKan-Datenbank ist nicht aktuell
+        logger.debug(u'k_layersadapt: QKan-Datenbank ist nicht aktuell')
+        if qkanDBUpdate:
+            # QKan-Datenbank soll aktualisiert werden
+            logger.debug(u'k_layersadapt: QKan-Datenbank wird aktualisiert')
+            if not dbQK.updateversion():
+                # Die Änderungen machen ein Neuladen der Projektdatei notwendig. 
+                status_neustart = True
 
     if projectTemplate is None or projectTemplate == u'':
         fehlermeldung(u'Bedienerfehler!', u'Es wurde keine Vorlage-Projektdatei ausgewählt')
@@ -230,8 +238,18 @@ def layersadapt(database_QKan, projectFile, projectTemplate,
         if anpassen_Wertebeziehungen_in_Tabellen:
             # Schleife über alle widgetv2type-Arten (Liste s. o.)
             for widgetv2type in widgetv2types:
-                node_maplayer = qgsxml.find(u"projectlayers/maplayer[layername='{ln}']".format(ln=layername))
-                nodes_edittype = node_maplayer.findall("./edittypes/edittype[@widgetv2type={wt}]".format(wt=widgetv2type))
+                lntext = u"projectlayers/maplayer[layername='{ln}']".format(ln=layername)
+                node_maplayer = qgsxml.find(lntext)
+                try:
+                    wttext = u"./edittypes/edittype[@widgetv2type='{wt}']".format(wt=widgetv2type)
+                    nodes_edittype = node_maplayer.findall(wttext)
+                except:
+                    fehlermeldung(u'Fehler in k_layersadapt:\n', u'lntext: {}\nwttext: {}'.format(lntext, wttext))
+                    del qgsxml
+                    del dbQK
+                    return None
+
+                logger.debug(u'k_layersadapt: lntext: {}\nwttext: {}'.format(lntext, wttext))
                 for node_edittype in nodes_edittype:
                     att = node_edittype.find('widgetv2config')
                     w_OrderByValue = att.attrib['OrderByValue']
@@ -281,8 +299,12 @@ def layersadapt(database_QKan, projectFile, projectTemplate,
         project = QgsProject.instance()
         project.write(QFileInfo(projectFile))
 
-    # Zoom auf 
-    if zoom_alles:
+    if status_neustart:
+        meldung(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
+        return False
+
+    # Zoom auf alles
+    elif zoom_alles:
         canvas.zoomToFullExtent()
 
 

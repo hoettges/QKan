@@ -71,7 +71,7 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
 
     :dbtyp:                     Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:                String
-    
+
     :returns: void
     '''
 
@@ -80,6 +80,7 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
 
     dbQK = DBConnection(dbname=qkanDB)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
     if not dbQK.updatestatus:
+    # QKan-Datenbank ist nicht aktuell
         return None
 
     if dbQK is None:
@@ -88,9 +89,6 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
         iface.messageBar().pushMessage(u"Fehler in qgsadapt", 
                     u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
             qkanDB), level=QgsMessageBar.CRITICAL)
-        return None
-    elif not dbQK.status:
-        # Datenbank wurde geändert
         return None
 
     # --------------------------------------------------------------------------

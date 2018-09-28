@@ -22,7 +22,7 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__version__ = '2.5.7'
+__version__ = '2.5.8'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -527,6 +527,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     flnam TEXT,
     haltnam TEXT,
     tezgnam TEXT,
+    teilgebiet TEXT,
     abflusstyp TEXT,
     speicherzahl INTEGER,
     speicherkonst REAL,
@@ -565,7 +566,8 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     sql = u"""CREATE TABLE linksw (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     elnam TEXT,
-    haltnam TEXT)"""
+    haltnam TEXT,
+    teilgebiet TEXT)"""
 
     try:
         cursl.execute(sql)

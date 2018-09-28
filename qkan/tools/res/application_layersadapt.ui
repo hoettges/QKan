@@ -7,17 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>458</width>
-    <height>644</height>
+    <height>676</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QKan-Projektdatei übertragen</string>
+   <string>Projektdatei anpassen</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>590</y>
+     <y>620</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -46,7 +46,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>470</y>
+     <y>500</y>
      <width>420</width>
      <height>100</height>
     </rect>
@@ -163,7 +163,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>330</y>
+     <y>360</y>
      <width>420</width>
      <height>70</height>
     </rect>
@@ -240,7 +240,7 @@
      <x>20</x>
      <y>130</y>
      <width>420</width>
-     <height>190</height>
+     <height>221</height>
     </rect>
    </property>
    <property name="font">
@@ -258,7 +258,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>130</y>
+      <y>160</y>
       <width>371</width>
       <height>20</height>
      </rect>
@@ -284,7 +284,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>110</y>
+      <y>140</y>
       <width>371</width>
       <height>20</height>
      </rect>
@@ -310,7 +310,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>90</y>
+      <y>120</y>
       <width>301</width>
       <height>20</height>
      </rect>
@@ -400,7 +400,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>160</y>
+      <y>190</y>
       <width>371</width>
       <height>20</height>
      </rect>
@@ -420,6 +420,32 @@
     </property>
     <property name="text">
      <string>Zoom auf alle Layer</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_qkanDBUpdate">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>90</y>
+      <width>241</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Struktur der QKan-Datenbank wird auf den aktuellen Stand angepasst. Dabei werden auch die Eingabeformulare aktualisiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Struktur der QKan-Datenbank wird auf den aktuellen Stand angepasst.</string>
+    </property>
+    <property name="text">
+     <string>QKan-Datenbank aktualisieren</string>
     </property>
    </widget>
   </widget>
@@ -547,7 +573,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>410</y>
+     <y>440</y>
      <width>420</width>
      <height>50</height>
     </rect>

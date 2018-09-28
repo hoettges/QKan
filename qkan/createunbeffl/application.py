@@ -295,9 +295,6 @@ class CreateUnbefFl:
                                            u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
                                                database_QKan), level=QgsMessageBar.CRITICAL)
             return None
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
-            return None
 
         # Kontrolle, ob in Tabelle "abflussparameter" ein Datensatz für unbefestigte Flächen vorhanden ist
         # (Standard: apnam = '$Default_Unbef')
