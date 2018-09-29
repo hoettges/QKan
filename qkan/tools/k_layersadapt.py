@@ -85,7 +85,7 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
 
     :dbtyp:                                         Typ der Datenbank (spatialite, postgis)
     :type dbtyp:                                    string
-    
+
     :returns: void
     '''
 
@@ -95,7 +95,7 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
 
     # Liste aller QKan-Layernamen: 
 
-    templateDir = os.path.join(pluginDirectory('qkan'), u"database/templates")
+    templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
     qgsTemplate = os.path.join(templateDir,'Projekt.qgs')
     tag = u"projectlayers/maplayer[provider='spatialite']"
     qgsxml = et.ElementTree()
@@ -134,28 +134,36 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     # -----------------------------------------------------------------------------------------------------
     # Datenbankverbindungen
 
-    dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank
+    dbQK = DBConnection(dbname=database_QKan, qkanDBUpdate=qkanDBUpdate)   # Datenbankobjekt der QKan-Datenbank
+                                                                            # qkanDBUpdate: mit Update
 
-    if dbQK is None:
-        fehlermeldung(u"Fehler in qgsadapt", 
-                      u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-        iface.messageBar().pushMessage(u"Fehler in qgsadapt", 
-                    u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-            database_QKan), level=QgsMessageBar.CRITICAL)
+    if (not dbQK.connected) and (not qkanDBUpdate):
+        logger.debug(u'k_layersadapt: Datenbankverbindung konnte nicht hergestellt werden.')
+        # fehlermeldung(u"Fehler in k_layersadapt", 
+                      # u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
+        # iface.messageBar().pushMessage(u"Fehler in k_layersadapt", 
+                    # u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
+            # database_QKan), level=QgsMessageBar.CRITICAL)
         return None
 
     # Status, wenn die Änderungen so gravierend waren, dass das Projekt neu geladen werden muss. 
-    status_neustart = False
+    # status_neustart = False
 
     if not dbQK.updatestatus:
         # QKan-Datenbank ist nicht aktuell
         logger.debug(u'k_layersadapt: QKan-Datenbank ist nicht aktuell')
         if qkanDBUpdate:
-            # QKan-Datenbank soll aktualisiert werden
-            logger.debug(u'k_layersadapt: QKan-Datenbank wird aktualisiert')
-            if not dbQK.updateversion():
-                # Die Änderungen machen ein Neuladen der Projektdatei notwendig. 
-                status_neustart = True
+            # Kontrolle, ob auch anpassen_Wertebeziehungen_in_Tabellen und anpassen_Formulare aktiviert
+            if not (anpassen_Wertebeziehungen_in_Tabellen and anpassen_Formulare):
+                # In diesem Fall ist ein Update der Datenbank nicht zulässig
+                fehlermeldung(u'Fehler in k_layersadapt:', 
+                    u'Nicht aktivierte Optionen lassen ein Update der QKan-Datenbank nicht zu!')
+                return None
+            else:
+                logger.debug(u'k_layersadapt: QKan-Datenbank wird aktualisiert')
+                dbQK.updateversion()
+        else:
+            return False                # Fehlermeldungen wurden schon von dbQK ausgegeben
 
     if projectTemplate is None or projectTemplate == u'':
         fehlermeldung(u'Bedienerfehler!', u'Es wurde keine Vorlage-Projektdatei ausgewählt')
@@ -233,7 +241,8 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
         if anpassen_Formulare:
             formpath = qgslayer[0].findtext('./editform')
             form = os.path.basename(formpath)
-            layer.setEditForm(form)
+            editFormConfig = layer.editFormConfig()
+            editFormConfig.setUiForm(form)
 
         if anpassen_Wertebeziehungen_in_Tabellen:
             # Schleife über alle widgetv2type-Arten (Liste s. o.)
@@ -252,19 +261,7 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
                 logger.debug(u'k_layersadapt: lntext: {}\nwttext: {}'.format(lntext, wttext))
                 for node_edittype in nodes_edittype:
                     att = node_edittype.find('widgetv2config')
-                    w_OrderByValue = att.attrib['OrderByValue']
-                    w_AllowNull = att.attrib['AllowNull']
-                    w_FilterExpression = att.attrib['FilterExpression']
-                    w_UseCompleter = att.attrib['UseCompleter']
-                    w_fieldEditable = att.attrib['fieldEditable']
-                    w_Key = att.attrib['Key']
-                    w_constraint = att.attrib['constraint']
-                    w_Layer = att.attrib['Layer']
-                    w_Value = att.attrib['Value']
-                    w_labelOnTop = att.attrib['labelOnTop']
-                    w_constraintDescription = att.attrib['constraintDescription']
-                    w_AllowMulti = att.attrib['AllowMulti']
-                    w_notNull = att.attrib['notNull']
+                    widgetConfig = att.attrib
 
                     fieldname = node_edittype.attrib['name']
                     fieldIndex = layer.fieldNameIndex(fieldname)
@@ -275,14 +272,7 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
                     # widgetConfig = editFormConfig.widgetConfig(fieldIndex)
 
                     editFormConfig.setWidgetType(fieldIndex, widgetv2type)
-                    widgetConfig = {u'FilterExpression': w_FilterExpression, 
-                        u'Layer': layerId, u'UseCompleter': w_UseCompleter, 
-                        u'fieldEditable': w_fieldEditable, 
-                        u'AllowMulti': w_AllowMulti, u'AllowNull': w_AllowNull, 
-                        u'OrderByValue': w_OrderByValue, u'Value': w_Value, 
-                        u'Key': w_Key, u'constraint': w_constraint, 
-                        u'labelOnTop': w_labelOnTop, u'notNull': w_notNull, 
-                        u'constraintDescription': w_constraintDescription}
+
                     editFormConfig.setWidgetConfig(fieldIndex, widgetConfig)
                     logger.debug('widgetConfig: \n{}\n'.format(widgetConfig))
 
@@ -299,9 +289,9 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
         project = QgsProject.instance()
         project.write(QFileInfo(projectFile))
 
-    if status_neustart:
-        meldung(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
-        return False
+    # if status_neustart:
+        # meldung(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
+        # return False
 
     # Zoom auf alles
     elif zoom_alles:

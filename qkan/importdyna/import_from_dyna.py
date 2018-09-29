@@ -233,15 +233,10 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
     # Datenbankverbindungen
 
     dbQK = DBConnection(dbname=database_QKan, epsg=epsg)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
-    if not dbQK.updatestatus:
-        return None
 
-    if dbQK is None:
-        fehlermeldung(u"Fehler in QKan_Import_from_KP", 
-                      u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-        iface.messageBar().pushMessage(u"Fehler in QKan_Import_from_KP", 
-                    u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-            database_QKan), level=QgsMessageBar.CRITICAL)
+    if not dbQK.connected:
+        logger.error(u"Fehler in import_from_dyna:\n",
+                      u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
         return None
 
     # # Referenztabellen laden. 
@@ -935,7 +930,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
     # Projektdatei schreiben, falls ausgewählt
 
     if projectfile is not None and projectfile != u'':
-        templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
+        templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
         projecttemplate = os.path.join(templatepath, u"projekt.qgs")
         projectpath = os.path.dirname(projectfile)
         if os.path.dirname(database_QKan) == projectpath:
@@ -1057,5 +1052,5 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
     project = QgsProject.instance()
     # project.read(QFileInfo(projectfile))
     project.read(QFileInfo(projectfile))         # read the new project file
-    logger.debug('Geladene Projektdatei: {}'.format(project.fileName()))
+    logger.debug(u'Geladene Projektdatei: {}'.format(project.fileName()))
 

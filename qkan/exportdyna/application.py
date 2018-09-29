@@ -59,7 +59,7 @@ class ExportToKP:
         :type iface: QgsInterface
         """
 
-        self.templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
+        self.templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
 
         # Save reference to the QGIS interface
         self.iface = iface
@@ -330,14 +330,9 @@ class ExportToKP:
         if database_QKan != '':
             # Nur wenn schon eine Projekt geladen oder eine QKan-Datenbank ausgewählt
             self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
-            if not self.dbQK.updatestatus:
-                return None
-            if self.dbQK is None:
-                fehlermeldung("Fehler in QKan_CreateUnbefFl",
-                              u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-                iface.messageBar().pushMessage("Fehler in exportdyna",
-                                               u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                                                   database_QKan), level=QgsMessageBar.CRITICAL)
+            if not self.dbQK.connected:
+                logger.error(u"Fehler in exportdyna.application:\n",
+                              u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
                 return None
 
             # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten

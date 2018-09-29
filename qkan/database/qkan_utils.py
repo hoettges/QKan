@@ -41,6 +41,12 @@ def meldung(title, text):
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.INFO)
     iface.messageBar().pushMessage(title, text, level=QgsMessageBar.INFO)
 
+
+def warnung(title, text):
+    logger.warning(u'{:s} {:s}'.format(title, text))
+    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.WARNING)
+    iface.messageBar().pushMessage(title, text, level=QgsMessageBar.WARNING)
+
     
 def fortschritt(text, prozent=0):
     logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))

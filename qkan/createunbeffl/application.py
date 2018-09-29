@@ -284,16 +284,10 @@ class CreateUnbefFl:
             return False
 
         # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
-        self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
-        if not self.dbQK.updatestatus:
-            return None
-
-        if self.dbQK is None:
-            fehlermeldung(u"Fehler in QKan_CreateUnbefFl",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage(u"Fehler in QKan_Import_from_HE",
-                                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                                               database_QKan), level=QgsMessageBar.CRITICAL)
+        self.dbQK = DBConnection(dbname=database_QKan)          # Datenbankobjekt der QKan-Datenbank zum Lesen
+        if not self.dbQK.connected:
+            logger.error(u"Fehler in createunbeffl.application:\n",
+                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
             return None
 
         # Kontrolle, ob in Tabelle "abflussparameter" ein Datensatz für unbefestigte Flächen vorhanden ist

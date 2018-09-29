@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan Version 2.5.8" version="2.18.17">
+<qgis projectname="QKan Version 2.5.8" version="2.18.24">
   <title>QKan Version 2.5.8</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
@@ -7,100 +7,100 @@
     <customproperties/>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Schächte">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" name="Auslässe">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" name="Auslässe">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Haltungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Sonderbauwerke">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="SW-Einleitungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen Direkteinleitungen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen Direkteinleitungen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="einleit20171004110830029" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;einleit&quot; (geom) sql=" name="Direkteinleitungen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="einleit20171004110830029" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;einleit&quot; (geom) sql=" name="Direkteinleitungen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Flächen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="Teilgebiete">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="Teilgebiete">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20171204105753202" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;tezg&quot; (geom) sql=" name="Haltungsflächen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20171204105753202" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;tezg&quot; (geom) sql=" name="Haltungsflächen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindung20170920132347429" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;linkfl&quot; (glink) sql=" name="Anbindungen Flächen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindung20170920132347429" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;linkfl&quot; (glink) sql=" name="Anbindungen Flächen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="Flächen">
+      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="Flächen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="linkageb20180630230055350" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;linkageb&quot; (glink) sql=" name="Anbindungen Außengebiete">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="linkageb20180630230055350" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;linkageb&quot; (glink) sql=" name="Anbindungen Außengebiete">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="aussengebiete20180630230050872" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;aussengebiete&quot; (geom) sql=" name="Außengebiete">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="aussengebiete20180630230050872" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;aussengebiete&quot; (geom) sql=" name="Außengebiete">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Referenztabellen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;profile&quot; sql=" name="Profile">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;profile&quot; sql=" name="Profile">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
+      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="0" checked="Qt::Checked" name="Kennlinien">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
@@ -109,10 +109,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>3550142.61799999978393316</xmin>
-      <ymin>5799510.33000000007450581</ymin>
-      <xmax>3550676.34299999941140413</xmax>
-      <ymax>5799884.03500000014901161</ymax>
+      <xmin>4501019.17999999970197678</xmin>
+      <ymin>5368742.40000000037252903</ymin>
+      <xmax>4501213.75</xmax>
+      <ymax>5369004.51999999955296516</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -192,6 +192,7 @@
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Flaeche20180727153915051"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="86_dop20rgbi_32336_5726_1_nw20170805155517828"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Flurstück_Fläche_dline20170805161040900"/>
+      <layer_coordinate_transform destAuthId="EPSG:31468" srcAuthId="EPSG:31468" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen_import20180928074429294"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Gebäude_Fläche_Basis_dtext20170805161041080"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="76_dop20rgbi_32335_5726_1_nw20170805155516272"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="gebaeude_ref20171017113422032"/>
@@ -240,6 +241,7 @@
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="C5_dop20rgbi_32340_5725_1_nw20170805155524040"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt__Text__linienförmig__Linienposition20170805161041588"/>
       <layer_coordinate_transform destAuthId="EPSG:31467" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="sw_he820180618082501728"/>
+      <layer_coordinate_transform destAuthId="EPSG:31468" srcAuthId="EPSG:31468" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen20180928074205708"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_Präsentationsobjekt___Punkt_Punkt_darea20170805161041469"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:4647" srcDatumTransform="-1" destDatumTransform="-1" layerid="flaechen_odnrw20171017115513210"/>
     </layer_coordinate_transform_info>
@@ -510,12 +512,12 @@
       </ComposerMap>
       <customproperties/>
     </Composition>
-    <Atlas hideCoverage="false" coverageLayer="tezg20171204105753202" singleFile="false" filenamePattern="'output_'||@atlas_featurenumber" enabled="true" coverageLayerName="Haltungsflächen" filterFeatures="false" coverageLayerProvider="spatialite" sortFeatures="false" pageNameExpression="&quot;flnam&quot;" coverageLayerSource="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/temp/temp.sqlite' table=&quot;tezg&quot; (geom) sql="/>
+    <Atlas hideCoverage="false" coverageLayer="tezg20171204105753202" singleFile="false" filenamePattern="'output_'||@atlas_featurenumber" enabled="true" coverageLayerName="Haltungsflächen" filterFeatures="false" coverageLayerProvider="spatialite" sortFeatures="false" pageNameExpression="&quot;flnam&quot;" coverageLayerSource="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkkp/beispiele/buch/buch_gk4.sqlite' table=&quot;tezg&quot; (geom) sql="/>
   </Composer>
   <projectlayers>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Anbindung20170920132347429</id>
-      <datasource>dbname='./temp.sqlite' table="linkfl" (glink) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="linkfl" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -551,6 +553,9 @@
         </edittype>
         <edittype widgetv2type="ValueRelation" name="tezgnam">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="flnam" constraint="" Layer="tezg20171204105753202" Value="flnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="teilgebiet">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueMap" name="abflusstyp">
           <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
@@ -871,19 +876,20 @@
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="2" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="flnam" index="1" name=""/>
         <alias field="haltnam" index="2" name=""/>
         <alias field="tezgnam" index="3" name=""/>
-        <alias field="abflusstyp" index="4" name=""/>
-        <alias field="speicherzahl" index="5" name=""/>
-        <alias field="speicherkonst" index="6" name=""/>
-        <alias field="fliesszeitkanal" index="7" name=""/>
-        <alias field="fliesszeitflaeche" index="8" name=""/>
-        <alias field="geom" index="9" name=""/>
-        <alias field="gbuf" index="10" name=""/>
+        <alias field="teilgebiet" index="4" name=""/>
+        <alias field="abflusstyp" index="5" name=""/>
+        <alias field="speicherzahl" index="6" name=""/>
+        <alias field="speicherkonst" index="7" name=""/>
+        <alias field="fliesszeitkanal" index="8" name=""/>
+        <alias field="fliesszeitflaeche" index="9" name=""/>
+        <alias field="geom" index="10" name=""/>
+        <alias field="gbuf" index="11" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -904,10 +910,10 @@
           <column width="-1" hidden="0" type="field" name="fliesszeitflaeche"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungflaechen.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungflaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -937,6 +943,7 @@ def my_form_open(dialog, layer, feature):
         <default field="flnam" expression=""/>
         <default field="haltnam" expression=""/>
         <default field="tezgnam" expression=""/>
+        <default field="teilgebiet" expression=""/>
         <default field="abflusstyp" expression="'Speicherkaskade'"/>
         <default field="speicherzahl" expression=""/>
         <default field="speicherkonst" expression=""/>
@@ -949,7 +956,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Anbindungen_SW_Punkte20171017125752772</id>
-      <datasource>dbname='./temp.sqlite' table="linksw" (glink) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="linksw" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -982,6 +989,9 @@ def my_form_open(dialog, layer, feature):
         </edittype>
         <edittype widgetv2type="ValueRelation" name="haltnam">
           <widgetv2config OrderByValue="0" AllowNull="0" FilterExpression="" UseCompleter="0" fieldEditable="1" Key="haltnam" constraint="" Layer="haltungen20161016203756230" Value="haltnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="teilgebiet">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="geom">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -1283,13 +1293,14 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="2" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="elnam" index="1" name=""/>
         <alias field="haltnam" index="2" name=""/>
-        <alias field="geom" index="3" name=""/>
-        <alias field="gbuf" index="4" name=""/>
+        <alias field="teilgebiet" index="3" name=""/>
+        <alias field="geom" index="4" name=""/>
+        <alias field="gbuf" index="5" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -1305,10 +1316,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="gbuf"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungeinleit.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungeinleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -1337,20 +1348,15 @@ def my_form_open(dialog, layer, feature):
         <default field="pk" expression=""/>
         <default field="elnam" expression=""/>
         <default field="haltnam" expression=""/>
+        <default field="teilgebiet" expression=""/>
         <default field="geom" expression=""/>
         <default field="gbuf" expression=""/>
       </defaults>
       <previewExpression> "flnam" || ' - ' ||  "haltnam" </previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>3550042.61819999990984797</xmin>
-        <ymin>5799510.32980000041425228</ymin>
-        <xmax>3550676.34299999987706542</xmax>
-        <ymax>5799884.0352999996393919</ymax>
-      </extent>
       <id>Speicher_Kopie20161221080207994</id>
-      <datasource>dbname='./temp.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1677,7 +1683,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="schnam" index="1" name=""/>
@@ -1730,10 +1736,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_auslaesse.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_auslaesse.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -1785,7 +1791,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>abflussparameter20161218110231636</id>
-      <datasource>dbname='./temp.sqlite' table="abflussparameter" sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="abflussparameter" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1799,7 +1805,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>false</geographicflag>
+          <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1849,7 +1855,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="apnam" index="1" name=""/>
@@ -1882,10 +1888,10 @@ def my_form_open(dialog, layer, feature):
           <column width="267" hidden="0" type="field" name="apnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_abflussparameter.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_abflussparameter.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -1927,7 +1933,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>auslasstypen20161201095045204</id>
-      <datasource>dbname='./temp.sqlite' table="auslasstypen" sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="auslasstypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1941,7 +1947,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>false</geographicflag>
+          <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1973,7 +1979,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="bezeichnung" index="1" name=""/>
@@ -1994,10 +2000,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_auslasstypen.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_auslasstypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -2033,7 +2039,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>aussengebiete20180630230050872</id>
-      <datasource>dbname='./temp.sqlite' table="aussengebiete" (geom) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="aussengebiete" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2357,7 +2363,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="gebnam" index="1" name=""/>
@@ -2394,10 +2400,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="flaeche"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_aussengebiete.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_aussengebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -2441,7 +2447,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>bodenklassen20170516122309914</id>
-      <datasource>dbname='./temp.sqlite' table="bodenklassen" sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="bodenklassen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2502,7 +2508,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="bknam" index="1" name=""/>
@@ -2533,10 +2539,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_bodenklassen.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_bodenklassen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -2587,7 +2593,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>einleit20171004110830029</id>
-      <datasource>dbname='./temp.sqlite' table="einleit" (geom) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="einleit" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2866,7 +2872,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="elnam" index="1" name=""/>
@@ -2893,10 +2899,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_einleit.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_einleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -2936,7 +2942,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>entwaesserungsarten20161018090806784</id>
-      <datasource>dbname='./temp.sqlite' table="entwaesserungsarten" sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="entwaesserungsarten" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2950,7 +2956,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>false</geographicflag>
+          <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -2985,7 +2991,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="kuerzel" index="1" name=""/>
@@ -3007,10 +3013,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_entwaesserungsarten.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_entwaesserungsarten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -3047,7 +3053,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>flaechen20170504083519678</id>
-      <datasource>dbname='./temp.sqlite' table="flaechen" (geom) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="flaechen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -3482,7 +3488,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="flnam" index="1" name=""/>
@@ -3518,10 +3524,10 @@ def my_form_open(dialog, layer, feature):
           <column width="157" hidden="0" type="field" name="abflusstyp"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_flaechen.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_flaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -3561,14 +3567,8 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "flnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="1" maximumScale="15000" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>3550042.61819999990984797</xmin>
-        <ymin>5799510.32980000041425228</ymin>
-        <xmax>3550676.34299999987706542</xmax>
-        <ymax>5799884.0352999996393919</ymax>
-      </extent>
       <id>haltungen20161016203756230</id>
-      <datasource>dbname='./temp.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4256,7 +4256,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="0" linePlacementFlags="10" placement="2" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>../../../../Program Files/QGIS2~1.16/bin</annotationform>
+      <annotationform>../../../Program Files/QGIS2~1.16/bin</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="haltnam" index="1" name=""/>
@@ -4315,10 +4315,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
+      <editforminitfilepath>../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS-Formulare können eine Python-Funktion haben, die beim Öffnen des Formulars gestartet wird.
@@ -4370,14 +4370,8 @@ def my_form_open(dialog, layer, feature):
       <previewExpression> "haltnam" </previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="15000" maximumScale="1.5e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>3550042.61819999990984797</xmin>
-        <ymin>5799510.32980000041425228</ymin>
-        <xmax>3550676.34299999987706542</xmax>
-        <ymax>5799884.0352999996393919</ymax>
-      </extent>
       <id>haltungen_Kopie20161016203906444</id>
-      <datasource>dbname='./temp.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4737,7 +4731,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="0" linePlacementFlags="10" placement="2" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>../../../../Program Files/QGIS2~1.16/bin</annotationform>
+      <annotationform>../../../Program Files/QGIS2~1.16/bin</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="haltnam" index="1" name=""/>
@@ -4796,10 +4790,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
+      <editforminitfilepath>../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS-Formulare können eine Python-Funktion haben, die beim Öffnen des Formulars gestartet wird.
@@ -4852,7 +4846,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>linkageb20180630230055350</id>
-      <datasource>dbname='./temp.sqlite' table="linkageb" (glink) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="linkageb" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5180,7 +5174,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="2" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="gebnam" index="1" name=""/>
@@ -5198,10 +5192,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="schnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungageb.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungageb.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -5235,7 +5229,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profildaten20161218110256525</id>
-      <datasource>dbname='./temp.sqlite' table="profildaten" sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="profildaten" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5278,7 +5272,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="profilnam" index="1" name=""/>
@@ -5297,10 +5291,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_profildaten.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_profildaten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -5335,7 +5329,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profile20161018090721921</id>
-      <datasource>dbname='./temp.sqlite' table="profile" sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="profile" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5381,7 +5375,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="profilnam" index="1" name=""/>
@@ -5402,10 +5396,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_profile.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_profile.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -5441,14 +5435,8 @@ def my_form_open(dialog, layer, feature):
  COALESCE( "profilnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>3550383.06980000017210841</xmin>
-        <ymin>5799652.43960000015795231</ymin>
-        <xmax>3550383.55720000015571713</xmax>
-        <ymax>5799730.78179999999701977</ymax>
-      </extent>
       <id>pumpen20161017080913064</id>
-      <datasource>dbname='./temp.sqlite' table="pumpen" (geom) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="pumpen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5814,7 +5802,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="0" linePlacementFlags="10" placement="2" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="pnam" index="1" name=""/>
@@ -5853,10 +5841,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="pnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_pumpen.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_pumpen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS-Formulare können eine Python-Funktion haben, die beim Öffnen des Formulars gestartet wird.
@@ -5899,7 +5887,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>pumpentypen20161018090730556</id>
-      <datasource>dbname='./temp.sqlite' table="pumpentypen" sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="pumpentypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5939,7 +5927,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="bezeichnung" index="1" name=""/>
@@ -5956,10 +5944,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_pumpentypen.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_pumpentypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -5992,14 +5980,8 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "bezeichnung", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>3550041.61819999990984797</xmin>
-        <ymin>5799509.32980000041425228</ymin>
-        <xmax>3550677.34299999987706542</xmax>
-        <ymax>5799885.0352999996393919</ymax>
-      </extent>
       <id>schaechte20161016203756252</id>
-      <datasource>dbname='./temp.sqlite' table="schaechte" (geom) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="schaechte" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -6319,7 +6301,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="0" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>../../../../Program Files/QGIS2~1.16/bin</annotationform>
+      <annotationform>../../../Program Files/QGIS2~1.16/bin</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="schnam" index="1" name=""/>
@@ -6372,10 +6354,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
+      <editforminitfilepath>../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS-Formulare können eine Python-Funktion haben, die beim Öffnen des Formulars gestartet wird.
@@ -6424,14 +6406,8 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>3550042.61819999990984797</xmin>
-        <ymin>5799510.32980000041425228</ymin>
-        <xmax>3550676.34299999987706542</xmax>
-        <ymax>5799884.0352999996393919</ymax>
-      </extent>
       <id>schaechte20161220162259105</id>
-      <datasource>dbname='./temp.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -6758,7 +6734,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="schnam" index="1" name=""/>
@@ -6811,10 +6787,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -6865,14 +6841,8 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>3550042.61819999990984797</xmin>
-        <ymin>5799510.32980000041425228</ymin>
-        <xmax>3550676.34299999987706542</xmax>
-        <ymax>5799884.0352999996393919</ymax>
-      </extent>
       <id>schaechte_Kopie20161204084617148</id>
-      <datasource>dbname='./temp.sqlite' table="schaechte" (geop) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="schaechte" (geop) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7364,7 +7334,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="0" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>../../../../Program Files/QGIS2~1.16/bin</annotationform>
+      <annotationform>../../../Program Files/QGIS2~1.16/bin</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="schnam" index="1" name=""/>
@@ -7417,10 +7387,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
+      <editforminitfilepath>../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS-Formulare können eine Python-Funktion haben, die beim Öffnen des Formulars gestartet wird.
@@ -7469,14 +7439,8 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>3550042.61819999990984797</xmin>
-        <ymin>5799510.32980000041425228</ymin>
-        <xmax>3550676.34299999987706542</xmax>
-        <ymax>5799884.0352999996393919</ymax>
-      </extent>
       <id>schaechte_Kopie20161221075653754</id>
-      <datasource>dbname='./temp.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7803,7 +7767,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="schnam" index="1" name=""/>
@@ -7856,10 +7820,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_speicher.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_speicher.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -7911,7 +7875,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>simulationsstatus20161201095050780</id>
-      <datasource>dbname='./temp.sqlite' table="simulationsstatus" sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="simulationsstatus" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7957,7 +7921,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="bezeichnung" index="1" name=""/>
@@ -7978,10 +7942,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_simulationsstatus.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_simulationsstatus.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -8017,7 +7981,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>speicherkennlinien20161218110320415</id>
-      <datasource>dbname='./temp.sqlite' table="speicherkennlinien" sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="speicherkennlinien" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -8060,7 +8024,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="schnam" index="1" name=""/>
@@ -8079,10 +8043,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_speicherkennlinien.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_speicherkennlinien.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -8117,7 +8081,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>teilgebiete20170214092005309</id>
-      <datasource>dbname='./temp.sqlite' table="teilgebiete" (geom) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="teilgebiete" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -8374,7 +8338,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="tgnam" index="1" name=""/>
@@ -8398,10 +8362,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="tgnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_teilgebiete.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_teilgebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -8436,7 +8400,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>tezg20171204105753202</id>
-      <datasource>dbname='./temp.sqlite' table="tezg" (geom) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="tezg" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -8708,7 +8672,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="flnam" index="1" name=""/>
@@ -8737,10 +8701,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_tezg.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_tezg.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
@@ -8779,14 +8743,8 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "pk", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>3550183.07310000015422702</xmin>
-        <ymin>5799653.01669999957084656</ymin>
-        <xmax>3550183.49319999990984797</xmax>
-        <ymax>5799670.80979999992996454</ymax>
-      </extent>
       <id>wehre20161125174724734</id>
-      <datasource>dbname='./temp.sqlite' table="wehre" (geom) sql=</datasource>
+      <datasource>dbname='./buch_gk4.sqlite' table="wehre" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -9207,7 +9165,7 @@ def my_form_open(dialog, layer, feature):
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="2" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
+      <annotationform>./dyna_gk4</annotationform>
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="wnam" index="1" name=""/>
@@ -9246,10 +9204,10 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="wnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_wehre.ui</editform>
+      <editform>../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_wehre.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitfilepath>./dyna_gk4</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS-Formulare können eine Python-Funktion haben, die beim Öffnen des Formulars gestartet wird.
@@ -9359,7 +9317,6 @@ SET geom =
       <LayerSnappingList type="QStringList">
         <value>Anbindung20170920132347429</value>
         <value>Anbindungen_SW_Punkte20171017125752772</value>
-        <value>Flaeche20180727164139560</value>
         <value>Speicher_Kopie20161221080207994</value>
         <value>aussengebiete20180630230050872</value>
         <value>einleit20171004110830029</value>
@@ -9377,7 +9334,6 @@ SET geom =
         <value>wehre20161125174724734</value>
       </LayerSnappingList>
       <LayerSnappingEnabledList type="QStringList">
-        <value>disabled</value>
         <value>disabled</value>
         <value>disabled</value>
         <value>enabled</value>
@@ -9400,7 +9356,6 @@ SET geom =
       <AvoidIntersectionsList type="QStringList"/>
       <IntersectionSnapping type="bool">true</IntersectionSnapping>
       <LayerSnappingToleranceUnitList type="QStringList">
-        <value>2</value>
         <value>2</value>
         <value>2</value>
         <value>1</value>
@@ -9437,12 +9392,10 @@ SET geom =
         <value>to_vertex_and_segment</value>
         <value>to_vertex_and_segment</value>
         <value>to_vertex_and_segment</value>
-        <value>to_vertex_and_segment</value>
       </LayerSnapToList>
       <DefaultSnapType type="QString">to vertex and segment</DefaultSnapType>
       <DefaultSnapTolerance type="double">10</DefaultSnapTolerance>
       <LayerSnappingToleranceList type="QStringList">
-        <value>0.000000</value>
         <value>0.000000</value>
         <value>0.000000</value>
         <value>5.000000</value>

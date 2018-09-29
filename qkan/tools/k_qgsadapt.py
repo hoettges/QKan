@@ -79,16 +79,10 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     # Datenbankverbindungen
 
     dbQK = DBConnection(dbname=qkanDB)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
-    if not dbQK.updatestatus:
-    # QKan-Datenbank ist nicht aktuell
-        return None
 
-    if dbQK is None:
-        fehlermeldung(u"Fehler in qgsadapt", 
-                      u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(qkanDB))
-        iface.messageBar().pushMessage(u"Fehler in qgsadapt", 
-                    u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-            qkanDB), level=QgsMessageBar.CRITICAL)
+    if not dbQK.connected:
+        logger.error(u"Fehler in k_qgsadapt:\n",
+                      u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(qkanDB))
         return None
 
     # --------------------------------------------------------------------------
@@ -153,7 +147,7 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
         return False
 
     if setPathToTemplateDir:
-        templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
+        templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
 
     projectpath = os.path.dirname(projectFile)
     if os.path.dirname(qkanDB) == projectpath:
