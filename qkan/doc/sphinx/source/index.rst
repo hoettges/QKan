@@ -25,8 +25,8 @@ Videoanleitungen
     Qkan_Videoanleitungen
 
 
-QKan-Formulare
-==============
+QKan-Funktionen
+===============
 
 .. toctree::
     :maxdepth: 2
