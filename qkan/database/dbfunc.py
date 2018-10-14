@@ -343,7 +343,7 @@ class DBConnection:
             if versionolder(self.versionlis, [2, 0, 2]):
 
                 # Tabelle einleit
-                sqllis = [u"""CREATE TABLE IF NOT EXISTS einleit(
+                sqllis = [u"""CREATE TABLE IF NOT EXISTS einleit (
                     pk INTEGER PRIMARY KEY AUTOINCREMENT,
                     elnam TEXT,
                     haltnam TEXT,
@@ -360,7 +360,8 @@ class DBConnection:
                 sqllis = [u"""CREATE TABLE IF NOT EXISTS linksw (
                         pk INTEGER PRIMARY KEY AUTOINCREMENT,
                         elnam TEXT,
-                        haltnam TEXT)""", 
+                        haltnam TEXT,
+                        teilgebiet TEXT)""", 
                         u"""SELECT AddGeometryColumn('linksw','geom',{},'POLYGON',2)""".format(self.epsg), 
                         u"""SELECT AddGeometryColumn('linksw','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg), 
                         u"""SELECT AddGeometryColumn('linksw','glink',{},'LINESTRING',2)""".format(self.epsg),
@@ -582,6 +583,8 @@ class DBConnection:
                 # triggers = self.fetchall()
 
                 # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
+                # 14.10.2018: Unklar, warum überhaupt. Es findet keine Änderung statt. Möglicherweise
+                # muss hier eine händische Änderung "eingefangen werden". 
                 sqllis = [u"""BEGIN TRANSACTION;""",
                           u"""CREATE TABLE IF NOT EXISTS linksw_t (
                             pk INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -602,7 +605,8 @@ class DBConnection:
                           u"""CREATE TABLE linksw (
                             pk INTEGER PRIMARY KEY AUTOINCREMENT,
                             elnam TEXT,
-                            haltnam TEXT)""",
+                            haltnam TEXT,
+                            teilgebiet TEXT)""",
                           u"""SELECT AddGeometryColumn('linksw','geom',{},'POLYGON',2)""".format(self.epsg),
                           u"""SELECT AddGeometryColumn('linksw','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
                           u"""SELECT AddGeometryColumn('linksw','glink',{},'LINESTRING',2)""".format(self.epsg),
@@ -669,7 +673,8 @@ class DBConnection:
                             pk INTEGER PRIMARY KEY AUTOINCREMENT,
                             flnam TEXT,
                             haltnam TEXT,
-                            tezgnam TEXT);""",
+                            tezgnam TEXT,
+                            teilgebiet TEXT);""",
                           u"""SELECT AddGeometryColumn('linkfl','geom',{},'MULTIPOLYGON',2)""".format(self.epsg),
                           u"""SELECT AddGeometryColumn('linkfl','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
                           u"""SELECT AddGeometryColumn('linkfl','glink',{},'LINESTRING',2)""".format(self.epsg),
@@ -1031,6 +1036,7 @@ class DBConnection:
                             flnam TEXT,
                             haltnam TEXT,
                             tezgnam TEXT,
+                            teilgebiet TEXT,
                             abflusstyp TEXT,
                             speicherzahl INTEGER,
                             speicherkonst REAL,
