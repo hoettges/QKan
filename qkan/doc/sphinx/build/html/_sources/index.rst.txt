@@ -4,14 +4,23 @@
     contain the root `toctree` directive.
 
 
-QKan - Kanaldaten aufbereiten mit QGIS
-======================================
+QKan - Kanaldaten mit QGIS
+==========================
 
 .. toctree::
     :maxdepth: 2
     :numbered:
 
-    Qkan_flaechen
+    Qkan_allgemein
+
+
+QKan - Installation
+===================
+
+.. toctree::
+    :maxdepth: 2
+    :numbered:
+
     Qkan_aufsetzen
 
 
@@ -32,6 +41,7 @@ QKan-Funktionen
     :maxdepth: 2
     :numbered:
 
+    Qkan_flaechen
     Qkan_Formulare
 
 

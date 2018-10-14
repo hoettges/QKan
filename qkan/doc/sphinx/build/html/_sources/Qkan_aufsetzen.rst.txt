@@ -195,7 +195,7 @@ QKan-HE7-Plugin
 Nachdem die notwendigen Voraussetzungen geschaffen sind, kann das Zusatz-Plugin zum Datenaustausch mit dem Simulationsprogramm HYSTEM-EXTRAN 7.x installiert werden. 
 Die Installation erfolgt wie bei dem QKan_Plugin durch Download, einfaches Kopieren des QKan-HE7-Ordners und Aktivieren. Der Link zum Download befindet sich hier: qkanhe7github_ . 
 
-.. _qkanhe7github: https://github.com/hoettges/QKan-HE7/tree/master
+.. _qkanhe7github: https://github.com/hoettges/QKan-plugin-HE7/tree/master
 
 
 .. warning:: Die ersten Anwender von QKan berichten davon, dass die Firebird-Datenbank in der hier verwendeten lizenzkostenfreien Version Probleme verursacht, wenn sich die Hystem-Extran-Datenbankdatei (Kanalnetz- oder Ergebnisdaten) in einem Netzwerk-Verzeichnis befindet. In diesem Fall hilft es, die Datei in ein lokales Verzeichnis (auf C:) zu verschieben, und später nach Beendigung der Arbeit wieder zurück zu verschieben. 

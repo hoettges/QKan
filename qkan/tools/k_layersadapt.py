@@ -42,7 +42,7 @@ from PyQt4.QtCore import QFileInfo
 import xml.etree.ElementTree as et
 
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fortschritt, meldung, fehlermeldung, get_qkanlayerAttributes, evalNodeTypes
+from qkan.database.qkan_utils import fortschritt, meldung, fehlermeldung, warnung, get_qkanlayerAttributes, evalNodeTypes
 
 logger = logging.getLogger(u'QKan')
 
@@ -154,14 +154,20 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
         logger.debug(u'k_layersadapt: QKan-Datenbank ist nicht aktuell')
         if qkanDBUpdate:
             # Kontrolle, ob auch anpassen_Wertebeziehungen_in_Tabellen und anpassen_Formulare aktiviert
-            if not (anpassen_Wertebeziehungen_in_Tabellen and anpassen_Formulare):
-                # In diesem Fall ist ein Update der Datenbank nicht zulässig
-                fehlermeldung(u'Fehler in k_layersadapt:', 
-                    u'Nicht aktivierte Optionen lassen ein Update der QKan-Datenbank nicht zu!')
-                return None
-            else:
-                logger.debug(u'k_layersadapt: QKan-Datenbank wird aktualisiert')
-                dbQK.updateversion()
+            # if not (anpassen_Wertebeziehungen_in_Tabellen and anpassen_Formulare):
+                # # In diesem Fall ist ein Update der Datenbank nicht zulässig
+                # fehlermeldung(u'Fehler in k_layersadapt:', 
+                    # u'Nicht aktivierte Optionen lassen ein Update der QKan-Datenbank nicht zu!')
+                # return None
+            # else:
+                # logger.debug(u'k_layersadapt: QKan-Datenbank wird aktualisiert')
+                # dbQK.updateversion()
+            logger.debug(u'k_layersadapt: QKan-Datenbank wird aktualisiert')
+            dbQK.updateversion()
+            logger.debug("Status dbQK:\n connected: {}".format(dbQK.connected))
+            if not dbQK.connected:
+                warnung("Achtung!", "Datenbank wurde aktualisiert. Jetzt müssen noch alle Projektdateien angepasst werden!")
+                return
         else:
             return False                # Fehlermeldungen wurden schon von dbQK ausgegeben
 

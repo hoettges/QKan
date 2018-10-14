@@ -175,7 +175,7 @@ class QKanTools:
         icon_layersadapt_path = ':/plugins/qkan/tools/res/icon_layersadapt.png'
         Dummy.instance.add_action(
             icon_layersadapt_path, 
-            text=self.tr(u'Layer gemäß QKan ergänzen/wiederherstellen'), 
+            text=self.tr(u'Projektlayer auf QKan-Standard setzen'), 
             callback=self.run_layersadapt, 
             parent=self.iface.mainWindow())
 
@@ -776,7 +776,7 @@ class QKanTools:
 
     def dlgla_helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#layer-initialisieren')
+        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#projektlayer-auf-qkan-standard-setzen')
         webbrowser.open_new_tab(helpfile)
 
     def dlgla_selectFile_qkanDB(self):
