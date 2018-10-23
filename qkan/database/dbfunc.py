@@ -42,7 +42,7 @@ from qgis.utils import iface, pluginDirectory
 
 from PyQt4.QtGui import QProgressBar
 
-from qkan_database import createdbtables, versionolder
+from qkan_database import createdbtables, versionolder, dbVersion
 from qkan_utils import fortschritt, fehlermeldung, meldung
 
 logger = logging.getLogger(u'QKan')
@@ -94,7 +94,7 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.5.9'
+        self.actversion = dbVersion()
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
         self.isCurrentVersion = True        # QKan-Datenbank ist auf dem aktuellen Stand. 
         self.connected = True               # Verbindung hergestellt, d.h. weder fehlgeschlagen
