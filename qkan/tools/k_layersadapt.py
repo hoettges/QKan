@@ -33,26 +33,32 @@ __revision__ = ':%H$'
 import logging
 import os, time
 
-from qgis.core import QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem
+from qgis.core import (QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem, 
+    QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry)
 from qgis.gui import QgsMessageBar, QgsMapCanvas, QgsLayerTreeMapCanvasBridge
 from qgis.utils import iface, pluginDirectory
 
 from qgis.PyQt.QtGui import QProgressBar
 from PyQt4.QtCore import QFileInfo
+
 import xml.etree.ElementTree as et
 
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fortschritt, meldung, fehlermeldung, warnung, get_qkanlayerAttributes, evalNodeTypes
+from qkan.database.qkan_utils import (fortschritt, meldung, fehlermeldung, warnung, 
+    get_qkanlayerAttributes, isQkanLayer, listQkanLayers, evalNodeTypes)
+
+from qkan.database.qkan_database import dbVersion, qgsVersion
 
 logger = logging.getLogger(u'QKan')
 
 progress_bar = None
 
+
 def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate, 
                 anpassen_Datenbankanbindung, anpassen_Wertebeziehungen_in_Tabellen, 
                 anpassen_Formulare, 
                 anpassen_Projektionssystem, aktualisieren_Schachttypen, zoom_alles, 
-                anpassen_auswahl, dbtyp = u'spatialite'):
+                fehlende_layer_ergaenzen, anpassen_auswahl, dbtyp = u'spatialite'):
     '''Anpassen von Projektlayern an den QKan-Standard 
     Voraussetzungen: keine
 
@@ -80,6 +86,12 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     :aktualisieren_Schachttypen:                    Knotentypen in schaechte.knotentyp setzen
     :type aktualisieren_Schachttypen                Boolean
 
+    :zoom_alles:                                    Nach der Bearbeitung die Karte auf gesamte Gebiet zoomen
+    :type zoom_alles:                               Boolean
+
+    :fehlende_layer_ergaenzen:                      Fehlende QKan-Layer werden ergänzt
+    :type fehlende_layer_ergaenzen:                 Boolean
+
     :anpassen_auswahl:                              Wahl der anzupassenden Layer
     :type anpassen_auswahl:                         list
 
@@ -91,23 +103,12 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
 
     # -----------------------------------------------------------------------------------------------------
     # Liste aller widgetv2type-Arten: 
-    widgetv2types = ['ValueRelation', 'ValueMap', 'DateTime', 'CheckBox']
+    widgetv2types = ['ValueRelation', 'DateTime', 'CheckBox']          # 'ValueMap' entfällt, weil entsprechende 
+                                                                        # C-API-Funktion nicht in Python gemappt!
 
-    # Liste aller QKan-Layernamen: 
-
-    templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
-    qgsTemplate = os.path.join(templateDir,'Projekt.qgs')
-    tag = u"projectlayers/maplayer[provider='spatialite']"
-    qgsxml = et.ElementTree()
-    try:
-        qgsxml.parse(qgsTemplate)
-    except:
-        fehlermeldung(u'Dateifehler bei Layeranpassung:', 
-                      u'Projekt-Template {} nicht vorhanden.'.format(qgsTemplate))
-        return
-    qgslayer = qgsxml.findall(tag)
-    qkanLayers = [tag.findtext('./layername') for tag in qgslayer]
-    del qgsxml
+    # Liste aller QKan-Layernamen. Diese wird auf jeden Fall aus der Standardvorlage entnommen!
+    # Dabei wird trotzdem geprüft, ob es sich um einen QKan-Layer handelt; es könnte sich ja um eine 
+    # vom Benutzer angepasste Vorlage handeln. 
 
     # Dictionary aller Layer für legendInterface
     allLayers = iface.legendInterface().layers()
@@ -115,10 +116,11 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
         meldung(u'Benutzerfehler: ', u'Es ist kein Projekt geladen.')
         return
 
-    layerIndex = {}
+    layerList = {}
     for layer in allLayers:
-        layerIndex[layer.name()] = layer
+        layerList[layer.name()] = layer
 
+    logger.debug(u'k_layersadapt, layerList: {}'.format(layerList))
     # Dictionary aller Layer für mapCanvas
     canvas = iface.mapCanvas()
     allCanvasLayers = canvas.layers()
@@ -137,48 +139,90 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     dbQK = DBConnection(dbname=database_QKan, qkanDBUpdate=qkanDBUpdate)   # Datenbankobjekt der QKan-Datenbank
                                                                             # qkanDBUpdate: mit Update
 
-    if (not dbQK.connected) and (not qkanDBUpdate):
-        logger.debug(u'k_layersadapt: Datenbankverbindung konnte nicht hergestellt werden.')
-        # fehlermeldung(u"Fehler in k_layersadapt", 
-                      # u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-        # iface.messageBar().pushMessage(u"Fehler in k_layersadapt", 
-                    # u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-            # database_QKan), level=QgsMessageBar.CRITICAL)
+    if not dbQK.connected:
+        if not qkanDBUpdate:
+            logger.debug(u'k_layersadapt: QKan-Datenbank ist nicht aktuell, aber keine Update aktiviert. Abbruch')
+        else:
+            logger.debug(u'k_layersadapt: QKan-Datenbank wurde aktualisiert, Neuladen des Projektes erforderlich')
+            # tw = iface.layerTreeView()
+            # tw.repaint()
+            # project = QgsProject.instance()
+            # project.clear()
+            
         return None
+
+    actversion = dbQK.actversion
+    logger.debug('actversion: {}'.format(actversion))
 
     # Status, wenn die Änderungen so gravierend waren, dass das Projekt neu geladen werden muss. 
     # status_neustart = False
 
-    if not dbQK.updatestatus:
-        # QKan-Datenbank ist nicht aktuell
-        logger.debug(u'k_layersadapt: QKan-Datenbank ist nicht aktuell')
-        if qkanDBUpdate:
-            # Kontrolle, ob auch anpassen_Wertebeziehungen_in_Tabellen und anpassen_Formulare aktiviert
-            # if not (anpassen_Wertebeziehungen_in_Tabellen and anpassen_Formulare):
-                # # In diesem Fall ist ein Update der Datenbank nicht zulässig
-                # fehlermeldung(u'Fehler in k_layersadapt:', 
-                    # u'Nicht aktivierte Optionen lassen ein Update der QKan-Datenbank nicht zu!')
-                # return None
-            # else:
-                # logger.debug(u'k_layersadapt: QKan-Datenbank wird aktualisiert')
-                # dbQK.updateversion()
-            logger.debug(u'k_layersadapt: QKan-Datenbank wird aktualisiert')
-            dbQK.updateversion()
-            logger.debug("Status dbQK:\n connected: {}".format(dbQK.connected))
-            if not dbQK.connected:
-                warnung("Achtung!", "Datenbank wurde aktualisiert. Jetzt müssen noch alle Projektdateien angepasst werden!")
-                return
-        else:
-            return False                # Fehlermeldungen wurden schon von dbQK ausgegeben
+    # if not dbQK.isCurrentVersion:
+        # # QKan-Datenbank ist nicht aktuell
+        # logger.debug(u'k_layersadapt: QKan-Datenbank ist nicht aktuell')
+        # if qkanDBUpdate:
+            # # Kontrolle, ob auch anpassen_Wertebeziehungen_in_Tabellen und anpassen_Formulare aktiviert
+            # # if not (anpassen_Wertebeziehungen_in_Tabellen and anpassen_Formulare):
+                # # # In diesem Fall ist ein Update der Datenbank nicht zulässig
+                # # fehlermeldung(u'Fehler in k_layersadapt:', 
+                    # # u'Nicht aktivierte Optionen lassen ein Update der QKan-Datenbank nicht zu!')
+                # # return None
+            # # else:
+                # # logger.debug(u'k_layersadapt: QKan-Datenbank wird aktualisiert')
+                # # dbQK.updateversion()
+            # logger.debug(u'k_layersadapt: QKan-Datenbank wird aktualisiert')
+            # dbQK.updateversion()
+            # logger.debug("Status dbQK:\n connected: {}".format(dbQK.connected))
+            # if not dbQK.connected:
+                # warnung("Achtung!", "Datenbank wurde aktualisiert. Jetzt müssen noch alle Projektdateien angepasst werden!")
+                # return
+        # else:
+            # return False                # Fehlermeldungen wurden schon von dbQK ausgegeben
+
+    # Vorlage-Projektdatei. Falls Standard oder keine Vorgabe, wird die Standard-Projektdatei verwendet
 
     if projectTemplate is None or projectTemplate == u'':
-        fehlermeldung(u'Bedienerfehler!', u'Es wurde keine Vorlage-Projektdatei ausgewählt')
-        return False
+        templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
+        projectTemplate = os.path.join(templateDir,'Projekt.qgs')
 
     logger.debug(u'Projekttemplate: {}'.format(projectTemplate))
 
     qgsxml = et.ElementTree()
     qgsxml.parse(projectTemplate)
+
+    # Fehlende Layer ergänzen. Unabhängig von der Auswahl werden die fehlenden Referenztabellen 
+    # auf jeden Fall ergänzt. 
+
+    qkanLayers = listQkanLayers()
+    logger.debug(u'qkanLayers: {}'.format(qkanLayers))
+
+    layersRoot = QgsProject.instance().layerTreeRoot()
+    for layername in qkanLayers:
+        if layername not in layerList:
+            # layername fehlt in aktuellem Projekt
+            isVector = (qkanLayers[layername][1] != '')
+            if not isVector or fehlende_layer_ergaenzen:
+                # Referenzlisten werden auf jeden Fall ergänzt. 
+                table, geom_column, sql, group = qkanLayers[layername]
+                uri = QgsDataSourceURI()
+                uri.setDatabase(database_QKan)
+                uri.setDataSource(sql, table, geom_column)
+                try:
+                    layer = QgsVectorLayer(uri.uri(), layername, 'spatialite')
+                except BaseException as err:
+                    fehlermeldung(u'Fehler in k_layersadapt (11): {}'.format(err), 
+                                  u'layername: {}'.format(layername))
+                    return False
+                QgsMapLayerRegistry.instance().addMapLayer(layer, False)
+                atcGroup = layersRoot.findGroup(group)
+                if atcGroup == '':
+                    layersRoot.addGroup(group)
+                atcGroup.addLayer(layer)
+                logger.debug(u"k_layersadapt: Layer ergänzt: {}".format(layername))
+            else:
+                logger.debug(u"k_layersadapt: Layer nicht ergänzt: {}".format(layername))
+        # else:
+            # logger.debug(u"k_layersadapt: Layer schon vorhanden: {}".format(layername))
 
     # Liste der zu bearbeitenden Layer
     if anpassen_auswahl == 'auswahl_anpassen':
@@ -187,20 +231,32 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
         selectedLayers = iface.legendInterface().selectedLayers()
         selectedLayerNames = [lay.name() for lay in selectedLayers]
     else:
-        selectedLayerNames = qkanLayers
+        legendLayers = iface.legendInterface().layers()
+        selectedLayerNames = [lay.name() for lay in legendLayers]
+
+    logger.debug(u'k_layersadapt (9), selectedLayerNames: {}'.format(selectedLayerNames))
 
     for layername in selectedLayerNames:
+        if layername not in layerList:
+            logger.info(u'Projektlayer {} ist in QKan-Template nicht enthalten'.format(layername))
+            continue
+        
+        try: 
+            layer = layerList[layername]         # Layerobjekt ermitteln
+        except BaseException as err:
+            fehlermeldung(u'Fehler in k_layersadapt (10): {}'.format(err), 
+                                  u'layername: {}'.format(layername))
 
-        layer = layerIndex[layername]         # Layerobjekt ermitteln
+        logger.debug(u'k_layersadapt (8), layername: {}'.format(layername))
 
-        tag = u"projectlayers/maplayer[layername='{}'][provider='spatialite']".format(layername)
-        qgslayer = qgsxml.findall(tag)
-        if len(qgslayer) > 1:
+        tagLayer = u"projectlayers/maplayer[layername='{}'][provider='spatialite']".format(layername)
+        qgsLayers = qgsxml.findall(tagLayer)
+        if len(qgsLayers) > 1:
             fehlermeldung(u'DateifFehler!', 
                 u'In der Vorlage-Projektdatei wurden mehrere Layer {} gefunden'.format(layername))
             del dbQK
             return None
-        elif len(qgslayer) == 0:
+        elif len(qgsLayers) == 0:
             meldung(u'DateifFehler!', 
                 u'In der Vorlage-Projektdatei wurden kein Layer {} gefunden'.format(layername))
             continue                        # Layer ist in Projekt-Templatenicht vorhanden...
@@ -223,32 +279,34 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
                 # epsg-Code des Layers an angebundene Tabelle anpassen
             datasource = layer.source()
             dbname, table, geom, sql = get_qkanlayerAttributes(datasource)
+            if geom != '':
+                # Nur für Vektorlayer
+                sql = u"""SELECT srid
+                        FROM geom_cols_ref_sys
+                        WHERE Lower(f_table_name) = Lower('{table}')
+                        AND Lower(f_geometry_column) = Lower('{geom}')""".format(table=table, geom=geom)
+                if not dbQK.sql(sql, u'dbQK: k_layersadapt (1)'):
+                    return None
 
-            sql = u"""SELECT srid
-                    FROM geom_cols_ref_sys
-                    WHERE Lower(f_table_name) = Lower('{table}')
-                    AND Lower(f_geometry_column) = Lower('{geom}')""".format(table=table, geom=geom)
-            if not dbQK.sql(sql, u'dbQK: k_layersadapt (1)'):
-                return None
-
-            data = dbQK.fetchone()
-            if data is not None:
-                epsg = data[0]
-            else:
-                logger.debug(u'\nAnbindung neue QKanDB: {}\n'.format(datasource))
-            
-            crs = QgsCoordinateReferenceSystem(epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
-            if crs.isValid():
-                layer.setCrs(crs)
-            else:
-                fehlermeldung(u'Fehler bei Festlegung des Koordinatensystems!', 
-                u'Layer {}'.format(layername))
+                data = dbQK.fetchone()
+                if data is not None:
+                    epsg = data[0]
+                else:
+                    logger.debug(u'\nAnbindung neue QKanDB: {}\n'.format(datasource))
+                
+                crs = QgsCoordinateReferenceSystem(epsg, QgsCoordinateReferenceSystem.EpsgCrsId)
+                if crs.isValid():
+                    layer.setCrs(crs)
+                else:
+                    fehlermeldung(u'Fehler bei Festlegung des Koordinatensystems!', 
+                    u'Layer {}'.format(layername))
 
         if anpassen_Formulare:
-            formpath = qgslayer[0].findtext('./editform')
+            formpath = qgsLayers[0].findtext('./editform')
             form = os.path.basename(formpath)
             editFormConfig = layer.editFormConfig()
-            editFormConfig.setUiForm(form)
+            formsDir = os.path.join(pluginDirectory('qkan'), u"forms")
+            editFormConfig.setUiForm(os.path.join(formsDir, form))
 
         if anpassen_Wertebeziehungen_in_Tabellen:
             # Schleife über alle widgetv2type-Arten (Liste s. o.)
@@ -264,24 +322,39 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
                     del dbQK
                     return None
 
-                logger.debug(u'k_layersadapt: lntext: {}\nwttext: {}'.format(lntext, wttext))
+                logger.debug(u'k_layersadapt: \n lntext: {}\n wttext: {}\n'.format(lntext, wttext))
                 for node_edittype in nodes_edittype:
-                    att = node_edittype.find('widgetv2config')
-                    widgetConfig = att.attrib
+                    logger.debug(u'k_layersadapt: (1)')
+                    try:
+                        att = node_edittype.find('widgetv2config')
+                        widgetConfig = att.attrib
 
-                    fieldname = node_edittype.attrib['name']
-                    fieldIndex = layer.fieldNameIndex(fieldname)
-                    layerId = layer.id()
+                        logger.debug(u'k_layersadapt: (2)')
 
-                    editFormConfig = layer.editFormConfig()
-                    widgetType = editFormConfig.widgetType(fieldIndex)
-                    # widgetConfig = editFormConfig.widgetConfig(fieldIndex)
+                        fieldname = node_edittype.attrib['name']
+                        fieldIndex = layer.fieldNameIndex(fieldname)
+                        layerId = layer.id()
 
-                    editFormConfig.setWidgetType(fieldIndex, widgetv2type)
+                        logger.debug(u'k_layersadapt: (3)')
 
-                    editFormConfig.setWidgetConfig(fieldIndex, widgetConfig)
-                    logger.debug('widgetConfig: \n{}\n'.format(widgetConfig))
+                        editFormConfig = layer.editFormConfig()
+                        widgetType = editFormConfig.widgetType(fieldIndex)
+                        # widgetConfig = editFormConfig.widgetConfig(fieldIndex)
 
+                        logger.debug(u'k_layersadapt: (4)')
+
+                        editFormConfig.setWidgetType(fieldIndex, widgetv2type)
+
+                        logger.debug(u'k_layersadapt: (5)')
+
+                        editFormConfig.setWidgetConfig(fieldIndex, widgetConfig)
+                        logger.debug('widgetConfig: \n{}\n'.format(widgetConfig))
+                    except BaseException as err:
+                        fehlermeldung(u'Fehler in k_layersadapt (2): {}'.format(err), 
+                                  u'')
+
+        logger.debug(u'k_layersadapt (6)')
+    logger.debug(u'k_layersadapt (7)')
 
     if aktualisieren_Schachttypen:
         # Schachttypen auswerten
@@ -290,9 +363,11 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     del qgsxml
     del dbQK
 
+    project = QgsProject.instance()
+    project.setTitle('QKan Version {}'.format(qgsVersion()))
+
     # Schreiben der neuen Projektdatei
     if projectFile != '':
-        project = QgsProject.instance()
         project.write(QFileInfo(projectFile))
 
     # if status_neustart:
@@ -321,3 +396,4 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
             "Projektdatei ist angepasst und muss noch gespeichert werden!", level=QgsMessageBar.INFO)
     # QgsMessageLog.logMessage("\nFertig: Datenimport erfolgreich!", level=QgsMessageLog.INFO)
 
+    return True

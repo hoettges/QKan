@@ -233,6 +233,33 @@
      <string>alle anpassen</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="cb_completeLayers">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>26</y>
+      <width>160</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektionssystem für gewählte Layer anpassen. Bei aktiver Datenbankanbindung immer aktiv!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Projektionssystem für gewählte Layer anpassen. Bei aktiver Datenbankanbindung immer aktiv!</string>
+    </property>
+    <property name="text">
+     <string>Fehlende QKan-Layer
+hinzuladen</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_7">
    <property name="geometry">
@@ -507,10 +534,10 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Neu erzeugte Projektdatei&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Layereinstellungen aus gewählter Projektdatei übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Pfad und Name der neu erzeugten Projektdatei</string>
+     <string>Layereinstellungen aus gewählter Projektdatei übernehmen</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -533,10 +560,10 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektionssystem für gewählte Layer anpassen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QKan-Standard für die nachfolgenden Anpassungen anwenden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Projektionssystem für gewählte Layer anpassen</string>
+     <string>QKan-Standard für die nachfolgenden Anpassungen anwenden</string>
     </property>
     <property name="text">
      <string>QKan-Standard verwenden</string>

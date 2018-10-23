@@ -42,21 +42,21 @@ from qgis.utils import iface, pluginDirectory
 
 from PyQt4.QtGui import QProgressBar
 
-from qkan_database import createdbtables
-from qkan_utils import fortschritt, fehlermeldung, meldung, versionolder
+from qkan_database import createdbtables, versionolder
+from qkan_utils import fortschritt, fehlermeldung, meldung
 
 logger = logging.getLogger(u'QKan')
 
 progress_bar = None
 
-    
+
 # Hauptprogramm ----------------------------------------------------------------
 
 class DBConnection:
     """SpatiaLite Datenbankobjekt"""
 
     def __init__(self, dbname=None, tabObject=None, epsg=25832, qkanDBUpdate=False):
-        """Constructor. Überprüfung, ob die QKan-Datenbank die aktuelle Version hat, mit dem Attribut updatestatus. 
+        """Constructor. Überprüfung, ob die QKan-Datenbank die aktuelle Version hat, mit dem Attribut isCurrentVersion. 
 
         :param dbname:      Pfad zur SpatiaLite-Datenbankdatei. Falls nicht vorhanden, 
                             wird es angelegt.
@@ -81,7 +81,7 @@ class DBConnection:
 
         connected:          Datenbankverbindung erfolgreich
 
-        updatestatus:       Datenbank ist auf dem aktuellen Stand
+        isCurrentVersion:   Datenbank ist auf dem aktuellen Stand
         """
 
         # Übernahme einiger Attribute in die Klasse
@@ -94,9 +94,9 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
-        self.actversion = '2.5.8'
+        self.actversion = '2.5.9'
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
-        self.updatestatus = True            # QKan-Datenbank ist auf dem aktuellen Stand. 
+        self.isCurrentVersion = True        # QKan-Datenbank ist auf dem aktuellen Stand. 
         self.connected = True               # Verbindung hergestellt, d.h. weder fehlgeschlagen
                                              # noch wegen reload geschlossen
         self.reload = False                 # Datenbank wurde aktualisiert und dabei sind 
@@ -110,21 +110,26 @@ class DBConnection:
                 self.cursl = self.consl.cursor()
 
                 self.epsg = self.getepsg()
+                if self.epsg is None:
+                    logger.error(u'dbfunc.__init__: EPSG konnte nicht ermittelt werden. \n QKan-DB: {}\n'.format(dbname))
 
                 logger.debug(u'dbfund.__init__: Datenbank existiert und Verbindung hergestellt:\n{}'.format(dbname))
                 # Versionsprüfung
                 
                 if not self.checkVersion():
+                    logger.debug('dbfunc: Datenbank ist nicht aktuell')
                     if qkanDBUpdate:
+                        logger.debug('dbfunc: Update aktiviert. Deshalb wird Datenbank aktualisiert')
                         self.updateversion()
                         if self.reload:
+                            logger.debug('dbfunc: Datenbank muss neu geladen werden')
                             self.connected = False
                             self.consl.close()
                     else:
                         meldung(u"Projekt muss aktualisiert werden.", 
                             u"Die QKan-Version der Datenbank {verDB} stimmt nicht mit der aktuellen QKan-Version {verCur} überein und muss aktualisiert werden!".format(verDB=self.versiondbQK, verCur=self.actversion))
                         self.consl.close()
-                        self.updatestatus = False
+                        self.isCurrentVersion = False
                         self.connected = False              # Verbindungsstatus zur Kontrolle
 
             else:
@@ -210,7 +215,7 @@ class DBConnection:
             FROM geom_cols_ref_sys
             WHERE Lower(f_table_name) = Lower('haltungen')
             AND Lower(f_geometry_column) = Lower('geom')"""
-        if not self.sql(sql, u'Fehler in dbfunc.getepsg (1)'):
+        if not self.sql(sql, u'dbfunc.getepsg (1)'):
             return None
 
         data = self.fetchone()
@@ -219,27 +224,27 @@ class DBConnection:
         epsg = data[0]
         return epsg
 
-    def sql(self, sql, errormessage = u'allgemein', repeatmessage=False, transaction=False):
+    def sql(self, sql, sqlinfo = u'allgemein', repeatmessage=False, transaction=False):
         """Fuehrt eine SQL-Abfrage aus."""
 
         try:
             self.cursl.execute(sql)
 
             # Identische Protokollmeldungen werden für 2 Sekunden unterdrückt...
-            if self.sqltext == errormessage and not repeatmessage:
+            if self.sqltext == sqlinfo and not repeatmessage:
                 if (self.sqltime.now() - self.sqltime).seconds <2:
                     self.sqlcount += 1
                     return True
-            self.sqltext = errormessage
+            self.sqltext = sqlinfo
             self.sqltime = self.sqltime.now()
             if self.sqlcount == 0:
-                logger.debug(u'dbfunc.sql: {}\n{}\n'.format(errormessage,sql))
+                logger.debug(u'dbfunc.sql: {}\n{}\n'.format(sqlinfo,sql))
             else:
-                logger.debug(u'dbfunc.sql (Nr. {}): {}\n{}\n'.format(self.sqlcount, errormessage, sql))
+                logger.debug(u'dbfunc.sql (Nr. {}): {}\n{}\n'.format(self.sqlcount, sqlinfo, sql))
             self.sqlcount = 0
             return True
         except BaseException as err:
-            fehlermeldung(u'dbfunc.sql: SQL-Fehler in {e}'.format(e=errormessage), 
+            fehlermeldung(u'dbfunc.sql: SQL-Fehler in {e}'.format(e=sqlinfo), 
                           u"{e}\n{s}".format(e=repr(err), s=sql))
             # if transaction:
                 # self.cursl.commit("ROLLBACK;")
@@ -572,7 +577,7 @@ class DBConnection:
                     return False
 
 
-                progress_bar.setValue(20)
+                progress_bar.setValue(15)
 
                 # Tabelle linksw -------------------------------------------------------------
 
@@ -638,7 +643,7 @@ class DBConnection:
                 self.commit()
 
 
-                progress_bar.setValue(40)
+                progress_bar.setValue(30)
 
                 # Tabelle linkfl -------------------------------------------------------------
 
@@ -706,7 +711,7 @@ class DBConnection:
                 self.commit()
 
 
-                progress_bar.setValue(60)
+                progress_bar.setValue(45)
 
                 # Tabelle einleit -------------------------------------------------------------
 
@@ -773,7 +778,7 @@ class DBConnection:
 
                 self.commit()
 
-                progress_bar.setValue(80)
+                progress_bar.setValue(60)
 
                 self.reload = True
 
@@ -1155,7 +1160,7 @@ class DBConnection:
                 # 4. Schritt: Transaction abschließen
                 self.commit()
 
-                progress_bar.setValue(100)
+                progress_bar.setValue(75)
 
                 self.reload = True
 
@@ -1313,13 +1318,80 @@ class DBConnection:
                 self.commit()
 
 
-                progress_bar.setValue(100)
+                progress_bar.setValue(90)
 
                 self.reload = True
 
                 # Versionsnummer hochsetzen
 
                 self.versionlis = [2, 5, 8]
+
+
+            if versionolder(self.versionlis, [2, 5, 9]):
+
+                # ValueMaps durch RelationMaps ersetzen, weil die entsprechende Funktion 
+                # aus der QGIS-API in Python nicht gemappt ist, somit also in Python nicht verfügbar ist.
+                # Deshalb werden nachfolgend drei Tabellen ergänzt. In der Projektdatei muss entsprechend 
+                # die Felddefinition angepasst werden. 
+
+                # 1. Tabelle abflusstypen
+
+                sqllis = [u'''CREATE TABLE abflusstypen (
+                            pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+                            abflusstyp TEXT)''', 
+                          u"""INSERT INTO abflusstypen ('abflusstyp') 
+                          Values 
+                            ('Fliesszeiten'),
+                            ('Schwerpunktlaufzeit'),
+                            ('Speicherkaskade')"""]
+
+                for sql in sqllis:
+                    if not self.sql(sql, u'dbfunc.version (2.5.9) - abflusstypen'):
+                        return False
+                self.commit()
+
+                # 2. Tabelle Knotentypen
+
+                sqllis = [u'''CREATE TABLE knotentypen (
+                            pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+                            knotentyp TEXT)''', 
+                          u"""INSERT INTO knotentypen ('knotentyp') 
+                          Values
+                            ('Anfangsschacht'),
+                            ('Einzelschacht'),
+                            ('Endschacht'),
+                            ('Hochpunkt'),
+                            ('Normalschacht'),
+                            ('Tiefpunkt'),
+                            ('Verzweigung'),
+                            ('Fliesszeiten')"""]
+
+                for sql in sqllis:
+                    if not self.sql(sql, u'dbfunc.version (2.5.9) - knotentypen'):
+                        return False
+                self.commit()
+
+                # 3. Tabelle Schachttypen
+
+                sqllis = [u'''CREATE TABLE schachttypen (
+                            pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+                            schachttyp TEXT)''', 
+                          u"""INSERT INTO schachttypen ('schachttyp') 
+                          Values
+                            ('Auslass'),
+                            ('Schacht'),
+                            ('Speicher')"""]
+
+                for sql in sqllis:
+                    if not self.sql(sql, u'dbfunc.version (2.5.9) - schachttypen'):
+                        return False
+                self.commit()
+
+                progress_bar.setValue(100)
+
+                # Versionsnummer hochsetzen
+
+                self.versionlis = [2, 5, 9]
 
 
             # ---------------------------------------------------------------------------------------------------------
@@ -1330,10 +1402,6 @@ class DBConnection:
                 return False
 
             self.commit()
-
-            # Aktuelle Version in QGIS-Projekt schreiben
-            QgsProject.instance().setTitle('QKan Version {}'.format(self.actversion))
-            QgsProject.instance().setDirty(True)
 
             if self.reload:
                 meldung(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt nach dem Speichern neu laden...")

@@ -1052,5 +1052,6 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
     project = QgsProject.instance()
     # project.read(QFileInfo(projectfile))
     project.read(QFileInfo(projectfile))         # read the new project file
+    project.read(QFileInfo(projectfile))         # read the new project file
     logger.debug(u'Geladene Projektdatei: {}'.format(project.fileName()))
 

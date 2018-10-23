@@ -93,6 +93,9 @@ class QKanTools:
         # Pfad zum Arbeitsverzeichnis sicherstellen
         wordir = os.path.join(site.getuserbase(), 'qkan')
 
+        # Pfad zum Vorlagenverzeichnis sicherstellen
+        self.templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
+
         if not os.path.isdir(wordir):
             os.makedirs(wordir)
 
@@ -111,12 +114,13 @@ class QKanTools:
 
         # Formularereignisse anbinden ----------------------------------------------
 
-        # Formular dlgpr
+        # Formular dlgpr - QKan-Projektdatei übertragen
         self.dlgpr.pb_selectProjectFile.clicked.connect(self.dlgpr_selectFileProjectfile)
         self.dlgpr.pb_selectQKanDB.clicked.connect(self.dlgpr_selectFile_qkanDB)
         self.dlgpr.pb_selectProjectTemplate.clicked.connect(self.dlgpr_selectFileProjectTemplate)
+        self.dlgpr.cb_applyQKanTemplate.clicked.connect(self.dlgpr_applyQKanTemplate)
 
-        # Formular dlgla            
+        # Formular dlgla - Projektdatei anpassen an QKan-Standard
         self.dlgla.pb_selectProjectFile.clicked.connect(self.dlgla_selectFileProjectfile)
         self.dlgla.pb_selectQKanDB.clicked.connect(self.dlgla_selectFile_qkanDB)
         self.dlgla.cb_adaptDB.clicked.connect(self.dlgla_enableQkanDB)
@@ -125,17 +129,17 @@ class QKanTools:
         self.dlgla.cb_adaptForms.clicked.connect(self.dlgla_cb_adaptForms)
         self.dlgla.cb_adaptTableLookups.clicked.connect(self.dlgla_cb_adaptTableLookups)
         self.dlgla.cb_adaptKBS.clicked.connect(self.dlgla_cb_adaptKBS)
-        self.dlgla.cb_applyQKanTemplate.clicked.connect(self.dlgla_enableQKanTemplate)
+        self.dlgla.cb_applyQKanTemplate.clicked.connect(self.dlgla_applyQKanTemplate)
         self.dlgla.cb_saveProjectFile.clicked.connect(self.dlgla_enableSaveProjectFile)
         self.dlgla.cb_qkanDBUpdate.clicked.connect(self.dlgla_checkqkanDBUpdate)
 
-        # Formular dlgop
+        # Formular dlgop - QKan-Optionen
         self.dlgop.pb_fangradiusDefault.clicked.connect(self.dlgop_fangradiusDefault)
         self.dlgop.pb_mindestflaecheDefault.clicked.connect(self.dlgop_mindestflaecheDefault)
         self.dlgop.pb_max_loopsDefault.clicked.connect(self.dlgop_maxLoopsDefault)
         self.dlgop.pb_selectKBS.clicked.connect(self.dlgop_selectKBS)
 
-        # Formular dlgro
+        # Formular dlgro - Oberflächenabflussparameter ermitteln
         self.dlgro.lw_teilgebiete.itemClicked.connect(self.dlgro_lwTeilgebieteClick)
         self.dlgro.lw_abflussparameter.itemClicked.connect(self.dlgro_lwAbflussparamsClick)
         self.dlgro.cb_selTgbActive.stateChanged.connect(self.dlgro_selTgbActiveClick)
@@ -250,20 +254,17 @@ class QKanTools:
             self.dlgpr.tf_qkanDB.setText(filename)
 
 
+    def dlgpr_applyQKanTemplate(self):
+        """Aktiviert oder deaktiviert das Textfeld für die Template-Projektdatei"""
+
+        checked = self.dlgpr.cb_applyQKanTemplate.isChecked()
+        self.dlgpr.tf_projectTemplate.setEnabled(not checked)
+
     def dlgpr_selectFileProjectTemplate(self):
         """Vorlage-Projektdatei auswählen"""
 
-        self.setPathToTemplateDir = self.dlgpr.cb_setPathToTemplateDir.isChecked()
-        if self.setPathToTemplateDir:
-            self.templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
-        else:
-            try:
-                self.templateDir = os.path.dirname(self.database_QKan)
-            except:
-                logger.error('Programmfehler in tools.run_qgsadapt:\nPfad konnte nicht auf ' + \
-                             'database_QKan gesetzt werden.\n database_QKan = {}'.format(
-                               self.database_QKan))
-                self.templateDir = ''
+        self.dlgpr.cb_applyQKanTemplate.setChecked(False)              # automatisch deaktivieren
+        self.dlgpr_applyQKanTemplate()                                 # Auswirkungen auslösen
 
         filename = QFileDialog.getOpenFileName(self.dlgpr,
                                               u"Vorlage für zu erstellende Projektdatei auswählen",
@@ -310,12 +311,15 @@ class QKanTools:
             projectFile = ''
 
         # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen 
-        if 'setPathToTemplateDir' in self.config:
-            self.setPathToTemplateDir = self.config['setPathToTemplateDir']
+        if 'QKan_Standard_anwenden' in self.config:
+            self.applyQKanTemplate = self.config['QKan_Standard_anwenden']
         else:
-            self.setPathToTemplateDir = True
-        self.dlgpr.cb_setPathToTemplateDir.setChecked(self.setPathToTemplateDir)
+            self.applyQKanTemplate = True
+        self.dlgpr.cb_applyQKanTemplate.setChecked(self.applyQKanTemplate)
 
+        # Status initialisieren
+        self.dlgpr_applyQKanTemplate()
+        
         # show the dialog
         self.dlgpr.show()
         # Run the dialog event loop
@@ -329,7 +333,7 @@ class QKanTools:
             projectTemplate = self.dlgpr.tf_projectTemplate.text()
             self.database_QKan = self.dlgpr.tf_qkanDB.text()
             projectFile = self.dlgpr.tf_projectFile.text()
-            self.setPathToTemplateDir = self.dlgpr.cb_setPathToTemplateDir.isChecked()
+            self.applyQKanTemplate = self.dlgpr.cb_applyQKanTemplate.isChecked()
 
 
             # Konfigurationsdaten schreiben -----------------------------------------------------------
@@ -337,13 +341,13 @@ class QKanTools:
             self.config['projectTemplate'] = projectTemplate
             self.config['database_QKan'] = self.database_QKan
             self.config['projectfile'] = projectFile
-            self.config['setPathToTemplateDir'] = self.setPathToTemplateDir
+            self.config['QKan_Standard_anwenden'] = self.applyQKanTemplate
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
             qgsadapt(projectTemplate, self.database_QKan, epsg, projectFile, 
-                     self.setPathToTemplateDir, u'SpatiaLite')
+                     self.applyQKanTemplate, u'SpatiaLite')
 
     # ----------------------------------------------------------------------------------------------------
     # Allgemeine QKan-Optionen bearbeiten
@@ -826,17 +830,17 @@ class QKanTools:
             self.dlgla.cb_adaptKBS.setChecked(True)
             meldung("", u"Bei einer Anpassung der Layeranbindungen muss auch die Anpassung des KBS aktiviert sein!")
 
-    def dlgla_enableQKanTemplate(self):
+    def dlgla_applyQKanTemplate(self):
         """Aktiviert oder deaktiviert das Textfeld für die Template-Projektdatei"""
 
         checked = self.dlgla.cb_applyQKanTemplate.isChecked()
-        self.dlgla.tf_projectTemplate.setEnabled(checked)
+        self.dlgla.tf_projectTemplate.setEnabled(not checked)
 
     def dlgla_selectFileProjectTemplate(self):
         """Vorlage-Projektdatei auswählen"""
 
-        self.dlgla.cb_applyQKanTemplate.setChecked(True)                  # automatisch aktivieren
-        self.dlgla_enableQKanTemplate()                                 # Auswirkungen auslösen
+        self.dlgla.cb_applyQKanTemplate.setChecked(False)              # automatisch deaktivieren
+        self.dlgla_applyQKanTemplate()                                 # Auswirkungen auslösen
 
         if self.dlgla.cb_adaptTableLookups.isChecked():
             self.templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
@@ -935,11 +939,10 @@ class QKanTools:
 
         # GGfs. Standardvorlage schon eintragen
         if self.applyQKanTemplate:
-            self.templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
             self.projectTemplate = os.path.join(self.templateDir,'Projekt.qgs')
             self.dlgla.tf_projectTemplate.setText(self.projectTemplate)
 
-        # Groupbox "Themen anpassen" ---------------------------------------------------------------------------
+        # Groupbox "Layer anpassen" ---------------------------------------------------------------------------
 
         # Checkbox "Datenbankanbindung"
         if 'anpassen_Datenbankanbindung' in self.config:
@@ -947,6 +950,13 @@ class QKanTools:
         else:
             self.anpassen_Datenbankanbindung = True
         self.dlgla.cb_adaptDB.setChecked(self.anpassen_Datenbankanbindung)
+
+        # Checkbox "Projektionssystem anpassen"
+        if 'anpassen_Projektionssystem' in self.config:
+            self.anpassen_Projektionssystem = self.config['anpassen_Projektionssystem']
+        else:
+            self.anpassen_Projektionssystem = True
+        self.dlgla.cb_adaptKBS.setChecked(self.anpassen_Projektionssystem)
 
         # Checkbox "Wertbeziehungungen in Tabellen"
         if 'anpassen_Wertebeziehungen_in_Tabellen' in self.config:
@@ -962,13 +972,29 @@ class QKanTools:
             self.anpassen_Formulare = True
         self.dlgla.cb_adaptForms.setChecked(self.anpassen_Formulare)
 
-        # Checkbox "Wertbeziehungungen in Tabellen"
-        if 'anpassen_Projektionssystem' in self.config:
-            self.anpassen_Projektionssystem = self.config['anpassen_Projektionssystem']
-        else:
-            self.anpassen_Projektionssystem = True
-        self.dlgla.cb_adaptKBS.setChecked(self.anpassen_Projektionssystem)
+        # Groupbox "QKan-Layer" ---------------------------------------------------------------------------
 
+        # Optionen zur Berücksichtigung der vorhandenen Tabellen
+        if 'anpassen_auswahl' in self.config:
+            anpassen_auswahl = self.config['anpassen_auswahl']
+        else:
+            anpassen_auswahl = 'alle_anpassen'
+
+        if anpassen_auswahl == 'auswahl_anpassen':
+            self.dlgla.rb_adaptSelected.setChecked(True)
+        elif anpassen_auswahl == 'alle_anpassen':
+            self.dlgla.rb_adaptAll.setChecked(True)
+        else:
+            fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
+            return False
+
+        # Checkbox: Fehlende QKan-Layer ergänzen
+        if 'fehlende_layer_ergaenzen' in self.config:
+            self.fehlende_layer_ergaenzen = self.config['fehlende_layer_ergaenzen']
+        else:
+            self.fehlende_layer_ergaenzen = True
+        self.dlgla.cb_completeLayers.setChecked(self.fehlende_layer_ergaenzen)
+        
         # Weitere Formularfelder ---------------------------------------------------------------------------
 
         # Checkbox: Knotentype per Abfrage ermitteln und in "schaechte.knotentyp" eintragen
@@ -984,20 +1010,6 @@ class QKanTools:
         else:
             zoom_alles = True
         self.dlgla.cb_zoomAll.setChecked(zoom_alles)
-
-        # Optionen zur Berücksichtigung der vorhandenen Tabellen
-        if 'anpassen_auswahl' in self.config:
-            anpassen_auswahl = self.config['anpassen_auswahl']
-        else:
-            anpassen_auswahl = 'alle_anpassen'
-
-        if anpassen_auswahl == 'auswahl_anpassen':
-            self.dlgla.rb_adaptSelected.setChecked(True)
-        elif anpassen_auswahl == 'alle_anpassen':
-            self.dlgla.rb_adaptAll.setChecked(True)
-        else:
-            fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
-            return False
 
         # Checkbox: QKan-Standard anwenden
         if 'QKan_Standard_anwenden' in self.config:
@@ -1020,8 +1032,10 @@ class QKanTools:
             self.qkanDBUpdate = True
         self.dlgla.cb_qkanDBUpdate.setChecked(self.qkanDBUpdate)
 
-        # Status enabled setzen
+        # Status initialisieren
         self.dlgla_enableQkanDB()
+        self.dlgla_applyQKanTemplate()
+        self.dlgla_enableSaveProjectFile()
         self.dlgla_enableProjectTemplateGroup()
         
         # -----------------------------------------------------------------------------------------------------
@@ -1048,11 +1062,15 @@ class QKanTools:
             aktualisieren_Schachttypen = self.dlgla.cb_updateNodetype.isChecked()
             zoom_alles = self.dlgla.cb_zoomAll.isChecked()
             self.applyQKanTemplate = self.dlgla.cb_applyQKanTemplate.isChecked()
-            self.projectTemplate = self.dlgla.tf_projectTemplate.text()
+            if self.applyQKanTemplate:
+                self.projectTemplate = ''
+            else:
+                self.projectTemplate = self.dlgla.tf_projectTemplate.text()
             self.saveProjectFile = self.dlgla.cb_saveProjectFile.isChecked()
             projectFile = self.dlgla.tf_projectFile.text()
 
             # Optionen zur Berücksichtigung der vorhandenen Tabellen
+            fehlende_layer_ergaenzen = self.dlgla.cb_completeLayers.isChecked()
             if self.dlgla.rb_adaptAll.isChecked() or self.qkanDBUpdate:
                 anpassen_auswahl = 'alle_anpassen'
             elif self.dlgla.rb_adaptSelected.isChecked():
@@ -1060,7 +1078,6 @@ class QKanTools:
             else:
                 fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
                 return False
-
 
             # Konfigurationsdaten schreiben -----------------------------------------------------------
 
@@ -1071,6 +1088,7 @@ class QKanTools:
             self.config['anpassen_Wertebeziehungen_in_Tabellen'] = self.anpassen_Wertebeziehungen_in_Tabellen
             self.config['anpassen_Formulare'] = self.anpassen_Formulare
             self.config['anpassen_Projektionssystem'] = self.anpassen_Projektionssystem
+            self.config['fehlende_layer_ergaenzen'] = fehlende_layer_ergaenzen
             self.config['anpassen_auswahl'] = anpassen_auswahl
             self.config['qkanDBUpdate'] = self.qkanDBUpdate
             self.config['aktualisieren_Schachttypen'] = aktualisieren_Schachttypen
@@ -1081,9 +1099,35 @@ class QKanTools:
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
+            logger.debug("""layersadapt(database_QKan='{0:}', 
+                                projectFile='{1:}', 
+                                projectTemplate='{2:}', 
+                                qkanDBUpdate={3:}, 
+                                anpassen_Datenbankanbindung={4:}, 
+                                anpassen_Wertebeziehungen_in_Tabellen={5:}, 
+                                anpassen_Formulare={6:}, 
+                                anpassen_Projektionssystem={7:}, 
+                                aktualisieren_Schachttypen={8:}, 
+                                zoom_alles={9:}, 
+                                fehlende_layer_ergaenzen={10:}, 
+                                anpassen_auswahl = '{11}', 
+                                dbtyp = '{12}')""".format( \
+                                self.database_QKan, 
+                                projectFile, 
+                                self.projectTemplate, 
+                                self.qkanDBUpdate, 
+                                self.anpassen_Datenbankanbindung, 
+                                self.anpassen_Wertebeziehungen_in_Tabellen, 
+                                self.anpassen_Formulare, 
+                                self.anpassen_Projektionssystem, 
+                                aktualisieren_Schachttypen, 
+                                zoom_alles, 
+                                fehlende_layer_ergaenzen, 
+                                anpassen_auswahl, 
+                                u'SpatiaLite'))
             layersadapt(self.database_QKan, projectFile, self.projectTemplate, self.qkanDBUpdate, 
                         self.anpassen_Datenbankanbindung, self.anpassen_Wertebeziehungen_in_Tabellen, 
                         self.anpassen_Formulare, 
                         self.anpassen_Projektionssystem, aktualisieren_Schachttypen, zoom_alles, 
-                        anpassen_auswahl, u'SpatiaLite')
+                        fehlende_layer_ergaenzen, anpassen_auswahl, u'SpatiaLite')
 

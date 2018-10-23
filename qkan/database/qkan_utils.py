@@ -3,35 +3,12 @@
 import logging
 import re
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsProject
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u'QKan')
-
-
-# Versionscheck
-
-def versionolder(versliste, verslisref, depth=3):
-    """Gibt wahr zurück, wenn eine Versionsliste älter als eine Referenz-Versionsliste ist, 
-       falsch, wenn diese gleich oder größer ist. 
-
-    :param versliste:   Liste von Versionsnummern, höchstwertige zuerst
-    :type versliste:    list
-
-    :param verslisref:  Liste von Versionsnummern zum Vergleich, höchstwertige zuerst
-    :type verslisref:   list
-
-    :param depth:       Untersuchungstiefe
-    :type depth:        integer
-    """
-    for v1, v2 in zip(versliste[:depth], verslisref[:depth]):
-        if v1 < v2:
-            return True
-        elif v1 > v2:
-            return False
-    return False
 
 
 # Fortschritts- und Fehlermeldungen
@@ -53,7 +30,7 @@ def fortschritt(text, prozent=0):
     QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), u'Link Flächen: ', QgsMessageLog.INFO)
 
 
-def fehlermeldung(title, text=''):
+def fehlermeldung(title, text=u''):
     logger.error(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
     iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL)
@@ -66,12 +43,40 @@ def fehlermeldung(title, text=''):
 
 # Allgemeine Funktionen
 
+def listQkanLayers():
+    '''Dictionary mit den Namen aller QKan-Layer und einer Liste mit: 
+            Tabellenname, Geometriespalte, SQL-Where-Bedingung, Gruppenname
 
-def isQkanLayer(database_QKan, source):
+        Die Zusammenstellung wird aus der Template-QKanprojektdatei gelesen
+    '''
+    import os 
+    from qgis.utils import pluginDirectory
+    import xml.etree.ElementTree as et
+    from qkan.database.qkan_utils import get_qkanlayerAttributes
+    templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
+    qgsTemplate = os.path.join(templateDir,'Projekt.qgs')
+    qgsxml = et.ElementTree()
+    qgsxml.parse(qgsTemplate)
+    tagGroup = u'layer-tree-group/layer-tree-group'
+    qgsGroups = qgsxml.findall(tagGroup)
+    qkanLayers = {}
+    for group in qgsGroups:
+        groupName = group.attrib['name']
+        groupLayers = group.findall('layer-tree-layer')
+        for layer in groupLayers:
+            layerName = layer.attrib['name']
+            layerSource = layer.attrib['source']
+            dbname, table, geom, sql = get_qkanlayerAttributes(layerSource)
+            qkanLayers[layerName] = [table, geom, sql, groupName]
+    logger.debug('qkanLayers: \n{}'.format(qkanLayers))
+    return qkanLayers
+
+
+def isQkanLayer(layername, source):
     """Ermittelt, ob eine Layerquelle auf eine QKan-Tabelle verweist
 
-    :database_QKan: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type database: DBConnection (geerbt von dbapi...)
+    :database_QKan: Pfad zur Datenbank
+    :type database: String
 
     :source:        Pfad zur QKan-Datenbank
     :type source:   String
@@ -80,11 +85,14 @@ def isQkanLayer(database_QKan, source):
     :rtype:         boolean
     """
 
-    qkan_layers = [u' table="schaechte" (geop) sql=schachttyp = \'Schacht\'', u' table="schaechte" (geop) sql=schachttyp = \'Auslass\'', u' table="schaechte" (geop) sql=schachttyp = \'Speicher\'', u' table="schaechte" (geop) sql=', u' table="schaechte" (geom) sql=', u' table="haltungen" (geom) sql=', u' table="haltungen" (geom) sql=', u' table="wehre" (geom) sql=', u' table="pumpen" (geom) sql=', u' table="linksw" (glink) sql=', u' table="einleit" (geom) sql=', u' table="teilgebiete" (geom) sql=', u' table="tezg" (geom) sql=', u' table="linkfl" (glink) sql=', u' table="flaechen" (geom) sql=', u' table="linkageb" (glink) sql=', u' table="aussengebiete" (geom) sql=', u' table="entwaesserungsarten" sql=', u' table="pumpentypen" sql=', u' table="profile" sql=', u' table="auslasstypen" sql=', u' table="simulationsstatus" sql=', u' table="bodenklassen" sql=', u' table="abflussparameter" sql=', u' table="speicherkennlinien" sql=', u' table="profildaten" sql=']
+    dbname, table, geom, sql = get_qkanlayerAttributes(source)
 
-    tt = 'dbname=\'{}\''.format(database_QKan)
-    test = source.replace(tt, '') in qkan_layers
-    return test
+    qkanLayers = listQkanLayers()
+    if layername in qkanLayers:
+        if table == qkanLayers[layername][0] and geom == qkanLayers[layername][1] and sql == qkanLayers[layername][2]:
+            ve = (geom != '')                   # Vectorlayer?
+            return True, ve
+    return False, False
 
 
 def get_qkanlayerAttributes(source):
@@ -132,9 +140,7 @@ def get_database_QKan(silent = False):
     # logger.debug(u'Layerliste erstellt')
     logger.error(u'Keine Layer vorhanden...')
     if len(layers) == 0 and not silent:
-        iface.mainWindow().statusBar().clearMessage()
-        iface.messageBar().pushMessage(u"Fehler: ", u"Kein QKan-Projekt geladen!", level=QgsMessageBar.WARNING)
-        QgsMessageLog.logMessage(u"\nKein QKan-Projekt geladen!", level=QgsMessageLog.WARNING)
+        meldung(u"Fehler: ", u"Kein QKan-Projekt geladen!")
 
         return False, False
 
