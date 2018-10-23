@@ -53,7 +53,7 @@ progress_bar = None
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='SpatiaLite'):
+def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='spatialite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -68,7 +68,7 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='S
                             abgebrochen.
     :type autokorrektur:    String
     
-    :dbtyp:                 Typ der Datenbank (SpatiaLite, PostGIS)
+    :dbtyp:                 Typ der Datenbank (spatialite, postgis)
     :type dbtyp:            String
     
     :returns:               void

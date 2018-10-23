@@ -3,35 +3,12 @@
 import logging
 import re
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsProject
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u'QKan')
-
-
-# Versionscheck
-
-def versionolder(versliste, verslisref, depth=3):
-    """Gibt wahr zurück, wenn eine Versionsliste älter als eine Referenz-Versionsliste ist, 
-       falsch, wenn diese gleich oder größer ist. 
-
-    :param versliste:   Liste von Versionsnummern, höchstwertige zuerst
-    :type versliste:    list
-
-    :param verslisref:  Liste von Versionsnummern zum Vergleich, höchstwertige zuerst
-    :type verslisref:   list
-
-    :param depth:       Untersuchungstiefe
-    :type depth:        integer
-    """
-    for v1, v2 in zip(versliste[:depth], verslisref[:depth]):
-        if v1 < v2:
-            return True
-        elif v1 > v2:
-            return False
-    return False
 
 
 # Fortschritts- und Fehlermeldungen
@@ -41,13 +18,19 @@ def meldung(title, text):
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.INFO)
     iface.messageBar().pushMessage(title, text, level=QgsMessageBar.INFO)
 
+
+def warnung(title, text):
+    logger.warning(u'{:s} {:s}'.format(title, text))
+    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.WARNING)
+    iface.messageBar().pushMessage(title, text, level=QgsMessageBar.WARNING)
+
     
 def fortschritt(text, prozent=0):
     logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
     QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), u'Link Flächen: ', QgsMessageLog.INFO)
 
 
-def fehlermeldung(title, text=''):
+def fehlermeldung(title, text=u''):
     logger.error(u'{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
     iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL)
@@ -60,40 +43,123 @@ def fehlermeldung(title, text=''):
 
 # Allgemeine Funktionen
 
+def listQkanLayers():
+    '''Dictionary mit den Namen aller QKan-Layer und einer Liste mit: 
+            Tabellenname, Geometriespalte, SQL-Where-Bedingung, Gruppenname
+
+        Die Zusammenstellung wird aus der Template-QKanprojektdatei gelesen
+    '''
+    import os 
+    from qgis.utils import pluginDirectory
+    import xml.etree.ElementTree as et
+    from qkan.database.qkan_utils import get_qkanlayerAttributes
+    templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
+    qgsTemplate = os.path.join(templateDir,'Projekt.qgs')
+    qgsxml = et.ElementTree()
+    qgsxml.parse(qgsTemplate)
+    tagGroup = u'layer-tree-group/layer-tree-group'
+    qgsGroups = qgsxml.findall(tagGroup)
+    qkanLayers = {}
+    for group in qgsGroups:
+        groupName = group.attrib['name']
+        groupLayers = group.findall('layer-tree-layer')
+        for layer in groupLayers:
+            layerName = layer.attrib['name']
+            layerSource = layer.attrib['source']
+            dbname, table, geom, sql = get_qkanlayerAttributes(layerSource)
+            qkanLayers[layerName] = [table, geom, sql, groupName]
+    logger.debug('qkanLayers: \n{}'.format(qkanLayers))
+    return qkanLayers
+
+
+def isQkanLayer(layername, source):
+    """Ermittelt, ob eine Layerquelle auf eine QKan-Tabelle verweist
+
+    :database_QKan: Pfad zur Datenbank
+    :type database: String
+
+    :source:        Pfad zur QKan-Datenbank
+    :type source:   String
+
+    :returns:       Ergebnis der Prüfung
+    :rtype:         boolean
+    """
+
+    dbname, table, geom, sql = get_qkanlayerAttributes(source)
+
+    qkanLayers = listQkanLayers()
+    if layername in qkanLayers:
+        if table == qkanLayers[layername][0] and geom == qkanLayers[layername][1] and sql == qkanLayers[layername][2]:
+            ve = (geom != '')                   # Vectorlayer?
+            return True, ve
+    return False, False
+
+
+def get_qkanlayerAttributes(source):
+    """Ermittelt die Attribute eines QKan-Layers in einer SpatiaLite-Datenbank
+
+    :param source:  Source-String des QGIS-Layers
+    :type source:   string
+
+    :returns:       Attribute des Layers
+    :rtype:         tuple
+    """
+
+    posDbname = source.find(u'dbname=')
+    posTable = source.find(u' table=', posDbname + 1)
+    posGeomStart = source.find(u' (', posTable + 6)
+    posGeomEnd = source.find(u') ', posGeomStart + 2)
+    posSql = source.find(u' sql=', posGeomEnd + 1)
+
+    if posSql < 0:
+        return '', '', '', ''
+
+    dbname = source[posDbname + 8 : posTable - 1].strip()
+
+    if posGeomStart < 0 or posGeomStart > posSql:
+        geom = ''
+        posGeomStart = posSql
+    else:
+        geom = source[posGeomStart + 2 : posGeomEnd].strip()
+
+    table = source[posTable + 8 : posGeomStart - 1].strip()
+
+    if posSql < 0:
+        sql = ''
+    else:
+        sql = source[posSql + 5 :].strip()
+
+    return dbname, table, geom, sql
+
+
 def get_database_QKan(silent = False):
-    """Ermittlung der aktuellen QpatiaLite-Datenbank aus den geladenen Layern"""
+    """Ermittlung der aktuellen SpatiaLite-Datenbank aus den geladenen Layern"""
     database_QKan = u''
     epsg = u''
     layers = iface.legendInterface().layers()
     # logger.debug(u'Layerliste erstellt')
     logger.error(u'Keine Layer vorhanden...')
     if len(layers) == 0 and not silent:
-        iface.mainWindow().statusBar().clearMessage()
-        iface.messageBar().pushMessage(u"Fehler: ", u"Kein QKan-Projekt geladen!", level=QgsMessageBar.WARNING)
-        QgsMessageLog.logMessage(u"\nKein QKan-Projekt geladen!", level=QgsMessageLog.WARNING)
+        meldung(u"Fehler: ", u"Kein QKan-Projekt geladen!")
 
         return False, False
 
     # Über Layer iterieren
     for lay in layers:
-        lyattr = {}
+        dbname, table, geom, sql = get_qkanlayerAttributes(lay.source())
+        if ((table == 'flaechen' and geom == 'geom') or \
+            ( table == 'schaechte' and geom == 'geom') or \
+            ( table == 'haltungen' and geom == 'geom')):
+            # nur, wenn es sich um eine der drei QKan-Tabellen 'haltungen', 'schaechte' oder 'flaechen' handelt...
 
-        # Attributstring für Layer splitten
-        split = re.compile("['\"] ").split(lay.source())
-        for le in split:
-            if '=' in le:
-                key, value = le.split('=', 1)
-                lyattr[key] = value.strip('"').strip('\'')
-
-        # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
-        if 'table' in lyattr and 'dbname' in lyattr:
-            if lyattr['table'] == 'flaechen':
-                if database_QKan == '':
-                    database_QKan = lyattr['dbname']
-                    epsg = str(int(lay.crs().postgisSrid()))
-                elif database_QKan != lyattr['dbname']:
-                    logger.warning(u'Abweichende Datenbankanbindung gefunden: {}'.format(lyattr['dbname']))
-                    return False, False  # Im Projekt sind mehrere Sqlite-Datenbanken eingebungen...
+            if database_QKan == '':
+                # Datenbank wurde noch nicht festgelegt
+                database_QKan = dbname
+                epsg = str(int(lay.crs().postgisSrid()))
+            elif database_QKan != dbname:
+                # Datenbank wurde bereits festgelegt, weicht aber für einen weiteren QKan-Layer ab...
+                logger.warning(u'Abweichende Datenbankanbindung gefunden: {}'.format(dbname))
+                return False, False  # Im Projekt sind mehrere Sqlite-Datenbanken eingebungen...
     return database_QKan, epsg
 
 
@@ -124,11 +190,11 @@ def get_editable_layers():
     return elayers
 
 
-def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'SpatiaLite'):
+def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'spatialite'):
     """Prüft, ob in der Tabelle {tab} im Attribut {attr} eindeutige Namen enthalten sind. 
     Falls nicht, werden Namen vergeben, die sich aus {prefix} und ROWID zusammensetzen
 
-    :dbQK:              Typ der Datenbank (SpatiaLite, PostGIS)
+    :dbQK:              Typ der Datenbank (spatialite, postgis)
     :type dbQK:         Class FBConnection
     
     :tab:               Name der Tabelle
@@ -146,7 +212,7 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'SpatiaLite'):
                         abgebrochen.
     :type autokorrektur:   String
     
-    :dbtyp:             Typ der Datenbank (SpatiaLite, PostGIS)
+    :dbtyp:             Typ der Datenbank (spatialite, postgis)
     :type dbtyp:        String
     
     :returns:           Ergebnis der Prüfung bzw. Korrektur
@@ -217,10 +283,10 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'SpatiaLite'):
     return True
 
 
-def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp = u'SpatiaLite'):
+def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp = u'spatialite'):
     """Prüft, ob in der Tabelle {tab} im Attribut {attrgeo} ein Geoobjekt vorhanden ist. 
 
-    :dbQK:              Typ der Datenbank (SpatiaLite, PostGIS)
+    :dbQK:              Typ der Datenbank (spatialite, postgis)
     :type dbQK:         Class FBConnection
     
     :tab:               Name der Tabelle
@@ -234,7 +300,7 @@ def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp =
                         abgebrochen.
     :type autokorrektur:   String
     
-    :dbtyp:             Typ der Datenbank (SpatiaLite, PostGIS)
+    :dbtyp:             Typ der Datenbank (spatialite, postgis)
     :type dbtyp:        String
     
     :returns:           Ergebnis der Prüfung bzw. Korrektur
@@ -323,3 +389,101 @@ def sqlconditions(keyword, attrlis, valuelis2):
 
     return auswahl
 
+
+def evalNodeTypes(dbQK):
+    """Schachttypen auswerten. Dies geschieht ausschließlich mit SQL-Abfragen"""
+
+    # -- Anfangsschächte: Schächte ohne Haltung oben
+    sql_typAnf = u'''
+        UPDATE schaechte SET knotentyp = 'Anfangsschacht' WHERE schaechte.schnam IN
+        (SELECT t_sch.schnam
+        FROM schaechte AS t_sch 
+        LEFT JOIN haltungen AS t_hob
+        ON t_sch.schnam = t_hob.schoben
+        LEFT JOIN haltungen AS t_hun
+        ON t_sch.schnam = t_hun.schunten
+        WHERE t_hun.pk IS NULL)'''
+
+    # -- Endschächte: Schächte ohne Haltung unten
+    sql_typEnd = u'''
+        UPDATE schaechte SET knotentyp = 'Endschacht' WHERE schaechte.schnam IN
+        (SELECT t_sch.schnam
+        FROM schaechte AS t_sch 
+        LEFT JOIN haltungen AS t_hob
+        ON t_sch.schnam = t_hob.schunten
+        LEFT JOIN haltungen AS t_hun
+        ON t_sch.schnam = t_hun.schoben
+        WHERE t_hun.pk IS NULL)'''
+
+    # -- Hochpunkt: 
+    sql_typHoch = u'''
+        UPDATE schaechte SET knotentyp = 'Hochpunkt' WHERE schaechte.schnam IN
+        ( SELECT t_sch.schnam
+          FROM schaechte AS t_sch 
+          JOIN haltungen AS t_hob
+          ON t_sch.schnam = t_hob.schunten
+          JOIN haltungen AS t_hun
+          ON t_sch.schnam = t_hun.schoben
+          JOIN schaechte AS t_sun
+          ON t_sun.schnam = t_hun.schunten
+          JOIN schaechte AS t_sob
+          ON t_sob.schnam = t_hob.schunten
+          WHERE ifnull(t_hob.sohleunten,t_sch.sohlhoehe)>ifnull(t_hob.sohleoben,t_sob.sohlhoehe) AND 
+                ifnull(t_hun.sohleoben,t_sch.sohlhoehe)>ifnull(t_hun.sohleunten,t_sun.sohlhoehe))'''
+
+    # -- Tiefpunkt:
+    sql_typTief = u'''
+        UPDATE schaechte SET knotentyp = 'Tiefpunkt' WHERE schaechte.schnam IN
+        ( SELECT t_sch.schnam
+          FROM schaechte AS t_sch 
+          JOIN haltungen AS t_hob
+          ON t_sch.schnam = t_hob.schunten
+          JOIN haltungen AS t_hun
+          ON t_sch.schnam = t_hun.schoben
+          JOIN schaechte AS t_sun
+          ON t_sun.schnam = t_hun.schunten
+          JOIN schaechte AS t_sob
+          ON t_sob.schnam = t_hob.schunten
+          WHERE ifnull(t_hob.sohleunten,t_sch.sohlhoehe)<ifnull(t_hob.sohleoben,t_sob.sohlhoehe) AND 
+                ifnull(t_hun.sohleoben,t_sch.sohlhoehe)<ifnull(t_hun.sohleunten,t_sun.sohlhoehe))'''
+
+    # -- Verzweigung:
+    sql_typZweig = u'''
+        UPDATE schaechte SET knotentyp = 'Verzweigung' WHERE schaechte.schnam IN
+        ( SELECT t_sch.schnam
+          FROM schaechte AS t_sch 
+          JOIN haltungen AS t_hun
+          ON t_sch.schnam = t_hun.schoben
+          GROUP BY t_sch.pk
+          HAVING count(*) > 1)'''
+
+    # -- Einzelschacht:
+    sql_typEinzel = u'''
+        UPDATE schaechte SET knotentyp = 'Einzelschacht' WHERE schaechte.schnam IN
+        ( SELECT t_sch.schnam 
+          FROM schaechte AS t_sch 
+          LEFT JOIN haltungen AS t_hun
+          ON t_sch.schnam = t_hun.schoben
+          LEFT JOIN haltungen AS t_hob
+          ON t_sch.schnam = t_hob.schunten
+          WHERE t_hun.pk IS NULL AND t_hob.pk IS NULL)'''
+
+    if not dbQK.sql(sql_typAnf, u'importkanaldaten_he (39)'):
+        return None
+
+    if not dbQK.sql(sql_typEnd, u'importkanaldaten_he (40)'):
+        return None
+
+    if not dbQK.sql(sql_typHoch, u'importkanaldaten_he (41)'):
+        return None
+
+    if not dbQK.sql(sql_typTief, u'importkanaldaten_he (42)'):
+        return None
+
+    if not dbQK.sql(sql_typZweig, u'importkanaldaten_he (43)'):
+        return None
+
+    if not dbQK.sql(sql_typEinzel, u'importkanaldaten_he (44)'):
+        return None
+
+    dbQK.commit()

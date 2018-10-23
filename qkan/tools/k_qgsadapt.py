@@ -32,10 +32,10 @@ __copyright__ = '(C) 2016, Joerg Hoettges'
 __revision__ = ':%H$'
 
 import logging
-import os
+import os, time
 
 from qgis.core import QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem
-from qgis.gui import QgsMessageBar
+from qgis.gui import QgsMessageBar, QgsMapCanvas, QgsLayerTreeMapCanvasBridge
 from qgis.utils import iface, pluginDirectory
 
 from qgis.PyQt.QtGui import QProgressBar
@@ -71,7 +71,7 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
 
     :dbtyp:                     Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:                String
-    
+
     :returns: void
     '''
 
@@ -80,15 +80,9 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
 
     dbQK = DBConnection(dbname=qkanDB)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
-    if dbQK is None:
-        fehlermeldung(u"Fehler in qgsadapt", 
-                      u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(qkanDB))
-        iface.messageBar().pushMessage(u"Fehler in qgsadapt", 
-                    u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-            qkanDB), level=QgsMessageBar.CRITICAL)
-        return None
-    elif not dbQK.status:
-        # Datenbank wurde geändert
+    if not dbQK.connected:
+        logger.error(u"Fehler in k_qgsadapt:\n",
+                      u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(qkanDB))
         return None
 
     # --------------------------------------------------------------------------
@@ -153,7 +147,7 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
         return False
 
     if setPathToTemplateDir:
-        templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
+        templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
 
     projectpath = os.path.dirname(projectFile)
     if os.path.dirname(qkanDB) == projectpath:
@@ -270,7 +264,9 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     # QgsMessageLog.logMessage("\nFertig: Datenimport erfolgreich!", level=QgsMessageLog.INFO)
 
     # Importiertes Projekt laden
-    # project = QgsProject.instance()
-    # project.read(QFileInfo(projectFile))         # read the new project file
+    project = QgsProject.instance()
+    canvas = QgsMapCanvas(None)
+    bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), canvas)         #  synchronise the loaded project with the canvas
+    project.read(QFileInfo(projectFile))         # read the new project file
     # logger.debug(u'Geladene Projektdatei: {}   ({})'.format(project.fileName()))
 
