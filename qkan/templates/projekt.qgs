@@ -540,6 +540,12 @@
   </Composer>
   <projectlayers>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550089.9883467648178339</xmin>
+        <ymin>5799467.52773927338421345</ymin>
+        <xmax>3550661.50585629791021347</xmax>
+        <ymax>5799887.27342572622001171</ymax>
+      </extent>
       <id>Anbindung20170920132347429</id>
       <datasource>dbname='./muster.sqlite' table="linkfl" (glink) sql=</datasource>
       <keywordList>
@@ -976,6 +982,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression> "flnam" || ' - ' ||  "haltnam" </previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550092.51500000013038516</xmin>
+        <ymin>5799510.53160000033676624</ymin>
+        <xmax>3550651.34299999941140413</xmax>
+        <ymax>5799703.19008398987352848</ymax>
+      </extent>
       <id>Anbindungen_SW_Punkte20171017125752772</id>
       <datasource>dbname='./muster.sqlite' table="linksw" (glink) sql=</datasource>
       <keywordList>
@@ -1375,289 +1387,13 @@ def my_form_open(dialog, layer, feature):
       </defaults>
       <previewExpression> "flnam" || ' - ' ||  "haltnam" </previewExpression>
     </maplayer>
-    <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>549945.32632474624551833</xmin>
-        <ymin>5797598.27067562658339739</ymin>
-        <xmax>550588.90309642453212291</xmax>
-        <ymax>5798008.43393284268677235</ymax>
-      </extent>
-      <id>Flaeche20180727164139560</id>
-      <datasource>dbname='../../k_qkh8/beispiele/itwh/muster-modelldatenbank.idbm' table="flaeche" (geometry) sql=</datasource>
-      <keywordList>
-        <value></value>
-      </keywordList>
-      <layername>Flaeche</layername>
-      <srs>
-        <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
-          <geographicflag>false</geographicflag>
-        </spatialrefsys>
-      </srs>
-      <provider encoding="UTF-8">spatialite</provider>
-      <vectorjoins/>
-      <layerDependencies/>
-      <expressionfields/>
-      <map-layer-style-manager current="">
-        <map-layer-style name=""/>
-      </map-layer-style-manager>
-      <edittypes>
-        <edittype widgetv2type="TextEdit" name="Id">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Groesse">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Regenschreiber">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="RegenschreiberRef">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Haltung">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="HaltungRef">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="AnzahlSpeicher">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Speicherkonstante">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Schwerpunktlaufzeit">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="LaengsteFliesszeitKanal">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="FliesszeitOberflaeche">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="BerechnungSpeicherkonstante">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Typ">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Parametersatz">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="ParametersatzRef">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Neigungsklasse">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="GeomSchwerpunktXKoordinate">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="GeomSchwerpunktYKoordinate">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="BBMinXKoordinate">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="BBMaxYKoordinate">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="BBMinYKoordinate">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="BBMaxXKoordinate">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="IstPolygonalflaeche">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="ZuordnUnabhEZG">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="ZuordnungGesperrt">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Regenwasserbehandlung">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="RegenwasserbehandlungRef">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="GeomChanged">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Flaechentyp">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Flaeche2D">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Color">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="ColorIndex">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Name">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="LastModified">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Kommentar">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-      </edittypes>
-      <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
-        <symbols>
-          <symbol alpha="1" clip_to_extent="1" type="fill" name="0">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="138,79,103,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.26"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-        </symbols>
-        <rotation/>
-        <sizescale scalemethod="diameter"/>
-      </renderer-v2>
-      <labeling type="simple"/>
-      <customproperties/>
-      <blendMode>0</blendMode>
-      <featureBlendMode>0</featureBlendMode>
-      <layerTransparency>0</layerTransparency>
-      <displayfield>Name</displayfield>
-      <label>0</label>
-      <labelattributes>
-        <label fieldname="" text="Beschriftung"/>
-        <family fieldname="" name="MS Shell Dlg 2"/>
-        <size fieldname="" units="pt" value="12"/>
-        <bold fieldname="" on="0"/>
-        <italic fieldname="" on="0"/>
-        <underline fieldname="" on="0"/>
-        <strikeout fieldname="" on="0"/>
-        <color fieldname="" red="0" blue="0" green="0"/>
-        <x fieldname=""/>
-        <y fieldname=""/>
-        <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
-        <angle fieldname="" value="0" auto="0"/>
-        <alignment fieldname="" value="center"/>
-        <buffercolor fieldname="" red="255" blue="255" green="255"/>
-        <buffersize fieldname="" units="pt" value="1"/>
-        <bufferenabled fieldname="" on=""/>
-        <multilineenabled fieldname="" on=""/>
-        <selectedonly on=""/>
-      </labelattributes>
-      <annotationform>.</annotationform>
-      <aliases>
-        <alias field="Id" index="0" name=""/>
-        <alias field="Groesse" index="1" name=""/>
-        <alias field="Regenschreiber" index="2" name=""/>
-        <alias field="RegenschreiberRef" index="3" name=""/>
-        <alias field="Haltung" index="4" name=""/>
-        <alias field="HaltungRef" index="5" name=""/>
-        <alias field="AnzahlSpeicher" index="6" name=""/>
-        <alias field="Speicherkonstante" index="7" name=""/>
-        <alias field="Schwerpunktlaufzeit" index="8" name=""/>
-        <alias field="LaengsteFliesszeitKanal" index="9" name=""/>
-        <alias field="FliesszeitOberflaeche" index="10" name=""/>
-        <alias field="BerechnungSpeicherkonstante" index="11" name=""/>
-        <alias field="Typ" index="12" name=""/>
-        <alias field="Parametersatz" index="13" name=""/>
-        <alias field="ParametersatzRef" index="14" name=""/>
-        <alias field="Neigungsklasse" index="15" name=""/>
-        <alias field="GeomSchwerpunktXKoordinate" index="16" name=""/>
-        <alias field="GeomSchwerpunktYKoordinate" index="17" name=""/>
-        <alias field="BBMinXKoordinate" index="18" name=""/>
-        <alias field="BBMaxYKoordinate" index="19" name=""/>
-        <alias field="BBMinYKoordinate" index="20" name=""/>
-        <alias field="BBMaxXKoordinate" index="21" name=""/>
-        <alias field="IstPolygonalflaeche" index="22" name=""/>
-        <alias field="ZuordnUnabhEZG" index="23" name=""/>
-        <alias field="ZuordnungGesperrt" index="24" name=""/>
-        <alias field="Regenwasserbehandlung" index="25" name=""/>
-        <alias field="RegenwasserbehandlungRef" index="26" name=""/>
-        <alias field="GeomChanged" index="27" name=""/>
-        <alias field="Flaechentyp" index="28" name=""/>
-        <alias field="Flaeche2D" index="29" name=""/>
-        <alias field="Color" index="30" name=""/>
-        <alias field="ColorIndex" index="31" name=""/>
-        <alias field="Name" index="32" name=""/>
-        <alias field="LastModified" index="33" name=""/>
-        <alias field="Kommentar" index="34" name=""/>
-      </aliases>
-      <excludeAttributesWMS/>
-      <excludeAttributesWFS/>
-      <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
-        <columns/>
-      </attributetableconfig>
-      <editform>.</editform>
-      <editforminit/>
-      <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
-      <editforminitcode><![CDATA[]]></editforminitcode>
-      <featformsuppress>0</featformsuppress>
-      <editorlayout>generatedlayout</editorlayout>
-      <widgets/>
-      <conditionalstyles>
-        <rowstyles/>
-        <fieldstyles/>
-      </conditionalstyles>
-      <defaults>
-        <default field="Id" expression=""/>
-        <default field="Groesse" expression=""/>
-        <default field="Regenschreiber" expression=""/>
-        <default field="RegenschreiberRef" expression=""/>
-        <default field="Haltung" expression=""/>
-        <default field="HaltungRef" expression=""/>
-        <default field="AnzahlSpeicher" expression=""/>
-        <default field="Speicherkonstante" expression=""/>
-        <default field="Schwerpunktlaufzeit" expression=""/>
-        <default field="LaengsteFliesszeitKanal" expression=""/>
-        <default field="FliesszeitOberflaeche" expression=""/>
-        <default field="BerechnungSpeicherkonstante" expression=""/>
-        <default field="Typ" expression=""/>
-        <default field="Parametersatz" expression=""/>
-        <default field="ParametersatzRef" expression=""/>
-        <default field="Neigungsklasse" expression=""/>
-        <default field="GeomSchwerpunktXKoordinate" expression=""/>
-        <default field="GeomSchwerpunktYKoordinate" expression=""/>
-        <default field="BBMinXKoordinate" expression=""/>
-        <default field="BBMaxYKoordinate" expression=""/>
-        <default field="BBMinYKoordinate" expression=""/>
-        <default field="BBMaxXKoordinate" expression=""/>
-        <default field="IstPolygonalflaeche" expression=""/>
-        <default field="ZuordnUnabhEZG" expression=""/>
-        <default field="ZuordnungGesperrt" expression=""/>
-        <default field="Regenwasserbehandlung" expression=""/>
-        <default field="RegenwasserbehandlungRef" expression=""/>
-        <default field="GeomChanged" expression=""/>
-        <default field="Flaechentyp" expression=""/>
-        <default field="Flaeche2D" expression=""/>
-        <default field="Color" expression=""/>
-        <default field="ColorIndex" expression=""/>
-        <default field="Name" expression=""/>
-        <default field="LastModified" expression=""/>
-        <default field="Kommentar" expression=""/>
-      </defaults>
-      <previewExpression></previewExpression>
-    </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550042.61819999990984797</xmin>
+        <ymin>5799510.32980000041425228</ymin>
+        <xmax>3550676.34299999987706542</xmax>
+        <ymax>5799884.0352999996393919</ymax>
+      </extent>
       <id>Speicher_Kopie20161221080207994</id>
       <datasource>dbname='./muster.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
       <keywordList>
@@ -2096,7 +1832,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -2302,7 +2038,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -2393,6 +2129,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "bezeichnung", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>550556.68335283093620092</xmin>
+        <ymin>5797306.9120858795940876</ymin>
+        <xmax>551056.68335283093620092</xmax>
+        <ymax>5797606.9120858795940876</ymax>
+      </extent>
       <id>aussengebiete20180630230050872</id>
       <datasource>dbname='./muster.sqlite' table="aussengebiete" (geom) sql=</datasource>
       <keywordList>
@@ -2947,6 +2689,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "bknam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550368.63521308545023203</xmin>
+        <ymin>5799761.33437128085643053</ymin>
+        <xmax>3550564.92702467972412705</xmax>
+        <ymax>5799866.46123245358467102</ymax>
+      </extent>
       <id>einleit20171004110830029</id>
       <datasource>dbname='./muster.sqlite' table="einleit" (geom) sql=</datasource>
       <keywordList>
@@ -3313,7 +3061,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -3409,6 +3157,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE("pk", '&lt;NULL>')</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550037.60402216948568821</xmin>
+        <ymin>5799454.15496413037180901</ymin>
+        <xmax>3550682.22369706770405173</xmax>
+        <ymax>5799891.07670732028782368</ymax>
+      </extent>
       <id>flaechen20170504083519678</id>
       <datasource>dbname='./muster.sqlite' table="flaechen" (geom) sql=</datasource>
       <keywordList>
@@ -3919,6 +3673,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "flnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="1" maximumScale="15000" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550042.61819999990984797</xmin>
+        <ymin>5799510.32980000041425228</ymin>
+        <xmax>3550676.34299999987706542</xmax>
+        <ymax>5799884.0352999996393919</ymax>
+      </extent>
       <id>haltungen20161016203756230</id>
       <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
@@ -4722,6 +4482,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression> "haltnam" </previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="15000" maximumScale="1.5e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550042.61819999990984797</xmin>
+        <ymin>5799510.32980000041425228</ymin>
+        <xmax>3550676.34299999987706542</xmax>
+        <ymax>5799884.0352999996393919</ymax>
+      </extent>
       <id>haltungen_Kopie20161016203906444</id>
       <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
@@ -5261,6 +5027,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression></previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>550487.40524441201705486</xmin>
+        <ymin>5797468.80609032697975636</ymin>
+        <xmax>550759.87258393492083997</xmax>
+        <ymax>5797630.30411910824477673</ymax>
+      </extent>
       <id>linkageb20180630230055350</id>
       <datasource>dbname='./muster.sqlite' table="linkageb" (glink) sql=</datasource>
       <keywordList>
@@ -5856,6 +5628,12 @@ def my_form_open(dialog, layer, feature):
  COALESCE( "profilnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550383.06980000017210841</xmin>
+        <ymin>5799652.43960000015795231</ymin>
+        <xmax>3550383.55720000015571713</xmax>
+        <ymax>5799730.78179999999701977</ymax>
+      </extent>
       <id>pumpen20161017080913064</id>
       <datasource>dbname='./muster.sqlite' table="pumpen" (geom) sql=</datasource>
       <keywordList>
@@ -6465,6 +6243,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression></previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550041.61819999990984797</xmin>
+        <ymin>5799509.32980000041425228</ymin>
+        <xmax>3550677.34299999987706542</xmax>
+        <ymax>5799885.0352999996393919</ymax>
+      </extent>
       <id>schaechte20161016203756252</id>
       <datasource>dbname='./muster.sqlite' table="schaechte" (geom) sql=</datasource>
       <keywordList>
@@ -6879,6 +6663,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550042.61819999990984797</xmin>
+        <ymin>5799510.32980000041425228</ymin>
+        <xmax>3550676.34299999987706542</xmax>
+        <ymax>5799884.0352999996393919</ymax>
+      </extent>
       <id>schaechte20161220162259105</id>
       <datasource>dbname='./muster.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
       <keywordList>
@@ -7302,6 +7092,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550042.61819999990984797</xmin>
+        <ymin>5799510.32980000041425228</ymin>
+        <xmax>3550676.34299999987706542</xmax>
+        <ymax>5799884.0352999996393919</ymax>
+      </extent>
       <id>schaechte_Kopie20161204084617148</id>
       <datasource>dbname='./muster.sqlite' table="schaechte" (geop) sql=</datasource>
       <keywordList>
@@ -7888,6 +7684,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550042.61819999990984797</xmin>
+        <ymin>5799510.32980000041425228</ymin>
+        <xmax>3550676.34299999987706542</xmax>
+        <ymax>5799884.0352999996393919</ymax>
+      </extent>
       <id>schaechte_Kopie20161221075653754</id>
       <datasource>dbname='./muster.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
       <keywordList>
@@ -8836,6 +8638,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "tgnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550037.60402216948568821</xmin>
+        <ymin>5799454.15496413037180901</ymin>
+        <xmax>3550682.22369706770405173</xmax>
+        <ymax>5799891.07670732028782368</ymax>
+      </extent>
       <id>tezg20171204105753202</id>
       <datasource>dbname='./muster.sqlite' table="tezg" (geom) sql=</datasource>
       <keywordList>
@@ -9180,6 +8988,12 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "pk", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>3550183.07310000015422702</xmin>
+        <ymin>5799653.01669999957084656</ymin>
+        <xmax>3550183.49319999990984797</xmax>
+        <ymax>5799670.80979999992996454</ymax>
+      </extent>
       <id>wehre20161125174724734</id>
       <datasource>dbname='./muster.sqlite' table="wehre" (geom) sql=</datasource>
       <keywordList>
