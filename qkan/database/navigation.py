@@ -21,6 +21,10 @@ class Navigator:
         self.__dbname = dbname
         self.__error_msg = ""
         self.db = DBConnection(dbname)
+        if not self.db.connected:
+            main_logger.error(u"Fehler in navigation:\n",
+                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(dbname))
+            return None
         self.log = logging.getLogger("QKan.navigation.Navigator")
 
     def calculate_route_schacht(self, nodes):
@@ -282,6 +286,10 @@ class Worker(QtCore.QRunnable):
         self.__startpoint = startpoint
         self.__nodes = nodes
         self.__db = DBConnection(dbname)
+        if not self.__db.connected:
+            logger.error(u"Fehler in navigation:\n",
+                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(dbname))
+            return None
         self.__parent = parent
 
     def run(self):

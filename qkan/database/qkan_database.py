@@ -22,7 +22,9 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__version__ = '2.5.7'
+__dbVersion__ = '2.5.9'                         # Version der QKan-Datenbank
+__qgsVersion__  = '2.5.9'                       # Version des Projektes und der Projektdatei. Kann 
+                                                # höher als die der QKan-Datenbank sein
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -39,8 +41,70 @@ from qkan_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger(u'QKan')
 
+# Versionscheck
 
-def createdbtables(consl, cursl, version=__version__, epsg=25832):
+def dbVersion():
+    """Returns actual version of the QKan database"""
+    return __dbVersion__
+
+def qgsVersion():
+    """Returns actual project version"""
+    return __qgsVersion__
+
+def versionolder(versliste, verslisref, depth=3):
+    """Gibt wahr zurück, wenn eine Versionsliste älter als eine Referenz-Versionsliste ist, 
+       falsch, wenn diese gleich oder größer ist. 
+
+    :param versliste:   Liste von Versionsnummern, höchstwertige zuerst
+    :type versliste:    list
+
+    :param verslisref:  Liste von Versionsnummern zum Vergleich, höchstwertige zuerst
+    :type verslisref:   list
+
+    :param depth:       Untersuchungstiefe
+    :type depth:        integer
+    """
+    for v1, v2 in zip(versliste[:depth], verslisref[:depth]):
+        if v1 < v2:
+            return True
+        elif v1 > v2:
+            return False
+    return False
+
+def qgsActualVersion(warning = False):
+    '''Prüft die Version des aktiven Projektes
+
+    :returns:               Boolean
+    
+    Prüft im Vergleich zur Version der QKan-Datenbank, ob das geladene Projekt die gleiche oder höhere
+    Versionsnummer aufweist.
+    '''
+
+    layers = iface.legendInterface().layers()
+    logger.error(u'qkan_database.qgsActualVersion: Keine Layer vorhanden...')
+    if len(layers) == 0 and not silent:
+        meldung(u"Fehler: ", u"Kein QKan-Projekt geladen!")
+        return False
+        
+    actQgsVersion = QgsProject.instance().title().replace('QKan Version ', '')
+    if actQgsVersion == '':
+        if len(iface.legendInterface().layers()) == 0:
+            meldung(u"Benutzerfehler: ", u"Es ist kein Projekt geladen")
+        else:
+            actQgsVersion = '2.5.3'                     # davor wurde die Version der Projektdatei noch nicht verwaltet.
+    actQkanVersion = dbVersion()
+    actQgsVersionLis = [int(el.replace('a','').replace('b','').replace('c','')) for el in actQgsVersion.split('.')]
+    actQkanVersionLis = [int(el.replace('a','').replace('b','').replace('c','')) for el in actQkanVersion.split('.')]
+
+    isActual = not versionolder(actQgsVersionLis, actQkanVersionLis)
+    if isActual and warning:
+        meldung(u"Warnung: ", u"Das geladene Projekt entspricht nicht der aktuellen Version. ")
+    return isActual
+        
+
+# Erzeuge QKan-Tabellen
+
+def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     ''' Erstellt fuer eine neue QKan-Datenbank die benötigten Tabellen.
 
         :param consl: Datenbankobjekt der SpatiaLite-QKan-Datenbank
@@ -75,7 +139,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     ks REAL,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE,
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
     xschob REAL,
     yschob REAL,
     xschun REAL,
@@ -124,7 +188,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     istauslass INTEGER, 
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -310,7 +374,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     ausschalthoehe REAL,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -349,7 +413,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     aussenwsp REAL,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -393,7 +457,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     stdmittel REAL,
     fremdwas REAL,
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -425,7 +489,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     tgnam TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -470,7 +534,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     teilgebiet TEXT,
     tabelle TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -493,7 +557,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     abflussparameter TEXT,
     aufteilen TEXT DEFAULT 'nein',
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -527,6 +591,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     flnam TEXT,
     haltnam TEXT,
     tezgnam TEXT,
+    teilgebiet TEXT,
     abflusstyp TEXT,
     speicherzahl INTEGER,
     speicherkonst REAL,
@@ -565,7 +630,8 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     sql = u"""CREATE TABLE linksw (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     elnam TEXT,
-    haltnam TEXT)"""
+    haltnam TEXT,
+    teilgebiet TEXT)"""
 
     try:
         cursl.execute(sql)
@@ -605,7 +671,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     teilgebiet TEXT,
     abflussparameter TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -641,7 +707,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     ew REAL,
     einzugsgebiet TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -680,7 +746,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
         regenschreiber TEXT, 
         teilgebiet TEXT, 
         kommentar TEXT, 
-        createdat TEXT DEFAULT CURRENT_DATE)'''
+        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -817,7 +883,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     mulden_startwert REAL, 
     bodenklasse TEXT, 
     kommentar TEXT, 
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -857,7 +923,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     regenerationskonstante REAL,
     saettigungswassergehalt REAL,
     kommentar TEXT, 
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
@@ -886,6 +952,104 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
         except BaseException as err:
             fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
                       u'Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
+            consl.close()
+            return False
+    consl.commit()
+
+    # Abflusstypen -------------------------------------------------------------
+
+    sql = u'''CREATE TABLE abflusstypen (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    abflusstyp TEXT)'''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "abflusstypen" konnte nicht erstellt werden.')
+        consl.close()
+        return False
+
+    daten = [u"'Fliesszeiten'",
+             u"'Schwerpunktlaufzeit'",
+             u"'Speicherkaskade'"]
+
+    for ds in daten:
+        try:
+            sql = u"""INSERT INTO abflusstypen
+                     ( 'abflusstyp') Values ({})""".format(ds)
+            cursl.execute(sql)
+
+        except BaseException as err:
+            fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabellendaten "abflusstypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
+            consl.close()
+            return False
+    consl.commit()
+
+    # Knotentypen -------------------------------------------------------------
+
+    sql = u'''CREATE TABLE knotentypen (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    knotentyp TEXT)'''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "knotentypen" konnte nicht erstellt werden.')
+        consl.close()
+        return False
+
+    daten = [u"'Anfangsschacht'",
+             u"'Einzelschacht'",
+             u"'Endschacht'",
+             u"'Hochpunkt'",
+             u"'Normalschacht'",
+             u"'Tiefpunkt'",
+             u"'Verzweigung'",
+             u"'Fliesszeiten'"]
+
+    for ds in daten:
+        try:
+            sql = u"""INSERT INTO knotentypen
+                     ( 'knotentyp') Values ({})""".format(ds)
+            cursl.execute(sql)
+
+        except BaseException as err:
+            fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabellendaten "knotentypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
+            consl.close()
+            return False
+    consl.commit()
+
+    # Schachttypen -------------------------------------------------------------
+
+    sql = u'''CREATE TABLE schachttypen (
+    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    schachttyp TEXT)'''
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabelle "schachttypen" konnte nicht erstellt werden.')
+        consl.close()
+        return False
+
+    daten = [u"'Auslass'",
+             u"'Schacht'",
+             u"'Speicher'"]
+
+    for ds in daten:
+        try:
+            sql = u"""INSERT INTO schachttypen
+                     ( 'schachttyp') Values ({})""".format(ds)
+            cursl.execute(sql)
+
+        except BaseException as err:
+            fehlermeldung(u'qkan_database.createdbtables: {}'.format(err), 
+                      u'Tabellendaten "schachttypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
             consl.close()
             return False
     consl.commit()
@@ -938,7 +1102,7 @@ def createdbtables(consl, cursl, version=__version__, epsg=25832):
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
     subject TEXT, 
     value TEXT,
-    createdat TEXT DEFAULT CURRENT_DATE)'''
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)

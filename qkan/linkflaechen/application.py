@@ -541,15 +541,9 @@ class LinkFl:
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
-        if self.dbQK is None:
-            fehlermeldung(u"Fehler in LinkFl.run_createlinefl",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage(u"Fehler in LinkFl.run_createlinefl",
-                                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                                               database_QKan), level=QgsMessageBar.CRITICAL)
-            return None
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
+        if not self.dbQK.connected:
+            logger.error(u"Fehler in linkflaechen.application (1):\n",
+                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
             return None
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
@@ -772,15 +766,9 @@ class LinkFl:
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
-        if self.dbQK is None:
-            fehlermeldung(u"Fehler in LinkFl.run_createlinesw",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage(u"Fehler in LinkFl.run_createlinesw",
-                                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                                               database_QKan), level=QgsMessageBar.CRITICAL)
-            return None
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
+        if not self.dbQK.connected:
+            logger.error(u"Fehler in linkflaechen.application (2):\n",
+                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
             return None
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
@@ -947,15 +935,11 @@ class LinkFl:
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
-        if self.dbQK is None:
-            fehlermeldung(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                database_QKan), level=QgsMessageBar.CRITICAL)
-            return None
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
-            return None
 
+        if not self.dbQK.connected:
+            logger.error(u"Fehler in linkflaechen.application (3):\n",
+                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
+            return None
 
         # config in Dialog übernehmen
 
@@ -1071,15 +1055,9 @@ class LinkFl:
 
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
-        if self.dbQK is None:
-            fehlermeldung(u"Fehler in LinkFl.run_managegroups",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage(u"Fehler in LinkFl.run_managegroups",
-                                           u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                                               database_QKan), level=QgsMessageBar.CRITICAL)
-            return None
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
+        if not self.dbQK.connected:
+            logger.error(u"Fehler in linkflaechen.application (4):\n",
+                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
             return None
 
         self.showgroups()
@@ -1131,13 +1109,10 @@ class LinkFl:
 
         # Datenbankverbindung für Abfragen
         self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
-        if self.dbQK is None:
-            fehlermeldung(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-            iface.messageBar().pushMessage(u"Fehler in LinkFl.run_assigntgeb", u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-                database_QKan), level=QgsMessageBar.CRITICAL)
-            return False
-        elif not self.dbQK.status:
-            # Datenbank wurde geändert
+
+        if not self.dbQK.connected:
+            logger.error(u"Fehler in linkflaechen.application (5):\n",
+                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
             return None
 
         self.dlg_ul.tf_qkDB.setText(database_QKan)

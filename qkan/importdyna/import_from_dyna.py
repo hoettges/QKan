@@ -48,7 +48,7 @@ import xml.etree.ElementTree as ET
 import logging
 
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fortschritt, fehlermeldung
+from qkan.database.qkan_utils import fortschritt, fehlermeldung, evalNodeTypes
 
 logger = logging.getLogger('QKan')
 
@@ -187,7 +187,7 @@ class rahmen():
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_tabinit, dbtyp = 'SpatiaLite'):
+def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'SpatiaLite'):
 
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -204,9 +204,6 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_tabinit, 
 
     :epsg:                  EPSG-Nummer 
     :type epsg:             String
-
-    :check_tabinit:         Gibt an, ob die QKan-Tabellen zu Beginn geleert werden sollen. 
-    :type check_tabinit:    Boolean
 
     :dbtyp:                 Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:            String
@@ -237,15 +234,9 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_tabinit, 
 
     dbQK = DBConnection(dbname=database_QKan, epsg=epsg)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
-    if dbQK is None:
-        fehlermeldung(u"Fehler in QKan_Import_from_KP", 
-                      u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(database_QKan))
-        iface.messageBar().pushMessage(u"Fehler in QKan_Import_from_KP", 
-                    u'QKan-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format( \
-            database_QKan), level=QgsMessageBar.CRITICAL)
-        return None
-    elif not dbQK.status:
-        # Datenbank wurde geändert
+    if not dbQK.connected:
+        logger.error(u"Fehler in import_from_dyna:\n",
+                      u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
         return None
 
     # # Referenztabellen laden. 
@@ -594,10 +585,10 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_tabinit, 
     # Haltungsdaten
 
     # Tabelle in QKan-Datenbank leeren
-    if check_tabinit:
-        sql = """DELETE FROM haltungen"""
-        if not dbQK.sql(sql, 'importkanaldaten_dyna (6)'):
-            return None
+    # if check_tabinit:
+        # sql = """DELETE FROM haltungen"""
+        # if not dbQK.sql(sql, 'importkanaldaten_dyna (6)'):
+            # return None
 
     # Daten aUS temporären DYNA-Tabellen abfragen
     sql = u'''
@@ -696,10 +687,10 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_tabinit, 
 
 
     # Tabelle in QKan-Datenbank leeren
-    if check_tabinit:
-        sql = u'DELETE FROM schaechte'
-        if not dbQK.sql(sql, 'importkanaldaten_dyna (10)'):
-            return None
+    # if check_tabinit:
+        # sql = u'DELETE FROM schaechte'
+        # if not dbQK.sql(sql, 'importkanaldaten_dyna (10)'):
+            # return None
 
     # Daten aus temporären DYNA-Tabellen abfragen
     sql = u'''
@@ -878,104 +869,9 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_tabinit, 
     dbQK.commit()
 
 
-    # ------------------------------------------------------------------------------
-    # Schachttypen auswerten. Dies geschieht ausschließlich mit SQL-Abfragen
+    # Schachttypen auswerten
+    evalNodeTypes(dbQK)                     # in qkan.database.qkan_utils
 
-    # -- Anfangsschächte: Schächte ohne Haltung oben
-    sql_typAnf = u'''
-        UPDATE schaechte SET knotentyp = 'Anfangsschacht' WHERE schaechte.schnam IN
-        (SELECT t_sch.schnam
-        FROM schaechte as t_sch 
-        LEFT JOIN haltungen as t_hob
-        ON t_sch.schnam = t_hob.schoben
-        LEFT JOIN haltungen as t_hun
-        ON t_sch.schnam = t_hun.schunten
-        WHERE t_hun.pk IS NULL)'''
-
-    # -- Endschächte: Schächte ohne Haltung unten
-    sql_typEnd = u'''
-        UPDATE schaechte SET knotentyp = 'Endschacht' WHERE schaechte.schnam IN
-        (SELECT t_sch.schnam
-        FROM schaechte as t_sch 
-        LEFT JOIN haltungen as t_hob
-        ON t_sch.schnam = t_hob.schunten
-        LEFT JOIN haltungen as t_hun
-        ON t_sch.schnam = t_hun.schoben
-        WHERE t_hun.pk IS NULL)'''
-
-    # -- Hochpunkt: 
-    sql_typHoch = u'''
-        UPDATE schaechte SET knotentyp = 'Hochpunkt' WHERE schaechte.schnam IN
-        ( SELECT t_sch.schnam
-          FROM schaechte AS t_sch 
-          JOIN haltungen AS t_hob
-          ON t_sch.schnam = t_hob.schunten
-          JOIN haltungen AS t_hun
-          ON t_sch.schnam = t_hun.schoben
-          JOIN schaechte AS t_sun
-          ON t_sun.schnam = t_hun.schunten
-          JOIN schaechte AS t_sob
-          ON t_sob.schnam = t_hob.schunten
-          WHERE ifnull(t_hob.sohleunten,t_sch.sohlhoehe)>ifnull(t_hob.sohleoben,t_sob.sohlhoehe) and 
-                ifnull(t_hun.sohleoben,t_sch.sohlhoehe)>ifnull(t_hun.sohleunten,t_sun.sohlhoehe))'''
-
-    # -- Tiefpunkt:
-    sql_typTief = u'''
-        UPDATE schaechte SET knotentyp = 'Tiefpunkt' WHERE schaechte.schnam IN
-        ( SELECT t_sch.schnam
-          FROM schaechte AS t_sch 
-          JOIN haltungen AS t_hob
-          ON t_sch.schnam = t_hob.schunten
-          JOIN haltungen AS t_hun
-          ON t_sch.schnam = t_hun.schoben
-          JOIN schaechte AS t_sun
-          ON t_sun.schnam = t_hun.schunten
-          JOIN schaechte AS t_sob
-          ON t_sob.schnam = t_hob.schunten
-          WHERE ifnull(t_hob.sohleunten,t_sch.sohlhoehe)<ifnull(t_hob.sohleoben,t_sob.sohlhoehe) and 
-                ifnull(t_hun.sohleoben,t_sch.sohlhoehe)<ifnull(t_hun.sohleunten,t_sun.sohlhoehe))'''
-
-    # -- Verzweigung:
-    sql_typZweig = u'''
-        UPDATE schaechte SET knotentyp = 'Verzweigung' WHERE schaechte.schnam IN
-        ( SELECT t_sch.schnam
-          FROM schaechte AS t_sch 
-          JOIN haltungen AS t_hun
-          ON t_sch.schnam = t_hun.schoben
-          GROUP BY t_sch.pk
-          HAVING count(*) > 1)'''
-
-    # -- Einzelschacht:
-    sql_typEinzel = u'''
-        UPDATE schaechte SET knotentyp = 'Einzelschacht' WHERE schaechte.schnam IN
-        ( SELECT t_sch.schnam 
-          FROM schaechte AS t_sch 
-          LEFT JOIN haltungen AS t_hun
-          ON t_sch.schnam = t_hun.schoben
-          LEFT JOIN haltungen AS t_hob
-          ON t_sch.schnam = t_hob.schunten
-          WHERE t_hun.pk IS NULL AND t_hob.pk IS NULL)'''
-
-    if not dbQK.sql(sql_typAnf, u'importkanaldaten_dyna (31)'):
-        return None
-
-    if not dbQK.sql(sql_typEnd, u'importkanaldaten_dyna (32)'):
-        return None
-
-    if not dbQK.sql(sql_typHoch, u'importkanaldaten_dyna (33)'):
-        return None
-
-    if not dbQK.sql(sql_typTief, u'importkanaldaten_dyna (34)'):
-        return None
-
-    if not dbQK.sql(sql_typZweig, u'importkanaldaten_dyna (35)'):
-        return None
-
-    if not dbQK.sql(sql_typEinzel, u'importkanaldaten_dyna (36)'):
-        return None
-
-    dbQK.commit()
-    
 
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten
@@ -1034,7 +930,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_tabinit, 
     # Projektdatei schreiben, falls ausgewählt
 
     if projectfile is not None and projectfile != u'':
-        templatepath = os.path.join(pluginDirectory('qkan'), u"database/templates")
+        templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
         projecttemplate = os.path.join(templatepath, u"projekt.qgs")
         projectpath = os.path.dirname(projectfile)
         if os.path.dirname(database_QKan) == projectpath:
@@ -1156,5 +1052,6 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, check_tabinit, 
     project = QgsProject.instance()
     # project.read(QFileInfo(projectfile))
     project.read(QFileInfo(projectfile))         # read the new project file
-    logger.debug('Geladene Projektdatei: {}'.format(project.fileName()))
+    project.read(QFileInfo(projectfile))         # read the new project file
+    logger.debug(u'Geladene Projektdatei: {}'.format(project.fileName()))
 
