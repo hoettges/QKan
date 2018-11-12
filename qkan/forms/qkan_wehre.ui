@@ -471,14 +471,15 @@
   <tabstop>schoben</tabstop>
   <tabstop>schunten</tabstop>
   <tabstop>wehrtyp</tabstop>
-  <tabstop>schwellenhoehe</tabstop>
-  <tabstop>kammerhoehe</tabstop>
-  <tabstop>laenge</tabstop>
-  <tabstop>uebeiwert</tabstop>
   <tabstop>aussenwsp</tabstop>
+  <tabstop>schwellenhoehe</tabstop>
   <tabstop>schieberhanf</tabstop>
+  <tabstop>kammerhoehe</tabstop>
   <tabstop>schiebergeschw</tabstop>
+  <tabstop>laenge</tabstop>
   <tabstop>aussentyp</tabstop>
+  <tabstop>uebeiwert</tabstop>
+  <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>

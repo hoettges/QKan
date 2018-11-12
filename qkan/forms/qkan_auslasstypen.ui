@@ -160,6 +160,12 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>bezeichnung</tabstop>
+  <tabstop>he_nr</tabstop>
+  <tabstop>mu_nr</tabstop>
+  <tabstop>kp_nr</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

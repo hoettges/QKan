@@ -550,14 +550,15 @@
   <tabstop>gebnam</tabstop>
   <tabstop>schnam</tabstop>
   <tabstop>regenschreiber</tabstop>
+  <tabstop>teilgebiet</tabstop>
+  <tabstop>createdat</tabstop>
   <tabstop>hoeheob</tabstop>
   <tabstop>hoeheun</tabstop>
   <tabstop>fliessweg</tabstop>
   <tabstop>basisabfluss</tabstop>
   <tabstop>cn</tabstop>
-  <tabstop>teilgebiet</tabstop>
+  <tabstop>flaeche</tabstop>
   <tabstop>kommentar</tabstop>
-  <tabstop>createdat</tabstop>
  </tabstops>
  <resources/>
  <connections/>

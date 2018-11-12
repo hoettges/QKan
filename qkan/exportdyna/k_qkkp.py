@@ -123,7 +123,8 @@ def fneigkl(neigung):
 
 
 # Funktionen zum Schreiben der DYNA-Daten. Werden aus exportKanaldaten aufgerufen 
-def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice, dynabef_choice, 
+def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidung, 
+            dynaprof_choice, dynabef_choice, 
              dynaprof_nam, dynaprof_key, ausw_and, auswahl):
     '''Schreiben der DYNA-Typ12-Datenzeilen
 
@@ -141,6 +142,9 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
 
     :mindestflaeche:        Mindestflächengröße, ab der Flächenobjekte berücksichtigt werden   
     :type dbQK:             Float
+
+    :mit_verschneidung:     Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
+    :type mit_verschneidung: Boolean
 
     :dynaprof_choice:       Option, wie die Zuordnung der Querprofile aus QKan zu den in der DYNA-Datei 
                             vorhandenen erfolgt: Über den gemeinsamen Profilnamen oder den gemeinsamen Profilkey
@@ -180,6 +184,16 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
     else:
         logger.error(u'Fehler in k_qkkp.write12: Unbekannte Option in dynaprof_choice: {}'.format(dynaprof_choice))
 
+    # Verschneidung nur, wenn (mit_verschneidung)
+    if mit_verschneidung:
+        case_verschneidung = "fl.aufteilen IS NULL or fl.aufteilen <> 'ja'"
+        join_verschneidung = """
+            LEFT JOIN tezg AS tg
+            ON lf.tezgnam = tg.flnam"""
+    else:
+        case_verschneidung = "1"
+        join_verschneidung = ""
+
     # wdistbef ist die mit der (Teil-) Fläche gewichtete Fließlänge zur Haltung für die befestigten Flächen zu 
     # einer Haltung, 
     # wdistdur entsprechend für die durchlässigen Flächen. 
@@ -196,15 +210,17 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                     END AS neigung, 
                 fl.abflussparameter AS abflussparameter, 
                 area(tg.geom) AS fltezg,
-                CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                CASE WHEN {case_verschneidung} THEN fl.geom 
+                ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
             FROM linkfl AS lf
             INNER JOIN flaechen AS fl
-            ON lf.flnam = fl.flnam
+            ON lf.flnam = fl.flnam{join_verschneidung}),
             LEFT JOIN tezg AS tg
             ON lf.tezgnam = tg.flnam),
         halflaech AS (
             SELECT
                 fi.haltnam AS haltnam, 
+                coalesce(ap.endabflussbeiwert, 1.0) AS abflussbeiwert, 
                 sum(CASE ap.bodenklasse IS NULL 
                     WHEN 1 THEN area(fi.geom)/10000.
                     ELSE 0 END) AS flbef,
@@ -222,7 +238,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
                 distance(fi.geom,h.geom) AS disttezg, 
                 sum(neigung*area(fi.geom)/10000.) AS wneigung
             FROM flintersect AS fi
-            INNER JOIN abflussparameter AS ap
+            LEFT JOIN abflussparameter AS ap
             ON fi.abflussparameter = ap.apnam
             INNER JOIN haltungen AS h 
             ON fi.haltnam = h.haltnam
@@ -244,7 +260,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
             {sql_prof1}, 
             h.hoehe*1000. AS profilhoehe, 
             h.ks AS ks, 
-            f.flbef AS flbef, 
+            f.flbef*abflussbeiwert AS flbef, 
             f.flges AS flges,
             f.wdistbef/(f.flbef + 0.00000001) AS distbef,
             f.wdistdur/(f.fldur + 0.00000001) AS distdur,
@@ -274,7 +290,9 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice,
         ON e.haltnam = h.haltnam
         LEFT JOIN entwaesserungsarten AS a
         ON h.entwart = a.bezeichnung
-    """.format(mindestflaeche=mindestflaeche, ausw_and=ausw_and, auswahl=auswahl, sql_prof1=sql_prof1, sql_prof2=sql_prof2)
+    """.format(mindestflaeche=mindestflaeche, ausw_and=ausw_and, auswahl=auswahl, 
+                sql_prof1=sql_prof1, sql_prof2=sql_prof2, 
+                case_verschneidung=case_verschneidung, join_verschneidung=join_verschneidung)
 
     if not dbQK.sql(sql, u'dbQK: k_qkkp.write12 (1)'):
         return False
@@ -632,8 +650,9 @@ def write41(dbQK, df, ausw_and, auswahl):
 
 
 # Hauptfunktion ----------------------------------------------------------------------------
-def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynaprof_choice, liste_teilgebiete, autokorrektur, 
-                     autonum_dyna, fangradius=0.1, mindestflaeche=0.5, max_loops=1000, datenbanktyp=u'spatialite'):
+def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynaprof_choice, 
+                    liste_teilgebiete, profile_ergaenzen, autonum_dyna, mit_verschneidung, 
+                    fangradius=0.1, mindestflaeche=0.5, max_loops=1000, datenbanktyp=u'spatialite'):
     '''Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE-Firebird-Datenbank.
 
     :dynafile:              Zu Schreibende DYNA-Datei; kann mit Vorlagedatei identisch sein
@@ -648,13 +667,13 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
     :liste_teilgebiete:     Liste der ausgewählten Teilgebiete
     :type liste_teilgebiete: String
 
-    :autokorrektur:         Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
+    :profile_ergaenzen:     Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
                             werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
                             abgebrochen.
-    :autonum_dyna:          Sollen die Haltungen in der DYNA-Zusatztabelle nummeriert werden?
-    :boolean:
+    :type profile_ergaenzen: Boolean
 
-    :type autokorrektur:    String
+    :autonum_dyna:          Sollen die Haltungen in der DYNA-Zusatztabelle nummeriert werden?
+    :type autonum_dyna:     Boolean
 
     :fangradius:            Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine 
                             Haltung bzw. ein Einleitpunkt zugeordnet wird. 
@@ -1035,7 +1054,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 meldung(u'Fehlende Profildaten in DYNA-Vorlagedatei {fn}'.format(fn=template_dyna), 
                     u'{pn}'.format(pn=profil_new))
                 logger.debug(u'k_qkkp.exportKanaldaten (1): dynaprof_nam = {}'.format(', '.join(dynaprof_nam)))
-                if autokorrektur:
+                if profile_ergaenzen:
                     sql = """INSERT INTO profile (profilnam)
                             VALUES ('{pn}')""".format(pn=profil_new)
                     if not dbQK.sql(sql, u'dbQK: k_qkkp.exportKanaldaten (1)'):
@@ -1066,7 +1085,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 meldung(u'Fehlende Profildaten in DYNA-Vorlagedatei {fn}'.format(fn=template_dyna), 
                     u'{id}'.format(id=profil_key))
                 logger.debug(u'dynaprof_key = {}'.format(', '.join(dynaprof_key)))
-                if autokorrektur:
+                if profile_ergaenzen:
                     sql = """INSERT INTO profile (profilnam, kp_key)
                             VALUES ('{pn}', '{id}')""".format(pn=profilnam, id=profil_key)
                     if not dbQK.sql(sql, u'dbQK: k_qkkp.exportKanaldaten (1)'):
@@ -1126,8 +1145,9 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 if z[:2] == '++':
                     # Sobald nächster Block erreicht, ist Typ12 beendet
                     # Jetzt werden alle neuen Typ-12-Datensätze geschrieben
-                    if not write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, dynaprof_choice, 
-                                    dynabef_choice, dynaprof_nam, dynaprof_key, ausw_and, auswahl):
+                    if not write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidung, 
+                                    dynaprof_choice, dynabef_choice, dynaprof_nam, dynaprof_key, 
+                                    ausw_and, auswahl):
                         return False
                     typ12 = False
                     df.write(z)
