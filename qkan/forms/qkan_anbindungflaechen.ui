@@ -429,6 +429,17 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>flnam</tabstop>
+  <tabstop>haltnam</tabstop>
+  <tabstop>tezgnam</tabstop>
+  <tabstop>teilgebiet</tabstop>
+  <tabstop>abflusstyp</tabstop>
+  <tabstop>speicherzahl</tabstop>
+  <tabstop>speicherkonst</tabstop>
+  <tabstop>fliesszeitflaeche</tabstop>
+  <tabstop>fliesszeitkanal</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

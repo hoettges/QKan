@@ -83,7 +83,7 @@
    </widget>
    <widget class="QLineEdit" name="he_nr">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -131,7 +131,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="kp_nr">
+   <widget class="QLineEdit" name="kp_key">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -164,7 +164,7 @@
   <tabstop>profilnam</tabstop>
   <tabstop>he_nr</tabstop>
   <tabstop>mu_nr</tabstop>
-  <tabstop>kp_nr</tabstop>
+  <tabstop>kp_key</tabstop>
  </tabstops>
  <resources/>
  <connections/>

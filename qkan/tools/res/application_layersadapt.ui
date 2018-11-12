@@ -149,10 +149,10 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektionssystem für gewählte Layer anpassen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektdatei nach der Bearbeitung speichern&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Projektionssystem für gewählte Layer anpassen</string>
+     <string>Projektdatei nach der Bearbeitung speichern</string>
     </property>
     <property name="text">
      <string>Erzeugte Projektdatei speichern</string>
@@ -197,10 +197,10 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>nur Layer mit bereits geladenen QKan-Tabellen anpassen</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;nur aktivierte Layer berücksichtigen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>nur Layer mit bereits geladenen QKan-Tabellen anpassen</string>
+     <string>nur aktivierte Layer berücksichtigen</string>
     </property>
     <property name="text">
      <string>ausgewählte anpassen</string>
@@ -224,10 +224,10 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>nur Layer mit bereits geladenen QKan-Tabellen anpassen</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;alle QKan-Layer bearbeiten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>nur Layer mit bereits geladenen QKan-Tabellen anpassen</string>
+     <string>alle QKan-Layer bearbeiten</string>
     </property>
     <property name="text">
      <string>alle anpassen</string>
@@ -250,10 +250,10 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektionssystem für gewählte Layer anpassen. Bei aktiver Datenbankanbindung immer aktiv!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fehlende QKan-Layer entsprechend dem oben gewählten QKan-Standard hinzuladen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Projektionssystem für gewählte Layer anpassen. Bei aktiver Datenbankanbindung immer aktiv!</string>
+     <string>Fehlende QKan-Layer entsprechend dem oben gewählten QKan-Standard hinzuladen</string>
     </property>
     <property name="text">
      <string>Fehlende QKan-Layer
@@ -440,10 +440,10 @@ hinzuladen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Thematische Darstellungen für die gewählten QKan-Layern gemäß Vorlage ergänzen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nach der Bearbeitung wird der Zoom-Maßstab auf alle geladenen Inhalte angepasst&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Thematische Darstellungen für die gewählten QKan-Layern gemäß Vorlage ergänzen</string>
+     <string>Nach der Bearbeitung wird der Zoom-Maßstab auf alle geladenen Inhalte angepasst</string>
     </property>
     <property name="text">
      <string>Zoom auf alle Layer</string>

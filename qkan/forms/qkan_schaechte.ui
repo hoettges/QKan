@@ -521,16 +521,19 @@
  </customwidgets>
  <tabstops>
   <tabstop>schnam</tabstop>
+  <tabstop>schachttyp</tabstop>
   <tabstop>sohlhoehe</tabstop>
   <tabstop>deckelhoehe</tabstop>
   <tabstop>xsch</tabstop>
   <tabstop>ysch</tabstop>
   <tabstop>durchm</tabstop>
-  <tabstop>simstatus</tabstop>
+  <tabstop>ueberstauflaeche</tabstop>
   <tabstop>entwart</tabstop>
+  <tabstop>teilgebiet</tabstop>
+  <tabstop>simstatus</tabstop>
   <tabstop>strasse</tabstop>
   <tabstop>druckdicht</tabstop>
-  <tabstop>ueberstauflaeche</tabstop>
+  <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>

@@ -635,6 +635,13 @@ class LinkFl:
             linksw_in_tezg = True
         self.dlg_cl.cb_linkswInTezg.setChecked(linksw_in_tezg)
 
+        # Haltungsflächen (tezg) berücksichtigen
+        if 'mit_verschneidung' in self.config:
+            mit_verschneidung = self.config['mit_verschneidung']
+        else:
+            mit_verschneidung = True
+        self.dlg_cl.cb_regardTezg.setChecked(mit_verschneidung)
+
         # Suchradius
         if 'suchradius' in self.config:
             suchradius = self.config['suchradius']
@@ -699,6 +706,7 @@ class LinkFl:
 
             autokorrektur = self.dlg_cl.cb_autokorrektur.isChecked()
             linksw_in_tezg = self.dlg_cl.cb_linkswInTezg.isChecked()
+            mit_verschneidung = self.dlg_cl.cb_regardTezg.isChecked()
 
                 # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
                 # iface.messageBar().pushMessage(u"Bedienerfehler: ", 
@@ -718,6 +726,7 @@ class LinkFl:
             self.config['epsg'] = epsg
             self.config['autokorrektur'] = autokorrektur
             self.config['linksw_in_tezg'] = linksw_in_tezg
+            self.config['mit_verschneidung'] = mit_verschneidung
 
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
@@ -725,8 +734,8 @@ class LinkFl:
             # Start der Verarbeitung
 
             createlinkfl(self.dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                        liste_teilgebiete, linksw_in_tezg, autokorrektur, suchradius, 
-                        mindestflaeche, fangradius, bezug_abstand, epsg)
+                        liste_teilgebiete, linksw_in_tezg, mit_verschneidung, autokorrektur, 
+                        suchradius, mindestflaeche, fangradius, bezug_abstand, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()

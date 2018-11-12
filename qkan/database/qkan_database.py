@@ -23,7 +23,7 @@ __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
 __dbVersion__ = '2.5.9'                         # Version der QKan-Datenbank
-__qgsVersion__  = '2.5.11'                       # Version des Projektes und der Projektdatei. Kann 
+__qgsVersion__  = '2.5.12'                       # Version des Projektes und der Projektdatei. Kann 
                                                 # höher als die der QKan-Datenbank sein
 
 # This will get replaced with a git SHA1 when you do a git archive
@@ -34,10 +34,10 @@ import logging
 import os
 
 import pyspatialite.dbapi2 as splite
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsProject
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
-from qkan_utils import fortschritt, fehlermeldung
+from qkan_utils import fortschritt, fehlermeldung, meldung
 
 logger = logging.getLogger(u'QKan')
 
@@ -71,18 +71,21 @@ def versionolder(versliste, verslisref, depth=3):
             return False
     return False
 
-def qgsActualVersion(warning = False):
-    '''Prüft die Version des aktiven Projektes
+def qgsActualVersion(update = True, warning = False):
+    '''Prüft die Version des aktiven Projektes und aktualisiert die Layer gegebenenfalls
 
-    :returns:               Boolean
+    :param warning: Aktiviert Warnung in QGIS-Meldungsleiste
+    :type warning:  Boolean
+
+    :returns:       Boolean
     
     Prüft im Vergleich zur Version der QKan-Datenbank, ob das geladene Projekt die gleiche oder höhere
     Versionsnummer aufweist.
     '''
 
     layers = iface.legendInterface().layers()
-    logger.error(u'qkan_database.qgsActualVersion: Keine Layer vorhanden...')
     if len(layers) == 0 and not silent:
+        logger.error(u'qkan_database.qgsActualVersion: Keine Layer vorhanden...')
         meldung(u"Fehler: ", u"Kein QKan-Projekt geladen!")
         return False
         
@@ -92,15 +95,33 @@ def qgsActualVersion(warning = False):
             meldung(u"Benutzerfehler: ", u"Es ist kein Projekt geladen")
         else:
             actQgsVersion = '2.5.3'                     # davor wurde die Version der Projektdatei noch nicht verwaltet.
-    actQkanVersion = dbVersion()
+    curQgsVersion = qgsVersion()
     actQgsVersionLis = [int(el.replace('a','').replace('b','').replace('c','')) for el in actQgsVersion.split('.')]
-    actQkanVersionLis = [int(el.replace('a','').replace('b','').replace('c','')) for el in actQkanVersion.split('.')]
+    curQgsVersionLis = [int(el.replace('a','').replace('b','').replace('c','')) for el in curQgsVersion.split('.')]
 
-    isActual = not versionolder(actQgsVersionLis, actQkanVersionLis)
-    if isActual and warning:
-        meldung(u"Warnung: ", u"Das geladene Projekt entspricht nicht der aktuellen Version. ")
+    logger.debug('actQgsVersion: {}'.format(actQgsVersion))
+    logger.debug('curQgsVersion: {}'.format(curQgsVersion))
+
+    isActual = not versionolder(actQgsVersionLis, curQgsVersionLis)
+    if (not isActual):
+        if warning:
+            meldung(u"Warnung: ", u"Das geladene Projekt entspricht nicht der aktuellen Version. ")
+        if update:
+
+            # Bis Version 2.5.11
+            if versionolder(actQgsVersionLis, [2, 5, 12]):
+                wlayers = [la for la in layers if la.name() == 'Abflussparameter']
+                if len(wlayers) != 1:
+                    fehlermeldung(u"Fehler in Layerliste", u'Es gibt mehr als einen Layer "Abflussparameter"')
+                    return False
+                wlayer = wlayers[0]
+                logger.debug('vorher: wlayer.name(): {}'.format(wlayer.name()))
+                wlayer.setLayerName('Abflussparameter HE')
+                logger.debug('nachher: wlayer.name(): {}'.format(wlayer.name()))
+
+            isActual = True
     return isActual
-        
+
 
 # Erzeuge QKan-Tabellen
 

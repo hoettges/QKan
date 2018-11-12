@@ -98,6 +98,11 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>elnam</tabstop>
+  <tabstop>haltnam</tabstop>
+  <tabstop>teilgebiet</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

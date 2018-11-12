@@ -393,11 +393,11 @@ class ExportToKP:
 
         # Autokorrektur
 
-        if 'autokorrektur' in self.config:
-            autokorrektur = self.config['autokorrektur']
+        if 'profile_ergaenzen' in self.config:
+            profile_ergaenzen = self.config['profile_ergaenzen']
         else:
-            autokorrektur = True
-        self.dlg.cb_autokorrektur.setChecked(autokorrektur)
+            profile_ergaenzen = True
+        self.dlg.cb_profile_ergaenzen.setChecked(profile_ergaenzen)
 
         if 'autonummerierung_dyna' in self.config:
             autonummerierung_dyna = self.config['autonummerierung_dyna']
@@ -411,6 +411,13 @@ class ExportToKP:
             fangradius = self.config['fangradius']
         else:
             fangradius = u'0.1'
+
+        # Haltungsflächen (tezg) berücksichtigen
+        if 'mit_verschneidung' in self.config:
+            mit_verschneidung = self.config['mit_verschneidung']
+        else:
+            mit_verschneidung = True
+        self.dlg.cb_regardTezg.setChecked(mit_verschneidung)
 
         # Mindestflächengröße
         # Kann über Menü "Optionen" eingegeben werden
@@ -463,8 +470,9 @@ class ExportToKP:
             database_QKan = self.dlg.tf_QKanDB.text()
             dynafile = self.dlg.tf_KP_dest.text()
             template_dyna = self.dlg.tf_KP_template.text()
-            autokorrektur = self.dlg.cb_autokorrektur.isChecked()
+            profile_ergaenzen = self.dlg.cb_profile_ergaenzen.isChecked()
             autonummerierung_dyna = self.dlg.cb_autonummerierung_dyna.isChecked()
+            mit_verschneidung = self.dlg.cb_regardTezg.isChecked()
             if self.dlg.rb_flaechen.isChecked():
                 dynabef_choice = u'flaechen'
             elif self.dlg.rb_tezg.isChecked():
@@ -486,10 +494,11 @@ class ExportToKP:
             self.config['template_dyna'] = template_dyna
             self.config['database_QKan'] = database_QKan
             self.config['liste_teilgebiete'] = liste_teilgebiete
-            self.config['autokorrektur'] = autokorrektur
+            self.config['profile_ergaenzen'] = profile_ergaenzen
             self.config['autonummerierung_dyna'] = autonummerierung_dyna
             self.config['fangradius'] = fangradius
             self.config['mindestflaeche'] = mindestflaeche
+            self.config['mit_verschneidung'] = mit_verschneidung
             self.config['max_loops'] = max_loops
             self.config['dynabef_choice'] = dynabef_choice
             self.config['dynaprof_choice'] = dynaprof_choice
@@ -499,5 +508,5 @@ class ExportToKP:
                 fileconfig.write(json.dumps(self.config))
 
             exportKanaldaten(iface, dynafile, template_dyna, self.dbQK, dynabef_choice, dynaprof_choice, 
-                             liste_teilgebiete, autokorrektur, autonummerierung_dyna, fangradius, 
-                             mindestflaeche, max_loops, datenbanktyp)
+                             liste_teilgebiete, profile_ergaenzen, autonummerierung_dyna, mit_verschneidung, 
+                             fangradius, mindestflaeche, max_loops, datenbanktyp)

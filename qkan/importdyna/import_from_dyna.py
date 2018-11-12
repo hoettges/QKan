@@ -36,7 +36,8 @@ import os, time, sys
 
 import glob, shutil
 
-from qgis.core import QgsFeature, QgsGeometry, QgsMessageLog, QgsProject, QgsCoordinateReferenceSystem
+from qgis.core import (QgsFeature, QgsGeometry, QgsMessageLog, QgsProject, 
+                        QgsCoordinateReferenceSystem, QgsMapLayerRegistry)
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QFileInfo
 from PyQt4.QtGui import QAction, QIcon
 
@@ -1000,6 +1001,12 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
 
         # Zoom für Kartenfenster einstellen -------------------------------------------------------
 
+        if type(xmin) != type(0) and type(xmin) != type(0.0):
+            xmin = 0.
+            xmax = 100.
+            ymin = 0.
+            ymax = 100.
+
         for tag_extent in root.findall(u".//mapcanvas/extent"):
             elem = tag_extent.find(u"./xmin")
             elem.text = u'{:.3f}'.format(zoomxmin)
@@ -1052,6 +1059,5 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
     project = QgsProject.instance()
     # project.read(QFileInfo(projectfile))
     project.read(QFileInfo(projectfile))         # read the new project file
-    project.read(QFileInfo(projectfile))         # read the new project file
-    logger.debug(u'Geladene Projektdatei: {}'.format(project.fileName()))
+    QgsMapLayerRegistry.instance().reloadAllLayers()
 

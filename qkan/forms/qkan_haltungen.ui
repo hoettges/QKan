@@ -537,18 +537,19 @@
  <tabstops>
   <tabstop>haltnam</tabstop>
   <tabstop>schoben</tabstop>
+  <tabstop>sohleoben</tabstop>
   <tabstop>schunten</tabstop>
+  <tabstop>sohleunten</tabstop>
   <tabstop>profilnam</tabstop>
   <tabstop>hoehe</tabstop>
   <tabstop>breite</tabstop>
   <tabstop>laenge</tabstop>
+  <tabstop>ks</tabstop>
   <tabstop>entwart</tabstop>
   <tabstop>teilgebiet</tabstop>
   <tabstop>simstatus</tabstop>
-  <tabstop>ks</tabstop>
+  <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>
-  <tabstop>sohleoben</tabstop>
-  <tabstop>sohleunten</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -27,8 +27,8 @@
     <script type="text/javascript" src="_static/translations.js"></script>
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
     <link rel="search" title="Suche" href="search.html" />
-    <link rel="next" title="3. QKan - Step by Step Installation" href="Qkan_aufsetzen.html" />
-    <link rel="prev" title="QKan - Kanaldaten aufbereiten mit QGIS" href="index.html" />
+    <link rel="next" title="3. QKan-Formulare" href="Qkan_Formulare.html" />
+    <link rel="prev" title="1. Allgemeine Funktionen" href="Qkan_Videoanleitungen.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -64,9 +64,12 @@ zur automatischen Verknüpfung und zur Plausibilitäskontrolle.</p>
 <div class="section" id="grundprinzip">
 <h2>1.2. Grundprinzip<a class="headerlink" href="#grundprinzip" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Die abflusswirksamen Flächen werden mittels Linien mit den Haltungen verbunden, die von einem Punkt innerhalb
-der jeweiligen Fläche zur Haltung führen und im Layer &#8220;Anbindungen Flächen&#8221; (QKan-Tabelle &#8220;linkfl&#8221;) gespeichert werden.
-Maßgebend für die Zuordnung der abflusswirksamen Flächen sind diese Verbindungslinien sowie die Haltungsflächen
-im Layer &#8220;Haltungsflächen&#8221; (QKan-Tabelle &#8220;tezg&#8221;).</p>
+der jeweiligen Fläche zur Haltung führen und im Layer &#8220;Anbindungen Flächen&#8221; (QKan-Tabelle &#8220;linkfl&#8221;) gespeichert werden.</p>
+<p>Weiterhin können bei der Flächenverarbeitung sogenannte Haltungsflächen (QKan-Tabelle &#8220;tezg&#8221;) berücksichtigt
+werden, die entweder anhand der Geometrie und gegebenenfalls unter Berücksichtigung des Geländegefälles
+konstruiert oder aus Flurstücken erzeugt worden sind. Damit ist es möglich, große Flächen (z. B.
+grosse Gebäude), die sich über mehrere Flurstücke erstrecken, automatisch aufzuteilen. Außerdem können
+automatisch unbefestigte Flächen aus den freien Flächen zwischen den befestigten Flächen erzeugt werden.</p>
 <p>Es wird unterschieden zwischen Flächen, die als ganzes zugeordnet werden und großen Flächen, die sich über
 mehrere Haltungsflächen erstrecken und deshalb aufgeteilt
 werden müssen. Für diese muss der Anwender in der Tabelle &#8220;flaechen&#8221; das Attribut &#8220;aufteilen&#8221; aktivieren bzw. &#8220;ja&#8221;
@@ -166,8 +169,8 @@ Beschleunigung bei der Verarbeitung bewirken.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="vorheriges Kapitel">QKan - Kanaldaten aufbereiten mit QGIS</a></li>
-      <li>Next: <a href="Qkan_aufsetzen.html" title="nächstes Kapitel">3. QKan - Step by Step Installation</a></li>
+      <li>Previous: <a href="Qkan_Videoanleitungen.html" title="vorheriges Kapitel">1. Allgemeine Funktionen</a></li>
+      <li>Next: <a href="Qkan_Formulare.html" title="nächstes Kapitel">3. QKan-Formulare</a></li>
   </ul></li>
 </ul>
 </div>

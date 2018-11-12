@@ -29,8 +29,12 @@ Grundprinzip
 
 Die abflusswirksamen Flächen werden mittels Linien mit den Haltungen verbunden, die von einem Punkt innerhalb 
 der jeweiligen Fläche zur Haltung führen und im Layer "Anbindungen Flächen" (QKan-Tabelle "linkfl") gespeichert werden. 
-Maßgebend für die Zuordnung der abflusswirksamen Flächen sind diese Verbindungslinien sowie die Haltungsflächen 
-im Layer "Haltungsflächen" (QKan-Tabelle "tezg"). 
+
+Weiterhin können bei der Flächenverarbeitung sogenannte Haltungsflächen (QKan-Tabelle "tezg") berücksichtigt 
+werden, die entweder anhand der Geometrie und gegebenenfalls unter Berücksichtigung des Geländegefälles 
+konstruiert oder aus Flurstücken erzeugt worden sind. Damit ist es möglich, große Flächen (z. B. 
+grosse Gebäude), die sich über mehrere Flurstücke erstrecken, automatisch aufzuteilen. Außerdem können 
+automatisch unbefestigte Flächen aus den freien Flächen zwischen den befestigten Flächen erzeugt werden. 
 
 Es wird unterschieden zwischen Flächen, die als ganzes zugeordnet werden und großen Flächen, die sich über 
 mehrere Haltungsflächen erstrecken und deshalb aufgeteilt 

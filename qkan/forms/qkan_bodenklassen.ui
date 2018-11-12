@@ -375,6 +375,7 @@
   <tabstop>rueckgangskonstante</tabstop>
   <tabstop>regenerationskonstante</tabstop>
   <tabstop>saettigungswassergehalt</tabstop>
+  <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>
