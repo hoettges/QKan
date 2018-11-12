@@ -239,6 +239,8 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
 
     logger.debug(u'k_layersadapt (9), selectedLayerNames: {}'.format(selectedLayerNames))
 
+    layerNotQkanMeldung = False             # Am Schluss erscheint ggfs. eine Meldung, dass Nicht-QKan-Layer gefunden wurden.
+
     for layername in selectedLayerNames:
         if layername not in layerList:
             logger.info(u'Projektlayer {} ist in QKan-Template nicht enthalten'.format(layername))
@@ -260,8 +262,8 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
             del dbQK
             return None
         elif len(qgsLayers) == 0:
-            meldung(u'DateifFehler!', 
-                u'In der Vorlage-Projektdatei wurden kein Layer {} gefunden'.format(layername))
+            layerNotQkanMeldung = True
+            logger.info(u'In der Vorlage-Projektdatei wurden kein Layer {} gefunden'.format(layername))
             continue                        # Layer ist in Projekt-Templatenicht vorhanden...
 
         if anpassen_Datenbankanbindung:
@@ -358,6 +360,8 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
 
         logger.debug(u'k_layersadapt (6)')
     logger.debug(u'k_layersadapt (7)')
+    if layerNotQkanMeldung:
+        meldung(u'Information zu den Layern', u'Es wurden Layer gefunden, die nicht zum QKan-Standard gehörten. Eine Liste steht in der LOG-Datei...')
 
     if aktualisieren_Schachttypen:
         # Schachttypen auswerten
