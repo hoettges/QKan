@@ -47,7 +47,7 @@ from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (fortschritt, meldung, fehlermeldung, warnung, 
     get_qkanlayerAttributes, isQkanLayer, listQkanLayers, evalNodeTypes)
 
-from qkan.database.qkan_database import dbVersion, qgsVersion
+from qkan.database.qkan_database import dbVersion, qgsVersion, qgsActualVersion
 
 logger = logging.getLogger(u'QKan')
 
@@ -110,6 +110,9 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     # Dabei wird trotzdem geprüft, ob es sich um einen QKan-Layer handelt; es könnte sich ja um eine 
     # vom Benutzer angepasste Vorlage handeln. 
 
+    # Layernamen auf aktuellen Stand bringen
+    qgsActualVersion()
+
     # Dictionary aller Layer für legendInterface
     allLayers = iface.legendInterface().layers()
     if len(allLayers) == 0:
@@ -148,7 +151,7 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
             # tw.repaint()
             # project = QgsProject.instance()
             # project.clear()
-            
+        meldung(u'Update der Datenbank erfolgreich!',  u'Bitte aktualisieren Sie alle entsprechenden Projekte!')
         return None
 
     actversion = dbQK.actversion

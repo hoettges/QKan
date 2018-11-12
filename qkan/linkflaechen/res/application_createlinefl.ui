@@ -586,10 +586,10 @@ berücksichtigen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string extracomment="Es wird jeweils die geringste Entfernung zwischen Haltung und Zentroid der Fläche  berücksichtigt"/>
+     <string extracomment="Es wird jeweils die geringste Entfernung zwischen Haltung und Zentroid der Fläche  berücksichtigt">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Abstand zwischen Mitte der Fläche und Haltung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string extracomment="Es wird jeweils die geringste Entfernung zwischen Haltung und Zentroid der Fläche  berücksichtigt"/>
+     <string extracomment="Es wird jeweils die geringste Entfernung zwischen Haltung und Zentroid der Fläche  berücksichtigt">Abstand zwischen Mitte der Fläche und Haltung</string>
     </property>
     <property name="text">
      <string>Abstand zum Mittelpunkt</string>
@@ -612,10 +612,10 @@ berücksichtigen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string extracomment="Es wird jeweils die geringste Entfernung zwischen Haltung und Umrisslinie berücksichtigt"/>
+     <string extracomment="Es wird jeweils die geringste Entfernung zwischen Haltung und Umrisslinie berücksichtigt">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Der Abstand wird von der Kante der Fläche aus ermittelt, die der Haltung am nächsten ist&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden Haltungen"/>
+     <string extracomment="Anzahl der abhängig von den Filteroptionen zu berücksichtigenden Haltungen">Der Abstand wird von der Kante der Fläche aus ermittelt, die der Haltung am nächsten ist</string>
     </property>
     <property name="text">
      <string>Abstand zur nächsten Kante</string>
@@ -626,8 +626,8 @@ berücksichtigen</string>
      <rect>
       <x>350</x>
       <y>40</y>
-      <width>361</width>
-      <height>31</height>
+      <width>360</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="font">
@@ -655,8 +655,8 @@ berücksichtigen</string>
      <rect>
       <x>350</x>
       <y>20</y>
-      <width>361</width>
-      <height>31</height>
+      <width>360</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="font">
@@ -667,16 +667,45 @@ berücksichtigen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;1. Falls in den Tabellen &amp;quot;flaechen&amp;quot; und &amp;quot;einleitsw&amp;quot; leere oder doppelte Namen (flnam bzw. elnam) vorkommen, werden diese mit &amp;quot;f_nnnn&amp;quot; bzw. &amp;quot;e_nnnn&amp;quot; überschrieben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Verbindungslinien berücksichtigen nur Haltungen innerhalb derselben Haltungsfläche&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Automatische Korrektur von Namensfehlern in den Tabellen &quot;flaechen&quot; und &quot;einleitsw&quot;</string>
+     <string>Verbindungslinien berücksichtigen nur Haltungen innerhalb derselben Haltungsfläche</string>
     </property>
     <property name="layoutDirection">
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="text">
      <string>Verbindungen nur innerhalb Haltungsfläche (tezg) erstellen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_regardTezg">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>80</y>
+      <width>231</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Berücksichtigung von Haltungsflächen: Die Verbindungslinien werden zu jeder Teilfläche angelegt, die sich aus der Verschneidung der Flächen und der Haltungsflächen ergeben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Verbindungslinien werden nach Verschneidung der Flächen mit den Haltungsflächen erstellt</string>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>Mit Haltungsflächen verschneiden</string>
     </property>
    </widget>
   </widget>

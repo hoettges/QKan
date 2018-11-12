@@ -50,8 +50,8 @@ progress_bar = None
 # Erzeugung der graphischen Verknüpfungen für Flächen
 
 def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                liste_teilgebiete, linksw_in_tezg=False, autokorrektur=True, suchradius=50, 
-                mindestflaeche=0.5, fangradius=0.1, bezug_abstand=u'kante', 
+                liste_teilgebiete, linksw_in_tezg=False, mit_verschneidung=False, autokorrektur=True, 
+                suchradius=50, mindestflaeche=0.5, fangradius=0.1, bezug_abstand=u'kante', 
                 epsg=u'25832', dbtyp=u'SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -66,6 +66,15 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     :liste_teilgebiete: Liste der ausgewählten Teilgebiete
     :type liste_teilgebiete: list of String
+
+    :linksw_in_tezg: Verbindungslinien nur innerhalb der selben Haltungsfläche
+    :type linksw_in_tezg: Boolean
+
+    :mit_verschneidung: Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
+    :type mit_verschneidung: Boolean
+
+    :autokorrektur: Vor der Bearbeitung werden automatische einheitliche Flächenbezeichnungen vergeben
+    :type autokorrektur: Boolean
 
     :suchradius: Suchradius in der SQL-Abfrage
     :type suchradius: Real
@@ -164,7 +173,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         # progress_bar.reset()
         # return False
 
-    sql = u"""WITH linkadd AS (
+    if mit_verschneidung:
+        sql = u"""WITH linkadd AS (
                 SELECT
                     linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
                     flaechen.geom
@@ -188,6 +198,20 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                     and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_teil})
             INSERT INTO linkfl (flnam, tezgnam, geom)
             SELECT flnam, tezgnam, geom
+            FROM linkadd
+            WHERE lpk IS NULL AND geom > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
+    else:
+        sql = u"""WITH linkadd AS (
+                SELECT
+                    linkfl.pk AS lpk, flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
+                    flaechen.geom
+                FROM flaechen
+                LEFT JOIN linkfl
+                ON linkfl.flnam = flaechen.flnam
+                WHERE ((flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL) 
+                    and flaechen.geom IS NOT NULL){ausw_einf})
+            INSERT INTO linkfl (flnam, geom)
+            SELECT flnam, geom
             FROM linkadd
             WHERE lpk IS NULL AND geom > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
 
@@ -241,7 +265,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     # sie ausgeschlossen werden.
     
 
-    if linksw_in_tezg:
+    if linksw_in_tezg and mit_verschneidung:
+        # linksw_in_tezg funktioniert nur, wenn mit_verschneidung aktiviert ist
         sql = u"""WITH tlink AS
             (	SELECT lf.pk AS pk,
                     ha.haltnam, 

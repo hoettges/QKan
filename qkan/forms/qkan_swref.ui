@@ -266,10 +266,14 @@
  </widget>
  <tabstops>
   <tabstop>OI</tabstop>
-  <tabstop>wasserverbrauch</tabstop>
-  <tabstop>teilgebiet</tabstop>
+  <tabstop>Strassenname</tabstop>
+  <tabstop>Hausnummer</tabstop>
+  <tabstop>Zusatz</tabstop>
   <tabstop>Rechtswert</tabstop>
+  <tabstop>Hochwert</tabstop>
+  <tabstop>wasserverbrauch</tabstop>
   <tabstop>haltnam</tabstop>
+  <tabstop>teilgebiet</tabstop>
  </tabstops>
  <resources/>
  <connections/>

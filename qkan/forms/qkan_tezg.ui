@@ -265,10 +265,11 @@
   <tabstop>flnam</tabstop>
   <tabstop>regenschreiber</tabstop>
   <tabstop>teilgebiet</tabstop>
+  <tabstop>haltnam</tabstop>
+  <tabstop>createdat</tabstop>
   <tabstop>neigkl</tabstop>
   <tabstop>abflussparameter</tabstop>
   <tabstop>kommentar</tabstop>
-  <tabstop>haltnam</tabstop>
  </tabstops>
  <resources/>
  <connections/>

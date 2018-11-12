@@ -305,9 +305,16 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>elnam</tabstop>
   <tabstop>zufluss</tabstop>
-  <tabstop>teilgebiet</tabstop>
   <tabstop>haltnam</tabstop>
+  <tabstop>einzugsgebiet</tabstop>
+  <tabstop>strassenname</tabstop>
+  <tabstop>hausnummer</tabstop>
+  <tabstop>zusatz</tabstop>
+  <tabstop>teilgebiet</tabstop>
+  <tabstop>createdat</tabstop>
+  <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>
  <connections/>

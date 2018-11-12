@@ -68,7 +68,7 @@ def listQkanLayers():
             layerSource = layer.attrib['source']
             dbname, table, geom, sql = get_qkanlayerAttributes(layerSource)
             qkanLayers[layerName] = [table, geom, sql, groupName]
-    logger.debug('qkanLayers: \n{}'.format(qkanLayers))
+    logger.debug(u'qkanLayers: \n{}'.format(qkanLayers))
     return qkanLayers
 
 
@@ -94,6 +94,8 @@ def isQkanLayer(layername, source):
             return True, ve
     return False, False
 
+
+# todo: nachfolgende Funktion ist depricated und kann durch listQkanLayers ersetzt werden...
 
 def get_qkanlayerAttributes(source):
     """Ermittelt die Attribute eines QKan-Layers in einer SpatiaLite-Datenbank
@@ -380,10 +382,10 @@ def sqlconditions(keyword, attrlis, valuelis2):
 
     for attr, valuelis in zip(attrlis, valuelis2):
         if len(valuelis) != 0:
-            condlis.append("{attr} in ('{values}')".format(attr=attr, 
-                                                           values = "', '".join(valuelis)))
+            condlis.append(u"{attr} in ('{values}')".format(attr=attr, 
+                                                           values = u"', '".join(valuelis)))
     if len(condlis) != 0:
-        auswahl = ' {keyword} {conds}'.format(keyword=keyword, conds=' AND '.join(condlis))
+        auswahl = u' {keyword} {conds}'.format(keyword=keyword, conds=' AND '.join(condlis))
     else:
         auswahl = ''
 

@@ -454,9 +454,12 @@
   <tabstop>ysch</tabstop>
   <tabstop>sohlhoehe</tabstop>
   <tabstop>deckelhoehe</tabstop>
+  <tabstop>schachttyp</tabstop>
   <tabstop>simstatus</tabstop>
   <tabstop>entwart</tabstop>
+  <tabstop>teilgebiet</tabstop>
   <tabstop>strasse</tabstop>
+  <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>
