@@ -1001,11 +1001,11 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
 
         # Zoom für Kartenfenster einstellen -------------------------------------------------------
 
-        if type(xmin) != type(0) and type(xmin) != type(0.0):
-            xmin = 0.
-            xmax = 100.
-            ymin = 0.
-            ymax = 100.
+        if type(zoomxmin) != type(0) and type(zoomxmin) != type(0.0):
+            zoomxmin = 0.
+            zoomxmax = 100.
+            zoomymin = 0.
+            zoomymax = 100.
 
         for tag_extent in root.findall(u".//mapcanvas/extent"):
             elem = tag_extent.find(u"./xmin")
