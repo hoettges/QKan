@@ -23,8 +23,11 @@
 
 import json
 import logging
-import os.path
+import tempfile
+import os
 import site
+from datetime import datetime as dt
+import subprocess
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt4.QtGui import QFileDialog, QListWidgetItem, QTableWidgetItem
@@ -138,6 +141,8 @@ class QKanTools:
         self.dlgop.pb_mindestflaecheDefault.clicked.connect(self.dlgop_mindestflaecheDefault)
         self.dlgop.pb_max_loopsDefault.clicked.connect(self.dlgop_maxLoopsDefault)
         self.dlgop.pb_selectKBS.clicked.connect(self.dlgop_selectKBS)
+        self.dlgop.pb_openLogfile.clicked.connect(self.dlgop_openLogfile)
+        self.dlgop.pb_selectLogeditor.clicked.connect(self.dlgop_selectLogeditor)
 
         # Formular dlgro - Oberflächenabflussparameter ermitteln
         self.dlgro.lw_teilgebiete.itemClicked.connect(self.dlgro_lwTeilgebieteClick)
@@ -376,6 +381,35 @@ class QKanTools:
     def dlgop_maxLoopsDefault(self):
         self.dlgop.tf_max_loops.setText('1000')
 
+    def dlgop_openLogfile(self):
+        """Öffnet die Log-Datei mit dem Standard-Editor für Log-Dateien oder einem gewählten Editor"""
+
+        dnam = dt.today().strftime("%Y%m%d")
+        fnam = os.path.join(tempfile.gettempdir(), 'QKan{}.log'.format(dnam))
+        if self.logeditor == '':
+            os.startfile(fnam, 'open')
+        else:
+            command = '"{}" "{}"'.format(os.path.normpath(self.logeditor), os.path.normcase(fnam))
+            res = subprocess.call(command)
+            logger.debug('command: {}\nres: '.format(command, res))
+
+    def dlgop_selectLogeditor(self):
+        """Alternativen Text-Editor auswählen"""
+
+        # Textfeld wieder deaktivieren
+        self.dlgop.tf_logeditor.setEnabled(True)
+
+        filename = QFileDialog.getOpenFileName(self.dlgop,
+                                               u"Alternativen Texteditor auswählen", 
+                                               "c:/", 
+                                               "*.exe")
+        self.logeditor = filename
+        self.dlgop.tf_logeditor.setText(filename)
+        if os.path.dirname(filename) == '':
+            # Textfeld wieder deaktivieren
+            self.dlgop.tf_logeditor.setEnabled(False)
+
+
     # -----------------------------------------------------------------------------------------
     # 2. Aufruf des Formulars
 
@@ -422,6 +456,15 @@ class QKanTools:
             self.epsg = u'25832'
         self.dlgop.tf_epsg.setText(self.epsg)
 
+        if 'logeditor' in self.config:
+            self.logeditor = self.config['logeditor']
+        else:
+            self.logeditor = ''
+        self.dlgop.tf_logeditor.setText(self.logeditor)
+
+        # Textfeld für Editor deaktivieren, falls leer:
+        status_logeditor = (self.logeditor == '')
+        self.dlgop.tf_logeditor.setEnabled(status_logeditor)
 
         # show the dialog
         self.dlgop.show()
@@ -436,6 +479,7 @@ class QKanTools:
             fangradius = self.dlgop.tf_fangradius.text()
             mindestflaeche = self.dlgop.tf_mindestflaeche.text()
             max_loops = self.dlgop.tf_max_loops.text()
+            self.logeditor = self.dlgop.tf_logeditor.text().strip()
             if self.dlgop.rb_spatialite.isChecked():
                 datenbanktyp = u'spatialite'
             # elif self.dlgop.rb_postgis.isChecked():
@@ -450,6 +494,7 @@ class QKanTools:
             self.config['max_loops'] = max_loops
             self.config['datenbanktyp'] = datenbanktyp
             self.config['epsg'] = epsg
+            self.config['logeditor'] = self.logeditor
 
             with open(self.configfil, 'w') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
@@ -1099,7 +1144,7 @@ class QKanTools:
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-            logger.debug("""layersadapt(database_QKan='{0:}', 
+            logger.debug(u"""layersadapt(database_QKan='{0:}', 
                                 projectFile='{1:}', 
                                 projectTemplate='{2:}', 
                                 qkanDBUpdate={3:}, 
