@@ -1,112 +1,112 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan Version 2.5.15" version="2.18.24">
-  <title>QKan Version 2.5.15</title>
+<qgis projectname="QKan Version 2.5.16" version="2.18.24">
+  <title>QKan Version 2.5.16</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="">
     <customproperties/>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Schächte">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" name="Auslässe">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" name="Auslässe">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161221075653754" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161016203756252" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Haltungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Sonderbauwerke">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Unchecked" name="SW-Einleitungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="einleit20171004110830029" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;einleit&quot; (geom) sql=" name="Direkteinleitungen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="einleit20171004110830029" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;einleit&quot; (geom) sql=" name="Direkteinleitungen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen Direkteinleitungen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen Direkteinleitungen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Flächen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="Teilgebiete">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="Teilgebiete">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20171204105753202" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;tezg&quot; (geom) sql=" name="Haltungsflächen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20171204105753202" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;tezg&quot; (geom) sql=" name="Haltungsflächen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindung20170920132347429" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;linkfl&quot; (glink) sql=" name="Anbindungen Flächen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindung20170920132347429" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;linkfl&quot; (glink) sql=" name="Anbindungen Flächen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="Flächen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="Flächen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Referenztabellen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;profile&quot; sql=" name="Profile">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;profile&quot; sql=" name="Profile">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
+      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter HE">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter HE">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflusstypen20181109110308704" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;abflusstypen&quot; () sql=" name="abflusstypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflusstypen20181109110308704" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;abflusstypen&quot; () sql=" name="abflusstypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="knotentypen20181109110308798" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;knotentypen&quot; () sql=" name="knotentypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="knotentypen20181109110308798" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;knotentypen&quot; () sql=" name="knotentypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Abflussparameter20181109110308816" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;abflussparameter&quot; () sql=" name="Abflussparameter">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Abflussparameter20181109110308816" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;abflussparameter&quot; () sql=" name="Abflussparameter">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schachttypen20181109110308835" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;schachttypen&quot; () sql=" name="schachttypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schachttypen20181109110308835" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;schachttypen&quot; () sql=" name="schachttypen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Kennlinien">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/nette_klein/nette.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/Bayernallee/Klausuren/Bachelor Bauing/216145_Wasserwirtschaftliche_Planung/2018-p4/Ilias/C - Gelies, Hänsgen/Gelies_Marieke_mg3625s_306129/test/test.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
@@ -115,10 +115,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>388748.12433460779720917</xmin>
-      <ymin>5709919.53477143216878176</ymin>
-      <xmax>389080.33649007306667045</xmax>
-      <ymax>5710099.70628316793590784</ymax>
+      <xmin>388244.05999999999767169</xmin>
+      <ymin>5709781.4280000003054738</ymin>
+      <xmax>389576.61400000000139698</xmax>
+      <ymax>5711413.50700000021606684</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -140,7 +140,7 @@
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Bauteil_Fläche_darea20170805161040697"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="74_dop20rgbi_32335_5724_1_nw20170805155515909"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="einleit20171004110830029"/>
-      <layer_coordinate_transform destAuthId="EPSG:3044" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte_Kopie20161221075653754"/>
+      <layer_coordinate_transform destAuthId="EPSG:3044" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="schaechte20161221075653754"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="D5_dop20rgbi_32341_5725_1_nw20170805155526143"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="Alkis_AX_Bauteil_Fläche20170805161040431"/>
       <layer_coordinate_transform destAuthId="EPSG:25832" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="87_dop20rgbi_32336_5727_1_nw20170805155518032"/>
@@ -230,7 +230,7 @@
     <custom-order enabled="0">
       <item>schaechte20161220162259105</item>
       <item>Speicher_Kopie20161221080207994</item>
-      <item>schaechte_Kopie20161221075653754</item>
+      <item>schaechte20161221075653754</item>
       <item>schaechte_Kopie20161204084617148</item>
       <item>schaechte20161016203756252</item>
       <item>haltungen20161016203756230</item>
@@ -272,7 +272,7 @@
       </legendlayer>
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Speicher" showFeatureCount="0">
         <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="schaechte_Kopie20161221075653754" visible="1"/>
+          <legendlayerfile isInOverview="0" layerid="schaechte20161221075653754" visible="1"/>
         </filegroup>
       </legendlayer>
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Knotentyp" showFeatureCount="0">
@@ -504,7 +504,7 @@
   <projectlayers>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>Abflussparameter20181109110308816</id>
-      <datasource>dbname='./nette.sqlite' table="abflussparameter" () sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="abflussparameter" () sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -597,7 +597,7 @@
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_abflussparameter.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_abflussparameter.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -626,7 +626,7 @@
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Anbindung20170920132347429</id>
-      <datasource>dbname='./nette.sqlite' table="linkfl" (glink) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="linkfl" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -634,10 +634,10 @@
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -667,7 +667,7 @@
           <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="abflusstyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="abflusstyp" constraint="" Layer="abflusstypen20181022205533113" Value="abflusstyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="abflusstyp" constraint="" Layer="abflusstypen20181109110308704" Value="abflusstyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="speicherzahl">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -1004,15 +1004,19 @@
           <column width="-1" hidden="0" type="field" name="pk"/>
           <column width="-1" hidden="0" type="field" name="flnam"/>
           <column width="-1" hidden="0" type="field" name="haltnam"/>
-          <column width="-1" hidden="0" type="field" name="aufteilen"/>
           <column width="-1" hidden="0" type="field" name="teilgebiet"/>
           <column width="-1" hidden="0" type="field" name="geom"/>
           <column width="-1" hidden="0" type="field" name="gbuf"/>
           <column width="-1" hidden="1" type="actions"/>
           <column width="-1" hidden="0" type="field" name="tezgnam"/>
+          <column width="-1" hidden="0" type="field" name="abflusstyp"/>
+          <column width="-1" hidden="0" type="field" name="speicherzahl"/>
+          <column width="-1" hidden="0" type="field" name="speicherkonst"/>
+          <column width="-1" hidden="0" type="field" name="fliesszeitkanal"/>
+          <column width="-1" hidden="0" type="field" name="fliesszeitflaeche"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungflaechen.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungflaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1058,7 +1062,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Anbindungen_SW_Punkte20171017125752772</id>
-      <datasource>dbname='./nette.sqlite' table="linksw" (glink) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="linksw" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1066,10 +1070,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -1348,7 +1352,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungeinleit.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_anbindungeinleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1388,7 +1392,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Speicher_Kopie20161221080207994</id>
-      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
+      <datasource>dbname='./test.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1396,10 +1400,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -1450,13 +1454,13 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="knotentyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="knotentyp" constraint="" Layer="knotentypen20181022205533164" Value="knotentyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="knotentyp" constraint="" Layer="knotentypen20181109110308798" Value="knotentyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="auslasstyp">
           <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="bezeichnung" constraint="" Layer="auslasstypen20161201095045204" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="schachttyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schachttyp" constraint="" Layer="schachttypen20181022205533182" Value="schachttyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schachttyp" constraint="" Layer="schachttypen20181109110308835" Value="schachttyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="istspeicher">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -1756,7 +1760,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_auslaesse.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_auslaesse.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1811,7 +1815,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>abflussparameter20161218110231636</id>
-      <datasource>dbname='./nette.sqlite' table="abflussparameter" sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="abflussparameter" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1825,7 +1829,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1953,7 +1957,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>abflusstypen20181109110308704</id>
-      <datasource>dbname='./nette.sqlite' table="abflusstypen" () sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="abflusstypen" () sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2021,7 +2025,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>auslasstypen20161201095045204</id>
-      <datasource>dbname='./nette.sqlite' table="auslasstypen" sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="auslasstypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2035,7 +2039,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -2088,7 +2092,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_auslasstypen.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_auslasstypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2127,7 +2131,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>bodenklassen20170516122309914</id>
-      <datasource>dbname='./nette.sqlite' table="bodenklassen" sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="bodenklassen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2219,7 +2223,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_bodenklassen.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_bodenklassen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2273,7 +2277,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>einleit20171004110830029</id>
-      <datasource>dbname='./nette.sqlite' table="einleit" (geom) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="einleit" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2281,10 +2285,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -2579,7 +2583,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_einleit.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_einleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2622,7 +2626,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>entwaesserungsarten20161018090806784</id>
-      <datasource>dbname='./nette.sqlite' table="entwaesserungsarten" sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="entwaesserungsarten" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2636,7 +2640,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -2693,7 +2697,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_entwaesserungsarten.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_entwaesserungsarten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2733,7 +2737,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>flaechen20170504083519678</id>
-      <datasource>dbname='./nette.sqlite' table="flaechen" (geom) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="flaechen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2741,10 +2745,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -3269,7 +3273,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="aufteilen"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_flaechen.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_flaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -3313,7 +3317,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="1" maximumScale="15000" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>haltungen20161016203756230</id>
-      <datasource>dbname='./nette.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -3321,10 +3325,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -4060,7 +4064,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -4116,7 +4120,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="15000" maximumScale="1.5e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>haltungen_Kopie20161016203906444</id>
-      <datasource>dbname='./nette.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4124,10 +4128,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -4535,7 +4539,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -4591,7 +4595,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>knotentypen20181109110308798</id>
-      <datasource>dbname='./nette.sqlite' table="knotentypen" () sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="knotentypen" () sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4659,7 +4663,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profildaten20161218110256525</id>
-      <datasource>dbname='./nette.sqlite' table="profildaten" sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="profildaten" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4721,7 +4725,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_profildaten.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_profildaten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -4759,7 +4763,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profile20161018090721921</id>
-      <datasource>dbname='./nette.sqlite' table="profile" sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="profile" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4801,9 +4805,6 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="mu_nr">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="kp_nr">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
         <edittype widgetv2type="TextEdit" name="kp_key">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
@@ -4814,8 +4815,7 @@ def my_form_open(dialog, layer, feature):
         <alias field="profilnam" index="1" name=""/>
         <alias field="he_nr" index="2" name=""/>
         <alias field="mu_nr" index="3" name=""/>
-        <alias field="kp_nr" index="4" name=""/>
-        <alias field="kp_key" index="5" name=""/>
+        <alias field="kp_key" index="4" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -4830,7 +4830,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_profile.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_profile.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -4863,7 +4863,6 @@ def my_form_open(dialog, layer, feature):
         <default field="profilnam" expression=""/>
         <default field="he_nr" expression=""/>
         <default field="mu_nr" expression=""/>
-        <default field="kp_nr" expression=""/>
         <default field="kp_key" expression=""/>
       </defaults>
       <previewExpression>COALESCE( format('%1',"he_nr"), '&lt;NULL>' ) + ' - '+&#xd;
@@ -4871,7 +4870,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>pumpen20161017080913064</id>
-      <datasource>dbname='./nette.sqlite' table="pumpen" (geom) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="pumpen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4879,10 +4878,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -5276,7 +5275,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="pnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_pumpen.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_pumpen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5322,7 +5321,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>pumpentypen20161018090730556</id>
-      <datasource>dbname='./nette.sqlite' table="pumpentypen" sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="pumpentypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5379,7 +5378,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_pumpentypen.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_pumpentypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5416,7 +5415,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>schachttypen20181109110308835</id>
-      <datasource>dbname='./nette.sqlite' table="schachttypen" () sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="schachttypen" () sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5484,7 +5483,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte20161016203756252</id>
-      <datasource>dbname='./nette.sqlite' table="schaechte" (geom) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="schaechte" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5492,10 +5491,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -5546,13 +5545,13 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="knotentyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="knotentyp" constraint="" Layer="knotentypen20181022205533164" Value="knotentyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="knotentyp" constraint="" Layer="knotentypen20181109110308798" Value="knotentyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="auslasstyp">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="schachttyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schachttyp" constraint="" Layer="schachttypen20181022205533182" Value="schachttyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schachttyp" constraint="" Layer="schachttypen20181109110308835" Value="schachttyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="istspeicher">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -5845,7 +5844,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -5898,7 +5897,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte20161220162259105</id>
-      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
+      <datasource>dbname='./test.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5906,10 +5905,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -5960,13 +5959,13 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="knotentyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="knotentyp" constraint="" Layer="knotentypen20181022205533164" Value="knotentyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="knotentyp" constraint="" Layer="knotentypen20181109110308798" Value="knotentyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="auslasstyp">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="schachttyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schachttyp" constraint="" Layer="schachttypen20181022205533182" Value="schachttyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schachttyp" constraint="" Layer="schachttypen20181109110308835" Value="schachttyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="istspeicher">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -6266,7 +6265,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -6321,7 +6320,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte_Kopie20161204084617148</id>
-      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="schaechte" (geop) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -6329,10 +6328,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -6383,13 +6382,13 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="knotentyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="knotentyp" constraint="" Layer="knotentypen20181022205533164" Value="knotentyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="knotentyp" constraint="" Layer="knotentypen20181109110308798" Value="knotentyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="auslasstyp">
           <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="bezeichnung" constraint="" Layer="auslasstypen20161201095045204" Value="bezeichnung" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="schachttyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schachttyp" constraint="" Layer="schachttypen20181022205533182" Value="schachttyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schachttyp" constraint="" Layer="schachttypen20181109110308835" Value="schachttyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="istspeicher">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -6854,7 +6853,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -6906,8 +6905,8 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <id>schaechte_Kopie20161221075653754</id>
-      <datasource>dbname='./nette.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
+      <id>schaechte20161221075653754</id>
+      <datasource>dbname='./test.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -6915,10 +6914,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -6969,13 +6968,13 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="tgnam" constraint="" Layer="teilgebiete20170214092005309" Value="tgnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="knotentyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="knotentyp" constraint="" Layer="knotentypen20181022205533164" Value="knotentyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="knotentyp" constraint="" Layer="knotentypen20181109110308798" Value="knotentyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="auslasstyp">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="schachttyp">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schachttyp" constraint="" Layer="schachttypen20181022205533182" Value="schachttyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schachttyp" constraint="" Layer="schachttypen20181109110308835" Value="schachttyp" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="istspeicher">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -7275,7 +7274,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="istauslass"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_speicher.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_speicher.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7330,7 +7329,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>simulationsstatus20161201095050780</id>
-      <datasource>dbname='./nette.sqlite' table="simulationsstatus" sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="simulationsstatus" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7397,7 +7396,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_simulationsstatus.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_simulationsstatus.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7436,7 +7435,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>speicherkennlinien20161218110320415</id>
-      <datasource>dbname='./nette.sqlite' table="speicherkennlinien" sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="speicherkennlinien" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7470,7 +7469,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="schnam">
-          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schnam" constraint="" Layer="schaechte_Kopie20161221075653754" Value="schnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+          <widgetv2config OrderByValue="0" AllowNull="1" FilterExpression="" UseCompleter="1" fieldEditable="1" Key="schnam" constraint="" Layer="schaechte20161221075653754" Value="schnam" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="wspiegel">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -7498,7 +7497,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_speicherkennlinien.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_speicherkennlinien.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7536,7 +7535,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>teilgebiete20170214092005309</id>
-      <datasource>dbname='./nette.sqlite' table="teilgebiete" (geom) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="teilgebiete" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7544,10 +7543,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -7565,21 +7564,6 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="tgnam">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="ewdichte">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="wverbrauch">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="stdmittel">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="fremdwas">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="flaeche">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="kommentar">
@@ -7812,13 +7796,8 @@ def my_form_open(dialog, layer, feature):
       <aliases>
         <alias field="pk" index="0" name=""/>
         <alias field="tgnam" index="1" name=""/>
-        <alias field="ewdichte" index="2" name=""/>
-        <alias field="wverbrauch" index="3" name=""/>
-        <alias field="stdmittel" index="4" name=""/>
-        <alias field="fremdwas" index="5" name=""/>
-        <alias field="flaeche" index="6" name=""/>
-        <alias field="kommentar" index="7" name=""/>
-        <alias field="createdat" index="8" name=""/>
+        <alias field="kommentar" index="2" name=""/>
+        <alias field="createdat" index="3" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -7837,7 +7816,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="tgnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_teilgebiete.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_teilgebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7868,11 +7847,6 @@ def my_form_open(dialog, layer, feature):
       <defaults>
         <default field="pk" expression=""/>
         <default field="tgnam" expression=""/>
-        <default field="ewdichte" expression=""/>
-        <default field="wverbrauch" expression=""/>
-        <default field="stdmittel" expression=""/>
-        <default field="fremdwas" expression=""/>
-        <default field="flaeche" expression=""/>
         <default field="kommentar" expression=""/>
         <default field="createdat" expression="now()"/>
       </defaults>
@@ -7880,7 +7854,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>tezg20171204105753202</id>
-      <datasource>dbname='./nette.sqlite' table="tezg" (geom) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="tezg" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7888,10 +7862,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -8181,7 +8155,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_tezg.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_tezg.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8224,7 +8198,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>wehre20161125174724734</id>
-      <datasource>dbname='./nette.sqlite' table="wehre" (geom) sql=</datasource>
+      <datasource>dbname='./test.sqlite' table="wehre" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -8232,10 +8206,10 @@ def my_form_open(dialog, layer, feature):
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>2105</srsid>
-          <srid>25832</srid>
-          <authid>EPSG:25832</authid>
-          <description>ETRS89 / UTM zone 32N</description>
+          <srsid>1009</srsid>
+          <srid>3044</srid>
+          <authid>EPSG:3044</authid>
+          <description>ETRS89 / ETRS-TM32</description>
           <projectionacronym>utm</projectionacronym>
           <ellipsoidacronym>GRS80</ellipsoidacronym>
           <geographicflag>false</geographicflag>
@@ -8684,7 +8658,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="wnam"/>
         </columns>
       </attributetableconfig>
-      <editform>../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_wehre.ui</editform>
+      <editform>../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_wehre.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8791,7 +8765,7 @@ def my_form_open(dialog, layer, feature):
         <value>schaechte20161016203756252</value>
         <value>schaechte20161220162259105</value>
         <value>schaechte_Kopie20161204084617148</value>
-        <value>schaechte_Kopie20161221075653754</value>
+        <value>schaechte20161221075653754</value>
         <value>teilgebiete20170214092005309</value>
         <value>wehre20161125174724734</value>
       </LayerSnappingList>
