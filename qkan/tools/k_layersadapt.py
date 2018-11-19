@@ -118,12 +118,12 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     if len(allLayers) == 0:
         meldung(u'Benutzerfehler: ', u'Es ist kein Projekt geladen.')
         return
-
     layerList = {}
     for layer in allLayers:
         layerList[layer.name()] = layer
 
     logger.debug(u'k_layersadapt, layerList: {}'.format(layerList))
+
     # Dictionary aller Layer für mapCanvas
     canvas = iface.mapCanvas()
     allCanvasLayers = canvas.layers()
@@ -134,7 +134,6 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     canvasIndex = {}
     for layer in allCanvasLayers:
         canvasIndex[layer.name()] = layer
-
 
     # -----------------------------------------------------------------------------------------------------
     # Datenbankverbindungen
@@ -192,6 +191,26 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
 
     qgsxml = et.ElementTree()
     qgsxml.parse(projectTemplate)
+
+    # Dictionary, das alle LayerIDs aus der Template-Projektdatei den entsprechenden (QKan-) LayerIDs
+    # des aktuell geladenen Projekts zuordnet. Diese Liste wird bei der Korrektur der Wertelisten 
+    # benötigt. 
+
+    layerNotInProjektMeldung = False
+    rltext = u"projectlayers/maplayer"
+    nodes_refLayerTemplate = qgsxml.findall(rltext)
+    layerIdList = {}
+    for node in nodes_refLayerTemplate:
+        refLayerName = node.findtext('layername')
+        refLayerId = node.findtext('id')
+        if refLayerName in layerList:
+            layer = layerList[refLayerName]
+            layerId = layer.id()
+            layerIdList[refLayerId] = layerId
+        else:
+            layerNotInProjektMeldung = not fehlende_layer_ergaenzen     # nur setzen, wenn keine Ergänzung gewählt
+            logger.info(u'k_layersadapt: QKan-Layer nicht in Projekt: {}'.format(refLayerName))
+    logger.debug('Refliste Layer-Ids: \n{}'.format(layerIdList))
 
     # Fehlende Layer ergänzen. Unabhängig von der Auswahl werden die fehlenden Referenztabellen 
     # auf jeden Fall ergänzt. 
@@ -334,24 +353,25 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
                         att = node_edittype.find('widgetv2config')
                         widgetConfig = att.attrib
 
-                        logger.debug(u'k_layersadapt: (2)')
+                        # Bei Wertetabellen muss der Bezug auf das Projekt angepasst werden. 
+                        # Dazu muss zunächst in dem Projekt-Template aus den Attributen "widgetConfig" der Layerid gelesen, 
+                        # der dazu gehörige Layername ermittelt und für diesen im geladenen Projekt wiederum 
+                        # der Layerid ermittelt und stattdessen in die Attribute "widgetConfig" geschrieben werden. 
+                        # Das benötigte Dictionary wird oben erstellt
+                        if widgetv2type == 'ValueRelation':
+                            refLayerIdTemplate = widgetConfig['Layer']
+                            if refLayerIdTemplate not in layerIdList:
+                                logger.debug(u'layerIdList: \n{}'.format(layerIdList))
+                                fehlermeldung(u'Fehler in k_layersadapt (12)\n', 
+                                    u'LayerId konnte nicht gefunden werden: {}'.format(refLayerIdTemplate))
+                            widgetConfig['Layer'] = layerIdList[refLayerIdTemplate]
 
                         fieldname = node_edittype.attrib['name']
                         fieldIndex = layer.fieldNameIndex(fieldname)
-                        layerId = layer.id()
-
-                        logger.debug(u'k_layersadapt: (3)')
 
                         editFormConfig = layer.editFormConfig()
-                        widgetType = editFormConfig.widgetType(fieldIndex)
-                        # widgetConfig = editFormConfig.widgetConfig(fieldIndex)
-
-                        logger.debug(u'k_layersadapt: (4)')
 
                         editFormConfig.setWidgetType(fieldIndex, widgetv2type)
-
-                        logger.debug(u'k_layersadapt: (5)')
-
                         editFormConfig.setWidgetConfig(fieldIndex, widgetConfig)
                         logger.debug('widgetConfig: \n{}\n'.format(widgetConfig))
                     except BaseException as err:
@@ -360,8 +380,11 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
 
         logger.debug(u'k_layersadapt (6)')
     logger.debug(u'k_layersadapt (7)')
-    if layerNotQkanMeldung:
-        meldung(u'Information zu den Layern', u'Es wurden Layer gefunden, die nicht zum QKan-Standard gehörten. Eine Liste steht in der LOG-Datei...')
+
+    if layerNotInProjektMeldung:
+        meldung(u'Information zu den Layern', u'Es fehlten Layer, die zum QKan-Standard gehörten. Eine Liste steht in der LOG-Datei...')
+    # if layerNotQkanMeldung:
+        # meldung(u'Information zu den Layern', u'Es wurden Layer gefunden, die nicht zum QKan-Standard gehörten. Eine Liste steht in der LOG-Datei...')
 
     if aktualisieren_Schachttypen:
         # Schachttypen auswerten
