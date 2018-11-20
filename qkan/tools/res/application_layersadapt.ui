@@ -236,10 +236,10 @@
    <widget class="QCheckBox" name="cb_completeLayers">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>26</y>
-      <width>160</width>
-      <height>30</height>
+      <x>220</x>
+      <y>20</y>
+      <width>180</width>
+      <height>50</height>
      </rect>
     </property>
     <property name="font">
@@ -250,14 +250,14 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fehlende QKan-Layer entsprechend dem oben gewählten QKan-Standard hinzuladen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fehlende QKan-Layer mit Geodaten entsprechend dem oben gewählten QKan-Standard hinzuladen. Hinweis: Attributtabellen werden auf jeden Fall hinzugeladen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Fehlende QKan-Layer entsprechend dem oben gewählten QKan-Standard hinzuladen</string>
+     <string>Fehlende QKan-Geodaten-Layer entsprechend dem oben gewählten QKan-Standard hinzuladen</string>
     </property>
     <property name="text">
-     <string>Fehlende QKan-Layer
-hinzuladen</string>
+     <string>Fehlende QKan-Geodaten-
+Layer hinzuladen</string>
     </property>
    </widget>
   </widget>

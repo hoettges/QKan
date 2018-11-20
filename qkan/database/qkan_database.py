@@ -23,7 +23,7 @@ __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
 __dbVersion__ = '2.5.9'                         # Version der QKan-Datenbank
-__qgsVersion__  = '2.5.16'                       # Version des Projektes und der Projektdatei. Kann 
+__qgsVersion__  = '2.5.17'                       # Version des Projektes und der Projektdatei. Kann 
                                                 # höher als die der QKan-Datenbank sein
 
 # This will get replaced with a git SHA1 when you do a git archive
@@ -113,11 +113,16 @@ def qgsActualVersion(update = True, warning = False):
                 wlayers = [la for la in layers if la.name() == 'Abflussparameter']
                 if len(wlayers) != 1:
                     fehlermeldung(u"Fehler in Layerliste", u'Es gibt mehr als einen Layer "Abflussparameter"')
+                    layerList = [la.name() for la in layers]
+                    logger.debug('layerList: {}'.format(layerList))
                     return False
                 wlayer = wlayers[0]
                 logger.debug('vorher: wlayer.name(): {}'.format(wlayer.name()))
                 wlayer.setLayerName('Abflussparameter HE')
                 logger.debug('nachher: wlayer.name(): {}'.format(wlayer.name()))
+
+                project = QgsProject.instance()
+                project.setTitle('QKan Version {}'.format(qgsVersion()))
 
             isActual = True
     return isActual
