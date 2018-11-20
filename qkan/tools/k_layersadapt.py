@@ -192,26 +192,6 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     qgsxml = et.ElementTree()
     qgsxml.parse(projectTemplate)
 
-    # Dictionary, das alle LayerIDs aus der Template-Projektdatei den entsprechenden (QKan-) LayerIDs
-    # des aktuell geladenen Projekts zuordnet. Diese Liste wird bei der Korrektur der Wertelisten 
-    # benötigt. 
-
-    layerNotInProjektMeldung = False
-    rltext = u"projectlayers/maplayer"
-    nodes_refLayerTemplate = qgsxml.findall(rltext)
-    layerIdList = {}
-    for node in nodes_refLayerTemplate:
-        refLayerName = node.findtext('layername')
-        refLayerId = node.findtext('id')
-        if refLayerName in layerList:
-            layer = layerList[refLayerName]
-            layerId = layer.id()
-            layerIdList[refLayerId] = layerId
-        else:
-            layerNotInProjektMeldung = not fehlende_layer_ergaenzen     # nur setzen, wenn keine Ergänzung gewählt
-            logger.info(u'k_layersadapt: QKan-Layer nicht in Projekt: {}'.format(refLayerName))
-    logger.debug('Refliste Layer-Ids: \n{}'.format(layerIdList))
-
     # Fehlende Layer ergänzen. Unabhängig von der Auswahl werden die fehlenden Referenztabellen 
     # auf jeden Fall ergänzt. 
 
@@ -240,11 +220,33 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
                 if atcGroup == '':
                     layersRoot.addGroup(group)
                 atcGroup.addLayer(layer)
+                layerList[layer.name()] = layer
                 logger.debug(u"k_layersadapt: Layer ergänzt: {}".format(layername))
             else:
                 logger.debug(u"k_layersadapt: Layer nicht ergänzt: {}".format(layername))
         # else:
             # logger.debug(u"k_layersadapt: Layer schon vorhanden: {}".format(layername))
+
+    # Dictionary, das alle LayerIDs aus der Template-Projektdatei den entsprechenden (QKan-) LayerIDs
+    # des aktuell geladenen Projekts zuordnet. Diese Liste wird bei der Korrektur der Wertelisten 
+    # benötigt. 
+
+    layerNotInProjektMeldung = False
+    rltext = u"projectlayers/maplayer"
+    nodes_refLayerTemplate = qgsxml.findall(rltext)
+    layerIdList = {}
+    for node in nodes_refLayerTemplate:
+        refLayerName = node.findtext('layername')
+        refLayerId = node.findtext('id')
+        if refLayerName in layerList:
+            layer = layerList[refLayerName]
+            layerId = layer.id()
+            logger.debug('layerId: {}'.format(layerId))
+            layerIdList[refLayerId] = layerId
+        else:
+            layerNotInProjektMeldung = not fehlende_layer_ergaenzen     # nur setzen, wenn keine Ergänzung gewählt
+            logger.info(u'k_layersadapt: QKan-Layer nicht in Projekt: {}'.format(refLayerName))
+    logger.debug('Refliste Layer-Ids: \n{}'.format(layerIdList))
 
     # Liste der zu bearbeitenden Layer
     if anpassen_auswahl == 'auswahl_anpassen':
