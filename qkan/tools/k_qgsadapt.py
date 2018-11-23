@@ -180,30 +180,32 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
         tag_datasource = tag_maplayer.find(u"./datasource")
         tex = tag_datasource.text
         # Nur QKan-Tabellen bearbeiten
-        if tex[tex.index(u'table="') + 7:].split(u'" ')[0] in tabliste:
+        if 'table="' in tex:
+            # Nur diese Tabellen können QKan-Tabellen sein...
+            if tex[tex.index(u'table="') + 7:].split(u'" ')[0] in tabliste:
 
-            # <extend> löschen
-            for tag_extent in tag_maplayer.findall(u"./extent"):
-                tag_maplayer.remove(tag_extent)
+                # <extend> löschen
+                for tag_extent in tag_maplayer.findall(u"./extent"):
+                    tag_maplayer.remove(tag_extent)
 
-            for tag_spatialrefsys in tag_maplayer.findall(u"./srs/spatialrefsys"):
-                tag_spatialrefsys.clear()
+                for tag_spatialrefsys in tag_maplayer.findall(u"./srs/spatialrefsys"):
+                    tag_spatialrefsys.clear()
 
-                elem = ET.SubElement(tag_spatialrefsys, u'proj4')
-                elem.text = proj4text
-                elem = ET.SubElement(tag_spatialrefsys, u'srsid')
-                elem.text = u'{}'.format(srsid)
-                elem = ET.SubElement(tag_spatialrefsys, u'srid')
-                elem.text = u'{}'.format(srid)
-                elem = ET.SubElement(tag_spatialrefsys, u'authid')
-                elem.text = u'EPSG: {}'.format(srid)
-                elem = ET.SubElement(tag_spatialrefsys, u'description')
-                elem.text = description
-                elem = ET.SubElement(tag_spatialrefsys, u'projectionacronym')
-                elem.text = projectionacronym
-                if ellipsoidacronym is not None:
-                    elem = ET.SubElement(tag_spatialrefsys, u'ellipsoidacronym')
-                    elem.text = ellipsoidacronym
+                    elem = ET.SubElement(tag_spatialrefsys, u'proj4')
+                    elem.text = proj4text
+                    elem = ET.SubElement(tag_spatialrefsys, u'srsid')
+                    elem.text = u'{}'.format(srsid)
+                    elem = ET.SubElement(tag_spatialrefsys, u'srid')
+                    elem.text = u'{}'.format(srid)
+                    elem = ET.SubElement(tag_spatialrefsys, u'authid')
+                    elem.text = u'EPSG: {}'.format(srid)
+                    elem = ET.SubElement(tag_spatialrefsys, u'description')
+                    elem.text = description
+                    elem = ET.SubElement(tag_spatialrefsys, u'projectionacronym')
+                    elem.text = projectionacronym
+                    if ellipsoidacronym is not None:
+                        elem = ET.SubElement(tag_spatialrefsys, u'ellipsoidacronym')
+                        elem.text = ellipsoidacronym
 
     # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
 
