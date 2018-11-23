@@ -1032,7 +1032,9 @@ class LinkFl:
             # Start der Verarbeitung
 
             assigntgeb(self.dbQK, auswahltyp, liste_teilgebiete, 
-                       [u'haltungen', u'flaechen', u'schaechte', u'einleit', u'tezg', u'linksw', u'linkfl'], 
+                       [[u'haltungen', 'geom'], [u'flaechen', 'geom'], [u'schaechte', 'geop'], 
+                        [u'einleit', 'geom'], [u'tezg', 'geom'], [u'linksw', 'glink'], 
+                        [u'linkfl', 'glink']], 
                        autokorrektur, bufferradius)
 
         # --------------------------------------------------------------------------
