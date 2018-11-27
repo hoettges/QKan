@@ -111,7 +111,7 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
             FROM geom_cols_ref_sys
             WHERE Lower(f_table_name) = Lower('schaechte')
             AND Lower(f_geometry_column) = Lower('geom')"""
-    if not dbQK.sql(sql, 'importkanaldaten_dyna (37)'):
+    if not dbQK.sql(sql, 'k_qgsadapt (1)'):
         return None
 
     srid = dbQK.fetchone()[0]
@@ -209,13 +209,16 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
 
     # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
 
-    formspath =  os.path.join(pluginDirectory('qkan'), u"forms")
+    formspath = os.path.join(pluginDirectory('qkan'), u"forms")
     for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
         tag_editform = tag_maplayer.find(u"./editform")
-        dateiname = os.path.basename(tag_editform.text)
-        if dateiname in formsliste:
-            # Nur QKan-Tabellen bearbeiten
-            tag_editform.text = os.path.join(formspath,dateiname)
+        if tag_editform:
+            formpath = tag_editform.text
+            if formpath:
+                dateiname = os.path.basename(formpath)
+                if dateiname in formsliste:
+                    # Nur QKan-Tabellen bearbeiten
+                    tag_editform.text = os.path.join(formspath, dateiname)
 
     # Zoom für Kartenfenster einstellen -------------------------------------------------------
 
@@ -266,9 +269,9 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
     # QgsMessageLog.logMessage("\nFertig: Datenimport erfolgreich!", level=QgsMessageLog.INFO)
 
     # Importiertes Projekt laden
-    project = QgsProject.instance()
-    canvas = QgsMapCanvas(None)
-    bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), canvas)         #  synchronise the loaded project with the canvas
-    project.read(QFileInfo(projectFile))         # read the new project file
+    # project = QgsProject.instance()
+    # canvas = QgsMapCanvas(None)
+    # bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(), canvas)         #  synchronise the loaded project with the canvas
+    # project.read(QFileInfo(projectFile))         # read the new project file
     # logger.debug(u'Geladene Projektdatei: {}   ({})'.format(project.fileName()))
 
