@@ -576,7 +576,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
         FROM dynaprofil
         WHERE profil_key not in 
         (   SELECT kp_key 
-            FROM profile)'''
+            FROM profile WHERE kp_key IS NOT NULL)'''
 
     if not dbQK.sql(sql, 'importkanaldaten_dyna profile-2'):
         return None

@@ -335,10 +335,16 @@ class QKanTools:
 
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
-            projectTemplate = self.dlgpr.tf_projectTemplate.text()
             self.database_QKan = self.dlgpr.tf_qkanDB.text()
             projectFile = self.dlgpr.tf_projectFile.text()
             self.applyQKanTemplate = self.dlgpr.cb_applyQKanTemplate.isChecked()
+
+            # QKanTemplate nur, wenn nicht Option "QKan_Standard_anwenden" gewählt
+            if self.applyQKanTemplate:
+                templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
+                projectTemplate = os.path.join(templateDir,'Projekt.qgs')
+            else:
+                projectTemplate = self.dlgpr.tf_projectTemplate.text()
 
 
             # Konfigurationsdaten schreiben -----------------------------------------------------------

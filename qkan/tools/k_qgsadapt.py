@@ -171,7 +171,11 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir = 
                   'qkan_teilgebiete.ui', 'qkan_tezg.ui', 'qkan_wehre.ui']
 
     # Lesen der Projektdatei ------------------------------------------------------------------
-    qgsxml = ET.parse(projectTemplate)
+    try:
+        qgsxml = ET.parse(projectTemplate)
+    except BaseException as e:
+        fehlermeldung("\nFehler in qgsadapt: ", u'\nDatei "{}" konnte nicht gelesen werden'.format(projectTemplate))
+   
     root = qgsxml.getroot()
 
     # Projektionssystem anpassen --------------------------------------------------------------

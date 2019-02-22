@@ -170,7 +170,7 @@ class LinkFl:
         icon_createlinefl_path = ':/plugins/qkan/linkflaechen/res/icon_createlinefl.png'
         Dummy.instance.add_action(
             icon_createlinefl_path, 
-            text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'), 
+            text=self.tr(u'Erzeuge Verknüpfungslinien von Flächen zu Haltungen'), 
             callback=self.run_createlinefl, 
             parent=self.iface.mainWindow())
 
