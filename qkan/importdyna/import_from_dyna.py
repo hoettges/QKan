@@ -311,6 +311,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
            xob REAL,
            yob REAL,
            strschluessel TEXT)""",
+        u"""DELETE FROM dyna12""", 
         u"""CREATE TABLE IF NOT EXISTS dyna41 (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            schnam TEXT,
@@ -319,17 +320,19 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
            ykoor REAL,
            kanalnummer TEXT,
            haltungsnummer TEXT)""",
+        u"""DELETE FROM dyna41""", 
         u"""CREATE TABLE IF NOT EXISTS dynarauheit (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            ks_key TEXT,
            ks REAL)""",
+        u"""DELETE FROM dynarauheit""", 
         u"""CREATE TABLE IF NOT EXISTS dynaprofil (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            profil_key TEXT,
            profilnam TEXT,
            breite REAL,
-           hoehe REAL)"""]
-
+           hoehe REAL)""",
+        u"""DELETE FROM dynaprofil"""]
     
     for sql in sqllist:
         if not dbQK.sql(sql, u'importkanaldaten_dyna create tab_typ12'):

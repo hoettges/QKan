@@ -484,7 +484,7 @@ class QKanTools:
 
             fangradius = self.dlgop.tf_fangradius.text()
             mindestflaeche = self.dlgop.tf_mindestflaeche.text()
-            max_loops = self.dlgop.tf_max_loops.text()
+            max_loops = int(self.dlgop.tf_max_loops.text())
             self.logeditor = self.dlgop.tf_logeditor.text().strip()
             if self.dlgop.rb_spatialite.isChecked():
                 datenbanktyp = u'spatialite'
