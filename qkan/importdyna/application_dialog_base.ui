@@ -50,6 +50,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -98,6 +99,12 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QKan - Zieldatenbank (wird ggfs. neu angelegt)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -133,6 +140,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -196,6 +204,12 @@
       <width>410</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad der neu erzeugten Projektdatei (optional)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -296,6 +310,12 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quelldatenbank mit Kanaldaten aus HYSTEM-EXTRAN&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -311,6 +331,12 @@
       <width>70</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">

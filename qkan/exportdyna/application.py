@@ -216,6 +216,7 @@ class ExportToKP:
     def countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
+        logger.debug(u'arg: {}'.format(self.dlg.lw_teilgebiete))
         liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
 
         # Zu berücksichtigende Flächen zählen
@@ -261,7 +262,7 @@ class ExportToKP:
         else:
             self.dlg.lf_anzahl_haltungen.setText('0')
 
-    @staticmethod
+    # @staticmethod
     def listselecteditems(self, listWidget):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 

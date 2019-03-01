@@ -23,7 +23,7 @@ __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
 __dbVersion__ = '2.5.9'  # Version der QKan-Datenbank
-__qgsVersion__ = '3.5.17'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__qgsVersion__ = '3.5.24'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -96,7 +96,13 @@ def qgsActualVersion(update=True, warning=False):
         else:
             actQgsVersion = '2.5.3'  # davor wurde die Version der Projektdatei noch nicht verwaltet.
     curQgsVersion = qgsVersion()
-    actQgsVersionLis = [int(el.replace('a', '').replace('b', '').replace('c', '')) for el in actQgsVersion.split('.')]
+    try:
+        actQgsVersionLis = [int(el.replace('a', '').replace('b', '').replace('c', '')) for el in actQgsVersion.split('.')]
+    except BaseException as err:
+        logger.error(u'\nqkan_database.qgsActualVersion: {}\nVersionsstring fehlerhaft: {}'.format(err, actQgsVersion))
+        actQgsVersion = '2.5.3'                     # davor wurde die Version der Projektdatei noch nicht verwaltet.
+        actQgsVersionLis = [int(el.replace('a', '').replace('b', '').replace('c', '')) for el in actQgsVersion.split('.')]
+
     curQgsVersionLis = [int(el.replace('a', '').replace('b', '').replace('c', '')) for el in curQgsVersion.split('.')]
 
     logger.debug('actQgsVersion: {}'.format(actQgsVersion))

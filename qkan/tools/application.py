@@ -240,7 +240,7 @@ class QKanTools:
     def dlgpr_selectFile_qkanDB(self):
         """Anzubindende QKan-Datenbank festlegen"""
 
-        filename, __ = QFileDialog.getOpenFileName(self.dlgpr,
+        filename, __, __ = QFileDialog.getOpenFileName(self.dlgpr,
                                                        u"QKan-Datenbank auswählen",
                                                        self.default_dir,
                                                        "*.sqlite")
@@ -260,7 +260,7 @@ class QKanTools:
         self.dlgpr.cb_applyQKanTemplate.setChecked(False)  # automatisch deaktivieren
         self.dlgpr_applyQKanTemplate()  # Auswirkungen auslösen
 
-        filename, __ = QFileDialog.getOpenFileName(self.dlgpr,
+        filename, __, __ = QFileDialog.getOpenFileName(self.dlgpr,
                                                        u"Vorlage für zu erstellende Projektdatei auswählen",
                                                        self.templateDir,
                                                        "*.qgs")
@@ -304,7 +304,7 @@ class QKanTools:
         else:
             projectFile = ''
 
-        # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen
+        # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen 
         if 'QKan_Standard_anwenden' in self.config:
             self.applyQKanTemplate = self.config['QKan_Standard_anwenden']
         else:
@@ -323,10 +323,17 @@ class QKanTools:
         if result:
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
-            projectTemplate = self.dlgpr.tf_projectTemplate.text()
             self.database_QKan = self.dlgpr.tf_qkanDB.text()
             projectFile = self.dlgpr.tf_projectFile.text()
             self.applyQKanTemplate = self.dlgpr.cb_applyQKanTemplate.isChecked()
+
+            # QKanTemplate nur, wenn nicht Option "QKan_Standard_anwenden" gewählt
+            if self.applyQKanTemplate:
+                templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
+                projectTemplate = os.path.join(templateDir,'Projekt.qgs')
+            else:
+                projectTemplate = self.dlgpr.tf_projectTemplate.text()
+
 
             # Konfigurationsdaten schreiben -----------------------------------------------------------
 
@@ -386,7 +393,7 @@ class QKanTools:
         # Textfeld wieder deaktivieren
         self.dlgop.tf_logeditor.setEnabled(True)
 
-        filename, __ = QFileDialog.getOpenFileName(self.dlgop,
+        filename, __, __ = QFileDialog.getOpenFileName(self.dlgop,
                                                        u"Alternativen Texteditor auswählen",
                                                        "c:/",
                                                        "*.exe")
@@ -494,7 +501,7 @@ class QKanTools:
     def dlgro_selectFile_qkanDB(self):
         """Datenbankverbindung zur QKan-Datenbank (SpatiLite) auswaehlen."""
 
-        filename, __ = QFileDialog.getOpenFileName(self.dlgro, u"QKan-Datenbank auswählen",
+        filename, __, __ = QFileDialog.getOpenFileName(self.dlgro, u"QKan-Datenbank auswählen",
                                                        self.default_dir, "*.sqlite")
         # if os.path.dirname(filename) != '':
         # os.chdir(os.path.dirname(filename))
@@ -824,7 +831,7 @@ class QKanTools:
         """Anzubindende QKan-Datenbank festlegen"""
 
         self.dlgla.cb_adaptDB.setChecked(True)  # automatisch aktivieren
-        filename, __ = QFileDialog.getOpenFileName(self.dlgla,
+        filename, __, __ = QFileDialog.getOpenFileName(self.dlgla,
                                                        u"QKan-Datenbank auswählen",
                                                        self.default_dir,
                                                        "*.sqlite")
@@ -858,8 +865,8 @@ class QKanTools:
         self.dlgla_enableProjectTemplateGroup()
 
     def dlgla_cb_adaptKBS(self):
-        """Hält Checkbutton cb_adaptKBS aktiv, solange cb_adaptDB aktiv ist, weil bei
-           Änderung der Datenbankanbindung immer das Projektionssystem überprüft
+        """Hält Checkbutton cb_adaptKBS aktiv, solange cb_adaptDB aktiv ist, weil bei 
+           Änderung der Datenbankanbindung immer das Projektionssystem überprüft 
            werden soll. 
         """
         if self.dlgla.cb_adaptDB.isChecked():
@@ -889,7 +896,7 @@ class QKanTools:
                                  self.database_QKan))
                 self.templateDir = ''
 
-        filename, __ = QFileDialog.getOpenFileName(self.dlgla,
+        filename, __, __ = QFileDialog.getOpenFileName(self.dlgla,
                                                        "Projektdatei als Vorlage auswählen",
                                                        self.templateDir,
                                                        "*.qgs")
@@ -964,7 +971,7 @@ class QKanTools:
         else:
             projectFile = ''
 
-        # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen
+        # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen 
         if 'QKan_Standard_anwenden' in self.config:
             self.applyQKanTemplate = self.config['QKan_Standard_anwenden']
         else:

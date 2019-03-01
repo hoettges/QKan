@@ -1,27 +1,27 @@
 # -*- coding: utf-8 -*-
 
-"""
+'''
 
   Import from HE
   ==============
-
+  
   Aus einer Hystem-Extran-Datenbank im Firebird-Format werden Kanaldaten
   in die QKan-Datenbank importiert. Dazu wird eine Projektdatei erstellt,
   die verschiedene thematische Layer erzeugt, u.a. eine Klassifizierung
   der Schachttypen.
-
+  
   | Dateiname            : import_from_he.py
   | Date                 : September 2016
   | Copyright            : (C) 2016 by Joerg Hoettges
   | Email                : hoettges@fh-aachen.de
   | git sha              : $Format:%H$
-
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
+  
+  This program is free software; you can redistribute it and/or modify   
+  it under the terms of the GNU General Public License as published by   
+  the Free Software Foundation; either version 2 of the License, or      
   (at your option) any later version.
 
-"""
+'''
 
 __author__ = 'Joerg Hoettges'
 __date__ = 'September 2016'
@@ -104,7 +104,7 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir=Tr
             FROM geom_cols_ref_sys
             WHERE Lower(f_table_name) = Lower('schaechte')
             AND Lower(f_geometry_column) = Lower('geom')"""
-    if not dbQK.sql(sql, 'importkanaldaten_dyna (37)'):
+    if not dbQK.sql(sql, 'k_qgsadapt (1)'):
         return None
 
     srid = dbQK.fetchone()[0]
@@ -162,7 +162,11 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir=Tr
                   'qkan_teilgebiete.ui', 'qkan_tezg.ui', 'qkan_wehre.ui']
 
     # Lesen der Projektdatei ------------------------------------------------------------------
-    qgsxml = ElementTree.parse(projectTemplate)
+    try:
+        qgsxml = ElementTree.parse(projectTemplate)
+    except BaseException as e:
+        fehlermeldung("\nFehler in qgsadapt: ", u'\nDatei "{}" konnte nicht gelesen werden'.format(projectTemplate))
+   
     root = qgsxml.getroot()
 
     # Projektionssystem anpassen --------------------------------------------------------------
@@ -171,40 +175,45 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir=Tr
         tag_datasource = tag_maplayer.find(u"./datasource")
         tex = tag_datasource.text
         # Nur QKan-Tabellen bearbeiten
-        if tex[tex.index(u'table="') + 7:].split(u'" ')[0] in tabliste:
+        if 'table="' in tex:
+            # Nur diese Tabellen können QKan-Tabellen sein...
+            if tex[tex.index(u'table="') + 7:].split(u'" ')[0] in tabliste:
 
-            # <extend> löschen
-            for tag_extent in tag_maplayer.findall(u"./extent"):
-                tag_maplayer.remove(tag_extent)
+                # <extend> löschen
+                for tag_extent in tag_maplayer.findall(u"./extent"):
+                    tag_maplayer.remove(tag_extent)
 
-            for tag_spatialrefsys in tag_maplayer.findall(u"./srs/spatialrefsys"):
-                tag_spatialrefsys.clear()
+                for tag_spatialrefsys in tag_maplayer.findall(u"./srs/spatialrefsys"):
+                    tag_spatialrefsys.clear()
 
-                elem = ElementTree.SubElement(tag_spatialrefsys, u'proj4')
-                elem.text = proj4text
-                elem = ElementTree.SubElement(tag_spatialrefsys, u'srsid')
-                elem.text = u'{}'.format(srsid)
-                elem = ElementTree.SubElement(tag_spatialrefsys, u'srid')
-                elem.text = u'{}'.format(srid)
-                elem = ElementTree.SubElement(tag_spatialrefsys, u'authid')
-                elem.text = u'EPSG: {}'.format(srid)
-                elem = ElementTree.SubElement(tag_spatialrefsys, u'description')
-                elem.text = description
-                elem = ElementTree.SubElement(tag_spatialrefsys, u'projectionacronym')
-                elem.text = projectionacronym
-                if ellipsoidacronym is not None:
-                    elem = ElementTree.SubElement(tag_spatialrefsys, u'ellipsoidacronym')
-                    elem.text = ellipsoidacronym
+                    elem = ElementTree.SubElement(tag_spatialrefsys, u'proj4')
+                    elem.text = proj4text
+                    elem = ElementTree.SubElement(tag_spatialrefsys, u'srsid')
+                    elem.text = u'{}'.format(srsid)
+                    elem = ElementTree.SubElement(tag_spatialrefsys, u'srid')
+                    elem.text = u'{}'.format(srid)
+                    elem = ElementTree.SubElement(tag_spatialrefsys, u'authid')
+                    elem.text = u'EPSG: {}'.format(srid)
+                    elem = ElementTree.SubElement(tag_spatialrefsys, u'description')
+                    elem.text = description
+                    elem = ElementTree.SubElement(tag_spatialrefsys, u'projectionacronym')
+                    elem.text = projectionacronym
+                    if ellipsoidacronym is not None:
+                        elem = ElementTree.SubElement(tag_spatialrefsys, u'ellipsoidacronym')
+                        elem.text = ellipsoidacronym
 
     # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
 
     formspath = os.path.join(pluginDirectory('qkan'), u"forms")
     for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
         tag_editform = tag_maplayer.find(u"./editform")
-        dateiname = os.path.basename(tag_editform.text)
-        if dateiname in formsliste:
-            # Nur QKan-Tabellen bearbeiten
-            tag_editform.text = os.path.join(formspath, dateiname)
+        if tag_editform:
+            formpath = tag_editform.text
+            if formpath:
+                dateiname = os.path.basename(formpath)
+                if dateiname in formsliste:
+                    # Nur QKan-Tabellen bearbeiten
+                    tag_editform.text = os.path.join(formspath, dateiname)
 
     # Zoom für Kartenfenster einstellen -------------------------------------------------------
 
@@ -255,9 +264,9 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir=Tr
                                    level=Qgis.Info)
 
     # Importiertes Projekt laden
-    project = QgsProject.instance()
-    canvas = QgsMapCanvas(None)
-    bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(),
-                                         canvas)  # synchronise the loaded project with the canvas
-    project.read(QFileInfo(projectFile))  # read the new project file
+    # project = QgsProject.instance()
+    # canvas = QgsMapCanvas(None)
+    # bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(),
+                                         # canvas)  # synchronise the loaded project with the canvas
+    # project.read(QFileInfo(projectFile))  # read the new project file
     # logger.debug(u'Geladene Projektdatei: {}   ({})'.format(project.fileName()))

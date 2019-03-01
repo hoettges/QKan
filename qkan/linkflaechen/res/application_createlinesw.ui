@@ -10,6 +10,11 @@
     <height>486</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Tahoma</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Verbindungslinien erstellen</string>
   </property>
@@ -69,6 +74,12 @@
       <width>211</width>
       <height>181</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string extracomment="Auswahl der zu bearbeitenden Teilgebiete. Alle auswählen mit [Strg]+A">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Liste der Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -259,6 +270,12 @@
       <height>181</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string extracomment="Auswahl der zu bearbeitenden Haltungen nach Entwässerungssystem. Alle auswählen mit [Strg]+A">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Liste der in den Haltungen verwendeten Entwässerungssysteme./nStrg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -323,6 +340,12 @@
       <width>71</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>

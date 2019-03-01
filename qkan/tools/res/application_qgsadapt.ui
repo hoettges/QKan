@@ -10,6 +10,11 @@
     <height>386</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Tahoma</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>QKan-Projektdatei übertragen</string>
   </property>
@@ -116,6 +121,12 @@
       <width>391</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektdatei, die als Vorlage verwendet werden soll&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -232,6 +243,12 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad der neu erzeugten Projektdatei&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -292,6 +309,12 @@
       <width>391</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QKan - Datenbank, auf die die Projektdatei verweisen soll&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

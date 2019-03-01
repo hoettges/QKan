@@ -3,6 +3,7 @@
 import logging
 
 from qgis.core import QgsMessageLog, Qgis
+from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 # Anbindung an Logging-System (Initialisierung in __init__)
@@ -51,10 +52,10 @@ def listQkanLayers():
     '''
     import os
     from qgis.utils import pluginDirectory
-    from xml.etree import ElementTree
+    import xml.etree.ElementTree as et
     templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
     qgsTemplate = os.path.join(templateDir, 'Projekt.qgs')
-    qgsxml = ElementTree.ElementTree()
+    qgsxml = et.ElementTree()
     qgsxml.parse(qgsTemplate)
     tagGroup = u'layer-tree-group/layer-tree-group'
     qgsGroups = qgsxml.findall(tagGroup)

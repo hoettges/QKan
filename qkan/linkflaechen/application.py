@@ -160,7 +160,7 @@ class LinkFl:
         icon_createlinefl_path = ':/plugins/qkan/linkflaechen/res/icon_createlinefl.png'
         Dummy.instance.add_action(
             icon_createlinefl_path,
-            text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'),
+            text=self.tr(u'Erzeuge Verknüpfungslinien von Flächen zu Haltungen'),
             callback=self.run_createlinefl,
             parent=self.iface.mainWindow())
 
@@ -227,7 +227,7 @@ class LinkFl:
             anz = self.dlg_cl.lw_flaechen_abflussparam.count()
             for i in range(anz):
                 item = self.dlg_cl.lw_flaechen_abflussparam.item(i)
-                self.dlg_cl.lw_flaechen_abflussparam.setItemSelected(item, False)
+                item.setSelected(False)
 
             # Anzahl in der Anzeige aktualisieren
             self.countselectionfl()
@@ -244,7 +244,7 @@ class LinkFl:
             anz = self.dlg_cl.lw_hal_entw.count()
             for i in range(anz):
                 item = self.dlg_cl.lw_hal_entw.item(i)
-                self.dlg_cl.lw_hal_entw.setItemSelected(item, False)
+                item.setSelected(False)
 
             # Anzahl in der Anzeige aktualisieren
             self.countselectionfl()
@@ -261,7 +261,7 @@ class LinkFl:
             anz = self.dlg_cl.lw_teilgebiete.count()
             for i in range(anz):
                 item = self.dlg_cl.lw_teilgebiete.item(i)
-                self.dlg_cl.lw_teilgebiete.setItemSelected(item, False)
+                item.setSelected(False)
 
             # Anzahl in der Anzeige aktualisieren
             self.countselectionfl()
@@ -363,7 +363,7 @@ class LinkFl:
             anz = self.dlg_sw.lw_hal_entw.count()
             for i in range(anz):
                 item = self.dlg_sw.lw_hal_entw.item(i)
-                self.dlg_sw.lw_hal_entw.setItemSelected(item, False)
+                item.setSelected(False)
 
             # Anzahl in der Anzeige aktualisieren
             self.countselectionsw()
@@ -380,7 +380,7 @@ class LinkFl:
             anz = self.dlg_sw.lw_teilgebiete.count()
             for i in range(anz):
                 item = self.dlg_sw.lw_teilgebiete.item(i)
-                self.dlg_sw.lw_teilgebiete.setItemSelected(item, False)
+                item.setSelected(False)
 
             # Anzahl in der Anzeige aktualisieren
             self.countselectionsw()
@@ -1017,8 +1017,10 @@ class LinkFl:
 
             # Start der Verarbeitung
 
-            assigntgeb(self.dbQK, auswahltyp, liste_teilgebiete,
-                       [u'haltungen', u'flaechen', u'schaechte', u'einleit', u'tezg', u'linksw', u'linkfl'],
+            assigntgeb(self.dbQK, auswahltyp, liste_teilgebiete, 
+                       [[u'haltungen', 'geom'], [u'flaechen', 'geom'], [u'schaechte', 'geop'], 
+                        [u'einleit', 'geom'], [u'tezg', 'geom'], [u'linksw', 'glink'], 
+                        [u'linkfl', 'glink']], 
                        autokorrektur, bufferradius)
 
         # --------------------------------------------------------------------------

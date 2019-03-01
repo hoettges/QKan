@@ -10,6 +10,11 @@
     <height>608</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Tahoma</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Aus Verbindungslinien zugeordnete Haltungen in Flächen eintragen</string>
   </property>
@@ -70,6 +75,12 @@
       <height>171</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string extracomment="Auswahl der zu bearbeitenden Teilgebiete. Alle auswählen mit [Strg]+A"/>
     </property>
@@ -101,6 +112,12 @@
       <width>321</width>
       <height>171</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="selectionBehavior">
      <enum>QAbstractItemView::SelectRows</enum>
@@ -190,6 +207,12 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
    </widget>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
@@ -241,6 +264,12 @@
       <width>331</width>
       <height>41</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
    </widget>
    <widget class="QPushButton" name="pb_storegroup">

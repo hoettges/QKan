@@ -10,6 +10,11 @@
     <height>276</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Tahoma</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Verknüpfungen bereinigen</string>
   </property>
@@ -101,6 +106,12 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aktuell zu bearbeitende QKan-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -145,6 +156,12 @@
       <width>61</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">

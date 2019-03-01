@@ -7,8 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>382</width>
-    <height>188</height>
+    <height>162</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Tahoma</family>
+   </font>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -28,25 +33,6 @@
     </property>
     <property name="text">
      <string>Bezeichnung:</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lb_version">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>140</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Version QKan Import</string>
-    </property>
-    <property name="text">
-     <string>Version 2.5.4</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

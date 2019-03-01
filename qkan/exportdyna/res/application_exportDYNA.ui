@@ -10,6 +10,11 @@
     <height>616</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Tahoma</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Export in eine DYNA-Datei</string>
   </property>
@@ -56,6 +61,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -123,6 +129,12 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quelldatenbank mit Kanaldaten. Hier wird automatisch das aktuelle geladene Projekt eingetragen. Zum Ändern neue SpatiaLite-Datenbank auswählen...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -142,6 +154,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -189,6 +202,13 @@
       <width>550</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatei mit Kanaldaten für DYNA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -267,6 +287,13 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatei mit Kanaldaten für DYNA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -286,6 +313,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -357,6 +385,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -428,6 +457,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -547,6 +577,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -573,6 +604,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>50</weight>
      <bold>false</bold>
@@ -593,6 +625,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>50</weight>
      <bold>false</bold>
@@ -613,6 +646,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>8</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -633,6 +667,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -659,6 +694,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -685,6 +721,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>50</weight>
      <bold>false</bold>
@@ -705,6 +742,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>9</pointsize>
      <weight>75</weight>
      <bold>true</bold>

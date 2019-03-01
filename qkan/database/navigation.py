@@ -4,7 +4,7 @@ import logging
 
 from qgis.PyQt import QtCore
 
-from .dbfunc import DBConnection
+from qkan.database.dbfunc import DBConnection
 
 main_logger = logging.getLogger("QKan")
 main_logger.info("Navigation-Modul gestartet")

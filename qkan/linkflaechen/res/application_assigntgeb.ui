@@ -10,6 +10,11 @@
     <height>527</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Tahoma</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Aus Verbindungslinien zugeordnete Haltungen in Flächen eintragen</string>
   </property>
@@ -69,6 +74,12 @@
       <width>231</width>
       <height>171</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string extracomment="Auswahl der zu bearbeitenden Teilgebiete. Alle auswählen mit [Strg]+A"/>
@@ -156,6 +167,12 @@
       <width>61</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nur bei Auswahl &amp;quot;innerhalb&amp;quot;: die Fläche der Teilgebiete wird bei der Suche um die Pufferbreite vergrößert, um kleine Ungenauigkeiten zu berücksichtigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

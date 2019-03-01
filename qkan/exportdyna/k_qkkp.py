@@ -182,13 +182,17 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
 
     # Verschneidung nur, wenn (mit_verschneidung)
     if mit_verschneidung:
-        case_verschneidung = "fl.aufteilen IS NULL or fl.aufteilen <> 'ja'"
-        join_verschneidung = """
+        case_verschneidung = u"""
+                CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom 
+                ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom"""
+        join_verschneidung = u"""
             LEFT JOIN tezg AS tg
             ON lf.tezgnam = tg.flnam"""
+        tezg_verschneidung = u"""area(tg.geom) AS fltezg,"""
     else:
-        case_verschneidung = "1"
+        case_verschneidung = u"fl.geom AS geom"
         join_verschneidung = ""
+        tezg_verschneidung = u"0 AS fltezg,"
 
     # wdistbef ist die mit der (Teil-) Fläche gewichtete Fließlänge zur Haltung für die befestigten Flächen zu 
     # einer Haltung, 
@@ -205,14 +209,11 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
                     ELSE 20.0
                     END AS neigung, 
                 fl.abflussparameter AS abflussparameter, 
-                area(tg.geom) AS fltezg,
-                CASE WHEN {case_verschneidung} THEN fl.geom 
-                ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                {tezg_verschneidung}
+                {case_verschneidung}
             FROM linkfl AS lf
             INNER JOIN flaechen AS fl
             ON lf.flnam = fl.flnam{join_verschneidung}),
-            LEFT JOIN tezg AS tg
-            ON lf.tezgnam = tg.flnam),
         halflaech AS (
             SELECT
                 fi.haltnam AS haltnam, 
@@ -288,7 +289,8 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
         ON h.entwart = a.bezeichnung
     """.format(mindestflaeche=mindestflaeche, ausw_and=ausw_and, auswahl=auswahl,
                sql_prof1=sql_prof1, sql_prof2=sql_prof2,
-               case_verschneidung=case_verschneidung, join_verschneidung=join_verschneidung)
+               case_verschneidung=case_verschneidung, join_verschneidung=join_verschneidung, 
+               tezg_verschneidung=tezg_verschneidung)
 
     if not dbQK.sql(sql, u'dbQK: k_qkkp.write12 (1)'):
         return False
@@ -324,7 +326,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
             # kskey
             # ))
         except BaseException as err:
-            fehlermeldung(u'Fehler in k_qkkp.write12 (1): {}'.format(err),
+            fehlermeldung(u'Fehler in k_qkkp.write12 (2): {}'.format(err),
                           u'ks {} konnte in dynakeys_ks nicht gefunden werden\ndynakeys_ks = {}'.format( \
                               ks, str(dynakeys_ks)))
 
@@ -377,7 +379,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
             try:
                 profilkey = dynaprof_key[dynaprof_nam.index(profilid)]
             except BaseException as err:
-                fehlermeldung(u'Fehler in k_qkkp.write12 (2): {}'.format(err),
+                fehlermeldung(u'Fehler in k_qkkp.write12 (3): {}'.format(err),
                               u'Profilkey {id} konnte in interner Zuordnungsliste nicht gefunden werden\n')
                 logger.debug('dynprof_nam: {}'.format(', '.join(dynaprof_nam)))
 
@@ -702,7 +704,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                       u'Der logische Cache konnte nicht aktualisiert werden.')
 
     # DYNA-Vorlagedatei lesen. Dies geschieht zu Beginn, damit Zieldatei selbst Vorlage sein kann!
-    dynatemplate = open(template_dyna).readlines()
+    dynatemplate = open(template_dyna, encoding='windows-1252').readlines()
 
     # DYNA-Datei löschen, falls schon vorhanden
     if os.path.exists(dynafile):
@@ -823,7 +825,9 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
         nchange = 1  # Initialisierung
         changelog = []
         nlimit = 0
-        while nchange > 0 and nlimit < max_loops:
+
+        while (nchange > 0) and (max_loops > nlimit):
+            nlimit += 1
             sql = u"""
                 UPDATE dynahal
                 SET 
@@ -853,6 +857,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 return False
 
             nchange = int(dbQK.fetchone()[0])  # Zahl der zuletzt geänderten Datensätze
+            logger.debug('Typ von nchange: {}'.format(type(nchange)))
             changelog.append(nchange)
 
         dbQK.commit()
@@ -1106,7 +1111,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
 
     # Schreiben der DYNA-Datei ------------------------------------------------------------------------
 
-    with open(dynafile, 'w') as df:
+    with open(dynafile, 'w', encoding='windows-1252') as df:
 
         typ05 = False  # markiert, ob in der Vorlagedatei Block mit Datentyp 05 erreicht
         typ12 = False  # markiert, ob in der Vorlagedatei Block mit Datentyp 12 erreicht
@@ -1199,6 +1204,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 # df.write(z)
                 continue
 
+        dynatemplate.close()
     del dbQK
 
     fortschritt(u'Ende...', 1)

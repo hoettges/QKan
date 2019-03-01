@@ -10,6 +10,11 @@
     <height>577</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Tahoma</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Allgmeine QKan-Optionen</string>
   </property>
@@ -128,6 +133,12 @@
       <width>70</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximaler Abstand vom Ende der Anbindungslinie zur Haltung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -256,6 +267,12 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flächen unterhalb der angegebenen Größe werden nicht berücksichtigt&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -292,6 +309,12 @@
       <width>70</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Grenzwert für die automatische Nummerierung der Haltungen in Haltungssträngen in DYNA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -485,6 +508,12 @@ Haltungen pro Strang:</string>
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>EPSG-Nummer des Projektionssystems der Quelldaten</string>
     </property>
@@ -588,6 +617,12 @@ Haltungen pro Strang:</string>
       <width>361</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optional: Pfad zum Editor, mit dem die Log-Datei geöffnet werden soll&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

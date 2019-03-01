@@ -27,7 +27,7 @@ import logging
 import os
 
 import firebirdsql
-from qgis.core import Qgis
+from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 from .qkan_utils import fehlermeldung

@@ -10,6 +10,11 @@
     <height>721</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Tahoma</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Projektdatei anpassen</string>
   </property>
@@ -121,6 +126,12 @@
       <width>361</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Neu erzeugte Projektdatei&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -413,6 +424,12 @@ Layer hinzuladen</string>
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aktuelle QKan - Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -532,6 +549,12 @@ Layer hinzuladen</string>
       <width>361</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Layereinstellungen aus gewählter Projektdatei übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

@@ -173,7 +173,7 @@ class ImportFromDyna:
     # (jh, 09.10.2016)
 
     def select_dynaFile(self):
-        """DYNA (*.ein) -datei auswählen"""
+        u"""DYNA (*.ein) -datei auswählen"""
 
         filename, __ = QFileDialog.getOpenFileName(self.dlg,
                                                    "Dateinamen der zu lesenden Kanal++-Datei eingeben",

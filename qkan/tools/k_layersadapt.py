@@ -103,7 +103,8 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     qgsActualVersion()
 
     # Dictionary aller Layer für legendInterface
-    allLayers = iface.legendInterface().layers()
+    project = QgsProject.instance()
+    allLayers = project.mapLayers()
     if len(allLayers) == 0:
         meldung(u'Benutzerfehler: ', u'Es ist kein Projekt geladen.')
         return
@@ -143,7 +144,7 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
         return None
 
     actversion = dbQK.actversion
-    logger.debug('actversion: {}'.format(actversion))
+    logger.debug(u'actversion: {}'.format(actversion))
 
     # Status, wenn die Änderungen so gravierend waren, dass das Projekt neu geladen werden muss. 
     # status_neustart = False
@@ -230,12 +231,12 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
         if refLayerName in layerList:
             layer = layerList[refLayerName]
             layerId = layer.id()
-            logger.debug('layerId: {}'.format(layerId))
+            logger.debug(u'layerId: {}'.format(layerId))
             layerIdList[refLayerId] = layerId
         else:
             layerNotInProjektMeldung = not fehlende_layer_ergaenzen  # nur setzen, wenn keine Ergänzung gewählt
             logger.info(u'k_layersadapt: QKan-Layer nicht in Projekt: {}'.format(refLayerName))
-    logger.debug('Refliste Layer-Ids: \n{}'.format(layerIdList))
+    logger.debug(u'Refliste Layer-Ids: \n{}'.format(layerIdList))
 
     # Liste der zu bearbeitenden Layer
     if anpassen_auswahl == 'auswahl_anpassen':
@@ -364,7 +365,7 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
 
                         editFormConfig.setWidgetType(fieldIndex, widgetv2type)
                         editFormConfig.setWidgetConfig(fieldIndex, widgetConfig)
-                        logger.debug('widgetConfig: \n{}\n'.format(widgetConfig))
+                        logger.debug(u'widgetConfig: \n{}\n'.format(widgetConfig))
                     except BaseException as err:
                         fehlermeldung(u'Fehler in k_layersadapt (2): {}'.format(err),
                                       u'')
@@ -385,8 +386,7 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     del qgsxml
     del dbQK
 
-    project = QgsProject.instance()
-    project.setTitle('QKan Version {}'.format(qgsVersion()))
+    project.setTitle(u'QKan Version {}'.format(qgsVersion()))
 
     # Schreiben der neuen Projektdatei
     if projectFile != '':
