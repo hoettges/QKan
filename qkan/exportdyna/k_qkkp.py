@@ -830,6 +830,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
         changelog = []
         nlimit = 0
         while nchange > 0 and nlimit < max_loops:
+            nlimit += 1
             sql = u"""
                 UPDATE dynahal
                 SET 
