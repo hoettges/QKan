@@ -5,14 +5,19 @@
 """
 
 # flaechen.abflusstyp
-def abflusstypen(simprog):
-    abflusstypen =  {u'he': {u'Speicherkaskade': 0, u'Fliesszeiten': 1, u'Schwerpunktlaufzeit': 2, u'Direktabfluss': 0, u'Schwerpunktfließzeit': 2},
-                      u'kp': {u'Speicherkaskade': 0, u'Fliesszeiten': 1, u'Schwerpunktlaufzeit': 2, u'Direktabfluss': 0, u'Schwerpunktfließzeit': 2}
-                    }
+from .qkan_utils import fehlermeldung
 
-    if simprog in abflusstypen:
-        return abflusstypen[simprog]
+
+def abflusstypen(simprog):
+    typen = {
+        'he': {'Speicherkaskade': 0, 'Fliesszeiten': 1, 'Schwerpunktlaufzeit': 2, 'Direktabfluss': 0,
+               'Schwerpunktfließzeit': 2},
+        'kp': {'Speicherkaskade': 0, 'Fliesszeiten': 1, 'Schwerpunktlaufzeit': 2, 'Direktabfluss': 0,
+               'Schwerpunktfließzeit': 2}
+    }
+
+    if simprog in typen:
+        return typen[simprog]
     else:
         fehlermeldung(u'Fehler in Modul reflist', u'simprog nicht definiert: {}'.format(simprog))
         return None
-

@@ -25,20 +25,9 @@ __author__ = 'Joerg Hoettges'
 __date__ = 'February 2018'
 __copyright__ = '(C) 2018, Joerg Hoettges'
 
-# This will get replaced with a git SHA1 when you do a git archive
-
-__revision__ = ':%H$'
-
 import logging
-import os
 
-from qgis.PyQt.QtGui import QProgressBar
-
-from qgis.core import QgsMessageLog
-from qgis.gui import QgsMessageBar
-from qgis.utils import iface
-
-from qkan.database.qkan_utils import fortschritt, fehlermeldung, checknames
+from qkan.database.qkan_utils import fortschritt, checknames
 
 logger = logging.getLogger(u'QKan')
 
@@ -70,7 +59,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     # status_message = iface.messageBar().createMessage(u"", 
                     # u"Bereinigung Flächenverknüpfungen in Arbeit. Bitte warten.")
     # status_message.layout().addWidget(progress_bar)
-    # iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+    # iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # progress_bar.setValue(1)
 
@@ -148,7 +137,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     fortschritt(u'Ende...', 1)
     # progress_bar.setValue(100)
     # status_message.setText(u"Bereinigung Flächenverknüpfungen abgeschlossen.")
-    # status_message.setLevel(QgsMessageBar.SUCCESS)
+    # status_message.setLevel(Qgis.Success)
 
     return True
 
@@ -164,7 +153,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     # status_message = iface.messageBar().createMessage(u"", 
                 # u"Bereinigung Einzeleinleiter-Verknüpfungen in Arbeit. Bitte warten.")
     # status_message.layout().addWidget(progress_bar)
-    # iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+    # iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # progress_bar.setValue(1)
 
@@ -241,7 +230,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     fortschritt(u'Ende...', 1)
     # progress_bar.setValue(100)
     # status_message.setText(u"Bereinigung Einzeleinleiter-Verknüpfungen abgeschlossen.")
-    # status_message.setLevel(QgsMessageBar.SUCCESS)
+    # status_message.setLevel(Qgis.Success)
 
     return True
 
@@ -323,6 +312,6 @@ def updatelinkageb(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     fortschritt(u'Ende...', 1)
     # progress_bar.setValue(100)
     # status_message.setText(u"Bereinigung Aussengebiete-Verknüpfungen abgeschlossen.")
-    # status_message.setLevel(QgsMessageBar.SUCCESS)
+    # status_message.setLevel(Qgis.Success)
 
     return True

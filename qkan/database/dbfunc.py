@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-'''  
+"""
 
   Datenbankmanagement
   ===================
 
-  Definition einer Klasse mit Methoden fuer den Zugriff auf 
+  Definition einer Klasse mit Methoden fuer den Zugriff auf
   eine SpatiaLite-Datenbank.
 
   | Dateiname            : dbfunc.py
@@ -13,44 +13,48 @@
   | Copyright            : (C) 2016 by Joerg Hoettges
   | Email                : hoettges@fh-aachen.de
 
-  This program is free software; you can redistribute it and/or modify  
-  it under the terms of the GNU General Public License as published by  
-  the Free Software Foundation; either version 2 of the License, or     
-  (at your option) any later version.                                   
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
-'''
+"""
 
 __author__ = 'Joerg Hoettges'
 __date__ = 'September 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
 
-# This will get replaced with a git SHA1 when you do a git archive
-
-__revision__ = ':%H$'
-
+import datetime
+import glob
 import logging
 import os
 import shutil
-import glob
-import datetime
 
-from qgis.core import QgsMessageLog, QgsProject
-from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import Qgis
+from qgis.utils import iface, pluginDirectory, spatialite_connect
 
-import pyspatialite.dbapi2 as splite
-from qgis.utils import iface, pluginDirectory
-
-from PyQt4.QtGui import QProgressBar
-
-from qkan_database import createdbtables, versionolder, dbVersion
-from qkan_utils import fortschritt, fehlermeldung, meldung
+from .qkan_database import createdbtables, versionolder, dbVersion
+from .qkan_utils import fehlermeldung, meldung
 
 logger = logging.getLogger(u'QKan')
 
 progress_bar = None
 
 
-# Hauptprogramm ----------------------------------------------------------------
+# Pruefung, ob in Tabellen oder Spalten unerlaubte Zeichen enthalten sind
+def checknames(text):
+    """ Pruefung auf nicht erlaubte Zeichen in Tabellen- und Spaltennamen.
+
+        :param text: zu pruefende Bezeichnung einer Tabelle oder Tabellenspalte
+        :type text: Boolean
+
+        :returns: Testergebnis: True = alles o.k.
+        :rtype: logical
+    """
+
+    return not (max([ord(t) > 127 for t in text]) or ('.' in text) or ('-' in text))
+
 
 class DBConnection:
     """SpatiaLite Datenbankobjekt"""
@@ -90,32 +94,33 @@ class DBConnection:
 
         # Die nachfolgenden Klassenobjekte dienen dazu, gleichartige (sqlidtext) SQL-Debug-Meldungen 
         # nur einmal pro Sekunde zu erzeugen. 
-        self.sqltime = datetime.datetime(2017,1,1,1,0,0)
+        self.sqltime = datetime.datetime(2017, 1, 1, 1, 0, 0)
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
         self.actversion = dbVersion()
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
-        self.isCurrentVersion = True        # QKan-Datenbank ist auf dem aktuellen Stand. 
-        self.connected = True               # Verbindung hergestellt, d.h. weder fehlgeschlagen
-                                             # noch wegen reload geschlossen
-        self.reload = False                 # Datenbank wurde aktualisiert und dabei sind 
-                                             # gravierende Änderungen aufgetreten, die ein Neuladen 
-                                             # des Projektes erforderlich machen
+        self.isCurrentVersion = True  # QKan-Datenbank ist auf dem aktuellen Stand.
+        self.connected = True  # Verbindung hergestellt, d.h. weder fehlgeschlagen
+        # noch wegen reload geschlossen
+        self.reload = False  # Datenbank wurde aktualisiert und dabei sind
+        # gravierende Änderungen aufgetreten, die ein Neuladen
+        # des Projektes erforderlich machen
 
         if dbname is not None:
             # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
             if os.path.exists(dbname):
-                self.consl = splite.connect(database=dbname, check_same_thread=False)
+                self.consl = spatialite_connect(database=dbname, check_same_thread=False)
                 self.cursl = self.consl.cursor()
 
                 self.epsg = self.getepsg()
                 if self.epsg is None:
-                    logger.error(u'dbfunc.__init__: EPSG konnte nicht ermittelt werden. \n QKan-DB: {}\n'.format(dbname))
+                    logger.error(
+                        u'dbfunc.__init__: EPSG konnte nicht ermittelt werden. \n QKan-DB: {}\n'.format(dbname))
 
                 logger.debug(u'dbfund.__init__: Datenbank existiert und Verbindung hergestellt:\n{}'.format(dbname))
                 # Versionsprüfung
-                
+
                 if not self.checkVersion():
                     logger.debug('dbfunc: Datenbank ist nicht aktuell')
                     if qkanDBUpdate:
@@ -126,36 +131,38 @@ class DBConnection:
                             self.connected = False
                             self.consl.close()
                     else:
-                        meldung(u"Projekt muss aktualisiert werden.", 
-                            u"Die QKan-Version der Datenbank {verDB} stimmt nicht mit der aktuellen QKan-Version {verCur} überein und muss aktualisiert werden!".format(verDB=self.versiondbQK, verCur=self.actversion))
+                        meldung(u"Projekt muss aktualisiert werden.",
+                                (u"Die QKan-Version der Datenbank {verDB} stimmt nicht mit der aktuellen QKan-Version "
+                                 u"{verCur} überein und muss aktualisiert werden!").format(verDB=self.versiondbQK,
+                                                                                           verCur=self.actversion))
                         self.consl.close()
                         self.isCurrentVersion = False
-                        self.connected = False              # Verbindungsstatus zur Kontrolle
+                        self.connected = False  # Verbindungsstatus zur Kontrolle
 
             else:
                 iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank wird erstellt. Bitte waren...",
-                                               level=QgsMessageBar.INFO)
+                                               level=Qgis.Info)
 
                 datenbank_QKan_Template = os.path.join(self.templatepath, u"qkan.sqlite")
                 try:
                     shutil.copyfile(datenbank_QKan_Template, dbname)
                 except BaseException as err:
-                    fehlermeldung(u'Fehler in dbfunc.DBConnection:\n{}\n'.format(err), 
+                    fehlermeldung(u'Fehler in dbfunc.DBConnection:\n{}\n'.format(err),
                                   u'Kopieren von: {}\nnach: {}\n nicht möglich'.format(self.templatepath, dbname))
-                    self.connected = False              # Verbindungsstatus zur Kontrolle
+                    self.connected = False  # Verbindungsstatus zur Kontrolle
                     self.consl = None
 
-                self.consl = splite.connect(database=dbname)
+                self.consl = spatialite_connect(database=dbname)
                 self.cursl = self.consl.cursor()
 
                 # sql = u'SELECT InitSpatialMetadata()'
                 # self.cursl.execute(sql)
 
                 iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank ist erstellt!",
-                                               level=QgsMessageBar.INFO)
+                                               level=Qgis.Info)
                 if not createdbtables(self.consl, self.cursl, self.actversion, self.epsg):
                     fehlermeldung(u"Fehler",
-                                   u"SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden")
+                                  u"SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden")
         elif tabObject is not None:
             tabconnect = tabObject.publicSource()
             t_db, t_tab, t_geo, t_sql = tuple(tabconnect.split())
@@ -165,28 +172,27 @@ class DBConnection:
             # Pruefung auf korrekte Zeichen in Namen
             if not checknames(self.tabname):
                 fehlermeldung(u"Fehler", u"Unzulaessige Zeichen in Tabellenname: {}".format(self.tabname))
-                self.connected = False              # Verbindungsstatus zur Kontrolle
+                self.connected = False  # Verbindungsstatus zur Kontrolle
                 self.consl = None
             else:
 
                 try:
-                    self.consl = splite.connect(database=dbname)
+                    self.consl = spatialite_connect(database=dbname)
                     self.cursl = self.consl.cursor()
 
                     self.epsg = self.getepsg()
 
                 except:
                     fehlermeldung(u"Fehler",
-                                   u'Fehler beim Öffnen der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(dbname))
-                    self.connected = False              # Verbindungsstatus zur Kontrolle
+                                  u'Fehler beim Öffnen der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(dbname))
+                    self.connected = False  # Verbindungsstatus zur Kontrolle
                     self.consl = None
         else:
             fehlermeldung(u"Fehler",
-                               u'Fehler beim Anbinden der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(
-                                   dbname), level=QgsMessageBar.CRITICAL)
-            self.connected = False              # Verbindungsstatus zur Kontrolle
+                          u'Fehler beim Anbinden der SpatialLite-Datenbank {:s}!\nAbbruch!'.format(
+                              dbname))
+            self.connected = False  # Verbindungsstatus zur Kontrolle
             self.consl = None
-
 
     def __del__(self):
         """Destructor.
@@ -207,7 +213,6 @@ class DBConnection:
         lattr = [el[1] for el in daten]
         return lattr
 
-
     def getepsg(self):
         """ Feststellen des EPSG-Codes der Datenbank"""
 
@@ -224,7 +229,7 @@ class DBConnection:
         epsg = data[0]
         return epsg
 
-    def sql(self, sql, sqlinfo = u'allgemein', repeatmessage=False, transaction=False):
+    def sql(self, sql, sqlinfo=u'allgemein', repeatmessage=False, transaction=False):
         """Fuehrt eine SQL-Abfrage aus."""
 
         try:
@@ -232,22 +237,22 @@ class DBConnection:
 
             # Identische Protokollmeldungen werden für 2 Sekunden unterdrückt...
             if self.sqltext == sqlinfo and not repeatmessage:
-                if (self.sqltime.now() - self.sqltime).seconds <2:
+                if (self.sqltime.now() - self.sqltime).seconds < 2:
                     self.sqlcount += 1
                     return True
             self.sqltext = sqlinfo
             self.sqltime = self.sqltime.now()
             if self.sqlcount == 0:
-                logger.debug(u'dbfunc.sql: {}\n{}\n'.format(sqlinfo,sql))
+                logger.debug(u'dbfunc.sql: {}\n{}\n'.format(sqlinfo, sql))
             else:
                 logger.debug(u'dbfunc.sql (Nr. {}): {}\n{}\n'.format(self.sqlcount, sqlinfo, sql))
             self.sqlcount = 0
             return True
         except BaseException as err:
-            fehlermeldung(u'dbfunc.sql: SQL-Fehler in {e}'.format(e=sqlinfo), 
+            fehlermeldung(u'dbfunc.sql: SQL-Fehler in {e}'.format(e=sqlinfo),
                           u"{e}\n{s}".format(e=repr(err), s=sql))
             # if transaction:
-                # self.cursl.commit("ROLLBACK;")
+            # self.cursl.commit("ROLLBACK;")
             self.__del__()
             return False
 
@@ -316,7 +321,6 @@ class DBConnection:
 
         return (self.actversion == self.versiondbQK)
 
-
     # Aktualisierung der QKan-Datenbank auf aktuellen Stand
 
     def updateversion(self):
@@ -331,7 +335,8 @@ class DBConnection:
         # Nur wenn Stand der Datenbank nicht aktuell
         if not self.checkVersion():
 
-            self.versionlis = [int(el.replace('a','').replace('b','').replace('c','')) for el in self.versiondbQK.split('.')]
+            self.versionlis = [int(el.replace('a', '').replace('b', '').replace('c', '')) for el in
+                               self.versiondbQK.split('.')]
             logger.debug(u'dbfunc.updateversion: versiondbQK = {}'.format(self.versiondbQK))
 
             # Status, wenn die Änderungen so gravierend waren, dass das Projekt neu geladen werden muss. 
@@ -355,9 +360,9 @@ class DBConnection:
                     teilgebiet TEXT, 
                     zufluss REAL,
                     kommentar TEXT,
-                    createdat TEXT DEFAULT CURRENT_DATE)""", 
-                u"""SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)""".format(self.epsg),
-                u"""SELECT CreateSpatialIndex('einleit','geom')"""]
+                    createdat TEXT DEFAULT CURRENT_DATE)""",
+                          u"""SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)""".format(self.epsg),
+                          u"""SELECT CreateSpatialIndex('einleit','geom')"""]
                 for sql in sqllis:
                     if not self.sql(sql, u'dbfunc.version (3c)'):
                         return False
@@ -366,17 +371,16 @@ class DBConnection:
                         pk INTEGER PRIMARY KEY AUTOINCREMENT,
                         elnam TEXT,
                         haltnam TEXT,
-                        teilgebiet TEXT)""", 
-                        u"""SELECT AddGeometryColumn('linksw','geom',{},'POLYGON',2)""".format(self.epsg), 
-                        u"""SELECT AddGeometryColumn('linksw','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg), 
-                        u"""SELECT AddGeometryColumn('linksw','glink',{},'LINESTRING',2)""".format(self.epsg),
-                        u"""SELECT CreateSpatialIndex('linksw','geom')"""]
+                        teilgebiet TEXT)""",
+                          u"""SELECT AddGeometryColumn('linksw','geom',{},'POLYGON',2)""".format(self.epsg),
+                          u"""SELECT AddGeometryColumn('linksw','gbuf',{},'MULTIPOLYGON',2)""".format(self.epsg),
+                          u"""SELECT AddGeometryColumn('linksw','glink',{},'LINESTRING',2)""".format(self.epsg),
+                          u"""SELECT CreateSpatialIndex('linksw','geom')"""]
                 for sql in sqllis:
                     if not self.sql(sql, u'dbfunc.version (3d)'):
                         return False
 
                 self.versionlis = [2, 0, 2]
-
 
             # ---------------------------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 1, 2]):
@@ -405,7 +409,6 @@ class DBConnection:
 
                 self.versionlis = [2, 1, 2]
 
-
             # ---------------------------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 2, 0]):
                 attrlis = self.attrlist(u'einleit')
@@ -420,7 +423,6 @@ class DBConnection:
                     if not self.sql(sql, u'dbfunc.version (2.1.2-2)'):
                         return False
                     self.commit()
-
 
                 sql = u"""CREATE TABLE IF NOT EXISTS einzugsgebiete (
                     pk INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -445,7 +447,6 @@ class DBConnection:
 
                 self.versionlis = [2, 2, 0]
 
-
             # ---------------------------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 2, 1]):
 
@@ -460,7 +461,6 @@ class DBConnection:
                     self.commit()
 
                 self.versionlis = [2, 2, 1]
-
 
             # ---------------------------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 2, 2]):
@@ -477,17 +477,15 @@ class DBConnection:
 
                 self.versionlis = [2, 2, 2]
 
-
             # ---------------------------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 2, 3]):
-
 
                 # Tabelle flaechen -------------------------------------------------------------
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = u"""SELECT type, sql FROM sqlite_master WHERE tbl_name='flaechen'"""
                 # if not self.sql(sql, u'dbfunc.version.pragma (1)'):
-                    # return False
+                # return False
                 # triggers = self.fetchall()
 
                 # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
@@ -553,13 +551,13 @@ class DBConnection:
 
                 # 3. Schritt: Trigger wieder herstellen
                 # for el in triggers:
-                    # if el[0] != 'table':
-                        # sql = el[1]
-                        # logger.debug(u"Trigger 'flaechen' verarbeitet:\n{}".format(el[1]))
-                        # if not self.sql(sql, u'dbfunc.version (2.2.2-2)', transaction=True):
-                            # return False
-                    # else:
-                        # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
+                # if el[0] != 'table':
+                # sql = el[1]
+                # logger.debug(u"Trigger 'flaechen' verarbeitet:\n{}".format(el[1]))
+                # if not self.sql(sql, u'dbfunc.version (2.2.2-2)', transaction=True):
+                # return False
+                # else:
+                # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
                 # 4. Schritt: Transaction abschließen
                 self.commit()
@@ -576,7 +574,6 @@ class DBConnection:
                 if not self.sql(sql, u'dbfunc.version (2.2.2-3)'):
                     return False
 
-
                 progress_bar.setValue(15)
 
                 # Tabelle linksw -------------------------------------------------------------
@@ -584,7 +581,7 @@ class DBConnection:
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = u"""SELECT type, sql FROM sqlite_master WHERE tbl_name='linksw'"""
                 # if not self.sql(sql, u'dbfunc.version.pragma (3)'):
-                    # return False
+                # return False
                 # triggers = self.fetchall()
 
                 # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
@@ -631,17 +628,16 @@ class DBConnection:
 
                 # 3. Schritt: Trigger wieder herstellen
                 # for el in triggers:
-                    # if el[0] != 'table':
-                        # sql = el[1]
-                        # logger.debug(u"Trigger 'linksw' verarbeitet:\n{}".format(el[1]))
-                        # if not self.sql(sql, u'dbfunc.version (2.2.2-5)', transaction=True):
-                            # return False
-                    # else:
-                        # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
+                # if el[0] != 'table':
+                # sql = el[1]
+                # logger.debug(u"Trigger 'linksw' verarbeitet:\n{}".format(el[1]))
+                # if not self.sql(sql, u'dbfunc.version (2.2.2-5)', transaction=True):
+                # return False
+                # else:
+                # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
                 # 4. Schritt: Transaction abschließen
                 self.commit()
-
 
                 progress_bar.setValue(30)
 
@@ -650,7 +646,7 @@ class DBConnection:
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = u"""SELECT type, sql FROM sqlite_master WHERE tbl_name='linkfl'"""
                 # if not self.sql(sql, u'dbfunc.version.pragma (5)'):
-                    # return False
+                # return False
                 # triggers = self.fetchall()
 
                 # 2. Schritt: Temporäre Tabelle anlegen, Daten rüber kopieren, 
@@ -699,17 +695,16 @@ class DBConnection:
 
                 # 3. Schritt: Trigger wieder herstellen
                 # for el in triggers:
-                    # if el[0] != 'table':
-                        # sql = el[1]
-                        # logger.debug(u"Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
-                        # if not self.sql(sql, u'dbfunc.version (2.2.2-7)', transaction=True):
-                            # return False
-                    # else:
-                        # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
+                # if el[0] != 'table':
+                # sql = el[1]
+                # logger.debug(u"Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
+                # if not self.sql(sql, u'dbfunc.version (2.2.2-7)', transaction=True):
+                # return False
+                # else:
+                # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
                 # 4. Schritt: Transaction abschließen
                 self.commit()
-
 
                 progress_bar.setValue(45)
 
@@ -718,7 +713,7 @@ class DBConnection:
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = u"""SELECT type, sql FROM sqlite_master WHERE tbl_name='einleit'"""
                 # if not self.sql(sql, u'dbfunc.version.pragma (7)'):
-                    # return False
+                # return False
                 # triggers = self.fetchall()
 
                 # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
@@ -766,13 +761,13 @@ class DBConnection:
 
                 # 3. Schritt: Trigger wieder herstellen
                 # for el in triggers:
-                    # if el[0] != 'table':
-                        # sql = el[1]
-                        # logger.debug(u"Trigger 'einleit' verarbeitet:\n{}".format(el[1]))
-                        # if not self.sql(sql, u'dbfunc.version (2.2.2-9)', transaction=True):
-                            # return False
-                    # else:
-                        # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
+                # if el[0] != 'table':
+                # sql = el[1]
+                # logger.debug(u"Trigger 'einleit' verarbeitet:\n{}".format(el[1]))
+                # if not self.sql(sql, u'dbfunc.version (2.2.2-9)', transaction=True):
+                # return False
+                # else:
+                # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
                 # 4. Schritt: Transaction abschließen
 
@@ -839,7 +834,6 @@ class DBConnection:
                 if not self.sql(sql, u'dbfunc.version (2.4.9-1)'):
                     return False
 
-
                 sql = u'''CREATE VIEW IF NOT EXISTS "v_linkfl_check" AS 
                         WITH lfok AS
                         (   SELECT 
@@ -884,7 +878,6 @@ class DBConnection:
                 if not self.sql(sql, u'dbfunc.version (2.4.9-3)'):
                     return False
 
-
                 sql = u'''CREATE VIEW IF NOT EXISTS "v_flaechen_ohne_linkfl" AS 
                         SELECT 
                             fl.pk, 
@@ -912,7 +905,6 @@ class DBConnection:
                 # Versionsnummer hochsetzen
 
                 self.versionlis = [2, 4, 9]
-
 
             # ---------------------------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 5, 2]):
@@ -972,7 +964,6 @@ class DBConnection:
 
                 self.versionlis = [2, 5, 2]
 
-
                 # Formulare aktualisieren ----------------------------------------------------------
                 # 
                 # Dieser Block muss im letzten Update vorkommen, in dem auch Formulare geändert wurden...
@@ -989,30 +980,29 @@ class DBConnection:
                     formpath = os.path.join(projectpath, u'eingabemasken')
                     formlist = os.listdir(formpath)
 
-                    logger.debug(u"\nEingabeformulare aktualisieren: \n" + 
-                                  "projectpath = {projectpath}\n".format(projectpath=projectpath) + 
-                                  "formpath = {formpath}\n".format(formpath=formpath) + 
-                                  "formlist = {formlist}\n".format(formlist=formlist) + 
-                                  "templatepath = {templatepath}".format(templatepath=self.templatepath)
-                                  )
+                    logger.debug(u"\nEingabeformulare aktualisieren: \n" +
+                                 "projectpath = {projectpath}\n".format(projectpath=projectpath) +
+                                 "formpath = {formpath}\n".format(formpath=formpath) +
+                                 "formlist = {formlist}\n".format(formlist=formlist) +
+                                 "templatepath = {templatepath}".format(templatepath=self.templatepath)
+                                 )
 
                     for formfile in glob.iglob(os.path.join(self.templatepath, u'*.ui')):
                         logger.debug(u"Eingabeformular aktualisieren: {} -> {}".format(formfile, formpath))
                         shutil.copy2(formfile, formpath)
                 except BaseException as err:
-                    fehlermeldung(u'Fehler beim Aktualisieren der Eingabeformulare\n', 
+                    fehlermeldung(u'Fehler beim Aktualisieren der Eingabeformulare\n',
                                   u"{e}".format(e=repr(err)))
 
             # ------------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 5, 7]):
-
                 # Tabelle linkfl um die Felder [abflusstyp, speicherzahl, speicherkonst, fliesszeitkanal, fliesszeitflaeche]
                 # erweitern. Wegen der Probleme mit der Anzeige in QGIS wird die Tabelle dazu umgespeichert. 
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = u"""SELECT type, sql FROM sqlite_master WHERE tbl_name='linkfl'"""
                 # if not self.sql(sql, u'dbfunc.version.pragma (5)'):
-                    # return False
+                # return False
                 # triggers = self.fetchall()
 
                 # 2. Schritt: Temporäre Tabelle anlegen, Daten rüber kopieren, 
@@ -1066,20 +1056,18 @@ class DBConnection:
 
                 # 3. Schritt: Trigger wieder herstellen
                 # for el in triggers:
-                    # if el[0] != 'table':
-                        # sql = el[1]
-                        # logger.debug(u"Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
-                        # if not self.sql(sql, u'dbfunc.version (2.2.2-7)', transaction=True):
-                            # return False
-                    # else:
-                        # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
+                # if el[0] != 'table':
+                # sql = el[1]
+                # logger.debug(u"Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
+                # if not self.sql(sql, u'dbfunc.version (2.2.2-7)', transaction=True):
+                # return False
+                # else:
+                # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
                 # 4. Schritt: Transaction abschließen
                 self.commit()
 
-
                 # Oberflächenabflussdaten von Tabelle "flaechen" in Tabelle "linkfl" übertragen
-
                 sql = """
                 UPDATE linkfl SET 
                     (abflusstyp, speicherzahl, speicherkonst, fliesszeitkanal, fliesszeitflaeche) =
@@ -1097,7 +1085,7 @@ class DBConnection:
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = u"""SELECT type, sql FROM sqlite_master WHERE tbl_name='flaechen'"""
                 # if not self.sql(sql, u'dbfunc.version.pragma (5)'):
-                    # return False
+                # return False
                 # triggers = self.fetchall()
 
                 # 2. Schritt: Temporäre Tabelle anlegen, Daten rüber kopieren, 
@@ -1149,13 +1137,13 @@ class DBConnection:
 
                 # 3. Schritt: Trigger wieder herstellen
                 # for el in triggers:
-                    # if el[0] != 'table':
-                        # sql = el[1]
-                        # logger.debug(u"Trigger 'flaechen' verarbeitet:\n{}".format(el[1]))
-                        # if not self.sql(sql, u'dbfunc.version (2.2.2-7)', transaction=True):
-                            # return False
-                    # else:
-                        # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
+                # if el[0] != 'table':
+                # sql = el[1]
+                # logger.debug(u"Trigger 'flaechen' verarbeitet:\n{}".format(el[1]))
+                # if not self.sql(sql, u'dbfunc.version (2.2.2-7)', transaction=True):
+                # return False
+                # else:
+                # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
                 # 4. Schritt: Transaction abschließen
                 self.commit()
@@ -1168,7 +1156,6 @@ class DBConnection:
 
                 self.versionlis = [2, 5, 7]
 
-
             if versionolder(self.versionlis, [2, 5, 8]):
 
                 # Tabelle linkfl um das Feld teilgebiet erweitern. 
@@ -1177,7 +1164,7 @@ class DBConnection:
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = u"""SELECT type, sql FROM sqlite_master WHERE tbl_name='linkfl'"""
                 # if not self.sql(sql, u'dbfunc.version.pragma (5)'):
-                    # return False
+                # return False
                 # triggers = self.fetchall()
 
                 # 2. Schritt: Temporäre Tabelle anlegen, Daten rüber kopieren, 
@@ -1244,24 +1231,23 @@ class DBConnection:
 
                 # 3. Schritt: Trigger wieder herstellen
                 # for el in triggers:
-                    # if el[0] != 'table':
-                        # sql = el[1]
-                        # logger.debug(u"Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
-                        # if not self.sql(sql, u'dbfunc.version (2.2.2-7)', transaction=True):
-                            # return False
-                    # else:
-                        # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
+                # if el[0] != 'table':
+                # sql = el[1]
+                # logger.debug(u"Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
+                # if not self.sql(sql, u'dbfunc.version (2.2.2-7)', transaction=True):
+                # return False
+                # else:
+                # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
                 # 4. Schritt: Transaction abschließen
                 self.commit()
-
 
                 # Tabelle linksw -------------------------------------------------------------
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = u"""SELECT type, sql FROM sqlite_master WHERE tbl_name='linksw'"""
                 # if not self.sql(sql, u'dbfunc.version.pragma (3)'):
-                    # return False
+                # return False
                 # triggers = self.fetchall()
 
                 # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
@@ -1306,17 +1292,16 @@ class DBConnection:
 
                 # 3. Schritt: Trigger wieder herstellen
                 # for el in triggers:
-                    # if el[0] != 'table':
-                        # sql = el[1]
-                        # logger.debug(u"Trigger 'linksw' verarbeitet:\n{}".format(el[1]))
-                        # if not self.sql(sql, u'dbfunc.version (2.2.2-5)', transaction=True):
-                            # return False
-                    # else:
-                        # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
+                # if el[0] != 'table':
+                # sql = el[1]
+                # logger.debug(u"Trigger 'linksw' verarbeitet:\n{}".format(el[1]))
+                # if not self.sql(sql, u'dbfunc.version (2.2.2-5)', transaction=True):
+                # return False
+                # else:
+                # logger.debug(u"1. Trigger 'table' erkannt:\n{}".format(el[1]))
 
                 # 4. Schritt: Transaction abschließen
                 self.commit()
-
 
                 progress_bar.setValue(90)
 
@@ -1325,7 +1310,6 @@ class DBConnection:
                 # Versionsnummer hochsetzen
 
                 self.versionlis = [2, 5, 8]
-
 
             if versionolder(self.versionlis, [2, 5, 9]):
 
@@ -1338,7 +1322,7 @@ class DBConnection:
 
                 sqllis = [u'''CREATE TABLE abflusstypen (
                             pk INTEGER PRIMARY KEY AUTOINCREMENT, 
-                            abflusstyp TEXT)''', 
+                            abflusstyp TEXT)''',
                           u"""INSERT INTO abflusstypen ('abflusstyp') 
                           Values 
                             ('Fliesszeiten'),
@@ -1354,7 +1338,7 @@ class DBConnection:
 
                 sqllis = [u'''CREATE TABLE knotentypen (
                             pk INTEGER PRIMARY KEY AUTOINCREMENT, 
-                            knotentyp TEXT)''', 
+                            knotentyp TEXT)''',
                           u"""INSERT INTO knotentypen ('knotentyp') 
                           Values
                             ('Anfangsschacht'),
@@ -1375,7 +1359,7 @@ class DBConnection:
 
                 sqllis = [u'''CREATE TABLE schachttypen (
                             pk INTEGER PRIMARY KEY AUTOINCREMENT, 
-                            schachttyp TEXT)''', 
+                            schachttyp TEXT)''',
                           u"""INSERT INTO schachttypen ('schachttyp') 
                           Values
                             ('Auslass'),
@@ -1393,7 +1377,6 @@ class DBConnection:
 
                 self.versionlis = [2, 5, 9]
 
-
             # ---------------------------------------------------------------------------------------------------------
             # Aktuelle Version in Tabelle "info" schreiben
 
@@ -1404,10 +1387,10 @@ class DBConnection:
             self.commit()
 
             if self.reload:
-                meldung(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt nach dem Speichern neu laden...")
+                meldung(u"Achtung! Benutzerhinweis!",
+                        u"Die Datenbank wurde geändert. Bitte QGIS-Projekt nach dem Speichern neu laden...")
                 return False
 
             # Alles gut gelaufen...
 
             return True
-

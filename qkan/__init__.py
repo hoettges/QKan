@@ -5,7 +5,8 @@ import tempfile
 from datetime import datetime as dt
 
 # noinspection PyPep8Naming
-from PyQt4.QtGui import QIcon, QAction, QMenu
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QAction, QMenu
 
 # Aufsetzen des Logging-Systems
 logger = logging.getLogger('QKan')
@@ -46,11 +47,11 @@ class Dummy:
     instance = None
 
     def __init__(self, iface):
-        from createunbeffl import application as createunbeffl
-        from importdyna import application as importdyna
-        from exportdyna import application as exportdyna
-        from linkflaechen import application as linkflaechen
-        from tools import application as tools
+        from .createunbeffl import application as createunbeffl
+        from .importdyna import application as importdyna
+        from .exportdyna import application as exportdyna
+        from .linkflaechen import application as linkflaechen
+        from .tools import application as tools
         self.plugins = [
             createunbeffl.CreateUnbefFl(iface),
             importdyna.ImportFromDyna(iface),

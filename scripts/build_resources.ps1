@@ -4,7 +4,6 @@ Compiles all known resources.qrc to resources.py using QGIS's pyrcc4.
 #>
 
 $path = ""
-$PYRCC = "pyrcc4.exe"
 
 function Pause-Exit($code)
 {
@@ -12,13 +11,13 @@ function Pause-Exit($code)
     [void][System.Console]::ReadKey($true)
     exit $code
 }
-if ($inst = Get-ItemProperty -Path "HKLM:\SOFTWARE\QGIS 2.18" -Name InstallPath -ErrorAction SilentlyContinue)
+if ($inst = Get-ItemProperty -Path "HKLM:\SOFTWARE\QGIS 3.4" -Name InstallPath -ErrorAction SilentlyContinue)
 {
     $path = $inst.InstallPath
 }
 else
 {
-    $path = Read-Host -Prompt "Could not find installation path of QGIS 2.18.`nPlease enter it manually"
+    $path = Read-Host -Prompt "Could not find installation path of QGIS 3.4.`nPlease enter it manually"
 }
 
 if ([string]::IsNullOrEmpty($path))
@@ -29,11 +28,11 @@ if ([string]::IsNullOrEmpty($path))
 
 Write-Host "Using '$path'"
 
-$PYRCC = $path + "\bin\" + $PYRCC
+$PYTHON = $path + "\bin\python-qgis.bat"
 
-if (-not (Test-Path $PYRCC))
+if (-not (Test-Path $PYTHON))
 {
-    Write-Error -Message "pyrcc4 seems to be missing in your installation. Aborting."
+    Write-Error -Message "python-qgis.bat seems to be missing in your installation. Aborting."
     Pause-Exit(1)
 }
 
@@ -60,6 +59,7 @@ foreach ($element in $RESOURCE_FILES)
 {
     $target_file = $element.Replace(".qrc", ".py")
     Write-Host "Building $element"
-    & $PYRCC -o $target_file $element
+
+    & $PYTHON -m PyQt5.pyrcc_main -o $target_file $element
 }
 Pause-Exit(0)

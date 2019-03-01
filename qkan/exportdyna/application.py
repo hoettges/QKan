@@ -3,7 +3,7 @@
 
 """
 
-  QGis-Plugin
+  QGIS-Plugin
   ===========
 
   Definition der Formularklasse
@@ -20,32 +20,32 @@
   (at your option) any later version.                                  
 
 """
-# Ergaenzt (jh, 08.02.2017) -------------------------------------------------
 import json
 import logging
 import os.path
 import site
 
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QFileDialog, QListWidgetItem
-from qgis.core import QgsProject, QgsMessageLog
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
+from qgis.core import QgsProject
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface, pluginDirectory
 
-# noinspection PyUnresolvedReferences
-import resources
-# Initialize Qt resources from file resources.py
-# Import the code for the dialog
-from application_dialog import ExportToKPDialog
-from k_qkkp import exportKanaldaten
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fortschritt, fehlermeldung
+from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung
+# noinspection PyUnresolvedReferences
+from . import resources
+# Initialize Qt resources from file resources.py
+# Import the code for the dialog
+from .application_dialog import ExportToKPDialog
+from .k_qkkp import exportKanaldaten
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
 
 progress_bar = None
+
 
 class ExportToKP:
     """QGIS Plugin Implementation."""
@@ -155,12 +155,11 @@ class ExportToKP:
     # Anfang Eigene Funktionen -------------------------------------------------
     # (jh, 08.02.2017)
 
-
     def selectFile_kpDB_dest(self):
         """Zu erstellende DYNA-Datei eingeben"""
 
-        filename = QFileDialog.getSaveFileName(self.dlg, "Dateinamen der zu schreibenden DYNA-Datei eingeben",
-                                               self.default_dir, "*.ein")
+        filename, __ = QFileDialog.getSaveFileName(self.dlg, "Dateinamen der zu schreibenden DYNA-Datei eingeben",
+                                                   self.default_dir, "*.ein")
         # if os.path.dirname(filename) != '':
         # os.chdir(os.path.dirname(filename))
         self.dlg.tf_KP_dest.setText(filename)
@@ -168,8 +167,8 @@ class ExportToKP:
     def selectFile_kpDB_template(self):
         """Vorlage-DYNA-Datei auswaehlen."""
 
-        filename = QFileDialog.getOpenFileName(self.dlg, u"Vorlage-DYNA-Datei auswählen",
-                                               self.default_dir, "*.ein")
+        filename, __ = QFileDialog.getOpenFileName(self.dlg, u"Vorlage-DYNA-Datei auswählen",
+                                                   self.default_dir, "*.ein")
         # if os.path.dirname(filename) != '':
         # os.chdir(os.path.dirname(filename))
         self.dlg.tf_KP_template.setText(filename)
@@ -177,12 +176,11 @@ class ExportToKP:
     def selectFile_QKanDB(self):
         """Datenbankverbindung zur QKan-Datenbank (SpatiLite) auswaehlen."""
 
-        filename = QFileDialog.getOpenFileName(self.dlg, u"QKan-Datenbank auswählen",
-                                               self.default_dir, "*.sqlite")
+        filename, __ = QFileDialog.getOpenFileName(self.dlg, u"QKan-Datenbank auswählen",
+                                                   self.default_dir, "*.sqlite")
         # if os.path.dirname(filename) != '':
         # os.chdir(os.path.dirname(filename))
         self.dlg.tf_QKanDB.setText(filename)
-
 
     # -------------------------------------------------------------------------
     # Formularfunktionen
@@ -263,9 +261,7 @@ class ExportToKP:
         else:
             self.dlg.lf_anzahl_haltungen.setText('0')
 
-    # -------------------------------------------------------------------------
-    # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
-
+    @staticmethod
     def listselecteditems(self, listWidget):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
@@ -283,7 +279,6 @@ class ExportToKP:
 
     # Ende Eigene Funktionen ---------------------------------------------------
 
-
     def run(self):
         """Run method that performs all the real work"""
         # show the dialog
@@ -292,7 +287,7 @@ class ExportToKP:
         if len({'flaechen', 'haltungen', 'linkfl', 'tezg', 'schaechte'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
-                                           level=QgsMessageBar.CRITICAL)
+                                           level=Qgis.Critical)
             return False
 
         if 'dynafile' in self.config:
@@ -322,7 +317,8 @@ class ExportToKP:
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            logger.error(u"exportdyna.application: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error(
+                u"exportdyna.application: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
         self.dlg.tf_QKanDB.setText(database_QKan)
 
@@ -332,7 +328,8 @@ class ExportToKP:
             self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
             if not self.dbQK.connected:
                 logger.error(u"Fehler in exportdyna.application:\n",
-                              u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
+                             u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+                                 database_QKan))
                 return None
 
             # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
@@ -454,7 +451,6 @@ class ExportToKP:
         elif dynaprof_choice == u'profilkey':
             self.dlg.rb_profkey.setChecked(True)
 
-
         # Formular anzeigen
 
         self.dlg.show()
@@ -478,16 +474,15 @@ class ExportToKP:
             elif self.dlg.rb_tezg.isChecked():
                 dynabef_choice = u'tezg'
             else:
-                fehlermeldung(u"exportdyna.application.run", 
+                fehlermeldung(u"exportdyna.application.run",
                               u"Fehlerhafte Option: \ndynabef_choice = {}".format(repr(dynabef_choice)))
             if self.dlg.rb_profnam.isChecked():
                 dynaprof_choice = u'profilname'
             elif self.dlg.rb_profkey.isChecked():
                 dynaprof_choice = u'profilkey'
             else:
-                fehlermeldung(u"exportdyna.application.run", 
+                fehlermeldung(u"exportdyna.application.run",
                               u"Fehlerhafte Option: \ndynaprof_choice = {}".format(repr(dynaprof_choice)))
-
 
             # Konfigurationsdaten schreiben
             self.config['dynafile'] = dynafile
@@ -507,6 +502,6 @@ class ExportToKP:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
-            exportKanaldaten(iface, dynafile, template_dyna, self.dbQK, dynabef_choice, dynaprof_choice, 
-                             liste_teilgebiete, profile_ergaenzen, autonummerierung_dyna, mit_verschneidung, 
+            exportKanaldaten(iface, dynafile, template_dyna, self.dbQK, dynabef_choice, dynaprof_choice,
+                             liste_teilgebiete, profile_ergaenzen, autonummerierung_dyna, mit_verschneidung,
                              fangradius, mindestflaeche, max_loops, datenbanktyp)

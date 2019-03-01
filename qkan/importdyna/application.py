@@ -3,7 +3,7 @@
 
 """
 
-  QGis-Plugin
+  QGIS-Plugin
   ===========
 
   Definition der Formularklasse
@@ -20,24 +20,28 @@
   (at your option) any later version.                                  
 
 """
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QAction, QIcon, QFileDialog                      # (jh, 20.09.2016)
-# Initialize Qt resources from file resources.py
-import resources
-# Import the code for the dialog
-from application_dialog import ImportFromDynaDialog
+import json
+import logging
+import os
+import site
 
-import os, json, site
-
-from qgis.gui import QgsMessageBar, QgsGenericProjectionSelector
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import QgsProject
+from qgis.gui import QgsProjectionSelectionDialog
+
 # from qgis.utils import iface
 from qkan import Dummy
-from import_from_dyna import importKanaldaten
-import logging
+# Initialize Qt resources from file resources.py
+# noinspection PyUnresolvedReferences
+from . import resources
+# Import the code for the dialog
+from .application_dialog import ImportFromDynaDialog
+from .import_from_dyna import importKanaldaten
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
+
 
 class ImportFromDyna:
     """QGIS Plugin Implementation."""
@@ -99,10 +103,7 @@ class ImportFromDyna:
             with open(self.configfil, 'r') as fileconfig:
                 self.config = json.loads(fileconfig.read())
         else:
-            self.config = {'epsg': '25832'}                # Projektionssystem
-            self.config['database_QKan'] = ''
-            self.config['dynafile'] = ''
-            self.config['projectfile'] = ''
+            self.config = {'epsg': '25832', 'database_QKan': '', 'dynafile': '', 'projectfile': ''}
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
@@ -140,7 +141,6 @@ class ImportFromDyna:
 
         # Ende Eigene Funktionen ---------------------------------------------------
 
-
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -172,65 +172,60 @@ class ImportFromDyna:
     # Anfang Eigene Funktionen -------------------------------------------------
     # (jh, 09.10.2016)
 
-
     def select_dynaFile(self):
         """DYNA (*.ein) -datei auswählen"""
 
-        filename = QFileDialog.getOpenFileName(self.dlg,
-                                               "Dateinamen der zu lesenden Kanal++-Datei eingeben",
-                                               self.default_dir,
-                                               "*.ein")
+        filename, __ = QFileDialog.getOpenFileName(self.dlg,
+                                                   "Dateinamen der zu lesenden Kanal++-Datei eingeben",
+                                                   self.default_dir,
+                                                   "*.ein")
         self.dlg.tf_dynaFile.setText(filename)
 
         # Aktuelles Verzeichnis wechseln
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
 
-
     def selectFile_qkanDB(self):
         """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen, aber noch nicht verbinden.
            Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt. """
 
-        filename = QFileDialog.getSaveFileName(self.dlg,
-                                               "Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
-                                               self.default_dir,
-                                               "*.sqlite")
+        filename, __ = QFileDialog.getSaveFileName(self.dlg,
+                                                   "Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
+                                                   self.default_dir,
+                                                   "*.sqlite")
         self.dlg.tf_qkanDB.setText(filename)
 
         # Aktuelles Verzeichnis wechseln
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
 
-
     def selectProjectFile(self):
         """Zu erzeugende Projektdatei festlegen, falls ausgewählt."""
 
-        filename = QFileDialog.getSaveFileName(self.dlg,
-                                               "Dateinamen der zu erstellenden Projektdatei eingeben",
-                                               self.default_dir,
-                                               "*.qgs")
+        filename, __ = QFileDialog.getSaveFileName(self.dlg,
+                                                   "Dateinamen der zu erstellenden Projektdatei eingeben",
+                                                   self.default_dir,
+                                                   "*.qgs")
         self.dlg.tf_projectFile.setText(filename)
 
         # Aktuelles Verzeichnis wechseln
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
 
-
     def selectKBS(self):
         """KBS auswählen. Setzt das KBS für die weiteren Funktionen
 
         :returns: void
         """
-        projSelector = QgsGenericProjectionSelector()
-        projSelector.exec_()
-        erg = projSelector.selectedAuthId()
+        proj_selector = QgsProjectionSelectionDialog()
+        proj_selector.exec_()
+        erg = proj_selector.crs().geographicCrsAuthId()
         if len(erg.split(':')) == 2:
             self.dlg.tf_epsg.setText(erg.split(':')[1])
         else:
             self.dlg.tf_epsg.setText(erg)
 
     # Ende Eigene Funktionen ---------------------------------------------------
-
 
     def run(self):
         """Run method that performs all the real work"""
@@ -240,22 +235,13 @@ class ImportFromDyna:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            # pass
-
-            # (jh, 09.10.2016)
-
             # Namen der Datenbanken uebernehmen
-
             dynafile = self.dlg.tf_dynaFile.text()
             database_QKan = self.dlg.tf_qkanDB.text()
             projectfile = self.dlg.tf_projectFile.text()
             self.epsg = self.dlg.tf_epsg.text()
 
-
             # Konfigurationsdaten schreiben
-
             self.config['epsg'] = self.epsg
             self.config['database_QKan'] = database_QKan
             self.config['dynafile'] = dynafile
@@ -264,7 +250,5 @@ class ImportFromDyna:
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-
             # Start der Verarbeitung
-
             importKanaldaten(dynafile, database_QKan, projectfile, self.epsg)

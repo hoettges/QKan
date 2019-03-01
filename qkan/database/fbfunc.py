@@ -23,18 +23,14 @@ __author__ = 'Joerg Hoettges'
 __date__ = 'October 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
 
-# This will get replaced with a git SHA1 when you do a git archive
-
-__revision__ = ':%H$'
-
 import logging
 import os
 
 import firebirdsql
-from qgis.gui import QgsMessageBar
+from qgis.core import Qgis
 from qgis.utils import iface
 
-from qkan_utils import fortschritt, fehlermeldung
+from .qkan_utils import fehlermeldung
 
 logger = logging.getLogger(u'QKan')
 
@@ -57,12 +53,12 @@ class FBConnection:
             except:
                 iface.messageBar().pushMessage("Fehler",
                                                u'Fehler beim Anbinden der ITWH-Datenbank {:s}!\nAbbruch!'.format(
-                                                   dbname), level=QgsMessageBar.CRITICAL)
+                                                   dbname), level=Qgis.Critical)
                 self.confb = None
         else:
             iface.messageBar().pushMessage("Fehler",
                                            u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(dbname),
-                                           level=QgsMessageBar.CRITICAL)
+                                           level=Qgis.Critical)
             self.confb = None
 
     def __del__(self):

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import itertools
 import logging
-import os.path
 
-from PyQt4 import QtCore
-from qkan.database.dbfunc import DBConnection
+from qgis.PyQt import QtCore
+
+from .dbfunc import DBConnection
 
 main_logger = logging.getLogger("QKan")
 main_logger.info("Navigation-Modul gestartet")
@@ -23,8 +23,9 @@ class Navigator:
         self.db = DBConnection(dbname)
         if not self.db.connected:
             main_logger.error(u"Fehler in navigation:\n",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(dbname))
-            return None
+                              u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+                                  dbname))
+            raise Exception()  # TODO: ???
         self.log = logging.getLogger("QKan.navigation.Navigator")
 
     def calculate_route_schacht(self, nodes):
@@ -34,7 +35,7 @@ class Navigator:
         berechneten Route liegen.
         * Benötigt mindestens zwei Schächte
 
-        :param nodes: Entspricht einer Liste von den selektierten Schacht-Namen aus QGis.
+        :param nodes: Entspricht einer Liste von den selektierten Schacht-Namen aus QGIS.
         :type nodes: list
         :return: Gibt ein Routen-Objekt zurück mit allen Haltungen und Schächten
         :rtype: list
@@ -72,9 +73,9 @@ class Navigator:
         * Start- und Endhöhe müssen nicht in der richtigen Reihenfolge übergeben werden.
         * Zusätzliche Punkte müssen nur übergeben werden, wenn der Endpunkt über mehrere Wege zu erreichen ist.
 
-        :param startpoint: Entspricht dem Schacht-Namen aus QGis.
+        :param startpoint: Entspricht dem Schacht-Namen aus QGIS.
         :type startpoint:str
-        :param endpoint: Entspricht dem Schacht-Namen aus QGis.
+        :param endpoint: Entspricht dem Schacht-Namen aus QGIS.
         :type endpoint: str
         :param additional_points: Entspricht einer Liste von Schacht-Namen, die zusätzlich ausgewählt wurden.
         :type additional_points: list
@@ -151,7 +152,7 @@ class Navigator:
         """
         Berechnet eine Route zwischen mehreren Haltungen.
 
-        :param nodes: Alle selektierten Haltungs-Namen aus QGis
+        :param nodes: Alle selektierten Haltungs-Namen aus QGIS
         :type nodes: list
         :return: Gibt eine Routen-Objekt mit allen Haltungen und Schächten zurück
         :rtype: dict
@@ -172,8 +173,8 @@ class Navigator:
             return None
         else:
             self.log.error(u"Es gibt {} mögliche Routen. Der Pfad muss spezifiziert werden".format(len(routes)))
-            self.__error_msg = u"Mehrere Möglichkeiten ({}) den Endpunkt zu erreichen. Bitte spezifizieren Sie die Route.".format(
-                len(routes))
+            self.__error_msg = (u"Mehrere Möglichkeiten ({}) den Endpunkt zu erreichen. "
+                                u"Bitte spezifizieren Sie die Route.").format(len(routes))
             return None
 
     def __fetch_data(self, haltungen):
@@ -196,7 +197,7 @@ class Navigator:
             }
         }
 
-        :param haltungen: Liste aller Haltungs-Namen aus QGis
+        :param haltungen: Liste aller Haltungs-Namen aus QGIS
         :type haltungen: list
         :return: Gibt ein Routen-Objekt zurück.
         :rtype: dict
@@ -287,9 +288,10 @@ class Worker(QtCore.QRunnable):
         self.__nodes = nodes
         self.__db = DBConnection(dbname)
         if not self.__db.connected:
-            logger.error(u"Fehler in navigation:\n",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(dbname))
-            return None
+            main_logger.error(u"Fehler in navigation:\n",
+                              u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+                                  dbname))
+            raise Exception()  # TODO: ???
         self.__parent = parent
 
     def run(self):
@@ -305,7 +307,7 @@ class Worker(QtCore.QRunnable):
         Berechnet rekursiv alle Routen von einem Startpunkt bis zum Endpunkt (Keine weitere Haltung verfügbar)
         Außerdem wird abgebrochen, wenn alle Punkte in der Route vorkommen.
 
-        :param startpoint: Entspricht dem Haltungs-Namen des Startpunkts aus QGis
+        :param startpoint: Entspricht dem Haltungs-Namen des Startpunkts aus QGIS
         :type startpoint: str
         :return: Gibt eine Liste von allen möglichen Routen zurück
         :rtype: list

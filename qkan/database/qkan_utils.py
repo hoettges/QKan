@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import re
 
-from qgis.core import QgsMessageLog, QgsProject
-from qgis.gui import QgsMessageBar
+from qgis.core import QgsMessageLog, Qgis
 from qgis.utils import iface
 
 # Anbindung an Logging-System (Initialisierung in __init__)
@@ -14,32 +12,34 @@ logger = logging.getLogger(u'QKan')
 # Fortschritts- und Fehlermeldungen
 
 def meldung(title, text):
-    logger.info(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.INFO)
-    iface.messageBar().pushMessage(title, text, level=QgsMessageBar.INFO)
+    logger.info('{:s} {:s}'.format(title, text))
+    QgsMessageLog.logMessage(message='{:s} {:s}'.format(title, text), level=Qgis.Info)
+    iface.messageBar().pushMessage(title, text, level=Qgis.Info)
 
 
 def warnung(title, text):
-    logger.warning(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.WARNING)
-    iface.messageBar().pushMessage(title, text, level=QgsMessageBar.WARNING)
+    logger.warning('{:s} {:s}'.format(title, text))
+    QgsMessageLog.logMessage(message='{:s} {:s}'.format(title, text), level=Qgis.Warning)
+    iface.messageBar().pushMessage(title, text, level=Qgis.Warning)
 
-    
+
 def fortschritt(text, prozent=0):
-    logger.debug(u'{:s} ({:.0f}%)'.format(text, prozent * 100))
-    QgsMessageLog.logMessage(u'{:s} ({:.0f}%)'.format(text, prozent * 100), u'Link Flächen: ', QgsMessageLog.INFO)
+    logger.debug('{:s} ({:.0f}%)'.format(text, prozent * 100))
+    QgsMessageLog.logMessage(message='{:s} ({:.0f}%)'.format(text, prozent * 100), tag=u'Link Flächen: ',
+                             level=Qgis.Info)
 
 
 def fehlermeldung(title, text=u''):
-    logger.error(u'{:s} {:s}'.format(title, text))
-    QgsMessageLog.logMessage(u'{:s} {:s}'.format(title, text), level=QgsMessageLog.CRITICAL)
-    iface.messageBar().pushMessage(title, text, level=QgsMessageBar.CRITICAL)
+    logger.error('{:s} {:s}'.format(title, text))
+    QgsMessageLog.logMessage(message='{:s} {:s}'.format(title, text), level=Qgis.Critical)
+    iface.messageBar().pushMessage(title, text, level=Qgis.Critical)
 
     # Protokolldatei anzeigen
 
     # dnam = dt.today().strftime(u"%Y%m%d")
     # fnam = os.path.join(tempfile.gettempdir(), u'QKan{}.log'.format(dnam))
     # os.startfile(fnam)
+
 
 # Allgemeine Funktionen
 
@@ -49,13 +49,12 @@ def listQkanLayers():
 
         Die Zusammenstellung wird aus der Template-QKanprojektdatei gelesen
     '''
-    import os 
+    import os
     from qgis.utils import pluginDirectory
-    import xml.etree.ElementTree as et
-    from qkan.database.qkan_utils import get_qkanlayerAttributes
+    from xml.etree import ElementTree
     templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
-    qgsTemplate = os.path.join(templateDir,'Projekt.qgs')
-    qgsxml = et.ElementTree()
+    qgsTemplate = os.path.join(templateDir, 'Projekt.qgs')
+    qgsxml = ElementTree.ElementTree()
     qgsxml.parse(qgsTemplate)
     tagGroup = u'layer-tree-group/layer-tree-group'
     qgsGroups = qgsxml.findall(tagGroup)
@@ -90,7 +89,7 @@ def isQkanLayer(layername, source):
     qkanLayers = listQkanLayers()
     if layername in qkanLayers:
         if table == qkanLayers[layername][0] and geom == qkanLayers[layername][1] and sql == qkanLayers[layername][2]:
-            ve = (geom != '')                   # Vectorlayer?
+            ve = (geom != '')  # Vectorlayer?
             return True, ve
     return False, False
 
@@ -116,29 +115,29 @@ def get_qkanlayerAttributes(source):
     if posSql < 0:
         return '', '', '', ''
 
-    dbname = source[posDbname + 8 : posTable - 1].strip()
+    dbname = source[posDbname + 8: posTable - 1].strip()
 
     if posGeomStart < 0 or posGeomStart > posSql:
         geom = ''
         posGeomStart = posSql
     else:
-        geom = source[posGeomStart + 2 : posGeomEnd].strip()
+        geom = source[posGeomStart + 2: posGeomEnd].strip()
 
-    table = source[posTable + 8 : posGeomStart - 1].strip()
+    table = source[posTable + 8: posGeomStart - 1].strip()
 
     if posSql < 0:
         sql = ''
     else:
-        sql = source[posSql + 5 :].strip()
+        sql = source[posSql + 5:].strip()
 
     return dbname, table, geom, sql
 
 
-def get_database_QKan(silent = False):
+def get_database_QKan(silent=False):
     """Ermittlung der aktuellen SpatiaLite-Datenbank aus den geladenen Layern"""
     database_QKan = u''
     epsg = u''
-    layers = iface.legendInterface().layers()
+    layers = [x.layer() for x in iface.layerTreeCanvasBridge().rootGroup().findLayers()]
     # logger.debug(u'Layerliste erstellt')
     logger.error(u'Keine Layer vorhanden...')
     if len(layers) == 0 and not silent:
@@ -149,9 +148,9 @@ def get_database_QKan(silent = False):
     # Über Layer iterieren
     for lay in layers:
         dbname, table, geom, sql = get_qkanlayerAttributes(lay.source())
-        if ((table == 'flaechen' and geom == 'geom') or \
-            ( table == 'schaechte' and geom == 'geom') or \
-            ( table == 'haltungen' and geom == 'geom')):
+        if ((table == 'flaechen' and geom == 'geom') or
+                (table == 'schaechte' and geom == 'geom') or
+                (table == 'haltungen' and geom == 'geom')):
             # nur, wenn es sich um eine der drei QKan-Tabellen 'haltungen', 'schaechte' oder 'flaechen' handelt...
 
             if database_QKan == '':
@@ -172,7 +171,7 @@ def get_editable_layers():
 
     elayers = set([])  # Zuerst leere Liste anlegen
 
-    layers = iface.legendInterface().layers()
+    layers = [x.layer() for x in iface.layerTreeCanvasBridge().rootGroup().findLayers()]
     # logger.debug(u'Layerliste erstellt')
     if len(layers) > 0:
         # über Layer iterieren
@@ -192,7 +191,7 @@ def get_editable_layers():
     return elayers
 
 
-def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'spatialite'):
+def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp=u'spatialite'):
     """Prüft, ob in der Tabelle {tab} im Attribut {attr} eindeutige Namen enthalten sind. 
     Falls nicht, werden Namen vergeben, die sich aus {prefix} und ROWID zusammensetzen
 
@@ -235,8 +234,8 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'spatialite'):
 
     if len(daten) > 0:
         if autokorrektur:
-            meldung(u'Automatische Korrektur von Daten: ', 
-                u'In der Tabelle "{tab}" wurden leere Namen im Feld "{attr}" aufgefüllt'.format(tab=tab, attr=attr))
+            meldung(u'Automatische Korrektur von Daten: ',
+                    u'In der Tabelle "{tab}" wurden leere Namen im Feld "{attr}" aufgefüllt'.format(tab=tab, attr=attr))
 
             sql = u"""UPDATE {tab}
                 SET {attr} = printf('{prefix}%d', ROWID)
@@ -245,8 +244,9 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'spatialite'):
             if not dbQK.sql(sql, u"QKan.qgis_utils.checknames (2)"):
                 return False
         else:
-            fehlermeldung(u'Datenfehler', 
-                u'In der Tabelle "{tab}" gibt es leere Namen im Feld "{attr}". Abbruch!'.format(tab=tab, attr=attr))
+            fehlermeldung(u'Datenfehler',
+                          u'In der Tabelle "{tab}" gibt es leere Namen im Feld "{attr}". Abbruch!'.format(tab=tab,
+                                                                                                          attr=attr))
             return False
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -263,8 +263,8 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'spatialite'):
 
     if len(daten) > 0:
         if autokorrektur:
-            meldung(u'Automatische Korrektur von Daten: ', 
-                u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}"'.format(tab=tab, attr=attr))
+            meldung(u'Automatische Korrektur von Daten: ',
+                    u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}"'.format(tab=tab, attr=attr))
 
             sql = u"""WITH doppelte AS
                 (   SELECT {attr}, count(*) AS anzahl
@@ -278,14 +278,15 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp = u'spatialite'):
             if not dbQK.sql(sql, u"QKan.qgis_utils.checknames (4)"):
                 return False
         else:
-            fehlermeldung(u'Datenfehler', 
-                u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}". Abbruch!'.format(tab=tab, attr=attr))
+            fehlermeldung(u'Datenfehler',
+                          u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}". Abbruch!'.format(tab=tab,
+                                                                                                             attr=attr))
             return False
 
     return True
 
 
-def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp = u'spatialite'):
+def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete=[], dbtyp=u'spatialite'):
     """Prüft, ob in der Tabelle {tab} im Attribut {attrgeo} ein Geoobjekt vorhanden ist. 
 
     :dbQK:              Typ der Datenbank (spatialite, postgis)
@@ -318,10 +319,9 @@ def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp =
     else:
         auswahl = ''
 
-
     sql = u"""SELECT count(*) AS anzahl
             FROM {tab}
-            WHERE {tab}.{attrgeo} IS NULL{auswahl}""".format(tab=tab, attrgeo=attrgeo, auswahl = auswahl)
+            WHERE {tab}.{attrgeo} IS NULL{auswahl}""".format(tab=tab, attrgeo=attrgeo, auswahl=auswahl)
     if not dbQK.sql(sql, u"QKan.qgis_utils.checkgeom (1)"):
         return False
 
@@ -329,18 +329,20 @@ def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp =
 
     if daten[0] > 0:
         if autokorrektur:
-            meldung(u'Automatische Korrektur von Daten: ', 
-                u'In der Tabelle "{tab}" wurden leere Geo-Objekte gefunden. Diese Datensätze wurden gelöscht'.format(tab=tab, attrgeo=attrgeo))
+            meldung(u'Automatische Korrektur von Daten: ',
+                    (u'In der Tabelle "{tab}" wurden leere Geo-Objekte gefunden. '
+                     u'Diese Datensätze wurden gelöscht').format(
+                        tab=tab, attrgeo=attrgeo))
 
             sql = u"""DELETE
                 FROM {tab}
-                WHERE {attrgeo} IS NULL{auswahl}""".format(tab=tab, attrgeo=attrgeo, auswahl = auswahl)
+                WHERE {attrgeo} IS NULL{auswahl}""".format(tab=tab, attrgeo=attrgeo, auswahl=auswahl)
 
             if not dbQK.sql(sql, u"QKan.qgis_utils.checkgeom (2)"):
                 return False
         else:
-            fehlermeldung(u'Datenfehler', 
-                u'In der Tabelle "{tab}" gibt es leere Geoobjekte. Abbruch!'.format(tab=tab, attrgeo=attrgeo))
+            fehlermeldung(u'Datenfehler',
+                          u'In der Tabelle "{tab}" gibt es leere Geoobjekte. Abbruch!'.format(tab=tab, attrgeo=attrgeo))
             return False
 
     return True
@@ -362,7 +364,8 @@ def sqlconditions(keyword, attrlis, valuelis2):
 
     :returns:       Anhang zu einem SQL-Statement mit führendem Leerzeichen
     
-    Example: sqlconditions('WHERE', ('flaechen.teilgebiet', 'flaechen.abflussparameter'), (liste_teilegebiete, liste_abflussparamerer)
+    Example: sqlconditions('WHERE', ('flaechen.teilgebiet', 'flaechen.abflussparameter'),
+                                    (liste_teilegebiete, liste_abflussparamerer))
     """
 
     # Falls keine Wertelisten gegeben oder alle Wertelisten leer sind, wird ein Leerstring zurückgeben
@@ -373,17 +376,17 @@ def sqlconditions(keyword, attrlis, valuelis2):
         return ''
 
     if len(attrlis) != len(valuelis2):
-        fehlermeldung(u'Fehler in qkan_utils.sqlconditions:', 
-                u'Anzahl an Attributen und Wertlisten stimmt nicht ueberein: \n' + \
-                u'attrlis= {}\n'.format(attrlis) + \
-                u'valuelis2= {}\n'.format(valuelis2))
+        fehlermeldung(u'Fehler in qkan_utils.sqlconditions:',
+                      u'Anzahl an Attributen und Wertlisten stimmt nicht ueberein: \n' +
+                      u'attrlis= {}\n'.format(attrlis) +
+                      u'valuelis2= {}\n'.format(valuelis2))
 
-    condlis = []        # Liste der einzelnen SQL-Conditions
+    condlis = []  # Liste der einzelnen SQL-Conditions
 
     for attr, valuelis in zip(attrlis, valuelis2):
         if len(valuelis) != 0:
-            condlis.append(u"{attr} in ('{values}')".format(attr=attr, 
-                                                           values = u"', '".join(valuelis)))
+            condlis.append(u"{attr} in ('{values}')".format(attr=attr,
+                                                            values=u"', '".join(valuelis)))
     if len(condlis) != 0:
         auswahl = u' {keyword} {conds}'.format(keyword=keyword, conds=' AND '.join(condlis))
     else:

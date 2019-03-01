@@ -22,23 +22,18 @@
 import logging
 import math
 import os
-import shutil
-import time
 
-from qgis.PyQt.QtGui import QProgressBar
-
-from qgis.core import QgsMessageLog
-from qgis.gui import QgsMessageBar
-from qgis.utils import iface
+from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import Qgis
 
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fortschritt, fehlermeldung, meldung, checknames
+from qkan.database.qkan_utils import fortschritt, fehlermeldung, meldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
-
 
 logger = logging.getLogger('QKan')
 
 progress_bar = None
+
 
 # Hilfsfunktionen --------------------------------------------------------------------------
 
@@ -54,46 +49,46 @@ def formf(zahl, anz):
         if anz == 1:
             erg = '.'
         else:
-            erg = '{}0.'.format(' '*(anz-2))
+            erg = '{}0.'.format(' ' * (anz - 2))
         return erg
     elif zahl == 0:
-        return ' '*(anz - 1) + '0'
+        return ' ' * (anz - 1) + '0'
     elif zahl < 0:
         logger.error(u'Fehler in k_qkkp.formf (2): Zahl ist negativ', u'zahl = {}\nanz = {}\n'.format(zahl, anz))
         return None
 
     # try:
-    nv = int(math.log10(zahl))          # Anzahl Stellen vor dem Komma.
+    nv = int(math.log10(zahl))  # Anzahl Stellen vor dem Komma.
     # except BaseException as err:
-        # fehlermeldung(u'Fehler in k_qkkp.formf (1): {}'.format(err), 
-              # u'zahl = {}, anz = {}'.format(zahl, anz))
+    # fehlermeldung(u'Fehler in k_qkkp.formf (1): {}'.format(err),
+    # u'zahl = {}, anz = {}'.format(zahl, anz))
 
-    dez = True                          # In der Zahl kommt ein Dezimalkomma vor. Wird benötigt wenn 
-                                        # Nullen am Ende gelöscht werden sollen
+    dez = True  # In der Zahl kommt ein Dezimalkomma vor. Wird benötigt wenn
+    # Nullen am Ende gelöscht werden sollen
 
     # Prüfung, ob Zahl (auch nach Rundung!) kleiner 1 ist, so dass die führende Null weggelassen
     # werden kann
 
-    if round(zahl, anz-1) < 1:
-        fmt = '{0:' + '{:d}.{:d}f'.format(anz+1, anz-1) + '}'
+    if round(zahl, anz - 1) < 1:
+        fmt = '{0:' + '{:d}.{:d}f'.format(anz + 1, anz - 1) + '}'
         erg = fmt.format(zahl)[1:]
     else:
         if int(math.log10(round(zahl, 0))) + 1 > anz:
             logger.error(u'Fehler in k_qkkp.formf (3): Zahl ist zu groß!', u'zahl = {}\nanz = {}\n'.format(zahl, anz))
             return None
         # Korrektur von nv, für den Fall, dass zahl nahe an nächster 10-Potenz
-        nv = int(math.log10(round(zahl, max(0,anz-2-nv))))
+        nv = int(math.log10(round(zahl, max(0, anz - 2 - nv))))
         if nv + 1 == anz:
             # Genau soviel Platz wie Vorkommastellen
-            fmt = '{0:' + '{:d}.{:d}f'.format(anz, anz-1-nv) + '}'
-            dez = False                                 # Nullen am Ende dürfen nicht gelöscht werden
+            fmt = '{0:' + '{:d}.{:d}f'.format(anz, anz - 1 - nv) + '}'
+            dez = False  # Nullen am Ende dürfen nicht gelöscht werden
         elif nv + 1 == anz - 1:
             # Platz für alle Vorkommastellen und das Dezimalzeichen (dieses muss ergänzt werden)
-            fmt = '{0:' + '{:d}.{:d}f'.format(anz, anz-2-nv) + '}.'
-            dez = False                                 # obsolet, weil Dezimalpunkt am Ende
+            fmt = '{0:' + '{:d}.{:d}f'.format(anz, anz - 2 - nv) + '}.'
+            dez = False  # obsolet, weil Dezimalpunkt am Ende
         elif nv + 1 < anz - 1:
             # Platz für mindestens eine Nachkommastelle
-            fmt = '{0:' + '{:d}.{:d}f'.format(anz, anz-2-nv) + '}'
+            fmt = '{0:' + '{:d}.{:d}f'.format(anz, anz - 2 - nv) + '}'
         else:
             logger.error(u'Fehler in k_qkkp.formf (2):', u'zahl = {}\nanz = {}\n'.format(zahl, anz))
             return None
@@ -104,6 +99,7 @@ def formf(zahl, anz):
             fmt = '{0:>' + '{:d}s'.format(anz) + '}'
             erg = fmt.format(erg.rstrip('0'))
     return erg
+
 
 # Funktion zur Umwandlung der Neigungsklassen
 def fneigkl(neigung):
@@ -123,10 +119,10 @@ def fneigkl(neigung):
 
 
 # Funktionen zum Schreiben der DYNA-Daten. Werden aus exportKanaldaten aufgerufen 
-def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidung, 
-            dynaprof_choice, dynabef_choice, 
-             dynaprof_nam, dynaprof_key, ausw_and, auswahl):
-    '''Schreiben der DYNA-Typ12-Datenzeilen
+def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidung,
+            dynaprof_choice, dynabef_choice,
+            dynaprof_nam, dynaprof_key, ausw_and, auswahl):
+    """Schreiben der DYNA-Typ12-Datenzeilen
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type dbQK:             DBConnection
@@ -140,17 +136,17 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
     :dynakeys_ks:           Liste der Rauheitsbeiwerte in der DYNA-Datei
     :type dbQK:             List
 
-    :mindestflaeche:        Mindestflächengröße, ab der Flächenobjekte berücksichtigt werden   
+    :mindestflaeche:        Mindestflächengröße, ab der Flächenobjekte berücksichtigt werden
     :type dbQK:             Float
 
     :mit_verschneidung:     Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
     :type mit_verschneidung: Boolean
 
-    :dynaprof_choice:       Option, wie die Zuordnung der Querprofile aus QKan zu den in der DYNA-Datei 
+    :dynaprof_choice:       Option, wie die Zuordnung der Querprofile aus QKan zu den in der DYNA-Datei
                             vorhandenen erfolgt: Über den gemeinsamen Profilnamen oder den gemeinsamen Profilkey
     :type dbQK:             String
 
-    :dynabef_choice:        Option für die Haltungsgesamtfläche: Bestimmung als Summe der Einzelflächen 
+    :dynabef_choice:        Option für die Haltungsgesamtfläche: Bestimmung als Summe der Einzelflächen
                             oder über das tezg-Flächenobjekt
     :type dbQK:             String
 
@@ -167,7 +163,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
     :type dbQK:             String
 
     :returns: void
-    '''
+    """
 
     # Optionen zur Berechnung der befestigten Flächen
     # ... benötigt keine Modifikation der Abfrage
@@ -290,9 +286,9 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
         ON e.haltnam = h.haltnam
         LEFT JOIN entwaesserungsarten AS a
         ON h.entwart = a.bezeichnung
-    """.format(mindestflaeche=mindestflaeche, ausw_and=ausw_and, auswahl=auswahl, 
-                sql_prof1=sql_prof1, sql_prof2=sql_prof2, 
-                case_verschneidung=case_verschneidung, join_verschneidung=join_verschneidung)
+    """.format(mindestflaeche=mindestflaeche, ausw_and=ausw_and, auswahl=auswahl,
+               sql_prof1=sql_prof1, sql_prof2=sql_prof2,
+               case_verschneidung=case_verschneidung, join_verschneidung=join_verschneidung)
 
     if not dbQK.sql(sql, u'dbQK: k_qkkp.write12 (1)'):
         return False
@@ -305,8 +301,8 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
     for attr in dbQK.fetchall():
 
         # Attribute in Variablen speichern
-        (kanalnummer, haltungsnummer, laenge, deckelhoehe, sohleob, sohleun, material, 
-         profilid, profilhoehe, ks, flbef, flges, distbef, distdur, fltezg, disttezg, 
+        (kanalnummer, haltungsnummer, laenge, deckelhoehe, sohleob, sohleun, material,
+         profilid, profilhoehe, ks, flbef, flges, distbef, distdur, fltezg, disttezg,
          abfltyp, qzu, ewdichte, tgnr, neigung, entwart, haltyp, schoben, schunten, xob, yob) = attr
 
         laenge_t = formf(laenge, 7)
@@ -317,20 +313,20 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
         qzu_t = formf(qzu, 5)
         xob_t = formf(xob, 14)
         yob_t = formf(yob, 14)
-         
+
         # Schlüssel für DYNA einsetzen
         try:
             kskey = dynakeys_id[[u'{0:10.6f}'.format(kb) for kb in dynakeys_ks].index(u'{0:10.6f}'.format(ks))]
             # logger.debug(u'ks= {0:10.6f}\ndynakeys_ks= {1:s}\ndynakeys_id= {2:s}\nkskey= {3:s}'.format(
-                # ks,
-                # ', '.join([u'{0:10.6f}'.format(kb) for kb in dynakeys_ks]),
-                # ', '.join(dynakeys_id),
-                # kskey
-                # ))
+            # ks,
+            # ', '.join([u'{0:10.6f}'.format(kb) for kb in dynakeys_ks]),
+            # ', '.join(dynakeys_id),
+            # kskey
+            # ))
         except BaseException as err:
-            fehlermeldung(u'Fehler in k_qkkp.write12 (1): {}'.format(err), 
-                      u'ks {} konnte in dynakeys_ks nicht gefunden werden\ndynakeys_ks = {}'.format( \
-                      ks, str(dynakeys_ks)))
+            fehlermeldung(u'Fehler in k_qkkp.write12 (1): {}'.format(err),
+                          u'ks {} konnte in dynakeys_ks nicht gefunden werden\ndynakeys_ks = {}'.format( \
+                              ks, str(dynakeys_ks)))
 
         if flges is None:
             flges_t = '     '
@@ -343,7 +339,8 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
             if dynabef_choice == u'flaechen':
                 if flges != 0:
                     befgrad = flbef / flges * 100.
-                    befgrad = max(0,min(99,int(round(befgrad,0))))                # runden auf ganze Werte und Begrenzung auf 0 .. 99
+                    befgrad = max(0,
+                                  min(99, int(round(befgrad, 0))))  # runden auf ganze Werte und Begrenzung auf 0 .. 99
                     neigkl = fneigkl(neigung)
 
             elif dynabef_choice == u'tezg':
@@ -352,11 +349,12 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
                 else:
                     flges = fltezg
                     befgrad = flbef / flges * 100.
-                    befgrad = max(0,min(99,int(round(befgrad,0))))                # runden auf ganze Werte und Begrenzung auf 0 .. 99
+                    befgrad = max(0,
+                                  min(99, int(round(befgrad, 0))))  # runden auf ganze Werte und Begrenzung auf 0 .. 99
                     neigkl = fneigkl(neigung)
 
                     # Berechnungen der Fließlänge für die durchlässigen Flächen
-                    distdur = (disttezg*flges - wdistbef) / (flges - flbef)
+                    distdur = (disttezg * flges - wdistbef) / (flges - flbef)
 
             # Vorbereitung der Ausgabefelder für DYNA
             if flges == 0:
@@ -370,17 +368,17 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
                 flges_t = formf(flges, 5)
                 befgrad_t = '{0:2d}'.format(befgrad)
                 neigkl_t = '{0:1d}'.format(neigkl)
-                neigung_t = formf(neigung,8)
-                distbef_t = formf(distbef,8)
-                distdur_t = formf(distdur,8)
+                neigung_t = formf(neigung, 8)
+                distbef_t = formf(distbef, 8)
+                distdur_t = formf(distdur, 8)
 
         # Auswahl dynaprof_choice
         if dynaprof_choice == u'profilname':
             try:
                 profilkey = dynaprof_key[dynaprof_nam.index(profilid)]
             except BaseException as err:
-                fehlermeldung(u'Fehler in k_qkkp.write12 (2): {}'.format(err), 
-                    u'Profilkey {id} konnte in interner Zuordnungsliste nicht gefunden werden\n')
+                fehlermeldung(u'Fehler in k_qkkp.write12 (2): {}'.format(err),
+                              u'Profilkey {id} konnte in interner Zuordnungsliste nicht gefunden werden\n')
                 logger.debug('dynprof_nam: {}'.format(', '.join(dynaprof_nam)))
 
         elif dynaprof_choice == u'profilkey':
@@ -388,7 +386,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
 
         try:
             zeile = '12    {kanalnummer:>8s}{haltungsnummer:>3s}{laenge:7s}'.format(
-                        kanalnummer=kanalnummer, haltungsnummer=haltungsnummer, laenge=laenge_t) + \
+                kanalnummer=kanalnummer, haltungsnummer=haltungsnummer, laenge=laenge_t) + \
                     '{deckelhoehe:7s}{sohleob:7s}{sohleun:7s}{material:1s}'.format(
                         deckelhoehe=deckelhoehe_t, sohleob=sohleob_t, sohleun=sohleun_t, material=material) + \
                     '{profilkey:2s}{profilhoehe:4s}{kskey:1s}'.format(
@@ -400,47 +398,47 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
                     '{flges:5s}{neigkl:1s}{entwart:1d}{haltyp:1d}'.format(
                         flges=flges_t, neigkl=neigkl_t, entwart=entwart, haltyp=haltyp) + \
                     '  {schoben:>12s} {schunten:>12s}{xob:14s}{yob:14s}'.format(
-                    schoben=schoben, schunten=schunten, xob=xob_t, yob=yob_t) + \
+                        schoben=schoben, schunten=schunten, xob=xob_t, yob=yob_t) + \
                     '{distbef:>8s}{distdur:>8s}{neigung:>8s}\n'.format(
-                    distbef=distbef_t, distdur=distdur_t, neigung=neigung_t)
+                        distbef=distbef_t, distdur=distdur_t, neigung=neigung_t)
 
             # logger.debug(
-                # 'material = {}\n'.format(material) + \
-                # 'profilkey = {}\n'.format(profilkey) + \
-                # 'profilhoehe = {}\n'.format(profilhoehe) + \
-                # 'ks = {}\n'.format(ks) + \
-                # 'befgrad = {}\n'.format(befgrad) + \
-                # 'abfltyp = {}\n'.format(abfltyp) + \
-                # 'qzu = {}\n'.format(qzu) + \
-                # 'ewdichte = {}\n'.format(ewdichte))
+            # 'material = {}\n'.format(material) + \
+            # 'profilkey = {}\n'.format(profilkey) + \
+            # 'profilhoehe = {}\n'.format(profilhoehe) + \
+            # 'ks = {}\n'.format(ks) + \
+            # 'befgrad = {}\n'.format(befgrad) + \
+            # 'abfltyp = {}\n'.format(abfltyp) + \
+            # 'qzu = {}\n'.format(qzu) + \
+            # 'ewdichte = {}\n'.format(ewdichte))
 
             df.write(zeile)
         except BaseException as err:
-            fehlermeldung(u'Fehler in QKan_ExportDYNA.write12: {}\n'.format(err), 
-                'Datentypfehler in Variablenliste:\n' + \
-                'kanalnummer = {}\n'.format(kanalnummer) + \
-                'haltungsnummer = {}\n'.format(haltungsnummer) + \
-                'laenge = {}\n'.format(laenge) + \
-                'deckelhoehe = {}\n'.format(deckelhoehe) + \
-                'sohleob = {}\n'.format(sohleob) + \
-                'sohleun = {}\n'.format(sohleun) + \
-                'material = {}\n'.format(material) + \
-                'profilkey = {}\n'.format(profilkey) + \
-                'profilhoehe = {}\n'.format(profilhoehe) + \
-                'ks = {}\n'.format(ks) + \
-                'befgrad = {}\n'.format(befgrad) + \
-                'abfltyp = {}\n'.format(abfltyp) + \
-                'qzu = {}\n'.format(qzu) + \
-                'ewdichte = {}\n'.format(ewdichte) + \
-                'tgnr = {}\n'.format(tgnr) + \
-                'flges = {}\n'.format(flges) + \
-                'neigkl = {}\n'.format(neigkl) + \
-                'entwart = {}\n'.format(entwart) + \
-                'haltyp = {}\n'.format(haltyp) + \
-                'schoben = {}\n'.format(schoben) + \
-                'schunten = {}\n'.format(schunten) + \
-                'xob = {}\n'.format(xob) + \
-                'yob = {}\n'.format(yob))
+            fehlermeldung(u'Fehler in QKan_ExportDYNA.write12: {}\n'.format(err),
+                          'Datentypfehler in Variablenliste:\n' + \
+                          'kanalnummer = {}\n'.format(kanalnummer) + \
+                          'haltungsnummer = {}\n'.format(haltungsnummer) + \
+                          'laenge = {}\n'.format(laenge) + \
+                          'deckelhoehe = {}\n'.format(deckelhoehe) + \
+                          'sohleob = {}\n'.format(sohleob) + \
+                          'sohleun = {}\n'.format(sohleun) + \
+                          'material = {}\n'.format(material) + \
+                          'profilkey = {}\n'.format(profilkey) + \
+                          'profilhoehe = {}\n'.format(profilhoehe) + \
+                          'ks = {}\n'.format(ks) + \
+                          'befgrad = {}\n'.format(befgrad) + \
+                          'abfltyp = {}\n'.format(abfltyp) + \
+                          'qzu = {}\n'.format(qzu) + \
+                          'ewdichte = {}\n'.format(ewdichte) + \
+                          'tgnr = {}\n'.format(tgnr) + \
+                          'flges = {}\n'.format(flges) + \
+                          'neigkl = {}\n'.format(neigkl) + \
+                          'entwart = {}\n'.format(entwart) + \
+                          'haltyp = {}\n'.format(haltyp) + \
+                          'schoben = {}\n'.format(schoben) + \
+                          'schunten = {}\n'.format(schunten) + \
+                          'xob = {}\n'.format(xob) + \
+                          'yob = {}\n'.format(yob))
             return False
 
     return True
@@ -522,8 +520,8 @@ def write16(dbQK, df, ausw_and, auswahl):
     if not dbQK.sql(sql, u'dbQK: k_qkkp.write16 (1)'):
         return False
 
-    akt_schnam = ''             # Identifiziert Datensätze zum gleichen Knoten
-    knotennr = 0                # Knotennummer
+    akt_schnam = ''  # Identifiziert Datensätze zum gleichen Knoten
+    knotennr = 0  # Knotennummer
     zeilan = ''
     zeilab = ''
 
@@ -534,7 +532,7 @@ def write16(dbQK, df, ausw_and, auswahl):
 
         if schnam != akt_schnam:
             # Vorherigen Knoten schreiben. 
-            if i > 0: 
+            if i > 0:
                 # Dies darf erst ab 2. gelesener Zeile geschehen...
 
                 df.write('{0:15s}{1:}{2:}\n'.format(zeilkn, zeilan, zeilab))
@@ -544,30 +542,30 @@ def write16(dbQK, df, ausw_and, auswahl):
             # Nächsten Knoten initialisieren
 
             akt_schnam = schnam
-            knotennr += 1               # Knotennummer inkrementieren
-            akt_i = i                   # Nummer aktualisieren
+            knotennr += 1  # Knotennummer inkrementieren
+            akt_i = i  # Nummer aktualisieren
             # Datensatz Typ16 schreiben (Achtung: Letzter Datensatz wird nach Abschluss der Schleife geschrieben)
             zeilkn = '16{knotennr:4d}  {an_anz:1d}{ab_anz:1d}     '.format(
-                        knotennr=knotennr, an_anz=an_anz, ab_anz=ab_anz)
+                knotennr=knotennr, an_anz=an_anz, ab_anz=ab_anz)
 
             # Es gibt entweder mindestens eine ankommende oder abgehende Haltung
             if an_anz > 0:
                 zeilan = ' 1{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
-                        kanalnummer=an_kanalnummer, haltungsnummer=an_haltungsnummer)
+                    kanalnummer=an_kanalnummer, haltungsnummer=an_haltungsnummer)
             else:
-                zeilan = ''                 # Ankommende Haltungen zurücksetzen
+                zeilan = ''  # Ankommende Haltungen zurücksetzen
 
             if ab_anz > 0:
                 zeilab = ' 2{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
-                        kanalnummer=ab_kanalnummer, haltungsnummer=ab_haltungsnummer)
+                    kanalnummer=ab_kanalnummer, haltungsnummer=ab_haltungsnummer)
             else:
-                zeilab = ''                 # Abgehende Haltungen zurücksetzen
+                zeilab = ''  # Abgehende Haltungen zurücksetzen
 
         else:
             # Folgedatensatz zum selben Knoten
 
             if ab_anz != 0:
-                akt_an = (i - akt_i) // ab_anz               # Lfd. Nummer der ankommenden Haltung
+                akt_an = (i - akt_i) // ab_anz  # Lfd. Nummer der ankommenden Haltung
                 akt_ab = (i - akt_i) % ab_anz
             else:
                 akt_an = 0
@@ -576,11 +574,11 @@ def write16(dbQK, df, ausw_and, auswahl):
             if akt_an == 0:
                 # abgehende Haltung übernehmen; nur im ersten Teilblock
                 zeilab += '02{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
-                        kanalnummer=ab_kanalnummer, haltungsnummer=ab_haltungsnummer)
+                    kanalnummer=ab_kanalnummer, haltungsnummer=ab_haltungsnummer)
             if akt_ab == 0:
                 # ankommende Haltung übernehmen; jeweils zu Beginn jedes Teilblocks
                 zeilan += '51{kanalnummer:>8s}{haltungsnummer:>3s}'.format(
-                        kanalnummer=an_kanalnummer, haltungsnummer=an_haltungsnummer)
+                    kanalnummer=an_kanalnummer, haltungsnummer=an_haltungsnummer)
 
     else:
         # Letzter Typ16-Datensatz kann erst jetzt geschrieben werden. 
@@ -632,7 +630,6 @@ def write41(dbQK, df, ausw_and, auswahl):
         return False
 
     for attr in dbQK.fetchall():
-        
         # Attribute in Variablen speichern
         (kanalnummer, haltungsnummer, deckelhoehe, xsch, ysch, schnam) = attr
 
@@ -641,19 +638,18 @@ def write41(dbQK, df, ausw_and, auswahl):
         ysch_t = formf(ysch, 14)
 
         df.write('41    {kanalnummer:>8s}{haltungsnummer:>3s}       '.format(
-                    kanalnummer=kanalnummer, haltungsnummer=haltungsnummer) + \
-                '{deckelhoehe:7s}{xsch:14s}{ysch:14s}{schnam:>12s}\n'.format(
-                    deckelhoehe=deckelhoehe_t, xsch=xsch_t, ysch=ysch_t, schnam=schnam))
+            kanalnummer=kanalnummer, haltungsnummer=haltungsnummer) + \
+                 '{deckelhoehe:7s}{xsch:14s}{ysch:14s}{schnam:>12s}\n'.format(
+                     deckelhoehe=deckelhoehe_t, xsch=xsch_t, ysch=ysch_t, schnam=schnam))
 
     return True
 
 
-
 # Hauptfunktion ----------------------------------------------------------------------------
-def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynaprof_choice, 
-                    liste_teilgebiete, profile_ergaenzen, autonum_dyna, mit_verschneidung, 
-                    fangradius=0.1, mindestflaeche=0.5, max_loops=1000, datenbanktyp=u'spatialite'):
-    '''Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE-Firebird-Datenbank.
+def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynaprof_choice,
+                     liste_teilgebiete, profile_ergaenzen, autonum_dyna, mit_verschneidung,
+                     fangradius=0.1, mindestflaeche=0.5, max_loops=1000, datenbanktyp=u'spatialite'):
+    """Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE-Firebird-Datenbank.
 
     :dynafile:              Zu Schreibende DYNA-Datei; kann mit Vorlagedatei identisch sein
     :type dynafile:         string
@@ -675,8 +671,8 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
     :autonum_dyna:          Sollen die Haltungen in der DYNA-Zusatztabelle nummeriert werden?
     :type autonum_dyna:     Boolean
 
-    :fangradius:            Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine 
-                            Haltung bzw. ein Einleitpunkt zugeordnet wird. 
+    :fangradius:            Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine
+                            Haltung bzw. ein Einleitpunkt zugeordnet wird.
     :type fangradius:       Float
 
     :datenbanktyp:          Typ der Datenbank (SpatiaLite, PostGIS)
@@ -686,7 +682,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
     :type check_export:     Dictionary
 
     :returns: void
-    '''
+    """
 
     # Statusmeldung in der Anzeige
     global progress_bar
@@ -694,15 +690,15 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(u"", u"Export in Arbeit. Bitte warten.")
     status_message.layout().addWidget(progress_bar)
-    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+    iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # Aktualisierung der Verknüpfungen
     if not updatelinkfl(dbQK, fangradius):
-        fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen (dyna.export 1)', 
+        fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen (dyna.export 1)',
                       u'Der logische Cache konnte nicht aktualisiert werden.')
 
     if not updatelinksw(dbQK, fangradius):
-        fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen (dyna.export 1)', 
+        fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen (dyna.export 1)',
                       u'Der logische Cache konnte nicht aktualisiert werden.')
 
     # DYNA-Vorlagedatei lesen. Dies geschieht zu Beginn, damit Zieldatei selbst Vorlage sein kann!
@@ -713,8 +709,8 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
         try:
             os.remove(dynafile)
         except BaseException as err:
-            fehlermeldung(u'Fehler (33) in QKan_ExportDYNA {}'.format(err), 
-                'Die DYNA-Datei ist schon vorhanden und kann nicht ersetzt werden: {}'.format(repr(err)))
+            fehlermeldung(u'Fehler (33) in QKan_ExportDYNA {}'.format(err),
+                          'Die DYNA-Datei ist schon vorhanden und kann nicht ersetzt werden: {}'.format(repr(err)))
             return False
 
     fortschritt(u"DYNA-Datei aus Vorlage kopiert...", 0.01)
@@ -797,7 +793,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
             return False
 
         # Zurücksetzen von "kanalnummer" und "haltungsnummer"
-        
+
         sql = u"""
             UPDATE dynahal
             SET kanalnummer = NULL,
@@ -824,7 +820,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
         # Weitergabe der Nummerierung an die Folgehaltung im selben Strang, 
         # solange change() nicht 0 zurückgibt
 
-        nchange = 1         # Initialisierung
+        nchange = 1  # Initialisierung
         changelog = []
         nlimit = 0
         while nchange > 0 and nlimit < max_loops:
@@ -856,14 +852,14 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
             if not dbQK.sql(sql, u'dbQK: k_qkkp.init_dynahal (6)'):
                 return False
 
-            nchange = int(dbQK.fetchone()[0])       # Zahl der zuletzt geänderten Datensätze
+            nchange = int(dbQK.fetchone()[0])  # Zahl der zuletzt geänderten Datensätze
             changelog.append(nchange)
 
         dbQK.commit()
 
         if nlimit >= max_loops:
-            fehlermeldung(u'Fehler in QKan_ExportDYNA', 
-                u'{} Schleifendurchläufe in der Autonummerierung. Gegebenenfalls muss max_loops in der config-Datei angepasst werden...')
+            fehlermeldung(u'Fehler in QKan_ExportDYNA',
+                          u'{} Schleifendurchläufe in der Autonummerierung. Gegebenenfalls muss max_loops in der config-Datei angepasst werden...')
 
         logger.debug(u'Anzahl Änderungen für DYNA:\n{}'.format(u', '.join([str(n) for n in changelog])))
 
@@ -873,7 +869,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
 
         sql = u"""DELETE FROM dynahal"""
         if not dbQK.sql(sql, u'dbQK: k_qkkp.init_dynahal (7): Daten in Tabelle dynahal konnten nicht gelöscht werden'):
-                return False
+            return False
 
         sql = u"""
             INSERT INTO dynahal
@@ -889,7 +885,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 {ausw_and}{auswahl}""".format(ausw_and=ausw_and, auswahl=auswahl)
 
         if not dbQK.sql(sql, u'dbQK: k_qkkp.init_dynahal (8)'):
-                return False
+            return False
 
     progress_bar.setValue(20)
 
@@ -966,17 +962,17 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
     dynaprof_key = []
 
     # Initialisierungen für Profile
-    profilmodus = -1       # -1: Nicht im Profilblock, Nächste Zeile ist bei:
-                           #  0: Bezeichnung des gesamten Profile-Blocks. 
-                           #  1: Profilname, Koordinaten, nächster Block oder Ende
-                           #  2: Profilnr.
-                           #  3: Erste Koordinaten des Querprofils
+    profilmodus = -1  # -1: Nicht im Profilblock, Nächste Zeile ist bei:
+    #  0: Bezeichnung des gesamten Profile-Blocks.
+    #  1: Profilname, Koordinaten, nächster Block oder Ende
+    #  2: Profilnr.
+    #  3: Erste Koordinaten des Querprofils
 
-    x1 = None   # markiert, dass noch kein Profil eingelesen wurde (s. u.)
+    x1 = None  # markiert, dass noch kein Profil eingelesen wurde (s. u.)
 
     for zeile in dynatemplate:
         if zeile[0:2] == '##':
-            continue                # Kommentarzeile wird übersprungen
+            continue  # Kommentarzeile wird übersprungen
 
         # Zuerst werden Abschnitte mit besonderen Daten bearbeitet (Profildaten etc.)
         if profilmodus >= 0:
@@ -993,7 +989,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
             elif profilmodus == 3:
                 # Erster Profilpunkt
                 profilmodus = 1
-                x1 = 1                          # Punkt als Startpunkt für nächstes Teilstück speichern
+                x1 = 1  # Punkt als Startpunkt für nächstes Teilstück speichern
                 continue
             elif profilmodus == 1:
                 # weitere Profilpunkte, nächstes Profil oder Ende der Profile
@@ -1013,11 +1009,11 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                         dynaprof_nam.append(profilnam)
                         logger.debug(u'k_qkkp.exportKanaldaten (2): profilnam = {}'.format(profilnam))
                         # sql = u'''INSERT INTO dynaprofil (profil_key, profilnam, breite, hoehe) 
-                                      # VALUES ('{key}', '{nam}', {br}, {ho})'''.format(
-                                      # key=profil_key, nam=profilnam, br=breite, ho=hoehe)
+                        # VALUES ('{key}', '{nam}', {br}, {ho})'''.format(
+                        # key=profil_key, nam=profilnam, br=breite, ho=hoehe)
                         # logger.debug(u'sql = {}'.format(sql))
                         # if not dbQK.sql(sql, u'importkanaldaten_kp (1)'):
-                            # return None
+                        # return None
 
                     if zeile[0:2] != '++':
                         # Profilname
@@ -1051,8 +1047,8 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
         for profil in daten:
             profil_new = profil[0]
             if profil_new not in dynaprof_nam:
-                meldung(u'Fehlende Profildaten in DYNA-Vorlagedatei {fn}'.format(fn=template_dyna), 
-                    u'{pn}'.format(pn=profil_new))
+                meldung(u'Fehlende Profildaten in DYNA-Vorlagedatei {fn}'.format(fn=template_dyna),
+                        u'{pn}'.format(pn=profil_new))
                 logger.debug(u'k_qkkp.exportKanaldaten (1): dynaprof_nam = {}'.format(', '.join(dynaprof_nam)))
                 if profile_ergaenzen:
                     sql = """INSERT INTO profile (profilnam)
@@ -1062,7 +1058,8 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                     dbQK.commit()
                 fehler = 2
         if fehler == 2:
-            fehlermeldung(u'Fehler in den Profildaten', u'Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage ')
+            fehlermeldung(u'Fehler in den Profildaten',
+                          u'Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage ')
             del dbQK
             return False
 
@@ -1082,8 +1079,8 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
             if profil_key is None:
                 profil_key = 'NULL'
             if profil_key not in dynaprof_key:
-                meldung(u'Fehlende Profildaten in DYNA-Vorlagedatei {fn}'.format(fn=template_dyna), 
-                    u'{id}'.format(id=profil_key))
+                meldung(u'Fehlende Profildaten in DYNA-Vorlagedatei {fn}'.format(fn=template_dyna),
+                        u'{id}'.format(id=profil_key))
                 logger.debug(u'dynaprof_key = {}'.format(', '.join(dynaprof_key)))
                 if profile_ergaenzen:
                     sql = """INSERT INTO profile (profilnam, kp_key)
@@ -1093,16 +1090,16 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                     dbQK.commit()
                 fehler = 2
             elif profil_key is None:
-                fehlermeldung(u'Fehlende ID in DYNA-Vorlagedatei {fn}'.format(fn=template_dyna), 
-                    u'Es fehlt die ID für Profil {pn}'.format(pn=profil_new))
-                fehler = max(fehler, 1)         # fehler = 2 hat Priorität
+                fehlermeldung(u'Fehlende ID in DYNA-Vorlagedatei {fn}'.format(fn=template_dyna),
+                              u'Es fehlt die ID für Profil {pn}'.format(pn=profil_new))
+                fehler = max(fehler, 1)  # fehler = 2 hat Priorität
 
         if fehler == 1:
             fehlermeldung(u'Fehler in den Profildaten', u'Es gibt Profile ohne eine DYNA-Nummer (kp_key)')
             del dbQK
             return False
         elif fehler == 2:
-            fehlermeldung(u'Fehler in den Profildaten', 
+            fehlermeldung(u'Fehler in den Profildaten',
                           u'Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage vorhanden sind')
             del dbQK
             return False
@@ -1111,10 +1108,10 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
 
     with open(dynafile, 'w') as df:
 
-        typ05 = False                  # markiert, ob in der Vorlagedatei Block mit Datentyp 05 erreicht
-        typ12 = False                  # markiert, ob in der Vorlagedatei Block mit Datentyp 12 erreicht
-        typ16 = False                  # markiert, ob in der Vorlagedatei Block mit Datentyp 16 erreicht
-        typ41 = False                  # markiert, ob in der Vorlagedatei Block mit Datentyp 41 erreicht
+        typ05 = False  # markiert, ob in der Vorlagedatei Block mit Datentyp 05 erreicht
+        typ12 = False  # markiert, ob in der Vorlagedatei Block mit Datentyp 12 erreicht
+        typ16 = False  # markiert, ob in der Vorlagedatei Block mit Datentyp 16 erreicht
+        typ41 = False  # markiert, ob in der Vorlagedatei Block mit Datentyp 41 erreicht
 
         # Die nachfolgende Schleife durchläuft das DYNA-Template in der Liste "dynatemplate", schreibt die 
         # Standardzeilen. An den Stellen, an denen in der Vorlage Daten eingefügt und gegebenfalls in der
@@ -1136,7 +1133,10 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                     # Sobald nächster Block erreicht, ist Typ05 beendet
                     # Jetzt werden alle neuen Typ-05-Datensätze geschrieben
                     for id, mat, kb in zip(dynakeys_id, dynakeys_mat, dynakeys_ks):
-                        df.write(u'05 {id:1s} {mat:4s} {sp:10.6f}{kb:10.6f}{ks:10.6f}\n'.format(id=id[:1], mat=mat[:4], sp=0, kb=kb, ks=0).replace('  0.000000','          '))
+                        df.write(
+                            u'05 {id:1s} {mat:4s} {sp:10.6f}{kb:10.6f}{ks:10.6f}\n'.format(id=id[:1], mat=mat[:4], sp=0,
+                                                                                           kb=kb, ks=0).replace(
+                                '  0.000000', '          '))
                     typ05 = False
                     df.write(z)
 
@@ -1145,9 +1145,9 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 if z[:2] == '++':
                     # Sobald nächster Block erreicht, ist Typ12 beendet
                     # Jetzt werden alle neuen Typ-12-Datensätze geschrieben
-                    if not write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidung, 
-                                    dynaprof_choice, dynabef_choice, dynaprof_nam, dynaprof_key, 
-                                    ausw_and, auswahl):
+                    if not write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidung,
+                                   dynaprof_choice, dynabef_choice, dynaprof_nam, dynaprof_key,
+                                   ausw_and, auswahl):
                         return False
                     typ12 = False
                     df.write(z)
@@ -1162,7 +1162,7 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                     typ16 = False
                     df.write(z)
                 elif z[6:8] != '  ':
-                    df.write(z)                             # Bauwerksverknüpfungen
+                    df.write(z)  # Bauwerksverknüpfungen
             # Block Typ41
             elif typ41:
                 if z[:2] == '++':
@@ -1175,7 +1175,6 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
             else:
                 # Allgemeine Zeilen werden direkt aus der Templatedatei geschrieben
                 df.write(z)
-
 
             # Aktivierung der Datenblöcke
 
@@ -1205,5 +1204,4 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
     fortschritt(u'Ende...', 1)
     progress_bar.setValue(100)
     status_message.setText(u"Datenexport abgeschlossen.")
-    status_message.setLevel(QgsMessageBar.SUCCESS)
-
+    status_message.setLevel(Qgis.Success)

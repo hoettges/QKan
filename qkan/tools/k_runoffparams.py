@@ -1,43 +1,37 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 
   Set runoff parameters
   =====================
-  
+
   Berechnet für die Flächenobjekte die Oberflächenabflussparameter nach HYSTEM/EXTRAN 7 oder DYNA.
-  
+
   | Dateiname            : k_runoffparams.py
   | Date                 : Juli 2018
   | Copyright            : (C) 2018 by Joerg Hoettges
   | Email                : hoettges@fh-aachen.de
   | git sha              : $Format:%H$
-  
-  This program is free software; you can redistribute it and/or modify   
-  it under the terms of the GNU General Public License as published by   
-  the Free Software Foundation; either version 2 of the License, or      
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
 
-'''
+"""
 
 __author__ = 'Joerg Hoettges'
 __date__ = 'July 2018'
 __copyright__ = '(C) 2018, Joerg Hoettges'
 
-# This will get replaced with a git SHA1 when you do a git archive
-
-__revision__ = ':%H$'
-
 import logging
 
-from qgis.core import QgsMessageLog
+from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import QgsMessageLog, Qgis
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-from qgis.PyQt.QtGui import QProgressBar
-
-from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fortschritt, fehlermeldung, sqlconditions
+from qkan.database.qkan_utils import sqlconditions
 
 logger = logging.getLogger(u'QKan')
 
@@ -80,7 +74,7 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(u"Info", u"Oberflächenabflussparameter werden berechnet... Bitte warten.")
     status_message.layout().addWidget(progress_bar)
-    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+    iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # status_message.setText(u"Erzeugung von unbefestigten Flächen ist in Arbeit.")
     progress_bar.setValue(1)
@@ -309,10 +303,8 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
     dbQK.commit()
     del dbQK
 
-    # iface.mainWindow().statusBar().clearMessage()
-    # iface.messageBar().pushMessage(u"Information", u"Oberflächenabflussparameter sind berechnet und eingetragen!", level=QgsMessageBar.INFO)
-    QgsMessageLog.logMessage(u"\nOberflächenabflussparameter sind berechnet und eingetragen!", level=QgsMessageLog.INFO)
+    QgsMessageLog.logMessage(message="\nOberflächenabflussparameter sind berechnet und eingetragen!", level=Qgis.Info)
 
     progress_bar.setValue(100)
     status_message.setText(u"Oberflächenabflussparameter sind berechnet und eingetragen!")
-    status_message.setLevel(QgsMessageBar.SUCCESS)
+    status_message.setLevel(Qgis.Success)

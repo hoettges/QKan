@@ -23,30 +23,28 @@
 
 import json
 import logging
-import tempfile
 import os
 import site
-from datetime import datetime as dt
 import subprocess
+import tempfile
+from datetime import datetime as dt
 
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QFileDialog, QListWidgetItem, QTableWidgetItem
-from qgis.core import QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry, QgsMessageLog
-from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
+from qgis.gui import QgsMessageBar, QgsProjectionSelectionDialog
 from qgis.utils import iface, pluginDirectory
-from qgis.gui import QgsGenericProjectionSelector
 
-# Initialize Qt resources from file resources.py
-# noinspection PyUnresolvedReferences 
-import resources
-# Import the code for the dialog
-from application_dialog import QgsAdaptDialog, LayersAdaptDialog, QKanOptionsDialog, RunoffParamsDialog
-from k_qgsadapt import qgsadapt
-from k_layersadapt import layersadapt
-from k_runoffparams import setRunoffparams
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung, meldung, sqlconditions, isQkanLayer
+from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung, meldung, sqlconditions
+# Initialize Qt resources from file resources.py
+# noinspection PyUnresolvedReferences
+from . import resources
+# Import the code for the dialog
+from .application_dialog import QgsAdaptDialog, LayersAdaptDialog, QKanOptionsDialog, RunoffParamsDialog
+from .k_layersadapt import layersadapt
+from .k_qgsadapt import qgsadapt
+from .k_runoffparams import setRunoffparams
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u'QKan')
@@ -176,42 +174,36 @@ class QKanTools:
 
         icon_qgsadapt_path = ':/plugins/qkan/tools/res/icon_qgsadapt.png'
         Dummy.instance.add_action(
-            icon_qgsadapt_path, 
-            text=self.tr(u'Projektdatei auf bestehende QKan-Datenbank übertragen'), 
-            callback=self.run_qgsadapt, 
+            icon_qgsadapt_path,
+            text=self.tr(u'Projektdatei auf bestehende QKan-Datenbank übertragen'),
+            callback=self.run_qgsadapt,
             parent=self.iface.mainWindow())
 
         icon_layersadapt_path = ':/plugins/qkan/tools/res/icon_layersadapt.png'
         Dummy.instance.add_action(
-            icon_layersadapt_path, 
-            text=self.tr(u'Projektlayer auf QKan-Standard setzen'), 
-            callback=self.run_layersadapt, 
+            icon_layersadapt_path,
+            text=self.tr(u'Projektlayer auf QKan-Standard setzen'),
+            callback=self.run_layersadapt,
             parent=self.iface.mainWindow())
 
         icon_qkanoptions_path = ':/plugins/qkan/tools/res/icon_qkanoptions.png'
         Dummy.instance.add_action(
-            icon_qkanoptions_path, 
-            text=self.tr(u'Allgemeine Optionen'), 
-            callback=self.run_qkanoptions, 
+            icon_qkanoptions_path,
+            text=self.tr(u'Allgemeine Optionen'),
+            callback=self.run_qkanoptions,
             parent=self.iface.mainWindow())
 
         icon_runoffparams_path = ':/plugins/qkan/tools/res/icon_runoffparams.png'
         Dummy.instance.add_action(
-            icon_runoffparams_path, 
-            text=self.tr(u'Oberflächenabflussparameter eintragen'), 
-            callback=self.run_runoffparams, 
+            icon_runoffparams_path,
+            text=self.tr(u'Oberflächenabflussparameter eintragen'),
+            callback=self.run_runoffparams,
             parent=self.iface.mainWindow())
 
     def unload(self):
         pass
 
-
-    # -----------------------------------------------------------------------------------------------------
-    # Allgemeine Funktionen
-
-    # -------------------------------------------------------------------------
-    # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
-
+    @staticmethod
     def listselecteditems(self, listWidget):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
@@ -227,7 +219,6 @@ class QKanTools:
             liste.append(elem.text())
         return liste
 
-
     # -----------------------------------------------------------------------------------------------------
     # Erstellen einer Projektdatei aus einer Vorlage
 
@@ -236,28 +227,26 @@ class QKanTools:
     def dlgpr_selectFileProjectfile(self):
         """Zu erstellende Projektdatei festlegen"""
 
-        filename = QFileDialog.getSaveFileName(self.dlgpr,
-                                              u"Dateinamen der zu erstellenden Projektdatei eingeben",
-                                               self.default_dir,
-                                               "*.qgs")
+        filename, __ = QFileDialog.getSaveFileName(self.dlgpr,
+                                                       u"Dateinamen der zu erstellenden Projektdatei eingeben",
+                                                       self.default_dir,
+                                                       "*.qgs")
         # logger.info('Dateiname wurde erkannt zu:\n{}'.format(filename))
-        
+
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
             self.dlgpr.tf_projectFile.setText(filename)
 
-
     def dlgpr_selectFile_qkanDB(self):
         """Anzubindende QKan-Datenbank festlegen"""
 
-        filename = QFileDialog.getOpenFileName(self.dlgpr,
-                                               u"QKan-Datenbank auswählen",
-                                               self.default_dir,
-                                               "*.sqlite")
+        filename, __ = QFileDialog.getOpenFileName(self.dlgpr,
+                                                       u"QKan-Datenbank auswählen",
+                                                       self.default_dir,
+                                                       "*.sqlite")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
             self.dlgpr.tf_qkanDB.setText(filename)
-
 
     def dlgpr_applyQKanTemplate(self):
         """Aktiviert oder deaktiviert das Textfeld für die Template-Projektdatei"""
@@ -268,13 +257,13 @@ class QKanTools:
     def dlgpr_selectFileProjectTemplate(self):
         """Vorlage-Projektdatei auswählen"""
 
-        self.dlgpr.cb_applyQKanTemplate.setChecked(False)              # automatisch deaktivieren
-        self.dlgpr_applyQKanTemplate()                                 # Auswirkungen auslösen
+        self.dlgpr.cb_applyQKanTemplate.setChecked(False)  # automatisch deaktivieren
+        self.dlgpr_applyQKanTemplate()  # Auswirkungen auslösen
 
-        filename = QFileDialog.getOpenFileName(self.dlgpr,
-                                              u"Vorlage für zu erstellende Projektdatei auswählen",
-                                               self.templateDir,
-                                               "*.qgs")
+        filename, __ = QFileDialog.getOpenFileName(self.dlgpr,
+                                                       u"Vorlage für zu erstellende Projektdatei auswählen",
+                                                       self.templateDir,
+                                                       "*.qgs")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
             self.dlgpr.tf_projectTemplate.setText(filename)
@@ -290,10 +279,10 @@ class QKanTools:
         # Formularfeld Datenbank
 
         # Falls eine Datenbank angebunden ist, wird diese zunächst in das Formular eingetragen.
-        self.database_QKan, epsg = get_database_QKan(silent = True)
+        self.database_QKan, epsg = get_database_QKan(silent=True)
 
         if self.database_QKan:
-            self.default_dir = os.path.dirname(self.database_QKan)       # bereits geladene QKan-Datenbank übernehmen
+            self.default_dir = os.path.dirname(self.database_QKan)  # bereits geladene QKan-Datenbank übernehmen
         elif 'database_QKan' in self.config:
             self.database_QKan = self.config['database_QKan']
             self.dlgpr.tf_qkanDB.setText(self.database_QKan)
@@ -315,7 +304,7 @@ class QKanTools:
         else:
             projectFile = ''
 
-        # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen 
+        # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen
         if 'QKan_Standard_anwenden' in self.config:
             self.applyQKanTemplate = self.config['QKan_Standard_anwenden']
         else:
@@ -324,7 +313,7 @@ class QKanTools:
 
         # Status initialisieren
         self.dlgpr_applyQKanTemplate()
-        
+
         # show the dialog
         self.dlgpr.show()
         # Run the dialog event loop
@@ -332,14 +321,12 @@ class QKanTools:
 
         # See if OK was pressed
         if result:
-
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
             projectTemplate = self.dlgpr.tf_projectTemplate.text()
             self.database_QKan = self.dlgpr.tf_qkanDB.text()
             projectFile = self.dlgpr.tf_projectFile.text()
             self.applyQKanTemplate = self.dlgpr.cb_applyQKanTemplate.isChecked()
-
 
             # Konfigurationsdaten schreiben -----------------------------------------------------------
 
@@ -351,7 +338,7 @@ class QKanTools:
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
-            qgsadapt(projectTemplate, self.database_QKan, epsg, projectFile, 
+            qgsadapt(projectTemplate, self.database_QKan, epsg, projectFile,
                      self.applyQKanTemplate, u'SpatiaLite')
 
     # ----------------------------------------------------------------------------------------------------
@@ -364,9 +351,9 @@ class QKanTools:
 
         :returns: void
         """
-        projSelector = QgsGenericProjectionSelector()
-        projSelector.exec_()
-        erg = projSelector.selectedAuthId()
+        proj_selector = QgsProjectionSelectionDialog()
+        proj_selector.exec_()
+        erg = proj_selector.crs().geographicCrsAuthId()
         if len(erg.split(u':')) == 2:
             self.dlgop.tf_epsg.setText(erg.split(u':')[1])
         else:
@@ -399,16 +386,15 @@ class QKanTools:
         # Textfeld wieder deaktivieren
         self.dlgop.tf_logeditor.setEnabled(True)
 
-        filename = QFileDialog.getOpenFileName(self.dlgop,
-                                               u"Alternativen Texteditor auswählen", 
-                                               "c:/", 
-                                               "*.exe")
+        filename, __ = QFileDialog.getOpenFileName(self.dlgop,
+                                                       u"Alternativen Texteditor auswählen",
+                                                       "c:/",
+                                                       "*.exe")
         self.logeditor = filename
         self.dlgop.tf_logeditor.setText(filename)
         if os.path.dirname(filename) == '':
             # Textfeld wieder deaktivieren
             self.dlgop.tf_logeditor.setEnabled(False)
-
 
     # -----------------------------------------------------------------------------------------
     # 2. Aufruf des Formulars
@@ -448,7 +434,7 @@ class QKanTools:
         if datenbanktyp == u'spatialite':
             self.dlgop.rb_spatialite.setChecked(True)
         # elif datenbanktyp == u'postgis':
-            # self.dlgop.rb_postgis.setChecked(True)
+        # self.dlgop.rb_postgis.setChecked(True)
 
         if 'epsg' in self.config:
             self.epsg = self.config['epsg']
@@ -483,9 +469,9 @@ class QKanTools:
             if self.dlgop.rb_spatialite.isChecked():
                 datenbanktyp = u'spatialite'
             # elif self.dlgop.rb_postgis.isChecked():
-                # datenbanktyp = u'postgis'
+            # datenbanktyp = u'postgis'
             else:
-                fehlermeldung(u"tools.application.run", 
+                fehlermeldung(u"tools.application.run",
                               u"Fehlerhafte Option: \ndatenbanktyp = {}".format(repr(datenbanktyp)))
             epsg = self.dlgop.tf_epsg.text()
 
@@ -500,7 +486,6 @@ class QKanTools:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
-
     # ----------------------------------------------------------------------------------------------------
     # Oberflächenabflussparameter in QKan-Tabellen eintragen, ggfs. nur für ausgewählte Teilgebiete
 
@@ -509,15 +494,16 @@ class QKanTools:
     def dlgro_selectFile_qkanDB(self):
         """Datenbankverbindung zur QKan-Datenbank (SpatiLite) auswaehlen."""
 
-        filename = QFileDialog.getOpenFileName(self.dlgro, u"QKan-Datenbank auswählen",
-                                               self.default_dir, "*.sqlite")
+        filename, __ = QFileDialog.getOpenFileName(self.dlgro, u"QKan-Datenbank auswählen",
+                                                       self.default_dir, "*.sqlite")
         # if os.path.dirname(filename) != '':
         # os.chdir(os.path.dirname(filename))
         self.dlgro.tf_QKanDB.setText(filename)
 
     def dlgro_helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#berechnung-von-oberflachenabflussparametern')
+        helpfile = os.path.join(self.plugin_dir,
+                                '../doc/sphinx/build/html/Qkan_Formulare.html#berechnung-von-oberflachenabflussparametern')
         webbrowser.open_new_tab(helpfile)
 
     def dlgro_lwTeilgebieteClick(self):
@@ -575,7 +561,6 @@ class QKanTools:
             self.dlgro.rb_fliesszeiten.setEnabled(False)
         else:
             self.dlgro.rb_fliesszeiten.setEnabled(True)
-            
 
     def dlgro_countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
@@ -584,7 +569,8 @@ class QKanTools:
         liste_abflussparameter = self.listselecteditems(self.dlgro.lw_abflussparameter)
 
         # Auswahl der zu bearbeitenden Flächen
-        auswahl = sqlconditions('WHERE', ('teilgebiet', 'abflussparameter'), (liste_teilgebiete, liste_abflussparameter))
+        auswahl = sqlconditions('WHERE', ('teilgebiet', 'abflussparameter'),
+                                (liste_teilgebiete, liste_abflussparameter))
 
         sql = u"""SELECT count(*) AS anzahl FROM flaechen{auswahl}""".format(auswahl=auswahl)
 
@@ -596,7 +582,6 @@ class QKanTools:
         else:
             self.dlgro.lf_anzahl_flaechen.setText('0')
 
-
     def run_runoffparams(self):
         """Berechnen und Eintragen der Oberflächenabflussparameter in die Tabelle flaechen"""
 
@@ -604,7 +589,7 @@ class QKanTools:
         if len({'flaechen'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
-                                           level=QgsMessageBar.CRITICAL)
+                                           level=Qgis.Info)
             return False
 
         # Übernahme der Quelldatenbank:
@@ -636,7 +621,8 @@ class QKanTools:
 
         if not self.dbQK.connected:
             logger.error(u"Fehler in tools.application.runoffparams:\n",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
+                         u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+                             database_QKan))
             return None
 
         # Check, ob alle Teilgebiete in Flächen auch in Tabelle "teilgebiete" enthalten
@@ -660,7 +646,6 @@ class QKanTools:
             return False
 
         self.dbQK.commit()
-
 
         # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
@@ -686,7 +671,6 @@ class QKanTools:
                 fehlermeldung(u'QKan_Tools (6), Fehler in elem = {}\n'.format(elem), repr(err))
                 # if len(daten) == 1:
                 # self.dlgro.lw_teilgebiete.setCurrentRow(0)
-
 
         # Anlegen der Tabelle zur Auswahl der Abflussparameter
 
@@ -722,21 +706,27 @@ class QKanTools:
         else:
             runoffparamsfunctions = {
                 'itwh': [
-                    '0.8693*log(area(geom))+ 5.6317', 
-                    'pow(18.904*pow(neigkl,0.686)*area(geom), 0.2535*pow(neigkl,0.244))'], 
+                    '0.8693*log(area(geom))+ 5.6317',
+                    'pow(18.904*pow(neigkl,0.686)*area(geom), 0.2535*pow(neigkl,0.244))'],
                 'dyna': [
-                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(rauheit_bef=manningrauheit_bef), 
-                    'pow(2*{rauheit_dur} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(rauheit_dur=manningrauheit_dur)], 
+                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(
+                        rauheit_bef=manningrauheit_bef),
+                    'pow(2*{rauheit_dur} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(
+                        rauheit_dur=manningrauheit_dur)],
                 'Maniak': [
-                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(rauheit_bef=manningrauheit_bef), 
-                    'pow(2*{rauheit_dur} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(rauheit_dur=manningrauheit_dur),
-                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * abstand / SQRT(neigung), 0.467)'.format(rauheit_bef=manningrauheit_bef), 
+                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(
+                        rauheit_bef=manningrauheit_bef),
+                    'pow(2*{rauheit_dur} * (abstand + fliesslaenge) / SQRT(neigung), 0.467)'.format(
+                        rauheit_dur=manningrauheit_dur),
+                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * abstand / SQRT(neigung), 0.467)'.format(
+                        rauheit_bef=manningrauheit_bef),
                     'pow(2*{rauheit_dur} * abstand / SQRT(neigung), 0.467)'.format(rauheit_dur=manningrauheit_dur),
-                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * fliesslaenge / SQRT(neigung), 0.467)'.format(rauheit_bef=manningrauheit_bef), 
+                    '0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*{rauheit_bef} * fliesslaenge / SQRT(neigung), 0.467)'.format(
+                        rauheit_bef=manningrauheit_bef),
                     'pow(2*{rauheit_dur} * fliesslaenge / SQRT(neigung), 0.467)'.format(rauheit_dur=manningrauheit_dur)]
-                }
+            }
             self.config['runoffparamsfunctions'] = runoffparamsfunctions
-        
+
         # Optionen zur Berechnung des Oberflächenabflusses
         if 'runoffparamstype_choice' in self.config:
             runoffparamstype_choice = self.config['runoffparamstype_choice']
@@ -791,8 +781,9 @@ class QKanTools:
             elif self.dlgro.rb_maniak.isChecked():
                 runoffparamstype_choice = u'Maniak'
             else:
-                fehlermeldung(u"tools.runoffparams.run_runoffparams", 
-                              u"Fehlerhafte Option: \nrunoffparamstype_choice = {}".format(repr(runoffparamstype_choice)))
+                fehlermeldung(u"tools.runoffparams.run_runoffparams",
+                              u"Fehlerhafte Option: \nrunoffparamstype_choice = {}".format(
+                                  repr(runoffparamstype_choice)))
             if self.dlgro.rb_kaskade.isChecked():
                 runoffmodelltype_choice = u'Speicherkaskade'
             elif self.dlgro.rb_fliesszeiten.isChecked():
@@ -800,8 +791,9 @@ class QKanTools:
             elif self.dlgro.rb_schwerpunktlaufzeit.isChecked():
                 runoffmodelltype_choice = u'Schwerpunktlaufzeit'
             else:
-                fehlermeldung(u"tools.runoffparams.run_runoffparams", 
-                              u"Fehlerhafte Option: \nrunoffmodelltype_choice = {}".format(repr(runoffmodelltype_choice)))
+                fehlermeldung(u"tools.runoffparams.run_runoffparams",
+                              u"Fehlerhafte Option: \nrunoffmodelltype_choice = {}".format(
+                                  repr(runoffmodelltype_choice)))
 
             # Konfigurationsdaten schreiben
             self.config['database_QKan'] = database_QKan
@@ -814,9 +806,8 @@ class QKanTools:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
 
-            setRunoffparams(self.dbQK, runoffparamstype_choice, runoffmodelltype_choice, runoffparamsfunctions, 
-                liste_teilgebiete, liste_abflussparameter, datenbanktyp)
-
+            setRunoffparams(self.dbQK, runoffparamstype_choice, runoffmodelltype_choice, runoffparamsfunctions,
+                            liste_teilgebiete, liste_abflussparameter, datenbanktyp)
 
     # -----------------------------------------------------------------------------------------------------
     # Anpassen/Ergänzen von QKan-Layern
@@ -825,21 +816,21 @@ class QKanTools:
 
     def dlgla_helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#projektlayer-auf-qkan-standard-setzen')
+        helpfile = os.path.join(self.plugin_dir,
+                                '../doc/sphinx/build/html/Qkan_Formulare.html#projektlayer-auf-qkan-standard-setzen')
         webbrowser.open_new_tab(helpfile)
 
     def dlgla_selectFile_qkanDB(self):
         """Anzubindende QKan-Datenbank festlegen"""
 
-        self.dlgla.cb_adaptDB.setChecked(True)                       # automatisch aktivieren
-        filename = QFileDialog.getOpenFileName(self.dlgla,
-                                               u"QKan-Datenbank auswählen",
-                                               self.default_dir,
-                                               "*.sqlite")
+        self.dlgla.cb_adaptDB.setChecked(True)  # automatisch aktivieren
+        filename, __ = QFileDialog.getOpenFileName(self.dlgla,
+                                                       u"QKan-Datenbank auswählen",
+                                                       self.default_dir,
+                                                       "*.sqlite")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
             self.dlgla.tf_qkanDB.setText(filename)
-
 
     def dlgla_enableQkanDB(self):
         """Aktiviert oder deaktiviert das Textfeld für die Datenbankanbindung"""
@@ -849,7 +840,7 @@ class QKanTools:
         self.dlgla.tf_qkanDB.setEnabled(checked)
         # self.dlgla.pb_selectQKanDB.setEnabled(checked)
 
-        self.dlgla_cb_adaptKBS()            # Korrigiert ggfs. cb_adaptKBS
+        self.dlgla_cb_adaptKBS()  # Korrigiert ggfs. cb_adaptKBS
 
     def dlgla_enableProjectTemplateGroup(self):
         """Aktiviert oder deaktiviert die Groupbox für das Projektdatei-Template
@@ -867,8 +858,8 @@ class QKanTools:
         self.dlgla_enableProjectTemplateGroup()
 
     def dlgla_cb_adaptKBS(self):
-        """Hält Checkbutton cb_adaptKBS aktiv, solange cb_adaptDB aktiv ist, weil bei 
-           Änderung der Datenbankanbindung immer das Projektionssystem überprüft 
+        """Hält Checkbutton cb_adaptKBS aktiv, solange cb_adaptDB aktiv ist, weil bei
+           Änderung der Datenbankanbindung immer das Projektionssystem überprüft
            werden soll. 
         """
         if self.dlgla.cb_adaptDB.isChecked():
@@ -884,8 +875,8 @@ class QKanTools:
     def dlgla_selectFileProjectTemplate(self):
         """Vorlage-Projektdatei auswählen"""
 
-        self.dlgla.cb_applyQKanTemplate.setChecked(False)              # automatisch deaktivieren
-        self.dlgla_applyQKanTemplate()                                 # Auswirkungen auslösen
+        self.dlgla.cb_applyQKanTemplate.setChecked(False)  # automatisch deaktivieren
+        self.dlgla_applyQKanTemplate()  # Auswirkungen auslösen
 
         if self.dlgla.cb_adaptTableLookups.isChecked():
             self.templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
@@ -895,17 +886,16 @@ class QKanTools:
             except:
                 logger.error('Programmfehler in tools.run_layersadapt:\nPfad konnte nicht auf ' + \
                              'database_QKan gesetzt werden.\n database_QKan = {}'.format(
-                               self.database_QKan))
+                                 self.database_QKan))
                 self.templateDir = ''
 
-        filename = QFileDialog.getOpenFileName(self.dlgla,
-                                               "Projektdatei als Vorlage auswählen",
-                                               self.templateDir,
-                                               "*.qgs")
+        filename, __ = QFileDialog.getOpenFileName(self.dlgla,
+                                                       "Projektdatei als Vorlage auswählen",
+                                                       self.templateDir,
+                                                       "*.qgs")
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
             self.dlgla.tf_projectTemplate.setText(filename)
-
 
     def dlgla_enableSaveProjectFile(self):
         """Aktiviert oder deaktiviert das Textfeld für die zu Schreibende Projektdatei
@@ -920,18 +910,17 @@ class QKanTools:
     def dlgla_selectFileProjectfile(self):
         """Zu erstellende Projektdatei festlegen"""
 
-        self.dlgla.cb_saveProjectFile.setChecked(True)                 # automatisch aktivieren
+        self.dlgla.cb_saveProjectFile.setChecked(True)  # automatisch aktivieren
         self.dlgla_enableSaveProjectFile()
-        filename = QFileDialog.getSaveFileName(self.dlgla,
-                                               u"Dateinamen der zu erstellenden Projektdatei eingeben",
-                                               self.default_dir,
-                                               "*.qgs")
+        filename, __ = QFileDialog.getSaveFileName(self.dlgla,
+                                                       u"Dateinamen der zu erstellenden Projektdatei eingeben",
+                                                       self.default_dir,
+                                                       "*.qgs")
         # logger.info('Dateiname wurde erkannt zu:\n{}'.format(filename))
-        
+
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
             self.dlgla.tf_projectFile.setText(filename)
-
 
     def dlgla_checkqkanDBUpdate(self):
         """Setzt cb_adaptTableLookups, wenn cb_qkanDBUpdate gesetzt
@@ -939,11 +928,11 @@ class QKanTools:
 
         if self.dlgla.cb_qkanDBUpdate.isChecked():
             if not self.dlgla.cb_adaptTableLookups.isChecked():
-                meldung("", u"Bei einem Update der QKan-Datenbank muss auch die Anpassung von Wertbeziehungungen und Formularanbindungen aktiviert sein!")
+                meldung("",
+                        u"Bei einem Update der QKan-Datenbank muss auch die Anpassung von Wertbeziehungungen und Formularanbindungen aktiviert sein!")
 
             self.dlgla.cb_adaptTableLookups.setChecked(True)
             # self.dlgla_cb_adaptTableLookups()
-
 
     # -----------------------------------------------------------------------------------------------------
     # 2. Aufruf des Formulars
@@ -956,10 +945,10 @@ class QKanTools:
         # Formularfeld Datenbank
 
         # Falls eine Datenbank angebunden ist, wird diese zunächst in das Formular eingetragen.
-        self.database_QKan, epsg = get_database_QKan(silent = True)
+        self.database_QKan, epsg = get_database_QKan(silent=True)
 
         if self.database_QKan:
-            self.default_dir = os.path.dirname(self.database_QKan)       # bereits geladene QKan-Datenbank übernehmen
+            self.default_dir = os.path.dirname(self.database_QKan)  # bereits geladene QKan-Datenbank übernehmen
         elif 'database_QKan' in self.config:
             self.database_QKan = self.config['database_QKan']
             self.dlgla.tf_qkanDB.setText(self.database_QKan)
@@ -975,7 +964,7 @@ class QKanTools:
         else:
             projectFile = ''
 
-        # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen 
+        # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen
         if 'QKan_Standard_anwenden' in self.config:
             self.applyQKanTemplate = self.config['QKan_Standard_anwenden']
         else:
@@ -984,7 +973,7 @@ class QKanTools:
 
         # GGfs. Standardvorlage schon eintragen
         if self.applyQKanTemplate:
-            self.projectTemplate = os.path.join(self.templateDir,'Projekt.qgs')
+            self.projectTemplate = os.path.join(self.templateDir, 'Projekt.qgs')
             self.dlgla.tf_projectTemplate.setText(self.projectTemplate)
 
         # Groupbox "Layer anpassen" ---------------------------------------------------------------------------
@@ -1039,7 +1028,7 @@ class QKanTools:
         else:
             self.fehlende_layer_ergaenzen = True
         self.dlgla.cb_completeLayers.setChecked(self.fehlende_layer_ergaenzen)
-        
+
         # Weitere Formularfelder ---------------------------------------------------------------------------
 
         # Checkbox: Knotentype per Abfrage ermitteln und in "schaechte.knotentyp" eintragen
@@ -1082,7 +1071,7 @@ class QKanTools:
         self.dlgla_applyQKanTemplate()
         self.dlgla_enableSaveProjectFile()
         self.dlgla_enableProjectTemplateGroup()
-        
+
         # -----------------------------------------------------------------------------------------------------
         # show the dialog
         self.dlgla.show()
@@ -1095,9 +1084,9 @@ class QKanTools:
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
             self.qkanDBUpdate = self.dlgla.cb_qkanDBUpdate.isChecked()
-                # Achtung: Beeinflusst auch
-                #  - self.anpassen_Wertebeziehungen_in_Tabellen
-                #  - anpassen_auswahl
+            # Achtung: Beeinflusst auch
+            #  - self.anpassen_Wertebeziehungen_in_Tabellen
+            #  - anpassen_auswahl
 
             self.database_QKan = self.dlgla.tf_qkanDB.text()
             self.anpassen_Datenbankanbindung = self.dlgla.cb_adaptDB.isChecked()
@@ -1157,22 +1146,21 @@ class QKanTools:
                                 fehlende_layer_ergaenzen={10:}, 
                                 anpassen_auswahl = '{11}', 
                                 dbtyp = '{12}')""".format( \
-                                self.database_QKan, 
-                                projectFile, 
-                                self.projectTemplate, 
-                                self.qkanDBUpdate, 
-                                self.anpassen_Datenbankanbindung, 
-                                self.anpassen_Wertebeziehungen_in_Tabellen, 
-                                self.anpassen_Formulare, 
-                                self.anpassen_Projektionssystem, 
-                                aktualisieren_Schachttypen, 
-                                zoom_alles, 
-                                fehlende_layer_ergaenzen, 
-                                anpassen_auswahl, 
-                                u'SpatiaLite'))
-            layersadapt(self.database_QKan, projectFile, self.projectTemplate, self.qkanDBUpdate, 
-                        self.anpassen_Datenbankanbindung, self.anpassen_Wertebeziehungen_in_Tabellen, 
-                        self.anpassen_Formulare, 
-                        self.anpassen_Projektionssystem, aktualisieren_Schachttypen, zoom_alles, 
+                self.database_QKan,
+                projectFile,
+                self.projectTemplate,
+                self.qkanDBUpdate,
+                self.anpassen_Datenbankanbindung,
+                self.anpassen_Wertebeziehungen_in_Tabellen,
+                self.anpassen_Formulare,
+                self.anpassen_Projektionssystem,
+                aktualisieren_Schachttypen,
+                zoom_alles,
+                fehlende_layer_ergaenzen,
+                anpassen_auswahl,
+                u'SpatiaLite'))
+            layersadapt(self.database_QKan, projectFile, self.projectTemplate, self.qkanDBUpdate,
+                        self.anpassen_Datenbankanbindung, self.anpassen_Wertebeziehungen_in_Tabellen,
+                        self.anpassen_Formulare,
+                        self.anpassen_Projektionssystem, aktualisieren_Schachttypen, zoom_alles,
                         fehlende_layer_ergaenzen, anpassen_auswahl, u'SpatiaLite')
-

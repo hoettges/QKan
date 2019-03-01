@@ -23,21 +23,17 @@
 
 import os
 
-from PyQt4 import QtGui, uic
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QDialog
 
 FORM_CLASS_assigntgeb, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'res', 'application_assigntgeb.ui'))
 
 
-class AssigntgebDialog(QtGui.QDialog, FORM_CLASS_assigntgeb):
+class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):
     def __init__(self, parent=None):
         """Constructor."""
         super(AssigntgebDialog, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
 
@@ -45,15 +41,10 @@ FORM_CLASS_createlinefl, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'res', 'application_createlinefl.ui'))
 
 
-class CreatelineflDialog(QtGui.QDialog, FORM_CLASS_createlinefl):
+class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
     def __init__(self, parent=None):
         """Constructor."""
         super(CreatelineflDialog, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
 
@@ -61,15 +52,10 @@ FORM_CLASS_createlinesw, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'res', 'application_createlinesw.ui'))
 
 
-class CreatelineswDialog(QtGui.QDialog, FORM_CLASS_createlinesw):
+class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
     def __init__(self, parent=None):
         """Constructor."""
         super(CreatelineswDialog, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
 
@@ -77,15 +63,10 @@ FORM_CLASS_updatelinks, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'res', 'application_updatelinks.ui'))
 
 
-class UpdateLinksDialog(QtGui.QDialog, FORM_CLASS_updatelinks):
+class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):
     def __init__(self, parent=None):
         """Constructor."""
         super(UpdateLinksDialog, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
 
@@ -93,13 +74,8 @@ FORM_CLASS_managegroups, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'res', 'application_managegroups.ui'))
 
 
-class ManagegroupsDialog(QtGui.QDialog, FORM_CLASS_managegroups):
+class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):
     def __init__(self, parent=None):
         """Constructor."""
         super(ManagegroupsDialog, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)

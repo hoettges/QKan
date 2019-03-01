@@ -1,51 +1,47 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 
   Import from HE
   ==============
-  
+
   Aus einer Hystem-Extran-Datenbank im Firebird-Format werden Kanaldaten
   in die QKan-Datenbank importiert. Dazu wird eine Projektdatei erstellt,
   die verschiedene thematische Layer erzeugt, u.a. eine Klassifizierung
   der Schachttypen.
-  
+
   | Dateiname            : import_from_he.py
   | Date                 : September 2016
   | Copyright            : (C) 2016 by Joerg Hoettges
   | Email                : hoettges@fh-aachen.de
   | git sha              : $Format:%H$
-  
-  This program is free software; you can redistribute it and/or modify   
-  it under the terms of the GNU General Public License as published by   
-  the Free Software Foundation; either version 2 of the License, or      
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
 
-'''
+"""
 
 __author__ = 'Joerg Hoettges'
 __date__ = 'September 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
 
-# This will get replaced with a git SHA1 when you do a git archive
-
-__revision__ = ':%H$'
-
 import logging
 
-from PyQt4.QtGui import QProgressBar
-from qgis.core import QgsMessageLog
+from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import QgsMessageLog, Qgis
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import checknames, fortschritt, fehlermeldung
+from qkan.database.qkan_utils import checknames, fehlermeldung
 
 # import tempfile
 
 logger = logging.getLogger(u'QKan')
 
 progress_bar = None
+
 
 # Fortschritts- und Fehlermeldungen
 
@@ -84,9 +80,10 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='s
     global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
-    status_message = iface.messageBar().createMessage(u"Info", u"Erzeugung von unbefestigten Flächen in Arbeit. Bitte warten.")
+    status_message = iface.messageBar().createMessage(u"Info", u"Erzeugung von unbefestigten Flächen "
+                                                               u"in Arbeit. Bitte warten.")
     status_message.layout().addWidget(progress_bar)
-    iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
+    iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # status_message.setText(u"Erzeugung von unbefestigten Flächen ist in Arbeit.")
     progress_bar.setValue(1)
@@ -101,12 +98,13 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='s
     if not checknames(dbQK, u'flaechen', u'flnam', u'f_', autokorrektur):
         return False
 
-
     # Prüfung, ob unzulässige Kombinationen ausgewählt wurden
     if len(liste_selAbflparamTeilgeb) > 0:
         logger.debug(u'\nliste_selAbflparamTeilgeb (2): {}'.format(liste_selAbflparamTeilgeb))
         if False in [(attr[-1] == u'') for attr in liste_selAbflparamTeilgeb]:
-            fehlermeldung(u"Falsche Auswahl",u"Bitte nur zulässige Abflussparameter und Teilgebiete auswählen (siehe Spalte 'Anmerkungen')")
+            fehlermeldung(u"Falsche Auswahl",
+                          u"Bitte nur zulässige Abflussparameter und Teilgebiete auswählen "
+                          u"(siehe Spalte 'Anmerkungen')")
             return False
     else:
         sql = u"""SELECT count(*) AS anz
@@ -123,7 +121,9 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='s
         data = dbQK.fetchall()
         if len(data) > 0:
             if data[0][0] > 0:
-                fehlermeldung(u"Unvollständige Daten", u"In der Tabelle TEZG-Flächen sind noch fehlerhafte Daten zu den Abflussparametern oder den Bodenklassen enthalten. ")
+                fehlermeldung(u"Unvollständige Daten",
+                              u"In der Tabelle TEZG-Flächen sind noch fehlerhafte Daten zu den Abflussparametern "
+                              u"oder den Bodenklassen enthalten. ")
                 return False
 
     # Für die Erzeugung der Restflächen reicht eine SQL-Abfrage aus. 
@@ -148,7 +148,8 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='s
     first = True
     for attr in liste_selAbflparamTeilgeb:
         if attr[4] == u'None' or attr[1] == u'None':
-            fehlermeldung(u'Datenfehler: ', u'In den ausgewählten Daten sind noch Datenfelder nicht definiert ("NULL").')
+            fehlermeldung(u'Datenfehler: ',
+                          u'In den ausgewählten Daten sind noch Datenfelder nicht definiert ("NULL").')
             return False
         if first:
             first = False
@@ -165,7 +166,7 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='s
     # Erläuterung zur nachfolgenden SQL-Abfrage:
     # 1. aus der Abfrage werden alle Datensätze ohne geom-Objekte ausgeschlossen
     # 2. Wenn in einer tezg-Fläche keine Fläche liegt, wird einfach die tezg-Fläche übernommen
-    
+
     sql = u"""WITH flbef AS (
             SELECT 'fd_' || ltrim(tezg.flnam, 'ft_') AS flnam, 
               tezg.haltnam AS haltnam, tezg.neigkl AS neigkl, 
@@ -195,22 +196,22 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='s
 
     # # Hinzufügen von Verknüpfungen in die Tabelle linkfl für die neu erstellten unbefestigten Flächen
     # sql = u"""INSERT INTO linkfl (flnam, aufteilen, teilgebiet, geom, glink)
-            # SELECT
-                # fl.flnam AS flnam, 
-                # NULL AS aufteilen, 
-                # fl.teilgebiet AS teilgebiet, 
-                # NULL AS geom,
-                # MakeLine(PointOnSurface(fl.geom),Centroid(ha.geom)) AS glink
-                # FROM flaechen AS fl
-                # LEFT JOIN haltungen AS ha
-                # ON fl.haltnam = ha.haltnam
-                # INNER JOIN tezg AS tg
-                # ON 'fd_' || ltrim(tg.flnam, 'ft_') = fl.flnam
-                # WHERE fl.flnam NOT IN
-                # (   SELECT flnam FROM linkfl WHERE flnam IS NOT NULL)"""
+    # SELECT
+    # fl.flnam AS flnam,
+    # NULL AS aufteilen,
+    # fl.teilgebiet AS teilgebiet,
+    # NULL AS geom,
+    # MakeLine(PointOnSurface(fl.geom),Centroid(ha.geom)) AS glink
+    # FROM flaechen AS fl
+    # LEFT JOIN haltungen AS ha
+    # ON fl.haltnam = ha.haltnam
+    # INNER JOIN tezg AS tg
+    # ON 'fd_' || ltrim(tg.flnam, 'ft_') = fl.flnam
+    # WHERE fl.flnam NOT IN
+    # (   SELECT flnam FROM linkfl WHERE flnam IS NOT NULL)"""
 
     # if not dbQK.sql(sql, u"QKan.CreateUnbefFlaechen (5)"):
-        # return False
+    # return False
 
     # status_message.setText(u"Nachbearbeitung")
     progress_bar.setValue(90)
@@ -222,9 +223,9 @@ def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='s
     iface.mapCanvas().refreshAllLayers()
 
     iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage(u"Information", u"Restflächen sind erstellt!", level=QgsMessageBar.INFO)
-    QgsMessageLog.logMessage(u"\nRestflächen sind erstellt!", level=QgsMessageLog.INFO)
+    iface.messageBar().pushMessage(u"Information", u"Restflächen sind erstellt!", level=Qgis.Info)
+    QgsMessageLog.logMessage(message="\nRestflächen sind erstellt!", level=Qgis.Info)
 
     progress_bar.setValue(100)
     status_message.setText(u"Erzeugung von unbefestigten Flächen abgeschlossen.")
-    status_message.setLevel(QgsMessageBar.SUCCESS)
+    status_message.setLevel(Qgis.Success)

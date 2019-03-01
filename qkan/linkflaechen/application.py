@@ -20,29 +20,27 @@
  *                                                                         *
  ***************************************************************************/
 """
-# Ergaenzt (jh, 12.06.2017) -------------------------------------------------
 import json
 import logging
 import os.path
 import site
 import webbrowser
 
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QListWidgetItem, QTableWidgetItem
-from qgis.core import QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry, QgsMessageLog
-from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from qgis.PyQt.QtWidgets import QListWidgetItem, QTableWidgetItem
+from qgis.core import QgsVectorLayer, QgsDataSourceUri, QgsProject, Qgis
 from qgis.utils import iface
 
-# Initialize Qt resources from file resources.py
-# noinspection PyUnresolvedReferences 
-import resources
-# Import the code for the dialog
-from application_dialog import CreatelineflDialog, CreatelineswDialog, AssigntgebDialog, ManagegroupsDialog, UpdateLinksDialog
-from k_link import createlinkfl, createlinksw, assigntgeb, storegroup, reloadgroup
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
+# noinspection PyUnresolvedReferences
+from . import resources
+# Import the code for the dialog
+from .application_dialog import CreatelineflDialog, CreatelineswDialog, AssigntgebDialog, ManagegroupsDialog, \
+    UpdateLinksDialog
+from .k_link import createlinkfl, createlinksw, assigntgeb, storegroup, reloadgroup
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u'QKan')
@@ -84,9 +82,6 @@ class LinkFl:
         self.dlg_ul = UpdateLinksDialog()
         self.dlg_mg = ManagegroupsDialog()
 
-        # Anfang Eigene Funktionen -------------------------------------------------
-        # (jh, 12.06.2017)
-
         logger.info(u'\n\nQKan_LinkFlaechen initialisiert...')
 
         # --------------------------------------------------------------------------
@@ -105,11 +100,8 @@ class LinkFl:
             with open(self.configfil, 'r') as fileconfig:
                 self.config = json.loads(fileconfig.read())
         else:
-            self.config = {'epsg': '25832'}                     # Projektionssystem
-            self.config['autokorrektur'] = False
-            self.config['suchradius'] = u'50'
-            self.config['mindestflaeche'] = u'0.5'
-            self.config['bezug_abstand'] = 'kante'
+            self.config = {'epsg': '25832', 'autokorrektur': False, 'suchradius': u'50', 'mindestflaeche': u'0.5',
+                           'bezug_abstand': 'kante'}
             with open(self.configfil, 'w') as fileconfig:
                 fileconfig.write(json.dumps(self.config))
 
@@ -140,8 +132,6 @@ class LinkFl:
         self.dlg_mg.pb_storegroup.clicked.connect(self.storegrouptgb)
         self.dlg_mg.pb_reloadgroup.clicked.connect(self.reloadgrouptgb)
 
-        # Ende Eigene Funktionen ---------------------------------------------------
-
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -162,37 +152,37 @@ class LinkFl:
 
         icon_assigntgeb_path = ':/plugins/qkan/linkflaechen/res/icon_assigntgeb.png'
         Dummy.instance.add_action(
-            icon_assigntgeb_path, 
-            text=self.tr(u'Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen'), 
-            callback=self.run_assigntgeb, 
+            icon_assigntgeb_path,
+            text=self.tr(u'Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen'),
+            callback=self.run_assigntgeb,
             parent=self.iface.mainWindow())
 
         icon_createlinefl_path = ':/plugins/qkan/linkflaechen/res/icon_createlinefl.png'
         Dummy.instance.add_action(
-            icon_createlinefl_path, 
-            text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'), 
-            callback=self.run_createlinefl, 
+            icon_createlinefl_path,
+            text=self.tr(u'Erzeuge Verknüpfungslinien von Flaechen zu Haltungen'),
+            callback=self.run_createlinefl,
             parent=self.iface.mainWindow())
 
         icon_createlinesw_path = ':/plugins/qkan/linkflaechen/res/icon_createlinesw.png'
         Dummy.instance.add_action(
-            icon_createlinesw_path, 
-            text=self.tr(u'Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen'), 
-            callback=self.run_createlinesw, 
+            icon_createlinesw_path,
+            text=self.tr(u'Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen'),
+            callback=self.run_createlinesw,
             parent=self.iface.mainWindow())
 
         icon_updatelinks_path = ':/plugins/qkan/linkflaechen/res/icon_updatelinks.png'
         Dummy.instance.add_action(
-            icon_updatelinks_path, 
-            text=self.tr(u'Verknüpfungen bereinigen'), 
-            callback=self.run_updatelinks, 
+            icon_updatelinks_path,
+            text=self.tr(u'Verknüpfungen bereinigen'),
+            callback=self.run_updatelinks,
             parent=self.iface.mainWindow())
 
         icon_managegroups_path = ':/plugins/qkan/linkflaechen/res/icon_managegroups.png'
         Dummy.instance.add_action(
-            icon_managegroups_path, 
-            text=self.tr(u'Teilgebietszuordnungen als Gruppen verwalten'), 
-            callback=self.run_managegroups, 
+            icon_managegroups_path,
+            text=self.tr(u'Teilgebietszuordnungen als Gruppen verwalten'),
+            callback=self.run_managegroups,
             parent=self.iface.mainWindow())
 
     def unload(self):
@@ -203,7 +193,8 @@ class LinkFl:
 
     def cl_helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#automatisches-erzeugen-von-flachenanbindungen')
+        helpfile = os.path.join(self.plugin_dir,
+                                '../doc/sphinx/build/html/Qkan_Formulare.html#automatisches-erzeugen-von-flachenanbindungen')
         webbrowser.open_new_tab(helpfile)
 
     def cl_lw_flaechen_abflussparamClick(self):
@@ -339,13 +330,13 @@ class LinkFl:
         else:
             self.dlg_cl.lf_anzahl_haltungen.setText(u'0')
 
-
     # -------------------------------------------------------------------------
     # Formularfunktionen linksw
 
     def sw_helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern')
+        helpfile = os.path.join(self.plugin_dir,
+                                '../doc/sphinx/build/html/Qkan_Formulare.html#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern')
         webbrowser.open_new_tab(helpfile)
 
     def sw_lw_hal_entwClick(self):
@@ -438,10 +429,10 @@ class LinkFl:
         else:
             self.dlg_sw.lf_anzahl_einleit.setText(u'0')
 
-
     # -------------------------------------------------------------------------
     # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
-    def listselecteditems(self, listWidget):
+    @staticmethod
+    def listselecteditems(listWidget):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
         :param listWidget: String for translation.
@@ -455,7 +446,6 @@ class LinkFl:
         for elem in items:
             liste.append(elem.text())
         return liste
-
 
     # ----------------------------------------------------------------------------
     # Funktion zum Auflisten der Gruppen
@@ -480,7 +470,8 @@ class LinkFl:
         # Angeklickte Gruppe aus QListWidget
         gr = self.listselecteditems(self.dlg_mg.lw_gruppen)
         if len(gr) > 0:
-            self.gruppe = self.listselecteditems(self.dlg_mg.lw_gruppen)[0]     # Im Formular gesetzt: selectionMode = SingleSelection
+            self.gruppe = self.listselecteditems(self.dlg_mg.lw_gruppen)[
+                0]  # Im Formular gesetzt: selectionMode = SingleSelection
 
             sql = u"""
                 SELECT teilgebiet, tabelle, printf('%i',count(*)) AS Anzahl
@@ -505,8 +496,8 @@ class LinkFl:
                     self.dlg_mg.tw_gruppenattr.setRowHeight(i, 20)
 
     def reloadgrouptgb(self):
-        reloadgroup(self.dbQK, self.gruppe, dbtyp = u'SpatiaLite')
-        iface.messageBar().pushMessage(u"Fertig!", u'Teilgebiete wurden geladen!', level=QgsMessageBar.INFO)
+        reloadgroup(self.dbQK, self.gruppe, dbtyp=u'SpatiaLite')
+        iface.messageBar().pushMessage(u"Fertig!", u'Teilgebiete wurden geladen!', level=Qgis.Info)
 
     def storegrouptgb(self):
         neuegruppe = self.dlg_mg.tf_newgroup.text()
@@ -514,9 +505,9 @@ class LinkFl:
             kommentar = self.dlg_mg.tf_kommentar.toPlainText()
             if kommentar is None:
                 kommentar = u''
-            storegroup(self.dbQK, neuegruppe, kommentar, dbtyp = u'SpatiaLite')
+            storegroup(self.dbQK, neuegruppe, kommentar, dbtyp=u'SpatiaLite')
             self.showgroups()
-            iface.messageBar().pushMessage(u"Fertig!", u'Teilgebiete wurden gespeichert', level=QgsMessageBar.INFO)
+            iface.messageBar().pushMessage(u"Fertig!", u'Teilgebiete wurden gespeichert', level=Qgis.Info)
 
     # -------------------------------------------------------------------------
     # Öffnen des Formulars zur Erstellung der Verknüpfungen
@@ -528,7 +519,7 @@ class LinkFl:
         if len({u'flaechen', u'haltungen', u'linkfl'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
-                                           level=QgsMessageBar.CRITICAL)
+                                           level=Qgis.Critical)
             return False
 
         database_QKan = u''
@@ -543,7 +534,8 @@ class LinkFl:
 
         if not self.dbQK.connected:
             logger.error(u"Fehler in linkflaechen.application (1):\n",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
+                         u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+                             database_QKan))
             return None
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
@@ -580,7 +572,7 @@ class LinkFl:
                     try:
                         if elem[0] in self.config['liste_flaechen_abflussparam']:
                             self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
-                            self.dlg_cl.cb_selFlActive.setChecked(True)     # Auswahlcheckbox aktivieren
+                            self.dlg_cl.cb_selFlActive.setChecked(True)  # Auswahlcheckbox aktivieren
                     except BaseException as err:
                         del self.dbQK
                         # logger.debug(u'\nelem: {}'.format(str(elem)))  # debug
@@ -599,7 +591,7 @@ class LinkFl:
                 if 'liste_hal_entw' in self.config:
                     if elem[0] in self.config['liste_hal_entw']:
                         self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
-                        self.dlg_cl.cb_selHalActive.setChecked(True)     # Auswahlcheckbox aktivieren
+                        self.dlg_cl.cb_selHalActive.setChecked(True)  # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
                         # self.dlg_cl.lw_hal_entw.setCurrentRow(0)
 
@@ -615,7 +607,7 @@ class LinkFl:
                 if 'liste_teilgebiete' in self.config:
                     if elem[0] in self.config['liste_teilgebiete']:
                         self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
-                        self.dlg_cl.cb_selTgbActive.setChecked(True)     # Auswahlcheckbox aktivieren
+                        self.dlg_cl.cb_selTgbActive.setChecked(True)  # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
                         # self.dlg_cl.lw_teilgebiete.setCurrentRow(0)
 
@@ -678,7 +670,6 @@ class LinkFl:
 
         self.countselectionfl()
 
-
         # show the dialog
         self.dlg_cl.show()
         # Run the dialog event loop
@@ -708,11 +699,11 @@ class LinkFl:
             linksw_in_tezg = self.dlg_cl.cb_linkswInTezg.isChecked()
             mit_verschneidung = self.dlg_cl.cb_regardTezg.isChecked()
 
-                # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
-                # iface.messageBar().pushMessage(u"Bedienerfehler: ", 
-                # u'Bitte in beiden Tabellen mindestens ein Element auswählen!',
-                # level=QgsMessageBar.CRITICAL)
-                # self.run_createlinefl()
+            # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
+            # iface.messageBar().pushMessage(u"Bedienerfehler: ",
+            # u'Bitte in beiden Tabellen mindestens ein Element auswählen!',
+            # level=Qgis.Critical)
+            # self.run_createlinefl()
 
             # Konfigurationsdaten schreiben
 
@@ -734,23 +725,22 @@ class LinkFl:
             # Start der Verarbeitung
 
             createlinkfl(self.dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                        liste_teilgebiete, linksw_in_tezg, mit_verschneidung, autokorrektur, 
-                        suchradius, mindestflaeche, fangradius, bezug_abstand, epsg)
+                         liste_teilgebiete, linksw_in_tezg, mit_verschneidung, autokorrektur,
+                         suchradius, mindestflaeche, fangradius, bezug_abstand, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
-            layers = iface.legendInterface().layers()
+            layers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
             if u'Anbindungen Flächen' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
-                uri = QgsDataSourceURI()
+                uri = QgsDataSourceUri()
                 uri.setDatabase(database_QKan)
                 uri.setDataSource(u'', u'linkfl', u'glink')
                 vlayer = QgsVectorLayer(uri.uri(), u'Anbindungen Flächen', u'spatialite')
-                QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+                QgsProject.instance().addMapLayer(vlayer)
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
 
         del self.dbQK
-
 
     # -------------------------------------------------------------------------
     # Öffnen des Formulars zur Erstellung der Verknüpfungen
@@ -762,14 +752,15 @@ class LinkFl:
         if len({u'einleit', u'haltungen', u'linksw'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
-                                           level=QgsMessageBar.CRITICAL)
+                                           level=Qgis.Critical)
             return False
 
         database_QKan = u''
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
-            logger.error(u"LinkFl.run_createlinesw: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+            logger.error(
+                u"LinkFl.run_createlinesw: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
             return False
 
         # Datenbankverbindung für Abfragen
@@ -777,7 +768,8 @@ class LinkFl:
 
         if not self.dbQK.connected:
             logger.error(u"Fehler in linkflaechen.application (2):\n",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
+                         u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+                             database_QKan))
             return None
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
@@ -800,7 +792,6 @@ class LinkFl:
 
         self.dbQK.commit()
 
-
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
         sql = u'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinesw (1)"):
@@ -813,7 +804,7 @@ class LinkFl:
                 if 'liste_hal_entw' in self.config:
                     if elem[0] in self.config['liste_hal_entw']:
                         self.dlg_sw.lw_hal_entw.setCurrentRow(ielem)
-                        self.dlg_sw.cb_selHalActive.setChecked(True)     # Auswahlcheckbox aktivieren
+                        self.dlg_sw.cb_selHalActive.setChecked(True)  # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
                         # self.dlg_sw.lw_hal_entw.setCurrentRow(0)
 
@@ -829,7 +820,7 @@ class LinkFl:
                 if 'liste_teilgebiete' in self.config:
                     if elem[0] in self.config['liste_teilgebiete']:
                         self.dlg_sw.lw_teilgebiete.setCurrentRow(ielem)
-                        self.dlg_sw.cb_selTgbActive.setChecked(True)     # Auswahlcheckbox aktivieren
+                        self.dlg_sw.cb_selTgbActive.setChecked(True)  # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
                         # self.dlg_sw.lw_teilgebiete.setCurrentRow(0)
 
@@ -846,7 +837,6 @@ class LinkFl:
         # sein, dies erst am Schluss der Bearbeitung in einem eigenen Vorgang zu machen.
 
         self.countselectionsw()
-
 
         # show the dialog
         self.dlg_sw.show()
@@ -868,7 +858,6 @@ class LinkFl:
             liste_hal_entw = self.listselecteditems(self.dlg_sw.lw_hal_entw)
             liste_teilgebiete = self.listselecteditems(self.dlg_sw.lw_teilgebiete)
 
-
             # Konfigurationsdaten schreiben
 
             self.config['suchradius'] = suchradius
@@ -884,21 +873,19 @@ class LinkFl:
 
             createlinksw(self.dbQK, liste_teilgebiete, suchradius, epsg)
 
-
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
-            layers = iface.legendInterface().layers()
+            layers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
             if u'Anbindungen Direkteinleitungen' not in [lay.name() for lay in layers]:  # layers wurde oben erstellt
-                uri = QgsDataSourceURI()
+                uri = QgsDataSourceUri()
                 uri.setDatabase(database_QKan)
                 uri.setDataSource(u'', u'linksw', u'glink')
                 vlayer = QgsVectorLayer(uri.uri(), u'Anbindungen Direkteinleitungen', u'spatialite')
-                QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+                QgsProject.instance().addMapLayer(vlayer)
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
 
         del self.dbQK
-
 
     # Zuordnen der Haltungs- etc. -objekte zu (ausgewählten) Teilgebieten
 
@@ -911,7 +898,6 @@ class LinkFl:
         self.dlg_at.lb_bufferradius.setEnabled(onoff)
         self.dlg_at.tf_bufferradius.setEnabled(onoff)
         self.dlg_at.unit_bufferradius.setEnabled(onoff)
-
 
     def select_within(self):
         """Aktiviert die Eingabe der Pufferbreite"""
@@ -928,11 +914,11 @@ class LinkFl:
         """Öffnen des Formulars zur Zuordnung von Teilgebieten auf Haltungen und Flächen"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'tezg', 
-                 u'einleit'} & get_editable_layers()) > 0:
-            iface.messageBar().pushMessage(u"Bedienerfehler: ", 
-                   u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
-                   level=QgsMessageBar.CRITICAL)
+        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'tezg',
+                u'einleit'} & get_editable_layers()) > 0:
+            iface.messageBar().pushMessage(u"Bedienerfehler: ",
+                                           u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
+                                           level=Qgis.Critical)
             return False
 
         database_QKan = u''
@@ -943,11 +929,12 @@ class LinkFl:
             return False
 
         # Datenbankverbindung für Abfragen
-        self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+        self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if not self.dbQK.connected:
             logger.error(u"Fehler in linkflaechen.application (3):\n",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
+                         u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+                             database_QKan))
             return None
 
         # config in Dialog übernehmen
@@ -996,7 +983,6 @@ class LinkFl:
             bufferradius = u'0'
         self.dlg_at.tf_bufferradius.setText(bufferradius)
 
-
         # show the dialog
         self.dlg_at.show()
         # Run the dialog event loop
@@ -1031,15 +1017,14 @@ class LinkFl:
 
             # Start der Verarbeitung
 
-            assigntgeb(self.dbQK, auswahltyp, liste_teilgebiete, 
-                       [u'haltungen', u'flaechen', u'schaechte', u'einleit', u'tezg', u'linksw', u'linkfl'], 
+            assigntgeb(self.dbQK, auswahltyp, liste_teilgebiete,
+                       [u'haltungen', u'flaechen', u'schaechte', u'einleit', u'tezg', u'linksw', u'linkfl'],
                        autokorrektur, bufferradius)
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
 
         del self.dbQK
-
 
     # ----------------------------------------------------------------------------------------------
     # Laden und Speichern von Teilgebietszuordnungen als Gruppe
@@ -1048,11 +1033,11 @@ class LinkFl:
         """Speichern und Wiederherstellen von Teilgebietszuordnungen als Gruppe"""
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({u'flaechen', u'haltungen', u'schaechte', u'linksw', u'einleit', 
-                 u'linkfl', u'teilgebiete', u'tezg'} & get_editable_layers()) > 0:
+        if len({u'flaechen', u'haltungen', u'schaechte', u'linksw', u'einleit',
+                u'linkfl', u'teilgebiete', u'tezg'} & get_editable_layers()) > 0:
             iface.messageBar().pushMessage(u"Bedienerfehler: ",
                                            u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
-                                           level=QgsMessageBar.CRITICAL)
+                                           level=Qgis.Critical)
             return False
 
         database_QKan = u''
@@ -1066,11 +1051,11 @@ class LinkFl:
 
         if not self.dbQK.connected:
             logger.error(u"Fehler in linkflaechen.application (4):\n",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
+                         u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+                             database_QKan))
             return None
 
         self.showgroups()
-
 
         self.dlg_mg.lw_gruppen.setCurrentRow(0)
         # Anzeige initialisieren
@@ -1094,7 +1079,6 @@ class LinkFl:
 
         del self.dbQK
 
-
     # ----------------------------------------------------------------------------------------------
     # Logischen Cache der Verknüpfungen aktualisieren
 
@@ -1102,11 +1086,11 @@ class LinkFl:
         '''Aktualisieren des logischen Verknüpfungscaches in linkfl und linksw'''
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'tezg', 
-                 u'einleit'} & get_editable_layers()) > 0:
-            iface.messageBar().pushMessage(u"Bedienerfehler: ", 
-                   u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!', 
-                   level=QgsMessageBar.CRITICAL)
+        if len({u'flaechen', u'haltungen', u'linkfl', u'linksw', u'tezg',
+                u'einleit'} & get_editable_layers()) > 0:
+            iface.messageBar().pushMessage(u"Bedienerfehler: ",
+                                           u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
+                                           level=Qgis.Critical)
             return False
 
         database_QKan = u''
@@ -1117,11 +1101,12 @@ class LinkFl:
             return False
 
         # Datenbankverbindung für Abfragen
-        self.dbQK = DBConnection(dbname=database_QKan)      # Datenbankobjekt der QKan-Datenbank zum Lesen
+        self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if not self.dbQK.connected:
             logger.error(u"Fehler in linkflaechen.application (5):\n",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
+                         u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+                             database_QKan))
             return None
 
         self.dlg_ul.tf_qkDB.setText(database_QKan)
@@ -1169,4 +1154,3 @@ class LinkFl:
         # Datenbankverbindungen schliessen
 
         del self.dbQK
-

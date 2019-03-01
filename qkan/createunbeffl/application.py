@@ -20,26 +20,23 @@
  *                                                                         *
  ***************************************************************************/
 """
+import json
 import logging
 import os
 import site
 import webbrowser
-import json
 
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QTableWidgetItem, QTableWidgetSelectionRange
-from qgis.core import QgsMessageLog
-from qgis.gui import QgsMessageBar
-from qgis.utils import iface
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QTableWidgetSelectionRange
 
-# noinspection PyUnresolvedReferences
-import resources
-# Import the code for the dialog
-from application_dialog import CreateUnbefFlDialog
-from k_unbef import createUnbefFlaechen
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import get_database_QKan, fortschritt, fehlermeldung
+from qkan.database.qkan_utils import get_database_QKan, fehlermeldung
+# noinspection PyUnresolvedReferences
+from . import resources
+# Import the code for the dialog
+from .application_dialog import CreateUnbefFlDialog
+from .k_unbef import createUnbefFlaechen
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger('QKan')
@@ -107,7 +104,6 @@ class CreateUnbefFl:
         self.dlg.tw_selAbflparamTeilgeb.itemClicked.connect(self.tw_selAbflparamTeilgebClick)
         self.dlg.cb_selActive.stateChanged.connect(self.selActiveClick)
         self.dlg.button_box.helpRequested.connect(self.helpClick)
-
         
         # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -126,6 +122,7 @@ class CreateUnbefFl:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('CreateUnbefFl', message)
 
+    # noinspection PyPep8Naming
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
@@ -144,7 +141,8 @@ class CreateUnbefFl:
 
     def helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '../doc/sphinx/build/html/Qkan_Formulare.html#erzeugen-der-unbefestigten-flachen')
+        helpfile = os.path.join(self.plugin_dir,
+                                '../doc/sphinx/build/html/Qkan_Formulare.html#erzeugen-der-unbefestigten-flachen')
         webbrowser.open_new_tab(helpfile)
 
     def tw_selAbflparamTeilgebClick(self):
@@ -163,8 +161,8 @@ class CreateUnbefFl:
         else:
             # Auswahl deaktivieren und Liste zurücksetzen
             anz = self.dlg.tw_selAbflparamTeilgeb.rowCount()
-            range = QTableWidgetSelectionRange(0,0,anz-1,4)
-            self.dlg.tw_selAbflparamTeilgeb.setRangeSelected(range,False)
+            range = QTableWidgetSelectionRange(0, 0, anz - 1, 4)
+            self.dlg.tw_selAbflparamTeilgeb.setRangeSelected(range, False)
             logger.debug('\nChecked = False\nQWidget: anzahl = {}'.format(anz))
 
             # Anzahl in der Anzeige aktualisieren
@@ -185,9 +183,9 @@ class CreateUnbefFl:
         # ausgewählt wurde
 
         # if len(liste_selAbflparamTeilgeb) == 0:
-            # anzahl = sum([int(attr[-2]) for attr in self.listetezg])
+        # anzahl = sum([int(attr[-2]) for attr in self.listetezg])
         # else:
-            # anzahl = sum([int(attr[-2]) for attr in liste_selAbflparamTeilgeb])
+        # anzahl = sum([int(attr[-2]) for attr in liste_selAbflparamTeilgeb])
 
         # Vorbereitung des Auswahlkriteriums für die SQL-Abfrage: Kombination aus abflussparameter und teilgebiet
         # Dieser Block ist identisch in k_unbef und in application enthalten
@@ -206,15 +204,18 @@ class CreateUnbefFl:
         first = True
         for attr in liste_selAbflparamTeilgeb:
             if attr[4] == u'None' or attr[1] == u'None':
-                fehlermeldung(u'Datenfehler: ', u'In den ausgewählten Daten sind noch Datenfelder nicht definiert ("NULL").')
+                fehlermeldung(u'Datenfehler: ',
+                              u'In den ausgewählten Daten sind noch Datenfelder nicht definiert ("NULL").')
                 return False
             if first:
                 first = False
                 auswahl += u""" (tezg.abflussparameter = '{abflussparameter}' AND
-                                tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0], teilgebiet=attr[1])
+                                tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0],
+                                                                            teilgebiet=attr[1])
             else:
                 auswahl += u""" OR\n      (tezg.abflussparameter = '{abflussparameter}' AND
-                                tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0], teilgebiet=attr[1])
+                                tezg.teilgebiet = '{teilgebiet}')""".format(abflussparameter=attr[0],
+                                                                            teilgebiet=attr[1])
 
         if len(liste_selAbflparamTeilgeb) >= 2:
             auswahl += u")"
@@ -238,10 +239,8 @@ class CreateUnbefFl:
         else:
             self.dlg.lf_anzahl_tezg.setText(u'0')
 
-
-    # -------------------------------------------------------------------------
-    # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
-    def listselectedTabitems(self, tableWidget, nCols = 5):
+    @staticmethod
+    def listselectedTabitems(self, tableWidget, nCols=5):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
         :param tableWidget: Tabelle zur Auswahl der Arten von Haltungsflächen.
@@ -264,13 +263,12 @@ class CreateUnbefFl:
                 liste = [[el.text() for el in items][i:anz:nRows] for i in range(nRows)]
             else:
                 # Elemente wurden zeilenweise übergeben
-                liste = [[el.text() for el in items][i:i+5] for i in range(0,anz,5)]
+                liste = [[el.text() for el in items][i:i + 5] for i in range(0, anz, 5)]
         else:
             # Elemente wurden zeilenweise übergeben oder Liste ist leer
-            liste = [[el.text() for el in items][i:i+5] for i in range(0,anz,5)]
+            liste = [[el.text() for el in items][i:i + 5] for i in range(0, anz, 5)]
 
         return liste
-
 
     # ------------------------------------------------------------------------------------------------------------
     # Vorbereiten und Öffnen des Formulars
@@ -284,10 +282,11 @@ class CreateUnbefFl:
             return False
 
         # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
-        self.dbQK = DBConnection(dbname=database_QKan)          # Datenbankobjekt der QKan-Datenbank zum Lesen
+        self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
         if not self.dbQK.connected:
             logger.error(u"Fehler in createunbeffl.application:\n",
-                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
+                         u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+                             database_QKan))
             return None
 
         # Kontrolle, ob in Tabelle "abflussparameter" ein Datensatz für unbefestigte Flächen vorhanden ist
@@ -304,7 +303,8 @@ class CreateUnbefFl:
 
         if data is None:
             if autokorrektur:
-                daten = [u"'$Default_Unbef', u'von QKan ergänzt', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
+                daten = [
+                    u"'$Default_Unbef', u'von QKan ergänzt', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
 
                 for ds in daten:
                     sql = u"""INSERT INTO abflussparameter
@@ -314,30 +314,31 @@ class CreateUnbefFl:
                     if not self.dbQK.sql(sql, u'createunbeffl.run (2)'):
                         return False
             else:
-                fehlermeldung(u'Datenfehler: ', u'Bitte ergänzen Sie in der Tabelle "abflussparameter" einen Datensatz für unbefestigte Flächen ("bodenklasse" darf nicht leer oder NULL sein)')
+                fehlermeldung(u'Datenfehler: ',
+                              u'Bitte ergänzen Sie in der Tabelle "abflussparameter" einen Datensatz für unbefestigte Flächen ("bodenklasse" darf nicht leer oder NULL sein)')
 
         # # Kontrolle, ob noch Flächen in Tabelle "tezg" ohne Zuordnung zu einem Abflussparameter oder zu einem 
         # # Abflussparameter, bei dem keine Bodenklasse definiert ist (Kennzeichen für undurchlässige Flächen).
 
         # sql = u"""SELECT te.abflussparameter, te.teilgebiet, count(*) AS anz 
-            # FROM tezg AS te
-            # LEFT JOIN abflussparameter AS ap
-            # ON te.abflussparameter = ap.apnam
-            # WHERE ap.bodenklasse IS NULL
-            # GROUP BY abflussparameter, teilgebiet"""
+        # FROM tezg AS te
+        # LEFT JOIN abflussparameter AS ap
+        # ON te.abflussparameter = ap.apnam
+        # WHERE ap.bodenklasse IS NULL
+        # GROUP BY abflussparameter, teilgebiet"""
 
         # if not self.dbQK.sql(sql, u'createunbeffl.run (3)'):
-            # return False
+        # return False
 
         # data = self.dbQK.fetchall()
 
         # if len(data) > 0:
-            # liste = [u'{}\t{}\t{}'.format(el1, el2, el3) for el1, el2, el3 in data]
-            # liste.insert(0, u'\nAbflussparameter\tTeilgebiet\tAnzahl')
-            
-            # fehlermeldung(u'In Tabelle "tezg" fehlen Abflussparameter oder gehören zu befestigten Flächen (Bodenklasse = NULL):\n', 
-                          # u'\n'.join(liste))
-            # return False
+        # liste = [u'{}\t{}\t{}'.format(el1, el2, el3) for el1, el2, el3 in data]
+        # liste.insert(0, u'\nAbflussparameter\tTeilgebiet\tAnzahl')
+
+        # fehlermeldung(u'In Tabelle "tezg" fehlen Abflussparameter oder gehören zu befestigten Flächen (Bodenklasse = NULL):\n',
+        # u'\n'.join(liste))
+        # return False
 
         sql = u"""SELECT te.abflussparameter, te.teilgebiet, bk.bknam, count(*) AS anz, 
                 CASE WHEN te.abflussparameter ISNULL THEN 'Fehler: Kein Abflussparameter angegeben' ELSE
@@ -358,8 +359,8 @@ class CreateUnbefFl:
         self.listetezg = self.dbQK.fetchall()
         nzeilen = len(self.listetezg)
         self.dlg.tw_selAbflparamTeilgeb.setRowCount(nzeilen)
-        self.dlg.tw_selAbflparamTeilgeb.setHorizontalHeaderLabels([u"Abflussparameter", u"Teilgebiet", 
-                                                                     u"Bodenklasse", u"Anzahl", u"Anmerkungen"])
+        self.dlg.tw_selAbflparamTeilgeb.setHorizontalHeaderLabels([u"Abflussparameter", u"Teilgebiet",
+                                                                   u"Bodenklasse", u"Anzahl", u"Anmerkungen"])
         self.dlg.tw_selAbflparamTeilgeb.setColumnWidth(0, 144)  # 17 Pixel für Rand und Nummernspalte (und je Spalte?)
         self.dlg.tw_selAbflparamTeilgeb.setColumnWidth(1, 140)
         self.dlg.tw_selAbflparamTeilgeb.setColumnWidth(2, 90)
@@ -405,4 +406,3 @@ class CreateUnbefFl:
                 fileconfig.write(json.dumps(self.config))
 
             createUnbefFlaechen(self.dbQK, liste_selAbflparamTeilgeb, autokorrektur)
-
