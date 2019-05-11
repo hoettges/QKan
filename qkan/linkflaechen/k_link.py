@@ -37,7 +37,7 @@ from qgis.utils import iface
 from qkan.database.qkan_utils import fehlermeldung, checknames
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.linkflaechen.k_link')
 
 progress_bar = None
 

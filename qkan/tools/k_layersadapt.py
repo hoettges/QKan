@@ -38,7 +38,7 @@ from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_database import qgsVersion, qgsActualVersion
 from qkan.database.qkan_utils import meldung, fehlermeldung, get_qkanlayerAttributes, listQkanLayers, evalNodeTypes
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.tools.k_layersadapt')
 
 progress_bar = None
 
@@ -95,35 +95,15 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     widgetv2types = ['ValueRelation', 'DateTime', 'CheckBox']  # 'ValueMap' entfällt, weil entsprechende
     # C-API-Funktion nicht in Python gemappt!
 
-    # Liste aller QKan-Layernamen. Diese wird auf jeden Fall aus der Standardvorlage entnommen!
-    # Dabei wird trotzdem geprüft, ob es sich um einen QKan-Layer handelt; es könnte sich ja um eine 
-    # vom Benutzer angepasste Vorlage handeln. 
+    # QKan-Projekt
+    project = QgsProject.instance()
+    
+    if project.count() == 0:
+        fehlermeldung(u'Benutzerfehler: ', u'Es ist kein Projekt geladen.')
+        return
 
     # Layernamen auf aktuellen Stand bringen
     qgsActualVersion()
-
-    # Dictionary aller Layer für legendInterface
-    project = QgsProject.instance()
-    allLayers = project.mapLayers()
-    if len(allLayers) == 0:
-        meldung(u'Benutzerfehler: ', u'Es ist kein Projekt geladen.')
-        return
-    layerList = {}
-    for layer in allLayers:
-        layerList[layer.name()] = layer
-
-    logger.debug(u'k_layersadapt, layerList: {}'.format(layerList))
-
-    # Dictionary aller Layer für mapCanvas
-    canvas = iface.mapCanvas()
-    allCanvasLayers = canvas.layers()
-    if len(allCanvasLayers) == 0:
-        meldung(u'Benutzerfehler: ', u'Es ist kein Projekt geladen.')
-        return
-
-    canvasIndex = {}
-    for layer in allCanvasLayers:
-        canvasIndex[layer.name()] = layer
 
     # -----------------------------------------------------------------------------------------------------
     # Datenbankverbindungen
@@ -179,20 +159,21 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
 
     logger.debug(u'Projekttemplate: {}'.format(projectTemplate))
 
-    qgsxml = ElementTree.ElementTree()
-    qgsxml.parse(projectTemplate)
+    # Liste aller QKan-Layernamen aus gewählter QGS-Vorlage.
+    # Dabei wird trotzdem geprüft, ob es sich um einen QKan-Layer handelt; es könnte sich ja um eine 
+    # vom Benutzer angepasste Vorlage handeln. 
+
+    qkanLayers = listQkanLayers(projectTemplate)            # Liste aller Layernamen aus gewählter QGS-Vorlage
+    # logger.debug(u'qkanLayers: {}'.format(qkanLayers))
 
     # Fehlende Layer ergänzen. Unabhängig von der Auswahl werden die fehlenden Referenztabellen 
     # auf jeden Fall ergänzt. 
 
-    qkanLayers = listQkanLayers()
-    logger.debug(u'qkanLayers: {}'.format(qkanLayers))
-
-    layersRoot = QgsProject.instance().layerTreeRoot()
+    layersRoot = project.layerTreeRoot()
     for layername in qkanLayers:
-        if layername not in layerList:
+        if len(project.mapLayersBylayername(layername)) == 0:
             # layername fehlt in aktuellem Projekt
-            isVector = (qkanLayers[layername][1] != '')
+            isVector = (qkanLayers[layername][1] != '')             # Test, ob Vorlage-Layer spatial ist
             if not isVector or fehlende_layer_ergaenzen:
                 # Referenzlisten werden auf jeden Fall ergänzt. 
                 table, geom_column, sql, group = qkanLayers[layername]
@@ -205,7 +186,7 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
                     fehlermeldung(u'Fehler in k_layersadapt (11): {}'.format(err),
                                   u'layername: {}'.format(layername))
                     return False
-                QgsProject.instance().addMapLayer(layer, False)
+                project.addMapLayer(layer, False)
                 atcGroup = layersRoot.findGroup(group)
                 if atcGroup == '':
                     layersRoot.addGroup(group)
@@ -220,6 +201,9 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
     # Dictionary, das alle LayerIDs aus der Template-Projektdatei den entsprechenden (QKan-) LayerIDs
     # des aktuell geladenen Projekts zuordnet. Diese Liste wird bei der Korrektur der Wertelisten 
     # benötigt. 
+
+    qgsxml = ElementTree.ElementTree()
+    qgsxml.parse(projectTemplate)
 
     layerNotInProjektMeldung = False
     rltext = u"projectlayers/maplayer"

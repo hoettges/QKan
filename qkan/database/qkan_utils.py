@@ -7,7 +7,7 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.database.qkan_utils')
 
 
 # Fortschritts- und Fehlermeldungen
@@ -44,7 +44,7 @@ def fehlermeldung(title, text=u''):
 
 # Allgemeine Funktionen
 
-def listQkanLayers():
+def listQkanLayers(qgsTemplate = None):
     '''Dictionary mit den Namen aller QKan-Layer und einer Liste mit: 
             Tabellenname, Geometriespalte, SQL-Where-Bedingung, Gruppenname
 
@@ -53,8 +53,12 @@ def listQkanLayers():
     import os
     from qgis.utils import pluginDirectory
     import xml.etree.ElementTree as et
-    templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
-    qgsTemplate = os.path.join(templateDir, 'Projekt.qgs')
+
+    if not qgsTemplate:
+        return {}
+        # templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
+        # qgsTemplate = os.path.join(templateDir, 'Projekt.qgs')
+
     qgsxml = et.ElementTree()
     qgsxml.parse(qgsTemplate)
     tagGroup = u'layer-tree-group/layer-tree-group'

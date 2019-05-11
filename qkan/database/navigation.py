@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import itertools
 import logging
 
@@ -6,7 +7,7 @@ from qgis.PyQt import QtCore
 
 from qkan.database.dbfunc import DBConnection
 
-main_logger = logging.getLogger("QKan")
+main_logger = logging.getLogger("QKan.database.navigation.main")
 main_logger.info("Navigation-Modul gestartet")
 
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -42,7 +41,7 @@ from .application_dialog import ExportToKPDialog
 from .k_qkkp import exportKanaldaten
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.exportdyna.application')
 
 progress_bar = None
 

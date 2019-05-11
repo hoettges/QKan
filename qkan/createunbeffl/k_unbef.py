@@ -38,7 +38,7 @@ from qkan.database.qkan_utils import checknames, fehlermeldung
 
 # import tempfile
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.createunbeffl.k_unbef')
 
 progress_bar = None
 

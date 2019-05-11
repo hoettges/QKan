@@ -43,7 +43,7 @@ from .application_dialog import CreatelineflDialog, CreatelineswDialog, Assigntg
 from .k_link import createlinkfl, createlinksw, assigntgeb, storegroup, reloadgroup
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.linkflaechen.application')
 
 
 class LinkFl:

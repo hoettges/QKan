@@ -29,7 +29,7 @@ import logging
 
 from qkan.database.qkan_utils import fortschritt, checknames
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.linkflaechen.updatelinks')
 
 # progress_bar = None
 

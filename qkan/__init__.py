@@ -9,7 +9,10 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu
 
 # Aufsetzen des Logging-Systems
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.init')
+
+# Warnlevel des Logging-Systems setzten
+logger.setLevel(logging.DEBUG)
 
 if not logger.handlers:
     formatter = logging.Formatter('%(asctime)s %(name)s-%(levelname)s: %(message)s')
@@ -25,9 +28,6 @@ if not logger.handlers:
     fh = logging.FileHandler(fnam)
     fh.setFormatter(formatter)
     logger.addHandler(fh)
-
-    # Warnlevel des Logging-Systems setzten
-    logger.setLevel(logging.DEBUG)
 
     # Warnlever der Logging-Protokolle setzen
     ch.setLevel(logging.ERROR)

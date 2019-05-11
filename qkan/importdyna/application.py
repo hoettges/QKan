@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -40,7 +39,7 @@ from .application_dialog import ImportFromDynaDialog
 from .import_from_dyna import importKanaldaten
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.importdyna.application')
 
 
 class ImportFromDyna:

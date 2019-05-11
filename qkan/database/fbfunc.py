@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 
   Datenbankmanagement fuer Firebird-Datenbanken

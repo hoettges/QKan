@@ -37,7 +37,7 @@ from qgis.utils import iface, pluginDirectory, spatialite_connect
 from .qkan_database import createdbtables, versionolder, dbVersion
 from .qkan_utils import fehlermeldung, meldung
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.database.dbfunc')
 
 progress_bar = None
 

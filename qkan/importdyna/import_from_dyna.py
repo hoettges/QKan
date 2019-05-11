@@ -41,7 +41,7 @@ from qgis.utils import iface, pluginDirectory
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, evalNodeTypes
 
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.importdyna.import_from_dyna')
 
 
 # Hilfsfunktionen --------------------------------------------------------------------------

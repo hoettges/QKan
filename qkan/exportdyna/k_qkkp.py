@@ -30,7 +30,7 @@ from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fortschritt, fehlermeldung, meldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.exportdyna.k_qkkp')
 
 progress_bar = None
 

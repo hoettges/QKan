@@ -37,7 +37,7 @@ from qgis.utils import iface, spatialite_connect
 
 from .qkan_utils import fortschritt, fehlermeldung, meldung
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.database.qkan_database')
 
 
 def dbVersion():
@@ -84,7 +84,7 @@ def qgsActualVersion(update=True, warning=False):
     '''
 
     layers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
-    if len(layers) == 0 and not silent:
+    if len(layers) == 0 and warning:
         logger.error(u'qkan_database.qgsActualVersion: Keine Layer vorhanden...')
         meldung(u"Fehler: ", u"Kein QKan-Projekt geladen!")
         return False

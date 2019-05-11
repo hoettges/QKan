@@ -33,7 +33,7 @@ from qgis.utils import iface
 
 from qkan.database.qkan_utils import sqlconditions
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.tools.k_runoffparams')
 
 progress_bar = None
 

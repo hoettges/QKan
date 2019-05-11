@@ -33,6 +33,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 from qgis.gui import QgsMessageBar, QgsProjectionSelectionDialog
 from qgis.utils import iface, pluginDirectory
+from qgis.core import QgsProject
 
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
@@ -47,7 +48,7 @@ from .k_qgsadapt import qgsadapt
 from .k_runoffparams import setRunoffparams
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.tools.application')
 
 
 class QKanTools:
@@ -946,6 +947,13 @@ class QKanTools:
 
     def run_layersadapt(self):
         '''Anpassen oder Ergänzen von Layern entsprechend der QKan-Datenstrukturen'''
+
+        # QKan-Projekt
+        project = QgsProject.instance()
+        
+        if project.count() == 0:
+            fehlermeldung(u'Benutzerfehler: ', u'Es ist kein Projekt geladen.')
+            return
 
         # Formularfelder setzen -------------------------------------------------------------------------
 

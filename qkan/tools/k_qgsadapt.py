@@ -39,7 +39,7 @@ from qgis.utils import iface, pluginDirectory
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.tools.k_qgsadapt')
 
 progress_bar = None
 

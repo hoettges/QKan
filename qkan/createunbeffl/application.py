@@ -39,7 +39,7 @@ from .application_dialog import CreateUnbefFlDialog
 from .k_unbef import createUnbefFlaechen
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.createunbeffl.application')
 
 
 class CreateUnbefFl:
