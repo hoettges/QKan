@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>773</width>
-    <height>576</height>
+    <height>624</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>220</x>
-     <y>520</y>
+     <y>570</y>
      <width>331</width>
      <height>32</height>
     </rect>
@@ -482,7 +482,7 @@ berücksichtigen</string>
      <x>20</x>
      <y>380</y>
      <width>731</width>
-     <height>121</height>
+     <height>171</height>
     </rect>
    </property>
    <property name="font">
@@ -650,7 +650,7 @@ berücksichtigen</string>
      <string>Autokorrektur von Namen in Flächen und Einleitpunkten</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_linkswInTezg">
+   <widget class="QCheckBox" name="cb_linksInTezg">
     <property name="geometry">
      <rect>
       <x>350</x>
@@ -706,6 +706,35 @@ berücksichtigen</string>
     </property>
     <property name="text">
      <string>Mit Haltungsflächen verschneiden</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_geomMakeValid">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>120</y>
+      <width>201</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vor Beginn der Bearbeitung werden zunächst in den Tabellen &amp;quot;Flächen&amp;quot; und &amp;quot;Haltungsflächen&amp;quot; geometrische Fehler korrigiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Vor Beginn der Bearbeitung werden zunächst in den Tabellen &quot;Flächen&quot; und &quot;Haltungsflächen&quot; geometrische Fehler korrigiert.</string>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>Flächenobjekte bereinigen</string>
     </property>
    </widget>
   </widget>

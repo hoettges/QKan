@@ -37,7 +37,7 @@ from import_from_dyna import importKanaldaten
 import logging
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.importdyna.application')
 
 class ImportFromDyna:
     """QGIS Plugin Implementation."""
