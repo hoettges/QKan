@@ -1464,6 +1464,79 @@ class DBConnection:
                 self.versionlis = [2, 5, 24]
 
             # ---------------------------------------------------------------------------------------------------------
+            if versionolder(self.versionlis, [2, 5, 27]):
+
+                # Vergleich der Flächengröße mit der Summe der verschnittenen Teile
+
+                sql = u'''DROP VIEW IF EXISTS "v_flaechen_check"'''
+
+                if not self.sql(sql, u'dbfunc.version (2.5.27-1)'):
+                    return False
+
+                sql = u'''CREATE VIEW IF NOT EXISTS "v_flaechen_check" AS 
+                        WITH flintersect AS (
+                            SELECT fl.flnam AS finam, 
+                                   CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
+                                   ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
+                                   END AS flaeche
+                            FROM linkfl AS lf
+                            INNER JOIN flaechen AS fl
+                            ON lf.flnam = fl.flnam
+                            LEFT JOIN tezg AS tg
+                            ON lf.tezgnam = tg.flnam)
+                        SELECT fa.flnam, 
+                               AREA(fa.geom) AS flaeche, 
+                               sum(fi.flaeche) AS "summe_flaechen_stuecke", 
+                               sum(fi.flaeche) - AREA(fa.geom) AS differenz
+                        FROM flaechen AS fa
+                        LEFT JOIN flintersect AS fi
+                        ON fa.flnam = fi.finam
+                        GROUP BY fa.flnam
+                        HAVING ABS(sum(fi.flaeche) - AREA(fa.geom)) > 2'''
+
+                if not self.sql(sql, u'dbfunc.version (2.5.27-2)'):
+                    return False
+
+                sql = u'''DROP VIEW IF EXISTS "v_tezg_check"'''
+
+
+                # Vergleich der Haltungsflächengrößen mit der Summe der verschnittenen Teile
+
+                if not self.sql(sql, u'dbfunc.version (2.5.27-3)'):
+                    return False
+
+                sql = u'''CREATE VIEW IF NOT EXISTS "v_tezg_check" AS 
+                        WITH flintersect AS (
+                            SELECT tg.flnam AS finam, 
+                                   CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
+                                   ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
+                                   END AS flaeche
+                            FROM linkfl AS lf
+                            INNER JOIN flaechen AS fl
+                            ON lf.flnam = fl.flnam
+                            LEFT JOIN tezg AS tg
+                            ON lf.tezgnam = tg.flnam)
+                        SELECT tg.flnam, 
+                               AREA(tg.geom) AS haltungsflaeche, 
+                               sum(fi.flaeche) AS summe_flaechen_stuecke, 
+                               sum(fi.flaeche) - AREA(tg.geom) AS differenz
+                        FROM tezg AS tg
+                        LEFT JOIN flintersect AS fi
+                        ON tg.flnam = fi.finam
+                        GROUP BY tg.flnam
+                        HAVING ABS(sum(fi.flaeche) - AREA(tg.geom)) > 2'''
+
+                if not self.sql(sql, u'dbfunc.version (2.5.27-4)'):
+                    return False
+
+
+                self.commit()
+
+                # Versionsnummer hochsetzen
+
+                self.versionlis = [2, 5, 27]
+
+            # ---------------------------------------------------------------------------------------------------------
             # Aktuelle Version in Tabelle "info" schreiben
 
             sql = u"""UPDATE info SET value = '{}' WHERE subject = 'version'""".format(self.actversion)
