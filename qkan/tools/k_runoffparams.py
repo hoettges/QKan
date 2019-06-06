@@ -39,7 +39,7 @@ from qgis.PyQt.QtGui import QProgressBar
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fortschritt, fehlermeldung, sqlconditions
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.tools.k_runoffparams')
 
 progress_bar = None
 

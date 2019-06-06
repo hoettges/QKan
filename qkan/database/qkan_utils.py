@@ -8,7 +8,7 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.database.qkan_utils')
 
 
 # Fortschritts- und Fehlermeldungen
@@ -289,7 +289,7 @@ def checkgeom(dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete = [], dbtyp =
     """Prüft, ob in der Tabelle {tab} im Attribut {attrgeo} ein Geoobjekt vorhanden ist. 
 
     :dbQK:              Typ der Datenbank (spatialite, postgis)
-    :type dbQK:         Class FBConnection
+    :type dbQK:         Class DBConnection
     
     :tab:               Name der Tabelle
     :type tab:          String
@@ -390,6 +390,32 @@ def sqlconditions(keyword, attrlis, valuelis2):
         auswahl = ''
 
     return auswahl
+
+
+def check_flaechenbilanz(dbQK):
+    """stellt Attribut- und Wertelisten zu einem SQL-String zusammen.
+
+    :dbQK:              Typ der Datenbank (spatialite, postgis)
+    :type dbQK:         Class FBConnection
+    """
+
+    sql = u"""SELECT * FROM v_flaechen_check"""
+
+    if not dbQK.sql(sql, u"qkan_utils.check_flaechenbilanz (1)"):
+        return False
+
+    daten = dbQK.fetchone()
+    if daten is not None:
+        meldung(u"Differenz in Flächenbilanz!", u'Öffnen Sie den Layer "Prüfung Flächenbilanz"')
+
+    sql = u"""SELECT * FROM v_tezg_check"""
+
+    if not dbQK.sql(sql, u"qkan_utils.check_flaechenbilanz (2)"):
+        return False
+
+    daten = dbQK.fetchone()
+    if daten is not None:
+        meldung(u"Differenz in Bilanz der Haltungsflächen!", u'Öffnen Sie den Layer "Prüfung Haltungsflächenbilanz"')
 
 
 def evalNodeTypes(dbQK):

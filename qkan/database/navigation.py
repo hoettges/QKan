@@ -6,7 +6,7 @@ import os.path
 from PyQt4 import QtCore
 from qkan.database.dbfunc import DBConnection
 
-main_logger = logging.getLogger("QKan")
+main_logger = logging.getLogger("QKan.database.navigation.main")
 main_logger.info("Navigation-Modul gestartet")
 
 

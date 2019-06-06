@@ -37,15 +37,17 @@ from qgis.utils import iface
 # noinspection PyUnresolvedReferences 
 import resources
 # Import the code for the dialog
-from application_dialog import CreatelineflDialog, CreatelineswDialog, AssigntgebDialog, ManagegroupsDialog, UpdateLinksDialog
+from application_dialog import (CreatelineflDialog, CreatelineswDialog, AssigntgebDialog, 
+                                 ManagegroupsDialog, UpdateLinksDialog)
 from k_link import createlinkfl, createlinksw, assigntgeb, storegroup, reloadgroup
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung
+from qkan.database.qkan_utils import (get_database_QKan, get_editable_layers, 
+        fehlermeldung, meldung)
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.linkflaechen.application')
 
 
 class LinkFl:
@@ -628,12 +630,16 @@ class LinkFl:
             autokorrektur = True
         self.dlg_cl.cb_autokorrektur.setChecked(autokorrektur)
 
+        # MakeValid auf Tabellen "flaechen" und "tezg". Muss jedes Mal aktiviert werden
+        flaechen_bereinigen = False
+        self.dlg_cl.cb_geomMakeValid.setChecked(flaechen_bereinigen)
+
         # Verbindungslinien nur innerhalb tezg
-        if 'linksw_in_tezg' in self.config:
-            linksw_in_tezg = self.config['linksw_in_tezg']
+        if 'links_in_tezg' in self.config:
+            links_in_tezg = self.config['links_in_tezg']
         else:
-            linksw_in_tezg = True
-        self.dlg_cl.cb_linkswInTezg.setChecked(linksw_in_tezg)
+            links_in_tezg = True
+        self.dlg_cl.cb_linksInTezg.setChecked(links_in_tezg)
 
         # Haltungsflächen (tezg) berücksichtigen
         if 'mit_verschneidung' in self.config:
@@ -661,6 +667,7 @@ class LinkFl:
             fangradius = self.config['fangradius']
         else:
             fangradius = u'0.1'
+        
 
         # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
         if 'bezug_abstand' in self.config:
@@ -675,6 +682,7 @@ class LinkFl:
         else:
             fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
             return False
+
 
         self.countselectionfl()
 
@@ -705,7 +713,8 @@ class LinkFl:
                 return False
 
             autokorrektur = self.dlg_cl.cb_autokorrektur.isChecked()
-            linksw_in_tezg = self.dlg_cl.cb_linkswInTezg.isChecked()
+            flaechen_bereinigen = self.dlg_cl.cb_geomMakeValid.isChecked()
+            links_in_tezg = self.dlg_cl.cb_linksInTezg.isChecked()
             mit_verschneidung = self.dlg_cl.cb_regardTezg.isChecked()
 
                 # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
@@ -725,7 +734,7 @@ class LinkFl:
             self.config['liste_teilgebiete'] = liste_teilgebiete
             self.config['epsg'] = epsg
             self.config['autokorrektur'] = autokorrektur
-            self.config['linksw_in_tezg'] = linksw_in_tezg
+            self.config['links_in_tezg'] = links_in_tezg
             self.config['mit_verschneidung'] = mit_verschneidung
 
             with open(self.configfil, 'w') as fileconfig:
@@ -734,8 +743,9 @@ class LinkFl:
             # Start der Verarbeitung
 
             createlinkfl(self.dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                        liste_teilgebiete, linksw_in_tezg, mit_verschneidung, autokorrektur, 
-                        suchradius, mindestflaeche, fangradius, bezug_abstand, epsg)
+                        liste_teilgebiete, links_in_tezg, mit_verschneidung, autokorrektur, 
+                        flaechen_bereinigen, suchradius, mindestflaeche, fangradius, 
+                        bezug_abstand, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.legendInterface().layers()
@@ -953,12 +963,15 @@ class LinkFl:
         # config in Dialog übernehmen
 
         # Autokorrektur
-
         if 'autokorrektur' in self.config:
             autokorrektur = self.config['autokorrektur']
         else:
             autokorrektur = True
         self.dlg_at.cb_autokorrektur.setChecked(autokorrektur)
+
+        # MakeValid auf Tabellen "flaechen" und "tezg". Muss jedes Mal aktiviert werden
+        flaechen_bereinigen = False
+        self.dlg_at.cb_geomMakeValid.setChecked(flaechen_bereinigen)
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -1016,6 +1029,7 @@ class LinkFl:
                 return False
 
             autokorrektur = self.dlg_at.cb_autokorrektur.isChecked()
+            flaechen_bereinigen = self.dlg_at.cb_geomMakeValid.isChecked()
             bufferradius = self.dlg_at.tf_bufferradius.text()
 
             # config schreiben
@@ -1035,7 +1049,7 @@ class LinkFl:
                        [[u'haltungen', 'geom'], [u'flaechen', 'geom'], [u'schaechte', 'geop'], 
                         [u'einleit', 'geom'], [u'tezg', 'geom'], [u'linksw', 'glink'], 
                         [u'linkfl', 'glink']], 
-                       autokorrektur, bufferradius)
+                       autokorrektur, flaechen_bereinigen, bufferradius)
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
@@ -1129,11 +1143,12 @@ class LinkFl:
         self.dlg_ul.tf_qkDB.setText(database_QKan)
 
         # Festlegung des Fangradius
-        # Kann über Menü "Optionen" eingegeben werden
         if 'fangradius' in self.config:
             fangradius = self.config['fangradius']
         else:
             fangradius = u'0.1'
+        self.dlg_ul.tf_fangradius.setText(fangradius)
+        logger.debug('fangradius: {}'.format(fangradius))
 
         # Löschen von Flächenverknüpfungen ohne Linienobjekt
         if 'deletelinkflGeomNone' in self.config:
@@ -1141,6 +1156,10 @@ class LinkFl:
         else:
             deletelinkflGeomNone = True
         self.dlg_ul.cb_deleteGeomNone.setChecked(deletelinkflGeomNone)
+
+        # MakeValid auf Tabellen "flaechen" und "tezg". Muss jedes Mal aktiviert werden
+        flaechen_bereinigen = False
+        self.dlg_ul.cb_geomMakeValid.setChecked(flaechen_bereinigen)
 
         # show the dialog
         self.dlg_ul.show()
@@ -1151,6 +1170,7 @@ class LinkFl:
 
             # Inhalte aus Formular lesen
             deletelinkflGeomNone = self.dlg_ul.cb_deleteGeomNone.isChecked()
+            flaechen_bereinigen = self.dlg_ul.cb_geomMakeValid.isChecked()
 
             # config schreiben
             self.config['deletelinkflGeomNone'] = deletelinkflGeomNone
@@ -1162,10 +1182,12 @@ class LinkFl:
             # Start der Verarbeitung
 
             if self.dlg_ul.cb_linkfl.isChecked():
-                updatelinkfl(self.dbQK, fangradius, deletelinkflGeomNone)
+                updatelinkfl(self.dbQK, fangradius, flaechen_bereinigen, deletelinkflGeomNone)
 
             if self.dlg_ul.cb_linksw.isChecked():
                 updatelinksw(self.dbQK, fangradius, deletelinkflGeomNone)
+
+            meldung(u"Fertig!", u"Bereinigung Flächenverknüpfungen abgeschlossen.")
 
         # ----------------------------------------------------------------------------------------------
         # Datenbankverbindungen schliessen

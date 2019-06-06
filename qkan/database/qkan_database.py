@@ -22,8 +22,8 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__dbVersion__ = '2.5.9'                         # Version der QKan-Datenbank
-__qgsVersion__  = '2.5.24'                       # Version des Projektes und der Projektdatei. Kann 
+__dbVersion__ = '2.5.24'                         # Version der QKan-Datenbank
+__qgsVersion__  = '2.5.26'                       # Version des Projektes und der Projektdatei. Kann 
                                                 # höher als die der QKan-Datenbank sein
 
 # This will get replaced with a git SHA1 when you do a git archive
@@ -39,9 +39,8 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from qkan_utils import fortschritt, fehlermeldung, meldung
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.database.qkan_database')
 
-# Versionscheck
 
 def dbVersion():
     """Returns actual version of the QKan database"""
