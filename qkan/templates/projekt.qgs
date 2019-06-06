@@ -1,121 +1,121 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan Version 2.5.26" version="2.18.24">
-  <title>QKan Version 2.5.26</title>
+<qgis projectname="QKan Version 2.5.24" version="2.18.24">
+  <title>QKan Version 2.5.24</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="">
     <customproperties/>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Schächte">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161220162259105" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Schacht'" name="Schächte">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" name="Auslässe">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Speicher_Kopie20161221080207994" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Auslass'" name="Auslässe">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161221075653754" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;schaechte&quot; (geop) sql=schachttyp = 'Speicher'" name="Speicher">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte_Kopie20161204084617148" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;schaechte&quot; (geop) sql=" name="Knotentyp">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schaechte20161016203756252" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;schaechte&quot; (geom) sql=" name="Knotenpunkte">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Haltungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen20161016203756230" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungen nach Typ">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="haltungen_Kopie20161016203906444" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;haltungen&quot; (geom) sql=" name="Haltungslinien">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Sonderbauwerke">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="wehre20161125174724734" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;wehre&quot; (geom) sql=" name="Wehre">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpen20161017080913064" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;pumpen&quot; (geom) sql=" name="Pumpen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Unchecked" name="SW-Einleitungen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="einleit20171004110830029" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;einleit&quot; (geom) sql=" name="Direkteinleitungen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="einleit20171004110830029" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;einleit&quot; (geom) sql=" name="Direkteinleitungen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen Direkteinleitungen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="Anbindungen_SW_Punkte20171017125752772" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;linksw&quot; (glink) sql=" name="Anbindungen Direkteinleitungen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Flächen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="Teilgebiete">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="teilgebiete20170214092005309" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;teilgebiete&quot; (geom) sql=" name="Teilgebiete">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20171204105753202" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;tezg&quot; (geom) sql=" name="Haltungsflächen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="tezg20171204105753202" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;tezg&quot; (geom) sql=" name="Haltungsflächen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindung20170920132347429" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;linkfl&quot; (glink) sql=" name="Anbindungen Flächen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Anbindung20170920132347429" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;linkfl&quot; (glink) sql=" name="Anbindungen Flächen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="Flächen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="flaechen20170504083519678" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;flaechen&quot; (geom) sql=" name="Flächen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="0" checked="Qt::Checked" name="Referenztabellen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="entwaesserungsarten20161018090806784" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;entwaesserungsarten&quot; sql=" name="Entwässerungsarten">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="pumpentypen20161018090730556" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;pumpentypen&quot; sql=" name="Pumpentypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;profile&quot; sql=" name="Profile">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profile20161018090721921" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;profile&quot; sql=" name="Profile">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="auslasstypen20161201095045204" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;auslasstypen&quot; sql=" name="Auslasstypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
+      <layer-tree-layer expanded="0" providerKey="spatialite" checked="Qt::Checked" id="simulationsstatus20161201095050780" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;simulationsstatus&quot; sql=" name="Simulationsstatus">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="bodenklassen20170516122309914" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;bodenklassen&quot; sql=" name="Bodenklassen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Abflussparameter20181109110308816" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;abflussparameter&quot; () sql=" name="Abflussparameter HE">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="Abflussparameter20181109110308816" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;abflussparameter&quot; () sql=" name="Abflussparameter HE">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter KP">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflussparameter20161218110231636" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;abflussparameter&quot; sql=" name="Abflussparameter KP">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflusstypen20181109110308704" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;abflusstypen&quot; () sql=" name="abflusstypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="abflusstypen20181109110308704" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;abflusstypen&quot; () sql=" name="abflusstypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="knotentypen20181109110308798" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;knotentypen&quot; () sql=" name="knotentypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="knotentypen20181109110308798" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;knotentypen&quot; () sql=" name="knotentypen">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schachttypen20181109110308835" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;schachttypen&quot; () sql=" name="schachttypen">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="schachttypen20181109110308835" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;schachttypen&quot; () sql=" name="schachttypen">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="0" checked="Qt::Checked" name="Kennlinien">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="speicherkennlinien20161218110320415" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;speicherkennlinien&quot; sql=" name="Speicherkennlinien">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="profildaten20161218110256525" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;profildaten&quot; sql=" name="Profildaten">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
-    <layer-tree-group expanded="0" checked="Qt::Checked" name="Prüfung_Flächenbilanzen">
+    <layer-tree-group expanded="1" checked="Qt::Checked" name="Prüfung_Flächenbilanzen">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="v_tezg_check20190603184320555" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;v_tezg_check&quot; sql=" name="v_tezg_check">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="v_tezg_check20190603184320555" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;v_tezg_check&quot; sql=" name="Flächen und Teilflächensumme">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="v_flaechen_check20190603184314099" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_qkhe/beispiele/blueing/v190506/Wesel_gesamt_20181120.sqlite' table=&quot;v_flaechen_check&quot; sql=" name="v_flaechen_check">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Checked" id="v_flaechen_check20190603184314099" source="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/itwh/modell_einzel/modell.sqlite' table=&quot;v_flaechen_check&quot; sql=" name="Haltungsflächen und Teilflächensumme">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
@@ -124,22 +124,22 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>329251.19900000002235174</xmin>
-      <ymin>5718829</ymin>
-      <xmax>341523.88100000005215406</xmax>
-      <ymax>5730079</ymax>
+      <xmin>3550042.61799999978393316</xmin>
+      <ymin>5799510.33000000007450581</ymin>
+      <xmax>3550676.34299999941140413</xmax>
+      <ymax>5799884.03500000014901161</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
     <destinationsrs>
       <spatialrefsys>
-        <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-        <srsid>1009</srsid>
-        <srid>3044</srid>
-        <authid>EPSG:3044</authid>
-        <description>ETRS89 / ETRS-TM32</description>
-        <projectionacronym>utm</projectionacronym>
-        <ellipsoidacronym>GRS80</ellipsoidacronym>
+        <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+        <srsid>2647</srsid>
+        <srid>31467</srid>
+        <authid>EPSG:31467</authid>
+        <description>DHDN / Gauss-Kruger zone 3</description>
+        <projectionacronym>tmerc</projectionacronym>
+        <ellipsoidacronym>bessel</ellipsoidacronym>
         <geographicflag>false</geographicflag>
       </spatialrefsys>
     </destinationsrs>
@@ -424,13 +424,13 @@
         </filegroup>
       </legendlayer>
     </legendgroup>
-    <legendgroup open="false" checked="Qt::Checked" name="Prüfung_Flächenbilanzen">
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="v_tezg_check" showFeatureCount="0">
+    <legendgroup open="true" checked="Qt::Checked" name="Prüfung_Flächenbilanzen">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Flächen und Teilflächensumme" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="v_tezg_check20190603184320555" visible="1"/>
         </filegroup>
       </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="v_flaechen_check" showFeatureCount="0">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Haltungsflächen und Teilflächensumme" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="v_flaechen_check20190603184314099" visible="1"/>
         </filegroup>
@@ -527,7 +527,7 @@
   <projectlayers>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>Abflussparameter20181109110308816</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="abflussparameter" () sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="abflussparameter" () sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -649,20 +649,20 @@
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Anbindung20170920132347429</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="linkfl" (glink) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="linkfl" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Anbindungen Flächen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -1085,20 +1085,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Anbindungen_SW_Punkte20171017125752772</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="linksw" (glink) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="linksw" (glink) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Anbindungen Direkteinleitungen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -1415,20 +1415,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>Speicher_Kopie20161221080207994</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
+      <datasource>dbname='./modell.sqlite' table="schaechte" (geop) sql=schachttyp = 'Auslass'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Auslässe</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -1838,7 +1838,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>abflussparameter20161218110231636</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="abflussparameter" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="abflussparameter" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1852,7 +1852,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -1980,7 +1980,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>abflusstypen20181109110308704</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="abflusstypen" () sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="abflusstypen" () sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2048,7 +2048,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>auslasstypen20161201095045204</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="auslasstypen" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="auslasstypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2062,7 +2062,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -2154,7 +2154,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>bodenklassen20170516122309914</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="bodenklassen" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="bodenklassen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2300,20 +2300,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>einleit20171004110830029</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="einleit" (geom) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="einleit" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Direkteinleitungen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -2649,7 +2649,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>entwaesserungsarten20161018090806784</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="entwaesserungsarten" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="entwaesserungsarten" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -2663,7 +2663,7 @@ def my_form_open(dialog, layer, feature):
           <description></description>
           <projectionacronym></projectionacronym>
           <ellipsoidacronym></ellipsoidacronym>
-          <geographicflag>true</geographicflag>
+          <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
       <customproperties>
@@ -2760,20 +2760,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>flaechen20170504083519678</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="flaechen" (geom) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="flaechen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Flächen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -2814,9 +2814,6 @@ def my_form_open(dialog, layer, feature):
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
           <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Flaeche">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 attr="abflussparameter" forceraster="0" symbollevels="0" type="categorizedSymbol" enableorderby="0">
@@ -3280,7 +3277,6 @@ def my_form_open(dialog, layer, feature):
         <alias field="aufteilen" index="7" name=""/>
         <alias field="kommentar" index="8" name=""/>
         <alias field="createdat" index="9" name=""/>
-        <alias field="Flaeche" index="10" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -3339,26 +3335,25 @@ def my_form_open(dialog, layer, feature):
         <default field="aufteilen" expression=""/>
         <default field="kommentar" expression=""/>
         <default field="createdat" expression="now()"/>
-        <default field="Flaeche" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "flnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="1" maximumScale="15000" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>haltungen20161016203756230</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Haltungen nach Typ</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -4148,20 +4143,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="15000" maximumScale="1.5e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>haltungen_Kopie20161016203906444</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="haltungen" (geom) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="haltungen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Haltungslinien</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -4623,7 +4618,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>knotentypen20181109110308798</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="knotentypen" () sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="knotentypen" () sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4691,7 +4686,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profildaten20161218110256525</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="profildaten" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="profildaten" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4791,7 +4786,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>profile20161018090721921</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="profile" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="profile" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4898,20 +4893,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>pumpen20161017080913064</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="pumpen" (geom) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="pumpen" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Pumpen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -5349,7 +5344,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>pumpentypen20161018090730556</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="pumpentypen" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="pumpentypen" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5443,7 +5438,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>schachttypen20181109110308835</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="schachttypen" () sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="schachttypen" () sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -5511,20 +5506,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte20161016203756252</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="schaechte" (geom) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="schaechte" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Knotenpunkte</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -5925,20 +5920,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte20161220162259105</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
+      <datasource>dbname='./modell.sqlite' table="schaechte" (geop) sql=schachttyp = 'Schacht'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Schächte</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -6348,20 +6343,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte20161221075653754</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
+      <datasource>dbname='./modell.sqlite' table="schaechte" (geop) sql=schachttyp = 'Speicher'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Speicher</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -6771,20 +6766,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="100000" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>schaechte_Kopie20161204084617148</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="schaechte" (geop) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="schaechte" (geop) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Knotentyp</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -7357,7 +7352,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>simulationsstatus20161201095050780</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="simulationsstatus" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="simulationsstatus" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7463,7 +7458,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>speicherkennlinien20161218110320415</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="speicherkennlinien" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="speicherkennlinien" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -7563,20 +7558,20 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>teilgebiete20170214092005309</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="teilgebiete" (geom) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="teilgebiete" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Teilgebiete</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -7599,9 +7594,6 @@ def my_form_open(dialog, layer, feature):
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
           <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Flaeche">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
@@ -7829,7 +7821,6 @@ def my_form_open(dialog, layer, feature):
         <alias field="tgnam" index="1" name=""/>
         <alias field="kommentar" index="2" name=""/>
         <alias field="createdat" index="3" name=""/>
-        <alias field="Flaeche" index="4" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -7881,26 +7872,25 @@ def my_form_open(dialog, layer, feature):
         <default field="tgnam" expression=""/>
         <default field="kommentar" expression=""/>
         <default field="createdat" expression="now()"/>
-        <default field="Flaeche" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "tgnam", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>tezg20171204105753202</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="tezg" (geom) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="tezg" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Haltungsflächen</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
@@ -7938,9 +7928,6 @@ def my_form_open(dialog, layer, feature):
         </edittype>
         <edittype widgetv2type="DateTime" name="createdat">
           <widgetv2config fieldEditable="1" calendar_popup="1" allow_null="1" display_format="dd.MM.yyyy HH:mm" field_format="dd.MM.yyyy HH:mm" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="Flaeche">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
@@ -8173,7 +8160,6 @@ def my_form_open(dialog, layer, feature):
         <alias field="abflussparameter" index="6" name=""/>
         <alias field="kommentar" index="7" name=""/>
         <alias field="createdat" index="8" name=""/>
-        <alias field="Flaeche" index="9" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -8230,17 +8216,16 @@ def my_form_open(dialog, layer, feature):
         <default field="abflussparameter" expression=""/>
         <default field="kommentar" expression=""/>
         <default field="createdat" expression="now()"/>
-        <default field="Flaeche" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "pk", '&lt;NULL>' )</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>v_flaechen_check20190603184314099</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="v_flaechen_check" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="v_flaechen_check" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>v_flaechen_check</layername>
+      <layername>Haltungsflächen und Teilflächensumme</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
@@ -8253,7 +8238,11 @@ def my_form_open(dialog, layer, feature):
           <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
-      <customproperties/>
+      <customproperties>
+        <property key="embeddedWidgets/count" value="0"/>
+        <property key="variableNames"/>
+        <property key="variableValues"/>
+      </customproperties>
       <provider encoding="UTF-8">spatialite</provider>
       <vectorjoins/>
       <layerDependencies/>
@@ -8265,38 +8254,56 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="flnam">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="finam">
+        <edittype widgetv2type="TextEdit" name="flaeche">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="fl_int">
+        <edittype widgetv2type="TextEdit" name="summe_flaechen_stuecke">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="fl_ori">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="diff">
+        <edittype widgetv2type="TextEdit" name="differenz">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform></annotationform>
+      <annotationform>.</annotationform>
       <aliases>
         <alias field="flnam" index="0" name=""/>
-        <alias field="finam" index="1" name=""/>
-        <alias field="fl_int" index="2" name=""/>
-        <alias field="fl_ori" index="3" name=""/>
-        <alias field="diff" index="4" name=""/>
+        <alias field="flaeche" index="1" name=""/>
+        <alias field="summe_flaechen_stuecke" index="2" name=""/>
+        <alias field="differenz" index="3" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
       <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="1">
-        <columns/>
+        <columns>
+          <column width="-1" hidden="0" type="field" name="flnam"/>
+          <column width="-1" hidden="0" type="field" name="flaeche"/>
+          <column width="-1" hidden="0" type="field" name="summe_flaechen_stuecke"/>
+          <column width="-1" hidden="0" type="field" name="differenz"/>
+          <column width="-1" hidden="1" type="actions"/>
+        </columns>
       </attributetableconfig>
-      <editform></editform>
+      <editform>.</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath></editforminitfilepath>
-      <editforminitcode><![CDATA[]]></editforminitcode>
+      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+"""
+QGIS forms can have a Python function that is called when the form is
+opened.
+
+Use this function to add extra logic to your forms.
+
+Enter the name of the function in the "Python Init function"
+field.
+An example follows:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+]]></editforminitcode>
       <featformsuppress>0</featformsuppress>
       <editorlayout>generatedlayout</editorlayout>
       <widgets/>
@@ -8306,20 +8313,19 @@ def my_form_open(dialog, layer, feature):
       </conditionalstyles>
       <defaults>
         <default field="flnam" expression=""/>
-        <default field="finam" expression=""/>
-        <default field="fl_int" expression=""/>
-        <default field="fl_ori" expression=""/>
-        <default field="diff" expression=""/>
+        <default field="flaeche" expression=""/>
+        <default field="summe_flaechen_stuecke" expression=""/>
+        <default field="differenz" expression=""/>
       </defaults>
-      <previewExpression></previewExpression>
+      <previewExpression>COALESCE("flnam", '&lt;NULL>')||', '||COALESCE("flaeche", '&lt;NULL>')||', '||COALESCE("summe_flaechen_stuecke", '&lt;NULL>')||', '||COALESCE("differenz", '&lt;NULL>')</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>v_tezg_check20190603184320555</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="v_tezg_check" sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="v_tezg_check" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>v_tezg_check</layername>
+      <layername>Flächen und Teilflächensumme</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
@@ -8332,7 +8338,11 @@ def my_form_open(dialog, layer, feature):
           <geographicflag>true</geographicflag>
         </spatialrefsys>
       </srs>
-      <customproperties/>
+      <customproperties>
+        <property key="embeddedWidgets/count" value="0"/>
+        <property key="variableNames"/>
+        <property key="variableValues"/>
+      </customproperties>
       <provider encoding="UTF-8">spatialite</provider>
       <vectorjoins/>
       <layerDependencies/>
@@ -8344,38 +8354,56 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="flnam">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="finam">
+        <edittype widgetv2type="TextEdit" name="haltungsflaeche">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="fl_int">
+        <edittype widgetv2type="TextEdit" name="summe_flaechen_stuecke">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="fl_ori">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="diff">
+        <edittype widgetv2type="TextEdit" name="differenz">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
-      <annotationform></annotationform>
+      <annotationform>.</annotationform>
       <aliases>
         <alias field="flnam" index="0" name=""/>
-        <alias field="finam" index="1" name=""/>
-        <alias field="fl_int" index="2" name=""/>
-        <alias field="fl_ori" index="3" name=""/>
-        <alias field="diff" index="4" name=""/>
+        <alias field="haltungsflaeche" index="1" name=""/>
+        <alias field="summe_flaechen_stuecke" index="2" name=""/>
+        <alias field="differenz" index="3" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
       <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="1">
-        <columns/>
+        <columns>
+          <column width="-1" hidden="0" type="field" name="flnam"/>
+          <column width="-1" hidden="0" type="field" name="haltungsflaeche"/>
+          <column width="-1" hidden="0" type="field" name="summe_flaechen_stuecke"/>
+          <column width="-1" hidden="0" type="field" name="differenz"/>
+          <column width="-1" hidden="1" type="actions"/>
+        </columns>
       </attributetableconfig>
-      <editform></editform>
+      <editform>.</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath></editforminitfilepath>
-      <editforminitcode><![CDATA[]]></editforminitcode>
+      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+"""
+QGIS forms can have a Python function that is called when the form is
+opened.
+
+Use this function to add extra logic to your forms.
+
+Enter the name of the function in the "Python Init function"
+field.
+An example follows:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+]]></editforminitcode>
       <featformsuppress>0</featformsuppress>
       <editorlayout>generatedlayout</editorlayout>
       <widgets/>
@@ -8385,29 +8413,28 @@ def my_form_open(dialog, layer, feature):
       </conditionalstyles>
       <defaults>
         <default field="flnam" expression=""/>
-        <default field="finam" expression=""/>
-        <default field="fl_int" expression=""/>
-        <default field="fl_ori" expression=""/>
-        <default field="diff" expression=""/>
+        <default field="haltungsflaeche" expression=""/>
+        <default field="summe_flaechen_stuecke" expression=""/>
+        <default field="differenz" expression=""/>
       </defaults>
-      <previewExpression></previewExpression>
+      <previewExpression>COALESCE("flnam", '&lt;NULL>')||', '||COALESCE("haltungsflaeche", '&lt;NULL>')||', '||COALESCE("summe_flaechen_stuecke", '&lt;NULL>')||', '||COALESCE("differenz", '&lt;NULL>')</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>wehre20161125174724734</id>
-      <datasource>dbname='./Wesel_gesamt_20181120.sqlite' table="wehre" (geom) sql=</datasource>
+      <datasource>dbname='./modell.sqlite' table="wehre" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>Wehre</layername>
       <srs>
         <spatialrefsys>
-          <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>1009</srsid>
-          <srid>3044</srid>
-          <authid>EPSG:3044</authid>
-          <description>ETRS89 / ETRS-TM32</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <proj4>+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs</proj4>
+          <srsid>2647</srsid>
+          <srid>31467</srid>
+          <authid>EPSG:31467</authid>
+          <description>DHDN / Gauss-Kruger zone 3</description>
+          <projectionacronym>tmerc</projectionacronym>
+          <ellipsoidacronym>bessel</ellipsoidacronym>
           <geographicflag>false</geographicflag>
         </spatialrefsys>
       </srs>
