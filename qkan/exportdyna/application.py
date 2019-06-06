@@ -43,7 +43,7 @@ from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fortschritt, fehlermeldung
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.exportdyna.application')
 
 progress_bar = None
 

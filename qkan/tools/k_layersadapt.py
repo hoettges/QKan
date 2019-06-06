@@ -49,7 +49,7 @@ from qkan.database.qkan_utils import (fortschritt, meldung, fehlermeldung, warnu
 
 from qkan.database.qkan_database import dbVersion, qgsVersion, qgsActualVersion
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.tools.k_layersadapt')
 
 progress_bar = None
 
@@ -217,10 +217,15 @@ def layersadapt(database_QKan, projectFile, projectTemplate, qkanDBUpdate,
                     return False
                 QgsMapLayerRegistry.instance().addMapLayer(layer, False)
                 atcGroup = layersRoot.findGroup(group)
-                if atcGroup == '':
-                    layersRoot.addGroup(group)
+                if atcGroup is None:
+                    atcGroup = layersRoot.addGroup(group)
                 atcGroup.addLayer(layer)
                 layerList[layer.name()] = layer
+                # try:
+                # except:
+                    # logger.error(u'Fehler beim Anlegen der Gruppe {}'.format(group), 
+                                 # u'Layer: {}'.format(layer.name()))
+                    # return False
                 logger.debug(u"k_layersadapt: Layer ergänzt: {}".format(layername))
             else:
                 logger.debug(u"k_layersadapt: Layer nicht ergänzt: {}".format(layername))

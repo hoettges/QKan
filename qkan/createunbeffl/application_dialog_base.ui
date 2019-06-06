@@ -98,7 +98,7 @@
     <rect>
      <x>20</x>
      <y>270</y>
-     <width>321</width>
+     <width>601</width>
      <height>61</height>
     </rect>
    </property>
@@ -137,6 +137,35 @@
     <property name="text">
      <string>Autokorrektur von Namen und Abflussfaktoren
 in den TEZG-Flächen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_geomMakeValid">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>20</y>
+      <width>191</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vor Beginn der Bearbeitung werden zunächst in den Tabellen &amp;quot;Flächen&amp;quot; und &amp;quot;Haltungsflächen&amp;quot; geometrische Fehler korrigiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Vor Beginn der Bearbeitung werden zunächst in den Tabellen &quot;Flächen&quot; und &quot;Haltungsflächen&quot; geometrische Fehler korrigiert.</string>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>Flächenobjekte bereinigen</string>
     </property>
    </widget>
   </widget>

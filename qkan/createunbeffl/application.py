@@ -42,7 +42,7 @@ from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import get_database_QKan, fortschritt, fehlermeldung
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.createunbeffl.application')
 
 
 class CreateUnbefFl:

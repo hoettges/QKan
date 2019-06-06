@@ -49,7 +49,7 @@ from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung, meldung, sqlconditions, isQkanLayer
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.tools.application')
 
 
 class QKanTools:
@@ -956,6 +956,13 @@ class QKanTools:
 
     def run_layersadapt(self):
         '''Anpassen oder Ergänzen von Layern entsprechend der QKan-Datenstrukturen'''
+
+        # QKan-Projekt prüfen
+        layers = iface.legendInterface().layers()
+        
+        if len(layers) == 0:
+            fehlermeldung(u'Benutzerfehler: ', u'Es ist kein Projekt geladen.')
+            return
 
         # Formularfelder setzen -------------------------------------------------------------------------
 

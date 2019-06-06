@@ -36,7 +36,7 @@ from qkan.database.qkan_utils import fortschritt, fehlermeldung, meldung, checkn
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.exportdyna.k_qkkp')
 
 progress_bar = None
 
@@ -188,7 +188,7 @@ def write12(dbQK, df, dynakeys_id, dynakeys_ks, mindestflaeche, mit_verschneidun
     if mit_verschneidung:
         case_verschneidung = u"""
                 CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom 
-                ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom"""
+                ELSE CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3)) END AS geom"""
         join_verschneidung = u"""
             LEFT JOIN tezg AS tg
             ON lf.tezgnam = tg.flnam"""

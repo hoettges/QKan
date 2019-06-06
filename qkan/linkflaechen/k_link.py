@@ -39,10 +39,10 @@ from qgis.utils import iface
 
 from qgis.PyQt.QtGui import QProgressBar
 
-from qkan.database.qkan_utils import fehlermeldung, checknames
+from qkan.database.qkan_utils import fehlermeldung, checknames, check_flaechenbilanz
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u'QKan.linkflaechen.k_link')
 
 progress_bar = None
 
@@ -50,7 +50,8 @@ progress_bar = None
 # Erzeugung der graphischen Verknüpfungen für Flächen
 
 def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                liste_teilgebiete, linksw_in_tezg=False, mit_verschneidung=False, autokorrektur=True, 
+                liste_teilgebiete, links_in_tezg=False, mit_verschneidung=False, autokorrektur=True, 
+                flaechen_bereinigen=False, 
                 suchradius=50, mindestflaeche=0.5, fangradius=0.1, bezug_abstand=u'kante', 
                 epsg=u'25832', dbtyp=u'SpatiaLite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
@@ -67,14 +68,17 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     :liste_teilgebiete: Liste der ausgewählten Teilgebiete
     :type liste_teilgebiete: list of String
 
-    :linksw_in_tezg: Verbindungslinien nur innerhalb der selben Haltungsfläche
-    :type linksw_in_tezg: Boolean
+    :links_in_tezg: Verbindungslinien nur innerhalb der selben Haltungsfläche
+    :type links_in_tezg: Boolean
 
     :mit_verschneidung: Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
     :type mit_verschneidung: Boolean
 
     :autokorrektur: Vor der Bearbeitung werden automatische einheitliche Flächenbezeichnungen vergeben
     :type autokorrektur: Boolean
+
+    :flaechen_bereinigen: Vor der Bearbeitung werden die Tabellen "flaechen" und "tezg" mit MakeValid korrigiert
+    :type flaechen_bereinigen: Boolean
 
     :suchradius: Suchradius in der SQL-Abfrage
     :type suchradius: Real
@@ -126,6 +130,21 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, QgsMessageBar.INFO, 10)
 
+    # MakeValid auf Tabellen "flaechen" und "tezg". 
+    if flaechen_bereinigen:
+        sql = """UPDATE flaechen SET geom=MakeValid(geom)"""
+        if not dbQK.sql(sql, u"k_link.createlinkfl (1)"):
+            del dbQK
+            progress_bar.reset()
+            return False
+        sql = """UPDATE tezg SET geom=MakeValid(geom)"""
+        if not dbQK.sql(sql, u"k_link.createlinkfl (2)"):
+            del dbQK
+            progress_bar.reset()
+            return False
+        # Flächen prüfen und ggfs. Meldung anzeigen
+        check_flaechenbilanz(dbQK)
+
     # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
     if not checknames(dbQK, u'flaechen', u'flnam', u'f_', autokorrektur):
         del dbQK
@@ -135,7 +154,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinkfl(dbQK, deletelinkGeomNone = False):
+    if not updatelinkfl(dbQK, fangradius, flaechen_bereinigen = False, deletelinkGeomNone = False):
         fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
         return False
@@ -151,12 +170,12 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         pass
         # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
     else:
-        lis_einf.append(u"flaechen.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam)))
+        lis_einf.append(u"fl.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam)))
         lis_teil = lis_einf[:]          # hier ist ein deepcopy notwendig!
 
     if len(liste_teilgebiete) != 0:
-        lis_einf.append(u"flaechen.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
-        lis_teil.append(u"tezg.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
+        lis_einf.append(u"fl.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
+        lis_teil.append(u"tg.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
 
     ausw_einf = ' and '.join(lis_einf)
     ausw_teil = ' and '.join(lis_teil)
@@ -174,51 +193,110 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         # return False
 
     if mit_verschneidung:
+
+        # 1. Nicht zu verschneidende Flächen: aufteilen <> 'ja'
+        if links_in_tezg:
+            sql = u"""WITH linkadd AS (
+                          SELECT fl.flnam, fl.teilgebiet, fl.geom
+                          FROM flaechen AS fl
+                          LEFT JOIN linkfl AS lf
+                          ON lf.flnam = fl.flnam
+                          WHERE (fl.aufteilen <> 'ja' or fl.aufteilen IS NULL) AND
+                                lf.pk IS NULL AND area(fl.geom) > {minfl}{ausw_einf})
+                      INSERT INTO linkfl (flnam, tezgnam, teilgebiet, geom)
+                      SELECT la.flnam, tg.flnam AS tezgnam, la.teilgebiet, la.geom
+                      FROM linkadd AS la
+                      INNER JOIN tezg AS tg
+                      ON within(PointOnSurface(la.geom),tg.geom){ausw_teil}
+                      """.format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
+
+        else:
+            sql = u"""WITH linkadd AS (
+                          SELECT fl.flnam, fl.teilgebiet, fl.geom
+                          FROM flaechen AS fl
+                          LEFT JOIN linkfl AS lf
+                          ON lf.flnam = fl.flnam
+                          WHERE (fl.aufteilen <> 'ja' or fl.aufteilen IS NULL) AND
+                                lf.pk IS NULL AND area(fl.geom) > {minfl}{ausw_einf})
+                      INSERT INTO linkfl (flnam, tezgnam, teilgebiet, geom)
+                      SELECT la.flnam, NULL AS tezgnam, la.teilgebiet, la.geom
+                      FROM linkadd AS la""".format(ausw_einf=ausw_einf, minfl=mindestflaeche)
+
+        if not dbQK.sql(sql, u"QKan_LinkFlaechen (4a)"):
+            del dbQK
+            progress_bar.reset()
+            return False
+
+        # 1. Zu verschneidende Flächen: aufteilen = 'ja'
         sql = u"""WITH linkadd AS (
-                SELECT
-                    linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
-                    flaechen.geom
-                FROM flaechen
-                INNER JOIN tezg
-                ON within(centroid(flaechen.geom),tezg.geom)
-                LEFT JOIN linkfl
-                ON linkfl.flnam = flaechen.flnam
-                WHERE ((flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL) 
-                    and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_einf}
-                UNION
-                SELECT
-                    linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, flaechen.aufteilen, tezg.teilgebiet, 
-                    CastToMultiPolygon(intersection(flaechen.geom,tezg.geom)) AS geom
-                FROM flaechen
-                INNER JOIN tezg
-                ON intersects(flaechen.geom,tezg.geom)
-                LEFT JOIN linkfl
-                ON linkfl.flnam = flaechen.flnam AND linkfl.tezgnam = tezg.flnam
-                WHERE (flaechen.aufteilen = 'ja'
-                    and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_teil})
-            INSERT INTO linkfl (flnam, tezgnam, geom)
-            SELECT flnam, tezgnam, geom
-            FROM linkadd
-            WHERE lpk IS NULL AND geom > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
+                      SELECT fl.flnam, tg.flnam AS tezgnam, fl.teilgebiet, 
+                             fl.geom AS geof, tg.geom AS geot
+                      FROM flaechen AS fl
+                      INNER JOIN tezg AS tg
+                      ON intersects(fl.geom, tg.geom) AND fl.geom IS NOT NULL AND tg.geom IS NOT NULL
+                      LEFT JOIN linkfl AS lf
+                      ON lf.flnam = fl.flnam AND lf.tezgnam = tg.flnam
+                      WHERE fl.aufteilen = 'ja' AND
+                            lf.pk IS NULL AND area(fl.geom) > {minfl}{ausw_teil})
+                  INSERT INTO linkfl (flnam, tezgnam, teilgebiet, geom)
+                  SELECT la.flnam, la.tezgnam, la.teilgebiet, 
+                          CastToMultiPolygon(CollectionExtract(intersection(la.geof,la.geot),3)) AS geom
+                  FROM linkadd AS la 
+                  WHERE geom IS NOT NULL AND 
+                        area(geom) > {minfl}""".format(ausw_teil=ausw_teil, minfl=mindestflaeche)
+
+        if not dbQK.sql(sql, u"QKan_LinkFlaechen (4b)"):
+            del dbQK
+            progress_bar.reset()
+            return False
+
+        # sql = u"""WITH linkadd AS (
+                # SELECT
+                    # linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, 
+                    # flaechen.geom
+                # FROM flaechen
+                # INNER JOIN tezg
+                # ON within(centroid(flaechen.geom),tezg.geom)
+                # LEFT JOIN linkfl
+                # ON linkfl.flnam = flaechen.flnam
+                # WHERE ((flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL) 
+                    # and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_einf}
+                # UNION
+                # SELECT
+                    # linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, 
+                    # CastToMultiPolygon(CollectionExtract(intersection(flaechen.geom,tezg.geom),3)) AS geom
+                # FROM flaechen
+                # INNER JOIN tezg
+                # ON intersects(flaechen.geom,tezg.geom)
+                # LEFT JOIN linkfl
+                # ON linkfl.flnam = flaechen.flnam AND linkfl.tezgnam = tezg.flnam
+                # WHERE (flaechen.aufteilen = 'ja'
+                    # and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_teil})
+            # INSERT INTO linkfl (flnam, tezgnam, geom)
+            # SELECT flnam, tezgnam, geom
+            # FROM linkadd
+            # WHERE lpk IS NULL AND area(geom) > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
+
     else:
         sql = u"""WITH linkadd AS (
                 SELECT
-                    linkfl.pk AS lpk, flaechen.flnam, flaechen.aufteilen, flaechen.teilgebiet, 
-                    flaechen.geom
-                FROM flaechen
+                    linkfl.pk AS lpk, fl.flnam, fl.aufteilen, fl.teilgebiet, 
+                    fl.geom
+                FROM flaechen AS fl
                 LEFT JOIN linkfl
-                ON linkfl.flnam = flaechen.flnam
-                WHERE ((flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL) 
-                    and flaechen.geom IS NOT NULL){ausw_einf})
-            INSERT INTO linkfl (flnam, geom)
-            SELECT flnam, geom
+                ON linkfl.flnam = fl.flnam
+                WHERE ((fl.aufteilen <> 'ja' or fl.aufteilen IS NULL) 
+                    AND linkfl.pk IS NULL
+                    AND fl.geom IS NOT NULL){ausw_einf})
+            INSERT INTO linkfl (flnam, teilgebiet, geom)
+            SELECT flnam, teilgebiet, geom
             FROM linkadd
-            WHERE lpk IS NULL AND geom > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
+            WHERE area(geom) > {minfl}""".format(ausw_einf=ausw_einf, minfl=mindestflaeche)
 
-    if not dbQK.sql(sql, u"QKan_LinkFlaechen (4a)"):
-        del dbQK
-        progress_bar.reset()
-        return False
+        if not dbQK.sql(sql, u"QKan_LinkFlaechen (4c)"):
+            del dbQK
+            progress_bar.reset()
+            return False
 
     progress_bar.setValue(60)
 
@@ -265,8 +343,8 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     # sie ausgeschlossen werden.
     
 
-    if linksw_in_tezg and mit_verschneidung:
-        # linksw_in_tezg funktioniert nur, wenn mit_verschneidung aktiviert ist
+    if links_in_tezg and mit_verschneidung:
+        # links_in_tezg funktioniert nur, wenn mit_verschneidung aktiviert ist
         sql = u"""WITH tlink AS
             (	SELECT lf.pk AS pk,
                     ha.haltnam, 
@@ -331,7 +409,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinkfl(dbQK, deletelinkGeomNone = False):
+    if not updatelinkfl(dbQK, fangradius, flaechen_bereinigen = False, deletelinkGeomNone = False):
         fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen', 
                       u'Der logische Cache konnte nicht aktualisiert werden.')
         del dbQK
@@ -514,7 +592,8 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
 
 # -------------------------------------------------------------------------------------------------------------
 
-def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, bufferradius=u'0', dbtyp=u'SpatiaLite'):
+def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, flaechen_bereinigen=False, 
+                bufferradius=u'0', dbtyp=u'SpatiaLite'):
     '''Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
        Teilgebiete zu. Falls sich mehrere dieser Teilgebiete überlappen, ist das Resultat zufällig eines von diesen. 
 
@@ -532,6 +611,9 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, buff
                             abgebrochen.
     :type autokorrektur:    String
     
+    :flaechen_bereinigen: Vor der Bearbeitung werden die Tabellen "flaechen" und "tezg" mit MakeValid korrigiert
+    :type flaechen_bereinigen: Boolean
+
     :dbtyp:                 Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:            String
     
@@ -549,6 +631,21 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, buff
 
     logger.debug(u'\nbetroffene Tabellen (1):\n{}\n'.format(str(tablist)))
     logger.debug(u'\nbetroffene Teilgebiete (2):\n{}\n'.format(str(liste_teilgebiete)))
+
+    # MakeValid auf Tabellen "flaechen" und "tezg". 
+    if flaechen_bereinigen:
+        sql = """UPDATE flaechen SET geom=MakeValid(geom)"""
+        if not dbQK.sql(sql, u"k_link.assigntgeb (1)"):
+            del dbQK
+            progress_bar.reset()
+            return False
+        sql = """UPDATE tezg SET geom=MakeValid(geom)"""
+        if not dbQK.sql(sql, u"k_link.assigntgeb (2)"):
+            del dbQK
+            progress_bar.reset()
+            return False
+        # Flächen prüfen und ggfs. Meldung anzeigen
+        check_flaechenbilanz(dbQK)
 
     if not checknames(dbQK, u'teilgebiete', u'tgnam', u'tg_', autokorrektur):
         return False

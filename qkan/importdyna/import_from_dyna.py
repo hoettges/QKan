@@ -51,7 +51,7 @@ import logging
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fortschritt, fehlermeldung, evalNodeTypes
 
-logger = logging.getLogger('QKan')
+logger = logging.getLogger('QKan.importdyna.import_from_dyna')
 
 
 # Hilfsfunktionen --------------------------------------------------------------------------
