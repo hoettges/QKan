@@ -23,7 +23,7 @@ __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
 __dbVersion__ = '2.5.27'                         # Version der QKan-Datenbank
-__qgsVersion__  = '2.5.27'                       # Version des Projektes und der Projektdatei. Kann 
+__qgsVersion__  = '2.5.28'                       # Version des Projektes und der Projektdatei. Kann 
                                                 # höher als die der QKan-Datenbank sein
 
 # This will get replaced with a git SHA1 when you do a git archive
