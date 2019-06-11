@@ -82,12 +82,12 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', flaechen_bereinigen=False, deletelink
         sql = """UPDATE flaechen SET geom=MakeValid(geom)"""
         if not dbQK.sql(sql, u"k_link.createlinkfl (1)"):
             del dbQK
-            progress_bar.reset()
+            # progress_bar.reset()
             return False
         sql = """UPDATE tezg SET geom=MakeValid(geom)"""
         if not dbQK.sql(sql, u"k_link.createlinkfl (2)"):
             del dbQK
-            progress_bar.reset()
+            # progress_bar.reset()
             return False
         # Flächen prüfen und ggfs. Meldung anzeigen
         check_flaechenbilanz(dbQK)
