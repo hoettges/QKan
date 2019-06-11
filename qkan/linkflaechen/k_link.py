@@ -165,20 +165,24 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     lis_einf = ['']      # einfache Flächen. Erstes Element leer, damit beim join ' and ' schon am Anfang eingefügt wird
     lis_teil = ['']      # aufzuteilende Flächen. Erstes Element leer, damit beim join ' and ' schon am Anfang eingefügt wird
+    lis_vers = ['']      # dito nur mit anderem Namensraum
 
     if len(liste_flaechen_abflussparam) == 0:
         pass
         # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
     else:
         lis_einf.append(u"fl.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam)))
-        lis_teil = lis_einf[:]          # hier ist ein deepcopy notwendig!
+        lis_teil.append(u"la.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam)))
+        lis_vers.append(u"fl.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam)))
 
     if len(liste_teilgebiete) != 0:
         lis_einf.append(u"fl.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
         lis_teil.append(u"tg.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
+        lis_vers.append(u"tg.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
 
     ausw_einf = ' and '.join(lis_einf)
     ausw_teil = ' and '.join(lis_teil)
+    ausw_vers = ' and '.join(lis_vers)
 
     # Sowohl Flächen, die nicht als auch die, die verschnitten werden müssen
 
@@ -197,7 +201,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         # 1. Nicht zu verschneidende Flächen: aufteilen <> 'ja'
         if links_in_tezg:
             sql = u"""WITH linkadd AS (
-                          SELECT fl.flnam, fl.teilgebiet, fl.geom
+                          SELECT fl.flnam, fl.teilgebiet, fl.abflussparameter, fl.geom
                           FROM flaechen AS fl
                           LEFT JOIN linkfl AS lf
                           ON lf.flnam = fl.flnam
@@ -212,7 +216,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
         else:
             sql = u"""WITH linkadd AS (
-                          SELECT fl.flnam, fl.teilgebiet, fl.geom
+                          SELECT fl.flnam, fl.teilgebiet, fl.abflussparameter, fl.geom
                           FROM flaechen AS fl
                           LEFT JOIN linkfl AS lf
                           ON lf.flnam = fl.flnam
@@ -237,13 +241,13 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                       LEFT JOIN linkfl AS lf
                       ON lf.flnam = fl.flnam AND lf.tezgnam = tg.flnam
                       WHERE fl.aufteilen = 'ja' AND
-                            lf.pk IS NULL AND area(fl.geom) > {minfl}{ausw_teil})
+                            lf.pk IS NULL AND area(fl.geom) > {minfl}{ausw_vers})
                   INSERT INTO linkfl (flnam, tezgnam, teilgebiet, geom)
                   SELECT la.flnam, la.tezgnam, la.teilgebiet, 
                           CastToMultiPolygon(CollectionExtract(intersection(la.geof,la.geot),3)) AS geom
                   FROM linkadd AS la 
                   WHERE geom IS NOT NULL AND 
-                        area(geom) > {minfl}""".format(ausw_teil=ausw_teil, minfl=mindestflaeche)
+                        area(geom) > {minfl}""".format(ausw_vers=ausw_vers, minfl=mindestflaeche)
 
         if not dbQK.sql(sql, u"QKan_LinkFlaechen (4b)"):
             del dbQK
