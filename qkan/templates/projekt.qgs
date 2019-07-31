@@ -1,7 +1,7 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan Version 3.5.24" version="3.6.0-Noosa">
+<qgis projectname="QKan Version 3.0.0" version="3.6.0-Noosa">
   <homePath path=""/>
-  <title>QKan Version 3.5.24</title>
+  <title>QKan Version 3.0.0</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <trust active="0"/>
@@ -605,7 +605,7 @@
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_abflussparameter.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_abflussparameter.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1069,7 +1069,7 @@
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_anbindungflaechen.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_anbindungflaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1347,7 +1347,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_anbindungeinleit.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_anbindungeinleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -1898,7 +1898,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_auslaesse.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_auslaesse.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2190,7 +2190,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../../../../../../Users/hoettges/.qgis2/python/plugins/qkan/forms/qkan_kp_abflussparameter.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_kp_abflussparameter.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2513,7 +2513,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_auslasstypen.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_auslasstypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -2784,7 +2784,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_bodenklassen.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_bodenklassen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -3113,7 +3113,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_einleit.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_einleit.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -3321,7 +3321,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_entwaesserungsarten.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_entwaesserungsarten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -3997,7 +3997,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_flaechen.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_flaechen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -5091,7 +5091,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_haltungen.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -5720,7 +5720,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_haltungen.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_haltungen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -6032,7 +6032,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_profildaten.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_profildaten.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -6226,7 +6226,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_profile.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_profile.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -6739,7 +6739,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_pumpen.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_pumpen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -6901,7 +6901,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_pumpentypen.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_pumpentypen.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -7574,7 +7574,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_schaechte.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -8119,7 +8119,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_schaechte.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -8658,7 +8658,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_speicher.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_speicher.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -9409,7 +9409,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_schaechte.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_schaechte.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>../../../../Program Files/QGIS2~1.16/bin</editforminitfilepath>
@@ -9601,7 +9601,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_simulationsstatus.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_simulationsstatus.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -9786,7 +9786,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_speicherkennlinien.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_speicherkennlinien.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -10038,7 +10038,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_teilgebiete.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_teilgebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -10358,7 +10358,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_tezg.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_tezg.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>
@@ -10933,7 +10933,7 @@ def my_form_open(dialog, layer, feature):
         <rowstyles/>
         <fieldstyles/>
       </conditionalstyles>
-      <editform tolerant="1">../../../../../QKan3/qkan/forms/qkan_wehre.ui</editform>
+      <editform tolerant="1">/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_wehre.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath>.</editforminitfilepath>

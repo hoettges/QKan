@@ -26,7 +26,7 @@ import site
 
 from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.core import QgsProject
+from qgis.core import QgsProject, QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionDialog
 
 # from qgis.utils import iface
@@ -128,8 +128,7 @@ class ImportFromDyna:
             self.epsg = self.config['epsg']
         else:
             self.epsg = '25832'
-        self.dlg.tf_epsg.setText(self.epsg)
-        self.dlg.pb_selectKBS.clicked.connect(self.selectKBS)
+        self.dlg.qsw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(int(self.epsg)))
 
         if 'projectfile' in self.config:
             projectfile = self.config['projectfile']
@@ -211,19 +210,6 @@ class ImportFromDyna:
         if os.path.dirname(filename) != '':
             os.chdir(os.path.dirname(filename))
 
-    def selectKBS(self):
-        """KBS auswählen. Setzt das KBS für die weiteren Funktionen
-
-        :returns: void
-        """
-        proj_selector = QgsProjectionSelectionDialog()
-        proj_selector.exec_()
-        erg = proj_selector.crs().geographicCrsAuthId()
-        if len(erg.split(':')) == 2:
-            self.dlg.tf_epsg.setText(erg.split(':')[1])
-        else:
-            self.dlg.tf_epsg.setText(erg)
-
     # Ende Eigene Funktionen ---------------------------------------------------
 
     def run(self):
@@ -238,7 +224,7 @@ class ImportFromDyna:
             dynafile = self.dlg.tf_dynaFile.text()
             database_QKan = self.dlg.tf_qkanDB.text()
             projectfile = self.dlg.tf_projectFile.text()
-            self.epsg = self.dlg.tf_epsg.text()
+            self.epsg = str(self.dlg.qsw_epsg.crs().postgisSrid())
 
             # Konfigurationsdaten schreiben
             self.config['epsg'] = self.epsg
@@ -250,4 +236,18 @@ class ImportFromDyna:
                 fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
-            importKanaldaten(dynafile, database_QKan, projectfile, self.epsg)
+            
+            # Modulaufruf in Logdatei schreiben
+            logger.info('''qkan-Modul:\n        importKanaldaten(
+                dynafile='{dynafile}', 
+                database_QKan='{database_QKan}', 
+                projectfile='{projectfile}', 
+                epsg='{epsg}', 
+                dbtyp = '{dbtyp}')'''.format(
+                dynafile=dynafile, 
+                database_QKan=database_QKan, 
+                projectfile=projectfile, 
+                epsg=self.epsg, 
+                dbtyp = 'SpatiaLite'))
+
+            importKanaldaten(dynafile, database_QKan, projectfile, self.epsg, 'SpatiaLite')

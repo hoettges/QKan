@@ -973,26 +973,26 @@ class DBConnection:
                 # die Eingabeformulare müssen jedoch andere Namen verwenden, auf die entsprechend 
                 # in der Projektdatei verwiesen werden muss. 
 
-                try:
-                    projectpath = os.path.dirname(self.dbname)
-                    if u'eingabemasken' not in os.listdir(projectpath):
-                        os.mkdir(os.path.join(projectpath, u'eingabemasken'))
-                    formpath = os.path.join(projectpath, u'eingabemasken')
-                    formlist = os.listdir(formpath)
+                # try:
+                    # projectpath = os.path.dirname(self.dbname)
+                    # if u'eingabemasken' not in os.listdir(projectpath):
+                        # os.mkdir(os.path.join(projectpath, u'eingabemasken'))
+                    # formpath = os.path.join(projectpath, u'eingabemasken')
+                    # formlist = os.listdir(formpath)
 
-                    logger.debug(u"\nEingabeformulare aktualisieren: \n" +
-                                 "projectpath = {projectpath}\n".format(projectpath=projectpath) +
-                                 "formpath = {formpath}\n".format(formpath=formpath) +
-                                 "formlist = {formlist}\n".format(formlist=formlist) +
-                                 "templatepath = {templatepath}".format(templatepath=self.templatepath)
-                                 )
+                    # logger.debug(u"\nEingabeformulare aktualisieren: \n" +
+                                 # "projectpath = {projectpath}\n".format(projectpath=projectpath) +
+                                 # "formpath = {formpath}\n".format(formpath=formpath) +
+                                 # "formlist = {formlist}\n".format(formlist=formlist) +
+                                 # "templatepath = {templatepath}".format(templatepath=self.templatepath)
+                                 # )
 
-                    for formfile in glob.iglob(os.path.join(self.templatepath, u'*.ui')):
-                        logger.debug(u"Eingabeformular aktualisieren: {} -> {}".format(formfile, formpath))
-                        shutil.copy2(formfile, formpath)
-                except BaseException as err:
-                    fehlermeldung(u'Fehler beim Aktualisieren der Eingabeformulare\n',
-                                  u"{e}".format(e=repr(err)))
+                    # for formfile in glob.iglob(os.path.join(self.templatepath, u'*.ui')):
+                        # logger.debug(u"Eingabeformular aktualisieren: {} -> {}".format(formfile, formpath))
+                        # shutil.copy2(formfile, formpath)
+                # except BaseException as err:
+                    # fehlermeldung(u'Fehler beim Aktualisieren der Eingabeformulare\n',
+                                  # u"{e}".format(e=repr(err)))
 
             # ------------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 5, 7]):

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>522</width>
-    <height>455</height>
+    <height>443</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>140</x>
-     <y>400</y>
+     <y>390</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -43,7 +43,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>180</y>
+     <y>170</y>
      <width>481</width>
      <height>91</height>
     </rect>
@@ -133,7 +133,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>300</y>
+     <y>290</y>
      <width>481</width>
      <height>81</height>
     </rect>
@@ -225,7 +225,7 @@
      <x>20</x>
      <y>20</y>
      <width>481</width>
-     <height>131</height>
+     <height>121</height>
     </rect>
    </property>
    <property name="font">
@@ -246,22 +246,6 @@
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <widget class="QPushButton" name="pb_selectKBS">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>90</y>
-      <width>30</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank auswählen und optional erstellen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>...</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pb_selectDynaFile">
     <property name="geometry">
      <rect>
@@ -281,9 +265,9 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>90</y>
-      <width>191</width>
+      <x>0</x>
+      <y>80</y>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -295,7 +279,7 @@
      </font>
     </property>
     <property name="text">
-     <string>EPSG-Code des Projektionssystems:</string>
+     <string>Projektionssystem:</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -323,22 +307,6 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_epsg">
-    <property name="geometry">
-     <rect>
-      <x>350</x>
-      <y>90</y>
-      <width>70</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
@@ -362,8 +330,25 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
+   <widget class="QgsProjectionSelectionWidget" name="qsw_epsg">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>80</y>
+      <width>341</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsProjectionSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsprojectionselectionwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

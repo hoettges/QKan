@@ -1,41 +1,12 @@
 # -*- coding: utf-8 -*-
+
 import os
-import logging
-import tempfile
-from datetime import datetime as dt
+
+# from qkan.tools.logfile import logfile
 
 # noinspection PyPep8Naming
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu
-
-# Aufsetzen des Logging-Systems
-logger = logging.getLogger('QKan.init')
-
-# Warnlevel des Logging-Systems setzten
-logger.setLevel(logging.DEBUG)
-
-if not logger.handlers:
-    formatter = logging.Formatter('%(asctime)s %(name)s-%(levelname)s: %(message)s')
-
-    # Consolen-Handler
-    ch = logging.StreamHandler()
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-    # File-Handler
-    dnam = dt.today().strftime("%Y%m%d")
-    fnam = os.path.join(tempfile.gettempdir(), 'QKan{}.log'.format(dnam))
-    fh = logging.FileHandler(fnam)
-    fh.setFormatter(formatter)
-    logger.addHandler(fh)
-
-    # Warnlever der Logging-Protokolle setzen
-    ch.setLevel(logging.ERROR)
-    fh.setLevel(logging.DEBUG)
-
-    logger.info('Initialisierung logger erfolgreich!')
-else:
-    logger.info('Logger ist schon initialisiert')
 
 
 def classFactory(iface):  # pylint: disable=invalid-name
@@ -52,6 +23,9 @@ class Dummy:
         from .exportdyna import application as exportdyna
         from .linkflaechen import application as linkflaechen
         from .tools import application as tools
+
+        # logger = logfile('QKan')
+
         self.plugins = [
             createunbeffl.CreateUnbefFl(iface),
             importdyna.ImportFromDyna(iface),

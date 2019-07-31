@@ -20,6 +20,7 @@
 """
 
 import logging
+
 import math
 import os
 
@@ -54,7 +55,7 @@ def formf(zahl, anz):
     elif zahl == 0:
         return ' ' * (anz - 1) + '0'
     elif zahl < 0:
-        logger.error(u'Fehler in k_qkkp.formf (2): Zahl ist negativ', u'zahl = {}\nanz = {}\n'.format(zahl, anz))
+        logger.error(u'Fehler in k_qkkp.formf (2): Zahl ist negativ\nzahl = {}\nanz = {}\n'.format(zahl, anz))
         return None
 
     # try:
@@ -74,7 +75,7 @@ def formf(zahl, anz):
         erg = fmt.format(zahl)[1:]
     else:
         if int(math.log10(round(zahl, 0))) + 1 > anz:
-            logger.error(u'Fehler in k_qkkp.formf (3): Zahl ist zu groß!', u'zahl = {}\nanz = {}\n'.format(zahl, anz))
+            logger.error(u'Fehler in k_qkkp.formf (3): Zahl ist zu groß!\nzahl = {}\nanz = {}\n'.format(zahl, anz))
             return None
         # Korrektur von nv, für den Fall, dass zahl nahe an nächster 10-Potenz
         nv = int(math.log10(round(zahl, max(0, anz - 2 - nv))))
@@ -90,7 +91,7 @@ def formf(zahl, anz):
             # Platz für mindestens eine Nachkommastelle
             fmt = '{0:' + '{:d}.{:d}f'.format(anz, anz - 2 - nv) + '}'
         else:
-            logger.error(u'Fehler in k_qkkp.formf (2):', u'zahl = {}\nanz = {}\n'.format(zahl, anz))
+            logger.error(u'Fehler in k_qkkp.formf (2):\nzahl = {}\nanz = {}\n'.format(zahl, anz))
             return None
         erg = fmt.format(zahl)
 
@@ -468,7 +469,7 @@ def write16(dbQK, df, ausw_and, auswahl):
     if auswahl == '':
         ausw_tab = ''
     else:
-        ausw_tab = 'schaechte'
+        ausw_tab = 's.'
 
     # Zusammenstellen der Daten. 
     sql = u"""
@@ -498,7 +499,6 @@ def write16(dbQK, df, ausw_and, auswahl):
         ON h.pk = d.pk
         INNER JOIN schaechte AS s
         ON s.schnam = h.schunten)
-
     SELECT s.schnam, 
         han.kanalnummer AS an_kanalnummer, han.haltungsnummer AS an_haltungsnummer, 
         hab.kanalnummer AS ab_kanalnummer, hab.haltungsnummer AS ab_haltungsnummer, 
@@ -526,6 +526,7 @@ def write16(dbQK, df, ausw_and, auswahl):
     knotennr = 0  # Knotennummer
     zeilan = ''
     zeilab = ''
+    zeilkn = None
 
     for i, attr in enumerate(dbQK.fetchall()):
 
@@ -584,7 +585,8 @@ def write16(dbQK, df, ausw_and, auswahl):
 
     else:
         # Letzter Typ16-Datensatz kann erst jetzt geschrieben werden. 
-        df.write('{0:15s}{1:}{2:}\n'.format(zeilkn, zeilan, zeilab))
+        if zeilkn is not None:
+            df.write('{0:15s}{1:}{2:}\n'.format(zeilkn, zeilan, zeilab))
 
     return True
 
@@ -611,7 +613,7 @@ def write41(dbQK, df, ausw_and, auswahl):
     if auswahl == '':
         ausw_tab = ''
     else:
-        ausw_tab = 'schaechte'
+        ausw_tab = 's.'
 
     # Zusammenstellen der Daten. 
     sql = u"""
@@ -683,7 +685,8 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
     :check_export:          Liste von Export-Optionen
     :type check_export:     Dictionary
 
-    :returns: void
+    :returns:               Erfolgsstatus
+    :type returns:          Boolean
     """
 
     # Statusmeldung in der Anzeige
@@ -704,7 +707,14 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                       u'Der logische Cache konnte nicht aktualisiert werden.')
 
     # DYNA-Vorlagedatei lesen. Dies geschieht zu Beginn, damit Zieldatei selbst Vorlage sein kann!
-    dynatemplate = open(template_dyna, encoding='windows-1252').readlines()
+    try:
+        dynatemplate = open(template_dyna, encoding='windows-1252').readlines()
+    except:
+        fehlermeldung(u'Fehler (32) in QKan_ExportDYNA {}'.format(err),
+                      'Die Vorlage-DYNA-Datei ist nicht vorhanden: {}'.format(repr(template_dyna)))
+        return False
+        del dbQK
+
 
     # DYNA-Datei löschen, falls schon vorhanden
     if os.path.exists(dynafile):
@@ -712,7 +722,8 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
             os.remove(dynafile)
         except BaseException as err:
             fehlermeldung(u'Fehler (33) in QKan_ExportDYNA {}'.format(err),
-                          'Die DYNA-Datei ist schon vorhanden und kann nicht ersetzt werden: {}'.format(repr(err)))
+                          'Die DYNA-Datei ist schon vorhanden und kann nicht ersetzt werden: {}'.format(repr(dynafile)))
+            del dbQK
             return False
 
     fortschritt(u"DYNA-Datei aus Vorlage kopiert...", 0.01)
@@ -733,10 +744,6 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
     anzdata += float(dbQK.fetchone()[0]) * 2
     fortschritt(u"Anzahl Flächen: {}".format(anzdata))
 
-    # --------------------------------------------------------------------------------------------
-    # Haltungsnummerierung, falls aktiviert
-    # Diese ist nur für das gesamte Entwässerungsnetz möglich, damit keine Redundanzen entstehen.
-
     # Nur Daten fuer ausgewaehlte Teilgebiete
     if len(liste_teilgebiete) != 0:
         ausw_where = u""" WHERE """
@@ -746,6 +753,10 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
         ausw_where = u""
         ausw_and = u""
         auswahl = u""
+
+    # --------------------------------------------------------------------------------------------
+    # Haltungsnummerierung, falls aktiviert
+    # Diese ist nur für das gesamte Entwässerungsnetz möglich, damit keine Redundanzen entstehen.
 
     if autonum_dyna:
 
@@ -1204,10 +1215,10 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 # df.write(z)
                 continue
 
-        dynatemplate.close()
     del dbQK
 
     fortschritt(u'Ende...', 1)
     progress_bar.setValue(100)
     status_message.setText(u"Datenexport abgeschlossen.")
     status_message.setLevel(Qgis.Success)
+    return True

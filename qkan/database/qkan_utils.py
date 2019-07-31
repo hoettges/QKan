@@ -2,7 +2,7 @@
 
 import logging
 
-from qgis.core import QgsMessageLog, Qgis
+from qgis.core import QgsProject, QgsMessageLog, Qgis
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
@@ -43,6 +43,56 @@ def fehlermeldung(title, text=u''):
 
 
 # Allgemeine Funktionen
+
+def getEditWidgetConfigFromQgsTemplate(qgsxml, layername):
+    '''Liefert Parameter für QgsEditorWidgetSetup aus Qgs-Datei für alle Attribute in einem Layer
+
+    :qgsxml:            XML-Struktur der Projektdatei
+    :type qgsTemplate:  xml.etree.ElementTree
+
+    :layername:         Name des Layers
+    :type:              String
+
+    :returns:           Dictionary of attributnames: editWidgetType, Dictionary of Options
+    :type:              dict of string: tuple of String, dict of Strings
+    '''
+
+    lntext = u"projectlayers/maplayer[layername='{ln}']".format(ln=layername)
+    node_maplayer = qgsxml.find(lntext)
+    fieldnodes = node_maplayer.findall('./fieldConfiguration/field')
+
+    dictOfEditWidgets = {}                                                  # return: dictOfEditWidgets: init
+    for field in fieldnodes:
+        attr = field.attrib
+        logger.debug('editWidget: {}'.format(attr))
+        fieldname = attr['name']                                            # return: fieldname
+        ewNode = field.find('./editWidget')
+        attr = ewNode.attrib 
+        editWidgetType = attr['type']                                       # return: editWidgetType
+        if editWidgetType in ('TextEdit', 'ValueRelation'):
+            optionNodes = ewNode.findall('./config/Option/Option')
+            editWidgetOptions = {}                                          # return: editWidgetOptions: init
+            for optionNode in optionNodes:
+                attr = optionNode.attrib
+                optionName = attr['name']
+                optionValue = attr['value']
+                logger.debug("option: '{key}': {attr}".format(key=optionName, attr=optionValue))    # print
+                editWidgetOptions[optionName]=optionValue                    # return: editWidgetOptions
+            dictOfEditWidgets[fieldname] = (editWidgetType, editWidgetOptions)
+            logger.debug('dictOfEditWidgets: {}'.format(dictOfEditWidgets))
+        elif editWidgetType in ('ValueMap'):
+            optionNodes = ewNode.findall('./config/Option/Option/Option')
+            editWidgetOptions = {}                                          # return: editWidgetOptions: init
+            for optionNode in optionNodes:
+                attr = optionNode.attrib
+                optionName = attr['name']
+                optionValue = attr['value']
+                logger.debug("option: '{key}': {attr}".format(key=optionName, attr=optionValue))    # print
+                editWidgetOptions[optionName]=optionValue                    # return: editWidgetOptions
+            dictOfEditWidgets[fieldname] = (editWidgetType, {'map': editWidgetOptions})
+            logger.debug('dictOfEditWidgets: {}'.format(dictOfEditWidgets))
+    return dictOfEditWidgets
+
 
 def listQkanLayers(qgsTemplate = None):
     '''Dictionary mit den Namen aller QKan-Layer und einer Liste mit: 
@@ -140,32 +190,53 @@ def get_qkanlayerAttributes(source):
 
 def get_database_QKan(silent=False):
     """Ermittlung der aktuellen SpatiaLite-Datenbank aus den geladenen Layern"""
+
+    project = QgsProject.instance()
+
     database_QKan = u''
     epsg = u''
-    layers = [x.layer() for x in iface.layerTreeCanvasBridge().rootGroup().findLayers()]
-    # logger.debug(u'Layerliste erstellt')
-    logger.error(u'Keine Layer vorhanden...')
-    if len(layers) == 0 and not silent:
-        meldung(u"Fehler: ", u"Kein QKan-Projekt geladen!")
 
-        return False, False
+    layerobjects = project.mapLayersByName('Schächte')
+    if len(layerobjects) > 0:
+        lay = layerobjects[0]
+        dbname_s, table_s, geom_s, sql_s = get_qkanlayerAttributes(lay.source())
+        epsg_s = str(int(lay.crs().postgisSrid()))
+    else:
+        dbname_s = None
 
-    # Über Layer iterieren
-    for lay in layers:
-        dbname, table, geom, sql = get_qkanlayerAttributes(lay.source())
-        if ((table == 'flaechen' and geom == 'geom') or
-                (table == 'schaechte' and geom == 'geom') or
-                (table == 'haltungen' and geom == 'geom')):
-            # nur, wenn es sich um eine der drei QKan-Tabellen 'haltungen', 'schaechte' oder 'flaechen' handelt...
+    layerobjects = project.mapLayersByName('Flächen')
+    if len(layerobjects) > 0:
+        lay = layerobjects[0]
+        dbname_f, table_f, geom_f, sql_f = get_qkanlayerAttributes(lay.source())
+        epsg_f = str(int(lay.crs().postgisSrid()))
+    else:
+        dbname_f = None
 
-            if database_QKan == '':
-                # Datenbank wurde noch nicht festgelegt
-                database_QKan = dbname
-                epsg = str(int(lay.crs().postgisSrid()))
-            elif database_QKan != dbname:
-                # Datenbank wurde bereits festgelegt, weicht aber für einen weiteren QKan-Layer ab...
-                logger.warning(u'Abweichende Datenbankanbindung gefunden: {}'.format(dbname))
-                return False, False  # Im Projekt sind mehrere Sqlite-Datenbanken eingebungen...
+    if dbname_s == dbname_f and dbname_s is not None:
+        database_QKan = dbname_s
+        epsg = epsg_s
+    elif dbname_s is None and dbname_f is None: 
+        if not silent:
+            fehlermeldung('Fehler in Layerliste:', 'Layer "Schächte und Flächen exisitieren nicht"')
+        return None, None
+    elif dbname_f is not None:
+        database_QKan = dbname_f
+        epsg = epsg_f
+        if not silent:
+            warnung('Fehler in Layerliste:', 'Layer "Schächte exisitiert nicht"')
+    elif dbname_s is not None:
+        database_QKan = dbname_s
+        epsg = epsg_s
+        if not silent:
+            warnung('Fehler in Layerliste:', 'Layer "Flächen exisitiert nicht"')
+    else:
+        if not silent:
+            fehlermeldung('Fehler in Layerliste:', 
+            '''Layer "Schächte" und "Flächen" sind mit abweichenden Datenbanken verknüpft:
+            Schächte: ({0:})
+            Flächen:  ({0:})'''.format(dbname_s, dbname_f))
+        return None, None
+
     return database_QKan, epsg
 
 

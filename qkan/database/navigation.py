@@ -23,8 +23,8 @@ class Navigator:
         self.__error_msg = ""
         self.db = DBConnection(dbname)
         if not self.db.connected:
-            main_logger.error(u"Fehler in navigation:\n",
-                              u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+            main_logger.error(("Fehler in navigation:\n" + 
+                              'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!').format(
                                   dbname))
             raise Exception()  # TODO: ???
         self.log = logging.getLogger("QKan.navigation.Navigator")
@@ -289,8 +289,8 @@ class Worker(QtCore.QRunnable):
         self.__nodes = nodes
         self.__db = DBConnection(dbname)
         if not self.__db.connected:
-            main_logger.error(u"Fehler in navigation:\n",
-                              u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
+            main_logger.error(("Fehler in navigation:\n" + 
+                              'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!').format(
                                   dbname))
             raise Exception()  # TODO: ???
         self.__parent = parent

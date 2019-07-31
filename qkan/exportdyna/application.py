@@ -327,7 +327,7 @@ class ExportToKP:
             # Nur wenn schon eine Projekt geladen oder eine QKan-Datenbank ausgewählt
             self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
             if not self.dbQK.connected:
-                logger.error(u"Fehler in exportdyna.application:\n",
+                fehlermeldung(u"Fehler in exportdyna.application:\n",
                              u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
                                  database_QKan))
                 return None
@@ -501,6 +501,37 @@ class ExportToKP:
             with open(self.configfil, 'w') as fileconfig:
                 # logger.debug(u"Config-Dictionary: {}".format(self.config))
                 fileconfig.write(json.dumps(self.config))
+
+            # Start der Verarbeitung
+            
+            # Modulaufruf in Logdatei schreiben
+            logger.info('''qkan-Modul:\n        exportKanaldaten(
+                iface, 
+                dynafile='{dynafile}', 
+                template_dyna='{template_dyna}', 
+                dbQK=qbQK, 
+                dynabef_choice='{dynabef_choice}', 
+                dynaprof_choice='{dynaprof_choice}',
+                liste_teilgebiete='{liste_teilgebiete}', 
+                profile_ergaenzen={profile_ergaenzen}, 
+                autonum_dyna={autonummerierung_dyna}, 
+                mit_verschneidung={mit_verschneidung}, 
+                fangradius={fangradius}, 
+                mindestflaeche={mindestflaeche}, 
+                max_loops={max_loops}, 
+                datenbanktyp='{datenbanktyp}')'''.format(
+                dynafile=dynafile, 
+                template_dyna=template_dyna, 
+                dynabef_choice=dynabef_choice, 
+                dynaprof_choice=dynaprof_choice, 
+                liste_teilgebiete=liste_teilgebiete, 
+                profile_ergaenzen=profile_ergaenzen, 
+                autonummerierung_dyna=autonummerierung_dyna, 
+                mit_verschneidung=mit_verschneidung, 
+                fangradius=fangradius, 
+                mindestflaeche=mindestflaeche, 
+                max_loops=max_loops, 
+                datenbanktyp = 'SpatiaLite'))
 
             exportKanaldaten(iface, dynafile, template_dyna, self.dbQK, dynabef_choice, dynaprof_choice,
                              liste_teilgebiete, profile_ergaenzen, autonummerierung_dyna, mit_verschneidung,

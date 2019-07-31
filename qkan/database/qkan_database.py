@@ -22,8 +22,8 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'Oktober 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__dbVersion__ = '2.5.9'  # Version der QKan-Datenbank
-__qgsVersion__ = '3.5.24'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = '2.5.27'  # Version der QKan-Datenbank
+__qgsVersion__ = '3.0.0'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -118,7 +118,7 @@ def qgsActualVersion(update=True, warning=False):
             if versionolder(actQgsVersionLis, [2, 5, 12]):
                 wlayers = [la for la in layers if la.name() == 'Abflussparameter']
                 if len(wlayers) != 1:
-                    fehlermeldung(u"Fehler in Layerliste", u'Es gibt mehr als einen Layer "Abflussparameter"')
+                    logger.debug('Fehler in Layerliste: Es gibt mehr als einen Layer "Abflussparameter"')
                     layerList = [la.name() for la in layers]
                     logger.debug('layerList: {}'.format(layerList))
                     return False

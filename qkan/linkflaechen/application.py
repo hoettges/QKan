@@ -533,7 +533,7 @@ class LinkFl:
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if not self.dbQK.connected:
-            logger.error(u"Fehler in linkflaechen.application (1):\n",
+            fehlermeldung(u"Fehler in linkflaechen.application (1):\n",
                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
                              database_QKan))
             return None
@@ -767,7 +767,7 @@ class LinkFl:
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if not self.dbQK.connected:
-            logger.error(u"Fehler in linkflaechen.application (2):\n",
+            fehlermeldung(u"Fehler in linkflaechen.application (2):\n",
                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
                              database_QKan))
             return None
@@ -932,7 +932,7 @@ class LinkFl:
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if not self.dbQK.connected:
-            logger.error(u"Fehler in linkflaechen.application (3):\n",
+            fehlermeldung(u"Fehler in linkflaechen.application (3):\n",
                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
                              database_QKan))
             return None
@@ -1052,7 +1052,7 @@ class LinkFl:
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if not self.dbQK.connected:
-            logger.error(u"Fehler in linkflaechen.application (4):\n",
+            fehlermeldung(u"Fehler in linkflaechen.application (4):\n",
                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
                              database_QKan))
             return None
@@ -1106,7 +1106,7 @@ class LinkFl:
         self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
         if not self.dbQK.connected:
-            logger.error(u"Fehler in linkflaechen.application (5):\n",
+            fehlermeldung(u"Fehler in linkflaechen.application (5):\n",
                          u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
                              database_QKan))
             return None
