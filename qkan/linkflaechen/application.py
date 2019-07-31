@@ -69,7 +69,7 @@ class LinkFl:
         self.dlg_ul = UpdateLinksDialog()
         self.dlg_mg = ManagegroupsDialog()
 
-        logger.info(u'\n\nQKan_LinkFlaechen initialisiert...')
+        logger.info(u'QKan_LinkFlaechen initialisiert...')
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen

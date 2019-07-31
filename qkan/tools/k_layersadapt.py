@@ -27,13 +27,11 @@ __author__ = 'Joerg Hoettges'
 __date__ = 'September 2018'
 __copyright__ = '(C) 2018, Joerg Hoettges'
 
-# import logging
-from qkan.tools.logfile import logfile
+import logging
 
 import os
 
-from qgis.PyQt.QtCore import QFileInfo
-from qgis.core import (QgsProject, QgsCoordinateReferenceSystem, QgsVectorLayer, Qgis, 
+from qgis.core import (QgsProject, QgsCoordinateReferenceSystem, QgsVectorLayer, Qgis,
             QgsDataSourceUri, QgsEditorWidgetSetup)
 from qgis.utils import iface, pluginDirectory
 
@@ -42,8 +40,7 @@ from qkan.database.qkan_database import qgsVersion, qgsActualVersion
 from qkan.database.qkan_utils import (meldung, fehlermeldung, warnung, 
             get_qkanlayerAttributes, listQkanLayers, evalNodeTypes, getEditWidgetConfigFromQgsTemplate)
 
-# logger = logging.getLogger(u'QKan.tools.k_layersadapt')
-logger = logfile('QKan.tools.k_layersadapt')
+logger = logging.getLogger(u'QKan.tools.k_layersadapt')
 
 progress_bar = None
 

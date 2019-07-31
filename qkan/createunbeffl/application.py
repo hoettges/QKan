@@ -64,7 +64,7 @@ class CreateUnbefFl:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 12.06.2017)
 
-        logger.info(u'\n\nQKan_CreateUnbefFlaechen initialisiert...')
+        logger.info(u'QKan_CreateUnbefFlaechen initialisiert...')
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen
@@ -375,7 +375,7 @@ class CreateUnbefFl:
         self.dlg.show()
         # Run the dialog event loop
         result = self.dlg.exec_()
-        logger.debug('\n\nresult = {}'.format(repr(result)))
+        logger.debug('result = {}'.format(repr(result)))
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and

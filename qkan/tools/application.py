@@ -76,7 +76,7 @@ class QKanTools:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 12.06.2017)
 
-        logger.info(u'\n\nQKan_Tools initialisiert...')
+        logger.info(u'QKan_Tools initialisiert...')
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen

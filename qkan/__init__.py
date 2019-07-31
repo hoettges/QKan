@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import datetime
+import logging
 import os
+import tempfile
 from pathlib import Path
 
 from PyQt5.QtCore import QCoreApplication, QSettings, QTranslator
@@ -17,6 +20,25 @@ class Dummy:
 
     def __init__(self, iface):
         Dummy.instance = self
+
+        # Init logging
+        self.logger = logging.getLogger(u'QKan')
+        formatter = logging.Formatter(
+            fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+        file_handler = logging.FileHandler(
+            Path(tempfile.gettempdir())
+            / "QKan_{}.log".format(datetime.datetime.today().strftime("%Y-%m-%d"))
+        )
+        stream_handler = logging.StreamHandler()
+
+        file_handler.setFormatter(formatter)
+        stream_handler.setFormatter(stream_handler)
+
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.addHandler(file_handler)
+        self.logger.addHandler(stream_handler)
 
         # QGIS
         self.iface = iface
@@ -39,8 +61,6 @@ class Dummy:
         from .exportdyna import application as exportdyna
         from .linkflaechen import application as linkflaechen
         from .tools import application as tools
-
-        # logger = logfile('QKan')
 
         self.plugins = [
             createunbeffl.CreateUnbefFl(iface),
@@ -87,6 +107,11 @@ class Dummy:
 
     def unload(self):
         from qgis.utils import unloadPlugin
+
+        # Shutdown logger
+        for handler in self.logger.handlers[:]:
+            handler.close()
+            self.logger.removeHandler(handler)
 
         # Unload all other instances
         for instance in self.instances:

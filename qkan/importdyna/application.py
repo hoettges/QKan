@@ -71,7 +71,7 @@ class ImportFromDyna:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 09.10.2016)
 
-        logger.info(u'\n\nQKan_ImportDyna initialisiert...')
+        logger.info(u'QKan_ImportDyna initialisiert...')
 
         # --------------------------------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen

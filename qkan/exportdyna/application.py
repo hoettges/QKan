@@ -24,15 +24,14 @@ import logging
 import os.path
 import site
 
-from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 from qgis.core import QgsProject
-from qgis.gui import QgsMessageBar
 from qgis.utils import iface, pluginDirectory
 
 from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung
+from qkan.database.qkan_utils import fehlermeldung, get_database_QKan, get_editable_layers
 # noinspection PyUnresolvedReferences
 from . import resources
 # Initialize Qt resources from file resources.py
@@ -71,7 +70,7 @@ class ExportToKP:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 08.02.2017)
 
-        logger.info('\n\nQKan_ExportKP initialisiert...')
+        logger.info('QKan_ExportKP initialisiert...')
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen
