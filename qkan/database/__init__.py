@@ -30,7 +30,4 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    #
-    # from .perv_sum import PervSum
-    # return PervSum(iface)
     pass

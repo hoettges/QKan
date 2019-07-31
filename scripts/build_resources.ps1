@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-Compiles all known resources.qrc to resources.py using QGIS's pyrcc4.
+Compiles all known resources.qrc to resources.py using QGIS's pyrcc.
 #>
 
 $path = ""

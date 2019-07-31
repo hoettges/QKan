@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-
 import os
+from pathlib import Path
 
-# from qkan.tools.logfile import logfile
-
-# noinspection PyPep8Naming
+from PyQt5.QtCore import QCoreApplication, QSettings, QTranslator
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu
 
@@ -18,6 +16,24 @@ class Dummy:
     instance = None
 
     def __init__(self, iface):
+        Dummy.instance = self
+
+        # QGIS
+        self.iface = iface
+        self.plugin_dir = os.path.dirname(__file__)
+        self.actions = []
+
+        # Plugins
+        self.instances = []
+
+        # Translations
+        self.translator = QTranslator()
+        locale = (QSettings().value("locale/userLocale") or "en")[0:2]
+        for _file in (Path(__file__).parent / "i18n").iterdir():
+            if _file.name.endswith("_{}.qm".format(locale)):
+                self.translator.load(str(_file))
+        QCoreApplication.installTranslator(self.translator)
+
         from .createunbeffl import application as createunbeffl
         from .importdyna import application as importdyna
         from .exportdyna import application as exportdyna
@@ -31,33 +47,24 @@ class Dummy:
             importdyna.ImportFromDyna(iface),
             exportdyna.ExportToKP(iface),
             linkflaechen.LinkFl(iface),
-            tools.QKanTools(iface)
+            tools.QKanTools(iface),
         ]
-        Dummy.instance = self
-
-        # Plugins
-        self.instances = []
-
-        # QGIS
-        self.iface = iface
-        self.plugin_dir = os.path.dirname(__file__)
-        self.actions = []
 
         actions = self.iface.mainWindow().menuBar().actions()
         self.menu = None
         for menu in actions:
-            if menu.text() == 'QKan':
+            if menu.text() == "QKan":
                 self.menu = menu.menu()
                 self.menu_action = menu
                 break
 
-        self.toolbar = self.iface.addToolBar('QKan')
-        self.toolbar.setObjectName('QKan')
+        self.toolbar = self.iface.addToolBar("QKan")
+        self.toolbar.setObjectName("QKan")
 
     def initGui(self):
         # Create and insert QKan menu after the 3rd menu
         if self.menu is None:
-            self.menu = QMenu('QKan', self.iface.mainWindow().menuBar())
+            self.menu = QMenu("QKan", self.iface.mainWindow().menuBar())
 
             actions = self.iface.mainWindow().menuBar().actions()
             prepend = actions[3]
@@ -77,11 +84,12 @@ class Dummy:
 
     def unload(self):
         from qgis.utils import unloadPlugin
+
         # Unload all other instances
         for instance in self.instances:
-            print('Unloading ', instance.name)
+            print("Unloading ", instance.name)
             if not unloadPlugin(instance.name):
-                print('Failed to unload plugin!')
+                print("Failed to unload plugin!")
 
         # Remove entries from own menu
         for action in self.menu.actions():
@@ -96,6 +104,9 @@ class Dummy:
 
         # Remove menu
         self.iface.mainWindow().menuBar().removeAction(self.menu_action)
+
+        # Unload translator
+        QCoreApplication.removeTranslator(self.translator)
 
         # Call unload on all loaded plugins
         for plugin in self.plugins:
@@ -112,8 +123,18 @@ class Dummy:
         for plugin in instance.plugins:
             self.plugins.remove(plugin)
 
-    def add_action(self, icon_path, text, callback, enabled_flag=True, add_to_menu=True, add_to_toolbar=True,
-                   status_tip=None, whats_this=None, parent=None):
+    def add_action(
+        self,
+        icon_path,
+        text,
+        callback,
+        enabled_flag=True,
+        add_to_menu=True,
+        add_to_toolbar=True,
+        status_tip=None,
+        whats_this=None,
+        parent=None,
+    ):
         """Add a toolbar icon to the toolbar.
 
         :param icon_path: Path to the icon for this action. Can be a resource

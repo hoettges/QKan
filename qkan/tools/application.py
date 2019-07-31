@@ -66,19 +66,6 @@ class QKanTools:
         self.iface = iface
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
-        # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
-        locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'Flaechenzuordnungen_{}.qm'.format(locale))
-
-        if os.path.exists(locale_path):
-            self.translator = QTranslator()
-            self.translator.load(locale_path)
-
-            if qVersion() > '4.3.3':
-                QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
         self.dlgpr = QgsAdaptDialog()
@@ -166,7 +153,7 @@ class QKanTools:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('Flaechenzuordnungen', message)
+        return QCoreApplication.translate('QKanTools', message)
 
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
@@ -188,7 +175,7 @@ class QKanTools:
         icon_qkanoptions_path = ':/plugins/qkan/tools/res/icon_qkanoptions.png'
         Dummy.instance.add_action(
             icon_qkanoptions_path,
-            text=self.tr(u'Allgemeine Optionen'),
+            text=self.tr('Allgemeine Optionen'),
             callback=self.run_qkanoptions,
             parent=self.iface.mainWindow())
 
