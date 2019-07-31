@@ -23,23 +23,21 @@
 
 """
 
+
 __author__ = 'Joerg Hoettges'
 __date__ = 'September 2016'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-
 
 import logging
 import os
 import xml.etree.ElementTree as ET
 
-from qgis.PyQt.QtCore import QFileInfo
-from qgis.core import (QgsMessageLog, QgsProject,
-                       QgsCoordinateReferenceSystem, Qgis)
-from qgis.gui import QgsMessageBar
-from qgis.utils import iface, pluginDirectory
+from qgis.core import (Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject)
+from qgis.utils import pluginDirectory
 
+from qkan import Dummy
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, evalNodeTypes
+from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung
 
 logger = logging.getLogger('QKan.importdyna.import_from_dyna')
 
@@ -178,7 +176,7 @@ class rahmen:
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'SpatiaLite'):
+def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLite'):
 
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -1046,8 +1044,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp = 'Spatia
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
 
-    iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage("Information", "Datenimport ist fertig!", level=Qgis.Info)
+    Dummy.instance.iface.mainWindow().statusBar().clearMessage()
+    Dummy.instance.iface.messageBar().pushMessage("Information", "Datenimport ist fertig!", level=Qgis.Info)
     QgsMessageLog.logMessage(message="\nFertig: Datenimport erfolgreich!", level=Qgis.Info)
 
     # Importiertes Projekt laden

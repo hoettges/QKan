@@ -67,8 +67,11 @@ class Dummy:
             self.menu = QMenu("QKan", self.iface.mainWindow().menuBar())
 
             actions = self.iface.mainWindow().menuBar().actions()
-            prepend = actions[3]
-            self.menu_action = self.iface.mainWindow().menuBar().insertMenu(prepend, self.menu)
+            prepend = actions[3] if len(actions) > 3 else None
+
+            self.menu_action = (
+                self.iface.mainWindow().menuBar().insertMenu(prepend, self.menu)
+            )
 
         # Calls initGui on all known QKan plugins
         for plugin in self.plugins:

@@ -19,6 +19,7 @@
   (at your option) any later version.
 
 """
+from qkan import Dummy
 
 __author__ = 'Joerg Hoettges'
 __date__ = 'September 2016'
@@ -32,7 +33,7 @@ import shutil
 
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis
-from qgis.utils import iface, pluginDirectory, spatialite_connect
+from qgis.utils import pluginDirectory, spatialite_connect
 
 from .qkan_database import createdbtables, versionolder, dbVersion
 from .qkan_utils import fehlermeldung, meldung
@@ -140,7 +141,7 @@ class DBConnection:
                         self.connected = False  # Verbindungsstatus zur Kontrolle
 
             else:
-                iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank wird erstellt. Bitte waren...",
+                Dummy.instance.iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank wird erstellt. Bitte waren...",
                                                level=Qgis.Info)
 
                 datenbank_QKan_Template = os.path.join(self.templatepath, u"qkan.sqlite")
@@ -158,7 +159,7 @@ class DBConnection:
                 # sql = u'SELECT InitSpatialMetadata()'
                 # self.cursl.execute(sql)
 
-                iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank ist erstellt!",
+                Dummy.instance.iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank ist erstellt!",
                                                level=Qgis.Info)
                 if not createdbtables(self.consl, self.cursl, self.actversion, self.epsg):
                     fehlermeldung(u"Fehler",
@@ -343,7 +344,7 @@ class DBConnection:
             self.reload = False
 
             global progress_bar
-            progress_bar = QProgressBar(iface.messageBar())
+            progress_bar = QProgressBar(Dummy.instance.iface.messageBar())
             progress_bar.setRange(0, 100)
             progress_bar.setValue(0)
 
