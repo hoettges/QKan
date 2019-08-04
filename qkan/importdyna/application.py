@@ -27,10 +27,9 @@ import site
 from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import QgsProject, QgsCoordinateReferenceSystem
-from qgis.gui import QgsProjectionSelectionDialog
 
 # from qgis.utils import iface
-from qkan import Dummy
+from qkan import QKan
 # Initialize Qt resources from file resources.py
 # noinspection PyUnresolvedReferences
 from . import resources
@@ -75,53 +74,30 @@ class ImportFromDyna:
 
         # --------------------------------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen
-        wordir = os.path.join(site.getuserbase(), u'qkan')
+        # wordir = os.path.join(site.getuserbase(), u'qkan')
 
-        if not os.path.isdir(wordir):
-            os.makedirs(wordir)
+        # if not os.path.isdir(wordir):
+            # os.makedirs(wordir)
 
         # --------------------------------------------------------------------------------------------------
         # Konfigurationsdatei qkan.json lesen
         #
 
-        self.configfil = os.path.join(wordir, u'qkan.json')
-        if os.path.exists(self.configfil):
-            with open(self.configfil, 'r') as fileconfig:
-                self.config = json.loads(fileconfig.read())
-        else:
-            self.config = {'epsg': '25832', 'database_QKan': '', 'dynafile': '', 'projectfile': ''}
-            with open(self.configfil, 'w') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+        # self.configfil = os.path.join(wordir, u'qkan.json')
+        # if os.path.exists(self.configfil):
+            # with open(self.configfil, 'r') as fileconfig:
+                # self.config = json.loads(fileconfig.read())
+        # else:
+            # self.config = {'epsg': '25832', 'database_QKan': '', 'dynafile': '', 'projectfile': ''}
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(self.config))
 
         # Standard für Suchverzeichnis festlegen
         project = QgsProject.instance()
         self.default_dir = os.path.dirname(project.fileName())
 
-        if 'database_QKan' in self.config:
-            database_QKan = self.config['database_QKan']
-        else:
-            database_QKan = ''
-        self.dlg.tf_qkanDB.setText(database_QKan)
         self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
-
-        if 'dynafile' in self.config:
-            dynafile = self.config['dynafile']
-        else:
-            dynafile = ''
-        self.dlg.tf_dynaFile.setText(dynafile)
         self.dlg.pb_selectDynaFile.clicked.connect(self.select_dynaFile)
-
-        if 'epsg' in self.config:
-            self.epsg = self.config['epsg']
-        else:
-            self.epsg = '25832'
-        self.dlg.qsw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(int(self.epsg)))
-
-        if 'projectfile' in self.config:
-            projectfile = self.config['projectfile']
-        else:
-            projectfile = ''
-        self.dlg.tf_projectFile.setText(projectfile)
         self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
 
         # Ende Eigene Funktionen ---------------------------------------------------
@@ -145,7 +121,7 @@ class ImportFromDyna:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/qkan/importdyna/icon_ImportFromDyna.png'
-        Dummy.instance.add_action(
+        QKan.instance.add_action(
             icon_path,
             text=self.tr(u'Import aus DYNA-Datei (*.EIN)'),
             callback=self.run,
@@ -201,6 +177,33 @@ class ImportFromDyna:
 
     def run(self):
         """Run method that performs all the real work"""
+
+        if 'database_QKan' in QKan.config:
+            database_QKan = QKan.config['database_QKan']
+        else:
+            database_QKan = ''
+        self.dlg.tf_qkanDB.setText(database_QKan)
+
+        if 'dynafile' in QKan.config:
+            dynafile = QKan.config['dynafile']
+        else:
+            dynafile = ''
+        self.dlg.tf_dynaFile.setText(dynafile)
+
+        if 'epsg' in QKan.config:
+            self.epsg = QKan.config['epsg']
+        else:
+            self.epsg = '25832'
+        # logger.debug('QKan.importdyna.__init__: id(QKan): {0:}\n\t\tepsg: {1:}'.format(id(QKan), self.epsg))
+        self.dlg.qsw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(int(self.epsg)))
+
+        if 'projectfile' in QKan.config:
+            projectfile = QKan.config['projectfile']
+        else:
+            projectfile = ''
+
+        self.dlg.tf_projectFile.setText(projectfile)
+
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
@@ -214,13 +217,16 @@ class ImportFromDyna:
             self.epsg = str(self.dlg.qsw_epsg.crs().postgisSrid())
 
             # Konfigurationsdaten schreiben
-            self.config['epsg'] = self.epsg
-            self.config['database_QKan'] = database_QKan
-            self.config['dynafile'] = dynafile
-            self.config['projectfile'] = projectfile
+            QKan.config['epsg'] = self.epsg
+            QKan.config['database_QKan'] = database_QKan
+            QKan.config['dynafile'] = dynafile
+            QKan.config['projectfile'] = projectfile
 
-            with open(self.configfil, 'w') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+            qkan = QKan(self.iface)
+            qkan.saveconfig()
+            # logger.debug('QKan.importdyna.run: id(QKan): {0:}\n\t\tepsg: {1:}'.format(id(QKan), self.epsg))
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(QKan.config))
 
             # Start der Verarbeitung
             

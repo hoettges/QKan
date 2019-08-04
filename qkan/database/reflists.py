@@ -5,7 +5,7 @@
 """
 
 # flaechen.abflusstyp
-from database.qkan_utils import fehlermeldung
+from .qkan_utils import fehlermeldung
 
 
 def abflusstypen(simprog):

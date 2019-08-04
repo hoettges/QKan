@@ -45,7 +45,7 @@ logger = logging.getLogger(u'QKan.tools.k_layersadapt')
 progress_bar = None
 
 
-def layersadapt(database_QKan, projectTemplate, qkanDBUpdate,
+def layersadapt(database_QKan, projectTemplate, dbIsUptodate, qkanDBUpdate,
                 anpassen_Datenbankanbindung, anpassen_Wertebeziehungen_in_Tabellen,
                 anpassen_Formulare,
                 anpassen_Projektionssystem, aktualisieren_Schachttypen, zoom_alles,
@@ -55,6 +55,12 @@ def layersadapt(database_QKan, projectTemplate, qkanDBUpdate,
 
     :database_QKan:                                 Ziel-Datenbank, auf die die Projektdatei angepasst werden soll
     :type database_QKan:                            String
+
+    :dbIsUptodate:                                  verweist das Projekt auf eine aktuelle Datenbank?
+    :type dbIsUptodate:                             Boolean
+
+    :qkanDBUpdate:                                  Datenbank aktualisieren
+    :type qkanDBUpdate:                             Boolean
 
     :projectTemplate:                               Vorlage-Projektdatei für die anzupassenden Layereigenschaften
     :type projectTemplate:                          String
@@ -100,15 +106,15 @@ def layersadapt(database_QKan, projectTemplate, qkanDBUpdate,
     # -----------------------------------------------------------------------------------------------------
     # Datenbankverbindungen
 
-    dbQK = DBConnection(dbname=database_QKan, qkanDBUpdate=qkanDBUpdate)  # Datenbankobjekt der QKan-Datenbank
     # qkanDBUpdate: mit Update
+    dbQK = DBConnection(dbname=database_QKan, qkanDBUpdate=qkanDBUpdate)  # Datenbankobjekt der QKan-Datenbank
 
     if not dbQK.connected:
         if not qkanDBUpdate:
             warnung('Versionsfehler', 'QKan-Datenbank ist nicht aktuell, aber die Anpassung ist deaktiviert. Abbruch.')
-            logger.debug(u'k_layersadapt: QKan-Datenbank ist nicht aktuell, aber die Anpassung ist deaktiviert. Abbruch')
+            # logger.debug(u'k_layersadapt: QKan-Datenbank ist nicht aktuell, aber die Anpassung ist deaktiviert. Abbruch')
         else:
-            logger.debug(u'k_layersadapt: QKan-Datenbank wurde aktualisiert, Neuladen des Projektes erforderlich')
+            # logger.debug(u'k_layersadapt: QKan-Datenbank wurde aktualisiert, Neuladen des Projektes erforderlich')
             meldung(u'Update der Datenbank erfolgreich!', u'Bitte aktualisieren Sie alle entsprechenden Projekte!')
         return False
 
@@ -229,7 +235,7 @@ def layersadapt(database_QKan, projectTemplate, qkanDBUpdate,
         if len(qgsLayers) > 1:
             fehlermeldung(u'DateifFehler!',
                           u'In der Vorlage-Projektdatei wurden mehrere Layer {} gefunden'.format(layername))
-            del dbQK
+            # del dbQK
             return False
         elif len(qgsLayers) == 0:
             layerNotQkanMeldung = True
@@ -308,7 +314,7 @@ def layersadapt(database_QKan, projectTemplate, qkanDBUpdate,
         evalNodeTypes(dbQK)  # in qkan.database.qkan_utils
 
     del qgsxml
-    del dbQK
+    # del dbQK
 
     project.setTitle(u'QKan Version {}'.format(qgsVersion()))
 

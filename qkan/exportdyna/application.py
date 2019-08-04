@@ -29,7 +29,7 @@ from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 from qgis.core import QgsProject
 from qgis.utils import iface, pluginDirectory
 
-from qkan import Dummy
+from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan, get_editable_layers
 # noinspection PyUnresolvedReferences
@@ -74,26 +74,26 @@ class ExportToKP:
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen
-        wordir = os.path.join(site.getuserbase(), 'qkan')
+        # wordir = os.path.join(site.getuserbase(), 'qkan')
 
-        if not os.path.isdir(wordir):
-            os.makedirs(wordir)
+        # if not os.path.isdir(wordir):
+            # os.makedirs(wordir)
 
         # --------------------------------------------------------------------------
         # Konfigurationsdatei qkan.json lesen
         #
 
-        self.configfil = os.path.join(wordir, 'qkan.json')
-        if os.path.exists(self.configfil):
-            with open(self.configfil, 'r') as fileconfig:
-                self.config = json.loads(fileconfig.read())
-        else:
-            self.config['dynafile'] = ''
-            # Vorlagedatenbank nur für den Fall, dass der Anwender keine eigene Vorlage erstellen will
-            self.config['template_dyna'] = os.path.join(os.path.dirname(__file__), "templates", "dyna.ein")
-            self.config['database_QKan'] = ''
-            with open(self.configfil, 'w') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+        # self.configfil = os.path.join(wordir, 'qkan.json')
+        # if os.path.exists(self.configfil):
+            # with open(self.configfil, 'r') as fileconfig:
+                # self.config = json.loads(fileconfig.read())
+        # else:
+            # self.config['dynafile'] = ''
+            # # Vorlagedatenbank nur für den Fall, dass der Anwender keine eigene Vorlage erstellen will
+            # self.config['template_dyna'] = os.path.join(os.path.dirname(__file__), "templates", "dyna.ein")
+            # self.config['database_QKan'] = ''
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(self.config))
 
         # Standard für Suchverzeichnis festlegen
         project = QgsProject.instance()
@@ -129,7 +129,7 @@ class ExportToKP:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/qkan/exportdyna/res/icon_qk2kp.png'
-        Dummy.instance.add_action(icon_path,
+        QKan.instance.add_action(icon_path,
                                   text=self.tr('Export in DYNA-Datei...'),
                                   callback=self.run,
                                   parent=self.iface.mainWindow())
@@ -276,20 +276,20 @@ class ExportToKP:
                                            level=Qgis.Critical)
             return False
 
-        if 'dynafile' in self.config:
-            dynafile = self.config['dynafile']
+        if 'dynafile' in QKan.config:
+            dynafile = QKan.config['dynafile']
         else:
             dynafile = ''
         self.dlg.tf_KP_dest.setText(dynafile)
 
-        if 'template_dyna' in self.config:
-            template_dyna = self.config['template_dyna']
+        if 'template_dyna' in QKan.config:
+            template_dyna = QKan.config['template_dyna']
         else:
             template_dyna = ''
         self.dlg.tf_KP_template.setText(template_dyna)
 
-        if 'datenbanktyp' in self.config:
-            datenbanktyp = self.config['datenbanktyp']
+        if 'datenbanktyp' in QKan.config:
+            datenbanktyp = QKan.config['datenbanktyp']
         else:
             datenbanktyp = 'spatialite'
             pass  # Es gibt noch keine Wahlmöglichkeit
@@ -350,8 +350,8 @@ class ExportToKP:
 
             # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
             liste_teilgebiete = []
-            if 'liste_teilgebiete' in self.config:
-                liste_teilgebiete = self.config['liste_teilgebiete']
+            if 'liste_teilgebiete' in QKan.config:
+                liste_teilgebiete = QKan.config['liste_teilgebiete']
 
             # Abfragen der Tabelle teilgebiete nach Teilgebieten
             sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -376,48 +376,48 @@ class ExportToKP:
 
         # Autokorrektur
 
-        if 'profile_ergaenzen' in self.config:
-            profile_ergaenzen = self.config['profile_ergaenzen']
+        if 'profile_ergaenzen' in QKan.config:
+            profile_ergaenzen = QKan.config['profile_ergaenzen']
         else:
             profile_ergaenzen = True
         self.dlg.cb_profile_ergaenzen.setChecked(profile_ergaenzen)
 
-        if 'autonummerierung_dyna' in self.config:
-            autonummerierung_dyna = self.config['autonummerierung_dyna']
+        if 'autonummerierung_dyna' in QKan.config:
+            autonummerierung_dyna = QKan.config['autonummerierung_dyna']
         else:
             autonummerierung_dyna = False
         self.dlg.cb_autonummerierung_dyna.setChecked(autonummerierung_dyna)
 
         # Festlegung des Fangradius
         # Kann über Menü "Optionen" eingegeben werden
-        if 'fangradius' in self.config:
-            fangradius = self.config['fangradius']
+        if 'fangradius' in QKan.config:
+            fangradius = QKan.config['fangradius']
         else:
             fangradius = u'0.1'
 
         # Haltungsflächen (tezg) berücksichtigen
-        if 'mit_verschneidung' in self.config:
-            mit_verschneidung = self.config['mit_verschneidung']
+        if 'mit_verschneidung' in QKan.config:
+            mit_verschneidung = QKan.config['mit_verschneidung']
         else:
             mit_verschneidung = True
         self.dlg.cb_regardTezg.setChecked(mit_verschneidung)
 
         # Mindestflächengröße
         # Kann über Menü "Optionen" eingegeben werden
-        if 'mindestflaeche' in self.config:
-            mindestflaeche = self.config['mindestflaeche']
+        if 'mindestflaeche' in QKan.config:
+            mindestflaeche = QKan.config['mindestflaeche']
         else:
             mindestflaeche = u'0.5'
 
         # Maximalzahl Schleifendurchläufe
-        if 'max_loops' in self.config:
-            max_loops = self.config['max_loops']
+        if 'max_loops' in QKan.config:
+            max_loops = QKan.config['max_loops']
         else:
             max_loops = 1000
 
         # Optionen zur Berechnung der befestigten Flächen
-        if 'dynabef_choice' in self.config:
-            dynabef_choice = self.config['dynabef_choice']
+        if 'dynabef_choice' in QKan.config:
+            dynabef_choice = QKan.config['dynabef_choice']
         else:
             dynabef_choice = u'flaechen'
 
@@ -427,8 +427,8 @@ class ExportToKP:
             self.dlg.rb_tezg.setChecked(True)
 
         # Optionen zur Zuordnung des Profilschlüssels
-        if 'dynaprof_choice' in self.config:
-            dynaprof_choice = self.config['dynaprof_choice']
+        if 'dynaprof_choice' in QKan.config:
+            dynaprof_choice = QKan.config['dynaprof_choice']
         else:
             dynaprof_choice = u'profilname'
 
@@ -471,22 +471,24 @@ class ExportToKP:
                               u"Fehlerhafte Option: \ndynaprof_choice = {}".format(repr(dynaprof_choice)))
 
             # Konfigurationsdaten schreiben
-            self.config['dynafile'] = dynafile
-            self.config['template_dyna'] = template_dyna
-            self.config['database_QKan'] = database_QKan
-            self.config['liste_teilgebiete'] = liste_teilgebiete
-            self.config['profile_ergaenzen'] = profile_ergaenzen
-            self.config['autonummerierung_dyna'] = autonummerierung_dyna
-            self.config['fangradius'] = fangradius
-            self.config['mindestflaeche'] = mindestflaeche
-            self.config['mit_verschneidung'] = mit_verschneidung
-            self.config['max_loops'] = max_loops
-            self.config['dynabef_choice'] = dynabef_choice
-            self.config['dynaprof_choice'] = dynaprof_choice
+            QKan.config['dynafile'] = dynafile
+            QKan.config['template_dyna'] = template_dyna
+            QKan.config['database_QKan'] = database_QKan
+            QKan.config['liste_teilgebiete'] = liste_teilgebiete
+            QKan.config['profile_ergaenzen'] = profile_ergaenzen
+            QKan.config['autonummerierung_dyna'] = autonummerierung_dyna
+            QKan.config['fangradius'] = fangradius
+            QKan.config['mindestflaeche'] = mindestflaeche
+            QKan.config['mit_verschneidung'] = mit_verschneidung
+            QKan.config['max_loops'] = max_loops
+            QKan.config['dynabef_choice'] = dynabef_choice
+            QKan.config['dynaprof_choice'] = dynaprof_choice
 
-            with open(self.configfil, 'w') as fileconfig:
-                # logger.debug(u"Config-Dictionary: {}".format(self.config))
-                fileconfig.write(json.dumps(self.config))
+            qkan = QKan(self.iface)
+            qkan.saveconfig()
+            # with open(self.configfil, 'w') as fileconfig:
+                # # logger.debug(u"Config-Dictionary: {}".format(QKan.config))
+                # fileconfig.write(json.dumps(QKan.config))
 
             # Start der Verarbeitung
             

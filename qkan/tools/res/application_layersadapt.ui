@@ -47,7 +47,7 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox_6">
+  <widget class="QGroupBox" name="gb_selectLayers">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -149,7 +149,7 @@ Layer hinzuladen</string>
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_7">
+  <widget class="QGroupBox" name="gb_LayersAdapt">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -470,7 +470,7 @@ Layer hinzuladen</string>
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_8">
+  <widget class="QGroupBox" name="gb_setNodeTypes">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -517,7 +517,7 @@ Layer hinzuladen</string>
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_9">
+  <widget class="QGroupBox" name="gb_updateQkanDB">
    <property name="geometry">
     <rect>
      <x>20</x>

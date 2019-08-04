@@ -19,7 +19,7 @@
   (at your option) any later version.
 
 """
-from qkan import Dummy
+from qkan import QKan
 
 __author__ = 'Joerg Hoettges'
 __date__ = 'September 2016'
@@ -99,14 +99,19 @@ class DBConnection:
         self.sqltime = self.sqltime.now()
         self.sqltext = ''
         self.sqlcount = 0
+
         self.actversion = dbVersion()
         self.templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
-        self.isCurrentVersion = True  # QKan-Datenbank ist auf dem aktuellen Stand.
-        self.connected = True  # Verbindung hergestellt, d.h. weder fehlgeschlagen
-        # noch wegen reload geschlossen
-        self.reload = False  # Datenbank wurde aktualisiert und dabei sind
-        # gravierende Änderungen aufgetreten, die ein Neuladen
-        # des Projektes erforderlich machen
+
+        # QKan-Datenbank ist auf dem aktuellen Stand.
+        self.isCurrentVersion = True
+
+        # Verbindung hergestellt, d.h. weder fehlgeschlagen noch wegen reload geschlossen
+        self.connected = True
+
+        # reload = True: Datenbank wurde aktualisiert und dabei sind gravierende Änderungen aufgetreten, 
+        # die ein Neuladen des Projektes erforderlich machen
+        self.reload = False  
 
         if dbname is not None:
             # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
@@ -141,7 +146,7 @@ class DBConnection:
                         self.connected = False  # Verbindungsstatus zur Kontrolle
 
             else:
-                Dummy.instance.iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank wird erstellt. Bitte waren...",
+                QKan.instance.iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank wird erstellt. Bitte waren...",
                                                level=Qgis.Info)
 
                 datenbank_QKan_Template = os.path.join(self.templatepath, u"qkan.sqlite")
@@ -159,7 +164,7 @@ class DBConnection:
                 # sql = u'SELECT InitSpatialMetadata()'
                 # self.cursl.execute(sql)
 
-                Dummy.instance.iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank ist erstellt!",
+                QKan.instance.iface.messageBar().pushMessage(u"Information", u"SpatiaLite-Datenbank ist erstellt!",
                                                level=Qgis.Info)
                 if not createdbtables(self.consl, self.cursl, self.actversion, self.epsg):
                     fehlermeldung(u"Fehler",
@@ -344,7 +349,7 @@ class DBConnection:
             self.reload = False
 
             global progress_bar
-            progress_bar = QProgressBar(Dummy.instance.iface.messageBar())
+            progress_bar = QProgressBar(QKan.instance.iface.messageBar())
             progress_bar.setRange(0, 100)
             progress_bar.setValue(0)
 

@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 from qgis.core import (Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject)
 from qgis.utils import pluginDirectory
 
-from qkan import Dummy
+from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung
 
@@ -1044,8 +1044,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
 
-    Dummy.instance.iface.mainWindow().statusBar().clearMessage()
-    Dummy.instance.iface.messageBar().pushMessage("Information", "Datenimport ist fertig!", level=Qgis.Info)
+    QKan.instance.iface.mainWindow().statusBar().clearMessage()
+    QKan.instance.iface.messageBar().pushMessage("Information", "Datenimport ist fertig!", level=Qgis.Info)
     QgsMessageLog.logMessage(message="\nFertig: Datenimport erfolgreich!", level=Qgis.Info)
 
     # Importiertes Projekt laden

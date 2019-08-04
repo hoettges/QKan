@@ -868,7 +868,6 @@ def exportKanaldaten(iface, dynafile, template_dyna, dbQK, dynabef_choice, dynap
                 return False
 
             nchange = int(dbQK.fetchone()[0])  # Zahl der zuletzt geänderten Datensätze
-            logger.debug('Typ von nchange: {}'.format(type(nchange)))
             changelog.append(nchange)
 
         dbQK.commit()

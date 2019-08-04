@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import logging
-import os
+import os, site, json
 import tempfile
 from pathlib import Path
 
@@ -11,18 +11,38 @@ from qgis.PyQt.QtWidgets import QAction, QMenu
 
 
 def classFactory(iface):  # pylint: disable=invalid-name
-    dummy = Dummy(iface)
-    return dummy
+    qkan = QKan(iface)
+    return qkan
 
 
-class Dummy:
+class QKan:
     instance = None
 
+    # --------------------------------------------------------------------------------------------------
+    # Konfigurationsdatei qkan.json lesen
+    #
+
+    # Pfad zum Arbeitsverzeichnis sicherstellen
+    wordir = os.path.join(site.getuserbase(), u'qkan')
+
+    if not os.path.isdir(wordir):
+        os.makedirs(wordir)
+
+    configfil = os.path.join(wordir, u'qkan.json')
+    if os.path.exists(configfil):
+        with open(configfil, 'r') as fileconfig:
+            config = json.loads(fileconfig.read())
+    else:
+        config = {'epsg': '25832'}  # Projektionssystem
+        with open(configfil, 'w') as fileconfig:
+            fileconfig.write(json.dumps(config))
+
+
     def __init__(self, iface):
-        Dummy.instance = self
+        QKan.instance = self
 
         # Init logging
-        self.logger = logging.getLogger(u'QKan')
+        self.logger = logging.getLogger('QKan')
         formatter = logging.Formatter(
             fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
@@ -37,8 +57,9 @@ class Dummy:
         stream_handler.setFormatter(stream_handler)
 
         self.logger.setLevel(logging.DEBUG)
-        self.logger.addHandler(file_handler)
-        self.logger.addHandler(stream_handler)
+        if not self.logger.handlers:
+            self.logger.addHandler(file_handler)
+            self.logger.addHandler(stream_handler)
 
         # QGIS
         self.iface = iface
@@ -80,6 +101,7 @@ class Dummy:
 
         self.toolbar = self.iface.addToolBar("QKan")
         self.toolbar.setObjectName("QKan")
+
 
     def initGui(self):
         # Create and insert QKan menu after the 3rd menu
@@ -222,3 +244,9 @@ class Dummy:
         self.actions.append(action)
 
         return action
+
+    def saveconfig(self):
+        """Write config to json-File"""
+        with open(QKan.configfil, 'w') as fileconfig:
+            fileconfig.write(json.dumps(QKan.config))
+        # self.logger.debug('QKan.saveconfig: id(QKan): {0:}\n\t\tQKan.config['epsg']: {1:}'.format(id(QKan), QKan.config['epsg']))

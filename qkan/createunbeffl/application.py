@@ -29,7 +29,7 @@ import webbrowser
 from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QTableWidgetSelectionRange
 
-from qkan import Dummy
+from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import get_database_QKan, fehlermeldung
 # noinspection PyUnresolvedReferences
@@ -68,23 +68,23 @@ class CreateUnbefFl:
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen
-        wordir = os.path.join(site.getuserbase(), u'qkan')
+        # wordir = os.path.join(site.getuserbase(), u'qkan')
 
-        if not os.path.isdir(wordir):
-            os.makedirs(wordir)
+        # if not os.path.isdir(wordir):
+            # os.makedirs(wordir)
 
         # --------------------------------------------------------------------------------------------------
         # Konfigurationsdatei qkan.json lesen
         #
 
-        self.configfil = os.path.join(wordir, u'qkan.json')
-        if os.path.exists(self.configfil):
-            with open(self.configfil, 'r') as fileconfig:
-                self.config = json.loads(fileconfig.read())
-        else:
-            self.config = {'epsg': '25832'}  # Projektionssystem
-            with open(self.configfil, 'w') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+        # self.configfil = os.path.join(wordir, u'qkan.json')
+        # if os.path.exists(self.configfil):
+            # with open(self.configfil, 'r') as fileconfig:
+                # self.config = json.loads(fileconfig.read())
+        # else:
+            # self.config = {'epsg': '25832'}  # Projektionssystem
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(self.config))
 
         # Formularereignisse anbinden ----------------------------------------------
 
@@ -114,7 +114,7 @@ class CreateUnbefFl:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/qkan/createunbeffl/icon.png'
-        Dummy.instance.add_action(
+        QKan.instance.add_action(
             icon_path,
             text=self.tr('Erzeuge unbefestigte Flächen...'),
             callback=self.run,
@@ -363,8 +363,8 @@ class CreateUnbefFl:
 
         # Autokorrektur
 
-        if 'autokorrektur' in self.config:
-            autokorrektur = self.config['autokorrektur']
+        if 'autokorrektur' in QKan.config:
+            autokorrektur = QKan.config['autokorrektur']
         else:
             autokorrektur = True
         self.dlg.cb_autokorrektur.setChecked(autokorrektur)
@@ -387,9 +387,11 @@ class CreateUnbefFl:
             logger.debug(u'\nliste_selAbflparamTeilgeb (1): {}'.format(liste_selAbflparamTeilgeb))
             autokorrektur = self.dlg.cb_autokorrektur.isChecked()
 
-            self.config['autokorrektur'] = autokorrektur
+            QKan.config['autokorrektur'] = autokorrektur
 
-            with open(self.configfil, 'w') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+            qkan = QKan(self.iface)
+            qkan.saveconfig()
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(QKan.config))
 
             createUnbefFlaechen(self.dbQK, liste_selAbflparamTeilgeb, autokorrektur)

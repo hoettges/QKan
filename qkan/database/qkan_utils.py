@@ -2,10 +2,10 @@
 
 import logging
 
-from qgis.core import Qgis, QgsMessageLog
+from qgis.core import QgsProject, Qgis, QgsMessageLog
 from qgis.utils import iface
 
-from qkan import Dummy
+from qkan import QKan
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u'QKan.database.qkan_utils')
@@ -16,13 +16,13 @@ logger = logging.getLogger(u'QKan.database.qkan_utils')
 def meldung(title, text):
     logger.info('{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(message='{:s} {:s}'.format(title, text), level=Qgis.Info)
-    Dummy.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Info)
+    QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Info)
 
 
 def warnung(title, text):
     logger.warning('{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(message='{:s} {:s}'.format(title, text), level=Qgis.Warning)
-    Dummy.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Warning)
+    QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Warning)
 
 
 def fortschritt(text, prozent=0):
@@ -34,7 +34,7 @@ def fortschritt(text, prozent=0):
 def fehlermeldung(title, text=u''):
     logger.error('{:s} {:s}'.format(title, text))
     QgsMessageLog.logMessage(message='{:s} {:s}'.format(title, text), level=Qgis.Critical)
-    Dummy.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Critical)
+    QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Critical)
 
     # Protokolldatei anzeigen
 

@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QMainWindow
 from qgis.gui import QgisInterface
 from qgis.testing import start_app, unittest
 
-from qkan import Dummy
+from qkan import QKan
 
 LOGGER = logging.getLogger("QGIS")
 
@@ -35,8 +35,8 @@ class QgisTest(unittest.TestCase):
         QSettings().setValue("locale/userLocale", "deutsch")
 
         cls.iface = iface()
-        cls.dummy = Dummy(cls.iface)
-        cls.dummy.initGui()
+        cls.qkan = QKan(cls.iface)
+        cls.qkan.initGui()
 
     @classmethod
     def tearDownClass(cls) -> None:

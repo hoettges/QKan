@@ -31,7 +31,7 @@ from qgis.PyQt.QtWidgets import QListWidgetItem, QTableWidgetItem
 from qgis.core import QgsVectorLayer, QgsDataSourceUri, QgsProject, Qgis
 from qgis.utils import iface
 
-from qkan import Dummy
+from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
@@ -73,24 +73,24 @@ class LinkFl:
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen
-        wordir = os.path.join(site.getuserbase(), 'qkan')
+        # wordir = os.path.join(site.getuserbase(), 'qkan')
 
-        if not os.path.isdir(wordir):
-            os.makedirs(wordir)
+        # if not os.path.isdir(wordir):
+            # os.makedirs(wordir)
 
         # --------------------------------------------------------------------------------------------------
         # Konfigurationsdatei qkan.json lesen
         #
 
-        self.configfil = os.path.join(wordir, 'qkan.json')
-        if os.path.exists(self.configfil):
-            with open(self.configfil, 'r') as fileconfig:
-                self.config = json.loads(fileconfig.read())
-        else:
-            self.config = {'epsg': '25832', 'autokorrektur': False, 'suchradius': u'50', 'mindestflaeche': u'0.5',
-                           'bezug_abstand': 'kante'}
-            with open(self.configfil, 'w') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+        # self.configfil = os.path.join(wordir, 'qkan.json')
+        # if os.path.exists(self.configfil):
+            # with open(self.configfil, 'r') as fileconfig:
+                # self.config = json.loads(fileconfig.read())
+        # else:
+            # self.config = {'epsg': '25832', 'autokorrektur': False, 'suchradius': u'50', 'mindestflaeche': u'0.5',
+                           # 'bezug_abstand': 'kante'}
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(self.config))
 
         # Formularereignisse anbinden ----------------------------------------------
 
@@ -138,35 +138,35 @@ class LinkFl:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_assigntgeb_path = ':/plugins/qkan/linkflaechen/res/icon_assigntgeb.png'
-        Dummy.instance.add_action(
+        QKan.instance.add_action(
             icon_assigntgeb_path,
             text=self.tr(u'Alle Elemente des Entwässerungsnetzes zu Teilgebiet zuordnen'),
             callback=self.run_assigntgeb,
             parent=self.iface.mainWindow())
 
         icon_createlinefl_path = ':/plugins/qkan/linkflaechen/res/icon_createlinefl.png'
-        Dummy.instance.add_action(
+        QKan.instance.add_action(
             icon_createlinefl_path,
             text=self.tr(u'Erzeuge Verknüpfungslinien von Flächen zu Haltungen'),
             callback=self.run_createlinefl,
             parent=self.iface.mainWindow())
 
         icon_createlinesw_path = ':/plugins/qkan/linkflaechen/res/icon_createlinesw.png'
-        Dummy.instance.add_action(
+        QKan.instance.add_action(
             icon_createlinesw_path,
             text=self.tr(u'Erzeuge Verknüpfungslinien von Direkteinleitungen zu Haltungen'),
             callback=self.run_createlinesw,
             parent=self.iface.mainWindow())
 
         icon_updatelinks_path = ':/plugins/qkan/linkflaechen/res/icon_updatelinks.png'
-        Dummy.instance.add_action(
+        QKan.instance.add_action(
             icon_updatelinks_path,
             text=self.tr(u'Verknüpfungen bereinigen'),
             callback=self.run_updatelinks,
             parent=self.iface.mainWindow())
 
         icon_managegroups_path = ':/plugins/qkan/linkflaechen/res/icon_managegroups.png'
-        Dummy.instance.add_action(
+        QKan.instance.add_action(
             icon_managegroups_path,
             text=self.tr(u'Teilgebietszuordnungen als Gruppen verwalten'),
             callback=self.run_managegroups,
@@ -555,9 +555,9 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_cl.lw_flaechen_abflussparam.addItem(QListWidgetItem(elem[0]))
-                if 'liste_flaechen_abflussparam' in self.config:
+                if 'liste_flaechen_abflussparam' in QKan.config:
                     try:
-                        if elem[0] in self.config['liste_flaechen_abflussparam']:
+                        if elem[0] in QKan.config['liste_flaechen_abflussparam']:
                             self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
                             self.dlg_cl.cb_selFlActive.setChecked(True)  # Auswahlcheckbox aktivieren
                     except BaseException as err:
@@ -575,8 +575,8 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_cl.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
-                if 'liste_hal_entw' in self.config:
-                    if elem[0] in self.config['liste_hal_entw']:
+                if 'liste_hal_entw' in QKan.config:
+                    if elem[0] in QKan.config['liste_hal_entw']:
                         self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
                         self.dlg_cl.cb_selHalActive.setChecked(True)  # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
@@ -591,8 +591,8 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_cl.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                if 'liste_teilgebiete' in self.config:
-                    if elem[0] in self.config['liste_teilgebiete']:
+                if 'liste_teilgebiete' in QKan.config:
+                    if elem[0] in QKan.config['liste_teilgebiete']:
                         self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
                         self.dlg_cl.cb_selTgbActive.setChecked(True)  # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
@@ -601,49 +601,49 @@ class LinkFl:
         # config in Dialog übernehmen
 
         # Autokorrektur
-        if 'autokorrektur' in self.config:
-            autokorrektur = self.config['autokorrektur']
+        if 'autokorrektur' in QKan.config:
+            autokorrektur = QKan.config['autokorrektur']
         else:
             autokorrektur = True
         self.dlg_cl.cb_autokorrektur.setChecked(autokorrektur)
 
         # Verbindungslinien nur innerhalb tezg
-        if 'linksw_in_tezg' in self.config:
-            linksw_in_tezg = self.config['linksw_in_tezg']
+        if 'linksw_in_tezg' in QKan.config:
+            linksw_in_tezg = QKan.config['linksw_in_tezg']
         else:
             linksw_in_tezg = True
         self.dlg_cl.cb_linkswInTezg.setChecked(linksw_in_tezg)
 
         # Haltungsflächen (tezg) berücksichtigen
-        if 'mit_verschneidung' in self.config:
-            mit_verschneidung = self.config['mit_verschneidung']
+        if 'mit_verschneidung' in QKan.config:
+            mit_verschneidung = QKan.config['mit_verschneidung']
         else:
             mit_verschneidung = True
         self.dlg_cl.cb_regardTezg.setChecked(mit_verschneidung)
 
         # Suchradius
-        if 'suchradius' in self.config:
-            suchradius = self.config['suchradius']
+        if 'suchradius' in QKan.config:
+            suchradius = QKan.config['suchradius']
         else:
             suchradius = u'50'
         self.dlg_cl.tf_suchradius.setText(str(suchradius))
 
         # Mindestflächengröße
-        if 'mindestflaeche' in self.config:
-            mindestflaeche = self.config['mindestflaeche']
+        if 'mindestflaeche' in QKan.config:
+            mindestflaeche = QKan.config['mindestflaeche']
         else:
             mindestflaeche = u'0.5'
 
         # Fangradius für Anfang der Anbindungslinie
         # Kann über Menü "Optionen" eingegeben werden
-        if 'fangradius' in self.config:
-            fangradius = self.config['fangradius']
+        if 'fangradius' in QKan.config:
+            fangradius = QKan.config['fangradius']
         else:
             fangradius = u'0.1'
 
         # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
-        if 'bezug_abstand' in self.config:
-            bezug_abstand = self.config['bezug_abstand']
+        if 'bezug_abstand' in QKan.config:
+            bezug_abstand = QKan.config['bezug_abstand']
         else:
             bezug_abstand = 'kante'
 
@@ -694,20 +694,22 @@ class LinkFl:
 
             # Konfigurationsdaten schreiben
 
-            self.config['suchradius'] = suchradius
-            self.config['fangradius'] = fangradius
-            self.config['mindestflaeche'] = mindestflaeche
-            self.config['bezug_abstand'] = bezug_abstand
-            self.config['liste_hal_entw'] = liste_hal_entw
-            self.config['liste_flaechen_abflussparam'] = liste_flaechen_abflussparam
-            self.config['liste_teilgebiete'] = liste_teilgebiete
-            self.config['epsg'] = epsg
-            self.config['autokorrektur'] = autokorrektur
-            self.config['linksw_in_tezg'] = linksw_in_tezg
-            self.config['mit_verschneidung'] = mit_verschneidung
+            QKan.config['suchradius'] = suchradius
+            QKan.config['fangradius'] = fangradius
+            QKan.config['mindestflaeche'] = mindestflaeche
+            QKan.config['bezug_abstand'] = bezug_abstand
+            QKan.config['liste_hal_entw'] = liste_hal_entw
+            QKan.config['liste_flaechen_abflussparam'] = liste_flaechen_abflussparam
+            QKan.config['liste_teilgebiete'] = liste_teilgebiete
+            QKan.config['epsg'] = epsg
+            QKan.config['autokorrektur'] = autokorrektur
+            QKan.config['linksw_in_tezg'] = linksw_in_tezg
+            QKan.config['mit_verschneidung'] = mit_verschneidung
 
-            with open(self.configfil, 'w') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+            qkan = QKan(self.iface)
+            qkan.saveconfig()
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
 
@@ -788,8 +790,8 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_sw.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
-                if 'liste_hal_entw' in self.config:
-                    if elem[0] in self.config['liste_hal_entw']:
+                if 'liste_hal_entw' in QKan.config:
+                    if elem[0] in QKan.config['liste_hal_entw']:
                         self.dlg_sw.lw_hal_entw.setCurrentRow(ielem)
                         self.dlg_sw.cb_selHalActive.setChecked(True)  # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
@@ -804,8 +806,8 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_sw.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                if 'liste_teilgebiete' in self.config:
-                    if elem[0] in self.config['liste_teilgebiete']:
+                if 'liste_teilgebiete' in QKan.config:
+                    if elem[0] in QKan.config['liste_teilgebiete']:
                         self.dlg_sw.lw_teilgebiete.setCurrentRow(ielem)
                         self.dlg_sw.cb_selTgbActive.setChecked(True)  # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
@@ -814,8 +816,8 @@ class LinkFl:
         # config in Dialog übernehmen
 
         # Suchradius
-        if 'suchradius' in self.config:
-            suchradius = self.config['suchradius']
+        if 'suchradius' in QKan.config:
+            suchradius = QKan.config['suchradius']
         else:
             suchradius = u'50'
         self.dlg_sw.tf_suchradius.setText(str(suchradius))
@@ -847,14 +849,16 @@ class LinkFl:
 
             # Konfigurationsdaten schreiben
 
-            self.config['suchradius'] = suchradius
-            self.config['liste_hal_entw'] = liste_hal_entw
+            QKan.config['suchradius'] = suchradius
+            QKan.config['liste_hal_entw'] = liste_hal_entw
 
-            self.config['liste_teilgebiete'] = liste_teilgebiete
-            self.config['epsg'] = epsg
+            QKan.config['liste_teilgebiete'] = liste_teilgebiete
+            QKan.config['epsg'] = epsg
 
-            with open(self.configfil, 'w') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+            qkan = QKan(self.iface)
+            qkan.saveconfig()
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
 
@@ -928,8 +932,8 @@ class LinkFl:
 
         # Autokorrektur
 
-        if 'autokorrektur' in self.config:
-            autokorrektur = self.config['autokorrektur']
+        if 'autokorrektur' in QKan.config:
+            autokorrektur = QKan.config['autokorrektur']
         else:
             autokorrektur = True
         self.dlg_at.cb_autokorrektur.setChecked(autokorrektur)
@@ -943,13 +947,13 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_at.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                if 'liste_teilgebiete' in self.config:
-                    if elem[0] in self.config['liste_teilgebiete']:
+                if 'liste_teilgebiete' in QKan.config:
+                    if elem[0] in QKan.config['liste_teilgebiete']:
                         self.dlg_at.lw_teilgebiete.setCurrentRow(ielem)
 
         # Festlegung, ob die Auswahl nur Objekte innerhalb oder aller überlappenden berücksichtigt
-        if 'auswahltyp' in self.config:
-            auswahltyp = self.config['auswahltyp']
+        if 'auswahltyp' in QKan.config:
+            auswahltyp = QKan.config['auswahltyp']
         else:
             auswahltyp = u'within'
 
@@ -964,8 +968,8 @@ class LinkFl:
             return False
 
         # Festlegung des Pufferradius
-        if 'bufferradius' in self.config:
-            bufferradius = self.config['bufferradius']
+        if 'bufferradius' in QKan.config:
+            bufferradius = QKan.config['bufferradius']
         else:
             bufferradius = u'0'
         self.dlg_at.tf_bufferradius.setText(bufferradius)
@@ -993,14 +997,16 @@ class LinkFl:
 
             # config schreiben
 
-            self.config['liste_teilgebiete'] = liste_teilgebiete
-            self.config['auswahltyp'] = auswahltyp
-            self.config['epsg'] = epsg
-            self.config['bufferradius'] = bufferradius
-            self.config['autokorrektur'] = autokorrektur
+            QKan.config['liste_teilgebiete'] = liste_teilgebiete
+            QKan.config['auswahltyp'] = auswahltyp
+            QKan.config['epsg'] = epsg
+            QKan.config['bufferradius'] = bufferradius
+            QKan.config['autokorrektur'] = autokorrektur
 
-            with open(self.configfil, 'w') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+            qkan = QKan(self.iface)
+            qkan.saveconfig()
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
 
@@ -1102,14 +1108,14 @@ class LinkFl:
 
         # Festlegung des Fangradius
         # Kann über Menü "Optionen" eingegeben werden
-        if 'fangradius' in self.config:
-            fangradius = self.config['fangradius']
+        if 'fangradius' in QKan.config:
+            fangradius = QKan.config['fangradius']
         else:
             fangradius = u'0.1'
 
         # Löschen von Flächenverknüpfungen ohne Linienobjekt
-        if 'deletelinkflGeomNone' in self.config:
-            deletelinkflGeomNone = self.config['deletelinkflGeomNone']
+        if 'deletelinkflGeomNone' in QKan.config:
+            deletelinkflGeomNone = QKan.config['deletelinkflGeomNone']
         else:
             deletelinkflGeomNone = True
         self.dlg_ul.cb_deleteGeomNone.setChecked(deletelinkflGeomNone)
@@ -1125,11 +1131,13 @@ class LinkFl:
             deletelinkflGeomNone = self.dlg_ul.cb_deleteGeomNone.isChecked()
 
             # config schreiben
-            self.config['deletelinkflGeomNone'] = deletelinkflGeomNone
-            self.config['fangradius'] = fangradius
+            QKan.config['deletelinkflGeomNone'] = deletelinkflGeomNone
+            QKan.config['fangradius'] = fangradius
 
-            with open(self.configfil, 'w') as fileconfig:
-                fileconfig.write(json.dumps(self.config))
+            qkan = QKan(self.iface)
+            qkan.saveconfig()
+            # with open(self.configfil, 'w') as fileconfig:
+                # fileconfig.write(json.dumps(self.config))
 
             # Start der Verarbeitung
 
