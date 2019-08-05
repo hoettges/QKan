@@ -16,33 +16,14 @@ def classFactory(iface):  # pylint: disable=invalid-name
 
 
 class QKan:
-    instance = None
-
-    # --------------------------------------------------------------------------------------------------
-    # Konfigurationsdatei qkan.json lesen
-    #
-
-    # Pfad zum Arbeitsverzeichnis sicherstellen
-    wordir = os.path.join(site.getuserbase(), u'qkan')
-
-    if not os.path.isdir(wordir):
-        os.makedirs(wordir)
-
-    configfil = os.path.join(wordir, u'qkan.json')
-    if os.path.exists(configfil):
-        with open(configfil, 'r') as fileconfig:
-            config = json.loads(fileconfig.read())
-    else:
-        config = {'epsg': '25832'}  # Projektionssystem
-        with open(configfil, 'w') as fileconfig:
-            fileconfig.write(json.dumps(config))
-
+    instance = None  # type: QKan
+    config = None  # type: dict
 
     def __init__(self, iface):
         QKan.instance = self
 
         # Init logging
-        self.logger = logging.getLogger('QKan')
+        self.logger = logging.getLogger("QKan")
         formatter = logging.Formatter(
             fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
@@ -54,12 +35,31 @@ class QKan:
         stream_handler = logging.StreamHandler()
 
         file_handler.setFormatter(formatter)
-        stream_handler.setFormatter(stream_handler)
+        stream_handler.setFormatter(formatter)
 
         self.logger.setLevel(logging.DEBUG)
         if not self.logger.handlers:
             self.logger.addHandler(file_handler)
             self.logger.addHandler(stream_handler)
+
+        # Init config
+        work_dir = Path(site.getuserbase()) / "qkan"
+        if not work_dir.exists():
+            os.makedirs(work_dir)
+
+        self.config_file = work_dir / "qkan.json"
+        config = {"epsg": "25832"}  # Projektionssystem
+        if self.config_file.exists():
+            try:
+                QKan.config = json.loads(self.config_file.read_text())
+            except json.JSONDecodeError:  # Fehlerhafte Config
+                self.logger.error(
+                    "Fehler beim Einlesen der Config-Datei.", exc_info=True
+                )
+                QKan.config = config
+        else:
+            QKan.config = config
+            self.save_config()
 
         # QGIS
         self.iface = iface
@@ -101,7 +101,6 @@ class QKan:
 
         self.toolbar = self.iface.addToolBar("QKan")
         self.toolbar.setObjectName("QKan")
-
 
     def initGui(self):
         # Create and insert QKan menu after the 3rd menu
@@ -245,8 +244,10 @@ class QKan:
 
         return action
 
-    def saveconfig(self):
-        """Write config to json-File"""
-        with open(QKan.configfil, 'w') as fileconfig:
-            fileconfig.write(json.dumps(QKan.config))
-        # self.logger.debug('QKan.saveconfig: id(QKan): {0:}\n\t\tQKan.config['epsg']: {1:}'.format(id(QKan), QKan.config['epsg']))
+    @staticmethod
+    def save_config():
+        """Write config to json file"""
+        try:
+            QKan.instance.config_file.write_text(json.dumps(QKan.config))
+        except IOError:
+            QKan.instance.logger.error("Fehler beim Speichern der Config-Datei.", exc_info=True)

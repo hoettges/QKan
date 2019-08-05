@@ -71,27 +71,6 @@ class LinkFl:
 
         logger.info(u'QKan_LinkFlaechen initialisiert...')
 
-        # --------------------------------------------------------------------------
-        # Pfad zum Arbeitsverzeichnis sicherstellen
-        # wordir = os.path.join(site.getuserbase(), 'qkan')
-
-        # if not os.path.isdir(wordir):
-            # os.makedirs(wordir)
-
-        # --------------------------------------------------------------------------------------------------
-        # Konfigurationsdatei qkan.json lesen
-        #
-
-        # self.configfil = os.path.join(wordir, 'qkan.json')
-        # if os.path.exists(self.configfil):
-            # with open(self.configfil, 'r') as fileconfig:
-                # self.config = json.loads(fileconfig.read())
-        # else:
-            # self.config = {'epsg': '25832', 'autokorrektur': False, 'suchradius': u'50', 'mindestflaeche': u'0.5',
-                           # 'bezug_abstand': 'kante'}
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
-
         # Formularereignisse anbinden ----------------------------------------------
 
         # Dialog dlg_cl
@@ -706,10 +685,7 @@ class LinkFl:
             QKan.config['linksw_in_tezg'] = linksw_in_tezg
             QKan.config['mit_verschneidung'] = mit_verschneidung
 
-            qkan = QKan(self.iface)
-            qkan.saveconfig()
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
+            QKan.save_config()
 
             # Start der Verarbeitung
 
@@ -855,10 +831,7 @@ class LinkFl:
             QKan.config['liste_teilgebiete'] = liste_teilgebiete
             QKan.config['epsg'] = epsg
 
-            qkan = QKan(self.iface)
-            qkan.saveconfig()
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
+            QKan.save_config()
 
             # Start der Verarbeitung
 
@@ -1003,10 +976,7 @@ class LinkFl:
             QKan.config['bufferradius'] = bufferradius
             QKan.config['autokorrektur'] = autokorrektur
 
-            qkan = QKan(self.iface)
-            qkan.saveconfig()
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
+            QKan.save_config()
 
             # Start der Verarbeitung
 
@@ -1134,10 +1104,7 @@ class LinkFl:
             QKan.config['deletelinkflGeomNone'] = deletelinkflGeomNone
             QKan.config['fangradius'] = fangradius
 
-            qkan = QKan(self.iface)
-            qkan.saveconfig()
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
+            QKan.save_config()
 
             # Start der Verarbeitung
 

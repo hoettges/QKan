@@ -83,26 +83,6 @@ class QKanTools:
         # Pfad zum Vorlagenverzeichnis sicherstellen
         self.templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
 
-        # --------------------------------------------------------------------------
-        # Pfad zum Arbeitsverzeichnis sicherstellen
-        # wordir = os.path.join(site.getuserbase(), 'qkan')
-
-        # if not os.path.isdir(wordir):
-            # os.makedirs(wordir)
-
-        # --------------------------------------------------------------------------------------------------
-        # Konfigurationsdatei qkan.json lesen
-        #
-
-        # self.configfil = os.path.join(wordir, 'qkan.json')
-        # if os.path.exists(self.configfil):
-            # with open(self.configfil, 'r') as fileconfig:
-                # self.config = json.loads(fileconfig.read())
-        # else:
-            # self.config = {'epsg': '25832'}  # Projektionssystem
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
-
         # Formularereignisse anbinden ----------------------------------------------
 
         # Formular dlgpr - QKan-Projektdatei übertragen
@@ -329,10 +309,7 @@ class QKanTools:
             QKan.config['projectfile'] = projectFile
             QKan.config['QKan_Standard_anwenden'] = self.applyQKanTemplate
 
-            qkan = QKan(self.iface)
-            qkan.saveconfig()
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
+            QKan.save_config()
 
             qgsadapt(projectTemplate, self.database_QKan, self.epsg, projectFile,
                      self.applyQKanTemplate, u'SpatiaLite')
@@ -467,12 +444,7 @@ class QKanTools:
             QKan.config['epsg'] = self.epsg
             QKan.config['logeditor'] = self.logeditor
 
-            qkan = QKan(self.iface)
-            qkan.saveconfig()
-            # logger.debug('tools.run_qkanoptions (2): id(QKan): {0:}\n\t\tepsg: {1:}'.format(id(QKan), self.epsg))
-            # with open(self.configfil, 'w') as fileconfig:
-                # # logger.debug(u"Config-Dictionary: {}".format(self.config))
-                # fileconfig.write(json.dumps(self.config))
+            QKan.save_config()
 
     # ----------------------------------------------------------------------------------------------------
     # Oberflächenabflussparameter in QKan-Tabellen eintragen, ggfs. nur für ausgewählte Teilgebiete
@@ -789,11 +761,7 @@ class QKanTools:
             QKan.config['runoffparamstype_choice'] = runoffparamstype_choice
             QKan.config['runoffmodelltype_choice'] = runoffmodelltype_choice
 
-            qkan = QKan(self.iface)
-            qkan.saveconfig()
-            # with open(self.configfil, 'w') as fileconfig:
-                # # logger.debug(u"Config-Dictionary: {}".format(self.config))
-                # fileconfig.write(json.dumps(self.config))
+            QKan.save_config()
 
             setRunoffparams(self.dbQK, runoffparamstype_choice, runoffmodelltype_choice, runoffparamsfunctions,
                             liste_teilgebiete, liste_abflussparameter, datenbanktyp)
@@ -1102,10 +1070,7 @@ class QKanTools:
             QKan.config['zoom_alles'] = zoom_alles
             QKan.config['QKan_Standard_anwenden'] = self.applyQKanTemplate
 
-            qkan = QKan(self.iface)
-            qkan.saveconfig()
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
+            QKan.save_config()
 
             # Modulaufruf in Logdatei schreiben
             logger.debug('''qkan-Modul:\n        layersadapt(

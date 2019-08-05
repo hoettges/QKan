@@ -72,26 +72,6 @@ class ImportFromDyna:
 
         logger.info(u'QKan_ImportDyna initialisiert...')
 
-        # --------------------------------------------------------------------------------------------------
-        # Pfad zum Arbeitsverzeichnis sicherstellen
-        # wordir = os.path.join(site.getuserbase(), u'qkan')
-
-        # if not os.path.isdir(wordir):
-            # os.makedirs(wordir)
-
-        # --------------------------------------------------------------------------------------------------
-        # Konfigurationsdatei qkan.json lesen
-        #
-
-        # self.configfil = os.path.join(wordir, u'qkan.json')
-        # if os.path.exists(self.configfil):
-            # with open(self.configfil, 'r') as fileconfig:
-                # self.config = json.loads(fileconfig.read())
-        # else:
-            # self.config = {'epsg': '25832', 'database_QKan': '', 'dynafile': '', 'projectfile': ''}
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
-
         # Standard für Suchverzeichnis festlegen
         project = QgsProject.instance()
         self.default_dir = os.path.dirname(project.fileName())
@@ -222,11 +202,7 @@ class ImportFromDyna:
             QKan.config['dynafile'] = dynafile
             QKan.config['projectfile'] = projectfile
 
-            qkan = QKan(self.iface)
-            qkan.saveconfig()
-            # logger.debug('QKan.importdyna.run: id(QKan): {0:}\n\t\tepsg: {1:}'.format(id(QKan), self.epsg))
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(QKan.config))
+            QKan.save_config()
 
             # Start der Verarbeitung
             

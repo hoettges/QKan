@@ -72,29 +72,6 @@ class ExportToKP:
 
         logger.info('QKan_ExportKP initialisiert...')
 
-        # --------------------------------------------------------------------------
-        # Pfad zum Arbeitsverzeichnis sicherstellen
-        # wordir = os.path.join(site.getuserbase(), 'qkan')
-
-        # if not os.path.isdir(wordir):
-            # os.makedirs(wordir)
-
-        # --------------------------------------------------------------------------
-        # Konfigurationsdatei qkan.json lesen
-        #
-
-        # self.configfil = os.path.join(wordir, 'qkan.json')
-        # if os.path.exists(self.configfil):
-            # with open(self.configfil, 'r') as fileconfig:
-                # self.config = json.loads(fileconfig.read())
-        # else:
-            # self.config['dynafile'] = ''
-            # # Vorlagedatenbank nur für den Fall, dass der Anwender keine eigene Vorlage erstellen will
-            # self.config['template_dyna'] = os.path.join(os.path.dirname(__file__), "templates", "dyna.ein")
-            # self.config['database_QKan'] = ''
-            # with open(self.configfil, 'w') as fileconfig:
-                # fileconfig.write(json.dumps(self.config))
-
         # Standard für Suchverzeichnis festlegen
         project = QgsProject.instance()
         self.default_dir = os.path.dirname(project.fileName())
@@ -484,11 +461,7 @@ class ExportToKP:
             QKan.config['dynabef_choice'] = dynabef_choice
             QKan.config['dynaprof_choice'] = dynaprof_choice
 
-            qkan = QKan(self.iface)
-            qkan.saveconfig()
-            # with open(self.configfil, 'w') as fileconfig:
-                # # logger.debug(u"Config-Dictionary: {}".format(QKan.config))
-                # fileconfig.write(json.dumps(QKan.config))
+            QKan.save_config()
 
             # Start der Verarbeitung
             
