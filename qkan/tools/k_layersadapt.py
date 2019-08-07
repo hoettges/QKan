@@ -161,8 +161,8 @@ def layersadapt(database_QKan, projectTemplate, dbIsUptodate, qkanDBUpdate,
                     return False
                 project.addMapLayer(layer, False)
                 atcGroup = layersRoot.findGroup(group)
-                if atcGroup == '':
-                    layersRoot.addGroup(group)
+                if atcGroup is None:
+                    atcGroup = layersRoot.addGroup(group)
                 atcGroup.addLayer(layer)
 
                 # Stildatei laden, falls vorhanden

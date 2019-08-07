@@ -207,9 +207,9 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir=Tr
     formspath = os.path.join(pluginDirectory('qkan'), u"forms")
     for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
         tag_editform = tag_maplayer.find(u"./editform")
-        if tag_editform:
+        if tag_editform is not None:
             formpath = tag_editform.text
-            if formpath:
+            if formpath is not None:
                 dateiname = os.path.basename(formpath)
                 if dateiname in formsliste:
                     # Nur QKan-Tabellen bearbeiten
@@ -217,15 +217,16 @@ def qgsadapt(projectTemplate, qkanDB, epsg, projectFile, setPathToTemplateDir=Tr
 
     # Zoom für Kartenfenster einstellen -------------------------------------------------------
 
-    for tag_extent in root.findall(u".//mapcanvas/extent"):
-        elem = tag_extent.find(u"./xmin")
-        elem.text = u'{:.3f}'.format(zoomxmin)
-        elem = tag_extent.find(u"./ymin")
-        elem.text = u'{:.3f}'.format(zoomymin)
-        elem = tag_extent.find(u"./xmax")
-        elem.text = u'{:.3f}'.format(zoomxmax)
-        elem = tag_extent.find(u"./ymax")
-        elem.text = u'{:.3f}'.format(zoomymax)
+    if type(zoomxmin) is type(1.):
+        for tag_extent in root.findall(u".//mapcanvas/extent"):
+            elem = tag_extent.find(u"./xmin")
+            elem.text = u'{:.3f}'.format(zoomxmin)
+            elem = tag_extent.find(u"./ymin")
+            elem.text = u'{:.3f}'.format(zoomymin)
+            elem = tag_extent.find(u"./xmax")
+            elem.text = u'{:.3f}'.format(zoomxmax)
+            elem = tag_extent.find(u"./ymax")
+            elem.text = u'{:.3f}'.format(zoomymax)
 
     # Projektionssystem anpassen --------------------------------------------------------------
 

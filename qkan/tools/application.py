@@ -78,7 +78,7 @@ class QKanTools:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 12.06.2017)
 
-        logger.info(u'QKan_Tools initialisiert...')
+        logger.info(u'\n\nQKan_Tools initialisiert...')
 
         # Pfad zum Vorlagenverzeichnis sicherstellen
         self.templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
@@ -92,6 +92,7 @@ class QKanTools:
         self.dlgpr.cb_applyQKanTemplate.clicked.connect(self.dlgpr_applyQKanTemplate)
 
         # Formular dlgla - Projektdatei anpassen an QKan-Standard
+        self.dlgla.pb_selectProjectFile.clicked.connect(self.dlgla_selectFileProjectfile)
         self.dlgla.pb_selectQKanDB.clicked.connect(self.dlgla_selectFile_qkanDB)
         self.dlgla.cb_adaptDB.clicked.connect(self.dlgla_enableQkanDB)
         self.dlgla.pb_selectProjectTemplate.clicked.connect(self.dlgla_selectFileProjectTemplate)
@@ -100,12 +101,14 @@ class QKanTools:
         self.dlgla.cb_adaptTableLookups.clicked.connect(self.dlgla_cb_adaptTableLookups)
         self.dlgla.cb_adaptKBS.clicked.connect(self.dlgla_cb_adaptKBS)
         self.dlgla.cb_applyQKanTemplate.clicked.connect(self.dlgla_applyQKanTemplate)
+        self.dlgla.cb_saveProjectFile.clicked.connect(self.dlgla_enableSaveProjectFile)
         self.dlgla.cb_qkanDBUpdate.clicked.connect(self.dlgla_checkqkanDBUpdate)
 
         # Formular dlgop - QKan-Optionen
         self.dlgop.pb_fangradiusDefault.clicked.connect(self.dlgop_fangradiusDefault)
         self.dlgop.pb_mindestflaecheDefault.clicked.connect(self.dlgop_mindestflaecheDefault)
         self.dlgop.pb_max_loopsDefault.clicked.connect(self.dlgop_maxLoopsDefault)
+        self.dlgop.pb_selectKBS.clicked.connect(self.dlgop_selectKBS)
         self.dlgop.pb_openLogfile.clicked.connect(self.dlgop_openLogfile)
         self.dlgop.pb_selectLogeditor.clicked.connect(self.dlgop_selectLogeditor)
 

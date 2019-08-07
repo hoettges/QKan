@@ -27,13 +27,13 @@ __copyright__ = '(C) 2018, Joerg Hoettges'
 
 import logging
 
-from qkan.database.qkan_utils import fortschritt, checknames
+from qkan.database.qkan_utils import fortschritt, checknames, check_flaechenbilanz
 
 logger = logging.getLogger(u'QKan.linkflaechen.updatelinks')
 
 # progress_bar = None
 
-def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
+def updatelinkfl(dbQK, radiusHal = u'0.1', flaechen_bereinigen=False, deletelinkGeomNone = True):
     """Aktualisierung des logischen Cache für die Tabelle "linkfl"
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -42,14 +42,17 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     :radiusHal:             Fangradius für das Verknüpfungsende auf der Haltung
     :type radiusHal:        Float
 
+    :flaechen_bereinigen: Vor der Bearbeitung werden die Tabellen "flaechen" und "tezg" mit MakeValid korrigiert
+    :type flaechen_bereinigen: Boolean
+
     Für den Benutzer maßgebend ist ausschließlich die graphische
     Verknüpfung von linkfl. Der Export basiert aber aus Performancegründen
     ausschließlich auf der logischen Verknüpfung ("logischer Cache").
     Deshalb erfolgt hier die Anpassung bzw. Korrektur der logischen Verknüpfungen.
     Aus Performancegründen wird in den nachfolgenden Abfragen zunächst immer 
     eine Auswahl der Datensätze aus "linkfl" vorgenommen, bei denen die logische 
-    Verknüpfung nicht mit der graphischen übereinstimmt (Unterabfrage "missing") 
-    und die Korrektur nur für diese Datensätze durchgeführt.
+    Verknüpfung mit der graphischen übereinstimmt (Unterabfrage "linksvalid") 
+    und die Korrektur nur für die darin nicht enthaltenen Datensätze durchgeführt.
     """
 
     # Statusmeldung in der Anzeige
@@ -62,6 +65,21 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     # iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # progress_bar.setValue(1)
+
+    # MakeValid auf Tabellen "flaechen" und "tezg". 
+    if flaechen_bereinigen:
+        sql = """UPDATE flaechen SET geom=MakeValid(geom)"""
+        if not dbQK.sql(sql, u"k_link.createlinkfl (1)"):
+            del dbQK
+            # progress_bar.reset()
+            return False
+        sql = """UPDATE tezg SET geom=MakeValid(geom)"""
+        if not dbQK.sql(sql, u"k_link.createlinkfl (2)"):
+            del dbQK
+            # progress_bar.reset()
+            return False
+        # Flächen prüfen und ggfs. Meldung anzeigen
+        check_flaechenbilanz(dbQK)
 
     # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
     if not checknames(dbQK, u'flaechen', u'flnam', u'f_', True):
@@ -76,18 +94,21 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
             return False
 
     # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
+    # In der Unterabfrage "linksbroken" wird eine Liste aller nicht korrekter Verknüpfungen 
+    # aus linkfl erstellt,
+    # so dass im UPDATE-Teil nur noch alle darin enthaltenen Verknüpfungen bearbeitet werden
 
-    sql = u"""WITH missing AS
+    sql = u"""WITH linksbroken  AS
         (   SELECT lf.pk
             FROM linkfl AS lf
-            LEFT JOIN flaechen AS fl
+            INNER JOIN flaechen AS fl
             ON lf.flnam = fl.flnam
-            WHERE fl.pk IS NULL OR NOT within(StartPoint(lf.glink),buffer(fl.geom,{eps})))
+            WHERE fl.geom IS NOT NULL AND NOT within(StartPoint(lf.glink),fl.geom))
         UPDATE linkfl SET flnam =
         (   SELECT flnam
             FROM flaechen AS fl
             WHERE within(StartPoint(linkfl.glink),fl.geom) AND fl.geom IS NOT NULL)
-        WHERE linkfl.pk IN missing""".format(eps=radiusHal)
+        WHERE linkfl.pk IN linksbroken """.format(eps=radiusHal)
 
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (2)'):
         return False
@@ -95,18 +116,19 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     # progress_bar.setValue(30)
 
     # 2. Haltungen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
+    # Logik wie vor
 
-    sql = u"""WITH missing AS
+    sql = u"""WITH linksbroken AS
         (   SELECT lf.pk
             FROM linkfl AS lf
-            LEFT JOIN haltungen AS ha
+            INNER JOIN haltungen AS ha
             ON lf.haltnam = ha.haltnam
-            WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),{eps}),ha.geom))
+            WHERE ha.geom IS NOT NULL AND Distance(EndPoint(lf.glink),ha.geom) >= {eps})
         UPDATE linkfl SET haltnam =
         (   SELECT haltnam
             FROM haltungen AS ha
-            WHERE intersects(buffer(EndPoint(linkfl.glink),{eps}),ha.geom))
-        WHERE linkfl.pk IN missing""".format(eps=radiusHal)
+            WHERE Distance(EndPoint(linkfl.glink),ha.geom) < {eps})
+        WHERE linkfl.pk IN linksbroken""".format(eps=radiusHal)
 
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (3)'):
         return False
@@ -114,20 +136,23 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     # progress_bar.setValue(65)
 
     # 3. TEZG-Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl), nur für aufteilen = 'ja'
+    # Gleiche Logik wie zuvor. Zusätzlich sind alle Flächen, die nicht aufgeteilt werden müssen, in 
+    # linksvalid enthalten, da Sie auf keinen Fall einen Eintrag in "tezgnam" erhalten sollen. 
 
-    sql = u"""WITH missing AS
+    sql = u"""WITH linksvalid AS
         (   SELECT lf.pk
             FROM linkfl AS lf
-            LEFT JOIN tezg AS tg
-            ON lf.flnam = tg.flnam
-            WHERE tg.pk IS NULL OR NOT within(StartPoint(lf.glink),buffer(lf.geom,{eps})))
+            INNER JOIN tezg AS tg
+            ON lf.tezgnam = tg.flnam
+            INNER JOIN flaechen AS fl
+            ON lf.flnam = fl.flnam
+            WHERE (fl.aufteilen <> 'ja' OR fl.aufteilen IS NULL) OR 
+                  (tg.geom IS NOT NULL AND within(StartPoint(lf.glink),buffer(tg.geom,{eps}))))
         UPDATE linkfl SET tezgnam =
-        (   SELECT tg.flnam
+        (   SELECT flnam
             FROM tezg AS tg
-            INNER JOIN (SELECT flnam FROM flaechen AS fl) as fl
-            ON linkfl.flnam = fl.flnam
-            WHERE within(StartPoint(linkfl.glink),tg.geom) AND tg.geom IS NOT NULL)
-        WHERE linkfl.pk IN missing""".format(eps=radiusHal)
+            WHERE within(StartPoint(linkfl.glink),tg.geom))
+        WHERE linkfl.pk NOT IN linksvalid""".format(eps=radiusHal)
 
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (4)'):
         return False
@@ -137,7 +162,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     fortschritt(u'Ende...', 1)
     # progress_bar.setValue(100)
     # status_message.setText(u"Bereinigung Flächenverknüpfungen abgeschlossen.")
-    # status_message.setLevel(Qgis.Success)
+    # status_message.setLevel(QgsMessageBar.SUCCESS)
 
     return True
 
@@ -166,17 +191,17 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
 
     # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
 
-    sql = u"""WITH missing AS
+    sql = u"""WITH linksbroken AS
         (   SELECT lf.pk
             FROM linksw AS lf
-            LEFT JOIN einleit AS el
+            INNER JOIN einleit AS el
             ON lf.elnam = el.elnam
-            WHERE el.pk IS NULL OR NOT contains(buffer(StartPoint(lf.glink),{eps}),el.geom))
+            WHERE el.geom IS NOT NULL AND Distance(StartPoint(lf.glink),el.geom) >= {eps})
         UPDATE linksw SET elnam =
         (   SELECT elnam
             FROM einleit AS el
             WHERE contains(buffer(StartPoint(linksw.glink),{eps}),el.geom))
-        WHERE linksw.pk IN missing""".format(eps=radiusHal)
+        WHERE linksw.pk IN linksbroken""".format(eps=radiusHal)
 
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (3)'):
         return False
@@ -185,17 +210,17 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
 
     # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
 
-    sql = u"""WITH missing AS
+    sql = u"""WITH linksbroken AS
         (   SELECT lf.pk
             FROM linksw AS lf
-            LEFT JOIN haltungen AS ha
+            INNER JOIN haltungen AS ha
             ON lf.haltnam = ha.haltnam
-            WHERE ha.pk IS NULL OR NOT intersects(buffer(EndPoint(lf.glink),{eps}),ha.geom))
+            WHERE ha.geom IS NOT NULL AND Distance(EndPoint(lf.glink),ha.geom) >= {eps})
         UPDATE linksw SET haltnam =
         (   SELECT haltnam
             FROM haltungen AS ha
-            WHERE intersects(buffer(EndPoint(linksw.glink),{eps}),ha.geom))
-        WHERE linksw.pk IN missing""".format(eps=radiusHal)
+            WHERE Distance(EndPoint(linksw.glink),ha.geom) < {eps})
+        WHERE linksw.pk IN linksbroken""".format(eps=radiusHal)
 
     logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
@@ -208,17 +233,17 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
 
     # 3.2 Eintrag vornehmen
 
-    sql = u"""WITH missing AS
+    sql = u"""WITH linksvalid AS
         (   SELECT el.pk
             FROM einleit AS el
             INNER JOIN linksw AS lf
             ON el.elnam = lf.elnam
-            WHERE (el.haltnam IS NULL AND lf.haltnam IS NOT NULL) OR el.haltnam <> lf.haltnam)
+            WHERE el.haltnam <> lf.haltnam)
         UPDATE einleit SET haltnam =
         (   SELECT haltnam
             FROM linksw AS lf
             WHERE einleit.elnam = lf.elnam)
-        WHERE einleit.pk IN missing"""
+        WHERE einleit.pk IN linksvalid"""
 
     logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
 
@@ -248,17 +273,17 @@ def updatelinkageb(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
 
     # 1. Aussengebiet in "linkageb" eintragen (ohne Einschränkung auf auswahl)
 
-    sql = u"""WITH missing AS
+    sql = u"""WITH linksvalid AS
         (   SELECT lg.pk
             FROM linkageb AS lg
             LEFT JOIN aussengebiete AS ag
             ON lg.gebnam = ag.gebnam
-            WHERE ag.pk IS NULL OR NOT within(StartPoint(lg.glink), ag.geom))
+            WHERE ag.pk IS NOT NULL AND within(StartPoint(lg.glink), ag.geom))
         UPDATE linkageb SET gebnam =
         (   SELECT gebnam
             FROM aussengebiete AS ag
             WHERE within(StartPoint(linkageb.glink),ag.geom))
-        WHERE linkageb.pk IN missing""".format(eps=radiusHal)
+        WHERE linkageb.pk NOT IN linksvalid""".format(eps=radiusHal)
 
     if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkageb (3)'):
         return False
@@ -267,17 +292,17 @@ def updatelinkageb(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
 
     # 2. Schächte in "linkageb" eintragen (ohne Einschränkung auf auswahl)
 
-    sql = u"""WITH missing AS
+    sql = u"""WITH linksvalid AS
         (   SELECT lg.pk
             FROM linkageb AS lg
             LEFT JOIN schaechte AS sc
             ON lg.schnam = sc.schnam
-            WHERE sc.pk IS NULL OR NOT contains(buffer(EndPoint(lg.glink),{eps}),sc.geom))
+            WHERE sc.pk IS NOT NULL AND contains(buffer(EndPoint(lg.glink),{eps}),sc.geom))
         UPDATE linkageb SET schnam =
         (   SELECT schnam
             FROM schaechte AS sc
             WHERE contains(buffer(EndPoint(linkageb.glink),{eps}),sc.geom))
-        WHERE linkageb.pk IN missing""".format(eps=radiusHal)
+        WHERE linkageb.pk NOT IN linksvalid""".format(eps=radiusHal)
 
     logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
 
@@ -290,17 +315,17 @@ def updatelinkageb(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
 
     # 3.2 Eintrag vornehmen
 
-    sql = u"""WITH missing AS
+    sql = u"""WITH linksvalid AS
         (   SELECT ag.pk
             FROM aussengebiete AS ag
             INNER JOIN linkageb AS lg
             ON ag.gebnam = lg.gebnam
-            WHERE (ag.schnam IS NULL AND lg.schnam IS NOT NULL) OR ag.schnam <> lg.schnam)
+            WHERE ag.schnam == lg.schnam)
         UPDATE aussengebiete SET schnam =
         (   SELECT schnam
             FROM linkageb AS lg
             WHERE aussengebiete.gebnam = lg.gebnam)
-        WHERE aussengebiete.pk IN missing"""
+        WHERE aussengebiete.pk NOT IN linksvalid"""
 
     logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
 

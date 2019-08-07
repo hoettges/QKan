@@ -33,13 +33,14 @@ from qgis.utils import iface
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, fehlermeldung
+from qkan.database.qkan_utils import get_database_QKan, get_editable_layers, \
+    fehlermeldung, meldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 # noinspection PyUnresolvedReferences
 from . import resources
 # Import the code for the dialog
-from .application_dialog import CreatelineflDialog, CreatelineswDialog, AssigntgebDialog, ManagegroupsDialog, \
-    UpdateLinksDialog
+from .application_dialog import CreatelineflDialog, CreatelineswDialog, AssigntgebDialog, \
+    ManagegroupsDialog, UpdateLinksDialog
 from .k_link import createlinkfl, createlinksw, assigntgeb, storegroup, reloadgroup
 
 # Anbindung an Logging-System (Initialisierung in __init__)
@@ -297,7 +298,7 @@ class LinkFl:
             self.dlg_cl.lf_anzahl_haltungen.setText(u'0')
 
     # -------------------------------------------------------------------------
-    # Formularfunktionen linksw
+    # Formularfunktionen links
 
     def sw_helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
@@ -586,12 +587,16 @@ class LinkFl:
             autokorrektur = True
         self.dlg_cl.cb_autokorrektur.setChecked(autokorrektur)
 
+        # MakeValid auf Tabellen "flaechen" und "tezg". Muss jedes Mal aktiviert werden
+        flaechen_bereinigen = False
+        self.dlg_cl.cb_geomMakeValid.setChecked(flaechen_bereinigen)
+
         # Verbindungslinien nur innerhalb tezg
-        if 'linksw_in_tezg' in QKan.config:
-            linksw_in_tezg = QKan.config['linksw_in_tezg']
+        if 'links_in_tezg' in QKan.config:
+            links_in_tezg = QKan.config['links_in_tezg']
         else:
-            linksw_in_tezg = True
-        self.dlg_cl.cb_linkswInTezg.setChecked(linksw_in_tezg)
+            links_in_tezg = True
+        self.dlg_cl.cb_linksInTezg.setChecked(links_in_tezg)
 
         # Haltungsflächen (tezg) berücksichtigen
         if 'mit_verschneidung' in QKan.config:
@@ -619,6 +624,7 @@ class LinkFl:
             fangradius = QKan.config['fangradius']
         else:
             fangradius = u'0.1'
+
 
         # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
         if 'bezug_abstand' in QKan.config:
@@ -662,7 +668,8 @@ class LinkFl:
                 return False
 
             autokorrektur = self.dlg_cl.cb_autokorrektur.isChecked()
-            linksw_in_tezg = self.dlg_cl.cb_linkswInTezg.isChecked()
+            flaechen_bereinigen = self.dlg_cl.cb_geomMakeValid.isChecked()
+            links_in_tezg = self.dlg_cl.cb_linksInTezg.isChecked()
             mit_verschneidung = self.dlg_cl.cb_regardTezg.isChecked()
 
             # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
@@ -682,7 +689,7 @@ class LinkFl:
             QKan.config['liste_teilgebiete'] = liste_teilgebiete
             QKan.config['epsg'] = epsg
             QKan.config['autokorrektur'] = autokorrektur
-            QKan.config['linksw_in_tezg'] = linksw_in_tezg
+            QKan.config['links_in_tezg'] = links_in_tezg
             QKan.config['mit_verschneidung'] = mit_verschneidung
 
             QKan.save_config()
@@ -690,8 +697,9 @@ class LinkFl:
             # Start der Verarbeitung
 
             createlinkfl(self.dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                         liste_teilgebiete, linksw_in_tezg, mit_verschneidung, autokorrektur,
-                         suchradius, mindestflaeche, fangradius, bezug_abstand, epsg)
+                        liste_teilgebiete, links_in_tezg, mit_verschneidung, autokorrektur, 
+                        flaechen_bereinigen, suchradius, mindestflaeche, fangradius, 
+                        bezug_abstand, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
@@ -911,6 +919,10 @@ class LinkFl:
             autokorrektur = True
         self.dlg_at.cb_autokorrektur.setChecked(autokorrektur)
 
+        # MakeValid auf Tabellen "flaechen" und "tezg". Muss jedes Mal aktiviert werden
+        flaechen_bereinigen = False
+        self.dlg_at.cb_geomMakeValid.setChecked(flaechen_bereinigen)
+
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_assigntgeb (1)"):
@@ -966,6 +978,7 @@ class LinkFl:
                 return False
 
             autokorrektur = self.dlg_at.cb_autokorrektur.isChecked()
+            flaechen_bereinigen = self.dlg_at.cb_geomMakeValid.isChecked()
             bufferradius = self.dlg_at.tf_bufferradius.text()
 
             # config schreiben
@@ -984,7 +997,7 @@ class LinkFl:
                        [[u'haltungen', 'geom'], [u'flaechen', 'geom'], [u'schaechte', 'geop'], 
                         [u'einleit', 'geom'], [u'tezg', 'geom'], [u'linksw', 'glink'], 
                         [u'linkfl', 'glink']], 
-                       autokorrektur, bufferradius)
+                       autokorrektur, flaechen_bereinigen, bufferradius)
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
@@ -1077,11 +1090,12 @@ class LinkFl:
         self.dlg_ul.tf_qkDB.setText(database_QKan)
 
         # Festlegung des Fangradius
-        # Kann über Menü "Optionen" eingegeben werden
         if 'fangradius' in QKan.config:
             fangradius = QKan.config['fangradius']
         else:
             fangradius = u'0.1'
+        self.dlg_ul.tf_fangradius.setText(fangradius)
+        logger.debug('fangradius: {}'.format(fangradius))
 
         # Löschen von Flächenverknüpfungen ohne Linienobjekt
         if 'deletelinkflGeomNone' in QKan.config:
@@ -1089,6 +1103,10 @@ class LinkFl:
         else:
             deletelinkflGeomNone = True
         self.dlg_ul.cb_deleteGeomNone.setChecked(deletelinkflGeomNone)
+
+        # MakeValid auf Tabellen "flaechen" und "tezg". Muss jedes Mal aktiviert werden
+        flaechen_bereinigen = False
+        self.dlg_ul.cb_geomMakeValid.setChecked(flaechen_bereinigen)
 
         # show the dialog
         self.dlg_ul.show()
@@ -1099,6 +1117,7 @@ class LinkFl:
 
             # Inhalte aus Formular lesen
             deletelinkflGeomNone = self.dlg_ul.cb_deleteGeomNone.isChecked()
+            flaechen_bereinigen = self.dlg_ul.cb_geomMakeValid.isChecked()
 
             # config schreiben
             QKan.config['deletelinkflGeomNone'] = deletelinkflGeomNone
@@ -1109,10 +1128,12 @@ class LinkFl:
             # Start der Verarbeitung
 
             if self.dlg_ul.cb_linkfl.isChecked():
-                updatelinkfl(self.dbQK, fangradius, deletelinkflGeomNone)
+                updatelinkfl(self.dbQK, fangradius, flaechen_bereinigen, deletelinkflGeomNone)
 
             if self.dlg_ul.cb_linksw.isChecked():
                 updatelinksw(self.dbQK, fangradius, deletelinkflGeomNone)
+
+            meldung(u"Fertig!", u"Bereinigung Flächenverknüpfungen abgeschlossen.")
 
         # ----------------------------------------------------------------------------------------------
         # Datenbankverbindungen schliessen

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>502</width>
-    <height>276</height>
+    <height>297</height>
    </rect>
   </property>
   <property name="font">
@@ -22,7 +22,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>220</y>
+     <y>240</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -53,7 +53,7 @@
      <x>20</x>
      <y>20</y>
      <width>461</width>
-     <height>171</height>
+     <height>191</height>
     </rect>
    </property>
    <property name="font">
@@ -196,7 +196,7 @@
       <x>40</x>
       <y>80</y>
       <width>261</width>
-      <height>17</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -216,7 +216,7 @@
       <x>40</x>
       <y>100</y>
       <width>271</width>
-      <height>17</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -236,7 +236,7 @@
       <x>40</x>
       <y>140</y>
       <width>211</width>
-      <height>17</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -254,6 +254,35 @@
     </property>
     <property name="text">
      <string>Datensätze ohne Linienobjekt löschen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_geomMakeValid">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>160</y>
+      <width>161</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vor Beginn der Bearbeitung werden zunächst in den Tabellen &amp;quot;Flächen&amp;quot; und &amp;quot;Haltungsflächen&amp;quot; geometrische Fehler korrigiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Vor Beginn der Bearbeitung werden zunächst in den Tabellen &quot;Flächen&quot; und &quot;Haltungsflächen&quot; geometrische Fehler korrigiert.</string>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>Flächenobjekte bereinigen</string>
     </property>
    </widget>
   </widget>
