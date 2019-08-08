@@ -92,23 +92,20 @@ class QKanTools:
         self.dlgpr.cb_applyQKanTemplate.clicked.connect(self.dlgpr_applyQKanTemplate)
 
         # Formular dlgla - Projektdatei anpassen an QKan-Standard
-        self.dlgla.pb_selectProjectFile.clicked.connect(self.dlgla_selectFileProjectfile)
         self.dlgla.pb_selectQKanDB.clicked.connect(self.dlgla_selectFile_qkanDB)
         self.dlgla.cb_adaptDB.clicked.connect(self.dlgla_enableQkanDB)
-        self.dlgla.pb_selectProjectTemplate.clicked.connect(self.dlgla_selectFileProjectTemplate)
+        self.dlgla.pb_selectProjectTemplate.clicked.connect(self.dlgla_selectProjectTemplate)
         self.dlgla.button_box.helpRequested.connect(self.dlgla_helpClick)
         self.dlgla.cb_adaptForms.clicked.connect(self.dlgla_cb_adaptForms)
         self.dlgla.cb_adaptTableLookups.clicked.connect(self.dlgla_cb_adaptTableLookups)
         self.dlgla.cb_adaptKBS.clicked.connect(self.dlgla_cb_adaptKBS)
         self.dlgla.cb_applyQKanTemplate.clicked.connect(self.dlgla_applyQKanTemplate)
-        self.dlgla.cb_saveProjectFile.clicked.connect(self.dlgla_enableSaveProjectFile)
         self.dlgla.cb_qkanDBUpdate.clicked.connect(self.dlgla_checkqkanDBUpdate)
 
         # Formular dlgop - QKan-Optionen
         self.dlgop.pb_fangradiusDefault.clicked.connect(self.dlgop_fangradiusDefault)
         self.dlgop.pb_mindestflaecheDefault.clicked.connect(self.dlgop_mindestflaecheDefault)
         self.dlgop.pb_max_loopsDefault.clicked.connect(self.dlgop_maxLoopsDefault)
-        self.dlgop.pb_selectKBS.clicked.connect(self.dlgop_selectKBS)
         self.dlgop.pb_openLogfile.clicked.connect(self.dlgop_openLogfile)
         self.dlgop.pb_selectLogeditor.clicked.connect(self.dlgop_selectLogeditor)
 
@@ -833,7 +830,7 @@ class QKanTools:
         checked = self.dlgla.cb_applyQKanTemplate.isChecked()
         self.dlgla.tf_projectTemplate.setEnabled(not checked)
 
-    def dlgla_selectFileProjectTemplate(self):
+    def dlgla_selectProjectTemplate(self):
         """Vorlage-Projektdatei auswählen"""
 
         self.dlgla.cb_applyQKanTemplate.setChecked(False)  # automatisch deaktivieren
@@ -916,6 +913,8 @@ class QKanTools:
         self.dlgla.gb_LayersAdapt.setEnabled(self.dbIsUptodate)
         self.dlgla.gb_selectLayers.setEnabled(self.dbIsUptodate)
         self.dlgla.gb_setNodeTypes.setEnabled(self.dbIsUptodate)
+        self.dlgla.gb_updateQkanDB.setEnabled(not self.dbIsUptodate)
+        self.dlgla.cb_qkanDBUpdate.setChecked(not self.dbIsUptodate)
 
         # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen 
         if 'QKan_Standard_anwenden' in QKan.config:
@@ -1005,15 +1004,14 @@ class QKanTools:
             self.applyQKanTemplate = True
         self.dlgla.cb_applyQKanTemplate.setChecked(self.applyQKanTemplate)
 
-        # Checkbox: QKan-Datenbank aktualisieren
-        if self.dbIsUptodate:
-            if 'qkanDBUpdate' in QKan.config:
-                self.qkanDBUpdate = QKan.config['qkanDBUpdate']
-            else:
-                self.qkanDBUpdate = True
-        else:
-            self.qkanDBUpdate = True
-        self.dlgla.cb_qkanDBUpdate.setChecked(self.qkanDBUpdate)
+        # # Checkbox: QKan-Datenbank aktualisieren
+        # if self.dbIsUptodate:
+            # if 'qkanDBUpdate' in QKan.config:
+                # self.qkanDBUpdate = QKan.config['qkanDBUpdate']
+            # else:
+                # self.qkanDBUpdate = True
+        # else:
+            # self.qkanDBUpdate = True
 
         # Status initialisieren
         self.dlgla_enableQkanDB()
