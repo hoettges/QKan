@@ -300,6 +300,17 @@ def layersadapt(database_QKan, projectTemplate, dbIsUptodate, qkanDBUpdate,
                 fieldname = field.name()
                 if fieldname in dictOfEditWidgets:
                     type, options = dictOfEditWidgets[fieldname]
+                    if 'Layer' in options: 
+                        # LayerId aus Template-Projektdatei muss durch den 
+                        # entsprechenden LayerId der Projektdatei ersetzt werden.
+                        try:
+                            templateLayerName = options['Layer']
+                            projectLayerName = layerIdList[templateLayerName]
+                        except BaseException as err:
+                            fehlermeldung(f'Fehler in k_layersadapt (12) in layer {layername}: {err}',
+                                          'Möglicherweise ist der Template-Projektdatei fehlerhaft')
+                            return False
+                        options['Layer'] = projectLayerName
                     ews = QgsEditorWidgetSetup(type, options)
                     layer.setEditorWidgetSetup(idx, ews)
 

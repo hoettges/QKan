@@ -65,7 +65,7 @@ def getEditWidgetConfigFromQgsTemplate(qgsxml, layername):
     dictOfEditWidgets = {}                                                  # return: dictOfEditWidgets: init
     for field in fieldnodes:
         attr = field.attrib
-        logger.debug('editWidget: {}'.format(attr))
+        # logger.debug('editWidget: {}'.format(attr))
         fieldname = attr['name']                                            # return: fieldname
         ewNode = field.find('./editWidget')
         attr = ewNode.attrib 
@@ -77,10 +77,10 @@ def getEditWidgetConfigFromQgsTemplate(qgsxml, layername):
                 attr = optionNode.attrib
                 optionName = attr['name']
                 optionValue = attr['value']
-                logger.debug("option: '{key}': {attr}".format(key=optionName, attr=optionValue))    # print
+                # logger.debug("option: '{key}': {attr}".format(key=optionName, attr=optionValue))    # print
                 editWidgetOptions[optionName]=optionValue                    # return: editWidgetOptions
             dictOfEditWidgets[fieldname] = (editWidgetType, editWidgetOptions)
-            logger.debug('dictOfEditWidgets: {}'.format(dictOfEditWidgets))
+            # logger.debug('dictOfEditWidgets: {}'.format(dictOfEditWidgets))
         elif editWidgetType in ('ValueMap'):
             optionNodes = ewNode.findall('./config/Option/Option/Option')
             editWidgetOptions = {}                                          # return: editWidgetOptions: init
@@ -88,10 +88,10 @@ def getEditWidgetConfigFromQgsTemplate(qgsxml, layername):
                 attr = optionNode.attrib
                 optionName = attr['name']
                 optionValue = attr['value']
-                logger.debug("option: '{key}': {attr}".format(key=optionName, attr=optionValue))    # print
+                # logger.debug("option: '{key}': {attr}".format(key=optionName, attr=optionValue))    # print
                 editWidgetOptions[optionName]=optionValue                    # return: editWidgetOptions
             dictOfEditWidgets[fieldname] = (editWidgetType, {'map': editWidgetOptions})
-            logger.debug('dictOfEditWidgets: {}'.format(dictOfEditWidgets))
+            # logger.debug('dictOfEditWidgets: {}'.format(dictOfEditWidgets))
     return dictOfEditWidgets
 
 

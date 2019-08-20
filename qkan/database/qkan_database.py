@@ -20,10 +20,10 @@
 """
 
 __author__ = 'Joerg Hoettges'
-__date__ = 'Oktober 2016'
+__date__ = 'August 2019'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__dbVersion__ = '2.5.27'  # Version der QKan-Datenbank
-__qgsVersion__ = '3.0.0'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = '3.0.1'  # Version der QKan-Datenbank
+__qgsVersion__ = '3.0.1'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -405,6 +405,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     steuersch TEXT,
     einschalthoehe REAL,
     ausschalthoehe REAL,
+    teilgebiet TEXT,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
     createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
@@ -444,6 +445,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     uebeiwert REAL,
     aussentyp TEXT,
     aussenwsp REAL,
+    teilgebiet TEXT,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
     createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''

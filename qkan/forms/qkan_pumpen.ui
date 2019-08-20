@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>648</width>
-    <height>445</height>
+    <width>621</width>
+    <height>385</height>
    </rect>
   </property>
   <property name="font">
@@ -35,9 +35,9 @@
    <widget class="QLabel" name="label_20">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>20</x>
       <y>130</y>
-      <width>121</width>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
@@ -45,37 +45,11 @@
      <string>Steuerschacht</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>130</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Anfangsvolumen</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_6">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>160</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Gesamtvolumen</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_18">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>70</y>
+      <x>20</x>
+      <y>170</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -88,7 +62,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>220</y>
+      <y>200</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -114,7 +88,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>240</y>
+      <y>230</y>
       <width>631</width>
       <height>31</height>
      </rect>
@@ -127,7 +101,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>280</y>
+      <y>250</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -140,7 +114,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>190</y>
+      <y>130</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -152,8 +126,8 @@
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>100</y>
+      <x>20</x>
+      <y>200</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -191,9 +165,9 @@
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>190</y>
-      <width>91</width>
+      <x>320</x>
+      <y>70</y>
+      <width>71</width>
       <height>21</height>
      </rect>
     </property>
@@ -205,7 +179,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>160</y>
+      <y>100</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -244,31 +218,11 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="volanf">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>130</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="volges">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>160</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="sohle">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>190</y>
+      <x>470</x>
+      <y>70</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -277,8 +231,8 @@
    <widget class="QComboBox" name="pumpentyp">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>70</y>
+      <x>130</x>
+      <y>170</y>
       <width>131</width>
       <height>22</height>
      </rect>
@@ -287,8 +241,8 @@
    <widget class="QComboBox" name="simstatus">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>100</y>
+      <x>130</x>
+      <y>200</y>
       <width>131</width>
       <height>22</height>
      </rect>
@@ -297,7 +251,7 @@
    <widget class="QComboBox" name="steuersch">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>130</x>
       <y>130</y>
       <width>131</width>
       <height>22</height>
@@ -308,7 +262,7 @@
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>160</y>
+      <y>100</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -318,7 +272,7 @@
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>190</y>
+      <y>130</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -328,7 +282,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>300</y>
+      <y>270</y>
       <width>581</width>
       <height>71</height>
      </rect>
@@ -337,8 +291,8 @@
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>220</y>
+      <x>430</x>
+      <y>200</y>
       <width>141</width>
       <height>23</height>
      </rect>
@@ -350,37 +304,11 @@
      <string>dd.MM.yyyy HH:mm</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>130</y>
-      <width>21</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>m³</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>160</y>
-      <width>21</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>m³</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>190</y>
+      <x>570</x>
+      <y>70</y>
       <width>31</width>
       <height>21</height>
      </rect>
@@ -393,7 +321,7 @@
     <property name="geometry">
      <rect>
       <x>580</x>
-      <y>160</y>
+      <y>100</y>
       <width>31</width>
       <height>21</height>
      </rect>
@@ -406,7 +334,7 @@
     <property name="geometry">
      <rect>
       <x>580</x>
-      <y>190</y>
+      <y>130</y>
       <width>31</width>
       <height>21</height>
      </rect>
@@ -421,8 +349,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>648</width>
-     <height>20</height>
+     <width>621</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -439,8 +367,6 @@
   <tabstop>pnam</tabstop>
   <tabstop>schoben</tabstop>
   <tabstop>schunten</tabstop>
-  <tabstop>volanf</tabstop>
-  <tabstop>volges</tabstop>
   <tabstop>sohle</tabstop>
   <tabstop>pumpentyp</tabstop>
   <tabstop>simstatus</tabstop>

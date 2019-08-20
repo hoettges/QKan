@@ -206,7 +206,6 @@ class CreateUnbefFl:
         else:
             self.dlg.lf_anzahl_tezg.setText(u'0')
 
-    @staticmethod
     def listselectedTabitems(self, tableWidget, nCols=5):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
