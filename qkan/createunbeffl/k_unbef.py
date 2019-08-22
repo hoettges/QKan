@@ -31,8 +31,6 @@ import logging
 
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import QgsMessageLog, Qgis
-from qgis.gui import QgsMessageBar
-from qgis.utils import iface
 
 from qkan.database.qkan_utils import checknames, fehlermeldung
 
@@ -49,7 +47,7 @@ progress_bar = None
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def createUnbefFlaechen(dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='spatialite'):
+def createUnbefFlaechen(iface, dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp='spatialite'):
     '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.

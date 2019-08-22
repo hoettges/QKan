@@ -30,6 +30,7 @@ import os
 import firebirdsql
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
+from qgis.core import Qgis
 
 from .qkan_utils import fehlermeldung
 

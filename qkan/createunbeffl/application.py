@@ -369,4 +369,4 @@ class CreateUnbefFl:
             QKan.config['autokorrektur'] = autokorrektur
             QKan.save_config()
 
-            createUnbefFlaechen(self.dbQK, liste_selAbflparamTeilgeb, autokorrektur)
+            createUnbefFlaechen(self.iface, self.dbQK, liste_selAbflparamTeilgeb, autokorrektur)
