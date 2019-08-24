@@ -14,24 +14,23 @@ dass HYSTEM-EXTRAN 7.x eine Firebird-Datenbank verwendet.
 QGIS Installieren
 -----------------
 
-QKan basiert auf dem Open-Source-Programm QGIS. Deshalb wird dieses als erstes benötigt.
-Die aktuelle Version von QGIS finden Sie hier: QGIS_ oder falls dieser Link nicht funktioniert könne Sie manuell www.QGIS.org aufrufen. 
+QKan basiert auf dem Open-Source-Programm QGIS 3. Deshalb wird dieses als erstes benötigt.
+Die aktuelle Version von QGIS finden Sie hier: QGIS_ oder falls dieser Link nicht funktioniert können Sie manuell www.QGIS.org aufrufen. Für größere Organisationen ist die sogenannte LTR (long time release) Version empfehlenswert, weil bei dieser Variante mehr Wert auf Stabilität als auf die neuesten Funktionen gelegt wird. 
 
 .. _QGIS: http://www.QGIS.org/de/site/forusers/download.html
 
 Aktuell gibt es zwei Versionen von QGIS. In der neuen Version 3.0 wurden grundlegende Softwarepakete, auf denen QGIS aufbaut (QT 5.0 und Python 3.0) aktualisiert 
-und einige grundlegende Umstrukturierungen vorgenommen. QKan gibt es aktuell nur für Version 2.18, die Anpassung auf Version 3.xx ist bis Frühjahr 2019 geplant. 
+und einige grundlegende Umstrukturierungen vorgenommen. QKan wird seit August 2019 nur noch für Version 3 weiter entwickelt. 
 Durch Klicken auf den "Jetzt herunterladen"-Button auf der Startseite werden Sie sofort zur Downloadseite weitergeleitet. Gehen Sie vorher sicher, 
 dass Ihnen genügend freier Speicherplatz zur Verfügung steht, da die QGIS-Installation etwa 1,5 GB 
 Speicherplatz einnehmen wird. Wählen Sie in Abhänigkeit von Ihrem Betriebssystem und Ihrer Betriebssystem-Version einen Downloadlink aus. 
-In diesem Beispiel verwenden wir die 
-unter dem Punkt "Für Windows herunterladen" zu findende Version "Eigenständige QGIS-Installation Version 2.18 (64bit)":
+In diesem Beispiel verwenden wir die unter dem Punkt "Für Windows herunterladen" zu findende Version "Eigenständige QGIS-Installation Version 3.xx (64bit)":
 
 .. image:: .\QKan_Bilder\QGIS_herunterladen.png
 
 Wählen Sie ein entsprechendes Verzeichnis zum Speichern der Installationsdatei und führen Sie diese anschließend aus. Bestätigen Sie die Installation, 
 aktzeptieren das Lizenzabkommen und wählen anschießend das Verzeichnis, in dem QGIS installiert werden soll. Sie können auch einfach auf den Weiter-Button
-klicken, um es im Standartverzeichnis "C:\\Programme\\QGIS 2.18" zu installieren. Als letzes wird QGIS Sie nach den zusätzlichen Komponenten, wie zum Beispiel
+klicken, um es im Standartverzeichnis "C:\\Programme\\QGIS 3.xx" zu installieren. Als letzes wird QGIS Sie nach den zusätzlichen Komponenten, wie zum Beispiel
 dem North Carolina Data Set fragen:
 
 .. image:: .\QKan_Bilder\QGIS_komponenten.png
@@ -47,44 +46,44 @@ installieren. Klicken Sie anschließend auf "Installieren", um die Installation 
 QKan Plugins für QGIS
 ---------------------
 
-Nachdem QGIS erfolgreich auf Ihrem System installiert wurde, können nun das QKan-Plugin installiert werden. 
-Dieses erhalten Sie auf dem github Verzeichnis zu QKan. Einen Link dazu
-finden Sie hier: qkangithub_ . 
+Nachdem QGIS erfolgreich auf Ihrem System installiert wurde, kann nun das QKan-Plugin installiert werden. 
+Dieses erhalten Sie auf dem github-Verzeichnis zu QKan. Einen Link dazu finden Sie hier: QKan3-GITHUB_ . 
 
-.. _qkangithub: https://github.com/hoettges/QKan/tree/master
+.. _QKan3-GITHUB: https://github.com/hoettges/QKan/tree/qkan3
 
-.. image:: .\QKan_Bilder\github_hoettges.png
+.. image:: .\QKan_Bilder\github_qkan.png
 
-Falls Sie die aktuelle Entwicklungsversion laden möchten, wechseln Sie zunächst in den entsprechenden Zweig ("Branch"). Unter der Schaltfläche
-"Branch" kann der gewünschte Zweig aufgewählt werden und anschließend mit der grünen Schaltfläche "Clone or download" heruntergeladen werden. 
+Falls Sie HYSTEM-EXTRAN Version 7.8 oder 7.9 verwenden, benötigen Sie zusätzlich das QKan-HE7-Plugin. 
+Dies ist weiter unten erläutert, weil dazu noch weitere Installationen notwendig sind.
 
-In dem heruntergeladenen Zip-Archiv befindet sich im oberen Ordner ("QKan-master") ein Unterordner "QKan". Dieser muss in das 
-Plugin-Verzeichnis von QGIS kopiert werden. Das Plugin-Verzeichnis unter dem Betriebssystem Windows ist üblicherweise 
-"C:\\Users\\{Benutzername}\\.qgis2\\python\\plugins". Anstelle von "Users" erscheint im Explorer die Bezeichnung "Benutzer", 
-die aber intern durch "Users" ersetzt wird. Für {Benutzername} müssen Sie den Namen einsetzen, unter dem Sie am Computer angemeldet sind. Sollte das 
-Verzeichnis noch nicht existieren, müssen Sie es erstellen.
+In dem heruntergeladenen Zip-Archiv befindet sich im oberen Ordner ("QKan-qkan3") ein 
+Unterordner "QKan". Dieser muss in das Plugin-Verzeichnis von QGIS kopiert werden. 
+
+Starten Sie QGIS. Das Plugin-Verzeichnis finden Sie mit Hilfe des 
+QGIS-Menüs "Einstellungen > Benutzerprofile > Aktuelles Profilverzeichnis öffnen". 
+Dort wechseln Sie in den Unterordner "python\\plugins". 
 
 .. image:: .\QKan_Bilder\QKan_plugins.png
 
-Anschließend öffnen Sie QGIS mit Hilfe der "QGIS Desktop 2.18.x with GRASS 7.x" Verknüpfung, welche sich im QGIS Ordner auf Ihrem Desktop befinden sollte. 
-Wenn Sie QGIS gestartet haben, wählen Sie in der Hauptmenüleiste unter dem Menüpunkt "Erweiterungen" den Unterpunkt 
-"Erweiterungen verwalten und installieren..." aus um folgendes Fenster zu öffnen:
+Anschließend öffnen Sie mit dem Menü "Erweiterungen > Erweiterungen verwalten und installieren..." 
+folgendes Fenster:
 
 .. image:: .\QKan_Bilder\Qgis_erweiterungen.png
 
-Wählen Sie an der linken Seite den Reiter "Installiert" und setzen Sie den Haken vor dem Plugin "QKan". Nach dem Schließen dieses Fensters stehen 
-in QGIS ein Werkzeugkasten "QKan" mit mehreren Icons sowie ein Hauptmenü "QKan" mit mehreren Untermenüs zur Verfügung.  
+Wählen Sie an der linken Seite den Reiter "Installiert" und setzen Sie den Haken vor dem Plugin "QKan". 
+Nach dem Schließen dieses Fensters stehen in QGIS ein Werkzeugkasten "QKan" mit mehreren Icons 
+sowie ein Hauptmenü "QKan" mit mehreren Untermenüs zur Verfügung.  
 
 .. image:: .\QKan_Bilder\Qgis_menue.png
 
 Damit haben Sie QKan erfolgreich auf Ihren Computer installiert!
 
-Falls Sie Daten direkt mit dem Simulationsprogramm HYSTEM-EXTRAN 7.x austauschen wollen, müssen Sie auch die nachfolgenden Installationen vornehmen, um 
-anschließend das entsprechende Plugin nutzen zu können. 
-
 
 QKan-HE7 Plugin für HYSTEM-EXTRAN 7.x
 =====================================
+
+Falls Sie Daten direkt mit dem Simulationsprogramm HYSTEM-EXTRAN 7.x austauschen wollen, müssen Sie 
+auch die nachfolgenden Installationen vornehmen, um anschließend das entsprechende Plugin nutzen zu können. 
 
 Das QKan-Plugin zum direkten Datenaustausch mit HYSTEM-EXTRAN 7.8 und 7.9 erfordert die Installation eines Firebird-Datenbank-Servers sowie des zugehörigen Python-Moduls. 
 Die dazu notwendigen Schritte werden in den nachfolgenden Kapiteln erläutert. 
@@ -129,25 +128,8 @@ Zusätzliche Python-Module
 -------------------------
 
 Nun müssen einige in QGIS enthaltene Module aktualisiert beziehungsweise ergänzt werden. Da Installationen nur mit Administrator-Rechten ausgeführt werden 
-können, müssen Sie zunächst die "OSGeo4W Shell" als Administrator ausführen, um dort die weiteren Schritte vornehmen zu können. Falls Sie keinen 
+können, müssen Sie dazu "QGIS" als Administrator ausführen, um dort die weiteren Schritte vornehmen zu können. Falls Sie keinen 
 Administrator-Zugang haben, wenden Sie sich an Ihren IT-Administrator, damit er die nachfolgenden Schritte ausführt. 
-
-Starten der "OSGeo4W Shell" mit Administrator-Rechten
-+++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Das Vorgehen unterscheidet sich etwas, je nachdem, welche Version von Windows Sie haben. 
-
-Unter Windows 7 klicken Sie im Startmenü mit der rechten Maustaste auf "OSGeo4W Shell" und wählen "Als Administrator ausführen...". Unter Windows 10 wählen 
-Sie stattdessen unter "Mehr" die Zeile "Am Speicherort öffnen" und Klicken wieder mit der rechten Maustaste auf die Datei "OSGeo4W Shell", wo Sie dann 
-ebenfalls "Als Administrator ausführen..." wählen. 
-
-.. warning:: Achten Sie unbedingt darauf, die "OSGeo4W Shell" als Administrator auszuführen, da sonst kein Zugriff möglich ist!
-
-.. image:: .\QKan_Bilder\OSGeo4Wexe.png
-
-Geöffnet sieht sie dann etwa so aus:
-
-.. image:: .\QKan_Bilder\OSGeo4Wshell.png
 
 pyfirebirdsql
 +++++++++++++
@@ -168,34 +150,52 @@ führen Sie den Download entsprechend ihrem Browser durch.
 .. image:: .\QKan_Bilder\pyfirebird_dwn.png
 
 Sie erhalten nun eine .zip Datei mit dem Namen "pyfirebirdsql-master". Der darin enthaltene Ordner kann jetzt entpackt und anschließend in ein beliebiges
-Verzeichnis verschoben werden. Um das Modul zu installieren, müssen Sie in der bereits geöffneten "OSGeo4W Shell" mit Hilfe der Befehle "cd" in das Verzeichnis 
-wechseln, in das Sie im vorherigen Schritt die Installationsdateien entpackt hatten. In diesem Beispiel ist das: 
-"C:\\Users\\Christian\\Desktop\\QKan\\install\\pyfirebirdsql-master". Anschließend geben Sie den Befehl "python setup.py install" ein.
+Verzeichnis verschoben werden. 
 
-.. image:: .\QKan_Bilder\OSGeo4Wshellcd.png
+Die eigentliche Installation erfolgt in QGIS, das hierfür mit Administrator-Rechten gestartet werden muss.
 
-pip und matplotlib
-++++++++++++++++++
+Starten von "QGIS" mit Administrator-Rechten
++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. note:: Dieses Kapitel ist nur Für QGIS-Versionen vor 2.18.6 relevant, die noch eine ältere Version der Bibliothek "matplotlib" enhalten. Bei den neueren Versionen ist eine Aktualsierung von "matplotlib" nicht notwendig, so dass sie alle Schritte in diesem Kapitel überspringen und mit Kap. 4 fortfahren können. 
+Das Vorgehen unterscheidet sich etwas, je nachdem, welche Version von Windows Sie haben. 
 
-Das Modul matplotlib wird für die grafische Darstellung benötigt. Zu seiner Aktualisierung müssen zusätzlich die Programme "pip" sowie "setuptools" aktualisiert werden. 
+Sie suchen im Startmenü "QGIS" und klicken mit der rechten Maustaste darauf. In der Liste wählen Sie "Als Administrator ausführen...". Unter Windows 10 erscheint zunächst "Mehr", wo Sie dann "Als Administrator ausführen..." auswählen. 
 
-Geben Sie nacheinander im Fenster "OSGeo4W Shell" folgende Befehle ein:
+.. warning:: Achten Sie unbedingt darauf, "QGIS" als Administrator auszuführen, da sonst kein Zugriff möglich ist!
 
-python -m pip install --upgrade pip
+Für die Installation des Moduls "pyfirebirdsql" müssen einige Python-Kommandos ausgeführt werden. Hierzu öffnen Sie bitte in QGIS die Python-Konsole mit Hilfe des Menüs "Erweiterungen > Python-Konsole". 
 
-python -m pip install -U pip setuptools
+Geben Sie nun nacheinander die nachfolgend aufgeführten drei Zeilen ein. Dabei ist ``"C:\install\firebird\pyfirebirdsql-master"`` in diesem Beispiel der Pfad, auf dem die Installationsdateien für das Modul "pyfirebirdsql" und insbesondere die Datei "setup.py" liegen:
 
-pip install -U matplotlib
+.. code:: python
+
+    import os
+    os.chdir(r"C:\install\firebird\pyfirebirdsql-master")
+    os.system("python setup.py install")
+
+Zur Erläuterung: Für die weiteren Befehle wird das Modul “os” benötigt, das zuerst geladen werden muss. 
+Nun muss das Arbeitsverzeichnis auf das Verzeichnis gesetzt werden, auf dem die Installationsdateien für 
+das Modul "pyfirebirdsql" liegen (Anmerkung: der Buchstabe "r" vor dem Pfad dient in Python dazu, 
+das Zeichen "\\" als Bestandteil des Verzeichnispfades zu interpretieren und nicht wie in Python 
+üblich als Excape-Zeichen). Anschließend wird der Installationsprozess gestartet. 
+
+Wenn in der Python-Konsole eine 0 angefügt wurde, war die Installation erfolgreich.::
+
+    >>>import os 
+    >>>os.chdir(r"C:\install\firebird\pyfirebirdsql-master")
+    >>>os.system("python setup.py install")
+    0
 
 QKan-HE7-Plugin
 ---------------
 
-Nachdem die notwendigen Voraussetzungen geschaffen sind, kann das Zusatz-Plugin zum Datenaustausch mit dem Simulationsprogramm HYSTEM-EXTRAN 7.x installiert werden. 
+Nachdem die notwendigen Voraussetzungen geschaffen sind, kann das Plugin zum Datenaustausch mit dem Simulationsprogramm HYSTEM-EXTRAN 7.x installiert werden. 
 Die Installation erfolgt wie bei dem QKan_Plugin durch Download, einfaches Kopieren des QKan-HE7-Ordners und Aktivieren. Der Link zum Download befindet sich hier: qkanhe7github_ . 
 
-.. _qkanhe7github: https://github.com/hoettges/QKan-plugin-HE7/tree/master
+.. _qkanhe7github: https://github.com/hoettges/QKan-plugin-HE7/tree/qkan3
+
+.. image:: .\QKan_Bilder\github_qkan-he7.png
+
 
 
 .. warning:: Die ersten Anwender von QKan berichten davon, dass die Firebird-Datenbank in der hier verwendeten lizenzkostenfreien Version Probleme verursacht, wenn sich die Hystem-Extran-Datenbankdatei (Kanalnetz- oder Ergebnisdaten) in einem Netzwerk-Verzeichnis befindet. In diesem Fall hilft es, die Datei in ein lokales Verzeichnis (auf C:) zu verschieben, und später nach Beendigung der Arbeit wieder zurück zu verschieben. 
