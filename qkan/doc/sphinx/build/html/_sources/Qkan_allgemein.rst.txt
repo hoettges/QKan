@@ -1,11 +1,16 @@
 Allgemeines
 ===========
 
-QKan baut auf QGIS 2.18 auf und besteht zur Zeit aus 2 Plugins, die eine Palette von Funktionen zur Verarbeitung von 
-Kanaldaten umfassen. Langfristig soll QKan eine Anbindung an die in Deutschland weit verbreiteten hydrodynamsichen Simulationsprogramme bekommen. Bereits realisiert sind: 
+QKan baut auf QGIS 3 auf und besteht zur Zeit aus 2 Plugins, die eine Palette von Funktionen zur Verarbeitung von Kanaldaten umfassen. 
 
-    - HYSTEM-EXTRAN 7.8 und 7.9 (setzt zusätzliche Installationen voraus)
+Ein besonderer Schwerpunkt ist die Verarbeitung der befestigten und unbefestigten Flächen. QKan enthält eine Funktion zur automatisierten 
+Zuordnung dieser Flächen zu den Haltungen, die optional beim Export in das Simulationsprogramm mit Haltungflächen verschnitten werden. 
+Dabei ist es sowohl möglich, die Flächenzuordnung interaktiv für kleine Teilgebiete als auch automatisch für große Kanalnetze durchzuführen. 
+
+Langfristig soll QKan eine Anbindung an die in Deutschland weit verbreiteten hydrodynamischen Simulationsprogramme bekommen. Bereits realisiert sind: 
+
     - Kanal++/DYNA
+    - HYSTEM-EXTRAN 7.8 und 7.9 (setzt zusätzliche Installationen voraus)
 
 Außerdem bestehen verschiedene Möglichkeiten des Datenim- und Exports:
 
