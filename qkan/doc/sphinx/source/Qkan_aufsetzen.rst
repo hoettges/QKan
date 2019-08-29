@@ -46,31 +46,36 @@ installieren. Klicken Sie anschließend auf "Installieren", um die Installation 
 QKan Plugins für QGIS
 ---------------------
 
-Nachdem QGIS erfolgreich auf Ihrem System installiert wurde, kann nun das QKan-Plugin installiert werden. 
-Dieses erhalten Sie auf dem github-Verzeichnis zu QKan. Einen Link dazu finden Sie hier: QKan3-GITHUB_ . 
+Nachdem QGIS erfolgreich auf Ihrem System installiert wurde, können nun die QKan-Plugins installiert werden. 
+Es handelt sich um zwei Module, die Sie auf dem github-Verzeichnis zu QKan finden. 
+Einen Link zu den aktuellen Version finden Sie hier (rot eingerahmt): QKan3-GITHUB_ . 
 
-.. _QKan3-GITHUB: https://github.com/hoettges/QKan/tree/qkan3
+.. _QKan3-GITHUB: https://github.com/hoettges/QKan/releases
 
 .. image:: .\QKan_Bilder\github_qkan.png
 
-Falls Sie HYSTEM-EXTRAN Version 7.8 oder 7.9 verwenden, benötigen Sie zusätzlich das QKan-HE7-Plugin. 
-Dies ist weiter unten erläutert, weil dazu noch weitere Installationen notwendig sind.
+Das Plugin "qkan" enthält alle QKan-Module mit Ausnahme der Module, die im Zusammenhang mit HYSTEM-EXTRAN Version 7.8 oder 7.9 benötigt werden. 
+Diese sind im Plugin "qkan_he7" enthalten, erfordern aber noch weitere Installationen. Diese sind weiter unten erläutert. 
 
-In dem heruntergeladenen Zip-Archiv befindet sich im oberen Ordner ("QKan-qkan3") ein 
-Unterordner "QKan". Dieser muss in das Plugin-Verzeichnis von QGIS kopiert werden. 
+Die Installation des Plugins erfolgt durch einfaches Kopieren des Ordners "qkan" bzw. "qkan_he7", 
+die sich in den beiden Zip-Archiven befinden, 
+in das Plugin-Verzeichnis. Dieses finden Sie wie folgt:
 
 Starten Sie QGIS. Das Plugin-Verzeichnis finden Sie mit Hilfe des 
 QGIS-Menüs "Einstellungen > Benutzerprofile > Aktuelles Profilverzeichnis öffnen". 
-Dort wechseln Sie in den Unterordner "python\\plugins". 
+Dort wechseln Sie in den Unterordner "python\\plugins". Nun kopieren Sie das Verzeichnis "qkan" aus 
+dem Zip-Archiv "qkan.zip" in diesen Ordner. Im nachfolgenden Bild befinden sich bereits beide Plugins im Plugin-Ordner. 
 
 .. image:: .\QKan_Bilder\QKan_plugins.png
 
-Anschließend öffnen Sie mit dem Menü "Erweiterungen > Erweiterungen verwalten und installieren..." 
+Nun muss zunächst das Plugin "qkan" aktiviert werden. Öffnen Sie mit dem Menü "Erweiterungen > Erweiterungen verwalten und installieren..." 
 folgendes Fenster:
 
 .. image:: .\QKan_Bilder\Qgis_erweiterungen.png
 
-Wählen Sie an der linken Seite den Reiter "Installiert" und setzen Sie den Haken vor dem Plugin "QKan". 
+Wählen Sie an der linken Seite den Reiter "Installiert" und setzen Sie den Haken vor dem Plugin "QKan". Das Plugin "Qkan_Hystem-Extran 7" aktivieren Sie bitte nur, wenn Sie bereits, wie weiter unten erläutert, 
+Firebird und das entsprechende Zusatzmodul "pyfirebirdsql" installiert haben. 
+
 Nach dem Schließen dieses Fensters stehen in QGIS ein Werkzeugkasten "QKan" mit mehreren Icons 
 sowie ein Hauptmenü "QKan" mit mehreren Untermenüs zur Verfügung.  
 
@@ -85,7 +90,7 @@ QKan-HE7 Plugin für HYSTEM-EXTRAN 7.x
 Falls Sie Daten direkt mit dem Simulationsprogramm HYSTEM-EXTRAN 7.x austauschen wollen, müssen Sie 
 auch die nachfolgenden Installationen vornehmen, um anschließend das entsprechende Plugin nutzen zu können. 
 
-Das QKan-Plugin zum direkten Datenaustausch mit HYSTEM-EXTRAN 7.8 und 7.9 erfordert die Installation eines Firebird-Datenbank-Servers sowie des zugehörigen Python-Moduls. 
+Das QKan-Plugin zum direkten Datenaustausch mit HYSTEM-EXTRAN 7.8 und 7.9 erfordert zunächst die Installation eines Firebird-Datenbank-Servers sowie des zugehörigen Python-Moduls. 
 Die dazu notwendigen Schritte werden in den nachfolgenden Kapiteln erläutert. 
 
 
@@ -127,7 +132,7 @@ und suchen unter dem Reiter Prozesse nach "fbserver.exe".
 Zusätzliche Python-Module
 -------------------------
 
-Nun müssen einige in QGIS enthaltene Module aktualisiert beziehungsweise ergänzt werden. Da Installationen nur mit Administrator-Rechten ausgeführt werden 
+Nun muss in QGIS ein Modul ergänzt werden. Da Installationen nur mit Administrator-Rechten ausgeführt werden 
 können, müssen Sie dazu "QGIS" als Administrator ausführen, um dort die weiteren Schritte vornehmen zu können. Falls Sie keinen 
 Administrator-Zugang haben, wenden Sie sich an Ihren IT-Administrator, damit er die nachfolgenden Schritte ausführt. 
 
@@ -190,12 +195,8 @@ QKan-HE7-Plugin
 ---------------
 
 Nachdem die notwendigen Voraussetzungen geschaffen sind, kann das Plugin zum Datenaustausch mit dem Simulationsprogramm HYSTEM-EXTRAN 7.x installiert werden. 
-Die Installation erfolgt wie bei dem QKan_Plugin durch Download, einfaches Kopieren des QKan-HE7-Ordners und Aktivieren. Der Link zum Download befindet sich hier: qkanhe7github_ . 
-
-.. _qkanhe7github: https://github.com/hoettges/QKan-plugin-HE7/tree/qkan3
-
-.. image:: .\QKan_Bilder\github_qkan-he7.png
-
+Die Installation erfolgt wie bei dem QKan-Plugin (siehe oben) durch Download, einfaches Kopieren 
+des Ordners "qkan_he7" aus dem ZIP-Archiv "qkan_he7.zip" und Aktivieren. 
 
 
 .. warning:: Die ersten Anwender von QKan berichten davon, dass die Firebird-Datenbank in der hier verwendeten lizenzkostenfreien Version Probleme verursacht, wenn sich die Hystem-Extran-Datenbankdatei (Kanalnetz- oder Ergebnisdaten) in einem Netzwerk-Verzeichnis befindet. In diesem Fall hilft es, die Datei in ein lokales Verzeichnis (auf C:) zu verschieben, und später nach Beendigung der Arbeit wieder zurück zu verschieben. 
