@@ -27,7 +27,6 @@ import os
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis
 
-from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fortschritt, fehlermeldung, meldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 

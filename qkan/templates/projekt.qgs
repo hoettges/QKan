@@ -1,7 +1,7 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan Version 3.0.1" version="3.6.3-Noosa">
+<qgis projectname="QKan Version 3.0.2" version="3.6.3-Noosa">
   <homePath path=""/>
-  <title>QKan Version 3.0.1</title>
+  <title>QKan Version 3.0.2</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <trust active="0"/>
@@ -12116,7 +12116,7 @@ def my_form_open(dialog, layer, feature):
     <parentidentifier></parentidentifier>
     <language></language>
     <type></type>
-    <title>QKan Version 3.0.1</title>
+    <title>QKan Version 3.0.2</title>
     <abstract></abstract>
     <links/>
     <author></author>

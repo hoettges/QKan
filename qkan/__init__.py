@@ -36,6 +36,9 @@ class QKan:
 
         file_handler.setFormatter(formatter)
         stream_handler.setFormatter(formatter)
+        
+        file_handler.setLevel(logging.DEBUG)
+        stream_handler.setLevel(logging.DEBUG)
 
         self.logger.setLevel(logging.DEBUG)
         if not self.logger.handlers:
@@ -82,6 +85,7 @@ class QKan:
         from .exportdyna import application as exportdyna
         from .linkflaechen import application as linkflaechen
         from .tools import application as tools
+        # from .exporthe8 import application as exporthe8
 
         self.plugins = [
             createunbeffl.CreateUnbefFl(iface),
@@ -89,6 +93,7 @@ class QKan:
             exportdyna.ExportToKP(iface),
             linkflaechen.LinkFl(iface),
             tools.QKanTools(iface),
+            # exporthe8.ExportToH8(iface),
         ]
 
         actions = self.iface.mainWindow().menuBar().actions()

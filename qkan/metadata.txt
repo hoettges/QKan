@@ -10,11 +10,11 @@
 name=QKan
 qgisMinimumVersion=3.4.1
 description=Gruppe der QKan-Erweiterung(en)
-version=3.5.24
+version=3.0.2
 author=Jörg Höttges, Leon Ochsenfeld, Yannick Linke/FH Aachen
 email=hoettges@fh-aachen.de
 
-about=Dieses Plugin enthält die folgenden Module: Database, CreateUnbefFL, LinkFlaechen, ExportDyna, ImportDyna. Nähere Informationen können Sie der README.md entnehmen.
+about=Dieses Plugin enthält die folgenden Module: Database, CreateUnbefFL, LinkFlaechen, ExportDyna, ImportDyna, ExportHE8. Nähere Informationen können Sie der README.md entnehmen.
 
 tracker=https://github.com/hoettges/QKan/issues
 repository=https://github.com/hoettges/QKan

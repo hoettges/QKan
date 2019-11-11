@@ -22,8 +22,8 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'August 2019'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__dbVersion__ = '3.0.1'  # Version der QKan-Datenbank
-__qgsVersion__ = '3.0.1'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = '3.0.2'  # Version der QKan-Datenbank
+__qgsVersion__ = '3.0.2'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -992,7 +992,9 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     sql = u'''CREATE TABLE abflusstypen (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 
-    abflusstyp TEXT)'''
+    abflusstyp TEXT,
+    he_nr INTEGER,
+    kp_nr INTEGER)'''
 
     try:
         cursl.execute(sql)
@@ -1002,14 +1004,17 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         consl.close()
         return False
 
-    daten = [u"'Fliesszeiten'",
-             u"'Schwerpunktlaufzeit'",
-             u"'Speicherkaskade'"]
+    daten = ["'Speicherkaskade', 0, 0",
+             "'Direktabfluss', 0, 0",
+             "'Fliesszeiten', 1, 1",
+             "'Schwerpunktlaufzeit', 2, 2",
+             "'Schwerpunktfließzeit', 2, 2",
+             ]
 
     for ds in daten:
         try:
             sql = u"""INSERT INTO abflusstypen
-                     ( 'abflusstyp') Values ({})""".format(ds)
+                     (abflusstyp, he_nr, kp_nr) Values ({})""".format(ds)
             cursl.execute(sql)
 
         except BaseException as err:
@@ -1128,7 +1133,60 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         return False
     consl.commit()
 
-    # Allgemeiner Informationen -----------------------------------------------
+    # Hilfstabelle für den Flächen-Export
+
+    sql = """
+        CREATE TABLE IF NOT EXISTS flaechen_he8 (
+            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT, 
+            Haltung TEXT, 
+            Groesse REAL, 
+            Regenschreiber TEXT, 
+            BerechnungSpeicherkonstante INTEGER, 
+            Typ INTEGER, 
+            AnzahlSpeicher INTEGER, 
+            Speicherkonstante REAL, 
+            Schwerpunktlaufzeit REAL, 
+            FliesszeitOberflaeche REAL, 
+            LaengsteFliesszeitKanal REAL, 
+            Parametersatz TEXT, 
+            Neigungsklasse INTEGER, 
+            ZuordnUnabhEZG INTEGER,
+            LastModified TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')), 
+            Kommentar TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
+                      u'Fehler beim Erzeugen der Tabelle "flaechen_he8".')
+        consl.close()
+        return False
+
+    sql = """SELECT AddGeometryColumn('flaechen_he8','Geometry',{epsg},
+            'MULTIPOLYGON',2)""".format(epsg=epsg)
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
+                      u'Fehler beim Erzeugen des Attributes "flaechen_he8.Geometry".')
+        consl.close()
+        return False
+
+    sql = """SELECT CreateSpatialIndex('flaechen_he8','Geometry')"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
+                      u'Fehler beim Erzeugen des Spatial Index für Attribut "Geometry".')
+        consl.close()
+        return False
+
+    consl.commit()
+
+    # Allgemeine Informationen -----------------------------------------------
 
     sql = u'''CREATE TABLE info (
     pk INTEGER PRIMARY KEY AUTOINCREMENT, 

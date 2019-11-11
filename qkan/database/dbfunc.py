@@ -590,7 +590,7 @@ class DBConnection:
 
                 self.versionlis = [2, 0, 2]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 1, 2]):
 
                 attrlis = self.attrlist('linksw')
@@ -617,7 +617,7 @@ class DBConnection:
 
                 self.versionlis = [2, 1, 2]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 2, 0]):
                 attrlis = self.attrlist('einleit')
                 if not attrlis:
@@ -655,7 +655,7 @@ class DBConnection:
 
                 self.versionlis = [2, 2, 0]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 2, 1]):
 
                 attrlis = self.attrlist('flaechen')
@@ -670,7 +670,7 @@ class DBConnection:
 
                 self.versionlis = [2, 2, 1]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 2, 2]):
 
                 attrlis = self.attrlist('flaechen')
@@ -685,7 +685,7 @@ class DBConnection:
 
                 self.versionlis = [2, 2, 2]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 2, 3]):
 
                 # Tabelle flaechen -------------------------------------------------------------
@@ -989,7 +989,7 @@ class DBConnection:
 
                 self.versionlis = [2, 2, 3]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 2, 16]):
 
                 sql = """
@@ -1034,7 +1034,7 @@ class DBConnection:
 
                 self.versionlis = [2, 2, 16]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 4, 9]):
 
                 sql = '''DROP VIEW IF EXISTS "v_linkfl_check"'''
@@ -1114,7 +1114,7 @@ class DBConnection:
 
                 self.versionlis = [2, 4, 9]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 5, 2]):
 
                 # Einleitungen aus Aussengebieten ----------------------------------------------------------------
@@ -1586,7 +1586,7 @@ class DBConnection:
                 self.versionlis = [2, 5, 9]
 
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 5, 24]):
 
                 # Vergleich der Flächengröße mit der Summe der verschnittenen Teile
@@ -1655,7 +1655,7 @@ class DBConnection:
 
                 self.versionlis = [2, 5, 24]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 5, 27]):
 
                 # Vergleich der Flächengröße mit der Summe der verschnittenen Teile
@@ -1728,7 +1728,7 @@ class DBConnection:
 
                 self.versionlis = [2, 5, 27]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [3, 0, 1]):
 
                 # Spalte "teilgebiet" in Tabelle "pumpen" ergänzen
@@ -1784,7 +1784,76 @@ class DBConnection:
 
                 self.versionlis = [3, 0, 1]
 
-            # ------------------------------------------------------------------------------------------------------
+            # ------------------------------------------------------------------------------------
+            if versionolder(self.versionlis, [3, 0, 2]):
+
+                #  Temporäre Tabelle zum Export von Flächen für HE 8 -----------------------------
+
+                sql = """
+                    CREATE TABLE IF NOT EXISTS flaechen_he8 (
+                        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Name TEXT, 
+                        Haltung TEXT, 
+                        Groesse REAL, 
+                        Regenschreiber TEXT, 
+                        BerechnungSpeicherkonstante INTEGER, 
+                        Typ INTEGER, 
+                        AnzahlSpeicher INTEGER, 
+                        Speicherkonstante REAL, 
+                        Schwerpunktlaufzeit REAL, 
+                        FliesszeitOberflaeche REAL, 
+                        LaengsteFliesszeitKanal REAL, 
+                        Parametersatz TEXT, 
+                        Neigungsklasse INTEGER, 
+                        ZuordnUnabhEZG INTEGER,
+                        LastModified TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')), 
+                        Kommentar TEXT)"""
+
+                if not self.sql(sql, 'dbfunc.version (3.0.2-1)'):
+                    return False
+
+                sql = """SELECT AddGeometryColumn('flaechen_he8','Geometry',{epsg},
+                        'MULTIPOLYGON',2)""".format(epsg=self.epsg)
+
+                if not self.sql(sql, 'dbfunc.version (3.0.2-2)'):
+                    return False
+
+                sql = """SELECT CreateSpatialIndex('flaechen_he8','Geometry')"""
+
+                if not self.sql(sql, 'dbfunc.version (3.0.2-3)'):
+                    return False
+
+                # Erweitern der Tabelle "abflusstypen"
+
+                sqllis = ["""ALTER TABLE abflusstypen ADD COLUMN he_nr INTEGER""",
+                          """ALTER TABLE abflusstypen ADD COLUMN kp_nr INTEGER""",]
+
+                for sql in sqllis:
+                    if not self.sql(sql, 'dbfunc.version (3.0.2-4)'):
+                        return False
+
+                # Initialisierung
+
+                daten = ["'Speicherkaskade', 0, 0",
+                         "'Direktabfluss', 0, 0",
+                         "'Fliesszeiten', 1, 1",
+                         "'Schwerpunktlaufzeit', 2, 2",
+                         "'Schwerpunktfließzeit', 2, 2",
+                         ]
+
+                for ds in daten:
+                    sql = u"""INSERT INTO abflusstypen
+                             (abflusstyp, he_nr, kp_nr) Values ({})""".format(ds)
+                    if not self.sql(sql, 'dbfunc.version (3.0.2-5)'):
+                        return False
+
+                self.commit()
+
+                # Versionsnummer hochsetzen
+
+                self.versionlis = [3, 0, 2]
+
+            # ------------------------------------------------------------------------------------
             # Aktuelle Version in Tabelle "info" schreiben
 
             sql = """UPDATE info SET value = '{}' WHERE subject = 'version'""".format(self.actversion)

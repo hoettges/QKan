@@ -171,7 +171,7 @@ class QKanTools:
         pass
 
     @staticmethod
-    def listselecteditems(self, listWidget):
+    def listselecteditems(listWidget):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
         :param listWidget: String for translation.
