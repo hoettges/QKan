@@ -93,7 +93,7 @@ class QKan:
             exportdyna.ExportToKP(iface),
             linkflaechen.LinkFl(iface),
             tools.QKanTools(iface),
-            # exporthe8.ExportToH8(iface),
+            # exporthe8.ExportToHE8(iface),
         ]
 
         actions = self.iface.mainWindow().menuBar().actions()

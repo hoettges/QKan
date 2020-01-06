@@ -539,7 +539,7 @@
   <excludeAttributesWFS/>
   <defaults>
     <default field="pk" expression="" applyOnUpdate="0"/>
-    <default field="flnam" expression="" applyOnUpdate="0"/>
+    <default field="flnam" expression="" applyOnUpdate="''"/>
     <default field="haltnam" expression="" applyOnUpdate="0"/>
     <default field="neigkl" expression="" applyOnUpdate="0"/>
     <default field="teilgebiet" expression="" applyOnUpdate="0"/>

@@ -22,8 +22,8 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'August 2019'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__dbVersion__ = '3.0.2'  # Version der QKan-Datenbank
-__qgsVersion__ = '3.0.2'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = '3.0.3'  # Version der QKan-Datenbank
+__qgsVersion__ = '3.0.3'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging

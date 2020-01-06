@@ -121,10 +121,11 @@ class DBConnection:
 
                 self.epsg = self.getepsg()
                 if self.epsg is None:
-                    logger.error(
-                        'dbfunc.__init__: EPSG konnte nicht ermittelt werden. \n QKan-DB: {}\n'.format(dbname))
+                    logger.error('dbfunc.DBConnection.__init__: EPSG konnte nicht ermittelt werden. \n' + \
+                                 ' QKan-DB: {}\n'.format(dbname))
 
-                logger.debug('dbfund.__init__: Datenbank existiert und Verbindung hergestellt:\n{}'.format(dbname))
+                logger.debug('dbfunc.DBConnection.__init__: Datenbank existiert und Verbindung hergestellt:\n' + \
+                             '{}'.format(dbname))
                 # Versionsprüfung
 
                 if not self.checkVersion():
@@ -203,13 +204,18 @@ class DBConnection:
         
         Beendet die Datenbankverbindung.
         """
-        self.consl.close()
+        try:
+            self.consl.close()
+            logger.debug("Verbindung zur Datenbank {dbname} wieder geloest.")
+        except BaseException as err:
+            fehlermeldung('Fehler in dbfunc.DBConnection:',
+                          f"Verbindung zur Datenbank {dbname} konnte nicht geloest werden.\n")
 
     def attrlist(self, tablenam):
         """Gibt Spaltenliste zurück."""
 
         sql = 'PRAGMA table_info("{0:s}")'.format(tablenam)
-        if not self.sql(sql, 'dbfunc.attrlist fuer {}'.format(tablenam)):
+        if not self.sql(sql, 'dbfunc.DBConnection.attrlist fuer {}'.format(tablenam)):
             return False
 
         daten = self.cursl.fetchall()
@@ -224,12 +230,12 @@ class DBConnection:
             FROM geom_cols_ref_sys
             WHERE Lower(f_table_name) = Lower('haltungen')
             AND Lower(f_geometry_column) = Lower('geom')"""
-        if not self.sql(sql, 'dbfunc.getepsg (1)'):
+        if not self.sql(sql, 'dbfunc.DBConnection.getepsg (1)'):
             return None
 
         data = self.fetchone()
         if data is None:
-            fehlermeldung('Fehler in dbfunc.getepsg (2)', 'Konnte EPSG nicht ermitteln')
+            fehlermeldung('Fehler in dbfunc.DBConnection.getepsg (2)', 'Konnte EPSG nicht ermitteln')
         epsg = data[0]
         return epsg
 
@@ -247,13 +253,13 @@ class DBConnection:
             self.sqltext = sqlinfo
             self.sqltime = self.sqltime.now()
             if self.sqlcount == 0:
-                logger.debug('dbfunc.sql: {}\n{}\n'.format(sqlinfo, sql))
+                logger.debug('dbfunc.DBConnection.sql: {}\n{}\n'.format(sqlinfo, sql))
             else:
-                logger.debug('dbfunc.sql (Nr. {}): {}\n{}\n'.format(self.sqlcount, sqlinfo, sql))
+                logger.debug('dbfunc.DBConnection.sql (Nr. {}): {}\n{}\n'.format(self.sqlcount, sqlinfo, sql))
             self.sqlcount = 0
             return True
         except BaseException as err:
-            fehlermeldung('dbfunc.sql: SQL-Fehler in {e}'.format(e=sqlinfo),
+            fehlermeldung('dbfunc.DBConnection.sql: SQL-Fehler in {e}'.format(e=sqlinfo),
                           "{e}\n{s}".format(e=repr(err), s=sql))
             # if transaction:
             # self.cursl.commit("ROLLBACK;")
@@ -306,17 +312,17 @@ class DBConnection:
                 FROM info
                 WHERE subject = 'version'"""
 
-        if not self.sql(sql, 'dbfunc.version (1)'):
+        if not self.sql(sql, 'dbfunc.DBConnection.version (1)'):
             return False
 
         data = self.cursl.fetchone()
         if data is not None:
             self.versiondbQK = data[0]
-            logger.debug('dbfunc.version: Aktuelle Version der qkan-Datenbank ist {}'.format(self.versiondbQK))
+            logger.debug('dbfunc.DBConnection.version: Aktuelle Version der qkan-Datenbank ist {}'.format(self.versiondbQK))
         else:
-            logger.debug('dbfunc.version: Keine Versionsnummer vorhanden. data = {}'.format(repr(data)))
+            logger.debug('dbfunc.DBConnection.version: Keine Versionsnummer vorhanden. data = {}'.format(repr(data)))
             sql = """INSERT INTO info (subject, value) Values ('version', '1.9.9')"""
-            if not self.sql(sql, 'dbfunc.version (2)'):
+            if not self.sql(sql, 'dbfunc.DBConnection.version (2)'):
                 return False
 
             self.versiondbQK = '1.9.9'
@@ -371,7 +377,7 @@ class DBConnection:
         # 1. bestehende Tabelle
         # Benutzerdefinierte Felder müssen übernommen werden
         sql = f"PRAGMA table_info('{tabnam}')"
-        if not self.sql(sql, 'dbfunc.alterTable (1)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (1)', transaction=False):
             return False
         data = self.fetchall()
         attrPk = [el[1] for el in data if el[5] == 1][0]
@@ -384,7 +390,7 @@ class DBConnection:
         # Geometrieattribute
         sql = f"""SELECT f_geometry_column, geometry_type, srid, coord_dimension, spatial_index_enabled 
                     FROM geometry_columns WHERE f_table_name = '{tabnam}'"""
-        if not self.sql(sql, 'dbfunc.alterTable (2)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (2)', transaction=False):
             return False
         data = self.fetchall()
         attrDictGeo = dict([(el[0], f"'{el[0]}', {el[2]}, '{geoType[el[1]]}', {el[3]}") for el in data])
@@ -424,100 +430,100 @@ class DBConnection:
 
         # Attribute der neuen Tabelle als String für SQL-Anweisung
         attrTextNew =',\n'.join(attrDictNew.values())
-        logger.debug(f"dbfunc.alterTable - attrTextNew:{attrTextNew}")
+        logger.debug(f"dbfunc.DBConnection.alterTable - attrTextNew:{attrTextNew}")
 
         # 0. Foreign key constrain deaktivieren
         sql = "PRAGMA foreign_keys=OFF;"
-        if not self.sql(sql, 'dbfunc.alterTable (3)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (3)', transaction=False):
             return False
 
         # 1. Transaktion starten
         sql = "BEGIN TRANSACTION;"
-        if not self.sql(sql, 'dbfunc.alterTable (4)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (4)', transaction=False):
             return False
 
         # 2. Indizes und Trigger speichern
         sql = f"""SELECT type, sql 
                 FROM sqlite_master 
                 WHERE tbl_name='{tabnam}' AND (type = 'trigger' OR type = 'index')"""
-        if not self.sql(sql, 'dbfunc.alterTable (5)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (5)', transaction=False):
             return False
         triggers = [el[1] for el in self.fetchall()]
 
         # 2.1. Temporäre Hilfstabelle erstellen
         sql = f"CREATE TABLE IF NOT EXISTS {tabnam}_t ({attrTextNew});"
-        if not self.sql(sql, 'dbfunc.alterTable (6)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (6)', transaction=False):
             return False
 
         # 2.2. Geo-Attribute in Tabelle ergänzen
         for attr in attrSetGeo:
             sql = f"""SELECT AddGeometryColumn('{tabnam}_t', {attrDictGeo[attr]})"""
-            if not self.sql(sql, 'dbfunc.alterTable (7)', transaction=False):
+            if not self.sql(sql, 'dbfunc.DBConnection.alterTable (7)', transaction=False):
                 return False
 
         # 3. Hilfstabelle entleeren
         sql = f"DELETE FROM {tabnam}_t"
-        if not self.sql(sql, 'dbfunc.alterTable (8)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (8)', transaction=False):
             return False
 
         # 4. Daten aus Originaltabelle übertragen, dabei nur gemeinsame Attribute berücksichtigen
         sql = f"""INSERT INTO {tabnam}_t ({', '.join(attrSetBoth)})
                 SELECT {', '.join(attrSetBoth)}
                 FROM {tabnam};"""
-        if not self.sql(sql, 'dbfunc.alterTable (9)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (9)', transaction=False):
             return False
 
         # 5.1. Löschen der Geoobjektattribute
         for attr in attrSetGeo:
             sql = f"SELECT DiscardGeometryColumn('{tabnam}','{attr}')"
-            if not self.sql(sql, 'dbfunc.alterTable (10)', transaction=False):
+            if not self.sql(sql, 'dbfunc.DBConnection.alterTable (10)', transaction=False):
                 return False
 
         # 5.2. Löschen der Tabelle
         sql = f"DROP TABLE {tabnam};"
-        if not self.sql(sql, 'dbfunc.alterTable (11)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (11)', transaction=False):
             return False
 
         # 6.1 Geänderte Tabelle erstellen
         sql = f"""CREATE TABLE {tabnam} ({attrTextNew});"""
-        if not self.sql(sql, 'dbfunc.alterTable (12)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (12)', transaction=False):
             return False
 
         # 6.2. Geo-Attribute in Tabelle ergänzen und Indizes erstellen
         for attr in attrSetGeo:
             sql = f"""SELECT AddGeometryColumn('{tabnam}', {attrDictGeo[attr]})"""
-            if not self.sql(sql, 'dbfunc.alterTable (13)', transaction=False):
+            if not self.sql(sql, 'dbfunc.DBConnection.alterTable (13)', transaction=False):
                 return False
             sql = f"""SELECT CreateSpatialIndex('{tabnam}', '{attr}')"""
-            if not self.sql(sql, 'dbfunc.alterTable (14)', transaction=False):
+            if not self.sql(sql, 'dbfunc.DBConnection.alterTable (14)', transaction=False):
                 return False
 
         # 7. Daten aus Hilfstabelle übertragen, dabei nur gemeinsame Attribute berücksichtigen
         sql = f"""INSERT INTO {tabnam} ({', '.join(attrSetBoth)})
                 SELECT {', '.join(attrSetBoth)}
                 FROM {tabnam}_t;"""
-        if not self.sql(sql, 'dbfunc.alterTable (15)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (15)', transaction=False):
             return False
 
         # 8.1. Löschen der Geoobjektattribute der Hilfstabelle
         for attr in attrSetGeo:
             sql = f"SELECT DiscardGeometryColumn('{tabnam}_t','{attr}')"
-            if not self.sql(sql, 'dbfunc.alterTable (16)', transaction=False):
+            if not self.sql(sql, 'dbfunc.DBConnection.alterTable (16)', transaction=False):
                 return False
 
         # 9. Löschen der Hilfstabelle
         sql = """DROP TABLE {t}_t;""".format(t=tabnam)
-        if not self.sql(sql, 'dbfunc.alterTable (17)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (17)', transaction=False):
             return False
 
         # 9. Indizes und Trigger wiederherstellen
         # for sql in triggers:
-        #     if not self.sql(sql, 'dbfunc.alterTable (18)', transaction=False):
+        #     if not self.sql(sql, 'dbfunc.DBConnection.alterTable (18)', transaction=False):
         #         return False
 
         # 10. Verify key constraints
         sql = "PRAGMA foreign_key_check"
-        if not self.sql(sql, 'dbfunc.alterTable (19)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (19)', transaction=False):
             return False
 
         # 11. Transaktion abschließen
@@ -525,7 +531,7 @@ class DBConnection:
 
         # 12. Foreign key constrain wieder aktivieren
         sql = "PRAGMA foreign_keys=ON;"
-        if not self.sql(sql, 'dbfunc.alterTable (20)', transaction=False):
+        if not self.sql(sql, 'dbfunc.DBConnection.alterTable (20)', transaction=False):
             return False
 
 
@@ -545,7 +551,7 @@ class DBConnection:
 
             self.versionlis = [int(el.replace('a', '').replace('b', '').replace('c', '')) for el in
                                self.versiondbQK.split('.')]
-            logger.debug('dbfunc.updateversion: versiondbQK = {}'.format(self.versiondbQK))
+            logger.debug('dbfunc.DBConnection.updateversion: versiondbQK = {}'.format(self.versiondbQK))
 
             # Status, wenn die Änderungen so gravierend waren, dass das Projekt neu geladen werden muss. 
             self.reload = False
@@ -572,7 +578,7 @@ class DBConnection:
                           """SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)""".format(self.epsg),
                           """SELECT CreateSpatialIndex('einleit','geom')"""]
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (3c)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (3c)'):
                         return False
 
                 sqllis = ["""CREATE TABLE IF NOT EXISTS linksw (
@@ -585,7 +591,7 @@ class DBConnection:
                           """SELECT AddGeometryColumn('linksw','glink',{},'LINESTRING',2)""".format(self.epsg),
                           """SELECT CreateSpatialIndex('linksw','geom')"""]
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (3d)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (3d)'):
                         return False
 
                 self.versionlis = [2, 0, 2]
@@ -595,23 +601,23 @@ class DBConnection:
 
                 attrlis = self.attrlist('linksw')
                 if not attrlis:
-                    fehlermeldung('dbfunc.version (2.0.2):', 'attrlis für linksw ist leer')
+                    fehlermeldung('dbfunc.DBConnection.version (2.0.2):', 'attrlis für linksw ist leer')
                     return False
                 elif 'elnam' not in attrlis:
                     logger.debug('linksw.elnam ist nicht in: {}'.format(str(attrlis)))
                     sql = """ALTER TABLE linksw ADD COLUMN elnam TEXT"""
-                    if not self.sql(sql, 'dbfunc.version (2.0.2-1)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.0.2-1)'):
                         return False
                     self.commit()
 
                 attrlis = self.attrlist('linkfl')
                 if not attrlis:
-                    fehlermeldung('dbfunc.version (2.0.2):', 'attrlis für linkfl ist leer')
+                    fehlermeldung('dbfunc.DBConnection.version (2.0.2):', 'attrlis für linkfl ist leer')
                     return False
                 elif 'tezgnam' not in attrlis:
                     logger.debug('linkfl.tezgnam ist nicht in: {}'.format(str(attrlis)))
                     sql = """ALTER TABLE linkfl ADD COLUMN tezgnam TEXT"""
-                    if not self.sql(sql, 'dbfunc.version (2.0.2-3)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.0.2-3)'):
                         return False
                     self.commit()
 
@@ -625,10 +631,10 @@ class DBConnection:
                 elif 'ew' not in attrlis:
                     logger.debug('einleit.ew ist nicht in: {}'.format(str(attrlis)))
                     sql = """ALTER TABLE einleit ADD COLUMN ew REAL"""
-                    if not self.sql(sql, 'dbfunc.version (2.1.2-1)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.1.2-1)'):
                         return False
                     sql = """ALTER TABLE einleit ADD COLUMN einzugsgebiet TEXT"""
-                    if not self.sql(sql, 'dbfunc.version (2.1.2-2)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.1.2-2)'):
                         return False
                     self.commit()
 
@@ -642,15 +648,15 @@ class DBConnection:
                     kommentar TEXT,
                     createdat TEXT DEFAULT CURRENT_DATE)"""
 
-                if not self.sql(sql, 'dbfunc.version (2.1.2-3)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.1.2-3)'):
                     return False
 
                 sql = """SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)""".format(self.epsg)
-                if not self.sql(sql, 'dbfunc.version (2.1.2-4)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.1.2-4)'):
                     return False
 
                 sql = """SELECT CreateSpatialIndex('einzugsgebiete','geom')"""
-                if not self.sql(sql, 'dbfunc.version (2.1.2-5)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.1.2-5)'):
                     return False
 
                 self.versionlis = [2, 2, 0]
@@ -664,7 +670,7 @@ class DBConnection:
                 elif 'abflusstyp' not in attrlis:
                     logger.debug('flaechen.abflusstyp ist nicht in: {}'.format(str(attrlis)))
                     sql = """ALTER TABLE flaechen ADD COLUMN abflusstyp TEXT"""
-                    if not self.sql(sql, 'dbfunc.version (2.2.0-1)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.0-1)'):
                         return False
                     self.commit()
 
@@ -679,7 +685,7 @@ class DBConnection:
                 elif 'abflusstyp' not in attrlis:
                     logger.debug('flaechen.abflusstyp ist nicht in: {}'.format(str(attrlis)))
                     sql = """ALTER TABLE flaechen ADD COLUMN abflusstyp TEXT"""
-                    if not self.sql(sql, 'dbfunc.version (2.2.1-1)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.1-1)'):
                         return False
                     self.commit()
 
@@ -692,7 +698,7 @@ class DBConnection:
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = """SELECT type, sql FROM sqlite_master WHERE tbl_name='flaechen'"""
-                # if not self.sql(sql, 'dbfunc.version.pragma (1)'):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version.pragma (1)'):
                 # return False
                 # triggers = self.fetchall()
 
@@ -754,7 +760,7 @@ class DBConnection:
                           """DROP TABLE flaechen_t;"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.2.2-1)', transaction=True):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-1)', transaction=True):
                         return False
 
                 # 3. Schritt: Trigger wieder herstellen
@@ -762,7 +768,7 @@ class DBConnection:
                 # if el[0] != 'table':
                 # sql = el[1]
                 # logger.debug("Trigger 'flaechen' verarbeitet:\n{}".format(el[1]))
-                # if not self.sql(sql, 'dbfunc.version (2.2.2-2)', transaction=True):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-2)', transaction=True):
                 # return False
                 # else:
                 # logger.debug("1. Trigger 'table' erkannt:\n{}".format(el[1]))
@@ -779,7 +785,7 @@ class DBConnection:
                             ELSE NULL END
                         WHERE abflusstyp IS NULL"""
 
-                if not self.sql(sql, 'dbfunc.version (2.2.2-3)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-3)'):
                     return False
 
                 progress_bar.setValue(15)
@@ -788,7 +794,7 @@ class DBConnection:
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = """SELECT type, sql FROM sqlite_master WHERE tbl_name='linksw'"""
-                # if not self.sql(sql, 'dbfunc.version.pragma (3)'):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version.pragma (3)'):
                 # return False
                 # triggers = self.fetchall()
 
@@ -831,7 +837,7 @@ class DBConnection:
                           """DROP TABLE linksw_t;"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.2.2-4)', transaction=True):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-4)', transaction=True):
                         return False
 
                 # 3. Schritt: Trigger wieder herstellen
@@ -839,7 +845,7 @@ class DBConnection:
                 # if el[0] != 'table':
                 # sql = el[1]
                 # logger.debug("Trigger 'linksw' verarbeitet:\n{}".format(el[1]))
-                # if not self.sql(sql, 'dbfunc.version (2.2.2-5)', transaction=True):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-5)', transaction=True):
                 # return False
                 # else:
                 # logger.debug("1. Trigger 'table' erkannt:\n{}".format(el[1]))
@@ -853,7 +859,7 @@ class DBConnection:
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = """SELECT type, sql FROM sqlite_master WHERE tbl_name='linkfl'"""
-                # if not self.sql(sql, 'dbfunc.version.pragma (5)'):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version.pragma (5)'):
                 # return False
                 # triggers = self.fetchall()
 
@@ -898,7 +904,7 @@ class DBConnection:
                           """DROP TABLE linkfl_t;"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.2.2-6)', transaction=True):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-6)', transaction=True):
                         return False
 
                 # 3. Schritt: Trigger wieder herstellen
@@ -906,7 +912,7 @@ class DBConnection:
                 # if el[0] != 'table':
                 # sql = el[1]
                 # logger.debug("Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
-                # if not self.sql(sql, 'dbfunc.version (2.2.2-7)', transaction=True):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-7)', transaction=True):
                 # return False
                 # else:
                 # logger.debug("1. Trigger 'table' erkannt:\n{}".format(el[1]))
@@ -920,7 +926,7 @@ class DBConnection:
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = """SELECT type, sql FROM sqlite_master WHERE tbl_name='einleit'"""
-                # if not self.sql(sql, 'dbfunc.version.pragma (7)'):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version.pragma (7)'):
                 # return False
                 # triggers = self.fetchall()
 
@@ -964,7 +970,7 @@ class DBConnection:
                           """DROP TABLE einleit_t;"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.2.2-8)', transaction=True):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-8)', transaction=True):
                         return False
 
                 # 3. Schritt: Trigger wieder herstellen
@@ -972,7 +978,7 @@ class DBConnection:
                 # if el[0] != 'table':
                 # sql = el[1]
                 # logger.debug("Trigger 'einleit' verarbeitet:\n{}".format(el[1]))
-                # if not self.sql(sql, 'dbfunc.version (2.2.2-9)', transaction=True):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-9)', transaction=True):
                 # return False
                 # else:
                 # logger.debug("1. Trigger 'table' erkannt:\n{}".format(el[1]))
@@ -1005,19 +1011,19 @@ class DBConnection:
                         anzobun INTEGER,
                         anzunun INTEGER,
                         anzunob INTEGER)"""
-                if not self.sql(sql, 'dbfunc.version (2.4.1-1)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.4.1-1)'):
                     return False
 
                 sql = """
                     ALTER TABLE profile ADD COLUMN kp_key TEXT
                 """
-                if not self.sql(sql, 'dbfunc.version (2.4.1-3)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.4.1-3)'):
                     return False
 
                 sql = """
                     ALTER TABLE entwaesserungsarten ADD COLUMN kp_nr INTEGER
                 """
-                if not self.sql(sql, 'dbfunc.version (2.4.1-2)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.4.1-2)'):
                     return False
 
                 sqllis = ["""UPDATE entwaesserungsarten SET kp_nr = 0 WHERE bezeichnung = 'Mischwasser'""",
@@ -1025,7 +1031,7 @@ class DBConnection:
                           """UPDATE entwaesserungsarten SET kp_nr = 2 WHERE bezeichnung = 'Regenwasser'"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.4.1-4)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.4.1-4)'):
                         return False
 
                 self.commit()
@@ -1039,7 +1045,7 @@ class DBConnection:
 
                 sql = '''DROP VIEW IF EXISTS "v_linkfl_check"'''
 
-                if not self.sql(sql, 'dbfunc.version (2.4.9-1)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.4.9-1)'):
                     return False
 
                 sql = '''CREATE VIEW IF NOT EXISTS "v_linkfl_check" AS 
@@ -1078,12 +1084,12 @@ class DBConnection:
                         SELECT pk, anzahl, CASE WHEN anzahl > 1 THEN 'mehrfach vorhanden' WHEN flaech_nam IS NULL THEN 'Keine Fläche' WHEN linkfl_haltnam IS NULL THEN  'Keine Haltung' ELSE 'o.k.' END AS fehler
                         FROM lfok'''
 
-                if not self.sql(sql, 'dbfunc.version (2.4.9-2)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.4.9-2)'):
                     return False
 
                 sql = '''DROP VIEW IF EXISTS "v_flaechen_ohne_linkfl"'''
 
-                if not self.sql(sql, 'dbfunc.version (2.4.9-3)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.4.9-3)'):
                     return False
 
                 sql = '''CREATE VIEW IF NOT EXISTS "v_flaechen_ohne_linkfl" AS 
@@ -1105,7 +1111,7 @@ class DBConnection:
                         VALUES
                             (0, '', '', 'o.k.')'''
 
-                if not self.sql(sql, 'dbfunc.version (2.4.9-4)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.4.9-4)'):
                     return False
 
                 self.commit()
@@ -1133,17 +1139,17 @@ class DBConnection:
                     kommentar TEXT, 
                     createdat TEXT DEFAULT CURRENT_DATE)'''
 
-                if not self.sql(sql, 'dbfunc.version (2.5.2-1)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.2-1)'):
                     return False
 
                 sql = """SELECT AddGeometryColumn('aussengebiete','geom',{},'MULTIPOLYGON',2)""".format(self.epsg)
 
-                if not self.sql(sql, 'dbfunc.version (2.5.2-2)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.2-2)'):
                     return False
 
                 sql = """SELECT CreateSpatialIndex('aussengebiete','geom')"""
 
-                if not self.sql(sql, 'dbfunc.version (2.5.2-3)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.2-3)'):
                     return False
 
                 # Anbindung Aussengebiete -------------------------------------------------------------------------
@@ -1153,17 +1159,17 @@ class DBConnection:
                     gebnam TEXT,
                     schnam TEXT)"""
 
-                if not self.sql(sql, 'dbfunc.version (2.5.2-4)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.2-4)'):
                     return False
 
                 sql = """SELECT AddGeometryColumn('linkageb','glink',{epsg},'LINESTRING',2)""".format(epsg=self.epsg)
 
-                if not self.sql(sql, 'dbfunc.version (2.5.2-5)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.2-5)'):
                     return False
 
                 sql = """SELECT CreateSpatialIndex('linkageb','glink')"""
 
-                if not self.sql(sql, 'dbfunc.version (2.5.2-6)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.2-6)'):
                     return False
 
                 self.commit()
@@ -1209,7 +1215,7 @@ class DBConnection:
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = """SELECT type, sql FROM sqlite_master WHERE tbl_name='linkfl'"""
-                # if not self.sql(sql, 'dbfunc.version.pragma (5)'):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version.pragma (5)'):
                 # return False
                 # triggers = self.fetchall()
 
@@ -1259,7 +1265,7 @@ class DBConnection:
                           """DROP TABLE linkfl_t;"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.5.7-1)', transaction=True):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.7-1)', transaction=True):
                         return False
 
                 # 3. Schritt: Trigger wieder herstellen
@@ -1267,7 +1273,7 @@ class DBConnection:
                 # if el[0] != 'table':
                 # sql = el[1]
                 # logger.debug("Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
-                # if not self.sql(sql, 'dbfunc.version (2.2.2-7)', transaction=True):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-7)', transaction=True):
                 # return False
                 # else:
                 # logger.debug("1. Trigger 'table' erkannt:\n{}".format(el[1]))
@@ -1283,7 +1289,7 @@ class DBConnection:
                 FROM flaechen
                 WHERE linkfl.flnam = flaechen.flnam)
                 """
-                if not self.sql(sql, 'dbfunc.version (2.5.7-2)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.7-2)'):
                     return False
                 self.commit()
 
@@ -1292,7 +1298,7 @@ class DBConnection:
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = """SELECT type, sql FROM sqlite_master WHERE tbl_name='flaechen'"""
-                # if not self.sql(sql, 'dbfunc.version.pragma (5)'):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version.pragma (5)'):
                 # return False
                 # triggers = self.fetchall()
 
@@ -1340,7 +1346,7 @@ class DBConnection:
                           """DROP TABLE flaechen_t;"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.5.7-3)', transaction=True):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.7-3)', transaction=True):
                         return False
 
                 # 3. Schritt: Trigger wieder herstellen
@@ -1348,7 +1354,7 @@ class DBConnection:
                 # if el[0] != 'table':
                 # sql = el[1]
                 # logger.debug("Trigger 'flaechen' verarbeitet:\n{}".format(el[1]))
-                # if not self.sql(sql, 'dbfunc.version (2.2.2-7)', transaction=True):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-7)', transaction=True):
                 # return False
                 # else:
                 # logger.debug("1. Trigger 'table' erkannt:\n{}".format(el[1]))
@@ -1371,7 +1377,7 @@ class DBConnection:
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = """SELECT type, sql FROM sqlite_master WHERE tbl_name='linkfl'"""
-                # if not self.sql(sql, 'dbfunc.version.pragma (5)'):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version.pragma (5)'):
                 # return False
                 # triggers = self.fetchall()
 
@@ -1434,7 +1440,7 @@ class DBConnection:
                           """DROP TABLE linkfl_t;"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.5.8-1)', transaction=True):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.8-1)', transaction=True):
                         return False
 
                 # 3. Schritt: Trigger wieder herstellen
@@ -1442,7 +1448,7 @@ class DBConnection:
                 # if el[0] != 'table':
                 # sql = el[1]
                 # logger.debug("Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
-                # if not self.sql(sql, 'dbfunc.version (2.2.2-7)', transaction=True):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-7)', transaction=True):
                 # return False
                 # else:
                 # logger.debug("1. Trigger 'table' erkannt:\n{}".format(el[1]))
@@ -1454,7 +1460,7 @@ class DBConnection:
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
                 # sql = """SELECT type, sql FROM sqlite_master WHERE tbl_name='linksw'"""
-                # if not self.sql(sql, 'dbfunc.version.pragma (3)'):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version.pragma (3)'):
                 # return False
                 # triggers = self.fetchall()
 
@@ -1495,7 +1501,7 @@ class DBConnection:
                           """DROP TABLE linksw_t;"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.2.2-4)', transaction=True):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-4)', transaction=True):
                         return False
 
                 # 3. Schritt: Trigger wieder herstellen
@@ -1503,7 +1509,7 @@ class DBConnection:
                 # if el[0] != 'table':
                 # sql = el[1]
                 # logger.debug("Trigger 'linksw' verarbeitet:\n{}".format(el[1]))
-                # if not self.sql(sql, 'dbfunc.version (2.2.2-5)', transaction=True):
+                # if not self.sql(sql, 'dbfunc.DBConnection.version (2.2.2-5)', transaction=True):
                 # return False
                 # else:
                 # logger.debug("1. Trigger 'table' erkannt:\n{}".format(el[1]))
@@ -1538,7 +1544,7 @@ class DBConnection:
                             ('Speicherkaskade')"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.5.9) - abflusstypen'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.9) - abflusstypen'):
                         return False
                 self.commit()
 
@@ -1559,7 +1565,7 @@ class DBConnection:
                             ('Fliesszeiten')"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.5.9) - knotentypen'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.9) - knotentypen'):
                         return False
                 self.commit()
 
@@ -1575,7 +1581,7 @@ class DBConnection:
                             ('Speicher')"""]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (2.5.9) - schachttypen'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.9) - schachttypen'):
                         return False
                 self.commit()
 
@@ -1593,7 +1599,7 @@ class DBConnection:
 
                 sql = '''DROP VIEW IF EXISTS "v_flaechen_check"'''
 
-                if not self.sql(sql, 'dbfunc.version (2.5.24-1)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.24-1)'):
                     return False
 
                 sql = '''CREATE VIEW IF NOT EXISTS "v_flaechen_check" AS 
@@ -1615,7 +1621,7 @@ class DBConnection:
                         GROUP BY fa.flnam
                         HAVING ABS(sum(fi.flaeche) - AREA(fa.geom)) > 2'''
 
-                if not self.sql(sql, 'dbfunc.version (2.5.24-2)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.24-2)'):
                     return False
 
                 sql = '''DROP VIEW IF EXISTS "v_tezg_check"'''
@@ -1623,7 +1629,7 @@ class DBConnection:
 
                 # Vergleich der Haltungsflächengrößen mit der Summe der verschnittenen Teile
 
-                if not self.sql(sql, 'dbfunc.version (2.5.24-3)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.24-3)'):
                     return False
 
                 sql = '''CREATE VIEW IF NOT EXISTS "v_tezg_check" AS 
@@ -1645,7 +1651,7 @@ class DBConnection:
                         GROUP BY tg.flnam
                         HAVING ABS(sum(fi.flaeche) - AREA(tg.geom)) > 2'''
 
-                if not self.sql(sql, 'dbfunc.version (2.5.24-4)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.24-4)'):
                     return False
 
 
@@ -1662,7 +1668,7 @@ class DBConnection:
 
                 sql = '''DROP VIEW IF EXISTS "v_flaechen_check"'''
 
-                if not self.sql(sql, 'dbfunc.version (2.5.27-1)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.27-1)'):
                     return False
 
                 sql = '''CREATE VIEW IF NOT EXISTS "v_flaechen_check" AS 
@@ -1686,7 +1692,7 @@ class DBConnection:
                         GROUP BY fa.flnam
                         HAVING ABS(sum(fi.flaeche) - AREA(fa.geom)) > 2'''
 
-                if not self.sql(sql, 'dbfunc.version (2.5.27-2)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.27-2)'):
                     return False
 
                 sql = '''DROP VIEW IF EXISTS "v_tezg_check"'''
@@ -1694,7 +1700,7 @@ class DBConnection:
 
                 # Vergleich der Haltungsflächengrößen mit der Summe der verschnittenen Teile
 
-                if not self.sql(sql, 'dbfunc.version (2.5.27-3)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.27-3)'):
                     return False
 
                 sql = '''CREATE VIEW IF NOT EXISTS "v_tezg_check" AS 
@@ -1718,7 +1724,7 @@ class DBConnection:
                         GROUP BY tg.flnam
                         HAVING ABS(sum(fi.flaeche) - AREA(tg.geom)) > 2'''
 
-                if not self.sql(sql, 'dbfunc.version (2.5.27-4)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (2.5.27-4)'):
                     return False
 
 
@@ -1734,7 +1740,7 @@ class DBConnection:
                 # Spalte "teilgebiet" in Tabelle "pumpen" ergänzen
                 attrlis = self.attrlist('pumpen')
                 if not attrlis:
-                    fehlermeldung('dbfunc.version (3.0.1):', 'attrlis für pumpen ist leer')
+                    fehlermeldung('dbfunc.DBConnection.version (3.0.1):', 'attrlis für pumpen ist leer')
                     return False
                 elif 'teilgebiet' not in attrlis:
                     logger.debug('pumpen.teilgebiet ist nicht in: {}'.format(str(attrlis)))
@@ -1759,7 +1765,7 @@ class DBConnection:
                 # Spalte "teilgebiet" in Tabelle "wehre" ergänzen
                 attrlis = self.attrlist('wehre')
                 if not attrlis:
-                    fehlermeldung('dbfunc.version (3.0.1):', 'attrlis für wehre ist leer')
+                    fehlermeldung('dbfunc.DBConnection.version (3.0.1):', 'attrlis für wehre ist leer')
                     return False
                 elif 'teilgebiet' not in attrlis:
                     logger.debug('wehre.teilgebiet ist nicht in: {}'.format(str(attrlis)))
@@ -1809,18 +1815,18 @@ class DBConnection:
                         LastModified TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')), 
                         Kommentar TEXT)"""
 
-                if not self.sql(sql, 'dbfunc.version (3.0.2-1)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.2-1)'):
                     return False
 
                 sql = """SELECT AddGeometryColumn('flaechen_he8','Geometry',{epsg},
                         'MULTIPOLYGON',2)""".format(epsg=self.epsg)
 
-                if not self.sql(sql, 'dbfunc.version (3.0.2-2)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.2-2)'):
                     return False
 
                 sql = """SELECT CreateSpatialIndex('flaechen_he8','Geometry')"""
 
-                if not self.sql(sql, 'dbfunc.version (3.0.2-3)'):
+                if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.2-3)'):
                     return False
 
                 # Erweitern der Tabelle "abflusstypen"
@@ -1829,7 +1835,7 @@ class DBConnection:
                           """ALTER TABLE abflusstypen ADD COLUMN kp_nr INTEGER""",]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.version (3.0.2-4)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.2-4)'):
                         return False
 
                 # Initialisierung
@@ -1844,7 +1850,7 @@ class DBConnection:
                 for ds in daten:
                     sql = u"""INSERT INTO abflusstypen
                              (abflusstyp, he_nr, kp_nr) Values ({})""".format(ds)
-                    if not self.sql(sql, 'dbfunc.version (3.0.2-5)'):
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.2-5)'):
                         return False
 
                 self.commit()
@@ -1857,7 +1863,7 @@ class DBConnection:
             # Aktuelle Version in Tabelle "info" schreiben
 
             sql = """UPDATE info SET value = '{}' WHERE subject = 'version'""".format(self.actversion)
-            if not self.sql(sql, 'dbfunc.version (aktuell)'):
+            if not self.sql(sql, 'dbfunc.DBConnection.version (aktuell)'):
                 return False
 
             self.commit()

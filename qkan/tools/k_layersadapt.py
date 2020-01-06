@@ -335,6 +335,7 @@ def layersadapt(database_QKan, projectTemplate, dbIsUptodate, qkanDBUpdate,
 
     # Zoom auf alles
     if zoom_alles:
+        canvas = iface.mapCanvas()
         canvas.zoomToFullExtent()
 
     # Noch zu bearbeiten:
