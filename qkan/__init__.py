@@ -85,7 +85,7 @@ class QKan:
         from .exportdyna import application as exportdyna
         from .linkflaechen import application as linkflaechen
         from .tools import application as tools
-        # from .exporthe8 import application as exporthe8
+        from .exporthe8 import application as exporthe8
 
         self.plugins = [
             createunbeffl.CreateUnbefFl(iface),
@@ -93,7 +93,7 @@ class QKan:
             exportdyna.ExportToKP(iface),
             linkflaechen.LinkFl(iface),
             tools.QKanTools(iface),
-            # exporthe8.ExportToHE8(iface),
+            exporthe8.ExportToHE8(iface),
         ]
 
         actions = self.iface.mainWindow().menuBar().actions()

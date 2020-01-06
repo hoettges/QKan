@@ -490,7 +490,8 @@ class QKanTools:
             anz = self.dlgro.lw_teilgebiete.count()
             for i in range(anz):
                 item = self.dlgro.lw_teilgebiete.item(i)
-                self.dlgro.lw_teilgebiete.setItemSelected(item, False)
+                item.setSelected(False)
+                # self.dlgro.lw_teilgebiete.setItemSelected(item, False)
 
             # Anzahl in der Anzeige aktualisieren
             self.dlgro_countselection()
@@ -507,7 +508,8 @@ class QKanTools:
             anz = self.dlgro.lw_abflussparameter.count()
             for i in range(anz):
                 item = self.dlgro.lw_abflussparameter.item(i)
-                self.dlgro.lw_abflussparameter.setItemSelected(item, False)
+                item.setSelected(False)
+                # self.dlgro.lw_abflussparameter.setItemSelected(item, False)
 
             # Anzahl in der Anzeige aktualisieren
             self.dlgro_countselection()

@@ -3,6 +3,7 @@
    Bisher definiert:
     - HYSTEM-EXTRAN (he)
 """
+import enum
 
 # flaechen.abflusstyp
 from .qkan_utils import fehlermeldung
@@ -19,5 +20,10 @@ def abflusstypen(simprog):
     if simprog in typen:
         return typen[simprog]
     else:
-        fehlermeldung(u'Fehler in Modul reflist', u'simprog nicht definiert: {}'.format(simprog))
+        fehlermeldung('Fehler in Modul reflist', u'simprog nicht definiert: {}'.format(simprog))
         return None
+
+class Zeug(enum.Enum):
+    UEBVOL = 'uebvol'
+    UEBSTAUANZ = 'uebstauanz'
+    

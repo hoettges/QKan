@@ -1545,31 +1545,6 @@ hinzufügen</string>
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_combine_flaechenrw">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>210</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Flächen werden vor dem Export haltungsweise zusammengefasst, so dass pro Haltung nur ein Datensatz existiert. Dies erhöht die Verarbeitungsgeschwindigkeit in HYSTEM-EXTRAN, während die direkte Zuordnung zu den Geoobjekten in QKan verloren geht. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="cb_combine_einleitdirekt">
     <property name="geometry">
      <rect>

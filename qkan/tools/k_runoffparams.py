@@ -100,6 +100,7 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                         lf.flnam AS flnam, 
                         fl.neigkl AS neigkl,
                         fl.abflussparameter AS abflussparameter, 
+                        fl.teilgebiet AS teilgebiet, 
                         CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
                     FROM linkfl AS lf
                     INNER JOIN flaechen AS fl
@@ -152,6 +153,7 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                         lf.flnam AS flnam, 
                         fl.neigkl AS neigkl,
                         fl.abflussparameter AS abflussparameter, 
+                        fl.teilgebiet AS teilgebiet, 
                         CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
                     FROM linkfl AS lf
                     INNER JOIN flaechen AS fl
@@ -203,6 +205,7 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                         lf.flnam AS flnam, 
                         fl.neigkl AS neigkl,
                         fl.abflussparameter AS abflussparameter, 
+                        fl.teilgebiet AS teilgebiet, 
                         CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
                     FROM linkfl AS lf
                     INNER JOIN flaechen AS fl
@@ -254,6 +257,7 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                         lf.flnam AS flnam, 
                         fl.neigkl AS neigkl,
                         fl.abflussparameter AS abflussparameter, 
+                        fl.teilgebiet AS teilgebiet, 
                         CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
                     FROM linkfl AS lf
                     INNER JOIN flaechen AS fl

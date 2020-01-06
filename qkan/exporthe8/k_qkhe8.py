@@ -160,7 +160,7 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                     schaechte.deckelhoehe AS gelaendehoehe, 
                     1 AS art, 
                     st.he_nr AS planungsstatus, 
-                    coalesce(schaechte.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                    strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
                     schaechte.durchm AS durchmesser,
                     SetSrid(schaechte.geop, -1) AS geometry
                   FROM schaechte
@@ -202,7 +202,7 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                   schaechte.deckelhoehe AS gelaendehoehe, 
                   1 AS art, 
                   st.he_nr AS planungsstatus, 
-                  coalesce(schaechte.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                  strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
                   schaechte.rowid + {id0} AS id, 
                   schaechte.durchm AS durchmesser,
                   SetSrid(schaechte.geop, -1) AS geometry
@@ -1304,7 +1304,8 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
             UPDATE he.Flaeche SET (
               Haltung, Groesse, Regenschreiber, 
               BerechnungSpeicherkonstante, Typ, AnzahlSpeicher,
-              Speicherkonstante, Schwerpunktlaufzeit,
+              Speicherkonstante, 
+              Schwerpunktlaufzeit,
               FliesszeitOberflaeche, LaengsteFliesszeitKanal,
               Parametersatz, Neigungsklasse, 
               LastModified,
@@ -1313,7 +1314,8 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
             ( SELECT 
                 haltnam AS Haltung, flaeche AS Groesse, regenschreiber AS Regenschreiber, 
                 abflusstyp AS BerechnungSpeicherkonstante, typbef AS Typ, speicherzahl AS AnzahlSpeicher, 
-                speicherkonst AS Speicherkonstante, fliesszeitflaeche AS Schwerpunktlaufzeit, 
+                speicherkonst AS Speicherkonstante, 
+                coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
                 fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
                 abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
                 coalesce(createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
@@ -1384,7 +1386,8 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                   id, 
                   Name, Haltung, Groesse, Regenschreiber, 
                   BerechnungSpeicherkonstante, Typ, AnzahlSpeicher,
-                  Speicherkonstante, Schwerpunktlaufzeit,
+                  Speicherkonstante, 
+                  Schwerpunktlaufzeit,
                   FliesszeitOberflaeche, LaengsteFliesszeitKanal,
                   Parametersatz, Neigungsklasse, 
                   LastModified,
@@ -1394,10 +1397,11 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                   id AS id, 
                   flnam AS Name, haltnam AS Haltung, flaeche AS Groesse, regenschreiber AS Regenschreiber, 
                   abflusstyp AS BerechnungSpeicherkonstante, typbef AS Typ, speicherzahl AS AnzahlSpeicher, 
-                  speicherkonst AS Speicherkonstante, fliesszeitflaeche AS Schwerpunktlaufzeit, 
+                  speicherkonst AS Speicherkonstante, 
+                  coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
                   fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
                   abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
-                  coalesce(createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                  strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) AS lastmodified, 
                   kommentar AS Kommentar, 
                   SetSrid(geom, -1) AS geometry
                 FROM flintersect AS fi

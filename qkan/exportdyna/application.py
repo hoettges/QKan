@@ -170,7 +170,8 @@ class ExportToKP:
             anz = self.dlg.lw_teilgebiete.count()
             for i in range(anz):
                 item = self.dlg.lw_teilgebiete.item(i)
-                self.dlg.lw_teilgebiete.setItemSelected(item, False)
+                item.setSelected(False)
+                # self.dlg.lw_teilgebiete.setItemSelected(item, False)
 
             # Anzahl in der Anzeige aktualisieren
             self.countselection()
