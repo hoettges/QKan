@@ -227,8 +227,6 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
     # --------------------------------------------------------------------------------------------
     # Export der Speicherbauwerke
     #
-    # Beim Export werden die IDs mitgeschrieben, um bei den Speicherkennlinien
-    # wiederverwertet zu werden.
 
     if check_export['export_speicher'] or check_export['modify_speicher']:
 
@@ -238,67 +236,44 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
         else:
             auswahl = ""
 
-        sql = """
-            SELECT
-                schaechte.schnam AS schnam,
-                schaechte.deckelhoehe AS deckelhoehe,
-                schaechte.sohlhoehe AS sohlhoehe,
-                schaechte.durchm AS durchmesser,
-                schaechte.strasse AS strasse,
-                kommentar AS kommentar,
-                createdat,
-                geom
-            FROM schaechte
-            WHERE schaechte.schachttyp = 'Speicher'{}
-            """.format(auswahl)
+        fortschritt('Export Speicherschaechte...', 0.35)
+        progress_bar.setValue(35)
 
-        if not dbQK.sql(sql, 'dbQK: k_qkhe8.export_speicher'):
-            del dbHE
-            return False
+        if check_export['modify_speicher']:
 
-        nr0 = nextid
-        refid_speicher = {}
+            sql = """
+                UPDATE Speicherschacht SET
+                (   Sohlhoehe, Gelaendehoehe, 
+                    Scheitelhoehe={scheitelhoehe},
+                    Planungsstatus='{planungsstatus}',
+                    LastModified='{lastmodified}', Kommentar='{kommentar}', Geometry='{geom}'
+                    ) =
+                ( SELECT
+                    schaechte.sohlhoehe AS sohlhoehe, 
+                    schaechte.deckelhoehe AS gelaendehoehe,
+                    schaechte.deckelhoehe AS scheitelhoehe,
+                    st.he_nr AS planungsstatus, 
+                    strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                    kommentar AS kommentar,
+                    SetSrid(schaechte.geop, -1) AS geometry
+                  FROM schaechte
+                  LEFT JOIN simulationsstatus AS st
+                  ON schaechte.simstatus = st.bezeichnung
+                  WHERE schaechte.schachttyp = 'Speicher'{auswahl})
+                  WHERE Name='{name}'
+                """.format(auswahl=auswahl)
 
-        for attr in dbQK.fetchall():
-            fortschritt('Export Speicherschaechte...', 0.35)
-            progress_bar.setValue(35)
+            if not dbQK.sql(sql, 'dbQK: k_qkhe8.export_speicher (1)'):
+                return False
 
-            # In allen Feldern None durch NULL ersetzen
-            (schnam, deckelhoehe_t, sohlhoehe_t, durchmesser_t, strasse, kommentar, createdat_t, geom) = \
-                ('NULL' if el is None else el for el in attr)
+        if check_export['export_speicher'] or check_export['modify_speicher']:
 
-            # Formatierung der Zahlen
-            (deckelhoehe, sohlhoehe, durchmesser) = \
-                ('NULL' if tt == 'NULL' else '{:.3f}'.format(float(tt)) \
-                 for tt in (deckelhoehe_t, sohlhoehe_t, durchmesser_t))
-
-            # Standardwerte, falls keine Vorgaben
-            if createdat_t == 'NULL':
-                createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
-            else:
-                try:
-                    if createdat_t.count(':') == 1:
-                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M')
-                    else:
-                        createdat_s = time.strptime(createdat_t, '%d.%m.%Y %H:%M:%S')
-                except:
-                    createdat_s = time.localtime()
-                createdat = time.strftime('%d.%m.%Y %H:%M:%S', createdat_s)
-
-            # Speichern der aktuellen ID zum Speicherbauwerk
-            refid_speicher[schnam] = nextid
+            nr0 = nextid
+            refid_speicher = {}
 
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export['modify_speicher']:
                 sql = """
-                    UPDATE Speicherschacht SET
-                    Typ={typ}, Sohlhoehe={sohlhoehe},
-                      Gelaendehoehe={gelaendehoehe}, Art={art}, AnzahlKanten={anzahlkanten},
-                      Scheitelhoehe={scheitelhoehe}, HoeheVollfuellung={hoehevollfuellung},
-                      KonstanterZufluss={konstanterzufluss}, Absetzwirkung={absetzwirkung}, 
-                      Planungsstatus='{planungsstatus}',
-                      LastModified='{lastmodified}', Kommentar='{kommentar}', Geometry='{geom}'
-                      WHERE Name='{name}';
                 """.format(typ='1', sohlhoehe=sohlhoehe,
                            gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
                            scheitelhoehe=deckelhoehe, hoehevollfuellung=deckelhoehe,
@@ -306,8 +281,10 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                            name=schnam, lastmodified=createdat, kommentar=kommentar,
                            durchmesser=durchmesser, geom=geom)
 
-                if not dbHE.sql(sql, 'dbHE: export_speicher (1)'):
-                    return False
+
+
+
+
 
             # Einfuegen in die Datenbank
             if check_export['export_speicher']:

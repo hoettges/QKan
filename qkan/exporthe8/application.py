@@ -436,7 +436,6 @@ class ExportToHE8:
         modify_speicherkennlinien = cb_set('modify_speicherkennlinien', self.dlg.cb_modify_speicherkennlinien, False)
         modify_bodenklassen = cb_set('modify_bodenklassen', self.dlg.cb_modify_bodenklassen, False)
 
-        combine_flaechenrw = cb_set('combine_flaechenrw', self.dlg.cb_combine_flaechenrw, True)
         combine_einleitdirekt = cb_set('combine_einleitdirekt', self.dlg.cb_combine_einleitdirekt, True)
 
         # Check, ob die relevanten Layer nicht editable sind.
@@ -608,7 +607,6 @@ class ExportToHE8:
             check_export['modify_speicherkennlinien'] = self.dlg.cb_modify_speicherkennlinien.isChecked()
             check_export['modify_bodenklassen'] = self.dlg.cb_modify_bodenklassen.isChecked()
 
-            check_export['combine_flaechenrw'] = self.dlg.cb_combine_flaechenrw.isChecked()
             check_export['combine_einleitdirekt'] = self.dlg.cb_combine_einleitdirekt.isChecked()
 
             # Konfigurationsdaten schreiben

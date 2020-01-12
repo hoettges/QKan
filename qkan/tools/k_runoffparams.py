@@ -141,7 +141,7 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}
                 )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
-            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (3)'):
+            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (1)'):
                 return False
 
     elif runoffmodelltype_choice == 'Fliesszeiten':
@@ -194,7 +194,7 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}
                 )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
-            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (3)'):
+            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (2)'):
                 return False
 
            # Fließzeit Oberfläche
@@ -298,7 +298,7 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}
                 )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
-            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (3)'):
+            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (4)'):
                 return False
 
     # status_message.setText(u"Erzeugung von unbefestigten Flächen")
