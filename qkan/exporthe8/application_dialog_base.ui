@@ -417,6 +417,9 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_export_auslaesse">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -471,7 +474,7 @@
    </widget>
    <widget class="QCheckBox" name="cb_export_pumpen">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -499,7 +502,7 @@
    </widget>
    <widget class="QCheckBox" name="cb_export_wehre">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -526,6 +529,9 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_export_rohrprofile">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -551,6 +557,9 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_export_regenschreiber">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -576,6 +585,9 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_export_abflussparameter">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -601,6 +613,9 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_export_bodenklassen">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -647,7 +662,7 @@
    </widget>
    <widget class="QLabel" name="label_14">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -670,7 +685,7 @@
    </widget>
    <widget class="QLabel" name="label_15">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -712,6 +727,9 @@
     </property>
    </widget>
    <widget class="QLabel" name="label_17">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -775,6 +793,9 @@
     </property>
    </widget>
    <widget class="QLabel" name="label_21">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -795,6 +816,9 @@
     </property>
    </widget>
    <widget class="QLabel" name="label_22">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -815,6 +839,9 @@
     </property>
    </widget>
    <widget class="QLabel" name="label_23">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -835,6 +862,9 @@
     </property>
    </widget>
    <widget class="QLabel" name="label_24">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -944,6 +974,9 @@ hinzufügen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_modify_rohrprofile">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -994,6 +1027,9 @@ hinzufügen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_modify_bodenklassen">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -1019,6 +1055,9 @@ hinzufügen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_modify_auslaesse">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -1045,7 +1084,7 @@ hinzufügen</string>
    </widget>
    <widget class="QCheckBox" name="cb_modify_pumpen">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -1072,6 +1111,9 @@ hinzufügen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_modify_abflussparameter">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -1182,7 +1224,7 @@ hinzufügen</string>
    </widget>
    <widget class="QCheckBox" name="cb_modify_wehre">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -1361,6 +1403,9 @@ hinzufügen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_export_speicherkennlinien">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -1386,6 +1431,9 @@ hinzufügen</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_25">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>19</x>
@@ -1437,6 +1485,9 @@ hinzufügen</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_33">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -1457,6 +1508,9 @@ hinzufügen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_modify_einleitdirekt">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -1482,6 +1536,9 @@ hinzufügen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_export_einleitdirekt">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -1546,6 +1603,9 @@ hinzufügen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_combine_einleitdirekt">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -1592,6 +1652,9 @@ fassen</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_35">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -1612,6 +1675,9 @@ fassen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_modify_aussengebiete">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -1637,6 +1703,9 @@ fassen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_export_aussengebiete">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>130</x>

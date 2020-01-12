@@ -137,10 +137,8 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
         # Nur Daten fuer ausgewaehlte Teilgebiete
         if len(liste_teilgebiete) != 0:
             auswahl = " AND schaechte.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-            auswah2 = " WHERE schaechte.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
         else:
             auswahl = ""
-            auswah2 = ""
 
         fortschritt('Export Schaechte Teil 1...', 0.1)
         progress_bar.setValue(15)
@@ -167,8 +165,9 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                   LEFT JOIN simulationsstatus AS st
                   ON schaechte.simstatus = st.bezeichnung
                   WHERE schaechte.schnam = he.Schacht.Name and schaechte.schachttyp = 'Schacht'{auswahl})
-                WHERE he.Schacht.Name IN (SELECT schnam FROM schaechte{auswah2})
-                """.format(auswahl=auswahl, auswah2=auswah2)
+                WHERE he.Schacht.Name IN 
+                      (SELECT schnam FROM schaechte WHERE schaechte.schachttyp = 'Schacht'{auswahl})
+                """.format(auswahl=auswahl)
 
             if not dbQK.sql(sql, 'dbQK: k_qkhe8.export_schaechte (1)'):
                 return False
@@ -206,11 +205,11 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                   schaechte.rowid + {id0} AS id, 
                   schaechte.durchm AS durchmesser,
                   SetSrid(schaechte.geop, -1) AS geometry
-                  FROM schaechte
-                  LEFT JOIN simulationsstatus AS st
-                  ON schaechte.simstatus = st.bezeichnung
-                  WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Schacht) and 
-                        schaechte.schachttyp = 'Schacht'{auswahl}
+                FROM schaechte
+                LEFT JOIN simulationsstatus AS st
+                ON schaechte.simstatus = st.bezeichnung
+                WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Schacht) and 
+                      schaechte.schachttyp = 'Schacht'{auswahl}
             """.format(auswahl=auswahl, id0=id0)
 
             if not dbQK.sql(sql, 'dbHE: export_schaechte (3)'):
@@ -239,14 +238,15 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
         fortschritt('Export Speicherschaechte...', 0.35)
         progress_bar.setValue(35)
 
+        # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
         if check_export['modify_speicher']:
 
             sql = """
-                UPDATE Speicherschacht SET
+                UPDATE he.Speicherschacht SET
                 (   Sohlhoehe, Gelaendehoehe, 
-                    Scheitelhoehe={scheitelhoehe},
-                    Planungsstatus='{planungsstatus}',
-                    LastModified='{lastmodified}', Kommentar='{kommentar}', Geometry='{geom}'
+                    Scheitelhoehe,
+                    Planungsstatus,
+                    LastModified, Kommentar, Geometry
                     ) =
                 ( SELECT
                     schaechte.sohlhoehe AS sohlhoehe, 
@@ -259,65 +259,70 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                   FROM schaechte
                   LEFT JOIN simulationsstatus AS st
                   ON schaechte.simstatus = st.bezeichnung
-                  WHERE schaechte.schachttyp = 'Speicher'{auswahl})
-                  WHERE Name='{name}'
+                  WHERE schaechte.schnam = he.Speicherschacht.Name and schaechte.schachttyp = 'Speicher'{auswahl})
+                WHERE he.Speicherschacht.Name IN 
+                      (SELECT schnam FROM schaechte WHERE schaechte.schachttyp = 'Speicherschacht'{auswahl})
                 """.format(auswahl=auswahl)
 
             if not dbQK.sql(sql, 'dbQK: k_qkhe8.export_speicher (1)'):
                 return False
 
-        if check_export['export_speicher'] or check_export['modify_speicher']:
+        # Einfuegen in die Datenbank
+        if check_export['export_speicher']:
 
             nr0 = nextid
             refid_speicher = {}
 
-            # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
-            if check_export['modify_speicher']:
-                sql = """
-                """.format(typ='1', sohlhoehe=sohlhoehe,
-                           gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
-                           scheitelhoehe=deckelhoehe, hoehevollfuellung=deckelhoehe,
-                           konstanterzufluss='0', absetzwirkung='0', planungsstatus='0',
-                           name=schnam, lastmodified=createdat, kommentar=kommentar,
-                           durchmesser=durchmesser, geom=geom)
+            # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+            sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
+            if not dbQK.sql(sql, 'dbQK: k_qkhe8.export_schaechte (2)'):
+                return False
 
+            data = dbQK.fetchone()
+            if len(data) == 2:
+                idmin, idmax = data
+            else:
+                fehlermeldung('Fehler (35) in QKan_Export',
+                              f'Feststellung min, max zu rowid fehlgeschlagen: {data}')
+            nr0 = nextid
+            id0 = nextid - idmin
 
+            sql = """
+                INSERT INTO he.Speicherschacht
+                ( Id, Name, Typ, Sohlhoehe,
+                  Gelaendehoehe, Art, AnzahlKanten,
+                  Scheitelhoehe, HoeheVollfuellung,
+                  Planungsstatus,
+                  LastModified, Kommentar, Geometry)
+                SELECT
+                  schaechte.rowid + {id0} AS id, 
+                  schaechte.schnam AS name, 
+                  1 AS typ, 
+                  schaechte.sohlhoehe AS sohlhoehe, 
+                  schaechte.deckelhoehe AS gelaendehoehe,
+                  1 AS art, 
+                  2 AS anzahlkanten, 
+                  schaechte.deckelhoehe AS scheitelhoehe,
+                  schaechte.deckelhoehe AS hoehevollfuellung,
+                  st.he_nr AS planungsstatus, 
+                  strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                  kommentar AS kommentar,
+                  SetSrid(schaechte.geop, -1) AS geometry
+                FROM schaechte
+                LEFT JOIN simulationsstatus AS st
+                ON schaechte.simstatus = st.bezeichnung
+                WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Speicherschacht) and 
+                      schaechte.schachttyp = 'Speicherschacht'{auswahl}
+            """.format(auswahl=auswahl, id0=id0)
 
+            if not dbQK.sql(sql, 'dbHE: export_speicher (2)'):
+                return False
 
+            nextid += idmax - idmin + 1
+            dbQK.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
+            dbQK.commit()
 
-
-            # Einfuegen in die Datenbank
-            if check_export['export_speicher']:
-                sql = """
-                    INSERT INTO Speicherschacht
-                    ( Id, Typ, Sohlhoehe,
-                      Gelaendehoehe, Art, AnzahlKanten,
-                      Scheitelhoehe, HoeheVollfuellung,
-                      KonstanterZufluss, Absetzwirkung, Planungsstatus,
-                      Name, LastModified, Kommentar, Geometry)
-                    SELECT
-                      {id}, {typ}, {sohlhoehe},
-                      {gelaendehoehe}, {art}, {anzahlkanten},
-                      {scheitelhoehe}, {hoehevollfuellung},
-                      {konstanterzufluss}, {absetzwirkung}, '{planungsstatus}',
-                      '{name}', '{lastmodified}', '{kommentar}', {geom}
-                    WHERE '{name}' NOT IN (SELECT Name FROM Speicherschacht);
-                """.format(id=nextid, typ='1', sohlhoehe=sohlhoehe,
-                           gelaendehoehe=deckelhoehe, art='1', anzahlkanten='0',
-                           scheitelhoehe=deckelhoehe, hoehevollfuellung=deckelhoehe,
-                           konstanterzufluss='0', absetzwirkung='0', planungsstatus='0',
-                           name=schnam, lastmodified=createdat, kommentar=kommentar,
-                           durchmesser=durchmesser, geom=geom)
-
-                if not dbHE.sql(sql, 'dbHE: export_speicher (2)'):
-                    return False
-
-                nextid += 1
-
-        dbHE.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
-        dbHE.commit()
-
-        fortschritt('{} Speicher eingefuegt'.format(nextid - nr0), 0.40)
+            fortschritt('{} Speicher eingefuegt'.format(nextid - nr0), 0.40)
 
         # --------------------------------------------------------------------------------------------
         # Export der Kennlinien der Speicherbauwerke - nur wenn auch Speicher exportiert werden
