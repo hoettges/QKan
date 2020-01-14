@@ -412,7 +412,7 @@ class DBConnection:
         attrSetBoth |= attrSetGeo
 
         # Zusammenstellen aller Attribute. Begonnen wird mit dem Primärschlüssel
-        attrDictNew = {attrPk: f'{attrPk} INTEGER PRIMARY KEY AUTOINCREMENT'}
+        attrDictNew = {attrPk: f'{attrPk} INTEGER PRIMARY KEY'}
         # Zusammenstellen aller Attribute in der neuen Tabelle inkl. Benutzerattributen
         for el in attributesNew:
             attr = el.strip().split(' ')[0].strip()
@@ -568,7 +568,7 @@ class DBConnection:
 
                 # Tabelle einleit
                 sqllis = ["""CREATE TABLE IF NOT EXISTS einleit (
-                    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                    pk INTEGER PRIMARY KEY,
                     elnam TEXT,
                     haltnam TEXT,
                     teilgebiet TEXT, 
@@ -582,7 +582,7 @@ class DBConnection:
                         return False
 
                 sqllis = ["""CREATE TABLE IF NOT EXISTS linksw (
-                        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                        pk INTEGER PRIMARY KEY,
                         elnam TEXT,
                         haltnam TEXT,
                         teilgebiet TEXT)""",
@@ -639,7 +639,7 @@ class DBConnection:
                     self.commit()
 
                 sql = """CREATE TABLE IF NOT EXISTS einzugsgebiete (
-                    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                    pk INTEGER PRIMARY KEY,
                     tgnam TEXT,
                     ewdichte REAL,
                     wverbrauch REAL,
@@ -705,7 +705,7 @@ class DBConnection:
                 # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
                 sqllis = ["""BEGIN TRANSACTION;""",
                           """CREATE TABLE IF NOT EXISTS flaechen_t (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             flnam TEXT,
                             haltnam TEXT,
                             neigkl INTEGER DEFAULT 0,
@@ -732,7 +732,7 @@ class DBConnection:
                           """SELECT DiscardGeometryColumn('flaechen','geom')""",
                           """DROP TABLE flaechen;""",
                           """CREATE TABLE flaechen (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             flnam TEXT,
                             haltnam TEXT,
                             neigkl INTEGER DEFAULT 0,
@@ -803,7 +803,7 @@ class DBConnection:
                 # muss hier eine händische Änderung "eingefangen werden". 
                 sqllis = ["""BEGIN TRANSACTION;""",
                           """CREATE TABLE IF NOT EXISTS linksw_t (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             elnam TEXT,
                             haltnam TEXT)""",
                           """SELECT AddGeometryColumn('linksw_t','geom',{},'POLYGON',2)""".format(self.epsg),
@@ -819,7 +819,7 @@ class DBConnection:
                           """SELECT DiscardGeometryColumn('linksw','glink')""",
                           """DROP TABLE linksw;""",
                           """CREATE TABLE linksw (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             elnam TEXT,
                             haltnam TEXT,
                             teilgebiet TEXT)""",
@@ -868,7 +868,7 @@ class DBConnection:
 
                 sqllis = ["""BEGIN TRANSACTION;""",
                           """CREATE TABLE IF NOT EXISTS linkfl_t (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             flnam TEXT,
                             haltnam TEXT,
                             tezgnam TEXT);""",
@@ -885,7 +885,7 @@ class DBConnection:
                           """SELECT DiscardGeometryColumn('linkfl','glink')""",
                           """DROP TABLE linkfl;""",
                           """CREATE TABLE linkfl (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             flnam TEXT,
                             haltnam TEXT,
                             tezgnam TEXT,
@@ -933,7 +933,7 @@ class DBConnection:
                 # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
                 sqllis = ["""BEGIN TRANSACTION;""",
                           """CREATE TABLE IF NOT EXISTS einleit_t (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             elnam TEXT,
                             haltnam TEXT,
                             teilgebiet TEXT, 
@@ -951,7 +951,7 @@ class DBConnection:
                           """SELECT DiscardGeometryColumn('einleit','geom')""",
                           """DROP TABLE einleit;""",
                           """CREATE TABLE einleit (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             elnam TEXT,
                             haltnam TEXT,
                             teilgebiet TEXT, 
@@ -1000,7 +1000,7 @@ class DBConnection:
 
                 sql = """
                     CREATE TABLE IF NOT EXISTS dynahal (
-                        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                        pk INTEGER PRIMARY KEY,
                         haltnam TEXT,
                         schoben TEXT,
                         schunten TEXT,
@@ -1126,7 +1126,7 @@ class DBConnection:
                 # Einleitungen aus Aussengebieten ----------------------------------------------------------------
 
                 sql = '''CREATE TABLE IF NOT EXISTS aussengebiete (
-                    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    pk INTEGER PRIMARY KEY, 
                     gebnam TEXT, 
                     schnam TEXT, 
                     hoeheob REAL, 
@@ -1155,7 +1155,7 @@ class DBConnection:
                 # Anbindung Aussengebiete -------------------------------------------------------------------------
 
                 sql = """CREATE TABLE IF NOT EXISTS linkageb (
-                    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                    pk INTEGER PRIMARY KEY,
                     gebnam TEXT,
                     schnam TEXT)"""
 
@@ -1224,7 +1224,7 @@ class DBConnection:
 
                 sqllis = ["""BEGIN TRANSACTION;""",
                           """CREATE TABLE IF NOT EXISTS linkfl_t (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             flnam TEXT,
                             haltnam TEXT,
                             tezgnam TEXT);""",
@@ -1241,7 +1241,7 @@ class DBConnection:
                           """SELECT DiscardGeometryColumn('linkfl','glink')""",
                           """DROP TABLE linkfl;""",
                           """CREATE TABLE linkfl (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             flnam TEXT,
                             haltnam TEXT,
                             tezgnam TEXT,
@@ -1307,7 +1307,7 @@ class DBConnection:
 
                 sqllis = ["""BEGIN TRANSACTION;""",
                           """CREATE TABLE IF NOT EXISTS flaechen_t (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             flnam TEXT,
                             haltnam TEXT,
                             neigkl INTEGER DEFAULT 0,
@@ -1326,7 +1326,7 @@ class DBConnection:
                           """SELECT DiscardGeometryColumn('flaechen','geom')""",
                           """DROP TABLE flaechen;""",
                           """CREATE TABLE flaechen (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             flnam TEXT,
                             haltnam TEXT,
                             neigkl INTEGER DEFAULT 0,
@@ -1386,7 +1386,7 @@ class DBConnection:
 
                 sqllis = ["""BEGIN TRANSACTION;""",
                           """CREATE TABLE IF NOT EXISTS linkfl_t (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             flnam TEXT,
                             haltnam TEXT,
                             tezgnam TEXT,
@@ -1412,7 +1412,7 @@ class DBConnection:
                           """SELECT DiscardGeometryColumn('linkfl','glink')""",
                           """DROP TABLE linkfl;""",
                           """CREATE TABLE linkfl (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             flnam TEXT,
                             haltnam TEXT,
                             tezgnam TEXT,
@@ -1467,7 +1467,7 @@ class DBConnection:
                 # 2. Schritt: Tabelle umbenennen, neu anlegen und Daten rüberkopieren
                 sqllis = ["""BEGIN TRANSACTION;""",
                           """CREATE TABLE IF NOT EXISTS linksw_t (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             elnam TEXT,
                             haltnam TEXT)""",
                           """SELECT AddGeometryColumn('linksw_t','geom',{},'POLYGON',2)""".format(self.epsg),
@@ -1483,7 +1483,7 @@ class DBConnection:
                           """SELECT DiscardGeometryColumn('linksw','glink')""",
                           """DROP TABLE linksw;""",
                           """CREATE TABLE linksw (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                            pk INTEGER PRIMARY KEY,
                             elnam TEXT,
                             haltnam TEXT,
                             teilgebiet TEXT)""",
@@ -1535,7 +1535,7 @@ class DBConnection:
                 # 1. Tabelle abflusstypen
 
                 sqllis = ['''CREATE TABLE abflusstypen (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+                            pk INTEGER PRIMARY KEY, 
                             abflusstyp TEXT)''',
                           """INSERT INTO abflusstypen ('abflusstyp') 
                           Values 
@@ -1551,7 +1551,7 @@ class DBConnection:
                 # 2. Tabelle Knotentypen
 
                 sqllis = ['''CREATE TABLE knotentypen (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+                            pk INTEGER PRIMARY KEY, 
                             knotentyp TEXT)''',
                           """INSERT INTO knotentypen ('knotentyp') 
                           Values
@@ -1572,7 +1572,7 @@ class DBConnection:
                 # 3. Tabelle Schachttypen
 
                 sqllis = ['''CREATE TABLE schachttypen (
-                            pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+                            pk INTEGER PRIMARY KEY, 
                             schachttyp TEXT)''',
                           """INSERT INTO schachttypen ('schachttyp') 
                           Values
@@ -1797,7 +1797,7 @@ class DBConnection:
 
                 sql = """
                     CREATE TABLE IF NOT EXISTS flaechen_he8 (
-                        pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                        pk INTEGER PRIMARY KEY,
                         Name TEXT, 
                         Haltung TEXT, 
                         Groesse REAL, 
@@ -1858,6 +1858,83 @@ class DBConnection:
                 # Versionsnummer hochsetzen
 
                 self.versionlis = [3, 0, 2]
+
+            # ------------------------------------------------------------------------------------
+            if versionolder(self.versionlis, [3, 0, 5]):
+
+                # Zusätzliches Attribut flaechentyp in abflussfaktoren -----------------------------
+
+                sql = """
+                    ALTER TABLE abflussparameter ADD COLUMN flaechentyp TEXT"""
+
+                if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.5-1)'):
+                    return False
+
+                # Initialisierung
+
+                daten = [['$Default_Unbef', 'Grünfläche'],
+                         ['Gebäude', 'Gebäude'],
+                         ['Straße', 'Straße'],
+                         ['Grünfläche', 'Grünfläche'],
+                         ['Gewässer', 'Gewässer'],
+                         ]
+
+                for nam, typ in daten:
+                    sql = """UPDATE abflussparameter
+                             SET flaechentyp = '{typ}'
+                             WHERE apnam = '{nam}'
+                             """.format(typ=typ, nam=nam)
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.5-2)'):
+                        return False
+
+                # Neue Tabelle "flaechentypen"
+
+                sql = """CREATE TABLE IF NOT EXISTS flaechentypen (
+                    pk INTEGER PRIMARY KEY,
+                    bezeichnung TEXT,
+                    he_nr INTEGER)"""
+
+                if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.5-3)'):
+                    return False
+
+                # Initialisierung
+
+                daten = [['Gebäude', 0],
+                         ['Straße', 1],
+                         ['Grünfläche', 2],
+                         ['Gewässer', 3],
+                         ]
+
+                for bez, num in daten:
+                    sql = u"""INSERT INTO flaechentypen
+                             (bezeichnung, he_nr) Values ('{bez}', {num})""".format(bez=bez, num=num)
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.5-4)'):
+                        return False
+
+                # Zusätzliche Attribute flaechen_he8
+
+                attrlis = ['Flaechentyp INTEGER', 'IstPolygonalflaeche INTEGER', 'ZuordnungGesperrt INTEGER']
+
+                for attr in attrlis:
+                    sql = f"ALTER TABLE flaechen_he8 ADD COLUMN {attr}"
+
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.5-5)'):
+                        return False
+
+                # Änderung des EPSG-Codes in flaechen_he8 auf -1
+
+                sqllis = ["SELECT DiscardGeometryColumn('flaechen_he8', 'Geometry')", 
+                          "SELECT AddGeometryColumn('flaechen_he8','Geometry', -1, 'MULTIPOLYGON',2)"]
+
+                for sql in sqllis:
+                    if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.5-6)'):
+                        return False
+                    
+                self.commit()
+
+                # Versionsnummer hochsetzen
+
+                self.versionlis = [3, 0, 5]
 
             # ------------------------------------------------------------------------------------
             # Aktuelle Version in Tabelle "info" schreiben

@@ -38,7 +38,7 @@ from qgis.utils import iface, pluginDirectory
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_database import qgsVersion, qgsActualVersion
 from qkan.database.qkan_utils import (meldung, fehlermeldung, warnung, 
-            get_qkanlayerAttributes, listQkanLayers, evalNodeTypes, getEditWidgetConfigFromQgsTemplate)
+            get_qkanlayerAttributes, listQkanLayers, evalNodeTypes, getLayerConfigFromQgsTemplate)
 
 logger = logging.getLogger(u'QKan.tools.k_layersadapt')
 
@@ -293,8 +293,9 @@ def layersadapt(database_QKan, projectTemplate, dbIsUptodate, qkanDBUpdate,
             layer.setEditFormConfig(editFormConfig)
 
         if anpassen_Wertebeziehungen_in_Tabellen:
-            dictOfEditWidgets = getEditWidgetConfigFromQgsTemplate(qgsxml, layername)
+            dictOfEditWidgets, displayExpression = getLayerConfigFromQgsTemplate(qgsxml, layername)
 
+            # Anpassen der Wertebeziehungen
             # iterating over all fieldnames in template project
             for idx, field in enumerate(layer.fields()):
                 fieldname = field.name()
@@ -313,6 +314,12 @@ def layersadapt(database_QKan, projectTemplate, dbIsUptodate, qkanDBUpdate,
                         options['Layer'] = projectLayerName
                     ews = QgsEditorWidgetSetup(type, options)
                     layer.setEditorWidgetSetup(idx, ews)
+
+            # Anpassen des Anzeige-Ausdrucks, nur wenn nicht schon anderweitig sinnvoll gesetzt. 
+            logger.debug(f'DisplayExpression zu Layer {layer.name()}: {layer.displayExpression()}\n')
+            if layer.displayExpression() in ('pk', '"pk"', ''):
+                logger.debug(f'DisplayExpression zu Layer {layer.name()} gesetzt: {displayExpression}\n')
+                layer.setDisplayExpression(displayExpression)
 
     if layerNotInProjektMeldung:
         meldung(u'Information zu den Layern',

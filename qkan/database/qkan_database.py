@@ -22,8 +22,8 @@
 __author__ = 'Joerg Hoettges'
 __date__ = 'August 2019'
 __copyright__ = '(C) 2016, Joerg Hoettges'
-__dbVersion__ = '3.0.3'  # Version der QKan-Datenbank
-__qgsVersion__ = '3.0.4'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = '3.0.5'  # Version der QKan-Datenbank
+__qgsVersion__ = '3.0.5'  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -37,7 +37,7 @@ from qgis.utils import iface, spatialite_connect
 
 from .qkan_utils import fortschritt, fehlermeldung, meldung
 
-logger = logging.getLogger(u'QKan.database.qkan_database')
+logger = logging.getLogger('QKan.database.qkan_database')
 
 
 def dbVersion():
@@ -85,21 +85,21 @@ def qgsActualVersion(update=True, warning=False):
 
     layers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
     if len(layers) == 0 and warning:
-        logger.error(u'qkan_database.qgsActualVersion: Keine Layer vorhanden...')
-        meldung(u"Fehler: ", u"Kein QKan-Projekt geladen!")
+        logger.error('qkan_database.qgsActualVersion: Keine Layer vorhanden...')
+        meldung("Fehler: ", "Kein QKan-Projekt geladen!")
         return False
 
     actQgsVersion = QgsProject.instance().title().replace('QKan Version ', '')
     if actQgsVersion == '':
         if len(layers) == 0:
-            meldung(u"Benutzerfehler: ", u"Es ist kein Projekt geladen")
+            meldung("Benutzerfehler: ", "Es ist kein Projekt geladen")
         else:
             actQgsVersion = '2.5.3'  # davor wurde die Version der Projektdatei noch nicht verwaltet.
     curQgsVersion = qgsVersion()
     try:
         actQgsVersionLis = [int(el.replace('a', '').replace('b', '').replace('c', '')) for el in actQgsVersion.split('.')]
     except BaseException as err:
-        logger.error(u'\nqkan_database.qgsActualVersion: {}\nVersionsstring fehlerhaft: {}'.format(err, actQgsVersion))
+        logger.error('\nqkan_database.qgsActualVersion: {}\nVersionsstring fehlerhaft: {}'.format(err, actQgsVersion))
         actQgsVersion = '2.5.3'                     # davor wurde die Version der Projektdatei noch nicht verwaltet.
         actQgsVersionLis = [int(el.replace('a', '').replace('b', '').replace('c', '')) for el in actQgsVersion.split('.')]
 
@@ -111,7 +111,7 @@ def qgsActualVersion(update=True, warning=False):
     isActual = not versionolder(actQgsVersionLis, curQgsVersionLis)
     if not isActual:
         if warning:
-            meldung(u"Warnung: ", u"Das geladene Projekt entspricht nicht der aktuellen Version. ")
+            meldung("Warnung: ", "Das geladene Projekt entspricht nicht der aktuellen Version. ")
         if update:
 
             # Bis Version 2.5.11
@@ -151,8 +151,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     # Haltungen ----------------------------------------------------------------
 
-    sql = u'''CREATE TABLE haltungen (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE haltungen (
+    pk INTEGER PRIMARY KEY,
     haltnam TEXT,
     schoben TEXT,
     schunten TEXT,
@@ -180,19 +180,19 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "Haltungen" konnte nicht erstellt werden')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "Haltungen" konnte nicht erstellt werden')
         consl.close()
         return False
 
-    sql = u"SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('haltungen','geom')"
+    sql = "SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('haltungen','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -200,8 +200,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     # Schaechte ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
 
-    sql = u'''CREATE TABLE schaechte (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE schaechte (
+    pk INTEGER PRIMARY KEY,
     schnam TEXT,
     xsch REAL,
     ysch REAL,
@@ -225,21 +225,21 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "Schaechte" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "Schaechte" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql1 = u"""SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg)
-    sql2 = u"""SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg)
-    sqlindex = u"""SELECT CreateSpatialIndex('schaechte','geom')"""
+    sql1 = """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg)
+    sql2 = """SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg)
+    sqlindex = """SELECT CreateSpatialIndex('schaechte','geom')"""
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
 
@@ -247,8 +247,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     # Profile ------------------------------------------------------------------
 
-    sql = u'''CREATE TABLE profile (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE profile (
+    pk INTEGER PRIMARY KEY,
     profilnam TEXT,
     he_nr INTEGER,
     mu_nr INTEGER,
@@ -257,48 +257,48 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "Profile" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "Profile" konnte nicht erstellt werden.')
         consl.close()
         return False
 
     try:
 
-        daten = [u"'Kreisquerschnitt', 1, NULL, NULL",
-                 u"'Rechteckquerschnitt', 2, NULL, NULL",
-                 u"'Eiquerschnitt 0,67', 3, NULL, NULL",
-                 u"'Maulquerschnitt 1,20', 4, NULL, NULL",
-                 u"'Halbschalenquerschnitt, offen 2,00', 5, NULL, NULL",
-                 u"'Kreisquerschnitt, gestreckt 0,89', 6, NULL, NULL",
-                 u"'Kreisquerschnitt, \xfcberh\xf6ht 0,67', 7, NULL, NULL",
-                 u"'Eiquerschnitt, \xfcberh\xf6ht 0,57', 8, NULL, NULL",
-                 u"'Eiquerschnitt, breit 0,80', 9, NULL, NULL",
-                 u"'Eiquerschnitt, gedr\xfcckt 1,00', 10, NULL, NULL",
-                 u"'Drachenquerschnitt 1,00', 11, NULL, NULL",
-                 u"'Maulquerschnitt 1,33', 12, NULL, NULL",
-                 u"'Maulquerschnitt, \xfcberh\xf6ht 1,00', 13, NULL, NULL",
-                 u"'Maulquerschnitt, gedr\xfcckt 0,89', 14, NULL, NULL",
-                 u"'Maulquerschnitt, gestreckt 1,14', 15, NULL, NULL",
-                 u"'Maulquerschnitt, gestaucht 2,00', 16, NULL, NULL",
-                 u"'Haubenquerschnitt 0,89', 17, NULL, NULL",
-                 u"'Parabelquerschnitt 1,00', 18, NULL, NULL",
-                 u"'Rechteckquerschnitt mit geneigter Sohle 2,00', 19, NULL, NULL",
-                 u"'Rechteckquerschnitt mit geneigter Sohle 1,00', 20, NULL, NULL",
-                 u"'Rechteckquerschnitt mit geneigter Sohle 0,50', 21, NULL, NULL",
-                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 2,00, b=0,2B', 22, NULL, NULL",
-                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 1,00, b=0,2B', 23, NULL, NULL",
-                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 0,50, b=0,2B', 24, NULL, NULL",
-                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 2,00, b=0,4B', 25, NULL, NULL",
-                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 1,00, b=0,4B', 26, NULL, NULL",
-                 u"'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 0,50, b=0,4B', 27, NULL, NULL",
-                 u"'Trapezquerschnitt', 68, NULL, NULL"]
+        daten = ["'Kreisquerschnitt', 1, NULL, NULL",
+                 "'Rechteckquerschnitt', 2, NULL, NULL",
+                 "'Eiquerschnitt 0,67', 3, NULL, NULL",
+                 "'Maulquerschnitt 1,20', 4, NULL, NULL",
+                 "'Halbschalenquerschnitt, offen 2,00', 5, NULL, NULL",
+                 "'Kreisquerschnitt, gestreckt 0,89', 6, NULL, NULL",
+                 "'Kreisquerschnitt, \xfcberh\xf6ht 0,67', 7, NULL, NULL",
+                 "'Eiquerschnitt, \xfcberh\xf6ht 0,57', 8, NULL, NULL",
+                 "'Eiquerschnitt, breit 0,80', 9, NULL, NULL",
+                 "'Eiquerschnitt, gedr\xfcckt 1,00', 10, NULL, NULL",
+                 "'Drachenquerschnitt 1,00', 11, NULL, NULL",
+                 "'Maulquerschnitt 1,33', 12, NULL, NULL",
+                 "'Maulquerschnitt, \xfcberh\xf6ht 1,00', 13, NULL, NULL",
+                 "'Maulquerschnitt, gedr\xfcckt 0,89', 14, NULL, NULL",
+                 "'Maulquerschnitt, gestreckt 1,14', 15, NULL, NULL",
+                 "'Maulquerschnitt, gestaucht 2,00', 16, NULL, NULL",
+                 "'Haubenquerschnitt 0,89', 17, NULL, NULL",
+                 "'Parabelquerschnitt 1,00', 18, NULL, NULL",
+                 "'Rechteckquerschnitt mit geneigter Sohle 2,00', 19, NULL, NULL",
+                 "'Rechteckquerschnitt mit geneigter Sohle 1,00', 20, NULL, NULL",
+                 "'Rechteckquerschnitt mit geneigter Sohle 0,50', 21, NULL, NULL",
+                 "'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 2,00, b=0,2B', 22, NULL, NULL",
+                 "'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 1,00, b=0,2B', 23, NULL, NULL",
+                 "'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 0,50, b=0,2B', 24, NULL, NULL",
+                 "'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 2,00, b=0,4B', 25, NULL, NULL",
+                 "'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 1,00, b=0,4B', 26, NULL, NULL",
+                 "'Rechteckquerschnitt mit geneigter Sohle und horizontaler Sohle 0,50, b=0,4B', 27, NULL, NULL",
+                 "'Trapezquerschnitt', 68, NULL, NULL"]
 
         for ds in daten:
-            cursl.execute(u'INSERT INTO profile (profilnam, he_nr, mu_nr, kp_key) VALUES ({})'.format(ds))
+            cursl.execute('INSERT INTO profile (profilnam, he_nr, mu_nr, kp_key) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabellendaten "Profile" konnten nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabellendaten "Profile" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
 
@@ -306,8 +306,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     # Geometrie Sonderprofile --------------------------------------------------
 
-    sql = u'''CREATE TABLE profildaten (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE profildaten (
+    pk INTEGER PRIMARY KEY, 
     profilnam TEXT, 
     wspiegel REAL, 
     wbreite REAL)'''
@@ -315,16 +315,16 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "profildaten" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "profildaten" konnte nicht erstellt werden.')
         consl.close()
         return False
     consl.commit()
 
     # Entwaesserungssysteme ----------------------------------------------------
 
-    sql = u'''CREATE TABLE entwaesserungsarten (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE entwaesserungsarten (
+    pk INTEGER PRIMARY KEY, 
     kuerzel TEXT, 
     bezeichnung TEXT, 
     bemerkung TEXT, 
@@ -334,58 +334,58 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "entwaesserungsarten" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "entwaesserungsarten" konnte nicht erstellt werden.')
         consl.close()
         return False
 
     try:
 
-        daten = [u"'MW', 'Mischwasser', NULL, 0, 0",
-                 u"'RW', 'Regenwasser', NULL, 1, 2",
-                 u"'SW', 'Schmutzwasser', NULL, 2, 1"]
+        daten = ["'MW', 'Mischwasser', NULL, 0, 0",
+                 "'RW', 'Regenwasser', NULL, 1, 2",
+                 "'SW', 'Schmutzwasser', NULL, 2, 1"]
 
         for ds in daten:
             cursl.execute(
-                u'INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr, kp_nr) VALUES ({})'.format(
+                'INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr, kp_nr) VALUES ({})'.format(
                     ds))
 
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
 
     # Pumpentypen --------------------------------------------------------------
 
-    sql = u'''CREATE TABLE pumpentypen (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE pumpentypen (
+    pk INTEGER PRIMARY KEY, 
     bezeichnung TEXT, 
     he_nr INTEGER)'''
 
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "pumpentypen" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "pumpentypen" konnte nicht erstellt werden.')
         consl.close()
         return False
 
     try:
 
-        daten = [u"'Offline', 1",
-                 u"'Online Schaltstufen', 2",
-                 u"'Online Kennlinie', 3",
-                 u"'Online Wasserstandsdifferenz', 4",
-                 u"'Ideal', 5"]
+        daten = ["'Offline', 1",
+                 "'Online Schaltstufen', 2",
+                 "'Online Kennlinie', 3",
+                 "'Online Wasserstandsdifferenz', 4",
+                 "'Ideal', 5"]
 
         for ds in daten:
-            cursl.execute(u'INSERT INTO pumpentypen (bezeichnung, he_nr) VALUES ({})'.format(ds))
+            cursl.execute('INSERT INTO pumpentypen (bezeichnung, he_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
 
@@ -393,8 +393,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     # Pumpen -------------------------------------------------------------------
 
-    sql = u'''CREATE TABLE pumpen (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE pumpen (
+    pk INTEGER PRIMARY KEY,
     pnam TEXT,
     schoben TEXT,
     schunten TEXT,
@@ -413,19 +413,19 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "pumpen" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "pumpen" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql = u"SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('pumpen','geom')"
+    sql = "SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('pumpen','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
 
@@ -433,8 +433,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     # Wehre --------------------------------------------------------------------
 
-    sql = u'''CREATE TABLE wehre (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE wehre (
+    pk INTEGER PRIMARY KEY,
     wnam TEXT,
     schoben TEXT,
     schunten TEXT,
@@ -453,19 +453,19 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "wehre" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "wehre" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql = u"SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('wehre','geom')"
+    sql = "SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('wehre','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
 
@@ -483,8 +483,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     #  - fremdwas: %
     #  - flaeche: ha
 
-    sql = u'''CREATE TABLE einzugsgebiete (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE einzugsgebiete (
+    pk INTEGER PRIMARY KEY,
     tgnam TEXT,
     ewdichte REAL,
     wverbrauch REAL,
@@ -496,19 +496,19 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "Einzugsgebiete" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "Einzugsgebiete" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql = u"SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('einzugsgebiete','geom')"
+    sql = "SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('einzugsgebiete','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'In der Tabelle "Einzugsgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'In der Tabelle "Einzugsgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -518,8 +518,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     # Auswahl von Objekten in verschiedenen Tabellen für verschiedene Aufgaben (z. B. 
     # automatische Verknüpfung von befestigten Flächen und direkten Einleitungen). 
 
-    sql = u'''CREATE TABLE teilgebiete (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE teilgebiete (
+    pk INTEGER PRIMARY KEY,
     tgnam TEXT,
     kommentar TEXT,
     createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
@@ -527,19 +527,19 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "Teilgebiete" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "Teilgebiete" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql = u"SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('teilgebiete','geom')"
+    sql = "SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('teilgebiete','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -560,8 +560,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     #  - "einleit" 
     #  - "swgebaeude"
 
-    sql = u'''CREATE TABLE gruppen (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE gruppen (
+    pk INTEGER PRIMARY KEY,
     pktab INTEGER,
     grnam TEXT,
     teilgebiet TEXT,
@@ -572,16 +572,16 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "gruppen" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "gruppen" konnte nicht erstellt werden.')
         consl.close()
         return False
     consl.commit()
 
     # Befestigte und unbefestigte Flächen ------------------------------------------------------
 
-    sql = u'''CREATE TABLE flaechen (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE flaechen (
+    pk INTEGER PRIMARY KEY,
     flnam TEXT,
     haltnam TEXT,
     neigkl INTEGER DEFAULT 0,
@@ -595,19 +595,19 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "flaechen" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "flaechen" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql = u"""SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)""".format(epsg)
-    sqlindex = u"""SELECT CreateSpatialIndex('flaechen','geom')"""
+    sql = """SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)""".format(epsg)
+    sqlindex = """SELECT CreateSpatialIndex('flaechen','geom')"""
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -619,8 +619,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     # Werkzeug "QKan_Link_Flaechen" mit allen durch die Verschneidung mit tezg entstehenden
     # Anteilen zugeordnet. 
 
-    sql = u"""CREATE TABLE linkfl (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = """CREATE TABLE linkfl (
+    pk INTEGER PRIMARY KEY,
     flnam TEXT,
     haltnam TEXT,
     tezgnam TEXT,
@@ -634,23 +634,23 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "linkfl" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "linkfl" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql1 = u"""SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
-    sql2 = u"""SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
-    sql3 = u"""SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('linkfl','glink')"
+    sql1 = """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql2 = """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql3 = """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    sqlindex = "SELECT CreateSpatialIndex('linkfl','glink')"
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
         cursl.execute(sql3)
         cursl.execute(sqlindex)
     except Exception as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u"QKan_Database (1) SQL-Fehler in SpatiaLite:")
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      "QKan_Database (1) SQL-Fehler in SpatiaLite:")
         consl.close()
         return False
     consl.commit()
@@ -660,8 +660,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     # wird anschließend in das Feld haltnam eingetragen. Der Export erfolgt allerdings anhand
     # der grafischen Verknüpfungen dieser Tabelle. 
 
-    sql = u"""CREATE TABLE linksw (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = """CREATE TABLE linksw (
+    pk INTEGER PRIMARY KEY,
     elnam TEXT,
     haltnam TEXT,
     teilgebiet TEXT)"""
@@ -669,23 +669,23 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(traceback.format_exc()),
-                      u'Tabelle "linksw" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(traceback.format_exc()),
+                      'Tabelle "linksw" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql1 = u"""SELECT AddGeometryColumn('linksw','geom',{epsg},'POLYGON',2)""".format(epsg=epsg)
-    sql2 = u"""SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
-    sql3 = u"""SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('linksw','geom')"
+    sql1 = """SELECT AddGeometryColumn('linksw','geom',{epsg},'POLYGON',2)""".format(epsg=epsg)
+    sql2 = """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql3 = """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    sqlindex = "SELECT CreateSpatialIndex('linksw','geom')"
     try:
         cursl.execute(sql1)
         cursl.execute(sql2)
         cursl.execute(sql3)
         cursl.execute(sqlindex)
     except:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(traceback.format_exc()),
-                      u"QKan_Database (2) SQL-Fehler in SpatiaLite: \n")
+        fehlermeldung('qkan_database.createdbtables: {}'.format(traceback.format_exc()),
+                      "QKan_Database (2) SQL-Fehler in SpatiaLite: \n")
         consl.close()
         return False
     consl.commit()
@@ -695,8 +695,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     # Fläche als Differenz zu den innerhalb liegenden Flächen (befestigte und unbefestigte!)
     # gebildet
 
-    sql = u'''CREATE TABLE tezg (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE tezg (
+    pk INTEGER PRIMARY KEY,
     flnam TEXT,
     haltnam TEXT,
     neigkl INTEGER DEFAULT 1,
@@ -709,19 +709,19 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "tezg" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "tezg" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql = u"SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('tezg','geom')"
+    sql = "SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('tezg','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -730,8 +730,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     # Erfasst alle Direkteinleitungen mit festem SW-Zufluss (m³/a)
     # Die Zuordnung zum Teilgebiet dient nur der Auswahl
 
-    sql = u'''CREATE TABLE einleit (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = '''CREATE TABLE einleit (
+    pk INTEGER PRIMARY KEY,
     elnam TEXT,
     haltnam TEXT,
     teilgebiet TEXT, 
@@ -744,19 +744,19 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "einleit" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "einleit" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql = u"SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)".format(epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('einleit','geom')"
+    sql = "SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('einleit','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
@@ -765,8 +765,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     # Erfasst alle Außengebiete
     # Die Zuordnung zum Teilgebiet dient nur der Auswahl
 
-    sql = u'''CREATE TABLE aussengebiete (
-        pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE aussengebiete (
+        pk INTEGER PRIMARY KEY, 
         gebnam TEXT, 
         schnam TEXT, 
         hoeheob REAL, 
@@ -782,18 +782,18 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'Tabelle "aussengebiete" konnte nicht erstellt werden: \n{}'.format(repr(err)))
+        fehlermeldung('Tabelle "aussengebiete" konnte nicht erstellt werden: \n{}'.format(repr(err)))
         consl.close()
         return False
 
-    sql = u"""SELECT AddGeometryColumn('aussengebiete','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('aussengebiete','geom')"
+    sql = """SELECT AddGeometryColumn('aussengebiete','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sqlindex = "SELECT CreateSpatialIndex('aussengebiete','geom')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except BaseException as err:
         fehlermeldung(
-            u'In der Tabelle "aussengebiete" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(
+            'In der Tabelle "aussengebiete" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(
                 repr(err)))
         consl.close()
         return False
@@ -804,35 +804,35 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     # wird anschließend in das Feld schnam eingetragen. Der Export erfolgt allerdings anhand
     # der grafischen Verknüpfungen dieser Tabelle. 
 
-    sql = u"""CREATE TABLE linkageb (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
+    sql = """CREATE TABLE linkageb (
+    pk INTEGER PRIMARY KEY,
     gebnam TEXT,
     schnam TEXT)"""
 
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "linkageb" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "linkageb" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    sql = u"""SELECT AddGeometryColumn('linkageb','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
-    sqlindex = u"SELECT CreateSpatialIndex('linkageb','glink')"
+    sql = """SELECT AddGeometryColumn('linkageb','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg)
+    sqlindex = "SELECT CreateSpatialIndex('linkageb','glink')"
     try:
         cursl.execute(sql)
         cursl.execute(sqlindex)
     except:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(traceback.format_exc()),
-                      u"QKan_Database (2) SQL-Fehler in SpatiaLite: \n", sql)
+        fehlermeldung('qkan_database.createdbtables: {}'.format(traceback.format_exc()),
+                      "QKan_Database (2) SQL-Fehler in SpatiaLite: \n", sql)
         consl.close()
         return False
     consl.commit()
 
     # Simulationsstatus/Planungsstatus -----------------------------------------
 
-    sql = u'''CREATE TABLE simulationsstatus (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE simulationsstatus (
+    pk INTEGER PRIMARY KEY, 
     bezeichnung TEXT,
     he_nr INTEGER,
     mu_nr INTEGER,
@@ -841,36 +841,36 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "simulationsstatus" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "simulationsstatus" konnte nicht erstellt werden.')
         consl.close()
         return False
 
     try:
 
-        daten = [u"'keine Angabe', 0, NULL, 5",
-                 u"'vorhanden', 1, NULL, 0",
-                 u"'geplant', 2, NULL, 1",
-                 u"'fiktiv', 3, NULL, 2",
-                 u"'außer Betrieb (keine Sim.)', 4, NULL, 3",
-                 u"'verfüllt (keine Sim.)', 5, NULL, NULL",
-                 u"'stillgelegt', NULL, NULL, 4",
-                 u"'rückgebaut', NULL, NULL, 6"]
+        daten = ["'keine Angabe', 0, NULL, 5",
+                 "'vorhanden', 1, NULL, 0",
+                 "'geplant', 2, NULL, 1",
+                 "'fiktiv', 3, NULL, 2",
+                 "'außer Betrieb (keine Sim.)', 4, NULL, 3",
+                 "'verfüllt (keine Sim.)', 5, NULL, NULL",
+                 "'stillgelegt', NULL, NULL, 4",
+                 "'rückgebaut', NULL, NULL, 6"]
 
         for ds in daten:
-            cursl.execute(u'INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
+            cursl.execute('INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabellendaten "simulationsstatus" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
 
     # Auslasstypen -------------------------------------------------------------
 
-    sql = u'''CREATE TABLE auslasstypen (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE auslasstypen (
+    pk INTEGER PRIMARY KEY, 
     bezeichnung TEXT,
     he_nr INTEGER,
     mu_nr INTEGER,
@@ -879,33 +879,33 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "auslasstypen" konnten nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "auslasstypen" konnten nicht erstellt werden.')
         consl.close()
         return False
 
     try:
 
-        daten = [u"'frei', 0, NULL, NULL",
-                 u"'normal', 1, NULL, NULL",
-                 u"'konstant', 2, NULL, NULL",
-                 u"'Tide', 3, NULL, NULL",
-                 u"'Zeitreihe', 4, NULL, NULL"]
+        daten = ["'frei', 0, NULL, NULL",
+                 "'normal', 1, NULL, NULL",
+                 "'konstant', 2, NULL, NULL",
+                 "'Tide', 3, NULL, NULL",
+                 "'Zeitreihe', 4, NULL, NULL"]
 
         for ds in daten:
-            cursl.execute(u'INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
+            cursl.execute('INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})'.format(ds))
 
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabellendaten "auslasstypen" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
     consl.commit()
 
     # Abflussparameter -------------------------------------------------------------
 
-    sql = u'''CREATE TABLE abflussparameter (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE abflussparameter (
+    pk INTEGER PRIMARY KEY, 
     apnam TEXT, 
     anfangsabflussbeiwert REAL, 
     endabflussbeiwert REAL, 
@@ -914,39 +914,80 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     benetzung_startwert REAL, 
     mulden_startwert REAL, 
     bodenklasse TEXT, 
+    flaechentyp INTEGER, 
     kommentar TEXT, 
     createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
 
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "abflussparameter" konnten nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "abflussparameter" konnten nicht erstellt werden.')
         consl.close()
         return False
 
     try:
-        daten = [u"'$Default_Bef', 'Exportiert mit qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, 'NULL', '13.01.2011 08:44:50'",
-                 u"'$Default_Unbef', 'Exportiert mit qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"]
+        daten = ["'$Default_Bef', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, NULL, '13.01.2011 08:44'",
+                 "'$Default_Unbef', 'Standart qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', 'Grünfläche', '13.01.2011 08:44'",
+                 "'Gebäude', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, 'Gebäude', '13.01.2020 14:13'",
+                 "'Straße', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, 'Straße', '13.01.2020 14:13'",
+                 "'Grünfläche', 'Standart qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', 'Grünfläche', '13.01.2020 14:13'",
+                 "'Gewässer', 'Standart qkhe', 0, 0, 0, 0, 0, 0, NULL, 'Gewässer', '13.01.2020 14:13'"]
 
         for ds in daten:
-            sql = u"""INSERT INTO abflussparameter
-                     ( 'apnam', 'kommentar', 'anfangsabflussbeiwert', 'endabflussbeiwert', 'benetzungsverlust', 
-                       'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
-                       'createdat') Values ({})""".format(ds)
+            sql = """INSERT INTO abflussparameter
+                     ( apnam, kommentar, anfangsabflussbeiwert, endabflussbeiwert, benetzungsverlust, 
+                       muldenverlust, benetzung_startwert, mulden_startwert, bodenklasse, flaechentyp, 
+                       createdat) Values ({})""".format(ds)
             cursl.execute(sql)
 
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden.')
         consl.close()
         return False
+
+    consl.commit()
+
+    # Tabelle "flaechentypen" --------------------------------------------------------------------
+
+    sql = """CREATE TABLE IF NOT EXISTS flaechentypen (
+        pk INTEGER PRIMARY KEY,
+        bezeichnung TEXT,
+        he_nr INTEGER)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "flaechentypen" konnten nicht erstellt werden.')
+        consl.close()
+        return False
+
+    try:
+        daten = [['Gebäude', 0],
+                 ['Straße', 1],
+                 ['Grünfläche', 2],
+                 ['Gewässer', 3],
+                 ]
+
+        for bez, num in daten:
+            sql = u"""INSERT INTO flaechentypen
+                     (bezeichnung, he_nr) Values ('{bez}', {num})""".format(bez=bez, num=num)
+            cursl.execute(sql)
+
+    except BaseException as err:
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden.')
+        consl.close()
+        return False
+
     consl.commit()
 
     # Bodenklasse -------------------------------------------------------------
 
-    sql = u'''CREATE TABLE bodenklassen (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE bodenklassen (
+    pk INTEGER PRIMARY KEY, 
     bknam TEXT, 
     infiltrationsrateanfang REAL,
     infiltrationsrateende REAL,
@@ -960,38 +1001,38 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "bodenklassen" konnten nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "bodenklassen" konnten nicht erstellt werden.')
         consl.close()
         return False
 
-    daten = [u"'VollDurchlaessig', 10, 9, 10, 144, 1.584, 100, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-             u"'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-             u"'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-             u"'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-             u"'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-             u"'Undurchlaessig', 0, 0, 0, 100, 1, 0, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-             u"NULL, 0, 0, 0, 0, 0, 0, '13.01.2011 08:44:50', 'nur für interne QKan-Aufgaben'"]
+    daten = ["'VollDurchlaessig', 10, 9, 10, 144, 1.584, 100, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             "'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             "'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             "'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             "'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             "'Undurchlaessig', 0, 0, 0, 100, 1, 0, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
+             "NULL, 0, 0, 0, 0, 0, 0, '13.01.2011 08:44:50', 'nur für interne QKan-Aufgaben'"]
 
     for ds in daten:
         try:
-            sql = u"""INSERT INTO bodenklassen
+            sql = """INSERT INTO bodenklassen
                      ( 'bknam', 'infiltrationsrateanfang', 'infiltrationsrateende', 'infiltrationsratestart', 
                        'rueckgangskonstante', 'regenerationskonstante', 'saettigungswassergehalt', 
                        'createdat', 'kommentar') Values ({})""".format(ds)
             cursl.execute(sql)
 
         except BaseException as err:
-            fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                          u'Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
+            fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                          'Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
             consl.close()
             return False
     consl.commit()
 
     # Abflusstypen -------------------------------------------------------------
 
-    sql = u'''CREATE TABLE abflusstypen (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE abflusstypen (
+    pk INTEGER PRIMARY KEY, 
     abflusstyp TEXT,
     he_nr INTEGER,
     kp_nr INTEGER)'''
@@ -999,8 +1040,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "abflusstypen" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "abflusstypen" konnte nicht erstellt werden.')
         consl.close()
         return False
 
@@ -1013,88 +1054,88 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     for ds in daten:
         try:
-            sql = u"""INSERT INTO abflusstypen
+            sql = """INSERT INTO abflusstypen
                      (abflusstyp, he_nr, kp_nr) Values ({})""".format(ds)
             cursl.execute(sql)
 
         except BaseException as err:
-            fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                          u'Tabellendaten "abflusstypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
+            fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                          'Tabellendaten "abflusstypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
             consl.close()
             return False
     consl.commit()
 
     # Knotentypen -------------------------------------------------------------
 
-    sql = u'''CREATE TABLE knotentypen (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE knotentypen (
+    pk INTEGER PRIMARY KEY, 
     knotentyp TEXT)'''
 
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "knotentypen" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "knotentypen" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    daten = [u"'Anfangsschacht'",
-             u"'Einzelschacht'",
-             u"'Endschacht'",
-             u"'Hochpunkt'",
-             u"'Normalschacht'",
-             u"'Tiefpunkt'",
-             u"'Verzweigung'",
-             u"'Fliesszeiten'"]
+    daten = ["'Anfangsschacht'",
+             "'Einzelschacht'",
+             "'Endschacht'",
+             "'Hochpunkt'",
+             "'Normalschacht'",
+             "'Tiefpunkt'",
+             "'Verzweigung'",
+             "'Fliesszeiten'"]
 
     for ds in daten:
         try:
-            sql = u"""INSERT INTO knotentypen
+            sql = """INSERT INTO knotentypen
                      ( 'knotentyp') Values ({})""".format(ds)
             cursl.execute(sql)
 
         except BaseException as err:
-            fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                          u'Tabellendaten "knotentypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
+            fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                          'Tabellendaten "knotentypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
             consl.close()
             return False
     consl.commit()
 
     # Schachttypen -------------------------------------------------------------
 
-    sql = u'''CREATE TABLE schachttypen (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE schachttypen (
+    pk INTEGER PRIMARY KEY, 
     schachttyp TEXT)'''
 
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Tabelle "schachttypen" konnte nicht erstellt werden.')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Tabelle "schachttypen" konnte nicht erstellt werden.')
         consl.close()
         return False
 
-    daten = [u"'Auslass'",
-             u"'Schacht'",
-             u"'Speicher'"]
+    daten = ["'Auslass'",
+             "'Schacht'",
+             "'Speicher'"]
 
     for ds in daten:
         try:
-            sql = u"""INSERT INTO schachttypen
+            sql = """INSERT INTO schachttypen
                      ( 'schachttyp') Values ({})""".format(ds)
             cursl.execute(sql)
 
         except BaseException as err:
-            fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                          u'Tabellendaten "schachttypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
+            fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                          'Tabellendaten "schachttypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(err), sql)
             consl.close()
             return False
     consl.commit()
 
     # Kennlinie Speicherbauwerke -----------------------------------------------
 
-    sql = u'''CREATE TABLE speicherkennlinien (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE speicherkennlinien (
+    pk INTEGER PRIMARY KEY, 
     schnam TEXT, 
     wspiegel REAL, 
     oberfl REAL)'''
@@ -1102,17 +1143,17 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Fehler beim Erzeugen der Tabelle "Speicherkennlinien".')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Fehler beim Erzeugen der Tabelle "Speicherkennlinien".')
         consl.close()
         return False
     consl.commit()
 
     # Hilfstabelle für den DYNA-Export -----------------------------------------
 
-    sql = u"""
+    sql = """
         CREATE TABLE IF NOT EXISTS dynahal (
-            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+            pk INTEGER PRIMARY KEY,
             haltnam TEXT,
             schoben TEXT,
             schunten TEXT,
@@ -1127,8 +1168,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Fehler beim Erzeugen der Tabelle "dynahal".')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Fehler beim Erzeugen der Tabelle "dynahal".')
         consl.close()
         return False
     consl.commit()
@@ -1137,7 +1178,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     sql = """
         CREATE TABLE IF NOT EXISTS flaechen_he8 (
-            pk INTEGER PRIMARY KEY AUTOINCREMENT,
+            pk INTEGER PRIMARY KEY,
             Name TEXT, 
             Haltung TEXT, 
             Groesse REAL, 
@@ -1158,29 +1199,29 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Fehler beim Erzeugen der Tabelle "flaechen_he8".')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Fehler beim Erzeugen der Tabelle "flaechen_he8".')
         consl.close()
         return False
 
-    sql = """SELECT AddGeometryColumn('flaechen_he8','Geometry',{epsg},
-            'MULTIPOLYGON',2)""".format(epsg=epsg)
+    sql = """SELECT AddGeometryColumn('flaechen_he8','Geometry', -1,
+            'MULTIPOLYGON',2)"""
 
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Fehler beim Erzeugen des Attributes "flaechen_he8.Geometry".')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Fehler beim Erzeugen des Attributes "flaechen_he8.Geometry".')
         consl.close()
         return False
 
-    sql = """SELECT CreateSpatialIndex('flaechen_he8','Geometry')"""
+    sql = """SELECT CreateSpatialIndex('flaechen_he8', 'Geometry')"""
 
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Fehler beim Erzeugen des Spatial Index für Attribut "Geometry".')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Fehler beim Erzeugen des Spatial Index für Attribut "Geometry".')
         consl.close()
         return False
 
@@ -1188,8 +1229,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     # Allgemeine Informationen -----------------------------------------------
 
-    sql = u'''CREATE TABLE info (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sql = '''CREATE TABLE info (
+    pk INTEGER PRIMARY KEY, 
     subject TEXT, 
     value TEXT,
     createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))'''
@@ -1197,8 +1238,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.version: Fehler {}'.format(err),
-                      u'Fehler beim Erzeugen der Tabelle "Info".')
+        fehlermeldung('qkan_database.version: Fehler {}'.format(err),
+                      'Fehler beim Erzeugen der Tabelle "Info".')
         consl.close()
         return False
 
@@ -1206,7 +1247,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     # Prüfung der Anbindungen in "linkfl" auf eindeutige Zuordnung zu Flächen und Haltungen
 
-    sql = u'''CREATE VIEW IF NOT EXISTS "v_linkfl_check" AS 
+    sql = '''CREATE VIEW IF NOT EXISTS "v_linkfl_check" AS 
             WITH lfok AS
             (   SELECT 
                     lf.pk AS "pk",
@@ -1245,14 +1286,14 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.version: Fehler {}'.format(err),
-                      u'Fehler beim Erzeugen der Plausibilitätskontrolle "v_linkfl_check".')
+        fehlermeldung('qkan_database.version: Fehler {}'.format(err),
+                      'Fehler beim Erzeugen der Plausibilitätskontrolle "v_linkfl_check".')
         consl.close()
         return False
 
     # Feststellen der Flächen ohne Anbindung
 
-    sql = u'''CREATE VIEW IF NOT EXISTS "v_flaechen_ohne_linkfl" AS 
+    sql = '''CREATE VIEW IF NOT EXISTS "v_flaechen_ohne_linkfl" AS 
             SELECT 
                 fl.pk, 
                 fl.flnam AS "flaech_nam",
@@ -1274,14 +1315,14 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.version: Fehler {}'.format(err),
-                      u'Fehler beim Erzeugen der Plausibilitätskontrolle "v_flaechen_ohne_linkfl".')
+        fehlermeldung('qkan_database.version: Fehler {}'.format(err),
+                      'Fehler beim Erzeugen der Plausibilitätskontrolle "v_flaechen_ohne_linkfl".')
         consl.close()
         return False
 
     # Vergleich der Flächengröße mit der Summe der verschnittenen Teile
 
-    sql = u'''CREATE VIEW IF NOT EXISTS "v_flaechen_check" AS 
+    sql = '''CREATE VIEW IF NOT EXISTS "v_flaechen_check" AS 
             WITH flintersect AS (
                 SELECT fl.flnam AS finam, 
                        CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
@@ -1305,14 +1346,14 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.version: Fehler {}'.format(err), 
-                      u'Fehler beim Erzeugen der Plausibilitätskontrolle "v_flaechen_check".')
+        fehlermeldung('qkan_database.version: Fehler {}'.format(err), 
+                      'Fehler beim Erzeugen der Plausibilitätskontrolle "v_flaechen_check".')
         consl.close()
         return False
 
     # Vergleich der Haltungsflächengrößen mit der Summe der verschnittenen Teile
 
-    sql = u'''CREATE VIEW IF NOT EXISTS "v_tezg_check" AS 
+    sql = '''CREATE VIEW IF NOT EXISTS "v_tezg_check" AS 
             WITH flintersect AS (
                 SELECT tg.flnam AS finam, 
                        CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
@@ -1336,25 +1377,25 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.version: Fehler {}'.format(err), 
-                      u'Fehler beim Erzeugen der Plausibilitätskontrolle "v_tezg_check".')
+        fehlermeldung('qkan_database.version: Fehler {}'.format(err), 
+                      'Fehler beim Erzeugen der Plausibilitätskontrolle "v_tezg_check".')
         consl.close()
         return False
 
     # Abschluss --------------------------------------------------------------------
 
     # Aktuelle Version eintragen
-    sql = u"""INSERT INTO info (subject, value) VALUES ('version', '{}'); \n""".format(version)
+    sql = """INSERT INTO info (subject, value) VALUES ('version', '{}'); \n""".format(version)
     try:
         cursl.execute(sql)
     except BaseException as err:
-        fehlermeldung(u'qkan_database.createdbtables: {}'.format(err),
-                      u'Fehler beim Erzeugen der Tabelle "Info".')
+        fehlermeldung('qkan_database.createdbtables: {}'.format(err),
+                      'Fehler beim Erzeugen der Tabelle "Info".')
         consl.close()
         return False
     consl.commit()
 
-    fortschritt(u'Tabellen erstellt...', 0.01)
+    fortschritt('Tabellen erstellt...', 0.01)
 
     return True
 
@@ -1364,8 +1405,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 if __name__ in ('__main__', '__console__', '__builtin__'):
 
     # Verzeichnis der Testdaten
-    pfad = u'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh'
-    database_QKan = os.path.join(pfad, u'test1.sqlite')
+    pfad = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh'
+    database_QKan = os.path.join(pfad, 'test1.sqlite')
 
     if os.path.exists(database_QKan):
         os.remove(database_QKan)
@@ -1387,7 +1428,7 @@ if __name__ in ('__main__', '__console__', '__builtin__'):
 
     time.sleep(1)
 
-    sql = u'SELECT InitSpatialMetadata(transaction = TRUE)'
+    sql = 'SELECT InitSpatialMetadata(transaction = TRUE)'
     cursl.execute(sql)
 
     iface.messageBar().pushMessage("Information", "SpatiaLite-Datenbank ist erstellt!", level=Qgis.Info)

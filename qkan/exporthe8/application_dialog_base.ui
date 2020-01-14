@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>872</width>
-    <height>592</height>
+    <height>657</height>
    </rect>
   </property>
   <property name="font">
@@ -25,7 +25,7 @@
    <property name="geometry">
     <rect>
      <x>290</x>
-     <y>530</y>
+     <y>580</y>
      <width>261</width>
      <height>32</height>
     </rect>
@@ -1737,7 +1737,7 @@ fassen</string>
      <x>270</x>
      <y>400</y>
      <width>201</width>
-     <height>101</height>
+     <height>161</height>
     </rect>
    </property>
    <property name="font">
@@ -1810,6 +1810,36 @@ Flächen und Einleitpunkten</string>
 verschneiden</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="cb_copyFlaechenHE8">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>150</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zu exportierende Flächen zusätzlich in QKan-Datenbank in Tabelle &amp;quot;flaechen_he8&amp;quot; schreiben&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Zu exportierende Flächen zusätzlich in QKan-Datenbank in Tabelle &quot;flaechen_he8&quot; schreiben</string>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>Exportierte Flächen in
+QKan-Tabelle kopieren</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QCheckBox" name="cb_selActive">
    <property name="geometry">
@@ -1835,9 +1865,9 @@ verschneiden</string>
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>270</y>
+     <y>280</y>
      <width>201</width>
-     <height>231</height>
+     <height>281</height>
     </rect>
    </property>
    <property name="toolTip">

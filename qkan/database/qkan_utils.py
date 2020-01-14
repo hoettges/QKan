@@ -45,7 +45,7 @@ def fehlermeldung(title, text=u''):
 
 # Allgemeine Funktionen
 
-def getEditWidgetConfigFromQgsTemplate(qgsxml, layername):
+def getLayerConfigFromQgsTemplate(qgsxml, layername):
     '''Liefert Parameter für QgsEditorWidgetSetup aus Qgs-Datei für alle Attribute in einem Layer
 
     :qgsxml:            XML-Struktur der Projektdatei
@@ -92,7 +92,10 @@ def getEditWidgetConfigFromQgsTemplate(qgsxml, layername):
                 editWidgetOptions[optionName]=optionValue                    # return: editWidgetOptions
             dictOfEditWidgets[fieldname] = (editWidgetType, {'map': editWidgetOptions})
             # logger.debug('dictOfEditWidgets: {}'.format(dictOfEditWidgets))
-    return dictOfEditWidgets
+
+    displayExpression = node_maplayer.findtext('previewExpression')
+    
+    return dictOfEditWidgets, displayExpression
 
 
 def listQkanLayers(qgsTemplate = None):
