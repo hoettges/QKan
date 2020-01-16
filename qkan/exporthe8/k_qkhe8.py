@@ -1328,7 +1328,8 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
             FROM flintersect AS fi
             WHERE flaeche*10000 > {mindestflaeche}""".format(mindestflaeche=mindestflaeche, auswahl_a=auswahl_a, 
                                                     case_verschneidung=case_verschneidung, 
-                                                    join_verschneidung=join_verschneidung)
+                                                    join_verschneidung=join_verschneidung,
+                                                    expr_verschneidung=expr_verschneidung)
 
             logger.debug('Abfrage zum Export der Flächendaten nach HE8: \n{}'.format(sql))
 
@@ -1394,7 +1395,8 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
             """.format( \
                         mindestflaeche=mindestflaeche, auswahl_a=auswahl_a, 
                         case_verschneidung=case_verschneidung, 
-                        join_verschneidung=join_verschneidung)
+                        join_verschneidung=join_verschneidung,
+                        expr_verschneidung=expr_verschneidung)
 
             if not dbQK.sql(sql, 'dbQK: k_qkhe8.export_flaechenrw (1)'):
                 return False
@@ -1479,7 +1481,8 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                 WHERE flaeche*10000 > {mindestflaeche} and (flnam NOT IN (SELECT Name FROM he.Flaeche))""".format( \
                             mindestflaeche=mindestflaeche, auswahl_a=auswahl_a, 
                             case_verschneidung=case_verschneidung, 
-                            join_verschneidung=join_verschneidung, id0=id0)
+                            join_verschneidung=join_verschneidung,
+                            expr_verschneidung=expr_verschneidung, id0=id0)
 
                 if not dbQK.sql(sql, 'dbQK: k_qkhe8.export_flaechenrw (2)'):
                     return False
