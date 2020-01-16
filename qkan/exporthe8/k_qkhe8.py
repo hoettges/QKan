@@ -1250,9 +1250,12 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
             join_verschneidung = """
                 LEFT JOIN tezg AS tg
                 ON lf.tezgnam = tg.flnam"""
+            expr_verschneidung = \
+                """CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))"""
         else:
             case_verschneidung = "1"
             join_verschneidung = ""
+            expr_verschneidung = "fl.geom"                  # dummy
 
         # Einfuegen der Flächendaten in die QKan-Datenbank, Tabelle "flaechen_he8"
 
@@ -1280,14 +1283,13 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                 lf.speicherzahl AS speicherzahl, lf.speicherkonst AS speicherkonst,
                 lf.fliesszeitflaeche AS fliesszeitflaeche, lf.fliesszeitkanal AS fliesszeitkanal,
                 CASE WHEN {case_verschneidung} THEN area(fl.geom)/10000 
-                ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,
-                      tg.geom),3)))/10000 
+                ELSE area({expr_verschneidung})/10000 
                 END AS flaeche, 
                 fl.regenschreiber AS regenschreiber, coalesce(ft.he_nr, 0) AS flaechentypnr, 
                 fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
                 fl.kommentar AS kommentar,
                 CASE WHEN {case_verschneidung} THEN fl.geom
-                ELSE CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3)) 
+                ELSE {expr_verschneidung} 
                 END AS geom
               FROM linkfl AS lf
               INNER JOIN flaechen AS fl
@@ -1345,15 +1347,14 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                 lf.speicherzahl AS speicherzahl, lf.speicherkonst AS speicherkonst,
                 lf.fliesszeitflaeche AS fliesszeitflaeche, lf.fliesszeitkanal AS fliesszeitkanal,
                 CASE WHEN {case_verschneidung} THEN area(fl.geom)/10000 
-                ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,
-                      tg.geom),3)))/10000 
+                ELSE area({expr_verschneidung})/10000 
                 END AS flaeche, 
                 fl.regenschreiber AS regenschreiber,
                 coalesce(ft.he_nr, 0) AS flaechentypnr, 
                 fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
                 fl.kommentar AS kommentar,
                 CASE WHEN {case_verschneidung} THEN fl.geom
-                ELSE CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3)) 
+                ELSE {expr_verschneidung} 
                 END AS geom
               FROM linkfl AS lf
               INNER JOIN flaechen AS fl
@@ -1430,14 +1431,13 @@ def export2he8(iface, database_HE, dbtemplate_HE, dbQK, liste_teilgebiete, autok
                     lf.speicherzahl AS speicherzahl, lf.speicherkonst AS speicherkonst,
                     lf.fliesszeitflaeche AS fliesszeitflaeche, lf.fliesszeitkanal AS fliesszeitkanal,
                     CASE WHEN {case_verschneidung} THEN area(fl.geom)/10000 
-                    ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,
-                          tg.geom),3)))/10000 
+                    ELSE area({expr_verschneidung})/10000 
                     END AS flaeche, 
                     fl.regenschreiber AS regenschreiber, coalesce(ft.he_nr, 0) AS flaechentypnr, 
                     fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
                     fl.kommentar AS kommentar,
                     CASE WHEN {case_verschneidung} THEN fl.geom
-                    ELSE CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3)) 
+                    ELSE {expr_verschneidung} 
                     END AS geom
                   FROM linkfl AS lf
                   INNER JOIN flaechen AS fl
