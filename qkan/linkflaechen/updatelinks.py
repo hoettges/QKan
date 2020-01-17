@@ -167,9 +167,6 @@ def updatelinkfl(
     dbQK.commit()
 
     fortschritt(u"Ende...", 1)
-    # progress_bar.setValue(100)
-    # status_message.setText(u"Bereinigung Flächenverknüpfungen abgeschlossen.")
-    # status_message.setLevel(QgsMessageBar.SUCCESS)
 
     return True
 

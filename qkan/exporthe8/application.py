@@ -22,7 +22,7 @@
 import logging
 import os.path
 
-from qgis.core import QgsProject, Qgis
+from qgis.core import Qgis, QgsProject
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, QTranslator, qVersion
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 from qgis.utils import pluginDirectory
@@ -391,43 +391,24 @@ class ExportToHE8:
     def run(self):
         """Run method that performs all the real work"""
 
-        if "database_QKan" in QKan.config:
-            database_QKan = QKan.config["database_QKan"]
-        else:
-            database_QKan = ""
-        self.dlg.tf_QKanDB.setText(database_QKan)
+        self.dlg.tf_QKanDB.setText(QKan.config.database.qkan)
         self.dlg.pb_selectQKanDB.clicked.connect(self.selectFile_QKanDB)
 
-        if "database_HE" in QKan.config:
-            database_HE = QKan.config["database_HE"]
-        else:
-            database_HE = ""
-        self.dlg.tf_heDB_dest.setText(database_HE)
+        self.dlg.tf_heDB_dest.setText(QKan.config.database.he)
         self.dlg.pb_selectHeDB_dest.clicked.connect(self.selectFile_HeDB_dest)
 
-        if "dbtemplate_HE" in QKan.config:
-            dbtemplate_HE = QKan.config["dbtemplate_HE"]
-        else:
-            dbtemplate_HE = ""
-        self.dlg.tf_heDB_template.setText(dbtemplate_HE)
+        self.dlg.tf_heDB_template.setText(QKan.config.database.he_template)
         self.dlg.pb_selectHeDB_template.clicked.connect(self.selectFile_HeDB_template)
         self.dlg.pb_selectHeDB_emptytemplate.clicked.connect(
             self.selectFile_HeDB_emptytemplate
         )
-
-        if "datenbanktyp" in QKan.config:
-            datenbanktyp = QKan.config["datenbanktyp"]
-        else:
-            datenbanktyp = "spatialite"
-            pass  # Es gibt noch keine Wahlmöglichkeit
-
         # Auswahl der zu exportierenden Tabellen ----------------------------------------------
 
         # Eigene Funktion für die zahlreichen Checkboxen
 
         def cb_set(name, cbox, default):
-            if name in QKan.config:
-                checked = QKan.config[name]
+            if hasattr(QKan.config.check_export, name):
+                checked = getattr(QKan.config.check_export, name)
             else:
                 checked = default
             cbox.setChecked(checked)
@@ -531,8 +512,6 @@ class ExportToHE8:
         # Wenn dies nicht der Fall ist, wird die Quelldatenbank aus der
         # json-Datei übernommen.
 
-        database_QKan = ""
-
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             fehlermeldung(
@@ -591,9 +570,7 @@ class ExportToHE8:
         # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
         # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-        liste_teilgebiete = []
-        if "liste_teilgebiete" in QKan.config:
-            liste_teilgebiete = QKan.config["liste_teilgebiete"]
+        liste_teilgebiete = QKan.config.teilgebiete
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -619,33 +596,18 @@ class ExportToHE8:
         self.countselection()
 
         # Autokorrektur
-
-        if "autokorrektur" in QKan.config:
-            autokorrektur = QKan.config["autokorrektur"]
-        else:
-            autokorrektur = True
-        self.dlg.cb_autokorrektur.setChecked(autokorrektur)
+        self.dlg.cb_autokorrektur.setChecked(QKan.config.autokorrektur)
 
         # Festlegung des Fangradius
         # Kann über Menü "Optionen" eingegeben werden
-        if "fangradius" in QKan.config:
-            fangradius = QKan.config["fangradius"]
-        else:
-            fangradius = u"0.1"
+        fangradius = QKan.config.fangradius
 
         # Haltungsflächen (tezg) berücksichtigen
-        if "mit_verschneidung" in QKan.config:
-            mit_verschneidung = QKan.config["mit_verschneidung"]
-        else:
-            mit_verschneidung = True
-        self.dlg.cb_regardTezg.setChecked(mit_verschneidung)
+        self.dlg.cb_regardTezg.setChecked(QKan.config.mit_verschneidung)
 
         # Mindestflächengröße
         # Kann über Menü "Optionen" eingegeben werden
-        if "mindestflaeche" in QKan.config:
-            mindestflaeche = QKan.config["mindestflaeche"]
-        else:
-            mindestflaeche = u"0.5"
+        mindestflaeche = QKan.config.mindestflaeche
 
         self.countselection()
 
@@ -657,7 +619,6 @@ class ExportToHE8:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-
             # Abrufen der ausgewählten Elemente in beiden Listen
             liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
 
@@ -739,20 +700,20 @@ class ExportToHE8:
             ] = self.dlg.cb_combine_einleitdirekt.isChecked()
 
             # Konfigurationsdaten schreiben
-            QKan.config["database_HE"] = database_HE
-            QKan.config["dbtemplate_HE"] = dbtemplate_HE
-            QKan.config["database_QKan"] = database_QKan
-            QKan.config["datenbanktyp"] = datenbanktyp
-            QKan.config["liste_teilgebiete"] = liste_teilgebiete
-            QKan.config["autokorrektur"] = autokorrektur
-            QKan.config["fangradius"] = fangradius
-            QKan.config["mit_verschneidung"] = mit_verschneidung
-            QKan.config["mindestflaeche"] = mindestflaeche
+            QKan.config.database.he = database_HE
+            QKan.config.database.he_template = dbtemplate_HE
+            QKan.config.database.qkan = database_QKan
+            QKan.config.database.type = datenbanktyp
+            QKan.config.teilgebiete = liste_teilgebiete
+            QKan.config.autokorrektur = autokorrektur
+            QKan.config.fangradius = fangradius
+            QKan.config.mit_verschneidung = mit_verschneidung
+            QKan.config.mindestflaeche = mindestflaeche
 
             for el in check_export:
-                QKan.config[el] = check_export[el]
+                setattr(QKan.config.check_export, el, check_export[el])
 
-            QKan.save_config()
+            QKan.config.save()
 
             if not export2he8(
                 self.iface,

@@ -64,7 +64,7 @@ class DBConnection:
 
         :param dbname:      Pfad zur SpatiaLite-Datenbankdatei. Falls nicht vorhanden, 
                             wird es angelegt.
-        :type dbnam:        String
+        :type dbname:        String
 
         :param tabObject:   Vectorlayerobjekt, aus dem die Parameter zum 
                             Zugriff auf die SpatiaLite-Tabelle ermittelt werden.

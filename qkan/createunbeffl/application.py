@@ -289,7 +289,7 @@ class CreateUnbefFl:
         data = self.dbQK.fetchone()
 
         if data is None:
-            if QKan.config.get("autokorrektur", True):
+            if QKan.config.autokorrektur:
                 daten = [
                     u"'$Default_Unbef', u'von QKan ergänzt', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"
                 ]
@@ -376,12 +376,7 @@ class CreateUnbefFl:
         # config in Dialog übernehmen
 
         # Autokorrektur
-
-        if "autokorrektur" in QKan.config:
-            autokorrektur = QKan.config["autokorrektur"]
-        else:
-            autokorrektur = True
-        self.dlg.cb_autokorrektur.setChecked(autokorrektur)
+        self.dlg.cb_autokorrektur.setChecked(QKan.config.autokorrektur)
 
         self.countselection()
 
@@ -405,8 +400,8 @@ class CreateUnbefFl:
             )
             autokorrektur = self.dlg.cb_autokorrektur.isChecked()
 
-            QKan.config["autokorrektur"] = autokorrektur
-            QKan.save_config()
+            QKan.config.autokorrektur = autokorrektur
+            QKan.config.save()
 
             createUnbefFlaechen(
                 self.iface, self.dbQK, liste_selAbflparamTeilgeb, autokorrektur

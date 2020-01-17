@@ -106,7 +106,7 @@ class FBConnection:
             return True
         except AttributeError:
             fehlermeldung(
-                u"QKan.FBConnection: Datenbankzugriff geperrt, moeglicherweise durch eine andere Anwendung?"
+                u"QKan.FBConnection: Datenbankzugriff gesperrt, moeglicherweise durch eine andere Anwendung?"
             )
             self.__del__()
             return False

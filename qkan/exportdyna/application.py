@@ -22,7 +22,7 @@
 import logging
 import os.path
 
-from qgis.core import QgsProject, Qgis
+from qgis.core import Qgis, QgsProject
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 from qgis.utils import iface, pluginDirectory
@@ -253,7 +253,7 @@ class ExportToKP:
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
         :param listWidget: String for translation.
-        :type listWidget: QListWidgetItem
+        :type listWidget: QListWidget
 
         :returns: Tuple containing selected teilgebiete
         :rtype: tuple
@@ -285,30 +285,15 @@ class ExportToKP:
             )
             return False
 
-        if "dynafile" in QKan.config:
-            dynafile = QKan.config["dynafile"]
-        else:
-            dynafile = ""
-        self.dlg.tf_KP_dest.setText(dynafile)
+        self.dlg.tf_KP_dest.setText(QKan.config.dyna.dynafile)
+        self.dlg.tf_KP_template.setText(QKan.config.dyna.template)
 
-        if "template_dyna" in QKan.config:
-            template_dyna = QKan.config["template_dyna"]
-        else:
-            template_dyna = ""
-        self.dlg.tf_KP_template.setText(template_dyna)
-
-        if "datenbanktyp" in QKan.config:
-            datenbanktyp = QKan.config["datenbanktyp"]
-        else:
-            datenbanktyp = "spatialite"
-            pass  # Es gibt noch keine Wahlmöglichkeit
+        datenbanktyp = QKan.config.database.type  # Es gibt noch keine Wahlmöglichkeit
 
         # Übernahme der Quelldatenbank:
         # Wenn ein Projekt geladen ist, wird die Quelldatenbank daraus übernommen.
         # Wenn dies nicht der Fall ist, wird die Quelldatenbank aus der
         # json-Datei übernommen.
-
-        database_QKan = ""
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
@@ -364,9 +349,7 @@ class ExportToKP:
             # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
             # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-            liste_teilgebiete = []
-            if "liste_teilgebiete" in QKan.config:
-                liste_teilgebiete = QKan.config["liste_teilgebiete"]
+            liste_teilgebiete = QKan.config.teilgebiete
 
             # Abfragen der Tabelle teilgebiete nach Teilgebieten
             sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -393,62 +376,32 @@ class ExportToKP:
         self.countselection()
 
         # Autokorrektur
-
-        if "profile_ergaenzen" in QKan.config:
-            profile_ergaenzen = QKan.config["profile_ergaenzen"]
-        else:
-            profile_ergaenzen = True
-        self.dlg.cb_profile_ergaenzen.setChecked(profile_ergaenzen)
-
-        if "autonummerierung_dyna" in QKan.config:
-            autonummerierung_dyna = QKan.config["autonummerierung_dyna"]
-        else:
-            autonummerierung_dyna = False
-        self.dlg.cb_autonummerierung_dyna.setChecked(autonummerierung_dyna)
+        self.dlg.cb_profile_ergaenzen.setChecked(QKan.config.dyna.profile_ergaenzen)
+        self.dlg.cb_autonummerierung_dyna.setChecked(QKan.config.dyna.autonummerierung)
 
         # Festlegung des Fangradius
         # Kann über Menü "Optionen" eingegeben werden
-        if "fangradius" in QKan.config:
-            fangradius = QKan.config["fangradius"]
-        else:
-            fangradius = u"0.1"
+        fangradius = QKan.config.fangradius
 
         # Haltungsflächen (tezg) berücksichtigen
-        if "mit_verschneidung" in QKan.config:
-            mit_verschneidung = QKan.config["mit_verschneidung"]
-        else:
-            mit_verschneidung = True
-        self.dlg.cb_regardTezg.setChecked(mit_verschneidung)
+        self.dlg.cb_regardTezg.setChecked(QKan.config.mit_verschneidung)
 
         # Mindestflächengröße
         # Kann über Menü "Optionen" eingegeben werden
-        if "mindestflaeche" in QKan.config:
-            mindestflaeche = QKan.config["mindestflaeche"]
-        else:
-            mindestflaeche = u"0.5"
+        mindestflaeche = QKan.config.mindestflaeche
 
         # Maximalzahl Schleifendurchläufe
-        if "max_loops" in QKan.config:
-            max_loops = QKan.config["max_loops"]
-        else:
-            max_loops = 1000
+        max_loops = QKan.config.max_loops
 
         # Optionen zur Berechnung der befestigten Flächen
-        if "dynabef_choice" in QKan.config:
-            dynabef_choice = QKan.config["dynabef_choice"]
-        else:
-            dynabef_choice = u"flaechen"
-
+        dynabef_choice = QKan.config.dyna.bef_choice
         if dynabef_choice == u"flaechen":
             self.dlg.rb_flaechen.setChecked(True)
         elif dynabef_choice == u"tezg":
             self.dlg.rb_tezg.setChecked(True)
 
         # Optionen zur Zuordnung des Profilschlüssels
-        if "dynaprof_choice" in QKan.config:
-            dynaprof_choice = QKan.config["dynaprof_choice"]
-        else:
-            dynaprof_choice = u"profilname"
+        dynaprof_choice = QKan.config.dyna.prof_choice
 
         if dynaprof_choice == u"profilname":
             self.dlg.rb_profnam.setChecked(True)
@@ -462,7 +415,6 @@ class ExportToKP:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-
             # Abrufen der ausgewählten Elemente in beiden Listen
             liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
 
@@ -497,20 +449,21 @@ class ExportToKP:
                 )
 
             # Konfigurationsdaten schreiben
-            QKan.config["dynafile"] = dynafile
-            QKan.config["template_dyna"] = template_dyna
-            QKan.config["database_QKan"] = database_QKan
-            QKan.config["liste_teilgebiete"] = liste_teilgebiete
-            QKan.config["profile_ergaenzen"] = profile_ergaenzen
-            QKan.config["autonummerierung_dyna"] = autonummerierung_dyna
-            QKan.config["fangradius"] = fangradius
-            QKan.config["mindestflaeche"] = mindestflaeche
-            QKan.config["mit_verschneidung"] = mit_verschneidung
-            QKan.config["max_loops"] = max_loops
-            QKan.config["dynabef_choice"] = dynabef_choice
-            QKan.config["dynaprof_choice"] = dynaprof_choice
+            QKan.config.dyna.autonummerierung = autonummerierung_dyna
+            QKan.config.dyna.bef_choice = dynabef_choice
+            QKan.config.dyna.dynafile = dynafile
+            QKan.config.dyna.prof_choice = dynaprof_choice
+            QKan.config.dyna.profile_ergaenzen = profile_ergaenzen
+            QKan.config.dyna.template = template_dyna
+            QKan.config.database.qkan = database_QKan
+            QKan.config.fangradius = fangradius
+            QKan.config.max_loops = max_loops
+            QKan.config.mindestflaeche = mindestflaeche
+            QKan.config.mit_verschneidung = mit_verschneidung
+            QKan.config.teilgebiete = liste_teilgebiete
 
-            QKan.save_config()
+
+            QKan.config.save()
 
             # Start der Verarbeitung
 

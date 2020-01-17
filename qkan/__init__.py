@@ -3,13 +3,14 @@ import datetime
 import json
 import logging
 import os
-import site
 import tempfile
 from pathlib import Path
 
 from PyQt5.QtCore import QCoreApplication, QSettings, QTranslator
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu
+
+from .config import Config
 
 
 def classFactory(iface):  # pylint: disable=invalid-name
@@ -19,7 +20,7 @@ def classFactory(iface):  # pylint: disable=invalid-name
 
 class QKan:
     instance = None  # type: QKan
-    config = None  # type: dict
+    config = None  # type: Config
 
     def __init__(self, iface):
         QKan.instance = self
@@ -48,23 +49,12 @@ class QKan:
             self.logger.addHandler(stream_handler)
 
         # Init config
-        work_dir = Path(site.getuserbase()) / "qkan"
-        if not work_dir.exists():
-            os.makedirs(work_dir)
-
-        self.config_file = work_dir / "qkan.json"
-        config = {"epsg": "25832"}  # Projektionssystem
-        if self.config_file.exists():
-            try:
-                QKan.config = json.loads(self.config_file.read_text())
-            except json.JSONDecodeError:  # Fehlerhafte Config
-                self.logger.error(
-                    "Fehler beim Einlesen der Config-Datei.", exc_info=True
-                )
-                QKan.config = config
-        else:
-            QKan.config = config
-            self.save_config()
+        try:
+            QKan.config = Config.load()
+        except (json.JSONDecodeError, OSError):
+            self.logger.error("Failed to read config file.", exc_info=True)
+            QKan.config = Config()
+            QKan.config.save()
 
         # QGIS
         self.iface = iface
@@ -250,13 +240,3 @@ class QKan:
         self.actions.append(action)
 
         return action
-
-    @staticmethod
-    def save_config():
-        """Write config to json file"""
-        try:
-            QKan.instance.config_file.write_text(json.dumps(QKan.config, indent=4))
-        except IOError:
-            QKan.instance.logger.error(
-                "Fehler beim Speichern der Config-Datei.", exc_info=True
-            )

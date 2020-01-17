@@ -29,6 +29,7 @@ import logging
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.utils import iface
+from qkan import config
 from qkan.database.qkan_utils import sqlconditions
 
 logger = logging.getLogger(u"QKan.tools.k_runoffparams")
@@ -56,8 +57,11 @@ def setRunoffparams(
     :dbQK:                          Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type dbQK:                     DBConnection (geerbt von dbapi...)
 
-    :runoffparamstype_choice:       Simulationsprogramm, für das die Paremter berechnet werden sollen. 
+    :runoffparamstype_choice:       Simulationsprogramm, für das die Paremter berechnet werden sollen.
     :type runoffparamstype_choice:  string
+
+    :runoffparamsfunctions:         Funktionen, die von den Simulationsprogrammen genutzt werden sollen
+    :type runoffparamsfunctions:    config.ToolsConfig.RunoffParams
 
     :liste_teilgebiete:             Liste der bei der Bearbeitung zu berücksichtigenden Teilgebiete (Tabelle tezg)
     :type:                          list
@@ -67,11 +71,11 @@ def setRunoffparams(
 
     :returns:                       void
 
-    Für alle TEZG-Flächen wird, falls nicht schon vorhanden, ein unbefestigtes Flächenobjekt erzeugt. 
-    Dazu können in der Auswahlmaske zunächst die Kombinationen aus Abflussparameter und Teilgebiet 
+    Für alle TEZG-Flächen wird, falls nicht schon vorhanden, ein unbefestigtes Flächenobjekt erzeugt.
+    Dazu können in der Auswahlmaske zunächst die Kombinationen aus Abflussparameter und Teilgebiet
     gewählt werden, die in der Tabelle "tezg" vorkommen und die nachfolgenden Voraussetzungen erfüllen:
 
-    - Im Feld "abflussparameter" muss auf einen Abflussparameter verwiesen werden, der für unbefestigte 
+    - Im Feld "abflussparameter" muss auf einen Abflussparameter verwiesen werden, der für unbefestigte
       Flächen erzeugt wurde (infiltrationsparameter > 0)
     """
 
@@ -87,9 +91,8 @@ def setRunoffparams(
     # status_message.setText(u"Erzeugung von unbefestigten Flächen ist in Arbeit.")
     progress_bar.setValue(1)
 
-    funlis = runoffparamsfunctions[
-        runoffparamstype_choice
-    ]  # Beide Funktionen werden in einer for-Schleife abgearbeitet
+    # Beide Funktionen werden in einer for-Schleife abgearbeitet
+    funlis = getattr(runoffparamsfunctions, runoffparamstype_choice.lower())
     # logger.debug(u"\nfunlis:\n{}".format(funlis))
     kriterienlis = ["IS NULL", "IS NOT NULL"]
 

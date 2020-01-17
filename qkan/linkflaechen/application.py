@@ -555,8 +555,6 @@ class LinkFl:
             )
             return False
 
-        database_QKan = u""
-
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             logger.error(
@@ -608,18 +606,17 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_cl.lw_flaechen_abflussparam.addItem(QListWidgetItem(elem[0]))
-                if "liste_flaechen_abflussparam" in QKan.config:
-                    try:
-                        if elem[0] in QKan.config["liste_flaechen_abflussparam"]:
-                            self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
-                            self.dlg_cl.cb_selFlActive.setChecked(
-                                True
-                            )  # Auswahlcheckbox aktivieren
-                    except BaseException as err:
-                        del self.dbQK
-                        # logger.debug(u'\nelem: {}'.format(str(elem)))  # debug
-                        # if len(daten) == 1:
-                        # self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(0)
+                try:
+                    if elem[0] in QKan.config.linkflaechen.flaechen_abflussparam:
+                        self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
+                        self.dlg_cl.cb_selFlActive.setChecked(
+                            True
+                        )  # Auswahlcheckbox aktivieren
+                except BaseException as err:
+                    del self.dbQK
+                    # logger.debug(u'\nelem: {}'.format(str(elem)))  # debug
+                    # if len(daten) == 1:
+                    # self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(0)
 
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
         sql = u'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
@@ -630,14 +627,13 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_cl.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
-                if "liste_hal_entw" in QKan.config:
-                    if elem[0] in QKan.config["liste_hal_entw"]:
-                        self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
-                        self.dlg_cl.cb_selHalActive.setChecked(
-                            True
-                        )  # Auswahlcheckbox aktivieren
-                        # if len(daten) == 1:
-                        # self.dlg_cl.lw_hal_entw.setCurrentRow(0)
+                if elem[0] in QKan.config.linkflaechen.hal_entw:
+                    self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
+                    self.dlg_cl.cb_selHalActive.setChecked(
+                        True
+                    )  # Auswahlcheckbox aktivieren
+                    # if len(daten) == 1:
+                    # self.dlg_cl.lw_hal_entw.setCurrentRow(0)
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -648,67 +644,41 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_cl.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                if "liste_teilgebiete" in QKan.config:
-                    if elem[0] in QKan.config["liste_teilgebiete"]:
-                        self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
-                        self.dlg_cl.cb_selTgbActive.setChecked(
-                            True
-                        )  # Auswahlcheckbox aktivieren
-                        # if len(daten) == 1:
-                        # self.dlg_cl.lw_teilgebiete.setCurrentRow(0)
+                if elem[0] in QKan.config.teilgebiete:
+                    self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
+                    self.dlg_cl.cb_selTgbActive.setChecked(
+                        True
+                    )  # Auswahlcheckbox aktivieren
+                    # if len(daten) == 1:
+                    # self.dlg_cl.lw_teilgebiete.setCurrentRow(0)
 
         # config in Dialog übernehmen
 
         # Autokorrektur
-        if "autokorrektur" in QKan.config:
-            autokorrektur = QKan.config["autokorrektur"]
-        else:
-            autokorrektur = True
-        self.dlg_cl.cb_autokorrektur.setChecked(autokorrektur)
+        self.dlg_cl.cb_autokorrektur.setChecked(QKan.config.autokorrektur)
 
         # MakeValid auf Tabellen "flaechen" und "tezg". Muss jedes Mal aktiviert werden
         flaechen_bereinigen = False
         self.dlg_cl.cb_geomMakeValid.setChecked(flaechen_bereinigen)
 
         # Verbindungslinien nur innerhalb tezg
-        if "links_in_tezg" in QKan.config:
-            links_in_tezg = QKan.config["links_in_tezg"]
-        else:
-            links_in_tezg = True
-        self.dlg_cl.cb_linksInTezg.setChecked(links_in_tezg)
+        self.dlg_cl.cb_linksInTezg.setChecked(QKan.config.linkflaechen.links_in_tezg)
 
         # Haltungsflächen (tezg) berücksichtigen
-        if "mit_verschneidung" in QKan.config:
-            mit_verschneidung = QKan.config["mit_verschneidung"]
-        else:
-            mit_verschneidung = True
-        self.dlg_cl.cb_regardTezg.setChecked(mit_verschneidung)
+        self.dlg_cl.cb_regardTezg.setChecked(QKan.config.mit_verschneidung)
 
         # Suchradius
-        if "suchradius" in QKan.config:
-            suchradius = QKan.config["suchradius"]
-        else:
-            suchradius = u"50"
-        self.dlg_cl.tf_suchradius.setText(str(suchradius))
+        self.dlg_cl.tf_suchradius.setText(str(QKan.config.linkflaechen.suchradius))
 
         # Mindestflächengröße
-        if "mindestflaeche" in QKan.config:
-            mindestflaeche = QKan.config["mindestflaeche"]
-        else:
-            mindestflaeche = u"0.5"
+        mindestflaeche = QKan.config.mindestflaeche
 
         # Fangradius für Anfang der Anbindungslinie
         # Kann über Menü "Optionen" eingegeben werden
-        if "fangradius" in QKan.config:
-            fangradius = QKan.config["fangradius"]
-        else:
-            fangradius = u"0.1"
+        fangradius = QKan.config.fangradius
 
         # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
-        if "bezug_abstand" in QKan.config:
-            bezug_abstand = QKan.config["bezug_abstand"]
-        else:
-            bezug_abstand = "kante"
+        bezug_abstand = QKan.config.linkflaechen.bezug_abstand
 
         if bezug_abstand == "kante":
             self.dlg_cl.rb_abstandkante.setChecked(True)
@@ -760,19 +730,19 @@ class LinkFl:
 
             # Konfigurationsdaten schreiben
 
-            QKan.config["suchradius"] = suchradius
-            QKan.config["fangradius"] = fangradius
-            QKan.config["mindestflaeche"] = mindestflaeche
-            QKan.config["bezug_abstand"] = bezug_abstand
-            QKan.config["liste_hal_entw"] = liste_hal_entw
-            QKan.config["liste_flaechen_abflussparam"] = liste_flaechen_abflussparam
-            QKan.config["liste_teilgebiete"] = liste_teilgebiete
-            QKan.config["epsg"] = epsg
-            QKan.config["autokorrektur"] = autokorrektur
-            QKan.config["links_in_tezg"] = links_in_tezg
-            QKan.config["mit_verschneidung"] = mit_verschneidung
+            QKan.config.linkflaechen.suchradius = suchradius
+            QKan.config.fangradius = fangradius
+            QKan.config.mindestflaeche = mindestflaeche
+            QKan.config.linkflaechen.bezug_abstand = bezug_abstand
+            QKan.config.linkflaechen.hal_entw = liste_hal_entw
+            QKan.config.linkflaechen.flaechen_abflussparam = liste_flaechen_abflussparam
+            QKan.config.teilgebiete = liste_teilgebiete
+            QKan.config.epsg = epsg
+            QKan.config.autokorrektur = autokorrektur
+            QKan.config.linkflaechen.links_in_tezg = links_in_tezg
+            QKan.config.mit_verschneidung = mit_verschneidung
 
-            QKan.save_config()
+            QKan.config.save()
 
             # Start der Verarbeitung
 
@@ -825,8 +795,6 @@ class LinkFl:
             )
             return False
 
-        database_QKan = u""
-
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             logger.error(
@@ -877,14 +845,13 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_sw.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
-                if "liste_hal_entw" in QKan.config:
-                    if elem[0] in QKan.config["liste_hal_entw"]:
-                        self.dlg_sw.lw_hal_entw.setCurrentRow(ielem)
-                        self.dlg_sw.cb_selHalActive.setChecked(
-                            True
-                        )  # Auswahlcheckbox aktivieren
-                        # if len(daten) == 1:
-                        # self.dlg_sw.lw_hal_entw.setCurrentRow(0)
+                if elem[0] in QKan.config.linkflaechen.hal_entw:
+                    self.dlg_sw.lw_hal_entw.setCurrentRow(ielem)
+                    self.dlg_sw.cb_selHalActive.setChecked(
+                        True
+                    )  # Auswahlcheckbox aktivieren
+                    # if len(daten) == 1:
+                    # self.dlg_sw.lw_hal_entw.setCurrentRow(0)
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -895,23 +862,18 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_sw.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                if "liste_teilgebiete" in QKan.config:
-                    if elem[0] in QKan.config["liste_teilgebiete"]:
-                        self.dlg_sw.lw_teilgebiete.setCurrentRow(ielem)
-                        self.dlg_sw.cb_selTgbActive.setChecked(
-                            True
-                        )  # Auswahlcheckbox aktivieren
-                        # if len(daten) == 1:
-                        # self.dlg_sw.lw_teilgebiete.setCurrentRow(0)
+                if elem[0] in QKan.config.teilgebiete:
+                    self.dlg_sw.lw_teilgebiete.setCurrentRow(ielem)
+                    self.dlg_sw.cb_selTgbActive.setChecked(
+                        True
+                    )  # Auswahlcheckbox aktivieren
+                    # if len(daten) == 1:
+                    # self.dlg_sw.lw_teilgebiete.setCurrentRow(0)
 
         # config in Dialog übernehmen
 
         # Suchradius
-        if "suchradius" in QKan.config:
-            suchradius = QKan.config["suchradius"]
-        else:
-            suchradius = u"50"
-        self.dlg_sw.tf_suchradius.setText(str(suchradius))
+        self.dlg_sw.tf_suchradius.setText(str(QKan.config.linkflaechen.suchradius))
 
         # Haltungen direkt in einleit eintragen. Es kann wegen der längeren Zeitdauer sinnvoll
         # sein, dies erst am Schluss der Bearbeitung in einem eigenen Vorgang zu machen.
@@ -940,16 +902,13 @@ class LinkFl:
 
             # Konfigurationsdaten schreiben
 
-            QKan.config["suchradius"] = suchradius
-            QKan.config["liste_hal_entw"] = liste_hal_entw
-
-            QKan.config["liste_teilgebiete"] = liste_teilgebiete
-            QKan.config["epsg"] = epsg
-
-            QKan.save_config()
+            QKan.config.linkflaechen.suchradius = suchradius
+            QKan.config.linkflaechen.liste_hal_entw = liste_hal_entw
+            QKan.config.teilgebiete = liste_teilgebiete
+            QKan.config.epsg = epsg
+            QKan.config.save()
 
             # Start der Verarbeitung
-
             createlinksw(self.dbQK, liste_teilgebiete, suchradius, epsg)
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
@@ -1011,8 +970,6 @@ class LinkFl:
             )
             return False
 
-        database_QKan = u""
-
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             logger.error(
@@ -1037,12 +994,7 @@ class LinkFl:
         # config in Dialog übernehmen
 
         # Autokorrektur
-
-        if "autokorrektur" in QKan.config:
-            autokorrektur = QKan.config["autokorrektur"]
-        else:
-            autokorrektur = True
-        self.dlg_at.cb_autokorrektur.setChecked(autokorrektur)
+        self.dlg_at.cb_autokorrektur.setChecked(QKan.config.autokorrektur)
 
         # MakeValid auf Tabellen "flaechen" und "tezg". Muss jedes Mal aktiviert werden
         flaechen_bereinigen = False
@@ -1057,16 +1009,11 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_at.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                if "liste_teilgebiete" in QKan.config:
-                    if elem[0] in QKan.config["liste_teilgebiete"]:
-                        self.dlg_at.lw_teilgebiete.setCurrentRow(ielem)
+                if elem[0] in QKan.config.teilgebiete:
+                    self.dlg_at.lw_teilgebiete.setCurrentRow(ielem)
 
         # Festlegung, ob die Auswahl nur Objekte innerhalb oder aller überlappenden berücksichtigt
-        if "auswahltyp" in QKan.config:
-            auswahltyp = QKan.config["auswahltyp"]
-        else:
-            auswahltyp = u"within"
-
+        auswahltyp = QKan.config.linkflaechen.auswahltyp
         if auswahltyp == u"within":
             self.dlg_at.rb_within.setChecked(True)
             self.enable_bufferradius(True)
@@ -1078,11 +1025,8 @@ class LinkFl:
             return False
 
         # Festlegung des Pufferradius
-        if "bufferradius" in QKan.config:
-            bufferradius = QKan.config["bufferradius"]
-        else:
-            bufferradius = u"0"
-        self.dlg_at.tf_bufferradius.setText(bufferradius)
+        bufferradius = QKan.config.linkflaechen.bufferradius
+        self.dlg_at.tf_bufferradius.setText(str(bufferradius))
 
         # show the dialog
         self.dlg_at.show()
@@ -1107,14 +1051,14 @@ class LinkFl:
             bufferradius = self.dlg_at.tf_bufferradius.text()
 
             # config schreiben
+            #
+            QKan.config.teilgebiete = liste_teilgebiete
+            QKan.config.linkflaechen.auswahltyp = auswahltyp
+            QKan.config.epsg = epsg
+            QKan.config.linkflaechen.bufferradius = bufferradius
+            QKan.config.autokorrektur = autokorrektur
 
-            QKan.config["liste_teilgebiete"] = liste_teilgebiete
-            QKan.config["auswahltyp"] = auswahltyp
-            QKan.config["epsg"] = epsg
-            QKan.config["bufferradius"] = bufferradius
-            QKan.config["autokorrektur"] = autokorrektur
-
-            QKan.save_config()
+            QKan.config.save()
 
             # Start der Verarbeitung
 
@@ -1170,8 +1114,6 @@ class LinkFl:
                 level=Qgis.Critical,
             )
             return False
-
-        database_QKan = u""
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
@@ -1238,8 +1180,6 @@ class LinkFl:
             )
             return False
 
-        database_QKan = u""
-
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             logger.error(
@@ -1264,19 +1204,13 @@ class LinkFl:
         self.dlg_ul.tf_qkDB.setText(database_QKan)
 
         # Festlegung des Fangradius
-        if "fangradius" in QKan.config:
-            fangradius = QKan.config["fangradius"]
-        else:
-            fangradius = u"0.1"
-        self.dlg_ul.tf_fangradius.setText(fangradius)
+        fangradius = QKan.config.fangradius
+        self.dlg_ul.tf_fangradius.setText(str(fangradius))
         logger.debug("fangradius: {}".format(fangradius))
 
         # Löschen von Flächenverknüpfungen ohne Linienobjekt
-        if "deletelinkflGeomNone" in QKan.config:
-            deletelinkflGeomNone = QKan.config["deletelinkflGeomNone"]
-        else:
-            deletelinkflGeomNone = True
-        self.dlg_ul.cb_deleteGeomNone.setChecked(deletelinkflGeomNone)
+        delete_geom_none = QKan.config.linkflaechen.delete_geom_none
+        self.dlg_ul.cb_deleteGeomNone.setChecked(delete_geom_none)
 
         # MakeValid auf Tabellen "flaechen" und "tezg". Muss jedes Mal aktiviert werden
         flaechen_bereinigen = False
@@ -1290,24 +1224,22 @@ class LinkFl:
         if result:
 
             # Inhalte aus Formular lesen
-            deletelinkflGeomNone = self.dlg_ul.cb_deleteGeomNone.isChecked()
+            delete_geom_none = self.dlg_ul.cb_deleteGeomNone.isChecked()
             flaechen_bereinigen = self.dlg_ul.cb_geomMakeValid.isChecked()
 
             # config schreiben
-            QKan.config["deletelinkflGeomNone"] = deletelinkflGeomNone
-            QKan.config["fangradius"] = fangradius
-
-            QKan.save_config()
+            QKan.config.linkflaechen.delete_geom_none = delete_geom_none
+            QKan.config.fangradius = fangradius
+            QKan.config.save()
 
             # Start der Verarbeitung
-
             if self.dlg_ul.cb_linkfl.isChecked():
                 updatelinkfl(
-                    self.dbQK, fangradius, flaechen_bereinigen, deletelinkflGeomNone
+                    self.dbQK, fangradius, flaechen_bereinigen, delete_geom_none
                 )
 
             if self.dlg_ul.cb_linksw.isChecked():
-                updatelinksw(self.dbQK, fangradius, deletelinkflGeomNone)
+                updatelinksw(self.dbQK, fangradius, delete_geom_none)
 
             meldung(u"Fertig!", u"Bereinigung Flächenverknüpfungen abgeschlossen.")
 

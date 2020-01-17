@@ -165,33 +165,15 @@ class ImportFromDyna:
     def run(self):
         """Run method that performs all the real work"""
 
-        if "database_QKan" in QKan.config:
-            database_QKan = QKan.config["database_QKan"]
-        else:
-            database_QKan = ""
-        self.dlg.tf_qkanDB.setText(database_QKan)
+        self.dlg.tf_qkanDB.setText(QKan.config.database.qkan)
+        self.dlg.tf_dynaFile.setText(QKan.config.dyna.dynafile)
 
-        if "dynafile" in QKan.config:
-            dynafile = QKan.config["dynafile"]
-        else:
-            dynafile = ""
-        self.dlg.tf_dynaFile.setText(dynafile)
-
-        if "epsg" in QKan.config:
-            self.epsg = QKan.config["epsg"]
-        else:
-            self.epsg = "25832"
         # logger.debug('QKan.importdyna.__init__: id(QKan): {0:}\n\t\tepsg: {1:}'.format(id(QKan), self.epsg))
         self.dlg.qsw_epsg.setCrs(
-            QgsCoordinateReferenceSystem.fromEpsgId(int(self.epsg))
+            QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg)
         )
 
-        if "projectfile" in QKan.config:
-            projectfile = QKan.config["projectfile"]
-        else:
-            projectfile = ""
-
-        self.dlg.tf_projectFile.setText(projectfile)
+        self.dlg.tf_projectFile.setText(QKan.config.project_file)
 
         # show the dialog
         self.dlg.show()
@@ -201,17 +183,17 @@ class ImportFromDyna:
         if result:
             # Namen der Datenbanken uebernehmen
             dynafile = self.dlg.tf_dynaFile.text()
-            database_QKan = self.dlg.tf_qkanDB.text()
+            database_qkan = self.dlg.tf_qkanDB.text()
             projectfile = self.dlg.tf_projectFile.text()
             self.epsg = str(self.dlg.qsw_epsg.crs().postgisSrid())
 
             # Konfigurationsdaten schreiben
-            QKan.config["epsg"] = self.epsg
-            QKan.config["database_QKan"] = database_QKan
-            QKan.config["dynafile"] = dynafile
-            QKan.config["projectfile"] = projectfile
+            QKan.config.epsg = self.epsg
+            QKan.config.database.qkan = database_qkan
+            QKan.config.dyna.dynafile = dynafile
+            QKan.config.project_file = projectfile
 
-            QKan.save_config()
+            QKan.config.save()
 
             # Start der Verarbeitung
 
@@ -224,7 +206,7 @@ class ImportFromDyna:
                 epsg='{epsg}', 
                 dbtyp = '{dbtyp}')""".format(
                     dynafile=dynafile,
-                    database_QKan=database_QKan,
+                    database_QKan=database_qkan,
                     projectfile=projectfile,
                     epsg=self.epsg,
                     dbtyp="SpatiaLite",
@@ -232,5 +214,5 @@ class ImportFromDyna:
             )
 
             importKanaldaten(
-                dynafile, database_QKan, projectfile, self.epsg, "SpatiaLite"
+                dynafile, database_qkan, projectfile, self.epsg, "SpatiaLite"
             )

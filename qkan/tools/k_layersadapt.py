@@ -108,7 +108,7 @@ def layersadapt(
     :type fehlende_layer_ergaenzen:                 Boolean
 
     :anpassen_auswahl:                              Wahl der anzupassenden Layer
-    :type anpassen_auswahl:                         list
+    :type anpassen_auswahl:                         str
 
     :dbtyp:                                         Typ der Datenbank (spatialite, postgis)
     :type dbtyp:                                    string
