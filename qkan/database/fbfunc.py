@@ -20,23 +20,23 @@
 
 """
 
-__author__ = 'Joerg Hoettges'
-__date__ = 'October 2016'
-__copyright__ = '(C) 2016, Joerg Hoettges'
+__author__ = "Joerg Hoettges"
+__date__ = "October 2016"
+__copyright__ = "(C) 2016, Joerg Hoettges"
 
 import logging
 import os
 
 import firebirdsql
-from qgis.gui import QgsMessageBar
-from qgis.utils import iface
 from qgis.core import Qgis
+from qgis.utils import iface
 
 from .qkan_utils import fehlermeldung
 
-logger = logging.getLogger(u'QKan')
+logger = logging.getLogger(u"QKan")
 
 # Hauptprogramm ----------------------------------------------------------------
+
 
 class FBConnection:
     """Firebird Datenbankobjekt"""
@@ -50,17 +50,28 @@ class FBConnection:
         # Verbindung zur Datenbank herstellen
         if os.path.exists(dbname):
             try:
-                self.confb = firebirdsql.connect(database=dbname, user='SYSDBA', password='masterke', charset="latin1")
+                self.confb = firebirdsql.connect(
+                    database=dbname,
+                    user="SYSDBA",
+                    password="masterke",
+                    charset="latin1",
+                )
                 self.curfb = self.confb.cursor()
             except:
-                iface.messageBar().pushMessage("Fehler",
-                                               u'Fehler beim Anbinden der ITWH-Datenbank {:s}!\nAbbruch!'.format(
-                                                   dbname), level=Qgis.Critical)
+                iface.messageBar().pushMessage(
+                    "Fehler",
+                    u"Fehler beim Anbinden der ITWH-Datenbank {:s}!\nAbbruch!".format(
+                        dbname
+                    ),
+                    level=Qgis.Critical,
+                )
                 self.confb = None
         else:
-            iface.messageBar().pushMessage("Fehler",
-                                           u'ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!'.format(dbname),
-                                           level=Qgis.Critical)
+            iface.messageBar().pushMessage(
+                "Fehler",
+                u"ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!".format(dbname),
+                level=Qgis.Critical,
+            )
             self.confb = None
 
     def __del__(self):
@@ -87,19 +98,23 @@ class FBConnection:
         lattr = [el[1] for el in daten]
         return lattr
 
-    def sql(self, sql, errormessage = u'allgemein'):
+    def sql(self, sql, errormessage=u"allgemein"):
         """Fuehrt eine SQL-Abfrage aus."""
 
         try:
             self.curfb.execute(sql)
             return True
         except AttributeError:
-            fehlermeldung(u'QKan.FBConnection: Datenbankzugriff geperrt, moeglicherweise durch eine andere Anwendung?')
+            fehlermeldung(
+                u"QKan.FBConnection: Datenbankzugriff geperrt, moeglicherweise durch eine andere Anwendung?"
+            )
             self.__del__()
             return False
         except BaseException as err:
-            fehlermeldung(u'SQL-Fehler in {e}'.format(e=errormessage), 
-                          u"{e}\n{s}".format(e=repr(err), s=sql))
+            fehlermeldung(
+                u"SQL-Fehler in {e}".format(e=errormessage),
+                u"{e}\n{s}".format(e=repr(err), s=sql),
+            )
             self.__del__()
             return False
 

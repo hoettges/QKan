@@ -19,28 +19,31 @@
   (at your option) any later version.                                  
 
 """
-import json
 import logging
 import os.path
-import site
 
+from qgis.core import QgsProject
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
-from qgis.core import QgsProject
 from qgis.utils import iface, pluginDirectory
-
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan, get_editable_layers
+from qkan.database.qkan_utils import (
+    fehlermeldung,
+    get_database_QKan,
+    get_editable_layers,
+)
+
 # noinspection PyUnresolvedReferences
 from . import resources
+
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
 from .application_dialog import ExportToKPDialog
 from .k_qkkp import exportKanaldaten
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger('QKan.exportdyna.application')
+logger = logging.getLogger("QKan.exportdyna.application")
 
 progress_bar = None
 
@@ -57,7 +60,7 @@ class ExportToKP:
         :type iface: QgsInterface
         """
 
-        self.templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
+        self.templatepath = os.path.join(pluginDirectory("qkan"), u"templates")
 
         # Save reference to the QGIS interface
         self.iface = iface
@@ -70,7 +73,7 @@ class ExportToKP:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 08.02.2017)
 
-        logger.info('QKan_ExportKP initialisiert...')
+        logger.info("QKan_ExportKP initialisiert...")
 
         # Standard für Suchverzeichnis festlegen
         project = QgsProject.instance()
@@ -100,16 +103,18 @@ class ExportToKP:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('ExportToKP', message)
+        return QCoreApplication.translate("ExportToKP", message)
 
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/qkan/exportdyna/res/icon_qk2kp.png'
-        QKan.instance.add_action(icon_path,
-                                  text=self.tr('Export in DYNA-Datei...'),
-                                  callback=self.run,
-                                  parent=self.iface.mainWindow())
+        icon_path = ":/plugins/qkan/exportdyna/res/icon_qk2kp.png"
+        QKan.instance.add_action(
+            icon_path,
+            text=self.tr("Export in DYNA-Datei..."),
+            callback=self.run,
+            parent=self.iface.mainWindow(),
+        )
 
     def unload(self):
         pass
@@ -120,8 +125,12 @@ class ExportToKP:
     def selectFile_kpDB_dest(self):
         """Zu erstellende DYNA-Datei eingeben"""
 
-        filename, __ = QFileDialog.getSaveFileName(self.dlg, "Dateinamen der zu schreibenden DYNA-Datei eingeben",
-                                                   self.default_dir, "*.ein")
+        filename, __ = QFileDialog.getSaveFileName(
+            self.dlg,
+            "Dateinamen der zu schreibenden DYNA-Datei eingeben",
+            self.default_dir,
+            "*.ein",
+        )
         # if os.path.dirname(filename) != '':
         # os.chdir(os.path.dirname(filename))
         self.dlg.tf_KP_dest.setText(filename)
@@ -129,8 +138,9 @@ class ExportToKP:
     def selectFile_kpDB_template(self):
         """Vorlage-DYNA-Datei auswaehlen."""
 
-        filename, __ = QFileDialog.getOpenFileName(self.dlg, u"Vorlage-DYNA-Datei auswählen",
-                                                   self.default_dir, "*.ein")
+        filename, __ = QFileDialog.getOpenFileName(
+            self.dlg, u"Vorlage-DYNA-Datei auswählen", self.default_dir, "*.ein"
+        )
         # if os.path.dirname(filename) != '':
         # os.chdir(os.path.dirname(filename))
         self.dlg.tf_KP_template.setText(filename)
@@ -138,8 +148,9 @@ class ExportToKP:
     def selectFile_QKanDB(self):
         """Datenbankverbindung zur QKan-Datenbank (SpatiLite) auswaehlen."""
 
-        filename, __ = QFileDialog.getOpenFileName(self.dlg, u"QKan-Datenbank auswählen",
-                                                   self.default_dir, "*.sqlite")
+        filename, __ = QFileDialog.getOpenFileName(
+            self.dlg, u"QKan-Datenbank auswählen", self.default_dir, "*.sqlite"
+        )
         # if os.path.dirname(filename) != '':
         # os.chdir(os.path.dirname(filename))
         self.dlg.tf_QKanDB.setText(filename)
@@ -149,7 +160,7 @@ class ExportToKP:
 
     def helpClick(self):
         """Reaktion auf Klick auf Help-Schaltfläche"""
-        helpfile = os.path.join(self.plugin_dir, '..\doc', 'exportdyna.html')
+        helpfile = os.path.join(self.plugin_dir, "..\doc", "exportdyna.html")
         os.startfile(helpfile)
 
     def lw_teilgebieteClick(self):
@@ -164,7 +175,7 @@ class ExportToKP:
         # Checkbox hat den Status nach dem Klick
         if self.dlg.cb_selActive.isChecked():
             # Nix tun ...
-            logger.debug('\nChecked = True')
+            logger.debug("\nChecked = True")
         else:
             # Auswahl deaktivieren und Liste zurücksetzen
             anz = self.dlg.lw_teilgebiete.count()
@@ -179,15 +190,19 @@ class ExportToKP:
     def countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
-        logger.debug(u'arg: {}'.format(self.dlg.lw_teilgebiete))
+        logger.debug(u"arg: {}".format(self.dlg.lw_teilgebiete))
         liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
 
         # Zu berücksichtigende Flächen zählen
-        auswahl = ''
+        auswahl = ""
         if len(liste_teilgebiete) != 0:
-            auswahl = u" WHERE flaechen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            auswahl = u" WHERE flaechen.teilgebiet in ('{}')".format(
+                "', '".join(liste_teilgebiete)
+            )
 
-        sql = u"""SELECT count(*) AS anzahl FROM flaechen{auswahl}""".format(auswahl=auswahl)
+        sql = u"""SELECT count(*) AS anzahl FROM flaechen{auswahl}""".format(
+            auswahl=auswahl
+        )
 
         if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.countselection (1)"):
             return False
@@ -195,35 +210,43 @@ class ExportToKP:
         if not (daten is None):
             self.dlg.lf_anzahl_flaechen.setText(str(daten[0]))
         else:
-            self.dlg.lf_anzahl_flaechen.setText('0')
+            self.dlg.lf_anzahl_flaechen.setText("0")
 
         # Zu berücksichtigende Schächte zählen
-        auswahl = ''
+        auswahl = ""
         if len(liste_teilgebiete) != 0:
-            auswahl = u" WHERE schaechte.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            auswahl = u" WHERE schaechte.teilgebiet in ('{}')".format(
+                "', '".join(liste_teilgebiete)
+            )
 
-        sql = u"""SELECT count(*) AS anzahl FROM schaechte{auswahl}""".format(auswahl=auswahl)
+        sql = u"""SELECT count(*) AS anzahl FROM schaechte{auswahl}""".format(
+            auswahl=auswahl
+        )
         if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.countselection (2) "):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
             self.dlg.lf_anzahl_schaechte.setText(str(daten[0]))
         else:
-            self.dlg.lf_anzahl_schaechte.setText('0')
+            self.dlg.lf_anzahl_schaechte.setText("0")
 
         # Zu berücksichtigende Haltungen zählen
-        auswahl = ''
+        auswahl = ""
         if len(liste_teilgebiete) != 0:
-            auswahl = u" WHERE haltungen.teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
+            auswahl = u" WHERE haltungen.teilgebiet in ('{}')".format(
+                "', '".join(liste_teilgebiete)
+            )
 
-        sql = u"""SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(auswahl=auswahl)
+        sql = u"""SELECT count(*) AS anzahl FROM haltungen{auswahl}""".format(
+            auswahl=auswahl
+        )
         if not self.dbQK.sql(sql, u"QKan_ExportDYNA.application.countselection (3) "):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
             self.dlg.lf_anzahl_haltungen.setText(str(daten[0]))
         else:
-            self.dlg.lf_anzahl_haltungen.setText('0')
+            self.dlg.lf_anzahl_haltungen.setText("0")
 
     # @staticmethod
     def listselecteditems(self, listWidget):
@@ -248,28 +271,36 @@ class ExportToKP:
         # show the dialog
 
         # Check, ob die relevanten Layer nicht editable sind.
-        if len({'flaechen', 'haltungen', 'linkfl', 'tezg', 'schaechte'} & get_editable_layers()) > 0:
-            iface.messageBar().pushMessage(u"Bedienerfehler: ",
-                                           u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
-                                           level=Qgis.Critical)
+        if (
+            len(
+                {"flaechen", "haltungen", "linkfl", "tezg", "schaechte"}
+                & get_editable_layers()
+            )
+            > 0
+        ):
+            iface.messageBar().pushMessage(
+                u"Bedienerfehler: ",
+                u'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
+                level=Qgis.Critical,
+            )
             return False
 
-        if 'dynafile' in QKan.config:
-            dynafile = QKan.config['dynafile']
+        if "dynafile" in QKan.config:
+            dynafile = QKan.config["dynafile"]
         else:
-            dynafile = ''
+            dynafile = ""
         self.dlg.tf_KP_dest.setText(dynafile)
 
-        if 'template_dyna' in QKan.config:
-            template_dyna = QKan.config['template_dyna']
+        if "template_dyna" in QKan.config:
+            template_dyna = QKan.config["template_dyna"]
         else:
-            template_dyna = ''
+            template_dyna = ""
         self.dlg.tf_KP_template.setText(template_dyna)
 
-        if 'datenbanktyp' in QKan.config:
-            datenbanktyp = QKan.config['datenbanktyp']
+        if "datenbanktyp" in QKan.config:
+            datenbanktyp = QKan.config["datenbanktyp"]
         else:
-            datenbanktyp = 'spatialite'
+            datenbanktyp = "spatialite"
             pass  # Es gibt noch keine Wahlmöglichkeit
 
         # Übernahme der Quelldatenbank:
@@ -277,23 +308,29 @@ class ExportToKP:
         # Wenn dies nicht der Fall ist, wird die Quelldatenbank aus der
         # json-Datei übernommen.
 
-        database_QKan = ''
+        database_QKan = ""
 
         database_QKan, epsg = get_database_QKan()
         if not database_QKan:
             logger.error(
-                u"exportdyna.application: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!")
+                u"exportdyna.application: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
+            )
             return False
         self.dlg.tf_QKanDB.setText(database_QKan)
 
         # Datenbankverbindung für Abfragen
-        if database_QKan != '':
+        if database_QKan != "":
             # Nur wenn schon eine Projekt geladen oder eine QKan-Datenbank ausgewählt
-            self.dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+            self.dbQK = DBConnection(
+                dbname=database_QKan
+            )  # Datenbankobjekt der QKan-Datenbank zum Lesen
             if not self.dbQK.connected:
-                fehlermeldung(u"Fehler in exportdyna.application:\n",
-                             u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(
-                                 database_QKan))
+                fehlermeldung(
+                    u"Fehler in exportdyna.application:\n",
+                    u"QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
+                        database_QKan
+                    ),
+                )
                 return None
 
             # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
@@ -328,8 +365,8 @@ class ExportToKP:
 
             # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
             liste_teilgebiete = []
-            if 'liste_teilgebiete' in QKan.config:
-                liste_teilgebiete = QKan.config['liste_teilgebiete']
+            if "liste_teilgebiete" in QKan.config:
+                liste_teilgebiete = QKan.config["liste_teilgebiete"]
 
             # Abfragen der Tabelle teilgebiete nach Teilgebieten
             sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -344,7 +381,10 @@ class ExportToKP:
                     if elem[0] in liste_teilgebiete:
                         self.dlg.lw_teilgebiete.setCurrentRow(ielem)
                 except BaseException as err:
-                    fehlermeldung(u'QKan_ExportDYNA (6), Fehler in elem = {}\n'.format(elem), repr(err))
+                    fehlermeldung(
+                        u"QKan_ExportDYNA (6), Fehler in elem = {}\n".format(elem),
+                        repr(err),
+                    )
                     # if len(daten) == 1:
                     # self.dlg.lw_teilgebiete.setCurrentRow(0)
 
@@ -354,65 +394,65 @@ class ExportToKP:
 
         # Autokorrektur
 
-        if 'profile_ergaenzen' in QKan.config:
-            profile_ergaenzen = QKan.config['profile_ergaenzen']
+        if "profile_ergaenzen" in QKan.config:
+            profile_ergaenzen = QKan.config["profile_ergaenzen"]
         else:
             profile_ergaenzen = True
         self.dlg.cb_profile_ergaenzen.setChecked(profile_ergaenzen)
 
-        if 'autonummerierung_dyna' in QKan.config:
-            autonummerierung_dyna = QKan.config['autonummerierung_dyna']
+        if "autonummerierung_dyna" in QKan.config:
+            autonummerierung_dyna = QKan.config["autonummerierung_dyna"]
         else:
             autonummerierung_dyna = False
         self.dlg.cb_autonummerierung_dyna.setChecked(autonummerierung_dyna)
 
         # Festlegung des Fangradius
         # Kann über Menü "Optionen" eingegeben werden
-        if 'fangradius' in QKan.config:
-            fangradius = QKan.config['fangradius']
+        if "fangradius" in QKan.config:
+            fangradius = QKan.config["fangradius"]
         else:
-            fangradius = u'0.1'
+            fangradius = u"0.1"
 
         # Haltungsflächen (tezg) berücksichtigen
-        if 'mit_verschneidung' in QKan.config:
-            mit_verschneidung = QKan.config['mit_verschneidung']
+        if "mit_verschneidung" in QKan.config:
+            mit_verschneidung = QKan.config["mit_verschneidung"]
         else:
             mit_verschneidung = True
         self.dlg.cb_regardTezg.setChecked(mit_verschneidung)
 
         # Mindestflächengröße
         # Kann über Menü "Optionen" eingegeben werden
-        if 'mindestflaeche' in QKan.config:
-            mindestflaeche = QKan.config['mindestflaeche']
+        if "mindestflaeche" in QKan.config:
+            mindestflaeche = QKan.config["mindestflaeche"]
         else:
-            mindestflaeche = u'0.5'
+            mindestflaeche = u"0.5"
 
         # Maximalzahl Schleifendurchläufe
-        if 'max_loops' in QKan.config:
-            max_loops = QKan.config['max_loops']
+        if "max_loops" in QKan.config:
+            max_loops = QKan.config["max_loops"]
         else:
             max_loops = 1000
 
         # Optionen zur Berechnung der befestigten Flächen
-        if 'dynabef_choice' in QKan.config:
-            dynabef_choice = QKan.config['dynabef_choice']
+        if "dynabef_choice" in QKan.config:
+            dynabef_choice = QKan.config["dynabef_choice"]
         else:
-            dynabef_choice = u'flaechen'
+            dynabef_choice = u"flaechen"
 
-        if dynabef_choice == u'flaechen':
+        if dynabef_choice == u"flaechen":
             self.dlg.rb_flaechen.setChecked(True)
-        elif dynabef_choice == u'tezg':
+        elif dynabef_choice == u"tezg":
             self.dlg.rb_tezg.setChecked(True)
 
         # Optionen zur Zuordnung des Profilschlüssels
-        if 'dynaprof_choice' in QKan.config:
-            dynaprof_choice = QKan.config['dynaprof_choice']
+        if "dynaprof_choice" in QKan.config:
+            dynaprof_choice = QKan.config["dynaprof_choice"]
         else:
-            dynaprof_choice = u'profilname'
+            dynaprof_choice = u"profilname"
 
-        if dynaprof_choice == u'profilname':
+        if dynaprof_choice == u"profilname":
             self.dlg.rb_profnam.setChecked(True)
-        elif dynaprof_choice == u'profilkey':
+        elif dynaprof_choice == u"profilkey":
             self.dlg.rb_profkey.setChecked(True)
 
         # Formular anzeigen
@@ -434,40 +474,49 @@ class ExportToKP:
             autonummerierung_dyna = self.dlg.cb_autonummerierung_dyna.isChecked()
             mit_verschneidung = self.dlg.cb_regardTezg.isChecked()
             if self.dlg.rb_flaechen.isChecked():
-                dynabef_choice = u'flaechen'
+                dynabef_choice = u"flaechen"
             elif self.dlg.rb_tezg.isChecked():
-                dynabef_choice = u'tezg'
+                dynabef_choice = u"tezg"
             else:
-                fehlermeldung(u"exportdyna.application.run",
-                              u"Fehlerhafte Option: \ndynabef_choice = {}".format(repr(dynabef_choice)))
+                fehlermeldung(
+                    u"exportdyna.application.run",
+                    u"Fehlerhafte Option: \ndynabef_choice = {}".format(
+                        repr(dynabef_choice)
+                    ),
+                )
             if self.dlg.rb_profnam.isChecked():
-                dynaprof_choice = u'profilname'
+                dynaprof_choice = u"profilname"
             elif self.dlg.rb_profkey.isChecked():
-                dynaprof_choice = u'profilkey'
+                dynaprof_choice = u"profilkey"
             else:
-                fehlermeldung(u"exportdyna.application.run",
-                              u"Fehlerhafte Option: \ndynaprof_choice = {}".format(repr(dynaprof_choice)))
+                fehlermeldung(
+                    u"exportdyna.application.run",
+                    u"Fehlerhafte Option: \ndynaprof_choice = {}".format(
+                        repr(dynaprof_choice)
+                    ),
+                )
 
             # Konfigurationsdaten schreiben
-            QKan.config['dynafile'] = dynafile
-            QKan.config['template_dyna'] = template_dyna
-            QKan.config['database_QKan'] = database_QKan
-            QKan.config['liste_teilgebiete'] = liste_teilgebiete
-            QKan.config['profile_ergaenzen'] = profile_ergaenzen
-            QKan.config['autonummerierung_dyna'] = autonummerierung_dyna
-            QKan.config['fangradius'] = fangradius
-            QKan.config['mindestflaeche'] = mindestflaeche
-            QKan.config['mit_verschneidung'] = mit_verschneidung
-            QKan.config['max_loops'] = max_loops
-            QKan.config['dynabef_choice'] = dynabef_choice
-            QKan.config['dynaprof_choice'] = dynaprof_choice
+            QKan.config["dynafile"] = dynafile
+            QKan.config["template_dyna"] = template_dyna
+            QKan.config["database_QKan"] = database_QKan
+            QKan.config["liste_teilgebiete"] = liste_teilgebiete
+            QKan.config["profile_ergaenzen"] = profile_ergaenzen
+            QKan.config["autonummerierung_dyna"] = autonummerierung_dyna
+            QKan.config["fangradius"] = fangradius
+            QKan.config["mindestflaeche"] = mindestflaeche
+            QKan.config["mit_verschneidung"] = mit_verschneidung
+            QKan.config["max_loops"] = max_loops
+            QKan.config["dynabef_choice"] = dynabef_choice
+            QKan.config["dynaprof_choice"] = dynaprof_choice
 
             QKan.save_config()
 
             # Start der Verarbeitung
-            
+
             # Modulaufruf in Logdatei schreiben
-            logger.info('''qkan-Modul:\n        exportKanaldaten(
+            logger.info(
+                """qkan-Modul:\n        exportKanaldaten(
                 iface, 
                 dynafile='{dynafile}', 
                 template_dyna='{template_dyna}', 
@@ -481,20 +530,35 @@ class ExportToKP:
                 fangradius={fangradius}, 
                 mindestflaeche={mindestflaeche}, 
                 max_loops={max_loops}, 
-                datenbanktyp='{datenbanktyp}')'''.format(
-                dynafile=dynafile, 
-                template_dyna=template_dyna, 
-                dynabef_choice=dynabef_choice, 
-                dynaprof_choice=dynaprof_choice, 
-                liste_teilgebiete=liste_teilgebiete, 
-                profile_ergaenzen=profile_ergaenzen, 
-                autonummerierung_dyna=autonummerierung_dyna, 
-                mit_verschneidung=mit_verschneidung, 
-                fangradius=fangradius, 
-                mindestflaeche=mindestflaeche, 
-                max_loops=max_loops, 
-                datenbanktyp = 'SpatiaLite'))
+                datenbanktyp='{datenbanktyp}')""".format(
+                    dynafile=dynafile,
+                    template_dyna=template_dyna,
+                    dynabef_choice=dynabef_choice,
+                    dynaprof_choice=dynaprof_choice,
+                    liste_teilgebiete=liste_teilgebiete,
+                    profile_ergaenzen=profile_ergaenzen,
+                    autonummerierung_dyna=autonummerierung_dyna,
+                    mit_verschneidung=mit_verschneidung,
+                    fangradius=fangradius,
+                    mindestflaeche=mindestflaeche,
+                    max_loops=max_loops,
+                    datenbanktyp="SpatiaLite",
+                )
+            )
 
-            exportKanaldaten(iface, dynafile, template_dyna, self.dbQK, dynabef_choice, dynaprof_choice,
-                             liste_teilgebiete, profile_ergaenzen, autonummerierung_dyna, mit_verschneidung,
-                             fangradius, mindestflaeche, max_loops, datenbanktyp)
+            exportKanaldaten(
+                iface,
+                dynafile,
+                template_dyna,
+                self.dbQK,
+                dynabef_choice,
+                dynaprof_choice,
+                liste_teilgebiete,
+                profile_ergaenzen,
+                autonummerierung_dyna,
+                mit_verschneidung,
+                fangradius,
+                mindestflaeche,
+                max_loops,
+                datenbanktyp,
+            )

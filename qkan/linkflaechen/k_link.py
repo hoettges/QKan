@@ -23,21 +23,19 @@
 
 """
 
-__author__ = 'Joerg Hoettges'
-__date__ = 'September 2016'
-__copyright__ = '(C) 2016, Joerg Hoettges'
+__author__ = "Joerg Hoettges"
+__date__ = "September 2016"
+__copyright__ = "(C) 2016, Joerg Hoettges"
 
 import logging
 
+from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.core import QgsMessageLog, Qgis
-from qgis.gui import QgsMessageBar
 from qgis.utils import iface
-
-from qkan.database.qkan_utils import fehlermeldung, checknames, check_flaechenbilanz
+from qkan.database.qkan_utils import check_flaechenbilanz, checknames, fehlermeldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
-logger = logging.getLogger(u'QKan.linkflaechen.k_link')
+logger = logging.getLogger(u"QKan.linkflaechen.k_link")
 
 progress_bar = None
 
@@ -45,11 +43,23 @@ progress_bar = None
 # ------------------------------------------------------------------------------
 # Erzeugung der graphischen Verknüpfungen für Flächen
 
-def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
-                 liste_teilgebiete, links_in_tezg=False, mit_verschneidung=False, autokorrektur=True,
-                 flaechen_bereinigen=False, 
-                 suchradius=50, mindestflaeche=0.5, fangradius=0.1, bezug_abstand=u'kante',
-                 epsg=u'25832', dbtyp=u'SpatiaLite'):
+
+def createlinkfl(
+    dbQK,
+    liste_flaechen_abflussparam,
+    liste_hal_entw,
+    liste_teilgebiete,
+    links_in_tezg=False,
+    mit_verschneidung=False,
+    autokorrektur=True,
+    flaechen_bereinigen=False,
+    suchradius=50,
+    mindestflaeche=0.5,
+    fangradius=0.1,
+    bezug_abstand=u"kante",
+    epsg=u"25832",
+    dbtyp=u"SpatiaLite",
+):
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :param fangradius:
@@ -122,12 +132,14 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
     global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
-    status_message = iface.messageBar().createMessage(u"",
-                                                      u"Verknüpfungen zwischen Flächen und Haltungen werden hergestellt. Bitte warten...")
+    status_message = iface.messageBar().createMessage(
+        u"",
+        u"Verknüpfungen zwischen Flächen und Haltungen werden hergestellt. Bitte warten...",
+    )
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
-    # MakeValid auf Tabellen "flaechen" und "tezg". 
+    # MakeValid auf Tabellen "flaechen" und "tezg".
     if flaechen_bereinigen:
         sql = """UPDATE flaechen SET geom=MakeValid(geom)"""
         if not dbQK.sql(sql, u"k_link.createlinkfl (1)"):
@@ -143,7 +155,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
         check_flaechenbilanz(dbQK)
 
     # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
-    if not checknames(dbQK, u'flaechen', u'flnam', u'f_', autokorrektur):
+    if not checknames(dbQK, u"flaechen", u"flnam", u"f_", autokorrektur):
         del dbQK
         return False
 
@@ -151,47 +163,73 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinkfl(dbQK, fangradius, flaechen_bereinigen = False, deletelinkGeomNone = False):
-        fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen',
-                      u'Der logische Cache konnte nicht aktualisiert werden.')
+    if not updatelinkfl(
+        dbQK, fangradius, flaechen_bereinigen=False, deletelinkGeomNone=False
+    ):
+        fehlermeldung(
+            u"Fehler beim Update der Flächen-Verknüpfungen",
+            u"Der logische Cache konnte nicht aktualisiert werden.",
+        )
         return False
 
     progress_bar.setValue(20)
 
     # Kopieren der Flaechenobjekte in die Tabelle linkfl
 
-    lis_einf = ['']      # einfache Flächen. Erstes Element leer, damit beim join ' and ' schon am Anfang eingefügt wird
-    lis_teil = ['']      # aufzuteilende Flächen. Erstes Element leer, damit beim join ' and ' schon am Anfang eingefügt wird
-    lis_vers = ['']      # dito nur mit anderem Namensraum
+    lis_einf = [
+        ""
+    ]  # einfache Flächen. Erstes Element leer, damit beim join ' and ' schon am Anfang eingefügt wird
+    lis_teil = [
+        ""
+    ]  # aufzuteilende Flächen. Erstes Element leer, damit beim join ' and ' schon am Anfang eingefügt wird
+    lis_vers = [""]  # dito nur mit anderem Namensraum
 
     if len(liste_flaechen_abflussparam) == 0:
         pass
         # logger.debug(u'Warnung in Link Flaechen: Keine Auswahl bei Flächen...')
     else:
-        lis_einf.append(u"fl.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam)))
-        lis_teil.append(u"la.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam)))
-        lis_vers.append(u"fl.abflussparameter in ('{}')".format(u"', '".join(liste_flaechen_abflussparam)))
+        lis_einf.append(
+            u"fl.abflussparameter in ('{}')".format(
+                u"', '".join(liste_flaechen_abflussparam)
+            )
+        )
+        lis_teil.append(
+            u"la.abflussparameter in ('{}')".format(
+                u"', '".join(liste_flaechen_abflussparam)
+            )
+        )
+        lis_vers.append(
+            u"fl.abflussparameter in ('{}')".format(
+                u"', '".join(liste_flaechen_abflussparam)
+            )
+        )
 
     if len(liste_teilgebiete) != 0:
-        lis_einf.append(u"fl.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
-        lis_teil.append(u"tg.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
-        lis_vers.append(u"tg.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete)))
+        lis_einf.append(
+            u"fl.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
+        )
+        lis_teil.append(
+            u"tg.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
+        )
+        lis_vers.append(
+            u"tg.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
+        )
 
-    ausw_einf = ' and '.join(lis_einf)
-    ausw_teil = ' and '.join(lis_teil)
-    ausw_vers = ' and '.join(lis_vers)
+    ausw_einf = " and ".join(lis_einf)
+    ausw_teil = " and ".join(lis_teil)
+    ausw_vers = " and ".join(lis_vers)
 
     # Sowohl Flächen, die nicht als auch die, die verschnitten werden müssen
 
     # if not checkgeom(dbQK, 'tezg', 'geom', autokorrektur, liste_teilgebiete):
-        # del dbQK
-        # progress_bar.reset()
-        # return False
+    # del dbQK
+    # progress_bar.reset()
+    # return False
 
     # if not checkgeom(dbQK, 'flaechen', 'geom', autokorrektur, liste_teilgebiete):
-        # del dbQK
-        # progress_bar.reset()
-        # return False
+    # del dbQK
+    # progress_bar.reset()
+    # return False
 
     if mit_verschneidung:
 
@@ -209,7 +247,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                       FROM linkadd AS la
                       INNER JOIN tezg AS tg
                       ON within(PointOnSurface(la.geom),tg.geom){ausw_teil}
-                      """.format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
+                      """.format(
+                ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche
+            )
 
         else:
             sql = u"""WITH linkadd AS (
@@ -221,7 +261,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                                 lf.pk IS NULL AND area(fl.geom) > {minfl}{ausw_einf})
                       INSERT INTO linkfl (flnam, tezgnam, teilgebiet, geom)
                       SELECT la.flnam, NULL AS tezgnam, la.teilgebiet, la.geom
-                      FROM linkadd AS la""".format(ausw_einf=ausw_einf, minfl=mindestflaeche)
+                      FROM linkadd AS la""".format(
+                ausw_einf=ausw_einf, minfl=mindestflaeche
+            )
 
         if not dbQK.sql(sql, u"QKan_LinkFlaechen (4a)"):
             del dbQK
@@ -244,7 +286,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                           CastToMultiPolygon(CollectionExtract(intersection(la.geof,la.geot),3)) AS geom
                   FROM linkadd AS la 
                   WHERE geom IS NOT NULL AND 
-                        area(geom) > {minfl}""".format(ausw_vers=ausw_vers, minfl=mindestflaeche)
+                        area(geom) > {minfl}""".format(
+            ausw_vers=ausw_vers, minfl=mindestflaeche
+        )
 
         if not dbQK.sql(sql, u"QKan_LinkFlaechen (4b)"):
             del dbQK
@@ -252,31 +296,31 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             return False
 
         # sql = u"""WITH linkadd AS (
-                # SELECT
-                    # linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, 
-                    # flaechen.geom
-                # FROM flaechen
-                # INNER JOIN tezg
-                # ON within(centroid(flaechen.geom),tezg.geom)
-                # LEFT JOIN linkfl
-                # ON linkfl.flnam = flaechen.flnam
-                # WHERE ((flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL) 
-                    # and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_einf}
-                # UNION
-                # SELECT
-                    # linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam, 
-                    # CastToMultiPolygon(CollectionExtract(intersection(flaechen.geom,tezg.geom),3)) AS geom
-                # FROM flaechen
-                # INNER JOIN tezg
-                # ON intersects(flaechen.geom,tezg.geom)
-                # LEFT JOIN linkfl
-                # ON linkfl.flnam = flaechen.flnam AND linkfl.tezgnam = tezg.flnam
-                # WHERE (flaechen.aufteilen = 'ja'
-                    # and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_teil})
-            # INSERT INTO linkfl (flnam, tezgnam, geom)
-            # SELECT flnam, tezgnam, geom
-            # FROM linkadd
-            # WHERE lpk IS NULL AND area(geom) > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
+        # SELECT
+        # linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam,
+        # flaechen.geom
+        # FROM flaechen
+        # INNER JOIN tezg
+        # ON within(centroid(flaechen.geom),tezg.geom)
+        # LEFT JOIN linkfl
+        # ON linkfl.flnam = flaechen.flnam
+        # WHERE ((flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL)
+        # and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_einf}
+        # UNION
+        # SELECT
+        # linkfl.pk AS lpk, tezg.flnam AS tezgnam, flaechen.flnam,
+        # CastToMultiPolygon(CollectionExtract(intersection(flaechen.geom,tezg.geom),3)) AS geom
+        # FROM flaechen
+        # INNER JOIN tezg
+        # ON intersects(flaechen.geom,tezg.geom)
+        # LEFT JOIN linkfl
+        # ON linkfl.flnam = flaechen.flnam AND linkfl.tezgnam = tezg.flnam
+        # WHERE (flaechen.aufteilen = 'ja'
+        # and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_teil})
+        # INSERT INTO linkfl (flnam, tezgnam, geom)
+        # SELECT flnam, tezgnam, geom
+        # FROM linkadd
+        # WHERE lpk IS NULL AND area(geom) > {minfl}""".format(ausw_einf=ausw_einf, ausw_teil=ausw_teil, minfl=mindestflaeche)
 
     else:
         sql = u"""WITH linkadd AS (
@@ -292,7 +336,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
             INSERT INTO linkfl (flnam, teilgebiet, geom)
             SELECT flnam, teilgebiet, geom
             FROM linkadd
-            WHERE area(geom) > {minfl}""".format(ausw_einf=ausw_einf, minfl=mindestflaeche)
+            WHERE area(geom) > {minfl}""".format(
+            ausw_einf=ausw_einf, minfl=mindestflaeche
+        )
 
         if not dbQK.sql(sql, u"QKan_LinkFlaechen (4c)"):
             del dbQK
@@ -301,46 +347,51 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     progress_bar.setValue(60)
 
-    # Jetzt werden die Flächenobjekte mit einem Buffer erweitert und jeweils neu 
+    # Jetzt werden die Flächenobjekte mit einem Buffer erweitert und jeweils neu
     # hinzugekommmene mögliche Zuordnungen eingetragen.
 
     sql = u"""UPDATE linkfl SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linkfl.glink IS NULL""".format(
-        suchradius)
+        suchradius
+    )
     if not dbQK.sql(sql, u"createlinkfl (2)"):
         del dbQK
         progress_bar.reset()
         return False
 
-    # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche. 
-    # Filter braucht nur noch für Haltungen berücksichtigt zu werden, da Flächen bereits beim Einfügen 
-    # in tlink gefiltert wurden. 
+    # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche.
+    # Filter braucht nur noch für Haltungen berücksichtigt zu werden, da Flächen bereits beim Einfügen
+    # in tlink gefiltert wurden.
 
     if len(liste_hal_entw) == 0:
-        auswha = ''
+        auswha = ""
     else:
         auswha = u" AND ha.entwart in ('{}')".format(u"', '".join(liste_hal_entw))
 
     if len(liste_teilgebiete) == 0:
         auswlinkfl = u""
     else:
-        auswha += u" AND  ha.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
-        auswlinkfl = u" AND  linkfl.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
+        auswha += u" AND  ha.teilgebiet in ('{}')".format(
+            u"', '".join(liste_teilgebiete)
+        )
+        auswlinkfl = u" AND  linkfl.teilgebiet in ('{}')".format(
+            u"', '".join(liste_teilgebiete)
+        )
 
-    if bezug_abstand == 'mittelpunkt':
-        bezug = u'lf.geom'
+    if bezug_abstand == "mittelpunkt":
+        bezug = u"lf.geom"
     else:
-        bezug = u'PointonSurface(lf.geom)'
+        bezug = u"PointonSurface(lf.geom)"
 
     # Erläuterung zur nachfolgenden SQL-Abfrage:
     # tlink enthält alle potenziellen Verbindungen zwischen Flächen und Haltungen mit der jeweiligen Entfernung
-    # t2 enthält von diesen Verbindungen nur die Fläche (als pk) und den minimalen Abstand, 
-    # so dass in der Abfrage nach "update" nur die jeweils nächste Verbindung gefiltert wird. 
+    # t2 enthält von diesen Verbindungen nur die Fläche (als pk) und den minimalen Abstand,
+    # so dass in der Abfrage nach "update" nur die jeweils nächste Verbindung gefiltert wird.
     # Da diese Abfrage nur für neu zu erstellende Verknüpfungen gelten soll (also noch kein Eintrag
-    # im Feld "flaechen.haltnam" -> fl.haltnam -> tlink.linkhal -> t1.linkhal). 
+    # im Feld "flaechen.haltnam" -> fl.haltnam -> tlink.linkhal -> t1.linkhal).
 
     # Varianten ohne und mit Beschränkung der Anbindungslinien auf die Haltungsfläche
 
-    # Tipp: within und intersects schließt Datensätze ohne Geoobjekt ein. Deshalb müssen 
+    # Tipp: within und intersects schließt Datensätze ohne Geoobjekt ein. Deshalb müssen
     # sie ausgeschlossen werden.
 
     if links_in_tezg and mit_verschneidung:
@@ -363,8 +414,9 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
                 ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
                 WHERE linkfl.pk = t1.pk AND area(Buffer(t1.geolf, -1.1*{fangradius})) IS NOT NULL)
-            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, fangradius=fangradius,
-                                                             auswha=auswha, auswlinkfl=auswlinkfl)
+            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(
+            bezug=bezug, fangradius=fangradius, auswha=auswha, auswlinkfl=auswlinkfl
+        )
     else:
         sql = u"""WITH tlink AS
             (	SELECT lf.pk AS pk,
@@ -382,10 +434,11 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
                 INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
                 ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
                 WHERE linkfl.pk = t1.pk AND area(Buffer(t1.geolf, -1.1*{fangradius})) IS NOT NULL)
-            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(bezug=bezug, fangradius=fangradius,
-                                                             auswha=auswha, auswlinkfl=auswlinkfl)
+            WHERE linkfl.glink IS NULL{auswlinkfl}""".format(
+            bezug=bezug, fangradius=fangradius, auswha=auswha, auswlinkfl=auswlinkfl
+        )
 
-    logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
+    logger.debug(u"\nSQL-3a:\n{}\n".format(sql))
 
     if not dbQK.sql(sql, u"createlinkfl (5)"):
         del dbQK
@@ -394,7 +447,7 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     progress_bar.setValue(80)
 
-    # Löschen der Datensätze in linkfl, bei denen keine Verbindung erstellt wurde, weil die 
+    # Löschen der Datensätze in linkfl, bei denen keine Verbindung erstellt wurde, weil die
     # nächste Haltung zu weit entfernt ist.
 
     sql = u"""DELETE FROM linkfl WHERE glink IS NULL"""
@@ -408,9 +461,13 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 
     # Aktualisierung des logischen Cache
 
-    if not updatelinkfl(dbQK, fangradius, flaechen_bereinigen = False, deletelinkGeomNone = False):
-        fehlermeldung(u'Fehler beim Update der Flächen-Verknüpfungen',
-                      u'Der logische Cache konnte nicht aktualisiert werden.')
+    if not updatelinkfl(
+        dbQK, fangradius, flaechen_bereinigen=False, deletelinkGeomNone=False
+    ):
+        fehlermeldung(
+            u"Fehler beim Update der Flächen-Verknüpfungen",
+            u"Der logische Cache konnte nicht aktualisiert werden.",
+        )
         del dbQK
         progress_bar.reset()
         return False
@@ -432,9 +489,11 @@ def createlinkfl(dbQK, liste_flaechen_abflussparam, liste_hal_entw,
 # ------------------------------------------------------------------------------
 # Erzeugung der graphischen Verknüpfungen für Direkteinleitungen
 
-def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
-                 dbtyp=u'SpatiaLite'):
-    '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
+
+def createlinksw(
+    dbQK, liste_teilgebiete, suchradius=50, epsg=u"25832", dbtyp=u"SpatiaLite"
+):
+    """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :dbQK: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type database: DBConnection (geerbt von dbapi...)
@@ -452,47 +511,55 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
     :type dbtyp:    String
     
     :returns: void
-    '''
+    """
 
     # ------------------------------------------------------------------------------
     # Die Bearbeitung erfolgt analog zu createlinkfl, mit folgenden Änderungen:
     # - Es gibt keine Auswahl nach Abflussparametern und Entwässerungssystem
-    # - Es handelt sich um Punktobjekte anstelle von Flächen. 
-    #   - Daher entfällt die Option, ob der Abstand auf die Kante oder den 
+    # - Es handelt sich um Punktobjekte anstelle von Flächen.
+    #   - Daher entfällt die Option, ob der Abstand auf die Kante oder den
     #     Mittelpunkt bezogen werden soll
     #   - es gibt keine Verschneidung
 
     # Kopieren der Direkteinleitungen-Punkte in die Tabelle linksw. Dabei wird aus dem Punktobjekt
-    # aus einleit ein Flächenobjekt, damit ein Spatialindex verwendet werden kann 
+    # aus einleit ein Flächenobjekt, damit ein Spatialindex verwendet werden kann
     # (für POINT gibt es keinen MBR?)
 
     # Statusmeldung in der Anzeige
     global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
-    status_message = iface.messageBar().createMessage(u"",
-                                                      u"Verknüpfungen zwischen Einleitpunkten und Haltungen werden hergestellt. Bitte warten...")
+    status_message = iface.messageBar().createMessage(
+        u"",
+        u"Verknüpfungen zwischen Einleitpunkten und Haltungen werden hergestellt. Bitte warten...",
+    )
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # Aktualisierung des logischen Cache
 
     if not updatelinksw(dbQK, deletelinkGeomNone=False):
-        fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen',
-                      u'Der logische Cache konnte nicht aktualisiert werden.')
+        fehlermeldung(
+            u"Fehler beim Update der Einzeleinleiter-Verknüpfungen",
+            u"Der logische Cache konnte nicht aktualisiert werden.",
+        )
         return False
 
     if len(liste_teilgebiete) != 0:
-        auswahl = u" AND einleit.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
+        auswahl = u" AND einleit.teilgebiet in ('{}')".format(
+            u"', '".join(liste_teilgebiete)
+        )
     else:
-        auswahl = ''
+        auswahl = ""
 
     sql = u"""INSERT INTO linksw (elnam, teilgebiet, geom)
             SELECT einleit.elnam, einleit.teilgebiet,buffer(einleit.geom,{radius})
             FROM einleit
             LEFT JOIN linksw
             ON linksw.elnam = einleit.elnam
-            WHERE linksw.pk IS NULL{auswahl}""".format(auswahl=auswahl, radius=0.5)
+            WHERE linksw.pk IS NULL{auswahl}""".format(
+        auswahl=auswahl, radius=0.5
+    )
 
     # logger.debug(u'\nSQL-2a:\n{}\n'.format(sql))
 
@@ -501,33 +568,38 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
 
     progress_bar.setValue(25)
 
-    # Jetzt werden die Direkteinleitungen-Punkte mit einem Buffer erweitert und jeweils neu 
+    # Jetzt werden die Direkteinleitungen-Punkte mit einem Buffer erweitert und jeweils neu
     # hinzugekommmene mögliche Zuordnungen eingetragen.
     # Wenn das Attribut "haltnam" vergeben ist, gilt die Fläche als zugeordnet.
 
     sql = u"""UPDATE linksw SET gbuf = CastToMultiPolygon(buffer(geom,{})) WHERE linksw.glink IS NULL""".format(
-        suchradius)
+        suchradius
+    )
 
     if not dbQK.sql(sql, u"QKan_LinkSW (2)"):
         return False
 
-    # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche. 
-    # Filter braucht nur noch für Haltungen berücksichtigt zu werden, da Flächen bereits beim Einfügen 
-    # in tlink gefiltert wurden. 
+    # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche.
+    # Filter braucht nur noch für Haltungen berücksichtigt zu werden, da Flächen bereits beim Einfügen
+    # in tlink gefiltert wurden.
 
     if len(liste_teilgebiete) != 0:
-        auswahl = u" AND  hal.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
-        auswlin = u" AND  linksw.teilgebiet in ('{}')".format(u"', '".join(liste_teilgebiete))
+        auswahl = u" AND  hal.teilgebiet in ('{}')".format(
+            u"', '".join(liste_teilgebiete)
+        )
+        auswlin = u" AND  linksw.teilgebiet in ('{}')".format(
+            u"', '".join(liste_teilgebiete)
+        )
     else:
-        auswahl = ''
-        auswlin = ''
+        auswahl = ""
+        auswlin = ""
 
     # Erläuterung zur nachfolgenden SQL-Abfrage:
     # tlink enthält alle potenziellen Verbindungen zwischen Flächen und Haltungen mit der jeweiligen Entfernung
-    # t2 enthält von diesen Verbindungen nur die Fläche (als pk) und den minimalen Abstand, 
-    # so dass in der Abfrage nach "update" nur die jeweils nächste Verbindung gefiltert wird. 
+    # t2 enthält von diesen Verbindungen nur die Fläche (als pk) und den minimalen Abstand,
+    # so dass in der Abfrage nach "update" nur die jeweils nächste Verbindung gefiltert wird.
     # Da diese Abfrage nur für neu zu erstellende Verknüpfungen gelten soll (also noch kein Eintrag
-    # im Feld "einleit.haltnam" -> sw.haltnam -> tlink.linkhal -> t1.linkhal). 
+    # im Feld "einleit.haltnam" -> sw.haltnam -> tlink.linkhal -> t1.linkhal).
 
     sql = u"""WITH tlink AS
             (	SELECT sw.pk AS pk,
@@ -549,7 +621,9 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
             INNER JOIN (SELECT pk, Min(dist) AS dmin FROM tlink GROUP BY pk) AS t2
             ON t1.pk=t2.pk AND t1.dist <= t2.dmin + 0.000001
             WHERE linksw.pk = t1.pk)
-            WHERE linksw.glink IS NULL{auswlin}""".format(auswahl=auswahl, auswlin=auswlin)
+            WHERE linksw.glink IS NULL{auswlin}""".format(
+        auswahl=auswahl, auswlin=auswlin
+    )
 
     # logger.debug(u'\nSQL-3a:\n{}\n'.format(sql))
 
@@ -558,7 +632,7 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
 
     progress_bar.setValue(50)
 
-    # Löschen der Datensätze in linksw, bei denen keine Verbindung erstellt wurde, weil die 
+    # Löschen der Datensätze in linksw, bei denen keine Verbindung erstellt wurde, weil die
     # nächste Haltung zu weit entfernt ist.
 
     sql = u"""DELETE FROM linksw WHERE glink IS NULL"""
@@ -569,8 +643,10 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
     # Aktualisierung des logischen Cache
 
     if not updatelinksw(dbQK, deletelinkGeomNone=False):
-        fehlermeldung(u'Fehler beim Update der Einzeleinleiter-Verknüpfungen',
-                      u'Der logische Cache konnte nicht aktualisiert werden.')
+        fehlermeldung(
+            u"Fehler beim Update der Einzeleinleiter-Verknüpfungen",
+            u"Der logische Cache konnte nicht aktualisiert werden.",
+        )
         return False
 
     progress_bar.setValue(100)
@@ -589,9 +665,18 @@ def createlinksw(dbQK, liste_teilgebiete, suchradius=50, epsg=u'25832',
 
 # -------------------------------------------------------------------------------------------------------------
 
-def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, flaechen_bereinigen=False, 
-                bufferradius=u'0', dbtyp=u'SpatiaLite'):
-    '''Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
+
+def assigntgeb(
+    dbQK,
+    auswahltyp,
+    liste_teilgebiete,
+    tablist,
+    autokorrektur,
+    flaechen_bereinigen=False,
+    bufferradius=u"0",
+    dbtyp=u"SpatiaLite",
+):
+    """Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
        Teilgebiete zu. Falls sich mehrere dieser Teilgebiete überlappen, ist das Resultat zufällig eines von diesen. 
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -615,21 +700,22 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, flae
     :type dbtyp:            String
     
     :returns:               void
-    '''
+    """
 
     # Statusmeldung in der Anzeige
     global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
-    status_message = iface.messageBar().createMessage(u"",
-                                                      u"Teilgebiete werden zugeordnet. Bitte warten...")
+    status_message = iface.messageBar().createMessage(
+        u"", u"Teilgebiete werden zugeordnet. Bitte warten..."
+    )
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
-    logger.debug(u'\nbetroffene Tabellen (1):\n{}\n'.format(str(tablist)))
-    logger.debug(u'\nbetroffene Teilgebiete (2):\n{}\n'.format(str(liste_teilgebiete)))
+    logger.debug(u"\nbetroffene Tabellen (1):\n{}\n".format(str(tablist)))
+    logger.debug(u"\nbetroffene Teilgebiete (2):\n{}\n".format(str(liste_teilgebiete)))
 
-    # MakeValid auf Tabellen "flaechen" und "tezg". 
+    # MakeValid auf Tabellen "flaechen" und "tezg".
     if flaechen_bereinigen:
         sql = """UPDATE flaechen SET geom=MakeValid(geom)"""
         if not dbQK.sql(sql, u"k_link.assigntgeb (1)"):
@@ -644,7 +730,7 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, flae
         # Flächen prüfen und ggfs. Meldung anzeigen
         check_flaechenbilanz(dbQK)
 
-    if not checknames(dbQK, u'teilgebiete', u'tgnam', u'tg_', autokorrektur):
+    if not checknames(dbQK, u"teilgebiete", u"tgnam", u"tg_", autokorrektur):
         return False
 
     if len(liste_teilgebiete) != 0:
@@ -652,13 +738,13 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, flae
         auswahl_1 = u" AND teilgebiete.tgnam in ('{tgnames}')".format(tgnames=tgnames)
         auswahl_2 = u" WHERE teilgebiete.tgnam in ('{tgnames}')".format(tgnames=tgnames)
     else:
-        auswahl_1 = ''
-        auswahl_2 = ''
+        auswahl_1 = ""
+        auswahl_2 = ""
 
     for table, geom in tablist:
 
-        if auswahltyp == 'within':
-            if bufferradius == '0' or bufferradius.strip == '':
+        if auswahltyp == "within":
+            if bufferradius == "0" or bufferradius.strip == "":
                 sql = u"""
                 UPDATE {table} SET teilgebiet = 
                 (	SELECT teilgebiete.tgnam
@@ -673,7 +759,12 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, flae
                     INNER JOIN {table}
                     ON within({table}.{geom}, teilgebiete.geom)
                     WHERE {table}.{geom} IS NOT NULL and teilgebiete.geom IS NOT NULL {auswahl_1})
-                """.format(table=table, geom=geom, bufferradius=bufferradius, auswahl_1=auswahl_1)
+                """.format(
+                    table=table,
+                    geom=geom,
+                    bufferradius=bufferradius,
+                    auswahl_1=auswahl_1,
+                )
             else:
                 sql = u"""
                 UPDATE {table} SET teilgebiet = 
@@ -689,8 +780,13 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, flae
                     INNER JOIN {table}
                     ON within({table}.{geom}, buffer(teilgebiete.geom, {bufferradius}))
                     WHERE {table}.{geom} IS NOT NULL and teilgebiete.geom IS NOT NULL{auswahl_1})
-                """.format(table=table, geom=geom, bufferradius=bufferradius, auswahl_1=auswahl_1)
-        elif auswahltyp == 'overlaps':
+                """.format(
+                    table=table,
+                    geom=geom,
+                    bufferradius=bufferradius,
+                    auswahl_1=auswahl_1,
+                )
+        elif auswahltyp == "overlaps":
             sql = u"""
             UPDATE {table} SET teilgebiet = 
             (	SELECT teilgebiete.tgnam
@@ -705,10 +801,16 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, flae
                 INNER JOIN {table}
                 ON intersects({table}.{geom},teilgebiete.geom)
                 WHERE {table}.{geom} IS NOT NULL and teilgebiete.geom IS NOT NULL{auswahl_1})
-            """.format(table=table, geom=geom, auswahl_1=auswahl_1)
+            """.format(
+                table=table, geom=geom, auswahl_1=auswahl_1
+            )
         else:
-            fehlermeldung(u'Programmfehler', 
-                u'k_link.assigntgeb: auswahltyp hat unbekannten Fall {}'.format(str(auswahltyp)))
+            fehlermeldung(
+                u"Programmfehler",
+                u"k_link.assigntgeb: auswahltyp hat unbekannten Fall {}".format(
+                    str(auswahltyp)
+                ),
+            )
             del dbQK
             return False
 
@@ -727,15 +829,18 @@ def assigntgeb(dbQK, auswahltyp, liste_teilgebiete, tablist, autokorrektur, flae
 
     # iface.mainWindow().statusBar().clearMessage()
     # iface.messageBar().pushMessage(u"Information", u"Zuordnung von Haltungen und Flächen ist fertig!", level=Qgis.Info)
-    QgsMessageLog.logMessage(message="\nZuordnung von Haltungen und Flächen ist fertig!", level=Qgis.Info)
+    QgsMessageLog.logMessage(
+        message="\nZuordnung von Haltungen und Flächen ist fertig!", level=Qgis.Info
+    )
 
     return True
 
 
 # -------------------------------------------------------------------------------------------------------------
 
-def reloadgroup(dbQK, gruppenname, dbtyp=u'SpatiaLite'):
-    '''Lädt die unter einem Gruppennamen gespeicherten Teilgebietszuordnungen zurück in die Tabellen 
+
+def reloadgroup(dbQK, gruppenname, dbtyp=u"SpatiaLite"):
+    """Lädt die unter einem Gruppennamen gespeicherten Teilgebietszuordnungen zurück in die Tabellen 
        "haltungen", "schaechte", "flaechen", "tezg", "linkfl", "linksw", "einleit"
 
     :dbQK: Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -748,18 +853,28 @@ def reloadgroup(dbQK, gruppenname, dbtyp=u'SpatiaLite'):
     :type dbtyp:    String
     
     :returns: void
-    '''
+    """
 
     # Statusmeldung in der Anzeige
     global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
-    status_message = iface.messageBar().createMessage(u"",
-                                                      u"Teilgebiete werden aus der gewählten Gruppe wiederhergestellt. Bitte warten...")
+    status_message = iface.messageBar().createMessage(
+        u"",
+        u"Teilgebiete werden aus der gewählten Gruppe wiederhergestellt. Bitte warten...",
+    )
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
-    tablist = [u"haltungen", u"schaechte", u"flaechen", u"linkfl", u"linksw", u"tezg", u"einleit"]
+    tablist = [
+        u"haltungen",
+        u"schaechte",
+        u"flaechen",
+        u"linkfl",
+        u"linksw",
+        u"tezg",
+        u"einleit",
+    ]
 
     for table in tablist:
         sql = u"""
@@ -774,7 +889,9 @@ def reloadgroup(dbQK, gruppenname, dbtyp=u'SpatiaLite'):
         (   SELECT g.teilgebiet
             FROM gruppen AS g
             WHERE g.grnam = '{gruppenname}' AND
-            g.tabelle = '{table}')""".format(table=table, gruppenname=gruppenname)
+            g.tabelle = '{table}')""".format(
+            table=table, gruppenname=gruppenname
+        )
         # logger.debug(u'reloadgroup.sql: \n{}'.format(sql))
 
         if not dbQK.sql(sql, u"QKan_LinkFlaechen.reloadgroup (9): \n"):
@@ -791,8 +908,9 @@ def reloadgroup(dbQK, gruppenname, dbtyp=u'SpatiaLite'):
 
 # -------------------------------------------------------------------------------------------------------------
 
-def storegroup(dbQK, gruppenname, kommentar, dbtyp=u'SpatiaLite'):
-    '''Speichert die aktuellen Teilgebietszuordnungen der Tabellen 
+
+def storegroup(dbQK, gruppenname, kommentar, dbtyp=u"SpatiaLite"):
+    """Speichert die aktuellen Teilgebietszuordnungen der Tabellen 
        "haltungen", "schaechte", "flaechen", "tezg", "linkfl", "linksw", "einleit"
        unter einem neuen Gruppennamen
 
@@ -806,18 +924,28 @@ def storegroup(dbQK, gruppenname, kommentar, dbtyp=u'SpatiaLite'):
     :type dbtyp:    String
     
     :returns: void
-    '''
+    """
 
     # Statusmeldung in der Anzeige
     global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
-    status_message = iface.messageBar().createMessage(u"",
-                                                      u"Teilgebiete werden in der angegebenen Gruppe gespeichert. Bitte warten...")
+    status_message = iface.messageBar().createMessage(
+        u"",
+        u"Teilgebiete werden in der angegebenen Gruppe gespeichert. Bitte warten...",
+    )
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
-    tablist = [u"haltungen", u"schaechte", u"flaechen", u"linkfl", u"linksw", u"tezg", u"einleit"]
+    tablist = [
+        u"haltungen",
+        u"schaechte",
+        u"flaechen",
+        u"linkfl",
+        u"linksw",
+        u"tezg",
+        u"einleit",
+    ]
 
     # Abfrage setzt sich aus den mit UNION verbundenen Tabellen aus tablist zusammen...
     sql = u"""
@@ -832,7 +960,9 @@ def storegroup(dbQK, gruppenname, kommentar, dbtyp=u'SpatiaLite'):
     FROM
       haltungen
     WHERE teilgebiet <> '' And teilgebiet IS NOT NULL
-    """.format(gruppenname=gruppenname, kommentar=kommentar)
+    """.format(
+        gruppenname=gruppenname, kommentar=kommentar
+    )
 
     for table in tablist[1:]:
         sql += u"""UNION
@@ -845,7 +975,9 @@ def storegroup(dbQK, gruppenname, kommentar, dbtyp=u'SpatiaLite'):
         FROM
           {table}
         WHERE teilgebiet <> '' And teilgebiet IS NOT NULL
-        """.format(gruppenname=gruppenname, kommentar=kommentar, table=table)
+        """.format(
+            gruppenname=gruppenname, kommentar=kommentar, table=table
+        )
 
     # logger.debug(u'\nSQL-4:\n{}\n'.format(sql))
     # Zusammengesetzte SQL-Abfrage ausführen...

@@ -19,26 +19,26 @@
   (at your option) any later version.                                  
 
 """
-import json
 import logging
 import os
-import site
 
-from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.core import QgsProject, QgsCoordinateReferenceSystem
 
 # from qgis.utils import iface
 from qkan import QKan
+
 # Initialize Qt resources from file resources.py
 # noinspection PyUnresolvedReferences
 from . import resources
+
 # Import the code for the dialog
 from .application_dialog import ImportFromDynaDialog
 from .import_from_dyna import importKanaldaten
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger('QKan.importdyna.application')
+logger = logging.getLogger("QKan.importdyna.application")
 
 
 class ImportFromDyna:
@@ -70,7 +70,7 @@ class ImportFromDyna:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 09.10.2016)
 
-        logger.info(u'QKan_ImportDyna initialisiert...')
+        logger.info(u"QKan_ImportDyna initialisiert...")
 
         # Standard für Suchverzeichnis festlegen
         project = QgsProject.instance()
@@ -95,17 +95,18 @@ class ImportFromDyna:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('ImportFromDyna', message)
+        return QCoreApplication.translate("ImportFromDyna", message)
 
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/qkan/importdyna/icon_ImportFromDyna.png'
+        icon_path = ":/plugins/qkan/importdyna/icon_ImportFromDyna.png"
         QKan.instance.add_action(
             icon_path,
-            text=self.tr(u'Import aus DYNA-Datei (*.EIN)'),
+            text=self.tr(u"Import aus DYNA-Datei (*.EIN)"),
             callback=self.run,
-            parent=self.iface.mainWindow())
+            parent=self.iface.mainWindow(),
+        )
 
     def unload(self):
         pass
@@ -116,41 +117,47 @@ class ImportFromDyna:
     def select_dynaFile(self):
         u"""DYNA (*.ein) -datei auswählen"""
 
-        filename, __ = QFileDialog.getOpenFileName(self.dlg,
-                                                   "Dateinamen der zu lesenden Kanal++-Datei eingeben",
-                                                   self.default_dir,
-                                                   "*.ein")
+        filename, __ = QFileDialog.getOpenFileName(
+            self.dlg,
+            "Dateinamen der zu lesenden Kanal++-Datei eingeben",
+            self.default_dir,
+            "*.ein",
+        )
         self.dlg.tf_dynaFile.setText(filename)
 
         # Aktuelles Verzeichnis wechseln
-        if os.path.dirname(filename) != '':
+        if os.path.dirname(filename) != "":
             os.chdir(os.path.dirname(filename))
 
     def selectFile_qkanDB(self):
         """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen, aber noch nicht verbinden.
            Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt. """
 
-        filename, __ = QFileDialog.getSaveFileName(self.dlg,
-                                                   "Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
-                                                   self.default_dir,
-                                                   "*.sqlite")
+        filename, __ = QFileDialog.getSaveFileName(
+            self.dlg,
+            "Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
+            self.default_dir,
+            "*.sqlite",
+        )
         self.dlg.tf_qkanDB.setText(filename)
 
         # Aktuelles Verzeichnis wechseln
-        if os.path.dirname(filename) != '':
+        if os.path.dirname(filename) != "":
             os.chdir(os.path.dirname(filename))
 
     def selectProjectFile(self):
         """Zu erzeugende Projektdatei festlegen, falls ausgewählt."""
 
-        filename, __ = QFileDialog.getSaveFileName(self.dlg,
-                                                   "Dateinamen der zu erstellenden Projektdatei eingeben",
-                                                   self.default_dir,
-                                                   "*.qgs")
+        filename, __ = QFileDialog.getSaveFileName(
+            self.dlg,
+            "Dateinamen der zu erstellenden Projektdatei eingeben",
+            self.default_dir,
+            "*.qgs",
+        )
         self.dlg.tf_projectFile.setText(filename)
 
         # Aktuelles Verzeichnis wechseln
-        if os.path.dirname(filename) != '':
+        if os.path.dirname(filename) != "":
             os.chdir(os.path.dirname(filename))
 
     # Ende Eigene Funktionen ---------------------------------------------------
@@ -158,29 +165,31 @@ class ImportFromDyna:
     def run(self):
         """Run method that performs all the real work"""
 
-        if 'database_QKan' in QKan.config:
-            database_QKan = QKan.config['database_QKan']
+        if "database_QKan" in QKan.config:
+            database_QKan = QKan.config["database_QKan"]
         else:
-            database_QKan = ''
+            database_QKan = ""
         self.dlg.tf_qkanDB.setText(database_QKan)
 
-        if 'dynafile' in QKan.config:
-            dynafile = QKan.config['dynafile']
+        if "dynafile" in QKan.config:
+            dynafile = QKan.config["dynafile"]
         else:
-            dynafile = ''
+            dynafile = ""
         self.dlg.tf_dynaFile.setText(dynafile)
 
-        if 'epsg' in QKan.config:
-            self.epsg = QKan.config['epsg']
+        if "epsg" in QKan.config:
+            self.epsg = QKan.config["epsg"]
         else:
-            self.epsg = '25832'
+            self.epsg = "25832"
         # logger.debug('QKan.importdyna.__init__: id(QKan): {0:}\n\t\tepsg: {1:}'.format(id(QKan), self.epsg))
-        self.dlg.qsw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(int(self.epsg)))
+        self.dlg.qsw_epsg.setCrs(
+            QgsCoordinateReferenceSystem.fromEpsgId(int(self.epsg))
+        )
 
-        if 'projectfile' in QKan.config:
-            projectfile = QKan.config['projectfile']
+        if "projectfile" in QKan.config:
+            projectfile = QKan.config["projectfile"]
         else:
-            projectfile = ''
+            projectfile = ""
 
         self.dlg.tf_projectFile.setText(projectfile)
 
@@ -197,26 +206,31 @@ class ImportFromDyna:
             self.epsg = str(self.dlg.qsw_epsg.crs().postgisSrid())
 
             # Konfigurationsdaten schreiben
-            QKan.config['epsg'] = self.epsg
-            QKan.config['database_QKan'] = database_QKan
-            QKan.config['dynafile'] = dynafile
-            QKan.config['projectfile'] = projectfile
+            QKan.config["epsg"] = self.epsg
+            QKan.config["database_QKan"] = database_QKan
+            QKan.config["dynafile"] = dynafile
+            QKan.config["projectfile"] = projectfile
 
             QKan.save_config()
 
             # Start der Verarbeitung
-            
+
             # Modulaufruf in Logdatei schreiben
-            logger.info('''qkan-Modul:\n        importKanaldaten(
+            logger.info(
+                """qkan-Modul:\n        importKanaldaten(
                 dynafile='{dynafile}', 
                 database_QKan='{database_QKan}', 
                 projectfile='{projectfile}', 
                 epsg='{epsg}', 
-                dbtyp = '{dbtyp}')'''.format(
-                dynafile=dynafile, 
-                database_QKan=database_QKan, 
-                projectfile=projectfile, 
-                epsg=self.epsg, 
-                dbtyp = 'SpatiaLite'))
+                dbtyp = '{dbtyp}')""".format(
+                    dynafile=dynafile,
+                    database_QKan=database_QKan,
+                    projectfile=projectfile,
+                    epsg=self.epsg,
+                    dbtyp="SpatiaLite",
+                )
+            )
 
-            importKanaldaten(dynafile, database_QKan, projectfile, self.epsg, 'SpatiaLite')
+            importKanaldaten(
+                dynafile, database_QKan, projectfile, self.epsg, "SpatiaLite"
+            )

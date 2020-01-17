@@ -26,8 +26,9 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog
 
-FORM_CLASS_assigntgeb, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'res', 'application_assigntgeb.ui'))
+FORM_CLASS_assigntgeb, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "application_assigntgeb.ui")
+)
 
 
 class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):
@@ -37,8 +38,9 @@ class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):
         self.setupUi(self)
 
 
-FORM_CLASS_createlinefl, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'res', 'application_createlinefl.ui'))
+FORM_CLASS_createlinefl, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "application_createlinefl.ui")
+)
 
 
 class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
@@ -48,8 +50,9 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
         self.setupUi(self)
 
 
-FORM_CLASS_createlinesw, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'res', 'application_createlinesw.ui'))
+FORM_CLASS_createlinesw, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "application_createlinesw.ui")
+)
 
 
 class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
@@ -59,8 +62,9 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
         self.setupUi(self)
 
 
-FORM_CLASS_updatelinks, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'res', 'application_updatelinks.ui'))
+FORM_CLASS_updatelinks, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "application_updatelinks.ui")
+)
 
 
 class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):
@@ -70,8 +74,9 @@ class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):
         self.setupUi(self)
 
 
-FORM_CLASS_managegroups, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'res', 'application_managegroups.ui'))
+FORM_CLASS_managegroups, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "application_managegroups.ui")
+)
 
 
 class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):

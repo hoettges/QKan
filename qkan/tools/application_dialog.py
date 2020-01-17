@@ -26,8 +26,9 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog
 
-FORM_CLASS_qgsadapt, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'res', 'application_qgsadapt.ui'))
+FORM_CLASS_qgsadapt, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "application_qgsadapt.ui")
+)
 
 
 class QgsAdaptDialog(QDialog, FORM_CLASS_qgsadapt):
@@ -37,8 +38,9 @@ class QgsAdaptDialog(QDialog, FORM_CLASS_qgsadapt):
         self.setupUi(self)
 
 
-FORM_CLASS_layersadapt, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'res', 'application_layersadapt.ui'))
+FORM_CLASS_layersadapt, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "application_layersadapt.ui")
+)
 
 
 class LayersAdaptDialog(QDialog, FORM_CLASS_layersadapt):
@@ -48,8 +50,9 @@ class LayersAdaptDialog(QDialog, FORM_CLASS_layersadapt):
         self.setupUi(self)
 
 
-FORM_CLASS_qkanoptions, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'res', 'application_qkanoptions.ui'))
+FORM_CLASS_qkanoptions, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "application_qkanoptions.ui")
+)
 
 
 class QKanOptionsDialog(QDialog, FORM_CLASS_qkanoptions):
@@ -59,8 +62,9 @@ class QKanOptionsDialog(QDialog, FORM_CLASS_qkanoptions):
         self.setupUi(self)
 
 
-FORM_CLASS_runoffparams, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'res', 'application_runoffparams.ui'))
+FORM_CLASS_runoffparams, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "application_runoffparams.ui")
+)
 
 
 class RunoffParamsDialog(QDialog, FORM_CLASS_runoffparams):

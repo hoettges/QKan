@@ -3,7 +3,6 @@ from zipfile import ZipFile
 # noinspection PyUnresolvedReferences
 from qgis.core import QgsProject
 from qgis.testing import unittest
-
 from qkan.database.dbfunc import DBConnection
 from qkan.exportdyna.k_qkkp import exportKanaldaten
 from qkan.importdyna.import_from_dyna import importKanaldaten

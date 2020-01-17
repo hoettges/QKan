@@ -21,19 +21,22 @@
 
 """
 
-__author__ = 'Joerg Hoettges'
-__date__ = 'February 2018'
-__copyright__ = '(C) 2018, Joerg Hoettges'
+__author__ = "Joerg Hoettges"
+__date__ = "February 2018"
+__copyright__ = "(C) 2018, Joerg Hoettges"
 
 import logging
 
-from qkan.database.qkan_utils import fortschritt, checknames, check_flaechenbilanz
+from qkan.database.qkan_utils import check_flaechenbilanz, checknames, fortschritt
 
-logger = logging.getLogger(u'QKan.linkflaechen.updatelinks')
+logger = logging.getLogger(u"QKan.linkflaechen.updatelinks")
 
 # progress_bar = None
 
-def updatelinkfl(dbQK, radiusHal = u'0.1', flaechen_bereinigen=False, deletelinkGeomNone = True):
+
+def updatelinkfl(
+    dbQK, radiusHal=u"0.1", flaechen_bereinigen=False, deletelinkGeomNone=True
+):
     """Aktualisierung des logischen Cache für die Tabelle "linkfl"
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -59,14 +62,14 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', flaechen_bereinigen=False, deletelink
     # global progress_bar
     # progress_bar = QProgressBar(iface.messageBar())
     # progress_bar.setRange(0, 100)
-    # status_message = iface.messageBar().createMessage(u"", 
-                    # u"Bereinigung Flächenverknüpfungen in Arbeit. Bitte warten.")
+    # status_message = iface.messageBar().createMessage(u"",
+    # u"Bereinigung Flächenverknüpfungen in Arbeit. Bitte warten.")
     # status_message.layout().addWidget(progress_bar)
     # iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # progress_bar.setValue(1)
 
-    # MakeValid auf Tabellen "flaechen" und "tezg". 
+    # MakeValid auf Tabellen "flaechen" und "tezg".
     if flaechen_bereinigen:
         sql = """UPDATE flaechen SET geom=MakeValid(geom)"""
         if not dbQK.sql(sql, u"k_link.createlinkfl (1)"):
@@ -82,7 +85,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', flaechen_bereinigen=False, deletelink
         check_flaechenbilanz(dbQK)
 
     # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
-    if not checknames(dbQK, u'flaechen', u'flnam', u'f_', True):
+    if not checknames(dbQK, u"flaechen", u"flnam", u"f_", True):
         del dbQK
         return False
 
@@ -90,11 +93,11 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', flaechen_bereinigen=False, deletelink
     if deletelinkGeomNone:
         sql = u"""DELETE FROM linkfl WHERE glink IS NULL"""
 
-        if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (1)'):
+        if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinkfl (1)"):
             return False
 
     # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
-    # In der Unterabfrage "linksbroken" wird eine Liste aller nicht korrekter Verknüpfungen 
+    # In der Unterabfrage "linksbroken" wird eine Liste aller nicht korrekter Verknüpfungen
     # aus linkfl erstellt,
     # so dass im UPDATE-Teil nur noch alle darin enthaltenen Verknüpfungen bearbeitet werden
 
@@ -108,9 +111,11 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', flaechen_bereinigen=False, deletelink
         (   SELECT flnam
             FROM flaechen AS fl
             WHERE within(StartPoint(linkfl.glink),fl.geom) AND fl.geom IS NOT NULL)
-        WHERE linkfl.pk IN linksbroken """.format(eps=radiusHal)
+        WHERE linkfl.pk IN linksbroken """.format(
+        eps=radiusHal
+    )
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (2)'):
+    if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinkfl (2)"):
         return False
 
     # progress_bar.setValue(30)
@@ -128,16 +133,18 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', flaechen_bereinigen=False, deletelink
         (   SELECT haltnam
             FROM haltungen AS ha
             WHERE Distance(EndPoint(linkfl.glink),ha.geom) < {eps})
-        WHERE linkfl.pk IN linksbroken""".format(eps=radiusHal)
+        WHERE linkfl.pk IN linksbroken""".format(
+        eps=radiusHal
+    )
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (3)'):
+    if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinkfl (3)"):
         return False
 
     # progress_bar.setValue(65)
 
     # 3. TEZG-Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl), nur für aufteilen = 'ja'
-    # Gleiche Logik wie zuvor. Zusätzlich sind alle Flächen, die nicht aufgeteilt werden müssen, in 
-    # linksvalid enthalten, da Sie auf keinen Fall einen Eintrag in "tezgnam" erhalten sollen. 
+    # Gleiche Logik wie zuvor. Zusätzlich sind alle Flächen, die nicht aufgeteilt werden müssen, in
+    # linksvalid enthalten, da Sie auf keinen Fall einen Eintrag in "tezgnam" erhalten sollen.
 
     sql = u"""WITH linksvalid AS
         (   SELECT lf.pk
@@ -152,14 +159,16 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', flaechen_bereinigen=False, deletelink
         (   SELECT flnam
             FROM tezg AS tg
             WHERE within(StartPoint(linkfl.glink),tg.geom))
-        WHERE linkfl.pk NOT IN linksvalid""".format(eps=radiusHal)
+        WHERE linkfl.pk NOT IN linksvalid""".format(
+        eps=radiusHal
+    )
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkfl (4)'):
+    if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinkfl (4)"):
         return False
 
     dbQK.commit()
 
-    fortschritt(u'Ende...', 1)
+    fortschritt(u"Ende...", 1)
     # progress_bar.setValue(100)
     # status_message.setText(u"Bereinigung Flächenverknüpfungen abgeschlossen.")
     # status_message.setLevel(QgsMessageBar.SUCCESS)
@@ -167,7 +176,7 @@ def updatelinkfl(dbQK, radiusHal = u'0.1', flaechen_bereinigen=False, deletelink
     return True
 
 
-def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
+def updatelinksw(dbQK, radiusHal=u"0.1", deletelinkGeomNone=True):
     # Datenvorbereitung: Verknüpfung von Einleitpunkt zu Haltung wird durch Tabelle "linksw"
     # repräsentiert. Diese Zuordnung wird zunächst in "einleit.haltnam" übertragen.
 
@@ -175,8 +184,8 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     # global progress_bar
     # progress_bar = QProgressBar(iface.messageBar())
     # progress_bar.setRange(0, 100)
-    # status_message = iface.messageBar().createMessage(u"", 
-                # u"Bereinigung Einzeleinleiter-Verknüpfungen in Arbeit. Bitte warten.")
+    # status_message = iface.messageBar().createMessage(u"",
+    # u"Bereinigung Einzeleinleiter-Verknüpfungen in Arbeit. Bitte warten.")
     # status_message.layout().addWidget(progress_bar)
     # iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
@@ -186,7 +195,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     if deletelinkGeomNone:
         sql = u"""DELETE FROM linksw WHERE glink IS NULL"""
 
-        if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (2)'):
+        if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinksw (2)"):
             return False
 
     # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
@@ -201,9 +210,11 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
         (   SELECT elnam
             FROM einleit AS el
             WHERE contains(buffer(StartPoint(linksw.glink),{eps}),el.geom))
-        WHERE linksw.pk IN linksbroken""".format(eps=radiusHal)
+        WHERE linksw.pk IN linksbroken""".format(
+        eps=radiusHal
+    )
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (3)'):
+    if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinksw (3)"):
         return False
 
     # progress_bar.setValue(30)
@@ -220,11 +231,13 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
         (   SELECT haltnam
             FROM haltungen AS ha
             WHERE Distance(EndPoint(linksw.glink),ha.geom) < {eps})
-        WHERE linksw.pk IN linksbroken""".format(eps=radiusHal)
+        WHERE linksw.pk IN linksbroken""".format(
+        eps=radiusHal
+    )
 
-    logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
+    logger.debug(u"\nSQL-4b:\n{}\n".format(sql))
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (4)'):
+    if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinksw (4)"):
         return False
 
     # progress_bar.setValue(60)
@@ -245,14 +258,14 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
             WHERE einleit.elnam = lf.elnam)
         WHERE einleit.pk IN linksvalid"""
 
-    logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
+    logger.debug(u"\nSQL-4d:\n{}\n".format(sql))
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinksw (6)'):
+    if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinksw (6)"):
         return False
 
     dbQK.commit()
 
-    fortschritt(u'Ende...', 1)
+    fortschritt(u"Ende...", 1)
     # progress_bar.setValue(100)
     # status_message.setText(u"Bereinigung Einzeleinleiter-Verknüpfungen abgeschlossen.")
     # status_message.setLevel(Qgis.Success)
@@ -260,7 +273,7 @@ def updatelinksw(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     return True
 
 
-def updatelinkageb(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
+def updatelinkageb(dbQK, radiusHal=u"0.1", deletelinkGeomNone=True):
     # Datenvorbereitung: Verknüpfung von Aussengebiet zu Schacht wird durch Tabelle "linkageb"
     # repräsentiert. Diese Zuordnung wird zunächst in "aussengebiete.schnam" übertragen.
 
@@ -268,7 +281,7 @@ def updatelinkageb(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
     if deletelinkGeomNone:
         sql = u"""DELETE FROM linkageb WHERE glink IS NULL"""
 
-        if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkageb (2)'):
+        if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinkageb (2)"):
             return False
 
     # 1. Aussengebiet in "linkageb" eintragen (ohne Einschränkung auf auswahl)
@@ -283,9 +296,11 @@ def updatelinkageb(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
         (   SELECT gebnam
             FROM aussengebiete AS ag
             WHERE within(StartPoint(linkageb.glink),ag.geom))
-        WHERE linkageb.pk NOT IN linksvalid""".format(eps=radiusHal)
+        WHERE linkageb.pk NOT IN linksvalid""".format(
+        eps=radiusHal
+    )
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkageb (3)'):
+    if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinkageb (3)"):
         return False
 
     # progress_bar.setValue(30)
@@ -302,11 +317,13 @@ def updatelinkageb(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
         (   SELECT schnam
             FROM schaechte AS sc
             WHERE contains(buffer(EndPoint(linkageb.glink),{eps}),sc.geom))
-        WHERE linkageb.pk NOT IN linksvalid""".format(eps=radiusHal)
+        WHERE linkageb.pk NOT IN linksvalid""".format(
+        eps=radiusHal
+    )
 
-    logger.debug(u'\nSQL-4b:\n{}\n'.format(sql))
+    logger.debug(u"\nSQL-4b:\n{}\n".format(sql))
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkageb (4)'):
+    if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinkageb (4)"):
         return False
 
     # progress_bar.setValue(60)
@@ -327,14 +344,14 @@ def updatelinkageb(dbQK, radiusHal = u'0.1', deletelinkGeomNone = True):
             WHERE aussengebiete.gebnam = lg.gebnam)
         WHERE aussengebiete.pk NOT IN linksvalid"""
 
-    logger.debug(u'\nSQL-4d:\n{}\n'.format(sql))
+    logger.debug(u"\nSQL-4d:\n{}\n".format(sql))
 
-    if not dbQK.sql(sql, u'dbQK: linkflaechen.updatelinks.updatelinkageb (6)'):
+    if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinkageb (6)"):
         return False
 
     dbQK.commit()
 
-    fortschritt(u'Ende...', 1)
+    fortschritt(u"Ende...", 1)
     # progress_bar.setValue(100)
     # status_message.setText(u"Bereinigung Aussengebiete-Verknüpfungen abgeschlossen.")
     # status_message.setLevel(Qgis.Success)

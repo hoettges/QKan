@@ -20,20 +20,18 @@
 
 """
 
-__author__ = 'Joerg Hoettges'
-__date__ = 'July 2018'
-__copyright__ = '(C) 2018, Joerg Hoettges'
+__author__ = "Joerg Hoettges"
+__date__ = "July 2018"
+__copyright__ = "(C) 2018, Joerg Hoettges"
 
 import logging
 
+from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.core import QgsMessageLog, Qgis
-from qgis.gui import QgsMessageBar
 from qgis.utils import iface
-
 from qkan.database.qkan_utils import sqlconditions
 
-logger = logging.getLogger(u'QKan.tools.k_runoffparams')
+logger = logging.getLogger(u"QKan.tools.k_runoffparams")
 
 progress_bar = None
 
@@ -43,9 +41,17 @@ progress_bar = None
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runoffparamsfunctions,
-                    liste_teilgebiete, liste_abflussparameter, datenbanktyp):
-    '''Berechnet Oberlächenabflussparameter für HYSTEM/EXTRAN 7 und DYNA/Kanal++.
+
+def setRunoffparams(
+    dbQK,
+    runoffparamstype_choice,
+    runoffmodelltype_choice,
+    runoffparamsfunctions,
+    liste_teilgebiete,
+    liste_abflussparameter,
+    datenbanktyp,
+):
+    """Berechnet Oberlächenabflussparameter für HYSTEM/EXTRAN 7 und DYNA/Kanal++.
 
     :dbQK:                          Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type dbQK:                     DBConnection (geerbt von dbapi...)
@@ -67,31 +73,39 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
 
     - Im Feld "abflussparameter" muss auf einen Abflussparameter verwiesen werden, der für unbefestigte 
       Flächen erzeugt wurde (infiltrationsparameter > 0)
-    '''
+    """
 
     global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
-    status_message = iface.messageBar().createMessage(u"Info", u"Oberflächenabflussparameter werden berechnet... Bitte warten.")
+    status_message = iface.messageBar().createMessage(
+        u"Info", u"Oberflächenabflussparameter werden berechnet... Bitte warten."
+    )
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # status_message.setText(u"Erzeugung von unbefestigten Flächen ist in Arbeit.")
     progress_bar.setValue(1)
 
-    funlis = runoffparamsfunctions[runoffparamstype_choice]        # Beide Funktionen werden in einer for-Schleife abgearbeitet
+    funlis = runoffparamsfunctions[
+        runoffparamstype_choice
+    ]  # Beide Funktionen werden in einer for-Schleife abgearbeitet
     # logger.debug(u"\nfunlis:\n{}".format(funlis))
-    kriterienlis = ['IS NULL', 'IS NOT NULL']
+    kriterienlis = ["IS NULL", "IS NOT NULL"]
 
     # Auswahl der zu bearbeitenden Flächen
-    auswahl = sqlconditions('AND', ('fl.teilgebiet', 'fl.abflussparameter'), (liste_teilgebiete, liste_abflussparameter))
+    auswahl = sqlconditions(
+        "AND",
+        ("fl.teilgebiet", "fl.abflussparameter"),
+        (liste_teilgebiete, liste_abflussparameter),
+    )
 
-    if runoffmodelltype_choice == 'Speicherkaskade':
+    if runoffmodelltype_choice == "Speicherkaskade":
 
         # Es werden sowohl aufzuteilende und nicht aufzuteilende Flächen berücksichtigt
         # Schleife über befestigte und durchlässige Flächen (Kriterium: bodenklasse IS NULL)
         # dabei werden aus funlis und kriterienlis nacheinander zuerst die relevanten Inhalte für befestigte und anschließend
-        # für durchlässige Flächen genommen. 
+        # für durchlässige Flächen genommen.
 
         for fun, kriterium in zip(funlis[:2], kriterienlis):
             sql = """
@@ -140,12 +154,14 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                     INNER JOIN abflussparameter AS ap
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}
-                )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
-            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (1)'):
+                )""".format(
+                auswahl=auswahl, fun=fun, kriterium=kriterium
+            )
+            if not dbQK.sql(sql, u"QKan.tools.setRunoffparams (1)"):
                 return False
 
-    elif runoffmodelltype_choice == 'Fliesszeiten':
-         # Fließzeit Kanal
+    elif runoffmodelltype_choice == "Fliesszeiten":
+        # Fließzeit Kanal
         for fun, kriterium in zip(funlis[2:4], kriterienlis):
             sql = """
                 WITH flintersect AS (
@@ -193,11 +209,13 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                     INNER JOIN abflussparameter AS ap
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}
-                )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
-            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (2)'):
+                )""".format(
+                auswahl=auswahl, fun=fun, kriterium=kriterium
+            )
+            if not dbQK.sql(sql, u"QKan.tools.setRunoffparams (2)"):
                 return False
 
-           # Fließzeit Oberfläche
+        # Fließzeit Oberfläche
         for fun, kriterium in zip(funlis[4:6], kriterienlis):
             sql = """
                 WITH flintersect AS (
@@ -245,11 +263,13 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                     INNER JOIN abflussparameter AS ap
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}
-                )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
-            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (3)'):
+                )""".format(
+                auswahl=auswahl, fun=fun, kriterium=kriterium
+            )
+            if not dbQK.sql(sql, u"QKan.tools.setRunoffparams (3)"):
                 return False
 
-    elif runoffmodelltype_choice == 'Schwerpunktlaufzeit':
+    elif runoffmodelltype_choice == "Schwerpunktlaufzeit":
         for fun, kriterium in zip(funlis[:2], kriterienlis):
             sql = """
                 WITH flintersect AS (
@@ -297,8 +317,10 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
                     INNER JOIN abflussparameter AS ap
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}
-                )""".format(auswahl=auswahl, fun=fun, kriterium=kriterium)
-            if not dbQK.sql(sql, u'QKan.tools.setRunoffparams (4)'):
+                )""".format(
+                auswahl=auswahl, fun=fun, kriterium=kriterium
+            )
+            if not dbQK.sql(sql, u"QKan.tools.setRunoffparams (4)"):
                 return False
 
     # status_message.setText(u"Erzeugung von unbefestigten Flächen")
@@ -307,8 +329,13 @@ def setRunoffparams(dbQK, runoffparamstype_choice, runoffmodelltype_choice, runo
     dbQK.commit()
     del dbQK
 
-    QgsMessageLog.logMessage(message="\nOberflächenabflussparameter sind berechnet und eingetragen!", level=Qgis.Info)
+    QgsMessageLog.logMessage(
+        message="\nOberflächenabflussparameter sind berechnet und eingetragen!",
+        level=Qgis.Info,
+    )
 
     progress_bar.setValue(100)
-    status_message.setText(u"Oberflächenabflussparameter sind berechnet und eingetragen!")
+    status_message.setText(
+        u"Oberflächenabflussparameter sind berechnet und eingetragen!"
+    )
     status_message.setLevel(Qgis.Success)

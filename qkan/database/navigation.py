@@ -4,7 +4,6 @@ import itertools
 import logging
 
 from qgis.PyQt import QtCore
-
 from qkan.database.dbfunc import DBConnection
 
 main_logger = logging.getLogger("QKan.database.navigation.main")
@@ -23,9 +22,12 @@ class Navigator:
         self.__error_msg = ""
         self.db = DBConnection(dbname)
         if not self.db.connected:
-            main_logger.error(("Fehler in navigation:\n" + 
-                              'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!').format(
-                                  dbname))
+            main_logger.error(
+                (
+                    "Fehler in navigation:\n"
+                    + "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!"
+                ).format(dbname)
+            )
             raise Exception()  # TODO: ???
         self.log = logging.getLogger("QKan.navigation.Navigator")
 
@@ -66,7 +68,9 @@ class Navigator:
         if len(nodes) == 0:
             nodes = None
         self.log.debug(u"Zusätzliche Punkte:\t{}".format(nodes))
-        return self.__calculate_route_schacht(startpoint, endpoint, additional_points=nodes)
+        return self.__calculate_route_schacht(
+            startpoint, endpoint, additional_points=nodes
+        )
 
     def __calculate_route_schacht(self, startpoint, endpoint, additional_points):
         """
@@ -142,9 +146,13 @@ class Navigator:
                         self.log.info(u"Aktuelle Route ist valide")
                         possibilities += 1
                         if possibilities > 1:
-                            self.log.error(u"Zu viele Möglichkeiten zwischen Start- und End-Haltung.")
-                            self.__error_msg = u"Zu viele Möglichkeiten. Bitte wählen Sie einen Wegpunkt auf" \
-                                               u" dem kritischen Pfad!"
+                            self.log.error(
+                                u"Zu viele Möglichkeiten zwischen Start- und End-Haltung."
+                            )
+                            self.__error_msg = (
+                                u"Zu viele Möglichkeiten. Bitte wählen Sie einen Wegpunkt auf"
+                                u" dem kritischen Pfad!"
+                            )
                             return None
                         route = _route
         return route
@@ -173,9 +181,15 @@ class Navigator:
             self.__error_msg = u"Übergebener Pfad ist fehlerhaft."
             return None
         else:
-            self.log.error(u"Es gibt {} mögliche Routen. Der Pfad muss spezifiziert werden".format(len(routes)))
-            self.__error_msg = (u"Mehrere Möglichkeiten ({}) den Endpunkt zu erreichen. "
-                                u"Bitte spezifizieren Sie die Route.").format(len(routes))
+            self.log.error(
+                u"Es gibt {} mögliche Routen. Der Pfad muss spezifiziert werden".format(
+                    len(routes)
+                )
+            )
+            self.__error_msg = (
+                u"Mehrere Möglichkeiten ({}) den Endpunkt zu erreichen. "
+                u"Bitte spezifizieren Sie die Route."
+            ).format(len(routes))
             return None
 
     def __fetch_data(self, haltungen):
@@ -289,9 +303,12 @@ class Worker(QtCore.QRunnable):
         self.__nodes = nodes
         self.__db = DBConnection(dbname)
         if not self.__db.connected:
-            main_logger.error(("Fehler in navigation:\n" + 
-                              'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!').format(
-                                  dbname))
+            main_logger.error(
+                (
+                    "Fehler in navigation:\n"
+                    + "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!"
+                ).format(dbname)
+            )
             raise Exception()  # TODO: ???
         self.__parent = parent
 
@@ -361,7 +378,7 @@ class Worker(QtCore.QRunnable):
         next_haltungen = self.__db.fetchall()
         if len(next_haltungen) == 0:
             return
-        for option, in next_haltungen:
+        for (option,) in next_haltungen:
             hCopy = list(haltungen)
             hCopy.append(option)
             res = self.__get_routes_recursive(hCopy, results)

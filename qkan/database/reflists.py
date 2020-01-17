@@ -3,7 +3,6 @@
    Bisher definiert:
     - HYSTEM-EXTRAN (he)
 """
-import enum
 
 # flaechen.abflusstyp
 from .qkan_utils import fehlermeldung
@@ -11,19 +10,26 @@ from .qkan_utils import fehlermeldung
 
 def abflusstypen(simprog):
     typen = {
-        'he': {'Speicherkaskade': 0, 'Fliesszeiten': 1, 'Schwerpunktlaufzeit': 2, 'Direktabfluss': 0,
-               'Schwerpunktfließzeit': 2},
-        'kp': {'Speicherkaskade': 0, 'Fliesszeiten': 1, 'Schwerpunktlaufzeit': 2, 'Direktabfluss': 0,
-               'Schwerpunktfließzeit': 2}
+        "he": {
+            "Speicherkaskade": 0,
+            "Fliesszeiten": 1,
+            "Schwerpunktlaufzeit": 2,
+            "Direktabfluss": 0,
+            "Schwerpunktfließzeit": 2,
+        },
+        "kp": {
+            "Speicherkaskade": 0,
+            "Fliesszeiten": 1,
+            "Schwerpunktlaufzeit": 2,
+            "Direktabfluss": 0,
+            "Schwerpunktfließzeit": 2,
+        },
     }
 
     if simprog in typen:
         return typen[simprog]
     else:
-        fehlermeldung('Fehler in Modul reflist', u'simprog nicht definiert: {}'.format(simprog))
+        fehlermeldung(
+            "Fehler in Modul reflist", u"simprog nicht definiert: {}".format(simprog)
+        )
         return None
-
-class Zeug(enum.Enum):
-    UEBVOL = 'uebvol'
-    UEBSTAUANZ = 'uebstauanz'
-    

@@ -24,27 +24,27 @@
 """
 
 
-__author__ = 'Joerg Hoettges'
-__date__ = 'September 2016'
-__copyright__ = '(C) 2016, Joerg Hoettges'
+__author__ = "Joerg Hoettges"
+__date__ = "September 2016"
+__copyright__ = "(C) 2016, Joerg Hoettges"
 
 import logging
 import os
 import xml.etree.ElementTree as ET
 
-from qgis.core import (Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject)
+from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
 from qgis.utils import pluginDirectory
-
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung
 
-logger = logging.getLogger('QKan.importdyna.import_from_dyna')
+logger = logging.getLogger("QKan.importdyna.import_from_dyna")
 
 
 # Hilfsfunktionen --------------------------------------------------------------------------
 class rahmen:
-    '''Koordinatengrenzen in 2D'''
+    """Koordinatengrenzen in 2D"""
+
     def __init__(self):
         self.xmin = self.ymin = self.xmax = self.ymax = 0
 
@@ -65,15 +65,15 @@ class rahmen:
         self.ymax = max(self.ymax, y1, y2)
 
     def ppr(self, x1, y1, x2, y2, r):
-        d = ((x2-x1)**2 + (y2-y1)**2)**0.5
-        if abs(r-d/2) < (r+d/2) / 10000000.:
+        d = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+        if abs(r - d / 2) < (r + d / 2) / 10000000.0:
             h = 0
-        elif r > d/2:
-            h = (r**2 - d**2/4.)**0.5
+        elif r > d / 2:
+            h = (r ** 2 - d ** 2 / 4.0) ** 0.5
         else:
             return None
-        xm = (x1+x2)/2. - h/d*(y2-y1)
-        ym = (y1+y2)/2. + h/d*(x2-x1)
+        xm = (x1 + x2) / 2.0 - h / d * (y2 - y1)
+        ym = (y1 + y2) / 2.0 + h / d * (x2 - x1)
 
         # Anpassen der Koordinatengrenzen
 
@@ -122,19 +122,33 @@ class rahmen:
         #         self.ymin = min(self.ymin, ym - r)                    # Bogen geht über Südpol
 
     def ppp(self, x1, y1, x0, y0, x2, y2):
-        '''Kreisbogen wird durch 3 Punkte definiert'''
-        det=(x1-x0)*(y2-y0)-(x2-x0)*(y1-y0)
-        dist=(((x1-x0)**2+(y1-y0)**2)+
-              ((x0-x2)**2+(y0-y2)**2)+
-              ((x2-x1)**2+(y2-y1)**2))/3.
+        """Kreisbogen wird durch 3 Punkte definiert"""
+        det = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)
+        dist = (
+            ((x1 - x0) ** 2 + (y1 - y0) ** 2)
+            + ((x0 - x2) ** 2 + (y0 - y2) ** 2)
+            + ((x2 - x1) ** 2 + (y2 - y1) ** 2)
+        ) / 3.0
 
-        if (abs(det) > dist/10000.):
-            # Determinante darf nicht sehr klein sein. 
-            xm=(((x1-x0)*(x1+x0)+(y1-y0)*(y1+y0))*(y2-y0)-
-                ((x2-x0)*(x2+x0)+(y2-y0)*(y2+y0))*(y1-y0))/2./det
-            ym=(((x2-x0)*(x2+x0)+(y2-y0)*(y2+y0))*(x1-x0)-
-                ((x1-x0)*(x1+x0)+(y1-y0)*(y1+y0))*(x2-x0))/2./det
-            r = ((xm - x1)**2 + (ym - y1)**2)**0.5
+        if abs(det) > dist / 10000.0:
+            # Determinante darf nicht sehr klein sein.
+            xm = (
+                (
+                    ((x1 - x0) * (x1 + x0) + (y1 - y0) * (y1 + y0)) * (y2 - y0)
+                    - ((x2 - x0) * (x2 + x0) + (y2 - y0) * (y2 + y0)) * (y1 - y0)
+                )
+                / 2.0
+                / det
+            )
+            ym = (
+                (
+                    ((x2 - x0) * (x2 + x0) + (y2 - y0) * (y2 + y0)) * (x1 - x0)
+                    - ((x1 - x0) * (x1 + x0) + (y1 - y0) * (y1 + y0)) * (x2 - x0)
+                )
+                / 2.0
+                / det
+            )
+            r = ((xm - x1) ** 2 + (ym - y1) ** 2) ** 0.5
         else:
             return None
 
@@ -153,32 +167,37 @@ class rahmen:
         xre, yre = xm + r, ym
 
         # Nordpol
-        if (xob - x1) * (y0 - yob) > (yob - y1) * (x0 - xob) or \
-           (xob - x0) * (y2 - yob) > (yob - y0) * (x2 - xob):
+        if (xob - x1) * (y0 - yob) > (yob - y1) * (x0 - xob) or (xob - x0) * (
+            y2 - yob
+        ) > (yob - y0) * (x2 - xob):
             self.ymax = max(self.ymax, yob)
 
         # Westen
-        if (xli - x1) * (y0 - yli) > (yli - y1) * (x0 - xli) or \
-           (xli - x0) * (y2 - yli) > (yli - y0) * (x2 - xli):
+        if (xli - x1) * (y0 - yli) > (yli - y1) * (x0 - xli) or (xli - x0) * (
+            y2 - yli
+        ) > (yli - y0) * (x2 - xli):
             self.xmin = min(self.xmin, xli)
 
         # Süden
-        if (xun - x1) * (y0 - yun) > (yun - y1) * (x0 - xun) or \
-           (xun - x0) * (y2 - yun) > (yun - y0) * (x2 - xun):
+        if (xun - x1) * (y0 - yun) > (yun - y1) * (x0 - xun) or (xun - x0) * (
+            y2 - yun
+        ) > (yun - y0) * (x2 - xun):
             self.ymin = min(self.ymin, yun)
 
         # Osten
-        if (xre - x1) * (y0 - yre) > (yre - y1) * (x0 - xre) or \
-           (xre - x0) * (y2 - yre) > (yre - y0) * (x2 - xre):
+        if (xre - x1) * (y0 - yre) > (yre - y1) * (x0 - xre) or (xre - x0) * (
+            y2 - yre
+        ) > (yre - y0) * (x2 - xre):
             self.xmax = max(self.xmax, xre)
 
 
 # ------------------------------------------------------------------------------
 # Hauptprogramm
 
-def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLite'):
 
-    '''Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
+def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLite"):
+
+    """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
     :dynafile:              Datei mit den DYNA-Daten (*.EIN)
     :type database:         DBConnection (geerbt von firebirdsql...)
@@ -198,69 +217,73 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
     :type dbtyp:            String
 
     :returns: void
-    '''
+    """
 
     # Hilfsfunktionen
     # ------------------------------------------------------------------------------
-    def zahl(text, n=0., default=0.):
+    def zahl(text, n=0.0, default=0.0):
         """Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
            enthalten ist, werden n Nachkommastellen angenommen"""
         zahl = text.strip()
-        if zahl == '':
+        if zahl == "":
             return default
-        elif '.' in zahl:
+        elif "." in zahl:
             try:
                 return float(zahl)
             except BaseException as err:
-                logger.error('10: {}'.format(err))
+                logger.error("10: {}".format(err))
                 return None
         else:
-            return float(zahl) / 10. ** n
-
+            return float(zahl) / 10.0 ** n
 
     # ------------------------------------------------------------------------------
     # Datenbankverbindungen
 
-    dbQK = DBConnection(dbname=database_QKan, epsg=epsg)      # Datenbankobjekt der QKan-Datenbank zum Schreiben
+    dbQK = DBConnection(
+        dbname=database_QKan, epsg=epsg
+    )  # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
     if not dbQK.connected:
-        fehlermeldung(u"Fehler in import_from_dyna:\n",
-                      u'QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!'.format(database_QKan))
+        fehlermeldung(
+            u"Fehler in import_from_dyna:\n",
+            u"QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
+                database_QKan
+            ),
+        )
         return None
 
-    # # Referenztabellen laden. 
+    # # Referenztabellen laden.
 
     # # Profile. Attribut [profilnam] enthält die Bezeichnung des Benutzers. Dies kann auch ein Kürzel sein.
     # sql = u'SELECT kp_key, profilnam FROM profile'
     # if not dbQK.sql(sql, u'importkanaldaten_dyna (3)'):
-        # return None
+    # return None
     # daten = dbQK.fetchall()
     # ref_profil = {}
     # for el in daten:
-        # ref_profil[el[0]] = el[1]
+    # ref_profil[el[0]] = el[1]
 
     # # Entwässerungssystem. Attribut [bezeichnung] enthält die Bezeichnung des Benutzers.
     # sql = u'SELECT kp_nr, bezeichnung FROM entwaesserungsarten'
     # if not dbQK.sql(sql, u'importkanaldaten_dyna (4)'):
-        # return None
+    # return None
     # daten = dbQK.fetchall()
     # ref_entwart = {}
     # for el in daten:
-        # ref_entwart[el[0]] = el[1]
+    # ref_entwart[el[0]] = el[1]
 
     # # Simulationsstatus der Haltungen in Kanal++. Attribut [bezeichnung] enthält die Bezeichnung des Benutzers.
     # sql = u'SELECT kp_nr, bezeichnung FROM simulationsstatus'
     # if not dbQK.sql(sql, u'importkanaldaten_dyna (5)'):
-        # return None
+    # return None
     # daten = dbQK.fetchall()
     # ref_simstat = {}
     # for el in daten:
-        # ref_simstat[el[0]] = el[1]
+    # ref_simstat[el[0]] = el[1]
 
     # ref_kb = {}                # Wird aus der dyna-Datei gelesen
 
     # abflspendelis = {}             # Wird aus der dyna-Datei gelesen
-
 
     # ------------------------------------------------------------------------------
     # Vorverarbeitung der überhaupt nicht Datenbank kopatiblen Datenstruktur aus DYNA...
@@ -299,7 +322,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
            xob REAL,
            yob REAL,
            strschluessel TEXT)""",
-        u"""DELETE FROM dyna12""", 
+        u"""DELETE FROM dyna12""",
         u"""CREATE TABLE IF NOT EXISTS dyna41 (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            schnam TEXT,
@@ -308,50 +331,55 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
            ykoor REAL,
            kanalnummer TEXT,
            haltungsnummer TEXT)""",
-        u"""DELETE FROM dyna41""", 
+        u"""DELETE FROM dyna41""",
         u"""CREATE TABLE IF NOT EXISTS dynarauheit (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            ks_key TEXT,
            ks REAL)""",
-        u"""DELETE FROM dynarauheit""", 
+        u"""DELETE FROM dynarauheit""",
         u"""CREATE TABLE IF NOT EXISTS dynaprofil (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            profil_key TEXT,
            profilnam TEXT,
            breite REAL,
            hoehe REAL)""",
-        u"""DELETE FROM dynaprofil"""]
+        u"""DELETE FROM dynaprofil""",
+    ]
 
     for sql in sqllist:
-        if not dbQK.sql(sql, u'importkanaldaten_dyna create tab_typ12'):
+        if not dbQK.sql(sql, u"importkanaldaten_dyna create tab_typ12"):
             return None
 
     # Initialisierung von Parametern für die nachfolgende Leseschleife
 
-    kanalnummer_vor = ''            # um bei doppelten Haltungsdatensätzen diese nur einmal zu lesen.
-    haltungnummer_vor = ''          # Erläuterung: Die doppelten Haltungsdatensätze tauchen in DYNA immer dann
-                                    # auf, wenn mehrere Zuflüsse angegeben werden müssen.
+    kanalnummer_vor = (
+        ""
+    )  # um bei doppelten Haltungsdatensätzen diese nur einmal zu lesen.
+    haltungnummer_vor = (
+        ""
+    )  # Erläuterung: Die doppelten Haltungsdatensätze tauchen in DYNA immer dann
+    # auf, wenn mehrere Zuflüsse angegeben werden müssen.
 
     # Initialisierungen für Profile
-    profilmodus = -1       # -1: Nicht im Profilblock, Nächste Zeile ist bei:
-                           #  0: Bezeichnung des gesamten Profile-Blocks.
-                           #  1: Profilname, Koordinaten, nächster Block oder Ende
-                           #  2: Profilnr.
-                           #  3: Erste Koordinaten des Querprofils
+    profilmodus = -1  # -1: Nicht im Profilblock, Nächste Zeile ist bei:
+    #  0: Bezeichnung des gesamten Profile-Blocks.
+    #  1: Profilname, Koordinaten, nächster Block oder Ende
+    #  2: Profilnr.
+    #  3: Erste Koordinaten des Querprofils
 
-    x1 = y1 = None   # markiert, dass noch kein Profil eingelesen wurde (s. u.)
+    x1 = y1 = None  # markiert, dass noch kein Profil eingelesen wurde (s. u.)
 
     try:
-        for zeile in open(dynafile, encoding='windows-1252'):
-            if zeile[0:2] == '##':
-                continue                # Kommentarzeile wird übersprungen
+        for zeile in open(dynafile, encoding="windows-1252"):
+            if zeile[0:2] == "##":
+                continue  # Kommentarzeile wird übersprungen
 
             # Zuerst werden Abschnitte mit besonderen Daten bearbeitet (Profildaten etc.)
             if profilmodus >= 0:
                 if profilmodus == 0:
                     # Bezeichnung des gesamten Profile-Blocks. Wird nicht weiter verwendet
                     profilmodus = 1
-                    grenzen = rahmen()              # Grenzen-Objekt erstellen
+                    grenzen = rahmen()  # Grenzen-Objekt erstellen
                     continue
                 elif profilmodus == 2:
                     # Profilnr.
@@ -361,44 +389,77 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
                     continue
                 elif profilmodus == 3:
                     # Erster Profilpunkt
-                    werte = zeile.strip()[1:-2].replace(')(',',').replace(')',',').split(',')
+                    werte = (
+                        zeile.strip()[1:-2]
+                        .replace(")(", ",")
+                        .replace(")", ",")
+                        .split(",")
+                    )
                     if len(werte) != 2:
-                        logger.error('Erste Zeile von Profil {} ist keine Punktkoordinate: {}'.format(
-                            profilnam, zeile))
+                        logger.error(
+                            "Erste Zeile von Profil {} ist keine Punktkoordinate: {}".format(
+                                profilnam, zeile
+                            )
+                        )
                     xp, yp = [float(w) for w in werte]
                     grenzen.reset(xp, yp)
 
-                    plmodus = 'Linie'  # Alternative: 'Kreis'
+                    plmodus = "Linie"  # Alternative: 'Kreis'
                     profilmodus = 1
-                    x1, y1 = xp, yp             # Punkt als Startpunkt für nächstes Teilstück speichern
+                    x1, y1 = (
+                        xp,
+                        yp,
+                    )  # Punkt als Startpunkt für nächstes Teilstück speichern
                     continue
                 elif profilmodus == 1:
                     # weitere Profilpunkte, nächstes Profil oder Ende der Profile
-                    if zeile[0:1] == '(':
+                    if zeile[0:1] == "(":
                         # profilmodus == 1, weitere Profilpunkte
-                        werte = zeile.strip()[1:-2].replace(')(',',').replace(')',',').split(',')
+                        werte = (
+                            zeile.strip()[1:-2]
+                            .replace(")(", ",")
+                            .replace(")", ",")
+                            .split(",")
+                        )
                         nargs = len(werte)
 
                         if nargs == 2:
                             # Geradensegment
                             xp, yp = [float(w) for w in werte]
-                            grenzen.line(x1, y1, xp, yp)            # Grenzen aktualisieren
-                            x1, y1 = xp, yp                         # Punkt als Startpunkt für nächstes Teilstück speichern
+                            grenzen.line(x1, y1, xp, yp)  # Grenzen aktualisieren
+                            x1, y1 = (
+                                xp,
+                                yp,
+                            )  # Punkt als Startpunkt für nächstes Teilstück speichern
 
                         elif nargs == 3:
                             # Polyliniensegment mit Radius und Endpunkt
                             xp, yp, radius = [float(w) for w in werte]
-                            grenzen.line(x1, y1, xp, yp)            # Grenzen mit Stützstellen aktualisieren
-                            grenzen.ppr(x1, y1, xp, yp, radius)     # Grenzen für äußeren Punkt des Bogens aktualisieren
-                            x1, y1 = xp, yp                         # Punkt als Startpunkt für nächstes Teilstück speichern
+                            grenzen.line(
+                                x1, y1, xp, yp
+                            )  # Grenzen mit Stützstellen aktualisieren
+                            grenzen.ppr(
+                                x1, y1, xp, yp, radius
+                            )  # Grenzen für äußeren Punkt des Bogens aktualisieren
+                            x1, y1 = (
+                                xp,
+                                yp,
+                            )  # Punkt als Startpunkt für nächstes Teilstück speichern
 
                         elif nargs == 4:
                             # Polyliniensegment mit Punkt auf Bogen und Endpunkt
                             xm, ym, xp, yp = [float(w) for w in werte]
-                            grenzen.line(x1, y1, xm, ym)            # Grenzen mit Stützstellen aktualisieren
-                            grenzen.p(xp, yp)                       # Grenzen mit Stützstellen aktualisieren
-                            grenzen.ppp(x1, y1, xm, ym, xp, yp)     # Grenzen für äußere Punkte des Bogens aktualisieren
-                            x1, y1 = xp, yp                         # Punkt als Startpunkt für nächstes Teilstück speichern
+                            grenzen.line(
+                                x1, y1, xm, ym
+                            )  # Grenzen mit Stützstellen aktualisieren
+                            grenzen.p(xp, yp)  # Grenzen mit Stützstellen aktualisieren
+                            grenzen.ppp(
+                                x1, y1, xm, ym, xp, yp
+                            )  # Grenzen für äußere Punkte des Bogens aktualisieren
+                            x1, y1 = (
+                                xp,
+                                yp,
+                            )  # Punkt als Startpunkt für nächstes Teilstück speichern
 
                         continue
                     else:
@@ -410,16 +471,17 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
                         # Erst wenn das erste Profil eingelesen wurde
                         if x1 is not None:
                             # Höhe zu Breite-Verhältnis berechnen
-                            breite = (grenzen.xmax - grenzen.xmin)/1000.
-                            hoehe = (grenzen.ymax - grenzen.ymin)/1000.
-                            sql = u'''INSERT INTO dynaprofil (profil_key, profilnam, breite, hoehe) 
-                                          VALUES ('{key}', '{nam}', {br}, {ho})'''.format(
-                                          key=profil_key, nam=profilnam, br=breite, ho=hoehe)
-                            logger.debug(u'sql = {}'.format(sql))
-                            if not dbQK.sql(sql, u'importkanaldaten_kp (1)'):
+                            breite = (grenzen.xmax - grenzen.xmin) / 1000.0
+                            hoehe = (grenzen.ymax - grenzen.ymin) / 1000.0
+                            sql = u"""INSERT INTO dynaprofil (profil_key, profilnam, breite, hoehe) 
+                                          VALUES ('{key}', '{nam}', {br}, {ho})""".format(
+                                key=profil_key, nam=profilnam, br=breite, ho=hoehe
+                            )
+                            logger.debug(u"sql = {}".format(sql))
+                            if not dbQK.sql(sql, u"importkanaldaten_kp (1)"):
                                 return None
 
-                        if zeile[0:2] != '++':
+                        if zeile[0:2] != "++":
                             # Profilname
                             profilnam = zeile.strip()
                             profilmodus = 2
@@ -430,64 +492,102 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
                             x1 = y1 = None
 
             # Optionen und Daten
-            if zeile[0:6] == u'++QUER':
+            if zeile[0:6] == u"++QUER":
                 profilmodus = 0
 
-            elif zeile[0:6] == u'++KANA' and not status_einw:
-                status_einw = (u'EINW' in zeile)
+            elif zeile[0:6] == u"++KANA" and not status_einw:
+                status_einw = u"EINW" in zeile
 
-            elif zeile[0:2] == u'05':
+            elif zeile[0:2] == u"05":
                 ks_key = zeile[3:4].strip()
-                abflspende = float('0'+zeile[10:20].strip())
-                ks = float('0'+zeile[20:30].strip())
+                abflspende = float("0" + zeile[10:20].strip())
+                ks = float("0" + zeile[20:30].strip())
 
-                sql = u'''INSERT INTO dynarauheit (ks_key, ks) 
-                          Values ('{ks_key}', {ks})'''.format(
-                          ks_key=ks_key, ks=ks)
-                if not dbQK.sql(sql, u'importkanaldaten_kp (2)'):
+                sql = u"""INSERT INTO dynarauheit (ks_key, ks) 
+                          Values ('{ks_key}', {ks})""".format(
+                    ks_key=ks_key, ks=ks
+                )
+                if not dbQK.sql(sql, u"importkanaldaten_kp (2)"):
                     return None
 
-            elif zeile[0:2] == u'12':
+            elif zeile[0:2] == u"12":
 
                 n = 1
-                kanalnummer = zeile[6:14].lstrip('0 ').replace(' ', '0');  n = 3  # wegen der merkwürdigen DYNA-Logik für Kanalnamen
-                haltungsnummer = str(int('0' + zeile[14:17].strip()));  n = 4
-                if (kanalnummer, haltungsnummer) != (kanalnummer_vor, haltungnummer_vor):
-                    kanalnummer_vor, haltungnummer_vor = kanalnummer, haltungsnummer        # doppelte Haltungen werden übersprungen, weil Flächen-
-                                                                                            # daten z.Zt. nicht eingelesen werden.
+                kanalnummer = zeile[6:14].lstrip("0 ").replace(" ", "0")
+                n = 3  # wegen der merkwürdigen DYNA-Logik für Kanalnamen
+                haltungsnummer = str(int("0" + zeile[14:17].strip()))
+                n = 4
+                if (kanalnummer, haltungsnummer) != (
+                    kanalnummer_vor,
+                    haltungnummer_vor,
+                ):
+                    kanalnummer_vor, haltungnummer_vor = (
+                        kanalnummer,
+                        haltungsnummer,
+                    )  # doppelte Haltungen werden übersprungen, weil Flächen-
+                    # daten z.Zt. nicht eingelesen werden.
                     try:
-                        strschluessel = zeile[2:6].strip();  n = 2
-                        laenge = zahl(zeile[17:24], 2);  n = 5
-                        deckeloben = zahl(zeile[24:31], 3);  n = 6
-                        sohleoben = zahl(zeile[31:38], 3);  n = 7
-                        sohleunten = zahl(zeile[38:45], 3);  n = 8
-                        material = zeile[45:46];  n = 9
-                        profil_key = zeile[46:48].strip();  n = 10
-                        hoehe = zahl(zeile[48:52], 0)/1000.;  n = 11
-                        ks_key = zeile[52:53].strip();  n = 12
-                        flaeche = zahl(zeile[71:76], 2) * 10000.;  n = 20
-                        flaecheund = round(zahl(zeile[53:55]) / 100. * flaeche, 1);  n = 13
-                        qgewerbeind = zeile[55:56].strip();  n = 14
-                        qfremdind = zeile[56:57].strip();  n = 15
-                        zuflussid = zeile[57:58];  n = 16
-                        qzu = zahl(zeile[58:63], 1);  n = 17
+                        strschluessel = zeile[2:6].strip()
+                        n = 2
+                        laenge = zahl(zeile[17:24], 2)
+                        n = 5
+                        deckeloben = zahl(zeile[24:31], 3)
+                        n = 6
+                        sohleoben = zahl(zeile[31:38], 3)
+                        n = 7
+                        sohleunten = zahl(zeile[38:45], 3)
+                        n = 8
+                        material = zeile[45:46]
+                        n = 9
+                        profil_key = zeile[46:48].strip()
+                        n = 10
+                        hoehe = zahl(zeile[48:52], 0) / 1000.0
+                        n = 11
+                        ks_key = zeile[52:53].strip()
+                        n = 12
+                        flaeche = zahl(zeile[71:76], 2) * 10000.0
+                        n = 20
+                        flaecheund = round(zahl(zeile[53:55]) / 100.0 * flaeche, 1)
+                        n = 13
+                        qgewerbeind = zeile[55:56].strip()
+                        n = 14
+                        qfremdind = zeile[56:57].strip()
+                        n = 15
+                        zuflussid = zeile[57:58]
+                        n = 16
+                        qzu = zahl(zeile[58:63], 1)
+                        n = 17
                         if status_einw:
-                            ew = zahl(zeile[63:66]);    n = 18
+                            ew = zahl(zeile[63:66])
+                            n = 18
                         else:
-                            ew = zahl(zeile[63:66]) * flaeche / 10000.
-                        flaechenid = zeile[66:71];  n = 19
-                        neigkl = int('0' + zeile[76:77].strip());  n = 21
-                        entwart_nr = int('0' + zeile[77:78].strip());  n = 22
-                        simstatus_nr = int('0' + zeile[78:79].strip());  n = 23
-                        haeufigkeit = int('0' + zeile[80:81].strip());  n = 24
-                        schoben = zeile[81:93].strip();  n = 25
-                        schunten = zeile[94:106].strip();  n = 26
-                        xob = zahl(zeile[106:120]);  n = 27
-                        yob = zahl(zeile[120:134]);  n = 28
+                            ew = zahl(zeile[63:66]) * flaeche / 10000.0
+                        flaechenid = zeile[66:71]
+                        n = 19
+                        neigkl = int("0" + zeile[76:77].strip())
+                        n = 21
+                        entwart_nr = int("0" + zeile[77:78].strip())
+                        n = 22
+                        simstatus_nr = int("0" + zeile[78:79].strip())
+                        n = 23
+                        haeufigkeit = int("0" + zeile[80:81].strip())
+                        n = 24
+                        schoben = zeile[81:93].strip()
+                        n = 25
+                        schunten = zeile[94:106].strip()
+                        n = 26
+                        xob = zahl(zeile[106:120])
+                        n = 27
+                        yob = zahl(zeile[120:134])
+                        n = 28
                         schdmoben = zahl(zeile[180:187])
                     except BaseException as err:
-                        fehlermeldung(u"Programmfehler",u"import_from_dyna.importKanaldaten (1)")
-                        logger.error(u'12er: Wert Nr. {} - {}\nZeile: {}'.format(n, err, zeile))
+                        fehlermeldung(
+                            u"Programmfehler", u"import_from_dyna.importKanaldaten (1)"
+                        )
+                        logger.error(
+                            u"12er: Wert Nr. {} - {}\nZeile: {}".format(n, err, zeile)
+                        )
                         del dbQK
                         return None
 
@@ -503,33 +603,56 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
                           '{material}', '{profil_key}', {hoehe}, '{ks_key}', {flaeche}, {flaecheund}, {neigkl},
                           {entwart_nr}, {simstatus_nr},
                           '{flaechenid}', '{strschluessel}', {haeufigkeit}, {schdmoben})""".format(
-                            kanalnummer=kanalnummer, haltungsnummer=haltungsnummer,
-                            schoben=schoben, schunten=schunten, xob=xob, yob=yob,
-                            laenge=laenge, deckeloben=deckeloben, sohleoben=sohleoben,
-                            sohleunten=sohleunten, material=material, profil_key=profil_key,
-                            hoehe=hoehe, ks_key=ks_key, flaeche=flaeche, flaecheund=flaecheund,
-                            neigkl=neigkl, entwart_nr=entwart_nr, simstatus_nr=simstatus_nr,
-                            flaechenid=flaechenid, strschluessel=strschluessel,
-                            haeufigkeit=haeufigkeit, schdmoben=schdmoben)
+                            kanalnummer=kanalnummer,
+                            haltungsnummer=haltungsnummer,
+                            schoben=schoben,
+                            schunten=schunten,
+                            xob=xob,
+                            yob=yob,
+                            laenge=laenge,
+                            deckeloben=deckeloben,
+                            sohleoben=sohleoben,
+                            sohleunten=sohleunten,
+                            material=material,
+                            profil_key=profil_key,
+                            hoehe=hoehe,
+                            ks_key=ks_key,
+                            flaeche=flaeche,
+                            flaecheund=flaecheund,
+                            neigkl=neigkl,
+                            entwart_nr=entwart_nr,
+                            simstatus_nr=simstatus_nr,
+                            flaechenid=flaechenid,
+                            strschluessel=strschluessel,
+                            haeufigkeit=haeufigkeit,
+                            schdmoben=schdmoben,
+                        )
 
                     except BaseException as err:
-                        logger.error('12er: {}\n{}'.format(err, zeile))
-                    if not dbQK.sql(sql, u'importkanaldaten_dyna import typ12'):
+                        logger.error("12er: {}\n{}".format(err, zeile))
+                    if not dbQK.sql(sql, u"importkanaldaten_dyna import typ12"):
                         return None
 
-
-            elif zeile[0:2] == u'41':
+            elif zeile[0:2] == u"41":
 
                 try:
                     n = 1
-                    kanalnummer = zeile[6:14].lstrip('0 ').replace(' ', '0');    n = 2  # wegen der eigenwilligen DYNA-Logik für Kanalnamen;
-                    haltungsnummer = zeile[14:17];    n = 3
-                    deckelhoehe = zahl(zeile[24:31],3);    n = 4
-                    xkoor = zahl(zeile[31:45],0);    n = 5
-                    ykoor = zahl(zeile[45:59],0);    n = 6
-                    schnam = zeile[59:71].strip();    n = 7
+                    kanalnummer = zeile[6:14].lstrip("0 ").replace(" ", "0")
+                    n = 2  # wegen der eigenwilligen DYNA-Logik für Kanalnamen;
+                    haltungsnummer = zeile[14:17]
+                    n = 3
+                    deckelhoehe = zahl(zeile[24:31], 3)
+                    n = 4
+                    xkoor = zahl(zeile[31:45], 0)
+                    n = 5
+                    ykoor = zahl(zeile[45:59], 0)
+                    n = 6
+                    schnam = zeile[59:71].strip()
+                    n = 7
                 except BaseException as err:
-                    logger.error(u'16er: Wert Nr. {} - {}\nZeile: {}'.format(n, err, zeile))
+                    logger.error(
+                        u"16er: Wert Nr. {} - {}\nZeile: {}".format(n, err, zeile)
+                    )
                     return False
 
                 try:
@@ -537,16 +660,24 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
                     ( schnam, deckelhoehe, xkoor, ykoor, kanalnummer, haltungsnummer)
                     VALUES ('{schnam}', {deckelhoehe}, {xkoor}, {ykoor}, 
                       '{kanalnummer}', '{haltungsnummer}')""".format(
-                        schnam=schnam, deckelhoehe=deckelhoehe, xkoor=xkoor, ykoor=ykoor,
-                        kanalnummer=kanalnummer, haltungsnummer=haltungsnummer)
+                        schnam=schnam,
+                        deckelhoehe=deckelhoehe,
+                        xkoor=xkoor,
+                        ykoor=ykoor,
+                        kanalnummer=kanalnummer,
+                        haltungsnummer=haltungsnummer,
+                    )
 
                 except BaseException as err:
-                    logger.error(u'16er: {}\n{}'.format(err, zeile))
-                if not dbQK.sql(sql, u'importkanaldaten_dyna typ16'):
+                    logger.error(u"16er: {}\n{}".format(err, zeile))
+                if not dbQK.sql(sql, u"importkanaldaten_dyna typ16"):
                     return None
     except BaseException as err:
-        fehlermeldung(u"Dateifehler",u"Die Datei {} ist offensichtlich keine ANSI-Datei! ".format(dynafile))
-        logger.error(u'12er: Wert Nr. {} - {}\nZeile: {}'.format(n, err, zeile))
+        fehlermeldung(
+            u"Dateifehler",
+            u"Die Datei {} ist offensichtlich keine ANSI-Datei! ".format(dynafile),
+        )
+        logger.error(u"12er: Wert Nr. {} - {}\nZeile: {}".format(n, err, zeile))
         del dbQK
         return None
 
@@ -554,41 +685,40 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
     # Profile aus DYNA-Datei in Tabelle profile ergänzen
     # 1. Bei Namenskonflikten mit bereits gespeicherten Profilen wird die kp_key auf NULL gesetzt
 
-    sql = u'''UPDATE profile 
+    sql = u"""UPDATE profile 
         SET kp_key = NULL
         WHERE profilnam IN 
         (   SELECT profilnam
             FROM dynaprofil
-            WHERE profile.profilnam = dynaprofil.profilnam and profile.kp_key <> dynaprofil.profil_key)'''
+            WHERE profile.profilnam = dynaprofil.profilnam and profile.kp_key <> dynaprofil.profil_key)"""
 
-    if not dbQK.sql(sql, 'importkanaldaten_dyna profile-1'):
+    if not dbQK.sql(sql, "importkanaldaten_dyna profile-1"):
         return None
 
     # 2. Neue Profile aus DYNA hinzufügen
 
-    sql = u'''INSERT INTO profile 
+    sql = u"""INSERT INTO profile 
         (profilnam, kp_key)
         SELECT profilnam, profil_key
         FROM dynaprofil
         WHERE profil_key not in 
         (   SELECT kp_key 
-            FROM profile WHERE kp_key IS NOT NULL)'''
+            FROM profile WHERE kp_key IS NOT NULL)"""
 
-    if not dbQK.sql(sql, 'importkanaldaten_dyna profile-2'):
+    if not dbQK.sql(sql, "importkanaldaten_dyna profile-2"):
         return None
-
 
     # ------------------------------------------------------------------------------
     # Haltungsdaten
 
     # Tabelle in QKan-Datenbank leeren
     # if check_tabinit:
-        # sql = """DELETE FROM haltungen"""
-        # if not dbQK.sql(sql, 'importkanaldaten_dyna (6)'):
-            # return None
+    # sql = """DELETE FROM haltungen"""
+    # if not dbQK.sql(sql, 'importkanaldaten_dyna (6)'):
+    # return None
 
     # Daten aUS temporären DYNA-Tabellen abfragen
-    sql = u'''
+    sql = u"""
         SELECT 
             printf('%s-%s', dyna12.kanalnummer, dyna12.haltungsnummer) AS haltnam, 
             dyna12.schoben AS schoben, 
@@ -623,31 +753,57 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
         LEFT JOIN entwaesserungsarten
         ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
-        GROUP BY dyna12.kanalnummer, dyna12.haltungsnummer'''
+        GROUP BY dyna12.kanalnummer, dyna12.haltungsnummer"""
 
-    if not dbQK.sql(sql, 'importkanaldaten_dyna (7)'):
+    if not dbQK.sql(sql, "importkanaldaten_dyna (7)"):
         return None
     daten = dbQK.fetchall()
 
     # Haltungsdaten in die QKan-DB schreiben
 
     for attr in daten:
-        (haltnam, schoben, schunten, hoehe, breite, laenge, sohleoben, sohleunten,
-        deckeloben, deckelunten, teilgebiet, profilnam,
-        entwart, ks, simstatus, kommentar, xob, yob, xun, yun) = \
-            ['NULL' if el is None else el for el in attr]
+        (
+            haltnam,
+            schoben,
+            schunten,
+            hoehe,
+            breite,
+            laenge,
+            sohleoben,
+            sohleunten,
+            deckeloben,
+            deckelunten,
+            teilgebiet,
+            profilnam,
+            entwart,
+            ks,
+            simstatus,
+            kommentar,
+            xob,
+            yob,
+            xun,
+            yun,
+        ) = ["NULL" if el is None else el for el in attr]
 
         # (haltnam, schoben, schunten) = \
-          # [tt.decode('iso-8859-1') for tt in (haltnam_ansi, schoben_ansi, schunten_ansi)]
+        # [tt.decode('iso-8859-1') for tt in (haltnam_ansi, schoben_ansi, schunten_ansi)]
 
         # Geo-Objekt erzeugen
-        if dbtyp == 'SpatiaLite':
-            geom = u'MakeLine(MakePoint({0:},{1:},{4:s}),MakePoint({2:},{3:},{4:}))'.format(xob, yob, xun, yun, epsg)
-        elif dbtyp == 'postgis':
-            geom = u'ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:s}),ST_SetSRID(ST_MakePoint({2:},{3:}),{4:}))'.format(xob, yob, xun, yun, epsg)
+        if dbtyp == "SpatiaLite":
+            geom = u"MakeLine(MakePoint({0:},{1:},{4:s}),MakePoint({2:},{3:},{4:}))".format(
+                xob, yob, xun, yun, epsg
+            )
+        elif dbtyp == "postgis":
+            geom = u"ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:s}),ST_SetSRID(ST_MakePoint({2:},{3:}),{4:}))".format(
+                xob, yob, xun, yun, epsg
+            )
         else:
-            fehlermeldung('Programmfehler!',
-                'Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
+            fehlermeldung(
+                "Programmfehler!",
+                "Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!".format(
+                    dbtyp, dbdatabase[-7:].lower()
+                ),
+            )
 
         # Datensatz aufbereiten in die QKan-DB schreiben
 
@@ -658,36 +814,69 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
                 deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus, kommentar) VALUES (
                 {geom}, '{haltnam}', '{schoben}', '{schunten}', {hoehe}, {breite}, {laenge}, 
                 {sohleoben}, {sohleunten}, {deckeloben}, {deckelunten}, '{teilgebiet}', '{profilnam}', 
-                '{entwart}', {ks}, '{simstatus}', '{kommentar}')""".format( \
-                    geom=geom, haltnam=haltnam, schoben=schoben, schunten=schunten, hoehe=hoehe,
-                    breite=breite, laenge=laenge, sohleoben=sohleoben, sohleunten=sohleunten,
-                    deckeloben=deckeloben, deckelunten=deckelunten, teilgebiet=teilgebiet,
-                    profilnam=profilnam, entwart=entwart, ks=ks, simstatus=simstatus, kommentar=kommentar)
+                '{entwart}', {ks}, '{simstatus}', '{kommentar}')""".format(
+                geom=geom,
+                haltnam=haltnam,
+                schoben=schoben,
+                schunten=schunten,
+                hoehe=hoehe,
+                breite=breite,
+                laenge=laenge,
+                sohleoben=sohleoben,
+                sohleunten=sohleunten,
+                deckeloben=deckeloben,
+                deckelunten=deckelunten,
+                teilgebiet=teilgebiet,
+                profilnam=profilnam,
+                entwart=entwart,
+                ks=ks,
+                simstatus=simstatus,
+                kommentar=kommentar,
+            )
         except BaseException as e:
-            fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler in QKan_Import_from_KP", u"\nFehler in sql INSERT INTO haltungen: \n" + \
-                str((geom, haltnam, schoben, schunten,
-                hoehe, breite, laenge, sohleoben, sohleunten,
-                deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus)) + '\n\n')
+            fehlermeldung("SQL-Fehler", str(e))
+            fehlermeldung(
+                "Fehler in QKan_Import_from_KP",
+                u"\nFehler in sql INSERT INTO haltungen: \n"
+                + str(
+                    (
+                        geom,
+                        haltnam,
+                        schoben,
+                        schunten,
+                        hoehe,
+                        breite,
+                        laenge,
+                        sohleoben,
+                        sohleunten,
+                        deckeloben,
+                        deckelunten,
+                        teilgebiet,
+                        profilnam,
+                        entwart,
+                        ks,
+                        simstatus,
+                    )
+                )
+                + "\n\n",
+            )
 
-        if not dbQK.sql(sql, 'importkanaldaten_dyna (9a)'):
+        if not dbQK.sql(sql, "importkanaldaten_dyna (9a)"):
             return None
 
     dbQK.commit()
 
-
     # ------------------------------------------------------------------------------
     # Schachtdaten
 
-
     # Tabelle in QKan-Datenbank leeren
     # if check_tabinit:
-        # sql = u'DELETE FROM schaechte'
-        # if not dbQK.sql(sql, 'importkanaldaten_dyna (10)'):
-            # return None
+    # sql = u'DELETE FROM schaechte'
+    # if not dbQK.sql(sql, 'importkanaldaten_dyna (10)'):
+    # return None
 
     # Daten aus temporären DYNA-Tabellen abfragen
-    sql = u'''
+    sql = u"""
         SELECT 
             dyna12.schoben as schnam,
             dyna12.xob as xsch, 
@@ -704,7 +893,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
         LEFT JOIN entwaesserungsarten
         ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
-        GROUP BY dyna12.schoben'''
+        GROUP BY dyna12.schoben"""
 
     dbQK.sql(sql)
     daten = dbQK.fetchall()
@@ -712,44 +901,59 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
     # Schachtdaten aufbereiten und in die QKan-DB schreiben
 
     for attr in daten:
-        (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart,
-            simstat, kommentar) = ['NULL' if el is None else el for el in attr]
+        (
+            schnam,
+            xsch,
+            ysch,
+            sohlhoehe,
+            deckelhoehe,
+            durchm,
+            druckdicht,
+            entwart,
+            simstat,
+            kommentar,
+        ) = ["NULL" if el is None else el for el in attr]
 
         # schnam = schnam_ansi.decode('iso-8859-1')
 
         # # Entwasserungsarten
         # if entwart_kp in ref_entwart:
-            # entwart = ref_entwart[entwart_kp]
+        # entwart = ref_entwart[entwart_kp]
         # else:
-            # # Noch nicht in Tabelle [entwaesserungsarten] enthalten, also ergänzen
-            # sql = u"INSERT INTO entwaesserungsarten (bezeichnung, kp_nr) Values ('({0:})', {0:d})".format(entwart_kp)
-            # entwart = u'({:})'.format(entwart_kp)
-            # if not dbQK.sql(sql, 'importkanaldaten_dyna (11)'):
-                # return None
+        # # Noch nicht in Tabelle [entwaesserungsarten] enthalten, also ergänzen
+        # sql = u"INSERT INTO entwaesserungsarten (bezeichnung, kp_nr) Values ('({0:})', {0:d})".format(entwart_kp)
+        # entwart = u'({:})'.format(entwart_kp)
+        # if not dbQK.sql(sql, 'importkanaldaten_dyna (11)'):
+        # return None
 
         # # Simstatus-Nr aus EIN-Datei ersetzten
         # if simstat_kp in ref_simstat:
-            # simstatus = ref_simstat[simstat_kp]
+        # simstatus = ref_simstat[simstat_kp]
         # else:
-            # # Noch nicht in Tabelle [simulationsstatus] enthalten, also ergqenzen
-            # simstatus = u'({}_kp)'.format(simstat_kp)
-            # sql = u"INSERT INTO simulationsstatus (bezeichnung, kp_nr) Values ('{simstatus}', {kp_nr})".format( \
-                      # simstatus=simstatus, kp_nr=simstat_kp)
-            # ref_simstat[simstat_kp] = simstatus
-            # if not dbQK.sql(sql, 'importkanaldaten_dyna (12)'):
-                # return None
+        # # Noch nicht in Tabelle [simulationsstatus] enthalten, also ergqenzen
+        # simstatus = u'({}_kp)'.format(simstat_kp)
+        # sql = u"INSERT INTO simulationsstatus (bezeichnung, kp_nr) Values ('{simstatus}', {kp_nr})".format( \
+        # simstatus=simstatus, kp_nr=simstat_kp)
+        # ref_simstat[simstat_kp] = simstatus
+        # if not dbQK.sql(sql, 'importkanaldaten_dyna (12)'):
+        # return None
 
         # Geo-Objekte erzeugen
 
-        if dbtyp == 'SpatiaLite':
-            geop = u'MakePoint({0:},{1:},{2:})'.format(xsch,ysch,epsg)
-            geom = u'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))'.format(xsch, ysch,
-                                             (1. if durchm == 'NULL' else durchm/ 1000.) , epsg)
-        elif dbtyp == 'postgis':
-            geop = u'ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})'.format(xsch,ysch,epsg)
+        if dbtyp == "SpatiaLite":
+            geop = u"MakePoint({0:},{1:},{2:})".format(xsch, ysch, epsg)
+            geom = u"CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))".format(
+                xsch, ysch, (1.0 if durchm == "NULL" else durchm / 1000.0), epsg
+            )
+        elif dbtyp == "postgis":
+            geop = u"ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})".format(xsch, ysch, epsg)
         else:
-            fehlermeldung('Programmfehler!',
-                'Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
+            fehlermeldung(
+                "Programmfehler!",
+                "Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!".format(
+                    dbtyp, dbdatabase[-7:].lower()
+                ),
+            )
 
         # Datensatz in die QKan-DB schreiben
 
@@ -758,26 +962,37 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
                               schachttyp, simstatus, kommentar, geop, geom)
             VALUES ('{schnam}', {xsch}, {ysch}, {sohlhoehe}, {deckelhoehe}, {durchm}, {druckdicht}, '{entwart}', 
                      '{schachttyp}', '{simstatus}', '{kommentar}', 
-                     {geop}, {geom})""".format( \
-                     schnam=schnam, xsch=xsch, ysch=ysch, sohlhoehe=sohlhoehe, deckelhoehe=deckelhoehe,
-                     durchm=durchm, druckdicht=druckdicht, entwart=entwart,
-                     schachttyp = 'Schacht', simstatus=simstatus,
-                     kommentar=kommentar, geop=geop, geom=geom)
-            if not dbQK.sql(sql, 'importkanaldaten_dyna (13)'):
+                     {geop}, {geom})""".format(
+                schnam=schnam,
+                xsch=xsch,
+                ysch=ysch,
+                sohlhoehe=sohlhoehe,
+                deckelhoehe=deckelhoehe,
+                durchm=durchm,
+                druckdicht=druckdicht,
+                entwart=entwart,
+                schachttyp="Schacht",
+                simstatus=simstatus,
+                kommentar=kommentar,
+                geop=geop,
+                geom=geom,
+            )
+            if not dbQK.sql(sql, "importkanaldaten_dyna (13)"):
                 return None
         except BaseException as e:
-            fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler in QKan_Import_from_KP", u"\nSchächte: in sql: \n" + sql + '\n\n')
+            fehlermeldung("SQL-Fehler", str(e))
+            fehlermeldung(
+                "Fehler in QKan_Import_from_KP",
+                u"\nSchächte: in sql: \n" + sql + "\n\n",
+            )
 
     dbQK.commit()
-
 
     # ------------------------------------------------------------------------------
     # Auslässe
 
-
     # Daten aus temporären DYNA-Tabellen abfragen
-    sql = u'''
+    sql = u"""
         SELECT
             dyna41.schnam as schnam,
             dyna41.xkoor as xsch, 
@@ -796,7 +1011,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
         LEFT JOIN entwaesserungsarten
         ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
-        GROUP BY dyna41.schnam'''
+        GROUP BY dyna41.schnam"""
 
     dbQK.sql(sql)
     daten = dbQK.fetchall()
@@ -804,44 +1019,59 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
     # Auslassdaten aufbereiten und in die QKan-DB schreiben
 
     for attr in daten:
-        (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart,
-            simstat, kommentar) = ['NULL' if el is None else el for el in attr]
+        (
+            schnam,
+            xsch,
+            ysch,
+            sohlhoehe,
+            deckelhoehe,
+            durchm,
+            druckdicht,
+            entwart,
+            simstat,
+            kommentar,
+        ) = ["NULL" if el is None else el for el in attr]
 
         # schnam = schnam_ansi.decode('iso-8859-1')
 
         # # Entwasserungsarten
         # if entwart_kp in ref_entwart:
-            # entwart = ref_entwart[entwart_kp]
+        # entwart = ref_entwart[entwart_kp]
         # else:
-            # # Noch nicht in Tabelle [entwaesserungsarten] enthalten, also ergänzen
-            # sql = u"INSERT INTO entwaesserungsarten (bezeichnung, kp_nr) Values ('({0:})', {0:d})".format(entwart_kp)
-            # entwart = u'({:})'.format(entwart_kp)
-            # if not dbQK.sql(sql, 'importkanaldaten_dyna (14)'):
-                # return None
+        # # Noch nicht in Tabelle [entwaesserungsarten] enthalten, also ergänzen
+        # sql = u"INSERT INTO entwaesserungsarten (bezeichnung, kp_nr) Values ('({0:})', {0:d})".format(entwart_kp)
+        # entwart = u'({:})'.format(entwart_kp)
+        # if not dbQK.sql(sql, 'importkanaldaten_dyna (14)'):
+        # return None
 
         # # Simstatus-Nr aus EIN-Datei ersetzten
         # if simstat_kp in ref_simstat:
-            # simstatus = ref_simstat[simstat_kp]
+        # simstatus = ref_simstat[simstat_kp]
         # else:
-            # # Noch nicht in Tabelle [simulationsstatus] enthalten, also ergqenzen
-            # simstatus = u'({}_kp)'.format(simstat_kp)
-            # sql = u"INSERT INTO simulationsstatus (bezeichnung, kp_nr) Values ('{simstatus}', {kp_nr})".format( \
-                      # simstatus=simstatus, kp_nr=simstat_kp)
-            # ref_simstat[simstat_kp] = simstatus
-            # if not dbQK.sql(sql, 'importkanaldaten_dyna (15)'):
-                # return None
+        # # Noch nicht in Tabelle [simulationsstatus] enthalten, also ergqenzen
+        # simstatus = u'({}_kp)'.format(simstat_kp)
+        # sql = u"INSERT INTO simulationsstatus (bezeichnung, kp_nr) Values ('{simstatus}', {kp_nr})".format( \
+        # simstatus=simstatus, kp_nr=simstat_kp)
+        # ref_simstat[simstat_kp] = simstatus
+        # if not dbQK.sql(sql, 'importkanaldaten_dyna (15)'):
+        # return None
 
         # Geo-Objekte erzeugen
 
-        if dbtyp == 'SpatiaLite':
-            geop = u'MakePoint({0:},{1:},{2:})'.format(xsch,ysch,epsg)
-            geom = u'CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))'.format(xsch, ysch,
-                                             (1. if durchm == 'NULL' else durchm/ 1000.) , epsg)
-        elif dbtyp == 'postgis':
-            geop = u'ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})'.format(xsch,ysch,epsg)
+        if dbtyp == "SpatiaLite":
+            geop = u"MakePoint({0:},{1:},{2:})".format(xsch, ysch, epsg)
+            geom = u"CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))".format(
+                xsch, ysch, (1.0 if durchm == "NULL" else durchm / 1000.0), epsg
+            )
+        elif dbtyp == "postgis":
+            geop = u"ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})".format(xsch, ysch, epsg)
         else:
-            fehlermeldung('Programmfehler!',
-                'Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!'.format(dbtyp,dbdatabase[-7:].lower()))
+            fehlermeldung(
+                "Programmfehler!",
+                "Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!".format(
+                    dbtyp, dbdatabase[-7:].lower()
+                ),
+            )
 
         # Datensatz in die QKan-DB schreiben
 
@@ -851,42 +1081,58 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
             VALUES ('{schnam}', {xsch}, {ysch}, {sohlhoehe}, {deckelhoehe}, {durchm}, {druckdicht}, '{entwart}', 
                      '{schachttyp}', '{simstatus}', '{kommentar}', 
                      {geop}, {geom})""".format(
-                     schnam=schnam, xsch=xsch, ysch=ysch, sohlhoehe=sohlhoehe, deckelhoehe=deckelhoehe,
-                     durchm=durchm, druckdicht=druckdicht, entwart=entwart,
-                     schachttyp = 'Auslass', simstatus=simstatus,
-                     kommentar=kommentar, geop=geop, geom=geom)
-            if not dbQK.sql(sql, 'importkanaldaten_dyna (16)'):
+                schnam=schnam,
+                xsch=xsch,
+                ysch=ysch,
+                sohlhoehe=sohlhoehe,
+                deckelhoehe=deckelhoehe,
+                durchm=durchm,
+                druckdicht=druckdicht,
+                entwart=entwart,
+                schachttyp="Auslass",
+                simstatus=simstatus,
+                kommentar=kommentar,
+                geop=geop,
+                geom=geom,
+            )
+            if not dbQK.sql(sql, "importkanaldaten_dyna (16)"):
                 return None
         except BaseException as e:
-            fehlermeldung('SQL-Fehler', str(e))
-            fehlermeldung("Fehler in QKan_Import_from_KP", u"\nSchächte: in sql: \n" + sql + '\n\n')
+            fehlermeldung("SQL-Fehler", str(e))
+            fehlermeldung(
+                "Fehler in QKan_Import_from_KP",
+                u"\nSchächte: in sql: \n" + sql + "\n\n",
+            )
 
     dbQK.commit()
 
-
     # Schachttypen auswerten
-    evalNodeTypes(dbQK)                     # in qkan.database.qkan_utils
-
+    evalNodeTypes(dbQK)  # in qkan.database.qkan_utils
 
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten
-    sql = u'''SELECT min(xsch) AS xmin, 
+    sql = u"""SELECT min(xsch) AS xmin, 
                     max(xsch) AS xmax, 
                     min(ysch) AS ymin, 
                     max(ysch) AS ymax
-             FROM schaechte'''
+             FROM schaechte"""
     try:
         dbQK.sql(sql)
     except BaseException as e:
-        fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler in QKan_Import_from_KP", u"\nFehler in sql_zoom: \n" + sql + '\n\n')
+        fehlermeldung("SQL-Fehler", str(e))
+        fehlermeldung(
+            "Fehler in QKan_Import_from_KP", u"\nFehler in sql_zoom: \n" + sql + "\n\n"
+        )
 
     daten = dbQK.fetchone()
     try:
         zoomxmin, zoomxmax, zoomymin, zoomymax = daten
     except BaseException as e:
-        fehlermeldung('SQL-Fehler', str(e))
-        fehlermeldung("Fehler in QKan_Import_from_KP", u"\nFehler in sql_zoom; daten= " + str(daten) + '\n')
+        fehlermeldung("SQL-Fehler", str(e))
+        fehlermeldung(
+            "Fehler in QKan_Import_from_KP",
+            u"\nFehler in sql_zoom; daten= " + str(daten) + "\n",
+        )
 
     # --------------------------------------------------------------------------
     # Projektionssystem für die Projektdatei vorbereiten
@@ -894,7 +1140,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
             FROM geom_cols_ref_sys
             WHERE Lower(f_table_name) = Lower('schaechte')
             AND Lower(f_geometry_column) = Lower('geom')"""
-    if not dbQK.sql(sql, 'importkanaldaten_dyna (37)'):
+    if not dbQK.sql(sql, "importkanaldaten_dyna (37)"):
         return None
 
     srid = dbQK.fetchone()[0]
@@ -904,17 +1150,25 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
         proj4text = crs.toProj4()
         description = crs.description()
         projectionacronym = crs.projectionAcronym()
-        if 'ellipsoidAcronym' in dir(crs):
+        if "ellipsoidAcronym" in dir(crs):
             ellipsoidacronym = crs.ellipsoidAcronym()
         else:
             ellipsoidacronym = None
     except BaseException as e:
-        srid, srsid, proj4text, description, projectionacronym, ellipsoidacronym = \
-            'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy'
+        srid, srsid, proj4text, description, projectionacronym, ellipsoidacronym = (
+            "dummy",
+            "dummy",
+            "dummy",
+            "dummy",
+            "dummy",
+            "dummy",
+        )
 
         fehlermeldung('\nFehler in "daten"', str(e))
-        fehlermeldung("Fehler in QKan_Import_from_KP", u"\nFehler bei der Ermittlung der srid: \n" + str(daten))
-
+        fehlermeldung(
+            "Fehler in QKan_Import_from_KP",
+            u"\nFehler bei der Ermittlung der srid: \n" + str(daten),
+        )
 
     # --------------------------------------------------------------------------
     # Datenbankverbindungen schliessen
@@ -924,29 +1178,59 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
     # --------------------------------------------------------------------------
     # Projektdatei schreiben, falls ausgewählt
 
-    if projectfile is not None and projectfile != u'':
-        templatepath = os.path.join(pluginDirectory('qkan'), u"templates")
+    if projectfile is not None and projectfile != u"":
+        templatepath = os.path.join(pluginDirectory("qkan"), u"templates")
         projecttemplate = os.path.join(templatepath, u"projekt.qgs")
         projectpath = os.path.dirname(projectfile)
         if os.path.dirname(database_QKan) == projectpath:
-            datasource = database_QKan.replace(os.path.dirname(database_QKan), u'.')
+            datasource = database_QKan.replace(os.path.dirname(database_QKan), u".")
         else:
             datasource = database_QKan
 
         # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
         # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
-        tabliste = [u'einleit', u'einzugsgebiete', u'flaechen', u'haltungen', u'linkfl', u'linksw',
-                    u'pumpen', u'schaechte', u'teilgebiete', u'tezg', u'wehre']
+        tabliste = [
+            u"einleit",
+            u"einzugsgebiete",
+            u"flaechen",
+            u"haltungen",
+            u"linkfl",
+            u"linksw",
+            u"pumpen",
+            u"schaechte",
+            u"teilgebiete",
+            u"tezg",
+            u"wehre",
+        ]
 
         # Liste der QKan-Formulare, um individuell erstellte Formulare von der Bearbeitung auszuschliessen
-        formsliste = ['qkan_abflussparameter.ui', 'qkan_anbindungageb.ui', 'qkan_anbindungeinleit.ui',
-                      'qkan_anbindungflaechen.ui', 'qkan_auslaesse.ui', 'qkan_auslasstypen.ui',
-                      'qkan_aussengebiete.ui', 'qkan_bodenklassen.ui', 'qkan_einleit.ui',
-                      'qkan_einzugsgebiete.ui', 'qkan_entwaesserungsarten.ui', 'qkan_flaechen.ui',
-                      'qkan_haltungen.ui', 'qkan_profildaten.ui', 'qkan_profile.ui', 'qkan_pumpen.ui',
-                      'qkan_pumpentypen.ui', 'qkan_schaechte.ui', 'qkan_simulationsstatus.ui',
-                      'qkan_speicher.ui', 'qkan_speicherkennlinien.ui', 'qkan_swref.ui',
-                      'qkan_teilgebiete.ui', 'qkan_tezg.ui', 'qkan_wehre.ui']
+        formsliste = [
+            "qkan_abflussparameter.ui",
+            "qkan_anbindungageb.ui",
+            "qkan_anbindungeinleit.ui",
+            "qkan_anbindungflaechen.ui",
+            "qkan_auslaesse.ui",
+            "qkan_auslasstypen.ui",
+            "qkan_aussengebiete.ui",
+            "qkan_bodenklassen.ui",
+            "qkan_einleit.ui",
+            "qkan_einzugsgebiete.ui",
+            "qkan_entwaesserungsarten.ui",
+            "qkan_flaechen.ui",
+            "qkan_haltungen.ui",
+            "qkan_profildaten.ui",
+            "qkan_profile.ui",
+            "qkan_pumpen.ui",
+            "qkan_pumpentypen.ui",
+            "qkan_schaechte.ui",
+            "qkan_simulationsstatus.ui",
+            "qkan_speicher.ui",
+            "qkan_speicherkennlinien.ui",
+            "qkan_swref.ui",
+            "qkan_teilgebiete.ui",
+            "qkan_tezg.ui",
+            "qkan_wehre.ui",
+        ]
 
         # Lesen der Projektdatei ------------------------------------------------------------------
         qgsxml = ET.parse(projecttemplate)
@@ -958,7 +1242,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
             tag_datasource = tag_maplayer.find(u"./datasource")
             tex = tag_datasource.text
             # Nur QKan-Tabellen bearbeiten
-            if tex[tex.index(u'table="') + 7:].split(u'" ')[0] in tabliste:
+            if tex[tex.index(u'table="') + 7 :].split(u'" ')[0] in tabliste:
 
                 # <extend> löschen
                 for tag_extent in tag_maplayer.findall(u"./extent"):
@@ -967,25 +1251,25 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
                 for tag_spatialrefsys in tag_maplayer.findall(u"./srs/spatialrefsys"):
                     tag_spatialrefsys.clear()
 
-                    elem = ET.SubElement(tag_spatialrefsys, u'proj4')
+                    elem = ET.SubElement(tag_spatialrefsys, u"proj4")
                     elem.text = proj4text
-                    elem = ET.SubElement(tag_spatialrefsys, u'srsid')
-                    elem.text = u'{}'.format(srsid)
-                    elem = ET.SubElement(tag_spatialrefsys, u'srid')
-                    elem.text = u'{}'.format(srid)
-                    elem = ET.SubElement(tag_spatialrefsys, u'authid')
-                    elem.text = u'EPSG: {}'.format(srid)
-                    elem = ET.SubElement(tag_spatialrefsys, u'description')
+                    elem = ET.SubElement(tag_spatialrefsys, u"srsid")
+                    elem.text = u"{}".format(srsid)
+                    elem = ET.SubElement(tag_spatialrefsys, u"srid")
+                    elem.text = u"{}".format(srid)
+                    elem = ET.SubElement(tag_spatialrefsys, u"authid")
+                    elem.text = u"EPSG: {}".format(srid)
+                    elem = ET.SubElement(tag_spatialrefsys, u"description")
                     elem.text = description
-                    elem = ET.SubElement(tag_spatialrefsys, u'projectionacronym')
+                    elem = ET.SubElement(tag_spatialrefsys, u"projectionacronym")
                     elem.text = projectionacronym
                     if ellipsoidacronym is not None:
-                        elem = ET.SubElement(tag_spatialrefsys, u'ellipsoidacronym')
+                        elem = ET.SubElement(tag_spatialrefsys, u"ellipsoidacronym")
                         elem.text = ellipsoidacronym
 
         # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
 
-        formspath = os.path.join(pluginDirectory('qkan'), u"forms")
+        formspath = os.path.join(pluginDirectory("qkan"), u"forms")
         for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
             tag_editform = tag_maplayer.find(u"./editform")
             if tag_editform.text:
@@ -997,59 +1281,66 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp='SpatiaLi
         # Zoom für Kartenfenster einstellen -------------------------------------------------------
 
         if not isinstance(zoomxmin, (int, float)):
-            zoomxmin = 0.
-            zoomxmax = 100.
-            zoomymin = 0.
-            zoomymax = 100.
+            zoomxmin = 0.0
+            zoomxmax = 100.0
+            zoomymin = 0.0
+            zoomymax = 100.0
 
         for tag_extent in root.findall(u".//mapcanvas/extent"):
             elem = tag_extent.find(u"./xmin")
-            elem.text = u'{:.3f}'.format(zoomxmin)
+            elem.text = u"{:.3f}".format(zoomxmin)
             elem = tag_extent.find(u"./ymin")
-            elem.text = u'{:.3f}'.format(zoomymin)
+            elem.text = u"{:.3f}".format(zoomymin)
             elem = tag_extent.find(u"./xmax")
-            elem.text = u'{:.3f}'.format(zoomxmax)
+            elem.text = u"{:.3f}".format(zoomxmax)
             elem = tag_extent.find(u"./ymax")
-            elem.text = u'{:.3f}'.format(zoomymax)
+            elem.text = u"{:.3f}".format(zoomymax)
 
         # Projektionssystem anpassen --------------------------------------------------------------
 
-        for tag_spatialrefsys in root.findall(u".//mapcanvas/destinationsrs/spatialrefsys"):
+        for tag_spatialrefsys in root.findall(
+            u".//mapcanvas/destinationsrs/spatialrefsys"
+        ):
             tag_spatialrefsys.clear()
 
-            elem = ET.SubElement(tag_spatialrefsys, u'proj4')
+            elem = ET.SubElement(tag_spatialrefsys, u"proj4")
             elem.text = proj4text
-            elem = ET.SubElement(tag_spatialrefsys, u'srid')
-            elem.text = u'{}'.format(srid)
-            elem = ET.SubElement(tag_spatialrefsys, u'authid')
-            elem.text = u'EPSG: {}'.format(srid)
-            elem = ET.SubElement(tag_spatialrefsys, u'description')
+            elem = ET.SubElement(tag_spatialrefsys, u"srid")
+            elem.text = u"{}".format(srid)
+            elem = ET.SubElement(tag_spatialrefsys, u"authid")
+            elem.text = u"EPSG: {}".format(srid)
+            elem = ET.SubElement(tag_spatialrefsys, u"description")
             elem.text = description
-            elem = ET.SubElement(tag_spatialrefsys, u'projectionacronym')
+            elem = ET.SubElement(tag_spatialrefsys, u"projectionacronym")
             elem.text = projectionacronym
             if ellipsoidacronym is not None:
-                elem = ET.SubElement(tag_spatialrefsys, u'ellipsoidacronym')
+                elem = ET.SubElement(tag_spatialrefsys, u"ellipsoidacronym")
                 elem.text = ellipsoidacronym
 
         # Pfad zur QKan-Datenbank anpassen
 
         for tag_datasource in root.findall(u".//projectlayers/maplayer/datasource"):
             text = tag_datasource.text
-            tag_datasource.text = u"dbname='" + datasource + u"' " + text[text.find(u'table='):]
+            tag_datasource.text = (
+                u"dbname='" + datasource + u"' " + text[text.find(u"table=") :]
+            )
 
         qgsxml.write(projectfile)  # writing modified project file
-        logger.debug(u'Projektdatei: {}'.format(projectfile))
+        logger.debug(u"Projektdatei: {}".format(projectfile))
         # logger.debug(u'encoded string: {}'.format(tex))
 
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
 
     QKan.instance.iface.mainWindow().statusBar().clearMessage()
-    QKan.instance.iface.messageBar().pushMessage("Information", "Datenimport ist fertig!", level=Qgis.Info)
-    QgsMessageLog.logMessage(message="\nFertig: Datenimport erfolgreich!", level=Qgis.Info)
+    QKan.instance.iface.messageBar().pushMessage(
+        "Information", "Datenimport ist fertig!", level=Qgis.Info
+    )
+    QgsMessageLog.logMessage(
+        message="\nFertig: Datenimport erfolgreich!", level=Qgis.Info
+    )
 
     # Importiertes Projekt laden
     project = QgsProject.instance()
     # project.read(QFileInfo(projectfile))
-    project.read(projectfile)           # read the new project file
-
+    project.read(projectfile)  # read the new project file
