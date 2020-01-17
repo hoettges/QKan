@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import datetime
+import json
 import logging
-import os, site, json
+import os
+import site
 import tempfile
 from pathlib import Path
 
@@ -36,7 +38,7 @@ class QKan:
 
         file_handler.setFormatter(formatter)
         stream_handler.setFormatter(formatter)
-        
+
         file_handler.setLevel(logging.DEBUG)
         stream_handler.setLevel(logging.DEBUG)
 
@@ -80,20 +82,20 @@ class QKan:
                 self.translator.load(str(_file))
         QCoreApplication.installTranslator(self.translator)
 
-        from .createunbeffl import application as createunbeffl
-        from .importdyna import application as importdyna
-        from .exportdyna import application as exportdyna
+        from .createunbeffl import CreateUnbefFl
+        from .importdyna import ImportFromDyna
+        from .exportdyna import ExportToKP
         from .linkflaechen import application as linkflaechen
-        from .tools import application as tools
-        from .exporthe8 import application as exporthe8
+        from .tools import QKanTools
+        from .exporthe8 import ExportToHE8
 
         self.plugins = [
-            createunbeffl.CreateUnbefFl(iface),
-            importdyna.ImportFromDyna(iface),
-            exportdyna.ExportToKP(iface),
+            CreateUnbefFl(iface),
+            ImportFromDyna(iface),
+            ExportToKP(iface),
             linkflaechen.LinkFl(iface),
-            tools.QKanTools(iface),
-            exporthe8.ExportToHE8(iface),
+            QKanTools(iface),
+            ExportToHE8(iface),
         ]
 
         actions = self.iface.mainWindow().menuBar().actions()
@@ -255,4 +257,6 @@ class QKan:
         try:
             QKan.instance.config_file.write_text(json.dumps(QKan.config))
         except IOError:
-            QKan.instance.logger.error("Fehler beim Speichern der Config-Datei.", exc_info=True)
+            QKan.instance.logger.error(
+                "Fehler beim Speichern der Config-Datei.", exc_info=True
+            )
