@@ -834,15 +834,15 @@ def exportKanaldaten(
     # DYNA-Vorlagedatei lesen. Dies geschieht zu Beginn, damit Zieldatei selbst Vorlage sein kann!
     try:
         dynatemplate = open(template_dyna, encoding="windows-1252").readlines()
-    except:
+    except IOError as err:
         fehlermeldung(
             u"Fehler (32) in QKan_ExportDYNA {}".format(err),
             "Die Vorlage-DYNA-Datei ist nicht vorhanden: {}".format(
                 repr(template_dyna)
             ),
         )
-        return False
         del dbQK
+        return False
 
     # DYNA-Datei löschen, falls schon vorhanden
     if os.path.exists(dynafile):

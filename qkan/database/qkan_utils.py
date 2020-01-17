@@ -57,7 +57,7 @@ def getLayerConfigFromQgsTemplate(qgsxml, layername):
     """Liefert Parameter für QgsEditorWidgetSetup aus Qgs-Datei für alle Attribute in einem Layer
 
     :qgsxml:            XML-Struktur der Projektdatei
-    :type qgsTemplate:  xml.etree.ElementTree
+    :type qgsxml:       xml.etree.ElementTree.ElementTree
 
     :layername:         Name des Layers
     :type:              String
@@ -139,8 +139,8 @@ def listQkanLayers(qgsTemplate=None):
 def isQkanLayer(layername, source):
     """Ermittelt, ob eine Layerquelle auf eine QKan-Tabelle verweist
 
-    :database_QKan: Pfad zur Datenbank
-    :type database: String
+    :layername:      Name des Layers
+    :type layername: String
 
     :source:        Pfad zur QKan-Datenbank
     :type source:   String

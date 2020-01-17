@@ -800,8 +800,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
         else:
             fehlermeldung(
                 "Programmfehler!",
-                "Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!".format(
-                    dbtyp, dbdatabase[-7:].lower()
+                "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(
+                    dbtyp
                 ),
             )
 
@@ -950,8 +950,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
         else:
             fehlermeldung(
                 "Programmfehler!",
-                "Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!".format(
-                    dbtyp, dbdatabase[-7:].lower()
+                "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(
+                    dbtyp
                 ),
             )
 
@@ -1068,8 +1068,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
         else:
             fehlermeldung(
                 "Programmfehler!",
-                "Datenbanktyp ist fehlerhaft {0:s}, Endung: {1:s}!\nAbbruch!".format(
-                    dbtyp, dbdatabase[-7:].lower()
+                "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(
+                    dbtyp
                 ),
             )
 

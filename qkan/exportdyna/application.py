@@ -22,7 +22,7 @@
 import logging
 import os.path
 
-from qgis.core import QgsProject
+from qgis.core import QgsProject, Qgis
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 from qgis.utils import iface, pluginDirectory

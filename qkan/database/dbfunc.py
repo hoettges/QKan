@@ -239,7 +239,7 @@ class DBConnection:
         except BaseException as err:
             fehlermeldung(
                 "Fehler in dbfunc.DBConnection:",
-                f"Verbindung zur Datenbank {dbname} konnte nicht geloest werden.\n",
+                f"Verbindung zur Datenbank {self.dbname} konnte nicht geloest werden.\n",
             )
 
     def attrlist(self, tablenam):

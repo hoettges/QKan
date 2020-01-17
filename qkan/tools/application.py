@@ -25,6 +25,7 @@ import logging
 import os
 import subprocess
 import tempfile
+import webbrowser
 from datetime import datetime as dt
 from pathlib import Path
 
@@ -198,7 +199,7 @@ class QKanTools:
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
         :param listWidget: String for translation.
-        :type listWidget: QListWidgetItem
+        :type listWidget: QListWidget
 
         :returns: Tuple containing selected teilgebiete
         :rtype: tuple

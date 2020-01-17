@@ -458,7 +458,7 @@ class LinkFl:
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
         :param listWidget: String for translation.
-        :type listWidget: QListWidgetItem
+        :type listWidget: QListWidget
 
         :returns: Tuple containing selected teilgebiete
         :rtype: tuple
