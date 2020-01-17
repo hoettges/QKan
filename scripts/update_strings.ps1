@@ -11,13 +11,13 @@ function Pause-Exit($code)
     [void][System.Console]::ReadKey($true)
     exit $code
 }
-if ($inst = Get-ItemProperty -Path "HKLM:\SOFTWARE\QGIS 3.8" -Name InstallPath -ErrorAction SilentlyContinue)
+if ($inst = Get-ItemProperty -Path "HKLM:\SOFTWARE\QGIS 3.4" -Name InstallPath -ErrorAction SilentlyContinue)
 {
     $path = $inst.InstallPath
 }
 else
 {
-    $path = Read-Host -Prompt "Could not find installation path of QGIS 3.8.`nPlease enter it manually"
+    $path = Read-Host -Prompt "Could not find installation path of QGIS 3.4.`nPlease enter it manually"
 }
 
 if ([string]::IsNullOrEmpty($path))
@@ -35,17 +35,6 @@ if (-not (Test-Path $PYTHON))
     Write-Error -Message "python-qgis.bat seems to be missing in your installation. Aborting."
     Pause-Exit(1)
 }
-
-# Init Q4W environment, replicates o4w_env.bat
-[Environment]::SetEnvironmentVariable("PATH", [string]::Join(";", @($path, "%WINDIR%\system32", "%WINDIR%", "%WINDIR%\system32\WBem")))
-[Environment]::SetEnvironmentVariable("PYTHONPATH", $inst.InstallPath + "\apps\qgis\python")
-[Environment]::SetEnvironmentVariable("PYTHONHOME", $inst.InstallPath + "\apps\Python37")
-[Environment]::SetEnvironmentVariable("QT_PLUGIN_PATH", $inst.InstallPath + "\apps\qgis\qtplugins;" + $inst.InstallPath + "\apps\qt5\plugins")
-[Environment]::SetEnvironmentVariable("O4W_QT_LIBRARIES", $inst.InstallPath + "\lib\")
-[Environment]::SetEnvironmentVariable("O4W_QT_HEADERS", $inst.InstallPath + "\include\qt5")
-[Environment]::SetEnvironmentVariable("O4W_QT_PREFIX", $inst.InstallPath + "\apps\qt5")
-[Environment]::SetEnvironmentVariable("O4W_QT_PLUGINS", $inst.InstallPath + "\apps\qt5\plugins")
-[Environment]::SetEnvironmentVariable("OSGEO4W_ROOT", $inst.InstallPath)
 
 $LOCALES=@("en")
 
