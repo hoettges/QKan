@@ -29,7 +29,8 @@ import logging
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.utils import iface
-from qkan import config
+
+from qkan import enums
 from qkan.database.qkan_utils import sqlconditions
 
 logger = logging.getLogger(u"QKan.tools.k_runoffparams")
@@ -45,8 +46,8 @@ progress_bar = None
 
 def setRunoffparams(
     dbQK,
-    runoffparamstype_choice,
-    runoffmodelltype_choice,
+    runoffparamstype_choice: enums.RunOffParamsType,
+    runoffmodeltype_choice: enums.RunOffModelType,
     runoffparamsfunctions,
     liste_teilgebiete,
     liste_abflussparameter,
@@ -58,10 +59,10 @@ def setRunoffparams(
     :type dbQK:                     DBConnection (geerbt von dbapi...)
 
     :runoffparamstype_choice:       Simulationsprogramm, für das die Paremter berechnet werden sollen.
-    :type runoffparamstype_choice:  string
+    :type runoffparamstype_choice:  enums.RunOffParamsType
 
-    :runoffparamsfunctions:         Funktionen, die von den Simulationsprogrammen genutzt werden sollen
-    :type runoffparamsfunctions:    config.ToolsConfig.RunoffParams
+    :runoffmodeltype_choice:        Funktionen, die von den Simulationsprogrammen genutzt werden sollen
+    :type runoffmodeltype_choice:   enums.RunOffModelType
 
     :liste_teilgebiete:             Liste der bei der Bearbeitung zu berücksichtigenden Teilgebiete (Tabelle tezg)
     :type:                          list
@@ -92,7 +93,7 @@ def setRunoffparams(
     progress_bar.setValue(1)
 
     # Beide Funktionen werden in einer for-Schleife abgearbeitet
-    funlis = getattr(runoffparamsfunctions, runoffparamstype_choice.lower())
+    funlis = getattr(runoffparamsfunctions, runoffparamstype_choice.value)
     # logger.debug(u"\nfunlis:\n{}".format(funlis))
     kriterienlis = ["IS NULL", "IS NOT NULL"]
 
@@ -103,8 +104,7 @@ def setRunoffparams(
         (liste_teilgebiete, liste_abflussparameter),
     )
 
-    if runoffmodelltype_choice == "Speicherkaskade":
-
+    if runoffmodeltype_choice == enums.RunOffModelType.SPEICHERKASKADE:
         # Es werden sowohl aufzuteilende und nicht aufzuteilende Flächen berücksichtigt
         # Schleife über befestigte und durchlässige Flächen (Kriterium: bodenklasse IS NULL)
         # dabei werden aus funlis und kriterienlis nacheinander zuerst die relevanten Inhalte für befestigte und anschließend
@@ -163,7 +163,7 @@ def setRunoffparams(
             if not dbQK.sql(sql, u"QKan.tools.setRunoffparams (1)"):
                 return False
 
-    elif runoffmodelltype_choice == "Fliesszeiten":
+    elif runoffmodeltype_choice == enums.RunOffModelType.SPEICHERKASKADE:
         # Fließzeit Kanal
         for fun, kriterium in zip(funlis[2:4], kriterienlis):
             sql = """
@@ -272,7 +272,7 @@ def setRunoffparams(
             if not dbQK.sql(sql, u"QKan.tools.setRunoffparams (3)"):
                 return False
 
-    elif runoffmodelltype_choice == "Schwerpunktlaufzeit":
+    elif runoffmodeltype_choice == enums.RunOffModelType.SCHWERPUNKTLAUFZEIT:
         for fun, kriterium in zip(funlis[:2], kriterienlis):
             sql = """
                 WITH flintersect AS (

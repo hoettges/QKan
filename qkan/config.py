@@ -6,6 +6,8 @@ import site
 import warnings
 from pathlib import Path
 
+from qkan import enums
+
 log = logging.getLogger("QKan.config")
 
 
@@ -76,7 +78,7 @@ class ClassObject:
             elif key not in kwargs_keys:
                 setattr(self, key, getattr(self, key))
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str):
         warnings.warn(
             f"{self.__class__.__name__}: The dict-like config has been replaced "
             f"with a class, use hasattr() instead.",
@@ -94,7 +96,7 @@ class ClassObject:
         )
         return hasattr(self, item)
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key: str, value):
         # Allow setting anything in temporary storage
         if hasattr(self, "allow_any"):
             super().__setattr__(key, value)
@@ -109,9 +111,10 @@ class ClassObject:
             )
         elif key not in self.__annotations__:
             log.warning(
-                f"{self.__class__.__name__}: Setting unknown value/key "
+                f"{self.__class__.__name__}: Dropping unknown value/key "
                 f"combination in config {key}={value} ({type(value)})"
             )
+            return
         super().__setattr__(key, value)
 
     def __str__(self):
@@ -131,39 +134,110 @@ class TempStorage(ClassObject):
     allow_any = True
 
 
+class CheckExport(TempStorage):
+    pass
+    # TODO: Requires additional changes in ExportHE8.
+    #  Until then this will simply replicate a TempStorage
+    # class CEObj(ClassObject):
+    #     init: bool = False
+    #     update: bool = True
+    #     append: bool = True
+    #     delete: bool = True
+
+    # export_abflussparameter: CEObj = CEObj()
+    # export_auslaesse: CEObj = CEObj()
+    # export_aussengebiete: CEObj = CEObj()
+    # export_bodenklassen: CEObj = CEObj()
+    # export_einleitdirekt: CEObj = CEObj()
+    # export_einleitew: CEObj = CEObj()
+    # export_flaechenrw: CEObj = CEObj()
+    # export_haltungen: CEObj = CEObj()
+    # export_profildaten: CEObj = CEObj()
+    # export_pumpen: CEObj = CEObj()
+    # export_regenschreiber: CEObj = CEObj()
+    # export_rohrprofile: CEObj = CEObj()
+    # export_schaechte: CEObj = CEObj()
+    # export_speicher: CEObj = CEObj()
+    # export_speicherkennlinien: CEObj = CEObj()
+    # export_wehre: CEObj = CEObj()
+    # import_abflussparameter: CEObj = CEObj()
+    # import_auslaesse: CEObj = CEObj()
+    # import_aussengebiete: CEObj = CEObj()
+    # import_bodenklassen: CEObj = CEObj()
+    # import_einleitdirekt: CEObj = CEObj()
+    # import_einleitew: CEObj = CEObj()
+    # import_haltungen: CEObj = CEObj()
+    # import_profildaten: CEObj = CEObj()
+    # import_pumpen: CEObj = CEObj()
+    # import_regenschreiber: CEObj = CEObj()
+    # import_rohrprofile: CEObj = CEObj()
+    # import_schaechte: CEObj = CEObj()
+    # import_speicher: CEObj = CEObj()
+    # import_speicherkennlinien: CEObj = CEObj()
+    # import_wehre: CEObj = CEObj()
+
+    def __str__(self):
+        return "<CheckExport *hidden in __str__*>"
+
+
 class DatabaseConfig(ClassObject):
-    he: str = ""
-    he_ergebnis: str = ""
     qkan: str = ""
-    he_template: str = ""
     type: str = "spatialite"
 
 
 class DynaConfig(ClassObject):
     autonummerierung: bool = False
-    bef_choice: str = "flaechen"  # TODO: Enum ['flaechen', 'tezg']
-    dynafile: str = ""
+    bef_choice: enums.BefChoice = enums.BefChoice.FLAECHEN
+    file: str = ""
+    prof_choice: enums.ProfChoice = enums.ProfChoice.PROFILNAME
     profile_ergaenzen: bool = True
-    prof_choice: str = "profilname"  # TODO: Enum ['profilname', 'profilkey']
     template: str = ""
 
 
 class LinkFlConfig(ClassObject):
     # Linkflaechen
-    auswahltyp: str = "within"  # TODO: Enum ['within', 'overlaps']
-    bezug_abstand: str = "kante"  # TODO: Enum ['kante', 'mittelpunkt']
+    auswahltyp: enums.AuswahlTyp = enums.AuswahlTyp.WITHIN
+    bezug_abstand: enums.BezugAbstand = enums.BezugAbstand.KANTE
     bufferradius: int = 0
     delete_geom_none: bool = True
-    flaechen_abflussparam: list = []
-    hal_entw: list = []
     links_in_tezg: bool = True
     suchradius: int = 50
 
 
+class ChoiceConfig(ClassObject):
+    abflussparameter: list = []
+    flaechen_abflussparam: list = []
+    hal_entw: list = []
+    teilgebiete: list = []
+
+
 class HEConfig(ClassObject):
-    verschneidung: bool = True
-    qml_choice: str = "uebh"  # TODO: Enum ['uebh', 'uebvol', 'userqml', 'none']
+    database: str = ""
+    database_erg: str = ""
+    database_erg_fb: str = ""
+    database_fb: str = ""
+    qml_choice: enums.QmlChoice = enums.QmlChoice.UEBH
     qml_file_results: str = ""
+    template: str = ""
+    template_fb: str = ""
+
+
+class ProjectConfig(ClassObject):
+    file: str = ""
+    save_file: bool = True
+    template: str = ""
+
+
+class AdaptConfig(ClassObject):
+    add_missing_layers: bool = True
+    database: bool = True
+    forms: bool = True
+    kbs: bool = True
+    qkan_db_update: bool = True
+    selected_layers: enums.SelectedLayers = enums.SelectedLayers.ALL
+    table_lookups: bool = True
+    update_node_type: bool = True
+    zoom_all: bool = True
 
 
 class ToolsConfig(ClassObject):
@@ -188,42 +262,35 @@ class ToolsConfig(ClassObject):
             "pow(2*0.10 * fliesslaenge / SQRT(neigung), 0.467)",
         ]
 
-    abflussparameter: list = []
-    adapt_db: bool = True
-    adapt_forms: bool = True
-    adapt_kbs: bool = True
-    adapt_selected: str = "alle_anpassen"  # TODO: Enum ['alle_anpassen', 'auswahl_anpassen']
-    adapt_table_lookups: bool = True
+        def __str__(self):
+            return "<CheckExport *hidden in __str__*>"
+
     apply_qkan_template: bool = True
-    fehlende_layer_ergaenzen: bool = True
     logeditor: str = ""
     manningrauheit_bef: float = 0.02
     manningrauheit_dur: float = 0.10
-    project_template: str = ""
-    qkan_db_update: bool = True
+    runoffmodeltype_choice: enums.RunOffModelType = enums.RunOffModelType.SPEICHERKASKADE
     runoffparamsfunctions: RunoffParams = RunoffParams()
-    runoffparamstype_choice: str = "Maniak"  # TODO: Enum? ['iwth', 'dyna', 'Maniak']
-    # TODO: Enum ['Speicherkaskade', 'Fliesszeiten', 'Schwerpunktlaufzeit']
-    runoffmodeltype_choice: str = "Speicherkaskade"
-    update_node_type: bool = True
-    zoom_all: bool = True
+    runoffparamstype_choice: enums.RunOffParamsType = enums.RunOffParamsType.MANIAK
 
 
 class Config(ClassObject):
     autokorrektur: bool = True
     epsg: int = 25832
     fangradius: float = 0.1
+    max_loops: int = 1000
     mindestflaeche: float = 0.5
     mit_verschneidung: bool = True
-    max_loops: int = 1000
-    project_file: str = ""
-    teilgebiete: list = []
+    # ---
+    adapt: AdaptConfig = AdaptConfig()
+    check_export: CheckExport = CheckExport()
+    choices: ChoiceConfig = ChoiceConfig()
     database: DatabaseConfig = DatabaseConfig()
     dyna: DynaConfig = DynaConfig()
     he: HEConfig = HEConfig()
     linkflaechen: LinkFlConfig = LinkFlConfig()
+    project: ProjectConfig = ProjectConfig()
     tools: ToolsConfig = ToolsConfig()
-    check_export: TempStorage = TempStorage()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

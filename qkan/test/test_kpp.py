@@ -3,6 +3,8 @@ from zipfile import ZipFile
 # noinspection PyUnresolvedReferences
 from qgis.core import QgsProject
 from qgis.testing import unittest
+
+from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.exportdyna.k_qkkp import exportKanaldaten
 from qkan.importdyna.import_from_dyna import importKanaldaten
@@ -63,8 +65,8 @@ class TestKpp(QgisTest):
             dynafile=dynafile,
             template_dyna=template_dyna,
             dbQK=db,
-            dynabef_choice="flaechen",
-            dynaprof_choice="profilname",
+            dynabef_choice=enums.BefChoice.FLAECHEN,
+            dynaprof_choice=enums.ProfChoice.PROFILNAME,
             liste_teilgebiete="[]",
             profile_ergaenzen=True,
             autonum_dyna=True,

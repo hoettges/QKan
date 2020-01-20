@@ -26,7 +26,8 @@ from qgis.core import Qgis, QgsProject
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 from qgis.utils import iface, pluginDirectory
-from qkan import QKan
+
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
     fehlermeldung,
@@ -281,7 +282,7 @@ class ExportToKP:
             )
             return False
 
-        self.dlg.tf_KP_dest.setText(QKan.config.dyna.dynafile)
+        self.dlg.tf_KP_dest.setText(QKan.config.dyna.file)
         self.dlg.tf_KP_template.setText(QKan.config.dyna.template)
 
         datenbanktyp = QKan.config.database.type  # Es gibt noch keine Wahlmöglichkeit
@@ -345,7 +346,7 @@ class ExportToKP:
             # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
             # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-            liste_teilgebiete = QKan.config.teilgebiete
+            liste_teilgebiete = QKan.config.choices.teilgebiete
 
             # Abfragen der Tabelle teilgebiete nach Teilgebieten
             sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -391,17 +392,17 @@ class ExportToKP:
 
         # Optionen zur Berechnung der befestigten Flächen
         dynabef_choice = QKan.config.dyna.bef_choice
-        if dynabef_choice == u"flaechen":
+        if dynabef_choice == enums.BefChoice.FLAECHEN:
             self.dlg.rb_flaechen.setChecked(True)
-        elif dynabef_choice == u"tezg":
+        elif dynabef_choice == enums.BefChoice.TEZG:
             self.dlg.rb_tezg.setChecked(True)
 
         # Optionen zur Zuordnung des Profilschlüssels
         dynaprof_choice = QKan.config.dyna.prof_choice
 
-        if dynaprof_choice == u"profilname":
+        if dynaprof_choice == enums.ProfChoice.PROFILNAME:
             self.dlg.rb_profnam.setChecked(True)
-        elif dynaprof_choice == u"profilkey":
+        elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
             self.dlg.rb_profkey.setChecked(True)
 
         # Formular anzeigen
@@ -422,9 +423,9 @@ class ExportToKP:
             autonummerierung_dyna: bool = self.dlg.cb_autonummerierung_dyna.isChecked()
             mit_verschneidung: bool = self.dlg.cb_regardTezg.isChecked()
             if self.dlg.rb_flaechen.isChecked():
-                dynabef_choice = u"flaechen"
+                dynabef_choice = enums.BefChoice.FLAECHEN
             elif self.dlg.rb_tezg.isChecked():
-                dynabef_choice = u"tezg"
+                dynabef_choice = enums.BefChoice.TEZG
             else:
                 fehlermeldung(
                     u"exportdyna.application.run",
@@ -433,9 +434,9 @@ class ExportToKP:
                     ),
                 )
             if self.dlg.rb_profnam.isChecked():
-                dynaprof_choice = u"profilname"
+                dynaprof_choice = enums.ProfChoice.PROFILNAME
             elif self.dlg.rb_profkey.isChecked():
-                dynaprof_choice = u"profilkey"
+                dynaprof_choice = enums.ProfChoice.PROFILKEY
             else:
                 fehlermeldung(
                     u"exportdyna.application.run",
@@ -445,19 +446,18 @@ class ExportToKP:
                 )
 
             # Konfigurationsdaten schreiben
+            QKan.config.choices.teilgebiete = liste_teilgebiete
+            QKan.config.database.qkan = database_QKan
             QKan.config.dyna.autonummerierung = autonummerierung_dyna
             QKan.config.dyna.bef_choice = dynabef_choice
-            QKan.config.dyna.dynafile = dynafile
+            QKan.config.dyna.file = dynafile
             QKan.config.dyna.prof_choice = dynaprof_choice
             QKan.config.dyna.profile_ergaenzen = profile_ergaenzen
             QKan.config.dyna.template = template_dyna
-            QKan.config.database.qkan = database_QKan
             QKan.config.fangradius = fangradius
             QKan.config.max_loops = max_loops
             QKan.config.mindestflaeche = mindestflaeche
             QKan.config.mit_verschneidung = mit_verschneidung
-            QKan.config.teilgebiete = liste_teilgebiete
-
 
             QKan.config.save()
 

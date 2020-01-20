@@ -25,6 +25,8 @@ import os
 
 from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
+
+from qkan import enums
 from qkan.database.qkan_utils import fehlermeldung, fortschritt, meldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
@@ -137,8 +139,8 @@ def write12(
     dynakeys_ks,
     mindestflaeche,
     mit_verschneidung,
-    dynaprof_choice,
-    dynabef_choice,
+    dynaprof_choice: enums.ProfChoice,
+    dynabef_choice: enums.BefChoice,
     dynaprof_nam,
     dynaprof_key,
     ausw_and,
@@ -166,11 +168,11 @@ def write12(
 
     :dynaprof_choice:       Option, wie die Zuordnung der Querprofile aus QKan zu den in der DYNA-Datei
                             vorhandenen erfolgt: Über den gemeinsamen Profilnamen oder den gemeinsamen Profilkey
-    :type dbQK:             String
+    :type dynaprof_choice:  enums.ProfChoice
 
     :dynabef_choice:        Option für die Haltungsgesamtfläche: Bestimmung als Summe der Einzelflächen
                             oder über das tezg-Flächenobjekt
-    :type dbQK:             String
+    :type dynabef_choice:   enums.BefChoice
 
     :dynaprof_nam:          Liste der Querprofilnamen aus der Vorlage-DYNA-Datei
     :type dbQK:             List
@@ -191,10 +193,10 @@ def write12(
     # ... benötigt keine Modifikation der Abfrage
 
     # Optionen zur Zuordnung des Profilschlüssels
-    if dynaprof_choice == u"profilname":
+    if dynaprof_choice == enums.ProfChoice.PROFILNAME:
         sql_prof1 = u"h.profilnam AS profilid"
         sql_prof2 = ""
-    elif dynaprof_choice == u"profilkey":
+    elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
         sql_prof1 = u"p.kp_key AS profilid"
         sql_prof2 = """
         INNER JOIN profile as p
@@ -403,7 +405,7 @@ def write12(
             distbef_t = "       0"
             distdur_t = "       0"
         else:
-            if dynabef_choice == u"flaechen":
+            if dynabef_choice == enums.BefChoice.FLAECHEN:
                 if flges != 0:
                     befgrad = flbef / flges * 100.0
                     befgrad = max(
@@ -411,7 +413,7 @@ def write12(
                     )  # runden auf ganze Werte und Begrenzung auf 0 .. 99
                     neigkl = fneigkl(neigung)
 
-            elif dynabef_choice == u"tezg":
+            elif dynabef_choice == enums.BefChoice.TEZG:
                 if fltezg == 0:
                     flges = 0
                 else:
@@ -442,7 +444,7 @@ def write12(
                 distdur_t = formf(distdur, 8)
 
         # Auswahl dynaprof_choice
-        if dynaprof_choice == u"profilname":
+        if dynaprof_choice == enums.ProfChoice.PROFILNAME:
             try:
                 profilkey = dynaprof_key[dynaprof_nam.index(profilid)]
             except BaseException as err:
@@ -452,7 +454,7 @@ def write12(
                 )
                 logger.debug("dynprof_nam: {}".format(", ".join(dynaprof_nam)))
 
-        elif dynaprof_choice == u"profilkey":
+        elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
             profilkey = profilid
 
         try:
@@ -761,8 +763,8 @@ def exportKanaldaten(
     dynafile,
     template_dyna,
     dbQK,
-    dynabef_choice,
-    dynaprof_choice,
+    dynabef_choice: enums.BefChoice,
+    dynaprof_choice: enums.ProfChoice,
     liste_teilgebiete,
     profile_ergaenzen,
     autonum_dyna,
@@ -1205,7 +1207,7 @@ def exportKanaldaten(
 
     fehler = 0
 
-    if dynaprof_choice == u"profilname":
+    if dynaprof_choice == enums.ProfChoice.PROFILNAME:
         # Die DYNA-Schlüssel werden entsprechend der DYNA-Vorlagedatei vergeben. Daher braucht
         # nur das Vorhandensein der Profilnamen geprüft zu werden.
         sql = u"""SELECT profilnam
@@ -1249,7 +1251,7 @@ def exportKanaldaten(
             del dbQK
             return False
 
-    elif dynaprof_choice == u"profilkey":
+    elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
         sql = u"""SELECT p.kp_key, h.profilnam
                 FROM haltungen AS h
                 LEFT JOIN profile AS p

@@ -4,11 +4,13 @@ import json
 import logging
 import os
 import tempfile
+import typing
 from pathlib import Path
 
+import qgis
 from PyQt5.QtCore import QCoreApplication, QSettings, QTranslator
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QMenu
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QAction, QMenu
 
 from .config import Config
 
@@ -20,9 +22,9 @@ def classFactory(iface):  # pylint: disable=invalid-name
 
 class QKan:
     instance = None  # type: QKan
-    config = None  # type: Config
+    config: typing.Optional[Config] = None
 
-    def __init__(self, iface):
+    def __init__(self, iface: qgis.gui.QgisInterface):
         QKan.instance = self
 
         # Init logging
@@ -158,12 +160,12 @@ class QKan:
         for plugin in self.plugins:
             plugin.unload()
 
-    def register(self, instance):
+    def register(self, instance: typing.ClassVar):
         self.instances.append(instance)
 
         self.plugins += instance.plugins
 
-    def unregister(self, instance):
+    def unregister(self, instance: typing.ClassVar):
         self.instances.remove(instance)
 
         for plugin in instance.plugins:
@@ -171,9 +173,9 @@ class QKan:
 
     def add_action(
         self,
-        icon_path,
-        text,
-        callback,
+        icon_path: str,
+        text: str,
+        callback: typing.Callable,
         enabled_flag=True,
         add_to_menu=True,
         add_to_toolbar=True,

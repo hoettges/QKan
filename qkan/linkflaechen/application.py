@@ -28,7 +28,8 @@ from qgis.core import Qgis, QgsDataSourceUri, QgsProject, QgsVectorLayer
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QListWidgetItem, QTableWidgetItem
 from qgis.utils import iface
-from qkan import QKan
+
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
     fehlermeldung,
@@ -602,7 +603,7 @@ class LinkFl:
             if elem[0] is not None:
                 self.dlg_cl.lw_flaechen_abflussparam.addItem(QListWidgetItem(elem[0]))
                 try:
-                    if elem[0] in QKan.config.linkflaechen.flaechen_abflussparam:
+                    if elem[0] in QKan.config.choices.flaechen_abflussparam:
                         self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(ielem)
                         self.dlg_cl.cb_selFlActive.setChecked(
                             True
@@ -622,7 +623,7 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_cl.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
-                if elem[0] in QKan.config.linkflaechen.hal_entw:
+                if elem[0] in QKan.config.choices.hal_entw:
                     self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
                     self.dlg_cl.cb_selHalActive.setChecked(
                         True
@@ -639,7 +640,7 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_cl.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                if elem[0] in QKan.config.teilgebiete:
+                if elem[0] in QKan.config.choices.teilgebiete:
                     self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
                     self.dlg_cl.cb_selTgbActive.setChecked(
                         True
@@ -666,6 +667,7 @@ class LinkFl:
         self.dlg_cl.tf_suchradius.setText(str(QKan.config.linkflaechen.suchradius))
 
         # Mindestflächengröße
+        # TODO: Never written to, only read from config
         mindestflaeche = QKan.config.mindestflaeche
 
         # Fangradius für Anfang der Anbindungslinie
@@ -675,9 +677,9 @@ class LinkFl:
         # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
         bezug_abstand = QKan.config.linkflaechen.bezug_abstand
 
-        if bezug_abstand == "kante":
+        if bezug_abstand == enums.BezugAbstand.KANTE:
             self.dlg_cl.rb_abstandkante.setChecked(True)
-        elif bezug_abstand == "mittelpunkt":
+        elif bezug_abstand == enums.BezugAbstand.MITTELPUNKT:
             self.dlg_cl.rb_abstandmittelpunkt.setChecked(True)
         else:
             fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
@@ -706,9 +708,9 @@ class LinkFl:
             liste_teilgebiete: list = self.listselecteditems(self.dlg_cl.lw_teilgebiete)
             suchradius: int = int(self.dlg_cl.tf_suchradius.text())
             if self.dlg_cl.rb_abstandkante.isChecked():
-                bezug_abstand = "kante"
+                bezug_abstand = enums.BezugAbstand.KANTE
             elif self.dlg_cl.rb_abstandmittelpunkt.isChecked():
-                bezug_abstand = "mittelpunkt"
+                bezug_abstand = enums.BezugAbstand.MITTELPUNKT
             else:
                 fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
                 return False
@@ -725,17 +727,16 @@ class LinkFl:
             # self.run_createlinefl()
 
             # Konfigurationsdaten schreiben
-
-            QKan.config.linkflaechen.suchradius = suchradius
-            QKan.config.fangradius = fangradius
-            QKan.config.mindestflaeche = mindestflaeche
-            QKan.config.linkflaechen.bezug_abstand = bezug_abstand
-            QKan.config.linkflaechen.hal_entw = liste_hal_entw
-            QKan.config.linkflaechen.flaechen_abflussparam = liste_flaechen_abflussparam
-            QKan.config.teilgebiete = liste_teilgebiete
-            QKan.config.epsg = epsg
             QKan.config.autokorrektur = autokorrektur
+            QKan.config.choices.flaechen_abflussparam = liste_flaechen_abflussparam
+            QKan.config.choices.hal_entw = liste_hal_entw
+            QKan.config.choices.teilgebiete = liste_teilgebiete
+            QKan.config.epsg = epsg
+            QKan.config.fangradius = fangradius
+            QKan.config.linkflaechen.bezug_abstand = bezug_abstand
             QKan.config.linkflaechen.links_in_tezg = links_in_tezg
+            QKan.config.linkflaechen.suchradius = suchradius
+            QKan.config.mindestflaeche = mindestflaeche
             QKan.config.mit_verschneidung = mit_verschneidung
 
             QKan.config.save()
@@ -841,7 +842,7 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_sw.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
-                if elem[0] in QKan.config.linkflaechen.hal_entw:
+                if elem[0] in QKan.config.choices.hal_entw:
                     self.dlg_sw.lw_hal_entw.setCurrentRow(ielem)
                     self.dlg_sw.cb_selHalActive.setChecked(
                         True
@@ -858,7 +859,7 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_sw.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                if elem[0] in QKan.config.teilgebiete:
+                if elem[0] in QKan.config.choices.teilgebiete:
                     self.dlg_sw.lw_teilgebiete.setCurrentRow(ielem)
                     self.dlg_sw.cb_selTgbActive.setChecked(
                         True
@@ -898,10 +899,10 @@ class LinkFl:
 
             # Konfigurationsdaten schreiben
 
-            QKan.config.linkflaechen.suchradius = suchradius
-            QKan.config.linkflaechen.liste_hal_entw = liste_hal_entw
-            QKan.config.teilgebiete = liste_teilgebiete
+            QKan.config.choices.hal_entw = liste_hal_entw
+            QKan.config.choices.teilgebiete = liste_teilgebiete
             QKan.config.epsg = epsg
+            QKan.config.linkflaechen.suchradius = suchradius
             QKan.config.save()
 
             # Start der Verarbeitung
@@ -1005,15 +1006,15 @@ class LinkFl:
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
                 self.dlg_at.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                if elem[0] in QKan.config.teilgebiete:
+                if elem[0] in QKan.config.choices.teilgebiete:
                     self.dlg_at.lw_teilgebiete.setCurrentRow(ielem)
 
         # Festlegung, ob die Auswahl nur Objekte innerhalb oder aller überlappenden berücksichtigt
         auswahltyp = QKan.config.linkflaechen.auswahltyp
-        if auswahltyp == u"within":
+        if auswahltyp == enums.AuswahlTyp.WITHIN:
             self.dlg_at.rb_within.setChecked(True)
             self.enable_bufferradius(True)
-        elif auswahltyp == u"overlaps":
+        elif auswahltyp == enums.AuswahlTyp.OVERLAPS:
             self.dlg_at.rb_overlaps.setChecked(True)
             self.enable_bufferradius(False)
         else:
@@ -1035,9 +1036,9 @@ class LinkFl:
 
             liste_teilgebiete: list = self.listselecteditems(self.dlg_at.lw_teilgebiete)
             if self.dlg_at.rb_within.isChecked():
-                auswahltyp = u"within"
+                auswahltyp = enums.AuswahlTyp.WITHIN
             elif self.dlg_at.rb_overlaps.isChecked():
-                auswahltyp = u"overlaps"
+                auswahltyp = enums.AuswahlTyp.OVERLAPS
             else:
                 fehlermeldung(u"Fehler im Programmcode (4)", u"Nicht definierte Option")
                 return False
@@ -1048,11 +1049,11 @@ class LinkFl:
 
             # config schreiben
             #
-            QKan.config.teilgebiete = liste_teilgebiete
-            QKan.config.linkflaechen.auswahltyp = auswahltyp
-            QKan.config.epsg = epsg
-            QKan.config.linkflaechen.bufferradius = bufferradius
             QKan.config.autokorrektur = autokorrektur
+            QKan.config.choices.teilgebiete = liste_teilgebiete
+            QKan.config.epsg = epsg
+            QKan.config.linkflaechen.auswahltyp = auswahltyp
+            QKan.config.linkflaechen.bufferradius = bufferradius
 
             QKan.config.save()
 

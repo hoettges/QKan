@@ -34,6 +34,8 @@ from qgis.core import (
     QgsVectorLayer,
 )
 from qgis.utils import iface, pluginDirectory
+
+from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_database import qgsActualVersion, qgsVersion
 from qkan.database.qkan_utils import (
@@ -68,7 +70,7 @@ def layersadapt(
     aktualisieren_Schachttypen,
     zoom_alles,
     fehlende_layer_ergaenzen,
-    anpassen_auswahl,
+    anpassen_auswahl: enums.SelectedLayers,
     dbtyp="spatialite",
 ):
     """Anpassen von Projektlayern an den QKan-Standard
@@ -108,7 +110,7 @@ def layersadapt(
     :type fehlende_layer_ergaenzen:                 Boolean
 
     :anpassen_auswahl:                              Wahl der anzupassenden Layer
-    :type anpassen_auswahl:                         str
+    :type anpassen_auswahl:                         enums.SelectedLayers
 
     :dbtyp:                                         Typ der Datenbank (spatialite, postgis)
     :type dbtyp:                                    string
@@ -247,7 +249,7 @@ def layersadapt(
     logger.debug("Refliste Layer-Ids: \n{}".format(layerIdList))
 
     # Liste der zu bearbeitenden Layer
-    if anpassen_auswahl == "auswahl_anpassen":
+    if anpassen_auswahl == enums.SelectedLayers.SELECTED:
         # Im Formular wurde "nur ausgewählte Layer" angeklickt
 
         selectedLayers = iface.layerTreeCanvasBridge().rootGroup().checkedLayers()

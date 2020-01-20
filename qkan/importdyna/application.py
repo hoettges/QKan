@@ -166,13 +166,13 @@ class ImportFromDyna:
         """Run method that performs all the real work"""
 
         self.dlg.tf_qkanDB.setText(QKan.config.database.qkan)
-        self.dlg.tf_dynaFile.setText(QKan.config.dyna.dynafile)
+        self.dlg.tf_dynaFile.setText(QKan.config.dyna.file)
 
         self.dlg.qsw_epsg.setCrs(
             QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg)
         )
 
-        self.dlg.tf_projectFile.setText(QKan.config.project_file)
+        self.dlg.tf_projectFile.setText(QKan.config.project.file)
 
         # show the dialog
         self.dlg.show()
@@ -187,10 +187,10 @@ class ImportFromDyna:
             epsg: int = int(self.dlg.qsw_epsg.crs().postgisSrid())
 
             # Konfigurationsdaten schreiben
-            QKan.config.epsg = self.epsg
             QKan.config.database.qkan = database_qkan
-            QKan.config.dyna.dynafile = dynafile
-            QKan.config.project_file = projectfile
+            QKan.config.dyna.file = dynafile
+            QKan.config.epsg = epsg
+            QKan.config.project.file = projectfile
 
             QKan.config.save()
 
@@ -207,11 +207,11 @@ class ImportFromDyna:
                     dynafile=dynafile,
                     database_QKan=database_qkan,
                     projectfile=projectfile,
-                    epsg=self.epsg,
+                    epsg=epsg,
                     dbtyp="SpatiaLite",
                 )
             )
 
             importKanaldaten(
-                dynafile, database_qkan, projectfile, self.epsg, "SpatiaLite"
+                dynafile, database_qkan, projectfile, epsg, "SpatiaLite"
             )

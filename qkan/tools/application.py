@@ -34,7 +34,8 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 from qgis.utils import pluginDirectory
-from qkan import QKan
+
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
     fehlermeldung,
@@ -310,9 +311,9 @@ class QKanTools:
                 project_template: str = self.dlgpr.tf_projectTemplate.text()
 
             # Konfigurationsdaten schreiben -----------------------------
-            QKan.config.tools.project_template = project_template
             QKan.config.database.qkan = self.database_QKan
-            QKan.config.project_file = project_file
+            QKan.config.project.file = project_file
+            QKan.config.project.template = project_template
             QKan.config.tools.apply_qkan_template = self.apply_qkan_template
 
             QKan.config.save()
@@ -449,11 +450,11 @@ class QKanTools:
                 )
             self.epsg: int = int(self.dlgop.qsw_epsg.crs().postgisSrid())
 
-            QKan.config.fangradius = float(fangradius)
-            QKan.config.mindestflaeche = float(mindestflaeche)
-            QKan.config.max_loops = int(max_loops)
             QKan.config.database.type = datenbanktyp
             QKan.config.epsg = self.epsg
+            QKan.config.fangradius = fangradius
+            QKan.config.max_loops = max_loops
+            QKan.config.mindestflaeche = mindestflaeche
             QKan.config.tools.logeditor = self.logeditor
             QKan.config.save()
 
@@ -631,7 +632,7 @@ class QKanTools:
         # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
         liste_teilgebiete = []
         if "liste_teilgebiete" in QKan.config:
-            liste_teilgebiete = QKan.config.teilgebiete
+            liste_teilgebiete = QKan.config.choices.teilgebiete
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = '''SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'''
@@ -656,7 +657,7 @@ class QKanTools:
         # Anlegen der Tabelle zur Auswahl der Abflussparameter
 
         # Zunächst wird die Liste der beim letzten Mal gewählten Abflussparameter aus config gelesen
-        liste_abflussparameter = QKan.config.tools.abflussparameter
+        liste_abflussparameter = QKan.config.choices.abflussparameter
 
         # Abfragen der Tabelle abflussparameter nach Abflussparametern
         sql = '''SELECT "apnam" FROM "abflussparameter" GROUP BY "apnam"'''
@@ -687,20 +688,20 @@ class QKanTools:
         # Optionen zur Berechnung des Oberflächenabflusses
         runoffparamstype_choice = QKan.config.tools.runoffparamstype_choice
 
-        if runoffparamstype_choice == u"itwh":
+        if runoffparamstype_choice == enums.RunOffParamsType.ITWH:
             self.dlgro.rb_itwh.setChecked(True)
-        elif runoffparamstype_choice == u"dyna":
+        elif runoffparamstype_choice == enums.RunOffParamsType.DYNA:
             self.dlgro.rb_dyna.setChecked(True)
-        elif runoffparamstype_choice == u"Maniak":
+        elif runoffparamstype_choice == enums.RunOffParamsType.MANIAK:
             self.dlgro.rb_maniak.setChecked(True)
 
         runoffmodeltype_choice = QKan.config.tools.runoffmodeltype_choice
 
-        if runoffmodeltype_choice == u"Speicherkaskade":
+        if runoffmodeltype_choice == enums.RunOffModelType.SPEICHERKASKADE:
             self.dlgro.rb_kaskade.setChecked(True)
-        elif runoffmodeltype_choice == u"Fliesszeiten":
+        elif runoffmodeltype_choice == enums.RunOffModelType.FLIESSZEITEN:
             self.dlgro.rb_fliesszeiten.setChecked(True)
-        elif runoffmodeltype_choice == u"Schwerpunktlaufzeit":
+        elif runoffmodeltype_choice == enums.RunOffModelType.SCHWERPUNKTLAUFZEIT:
             self.dlgro.rb_schwerpunktlaufzeit.setChecked(True)
 
         # Status Radiobuttons initialisieren
@@ -725,34 +726,34 @@ class QKanTools:
             # Eingaben aus Formular übernehmen
             database_QKan: str = self.dlgro.tf_QKanDB.text()
             if self.dlgro.rb_itwh.isChecked():
-                runoffparamstype_choice = u"itwh"
+                runoffparamstype_choice = enums.RunOffParamsType.ITWH
             elif self.dlgro.rb_dyna.isChecked():
-                runoffparamstype_choice = u"dyna"
+                runoffparamstype_choice = enums.RunOffParamsType.DYNA
             elif self.dlgro.rb_maniak.isChecked():
-                runoffparamstype_choice = u"Maniak"
+                runoffparamstype_choice = enums.RunOffParamsType.MANIAK
             else:
                 fehlermeldung(
                     u"tools.runoffparams.run_runoffparams",
                     u"Fehlerhafte Option: runoffparamstype_choice",
                 )
             if self.dlgro.rb_kaskade.isChecked():
-                runoffmodeltype_choice = u"Speicherkaskade"
+                runoffmodeltype_choice = enums.RunOffModelType.SPEICHERKASKADE
             elif self.dlgro.rb_fliesszeiten.isChecked():
-                runoffmodeltype_choice = u"Fliesszeiten"
+                runoffmodeltype_choice = enums.RunOffModelType.FLIESSZEITEN
             elif self.dlgro.rb_schwerpunktlaufzeit.isChecked():
-                runoffmodeltype_choice = u"Schwerpunktlaufzeit"
+                runoffmodeltype_choice = enums.RunOffModelType.SCHWERPUNKTLAUFZEIT
             else:
                 fehlermeldung(
                     u"tools.runoffparams.run_runoffparams",
-                    u"Fehlerhafte Option: runoffmodelltype_choice",
+                    u"Fehlerhafte Option: runoffmodeltype_choice",
                 )
 
             # Konfigurationsdaten schreiben
+            QKan.config.choices.abflussparameter = liste_abflussparameter
+            QKan.config.choices.teilgebiete = liste_teilgebiete
             QKan.config.database.qkan = database_QKan
-            QKan.config.teilgebiete = liste_teilgebiete
-            QKan.config.tools.abflussparameter = liste_abflussparameter
-            QKan.config.tools.runoffparamstype_choice = runoffparamstype_choice
             QKan.config.tools.runoffmodeltype_choice = runoffmodeltype_choice
+            QKan.config.tools.runoffparamstype_choice = runoffparamstype_choice
 
             QKan.config.save()
 
@@ -940,45 +941,45 @@ class QKanTools:
         # Groupbox "Layer anpassen" ---------------------------------------------------------------------------
 
         # Checkbox "Datenbankanbindung"
-        adapt_db = QKan.config.tools.adapt_db
+        adapt_db = QKan.config.adapt.database
         self.dlgla.cb_adaptDB.setChecked(adapt_db)
 
         # Checkbox "Projektionssystem anpassen"
-        adapt_kbs = QKan.config.tools.adapt_kbs
+        adapt_kbs = QKan.config.adapt.kbs
         self.dlgla.cb_adaptKBS.setChecked(adapt_kbs)
 
         # Checkbox "Wertbeziehungungen in Tabellen"
-        adapt_table_lookups = QKan.config.tools.adapt_table_lookups
+        adapt_table_lookups = QKan.config.adapt.table_lookups
         self.dlgla.cb_adaptTableLookups.setChecked(adapt_table_lookups)
 
         # Checkbox "Formularanbindungen"
-        adapt_forms = QKan.config.tools.adapt_forms
+        adapt_forms = QKan.config.adapt.forms
         self.dlgla.cb_adaptForms.setChecked(adapt_forms)
 
         # Groupbox "QKan-Layer" ---------------------------------------------------------------------------
 
         # Optionen zur Berücksichtigung der vorhandenen Tabellen
-        adapt_selected = QKan.config.tools.adapt_selected
-        if adapt_selected == "auswahl_anpassen":
+        adapt_selected = QKan.config.adapt.selected_layers
+        if adapt_selected == enums.SelectedLayers.SELECTED:
             self.dlgla.rb_adaptSelected.setChecked(True)
-        elif adapt_selected == "alle_anpassen":
+        elif adapt_selected == enums.SelectedLayers.ALL:
             self.dlgla.rb_adaptAll.setChecked(True)
         else:
             fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
             return False
 
         # Checkbox: Fehlende QKan-Layer ergänzen
-        fehlende_layer_ergaenzen = QKan.config.tools.fehlende_layer_ergaenzen
+        fehlende_layer_ergaenzen = QKan.config.adapt.add_missing_layers
         self.dlgla.cb_completeLayers.setChecked(fehlende_layer_ergaenzen)
 
         # Weitere Formularfelder ---------------------------------------------------------------------------
 
         # Checkbox: Knotentype per Abfrage ermitteln und in "schaechte.knotentyp" eintragen
-        update_node_type = QKan.config.tools.update_node_type
+        update_node_type = QKan.config.adapt.update_node_type
         self.dlgla.cb_updateNodetype.setChecked(update_node_type)
 
         # Checkbox: Nach Aktualisierung auf alle Layer zoomen
-        self.dlgla.cb_zoomAll.setChecked(QKan.config.tools.zoom_all)
+        self.dlgla.cb_zoomAll.setChecked(QKan.config.adapt.zoom_all)
 
         # Checkbox: QKan-Standard anwenden
         self.apply_qkan_template = QKan.config.tools.apply_qkan_template
@@ -1031,25 +1032,25 @@ class QKanTools:
             # Optionen zur Berücksichtigung der vorhandenen Tabellen
             fehlende_layer_ergaenzen: bool = self.dlgla.cb_completeLayers.isChecked()
             if self.dlgla.rb_adaptAll.isChecked() or self.qkanDBUpdate:
-                adapt_selected = "alle_anpassen"
+                adapt_selected = enums.SelectedLayers.ALL
             elif self.dlgla.rb_adaptSelected.isChecked():
-                adapt_selected = "auswahl_anpassen"
+                adapt_selected = enums.SelectedLayers.SELECTED
             else:
                 fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
                 return False
 
             # Konfigurationsdaten schreiben -----------------------------------------------------------
 
+            QKan.config.adapt.add_missing_layers = fehlende_layer_ergaenzen
+            QKan.config.adapt.database = adapt_db
+            QKan.config.adapt.forms = adapt_forms
+            QKan.config.adapt.kbs = adapt_kbs
+            QKan.config.adapt.qkan_db_update = self.qkanDBUpdate
+            QKan.config.adapt.selected_layers = adapt_selected
+            QKan.config.adapt.table_lookups = adapt_table_lookups
+            QKan.config.adapt.update_node_type = update_node_type
+            QKan.config.adapt.zoom_all = zoom_alles
             QKan.config.database.qkan = self.database_QKan
-            QKan.config.tools.adapt_db = adapt_db
-            QKan.config.tools.adapt_table_lookups = adapt_table_lookups
-            QKan.config.tools.adapt_forms = adapt_forms
-            QKan.config.tools.adapt_kbs = adapt_kbs
-            QKan.config.tools.fehlende_layer_ergaenzen = fehlende_layer_ergaenzen
-            QKan.config.tools.adapt_selected = adapt_selected
-            QKan.config.tools.qkan_db_update = self.qkanDBUpdate
-            QKan.config.tools.update_node_type = update_node_type
-            QKan.config.tools.zoom_all = zoom_alles
             QKan.config.tools.apply_qkan_template = self.apply_qkan_template
             QKan.config.save()
 

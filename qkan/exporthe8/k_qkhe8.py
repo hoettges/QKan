@@ -23,7 +23,9 @@ import logging
 import os
 import shutil
 import time
+import typing
 
+import qgis
 from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
 from qkan.database.dbfunc import DBConnection

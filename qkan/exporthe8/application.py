@@ -390,10 +390,10 @@ class ExportToHE8:
         self.dlg.tf_QKanDB.setText(QKan.config.database.qkan)
         self.dlg.pb_selectQKanDB.clicked.connect(self.selectFile_QKanDB)
 
-        self.dlg.tf_heDB_dest.setText(QKan.config.database.he)
+        self.dlg.tf_heDB_dest.setText(QKan.config.he.database)
         self.dlg.pb_selectHeDB_dest.clicked.connect(self.selectFile_HeDB_dest)
 
-        self.dlg.tf_heDB_template.setText(QKan.config.database.he_template)
+        self.dlg.tf_heDB_template.setText(QKan.config.he.template)
         self.dlg.pb_selectHeDB_template.clicked.connect(self.selectFile_HeDB_template)
         self.dlg.pb_selectHeDB_emptytemplate.clicked.connect(
             self.selectFile_HeDB_emptytemplate
@@ -566,7 +566,7 @@ class ExportToHE8:
         # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
         # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-        liste_teilgebiete = QKan.config.teilgebiete
+        liste_teilgebiete = QKan.config.choices.teilgebiete
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -696,15 +696,15 @@ class ExportToHE8:
             ] = self.dlg.cb_combine_einleitdirekt.isChecked()
 
             # Konfigurationsdaten schreiben
-            QKan.config.database.he = database_HE
-            QKan.config.database.he_template = dbtemplate_HE
+            QKan.config.autokorrektur = autokorrektur
+            QKan.config.choices.teilgebiete = liste_teilgebiete
             QKan.config.database.qkan = database_QKan
             QKan.config.database.type = datenbanktyp
-            QKan.config.teilgebiete = liste_teilgebiete
-            QKan.config.autokorrektur = autokorrektur
             QKan.config.fangradius = fangradius
-            QKan.config.mit_verschneidung = mit_verschneidung
+            QKan.config.he.database = database_HE
+            QKan.config.he.template = dbtemplate_HE
             QKan.config.mindestflaeche = mindestflaeche
+            QKan.config.mit_verschneidung = mit_verschneidung
 
             for el in check_export:
                 setattr(QKan.config.check_export, el, check_export[el])

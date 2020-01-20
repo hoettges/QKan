@@ -32,6 +32,8 @@ import logging
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.utils import iface
+
+from qkan import enums
 from qkan.database.qkan_utils import check_flaechenbilanz, checknames, fehlermeldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
@@ -56,7 +58,7 @@ def createlinkfl(
     suchradius=50,
     mindestflaeche=0.5,
     fangradius=0.1,
-    bezug_abstand=u"kante",
+    bezug_abstand=enums.BezugAbstand.KANTE,
     epsg=u"25832",
     dbtyp=u"SpatiaLite",
 ):
@@ -377,7 +379,7 @@ def createlinkfl(
             u"', '".join(liste_teilgebiete)
         )
 
-    if bezug_abstand == "mittelpunkt":
+    if bezug_abstand == enums.BezugAbstand.MITTELPUNKT:
         bezug = u"lf.geom"
     else:
         bezug = u"PointonSurface(lf.geom)"
@@ -743,7 +745,7 @@ def assigntgeb(
 
     for table, geom in tablist:
 
-        if auswahltyp == "within":
+        if auswahltyp == enums.AuswahlTyp.WITHIN:
             if bufferradius == "0" or bufferradius.strip == "":
                 sql = u"""
                 UPDATE {table} SET teilgebiet = 
@@ -786,7 +788,7 @@ def assigntgeb(
                     bufferradius=bufferradius,
                     auswahl_1=auswahl_1,
                 )
-        elif auswahltyp == "overlaps":
+        elif auswahltyp == enums.AuswahlTyp.OVERLAPS:
             sql = u"""
             UPDATE {table} SET teilgebiet = 
             (	SELECT teilgebiete.tgnam
@@ -808,7 +810,7 @@ def assigntgeb(
             fehlermeldung(
                 u"Programmfehler",
                 u"k_link.assigntgeb: auswahltyp hat unbekannten Fall {}".format(
-                    str(auswahltyp)
+                    repr(auswahltyp)
                 ),
             )
             del dbQK
