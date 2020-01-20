@@ -168,7 +168,6 @@ class ImportFromDyna:
         self.dlg.tf_qkanDB.setText(QKan.config.database.qkan)
         self.dlg.tf_dynaFile.setText(QKan.config.dyna.dynafile)
 
-        # logger.debug('QKan.importdyna.__init__: id(QKan): {0:}\n\t\tepsg: {1:}'.format(id(QKan), self.epsg))
         self.dlg.qsw_epsg.setCrs(
             QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg)
         )
@@ -182,10 +181,10 @@ class ImportFromDyna:
         # See if OK was pressed
         if result:
             # Namen der Datenbanken uebernehmen
-            dynafile = self.dlg.tf_dynaFile.text()
-            database_qkan = self.dlg.tf_qkanDB.text()
-            projectfile = self.dlg.tf_projectFile.text()
-            self.epsg = str(self.dlg.qsw_epsg.crs().postgisSrid())
+            dynafile: str = self.dlg.tf_dynaFile.text()
+            database_qkan: str = self.dlg.tf_qkanDB.text()
+            projectfile: str = self.dlg.tf_projectFile.text()
+            epsg: int = int(self.dlg.qsw_epsg.crs().postgisSrid())
 
             # Konfigurationsdaten schreiben
             QKan.config.epsg = self.epsg

@@ -453,21 +453,16 @@ class LinkFl:
 
     # -------------------------------------------------------------------------
     # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
-    @staticmethod
-    def listselecteditems(listWidget):
+    def listselecteditems(self, listWidget):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
         :param listWidget: String for translation.
         :type listWidget: QListWidget
 
-        :returns: Tuple containing selected teilgebiete
-        :rtype: tuple
+        :returns: List containing selected teilgebiete
+        :rtype: list
         """
-        items = listWidget.selectedItems()
-        liste = []
-        for elem in items:
-            liste.append(elem.text())
-        return liste
+        return [_.text() for _ in listWidget.selectedItems()]
 
     # ----------------------------------------------------------------------------
     # Funktion zum Auflisten der Gruppen
@@ -703,12 +698,13 @@ class LinkFl:
             # Start der Verarbeitung
 
             # Abrufen der ausgewählten Elemente in beiden Listen
-            liste_flaechen_abflussparam = self.listselecteditems(
+            liste_flaechen_abflussparam: list = self.listselecteditems(
                 self.dlg_cl.lw_flaechen_abflussparam
             )
-            liste_hal_entw = self.listselecteditems(self.dlg_cl.lw_hal_entw)
-            liste_teilgebiete = self.listselecteditems(self.dlg_cl.lw_teilgebiete)
-            suchradius = self.dlg_cl.tf_suchradius.text()
+
+            liste_hal_entw: list = self.listselecteditems(self.dlg_cl.lw_hal_entw)
+            liste_teilgebiete: list = self.listselecteditems(self.dlg_cl.lw_teilgebiete)
+            suchradius: int = int(self.dlg_cl.tf_suchradius.text())
             if self.dlg_cl.rb_abstandkante.isChecked():
                 bezug_abstand = "kante"
             elif self.dlg_cl.rb_abstandmittelpunkt.isChecked():
@@ -717,10 +713,10 @@ class LinkFl:
                 fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
                 return False
 
-            autokorrektur = self.dlg_cl.cb_autokorrektur.isChecked()
-            flaechen_bereinigen = self.dlg_cl.cb_geomMakeValid.isChecked()
-            links_in_tezg = self.dlg_cl.cb_linksInTezg.isChecked()
-            mit_verschneidung = self.dlg_cl.cb_regardTezg.isChecked()
+            autokorrektur: bool = self.dlg_cl.cb_autokorrektur.isChecked()
+            flaechen_bereinigen: bool = self.dlg_cl.cb_geomMakeValid.isChecked()
+            links_in_tezg: bool = self.dlg_cl.cb_linksInTezg.isChecked()
+            mit_verschneidung: bool = self.dlg_cl.cb_regardTezg.isChecked()
 
             # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
             # iface.messageBar().pushMessage(u"Bedienerfehler: ",
@@ -893,12 +889,12 @@ class LinkFl:
             # Start der Verarbeitung
 
             # Inhalte aus Formular lesen
-            suchradius = self.dlg_sw.tf_suchradius.text()
+            suchradius = int(self.dlg_sw.tf_suchradius.text())
 
             # Abrufen der ausgewählten Elemente in beiden Listen
 
-            liste_hal_entw = self.listselecteditems(self.dlg_sw.lw_hal_entw)
-            liste_teilgebiete = self.listselecteditems(self.dlg_sw.lw_teilgebiete)
+            liste_hal_entw: list = self.listselecteditems(self.dlg_sw.lw_hal_entw)
+            liste_teilgebiete: list = self.listselecteditems(self.dlg_sw.lw_teilgebiete)
 
             # Konfigurationsdaten schreiben
 
@@ -1037,7 +1033,7 @@ class LinkFl:
 
             # Inhalte aus Formular lesen
 
-            liste_teilgebiete = self.listselecteditems(self.dlg_at.lw_teilgebiete)
+            liste_teilgebiete: list = self.listselecteditems(self.dlg_at.lw_teilgebiete)
             if self.dlg_at.rb_within.isChecked():
                 auswahltyp = u"within"
             elif self.dlg_at.rb_overlaps.isChecked():
@@ -1046,9 +1042,9 @@ class LinkFl:
                 fehlermeldung(u"Fehler im Programmcode (4)", u"Nicht definierte Option")
                 return False
 
-            autokorrektur = self.dlg_at.cb_autokorrektur.isChecked()
-            flaechen_bereinigen = self.dlg_at.cb_geomMakeValid.isChecked()
-            bufferradius = self.dlg_at.tf_bufferradius.text()
+            autokorrektur: bool = self.dlg_at.cb_autokorrektur.isChecked()
+            flaechen_bereinigen: bool = self.dlg_at.cb_geomMakeValid.isChecked()
+            bufferradius: int = int(self.dlg_at.tf_bufferradius.text())
 
             # config schreiben
             #
@@ -1224,8 +1220,8 @@ class LinkFl:
         if result:
 
             # Inhalte aus Formular lesen
-            delete_geom_none = self.dlg_ul.cb_deleteGeomNone.isChecked()
-            flaechen_bereinigen = self.dlg_ul.cb_geomMakeValid.isChecked()
+            delete_geom_none: bool = self.dlg_ul.cb_deleteGeomNone.isChecked()
+            flaechen_bereinigen: bool = self.dlg_ul.cb_geomMakeValid.isChecked()
 
             # config schreiben
             QKan.config.linkflaechen.delete_geom_none = delete_geom_none

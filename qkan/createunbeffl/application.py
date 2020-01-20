@@ -398,7 +398,7 @@ class CreateUnbefFl:
             logger.debug(
                 u"\nliste_selAbflparamTeilgeb (1): {}".format(liste_selAbflparamTeilgeb)
             )
-            autokorrektur = self.dlg.cb_autokorrektur.isChecked()
+            autokorrektur: bool = self.dlg.cb_autokorrektur.isChecked()
 
             QKan.config.autokorrektur = autokorrektur
             QKan.config.save()

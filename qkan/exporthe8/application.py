@@ -311,7 +311,7 @@ class ExportToHE8:
     def countselection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
-        liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
+        liste_teilgebiete: list = self.listselecteditems(self.dlg.lw_teilgebiete)
 
         # Zu berücksichtigende Flächen zählen
         auswahl = ""
@@ -377,14 +377,10 @@ class ExportToHE8:
         :param listWidget: String for translation.
         :type listWidget: QListWidget
 
-        :returns: Tuple containing selected teilgebiete
-        :rtype: tuple
+        :returns: List containing selected teilgebiete
+        :rtype: list
         """
-        items = listWidget.selectedItems()
-        liste = []
-        for elem in items:
-            liste.append(elem.text())
-        return liste
+        return [_.text() for _ in listWidget.selectedItems()]
 
     # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -620,17 +616,17 @@ class ExportToHE8:
         # See if OK was pressed
         if result:
             # Abrufen der ausgewählten Elemente in beiden Listen
-            liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
+            liste_teilgebiete: list = self.listselecteditems(self.dlg.lw_teilgebiete)
 
             # Eingaben aus Formular übernehmen
-            database_QKan = self.dlg.tf_QKanDB.text()
-            database_HE = self.dlg.tf_heDB_dest.text()
-            dbtemplate_HE = self.dlg.tf_heDB_template.text()
-            datenbanktyp = "spatialite"
-            autokorrektur = self.dlg.cb_autokorrektur.isChecked()
-            mit_verschneidung = self.dlg.cb_regardTezg.isChecked()
+            database_QKan: str = self.dlg.tf_QKanDB.text()
+            database_HE: str = self.dlg.tf_heDB_dest.text()
+            dbtemplate_HE: str = self.dlg.tf_heDB_template.text()
+            datenbanktyp: str = "spatialite"
+            autokorrektur: bool = self.dlg.cb_autokorrektur.isChecked()
+            mit_verschneidung: bool = self.dlg.cb_regardTezg.isChecked()
 
-            exportFlaechenHE8 = self.dlg.cb_copyFlaechenHE8.isChecked()
+            exportFlaechenHE8: bool = self.dlg.cb_copyFlaechenHE8.isChecked()
 
             check_export = {}
             check_export["export_schaechte"] = self.dlg.cb_export_schaechte.isChecked()

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import typing
 
 from qgis.core import Qgis, QgsMessageLog, QgsProject
 from qgis.utils import iface
@@ -203,63 +204,57 @@ def get_qkanlayerAttributes(source):
     return dbname, table, geom, sql
 
 
-def get_database_QKan(silent=False):
+def get_database_QKan(silent=False) -> typing.Tuple[typing.Optional[str], int]:
     """Ermittlung der aktuellen SpatiaLite-Datenbank aus den geladenen Layern"""
 
     project = QgsProject.instance()
 
-    database_QKan = u""
-    epsg = u""
-
     layerobjects = project.mapLayersByName("Schächte")
     if len(layerobjects) > 0:
         lay = layerobjects[0]
-        dbname_s, table_s, geom_s, sql_s = get_qkanlayerAttributes(lay.source())
-        epsg_s = str(int(lay.crs().postgisSrid()))
+        dbname_s, _, _, _ = get_qkanlayerAttributes(lay.source())
+        epsg_s = int(lay.crs().postgisSrid())
     else:
         dbname_s = None
+        epsg_s = 0
 
     layerobjects = project.mapLayersByName("Flächen")
     if len(layerobjects) > 0:
         lay = layerobjects[0]
-        dbname_f, table_f, geom_f, sql_f = get_qkanlayerAttributes(lay.source())
-        epsg_f = str(int(lay.crs().postgisSrid()))
+        dbname_f, _, _, _ = get_qkanlayerAttributes(lay.source())
+        epsg_f = int(lay.crs().postgisSrid())
     else:
         dbname_f = None
+        epsg_f = 0
 
     if dbname_s == dbname_f and dbname_s is not None:
-        database_QKan = dbname_s
-        epsg = epsg_s
+        return dbname_s, epsg_s
     elif dbname_s is None and dbname_f is None:
         if not silent:
             fehlermeldung(
                 "Fehler in Layerliste:",
                 'Layer "Schächte und Flächen exisitieren nicht"',
             )
-        return None, None
+        return None, 0
     elif dbname_f is not None:
-        database_QKan = dbname_f
-        epsg = epsg_f
         if not silent:
             warnung("Fehler in Layerliste:", 'Layer "Schächte exisitiert nicht"')
+        return dbname_f, epsg_f
     elif dbname_s is not None:
-        database_QKan = dbname_s
-        epsg = epsg_s
         if not silent:
             warnung("Fehler in Layerliste:", 'Layer "Flächen exisitiert nicht"')
+        return dbname_s, epsg_s
     else:
         if not silent:
             fehlermeldung(
                 "Fehler in Layerliste:",
                 """Layer "Schächte" und "Flächen" sind mit abweichenden Datenbanken verknüpft:
-            Schächte: ({0:})
-            Flächen:  ({0:})""".format(
+            Schächte: ()
+            Flächen:  ()""".format(
                     dbname_s, dbname_f
                 ),
             )
-        return None, None
-
-    return database_QKan, epsg
+        return None, 0
 
 
 def get_editable_layers():

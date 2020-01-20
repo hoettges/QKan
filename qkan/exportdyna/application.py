@@ -255,14 +255,10 @@ class ExportToKP:
         :param listWidget: String for translation.
         :type listWidget: QListWidget
 
-        :returns: Tuple containing selected teilgebiete
-        :rtype: tuple
+        :returns: List containing selected teilgebiete
+        :rtype: list
         """
-        items = listWidget.selectedItems()
-        liste = []
-        for elem in items:
-            liste.append(elem.text())
-        return liste
+        return [_.text() for _ in listWidget.selectedItems()]
 
     # Ende Eigene Funktionen ---------------------------------------------------
 
@@ -416,15 +412,15 @@ class ExportToKP:
         # See if OK was pressed
         if result:
             # Abrufen der ausgewählten Elemente in beiden Listen
-            liste_teilgebiete = self.listselecteditems(self.dlg.lw_teilgebiete)
+            liste_teilgebiete: list = self.listselecteditems(self.dlg.lw_teilgebiete)
 
             # Eingaben aus Formular übernehmen
-            database_QKan = self.dlg.tf_QKanDB.text()
-            dynafile = self.dlg.tf_KP_dest.text()
-            template_dyna = self.dlg.tf_KP_template.text()
-            profile_ergaenzen = self.dlg.cb_profile_ergaenzen.isChecked()
-            autonummerierung_dyna = self.dlg.cb_autonummerierung_dyna.isChecked()
-            mit_verschneidung = self.dlg.cb_regardTezg.isChecked()
+            database_QKan: str = self.dlg.tf_QKanDB.text()
+            dynafile: str = self.dlg.tf_KP_dest.text()
+            template_dyna: str = self.dlg.tf_KP_template.text()
+            profile_ergaenzen: bool = self.dlg.cb_profile_ergaenzen.isChecked()
+            autonummerierung_dyna: bool = self.dlg.cb_autonummerierung_dyna.isChecked()
+            mit_verschneidung: bool = self.dlg.cb_regardTezg.isChecked()
             if self.dlg.rb_flaechen.isChecked():
                 dynabef_choice = u"flaechen"
             elif self.dlg.rb_tezg.isChecked():

@@ -196,21 +196,16 @@ class QKanTools:
     def unload(self):
         pass
 
-    @staticmethod
-    def listselecteditems(listWidget):
+    def listselecteditems(self, listWidget):
         """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 
         :param listWidget: String for translation.
         :type listWidget: QListWidget
 
-        :returns: Tuple containing selected teilgebiete
-        :rtype: tuple
+        :returns: List containing selected teilgebiete
+        :rtype: list
         """
-        items = listWidget.selectedItems()
-        liste = []
-        for elem in items:
-            liste.append(elem.text())
-        return liste
+        return [_.text() for _ in listWidget.selectedItems()]
 
     # -----------------------------------------------------------------------------------------------------
     # Erstellen einer Projektdatei aus einer Vorlage
@@ -303,16 +298,16 @@ class QKanTools:
         if result:
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
-            self.database_QKan = self.dlgpr.tf_qkanDB.text()
-            project_file = self.dlgpr.tf_projectFile.text()
-            self.apply_qkan_template = self.dlgpr.cb_applyQKanTemplate.isChecked()
+            self.database_QKan: str = self.dlgpr.tf_qkanDB.text()
+            project_file: str = self.dlgpr.tf_projectFile.text()
+            self.apply_qkan_template: bool = self.dlgpr.cb_applyQKanTemplate.isChecked()
 
             # QKanTemplate nur, wenn nicht Option "QKan_Standard_anwenden" gewählt
             if self.apply_qkan_template:
                 template_dir = os.path.join(pluginDirectory("qkan"), u"templates")
-                project_template = os.path.join(template_dir, "Projekt.qgs")
+                project_template: str = os.path.join(template_dir, "Projekt.qgs")
             else:
-                project_template = self.dlgpr.tf_projectTemplate.text()
+                project_template: str = self.dlgpr.tf_projectTemplate.text()
 
             # Konfigurationsdaten schreiben -----------------------------
             QKan.config.tools.project_template = project_template
@@ -439,22 +434,20 @@ class QKanTools:
 
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
-            fangradius = self.dlgop.tf_fangradius.text()
-            mindestflaeche = self.dlgop.tf_mindestflaeche.text()
-            max_loops = int(self.dlgop.tf_max_loops.text())
-            self.logeditor = self.dlgop.tf_logeditor.text().strip()
+            fangradius: float = float(self.dlgop.tf_fangradius.text())
+            mindestflaeche: float = float(self.dlgop.tf_mindestflaeche.text())
+            max_loops: int = int(self.dlgop.tf_max_loops.text())
+            self.logeditor: str = self.dlgop.tf_logeditor.text().strip()
             if self.dlgop.rb_spatialite.isChecked():
-                datenbanktyp = u"spatialite"
+                datenbanktyp = "spatialite"
             # elif self.dlgop.rb_postgis.isChecked():
             # datenbanktyp = u'postgis'
             else:
                 fehlermeldung(
-                    u"tools.application.run",
-                    u"Fehlerhafte Option: \ndatenbanktyp = {}".format(
-                        repr(datenbanktyp)
-                    ),
+                    "tools.application.run",
+                    f"Fehlerhafte Option: \ndatenbanktyp = {datenbanktyp}"
                 )
-            self.epsg = self.dlgop.qsw_epsg.crs().postgisSrid()
+            self.epsg: int = int(self.dlgop.qsw_epsg.crs().postgisSrid())
 
             QKan.config.fangradius = float(fangradius)
             QKan.config.mindestflaeche = float(mindestflaeche)
@@ -724,13 +717,13 @@ class QKanTools:
         if result:
 
             # Abrufen der ausgewählten Elemente in den Listen
-            liste_teilgebiete = self.listselecteditems(self.dlgro.lw_teilgebiete)
-            liste_abflussparameter = self.listselecteditems(
+            liste_teilgebiete: list = self.listselecteditems(self.dlgro.lw_teilgebiete)
+            liste_abflussparameter: list = self.listselecteditems(
                 self.dlgro.lw_abflussparameter
             )
 
             # Eingaben aus Formular übernehmen
-            database_QKan = self.dlgro.tf_QKanDB.text()
+            database_QKan: str = self.dlgro.tf_QKanDB.text()
             if self.dlgro.rb_itwh.isChecked():
                 runoffparamstype_choice = u"itwh"
             elif self.dlgro.rb_dyna.isChecked():
@@ -1015,28 +1008,28 @@ class QKanTools:
 
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
-            self.qkanDBUpdate = self.dlgla.cb_qkanDBUpdate.isChecked()
+            self.qkanDBUpdate: bool = self.dlgla.cb_qkanDBUpdate.isChecked()
             # Achtung: Beeinflusst auch
             #  - adapt_table_lookups
             #  - adapt_selected
 
-            self.database_QKan = self.dlgla.tf_qkanDB.text()
-            adapt_db = self.dlgla.cb_adaptDB.isChecked()
-            adapt_table_lookups = (
+            self.database_QKan: str = self.dlgla.tf_qkanDB.text()
+            adapt_db: bool = self.dlgla.cb_adaptDB.isChecked()
+            adapt_table_lookups: bool = (
                 self.dlgla.cb_adaptTableLookups.isChecked() or self.qkanDBUpdate
             )
-            adapt_forms = self.dlgla.cb_adaptForms.isChecked()
-            adapt_kbs = self.dlgla.cb_adaptKBS.isChecked()
-            update_node_type = self.dlgla.cb_updateNodetype.isChecked()
-            zoom_alles = self.dlgla.cb_zoomAll.isChecked()
-            self.apply_qkan_template = self.dlgla.cb_applyQKanTemplate.isChecked()
+            adapt_forms: bool = self.dlgla.cb_adaptForms.isChecked()
+            adapt_kbs: bool = self.dlgla.cb_adaptKBS.isChecked()
+            update_node_type: bool = self.dlgla.cb_updateNodetype.isChecked()
+            zoom_alles: bool = self.dlgla.cb_zoomAll.isChecked()
+            self.apply_qkan_template: bool = self.dlgla.cb_applyQKanTemplate.isChecked()
             if self.apply_qkan_template:
                 self.projectTemplate = ""
             else:
-                self.projectTemplate = self.dlgla.tf_projectTemplate.text()
+                self.projectTemplate: str = self.dlgla.tf_projectTemplate.text()
 
             # Optionen zur Berücksichtigung der vorhandenen Tabellen
-            fehlende_layer_ergaenzen = self.dlgla.cb_completeLayers.isChecked()
+            fehlende_layer_ergaenzen: bool = self.dlgla.cb_completeLayers.isChecked()
             if self.dlgla.rb_adaptAll.isChecked() or self.qkanDBUpdate:
                 adapt_selected = "alle_anpassen"
             elif self.dlgla.rb_adaptSelected.isChecked():
