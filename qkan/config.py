@@ -1,3 +1,4 @@
+import enum
 import json
 import logging
 import os
@@ -10,6 +11,8 @@ log = logging.getLogger("QKan.config")
 
 class ConfigEncoder(json.JSONEncoder):
     def default(self, o):
+        if isinstance(o, enum.Enum):
+            return o.value
         return o.__dict__
 
 
@@ -28,13 +31,25 @@ class ClassObject:
                     setattr(self, key, self.__annotations__[key](**value))
                     continue
 
+                # Handle enums, right now only string enums are supported
+                if issubclass(self.__annotations__[key], enum.Enum) and isinstance(
+                    value, str
+                ):
+                    try:
+                        setattr(self, key, self.__annotations__[key](value))
+                    except ValueError:
+                        # Set default if the config's value does not exist in the enum
+                        setattr(self, key, getattr(self, key))
+                    continue
+
                 # Type does not match annotation
                 if type(value) is not self.__annotations__[key]:
                     # TODO: Notify user that setting has been reset/removed
                     if hasattr(self, key):
                         log.warning(
                             f"{self.__class__.__name__}: Replaced setting {key} "
-                            f"with default value {getattr(self, key)}, previously {value}"
+                            f"with default value {getattr(self, key)}, previously "
+                            f"{value} ({type(value)})"
                         )
                         setattr(self, key, getattr(self, key))
                         continue
