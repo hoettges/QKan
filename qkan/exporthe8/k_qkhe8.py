@@ -1648,15 +1648,15 @@ def export2he8(
                 kommentar AS Kommentar, 
                 SetSrid(geom, -1) AS geometry
               FROM flintersect AS fi
-              WHERE flnam = he.Flaeche.Name and flaeche*10000 > {mindestflaeche}
-            ) WHERE he.Flaeche.Name IN (SELECT flnam FROM flintersect)
-            """.format(
-                mindestflaeche=mindestflaeche,
-                auswahl_a=auswahl_a,
-                case_verschneidung=case_verschneidung,
-                join_verschneidung=join_verschneidung,
-                expr_verschneidung=expr_verschneidung,
-            )
+              WHERE flnam = he.Flaeche.Name and flaeche*10000 > {mindestflaeche} and flaeche IS NOT NULL
+            ) WHERE he.Flaeche.Name IN (
+                SELECT flnam FROM flintersect 
+                WHERE flaeche*10000 > {mindestflaeche} and flaeche IS NOT NULL)
+            """.format( \
+                        mindestflaeche=mindestflaeche, auswahl_a=auswahl_a, 
+                        case_verschneidung=case_verschneidung, 
+                        join_verschneidung=join_verschneidung,
+                        expr_verschneidung=expr_verschneidung)
 
             if not dbQK.sql(sql, "dbQK: k_qkhe8.export_flaechenrw (1)"):
                 return False

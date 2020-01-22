@@ -802,9 +802,6 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     consl.commit()
 
     # Teileinzugsgebiete ------------------------------------------------------------------
-    # Bei aktivierter Option "check_difftezg" wird je Teileinzugsgebiet eine unbefestigte
-    # Fläche als Differenz zu den innerhalb liegenden Flächen (befestigte und unbefestigte!)
-    # gebildet
 
     sql = """CREATE TABLE tezg (
     pk INTEGER PRIMARY KEY,
@@ -1390,6 +1387,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
             Haltung TEXT, 
             Groesse REAL, 
             Regenschreiber TEXT, 
+            Flaechentyp INTEGER, 
             BerechnungSpeicherkonstante INTEGER, 
             Typ INTEGER, 
             AnzahlSpeicher INTEGER, 
@@ -1400,6 +1398,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
             Parametersatz TEXT, 
             Neigungsklasse INTEGER, 
             ZuordnUnabhEZG INTEGER,
+            IstPolygonalflaeche SMALLINT, 
+            ZuordnungGesperrt SMALLINT, 
             LastModified TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')), 
             Kommentar TEXT)"""
 

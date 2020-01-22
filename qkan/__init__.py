@@ -255,7 +255,7 @@ class QKan:
     def save_config():
         """Write config to json file"""
         try:
-            QKan.instance.config_file.write_text(json.dumps(QKan.config))
+            QKan.instance.config_file.write_text(json.dumps(QKan.config, indent=4))
         except IOError:
             QKan.instance.logger.error(
                 "Fehler beim Speichern der Config-Datei.", exc_info=True

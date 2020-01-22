@@ -387,14 +387,10 @@ def layersadapt(
                     ews = QgsEditorWidgetSetup(type, options)
                     layer.setEditorWidgetSetup(idx, ews)
 
-            # Anpassen des Anzeige-Ausdrucks, nur wenn nicht schon anderweitig sinnvoll gesetzt.
-            logger.debug(
-                f"DisplayExpression zu Layer {layer.name()}: {layer.displayExpression()}\n"
-            )
-            if layer.displayExpression() in ("pk", '"pk"', ""):
-                logger.debug(
-                    f"DisplayExpression zu Layer {layer.name()} gesetzt: {displayExpression}\n"
-                )
+            # Anpassen des Anzeige-Ausdrucks, nur wenn nicht schon anderweitig sinnvoll gesetzt. 
+            logger.debug(f'DisplayExpression zu Layer {layer.name()}: {layer.displayExpression()}\n')
+            if layer.displayExpression() in ('pk', '"pk"', '', """COALESCE("pk", '<NULL>')"""):
+                logger.debug(f'DisplayExpression zu Layer {layer.name()} gesetzt: {displayExpression}\n')
                 layer.setDisplayExpression(displayExpression)
 
     if layerNotInProjektMeldung:
