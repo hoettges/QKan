@@ -24,7 +24,7 @@ __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 __dbVersion__ = "3.0.8"  # Version der QKan-Datenbank
 __qgsVersion__ = (
-    "3.0.8"
+    "3.0.9"
 )  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 

@@ -306,7 +306,7 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp=u"spatialite"):
                         die ROWID gesetzt wird
     :type prefix:       String
     
-    :autokorrektur:        Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
+    :autokorrektur:     Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
                         werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
                         abgebrochen.
     :type autokorrektur:   String

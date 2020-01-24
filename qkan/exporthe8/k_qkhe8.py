@@ -1450,7 +1450,7 @@ def export2he8(
     # ------------------------------------------------------------------------------------------------
     # Export der Flächen
 
-    if check_export["export_flaechenrw"] or check_export["modify_flaechenrw"]:
+    if check_export["export_flaechenrw"] or check_export["modify_flaechenrw"] or exportFlaechenHE8:
         """
         Export der Flaechendaten
 
@@ -1473,6 +1473,8 @@ def export2he8(
         In der QKan-Datenbank sind Fz_SschwP und Fz_oberfl zu einem Feld zusammengefasst (fliesszeitflaeche)
 
         Befestigte Flächen"""
+
+        nr0 = None      # Für Fortschrittsmeldung
 
         # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
         if not checknames(dbQK, "flaechen", "flnam", "f_", autokorrektur):
@@ -1754,9 +1756,10 @@ def export2he8(
 
                 nextid += idmax - idmin + 1
                 dbQK.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
-                dbQK.commit()
+        dbQK.commit()
 
-                fortschritt("{} Flaechen eingefuegt".format(nextid - nr0), 0.80)
+        if nr0:
+            fortschritt("{} Flaechen eingefuegt".format(nextid - nr0), 0.80)
 
     progress_bar.setValue(90)
 

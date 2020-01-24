@@ -97,21 +97,21 @@ def updatelinkfl(
             return False
 
     # 1. Flächen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
-    # In der Unterabfrage "linksbroken" wird eine Liste aller nicht korrekter Verknüpfungen
+    # In der Unterabfrage "linksvalid" wird eine Liste aller nicht korrekter Verknüpfungen
     # aus linkfl erstellt,
     # so dass im UPDATE-Teil nur noch alle darin enthaltenen Verknüpfungen bearbeitet werden
 
-    sql = u"""WITH linksbroken  AS
+    sql = u"""WITH linksvalid AS
         (   SELECT lf.pk
             FROM linkfl AS lf
             INNER JOIN flaechen AS fl
             ON lf.flnam = fl.flnam
-            WHERE fl.geom IS NOT NULL AND NOT within(StartPoint(lf.glink),fl.geom))
+            WHERE fl.geom IS NOT NULL AND within(StartPoint(lf.glink),fl.geom))
         UPDATE linkfl SET flnam =
         (   SELECT flnam
             FROM flaechen AS fl
             WHERE within(StartPoint(linkfl.glink),fl.geom) AND fl.geom IS NOT NULL)
-        WHERE linkfl.pk IN linksbroken """.format(
+        WHERE linkfl.pk NOT IN linksvalid """.format(
         eps=radiusHal
     )
 
@@ -123,17 +123,17 @@ def updatelinkfl(
     # 2. Haltungen in "linkfl" eintragen (ohne Einschränkung auf auswahl)
     # Logik wie vor
 
-    sql = u"""WITH linksbroken AS
+    sql = u"""WITH linksvalid AS
         (   SELECT lf.pk
             FROM linkfl AS lf
             INNER JOIN haltungen AS ha
             ON lf.haltnam = ha.haltnam
-            WHERE ha.geom IS NOT NULL AND Distance(EndPoint(lf.glink),ha.geom) >= {eps})
+            WHERE ha.geom IS NOT NULL AND Distance(EndPoint(lf.glink),ha.geom) < {eps})
         UPDATE linkfl SET haltnam =
         (   SELECT haltnam
             FROM haltungen AS ha
             WHERE Distance(EndPoint(linkfl.glink),ha.geom) < {eps})
-        WHERE linkfl.pk IN linksbroken""".format(
+        WHERE linkfl.pk NOT IN linksvalid""".format(
         eps=radiusHal
     )
 
@@ -200,17 +200,17 @@ def updatelinksw(dbQK, radiusHal=u"0.1", deletelinkGeomNone=True):
 
     # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
 
-    sql = u"""WITH linksbroken AS
+    sql = u"""WITH linksvalid AS
         (   SELECT lf.pk
             FROM linksw AS lf
             INNER JOIN einleit AS el
             ON lf.elnam = el.elnam
-            WHERE el.geom IS NOT NULL AND Distance(StartPoint(lf.glink),el.geom) >= {eps})
+            WHERE el.geom IS NOT NULL AND Distance(StartPoint(lf.glink),el.geom) < {eps})
         UPDATE linksw SET elnam =
         (   SELECT elnam
             FROM einleit AS el
             WHERE contains(buffer(StartPoint(linksw.glink),{eps}),el.geom))
-        WHERE linksw.pk IN linksbroken""".format(
+        WHERE linksw.pk NOT IN linksvalid""".format(
         eps=radiusHal
     )
 
@@ -221,17 +221,17 @@ def updatelinksw(dbQK, radiusHal=u"0.1", deletelinkGeomNone=True):
 
     # 2. Haltungen in "linksw" eintragen (ohne Einschränkung auf auswahl)
 
-    sql = u"""WITH linksbroken AS
+    sql = u"""WITH linksvalid AS
         (   SELECT lf.pk
             FROM linksw AS lf
             INNER JOIN haltungen AS ha
             ON lf.haltnam = ha.haltnam
-            WHERE ha.geom IS NOT NULL AND Distance(EndPoint(lf.glink),ha.geom) >= {eps})
+            WHERE ha.geom IS NOT NULL AND Distance(EndPoint(lf.glink),ha.geom) < {eps})
         UPDATE linksw SET haltnam =
         (   SELECT haltnam
             FROM haltungen AS ha
             WHERE Distance(EndPoint(linksw.glink),ha.geom) < {eps})
-        WHERE linksw.pk IN linksbroken""".format(
+        WHERE linksw.pk NOT IN linksvalid""".format(
         eps=radiusHal
     )
 
