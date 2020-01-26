@@ -27,6 +27,7 @@ import subprocess
 import tempfile
 import webbrowser
 from datetime import datetime as dt
+import site
 from pathlib import Path
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
@@ -125,6 +126,7 @@ class QKanTools:
         )
         self.dlgop.pb_max_loopsDefault.clicked.connect(self.dlgop_maxLoopsDefault)
         self.dlgop.pb_openLogfile.clicked.connect(self.dlgop_openLogfile)
+        self.dlgop.pb_openOptionsfile.clicked.connect(self.dlgop_openOptionsfile)
         self.dlgop.pb_selectLogeditor.clicked.connect(self.dlgop_selectLogeditor)
 
         # Formular dlgro - Oberflächenabflussparameter ermitteln
@@ -375,6 +377,21 @@ class QKanTools:
         else:
             command = '"{}" "{}"'.format(
                 os.path.normpath(self.logeditor), os.path.normcase(fnam)
+            )
+            res = subprocess.call(command)
+            logger.debug("command: {}\nres: ".format(command, res))
+
+    def dlgop_openOptionsfile(self):
+        """Öffnet die Optionen-Datei (*.json) mit dem Standard-Editor für Log-Dateien oder einem gewählten Editor"""
+
+        work_dir = Path(site.getuserbase()) / "qkan"
+        config_file = work_dir / "qkan.json"
+
+        if self.logeditor == "":
+            os.startfile(config_file, "open")
+        else:
+            command = '"{}" "{}"'.format(
+                os.path.normpath(self.logeditor), os.path.normcase(config_file)
             )
             res = subprocess.call(command)
             logger.debug("command: {}\nres: ".format(command, res))

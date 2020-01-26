@@ -533,14 +533,14 @@ Haltungen pro Strang:</string>
     </font>
    </property>
    <property name="title">
-    <string>Log-Datei</string>
+    <string>System-Dateien</string>
    </property>
    <widget class="QPushButton" name="pb_openLogfile">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>20</x>
       <y>30</y>
-      <width>81</width>
+      <width>131</width>
       <height>21</height>
      </rect>
     </property>
@@ -551,31 +551,7 @@ Haltungen pro Strang:</string>
      <string>Log-Datei anzeigen...</string>
     </property>
     <property name="text">
-     <string>Öffnen</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_7">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>30</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>9</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Log-Datei öffnen:</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <string>Log-Datei öffnen</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="tf_logeditor">
@@ -594,7 +570,7 @@ Haltungen pro Strang:</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optional: Pfad zum Editor, mit dem die Log-Datei geöffnet werden soll&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optional: Pfad zum Editor, mit dem die Log-Datei geöffnet werden soll. Wenn dieses Feld leer ist, wird der Standardeditor gewählt. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>EPSG-Nummer des Projektionssystems der Quelldaten</string>
@@ -641,6 +617,25 @@ Haltungen pro Strang:</string>
     </property>
     <property name="text">
      <string>...</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_openOptionsfile">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>30</y>
+      <width>161</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Öffnen der Optionen-Datei (*.json). Enthält alle Grundeinstellungen und viele Verzeichnispfade aus den Formularen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Optionen-Datei anzeigen...</string>
+    </property>
+    <property name="text">
+     <string>Optionen-Datei öffnen</string>
     </property>
    </widget>
   </widget>
