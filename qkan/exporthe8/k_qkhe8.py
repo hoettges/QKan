@@ -1627,7 +1627,10 @@ def export2he8(
               LEFT JOIN abflussparameter AS ap
               ON fl.abflussparameter = ap.apnam
               LEFT JOIN flaechentypen AS ft
-              ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl_a})
+              ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl_a}), 
+              flupdate AS (
+                SELECT flnam FROM flintersect 
+                WHERE flaeche*10000 > {mindestflaeche} and flaeche IS NOT NULL)
             UPDATE he.Flaeche SET (
               Haltung, Groesse, Regenschreiber, Flaechentyp, 
               BerechnungSpeicherkonstante, Typ, AnzahlSpeicher,
@@ -1651,9 +1654,7 @@ def export2he8(
                 SetSrid(geom, -1) AS geometry
               FROM flintersect AS fi
               WHERE flnam = he.Flaeche.Name and flaeche*10000 > {mindestflaeche} and flaeche IS NOT NULL
-            ) WHERE he.Flaeche.Name IN (
-                SELECT flnam FROM flintersect 
-                WHERE flaeche*10000 > {mindestflaeche} and flaeche IS NOT NULL)
+            ) WHERE he.Flaeche.Name IN flupdate
             """.format( \
                         mindestflaeche=mindestflaeche, auswahl_a=auswahl_a, 
                         case_verschneidung=case_verschneidung, 

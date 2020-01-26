@@ -111,9 +111,7 @@ def updatelinkfl(
         (   SELECT flnam
             FROM flaechen AS fl
             WHERE within(StartPoint(linkfl.glink),fl.geom) AND fl.geom IS NOT NULL)
-        WHERE linkfl.pk NOT IN linksvalid """.format(
-        eps=radiusHal
-    )
+        WHERE linkfl.pk NOT IN linksvalid """
 
     if not dbQK.sql(sql, u"dbQK: linkflaechen.updatelinks.updatelinkfl (2)"):
         return False

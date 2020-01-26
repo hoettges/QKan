@@ -22,9 +22,9 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.0.8"  # Version der QKan-Datenbank
+__dbVersion__ = "3.0.10"  # Version der QKan-Datenbank
 __qgsVersion__ = (
-    "3.0.9"
+    "3.0.10"
 )  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
@@ -1452,7 +1452,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(
-            "qkan_database.version: Fehler {}".format(err),
+            "qkan_database.createviews: Fehler {}".format(err),
             'Fehler beim Erzeugen der Tabelle "Info".',
         )
         consl.close()
@@ -1502,7 +1502,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(
-            "qkan_database.version: Fehler {}".format(err),
+            "qkan_database.createviews: Fehler {}".format(err),
             'Fehler beim Erzeugen der Plausibilitätskontrolle "v_linkfl_check".',
         )
         consl.close()
@@ -1533,7 +1533,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(
-            "qkan_database.version: Fehler {}".format(err),
+            "qkan_database.createviews: Fehler {}".format(err),
             'Fehler beim Erzeugen der Plausibilitätskontrolle "v_flaechen_ohne_linkfl".',
         )
         consl.close()
@@ -1566,7 +1566,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(
-            "qkan_database.version: Fehler {}".format(err),
+            "qkan_database.createviews: Fehler {}".format(err),
             'Fehler beim Erzeugen der Plausibilitätskontrolle "v_flaechen_check".',
         )
         consl.close()
@@ -1599,11 +1599,66 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(
-            "qkan_database.version: Fehler {}".format(err),
+            "qkan_database.createviews: Fehler {}".format(err),
             'Fehler beim Erzeugen der Plausibilitätskontrolle "v_tezg_check".',
         )
         consl.close()
         return False
+
+    consl.commit()
+
+    # Doppelte Verbindungslinien an Flächen prüfen
+    
+    sql = """CREATE VIEW IF NOT EXISTS "v_linkfl_redundant" AS 
+            WITH lfm AS (
+                SELECT flnam, tezgnam, count(*) AS anz
+                FROM linkfl AS lf
+                GROUP BY flnam, tezgnam)
+            SELECT lf.pk, lf.flnam, lf.tezgnam, lfm.anz
+            FROM linkfl AS lf
+            LEFT JOIN lfm
+            ON lf.flnam = lfm.flnam and lf.tezgnam = lfm.tezgnam
+            WHERE anz <> 1 or lf.flnam IS NULL
+            ORDER BY lf.flnam"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createviews: Fehler {}".format(err),
+            'Fehler beim Erzeugen der Plausibilitätskontrolle "v_linkfl_redundant".',
+        )
+        consl.close()
+        return False
+
+    consl.commit()
+
+    # Doppelte Verbindungslinien an Direkteinleitungen prüfen
+    
+    sql = """CREATE VIEW IF NOT EXISTS "v_linksw_redundant" AS 
+            WITH lsm AS (
+                SELECT elnam, count(*) AS anz
+                FROM linksw AS ls
+                GROUP BY elnam)
+            SELECT ls.pk, ls.elnam, lsm.anz
+            FROM linksw AS ls
+            LEFT JOIN lsm
+            ON ls.elnam = lsm.elnam
+            WHERE anz <> 1 or ls.elnam IS NULL
+            ORDER BY ls.elnam"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createviews: Fehler {}".format(err),
+            'Fehler beim Erzeugen der Plausibilitätskontrolle "v_linksw_redundant".',
+        )
+        consl.close()
+        return False
+
+    consl.commit()
+
 
     # Abschluss --------------------------------------------------------------------
 
@@ -1616,7 +1671,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'Fehler beim Erzeugen der Tabelle "Info".',
+            'Fehler beim Einfügen der Tabelle "Info".',
         )
         consl.close()
         return False
