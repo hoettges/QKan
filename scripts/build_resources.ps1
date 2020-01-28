@@ -39,6 +39,7 @@ if (-not (Test-Path $PYTHON))
 $RESOURCE_FILES=@(
 	"../qkan/createunbeffl/resources.qrc"
 	"../qkan/exportdyna/resources.qrc"
+	"../qkan/exporthe8/resources.qrc"
 	"../qkan/importdyna/resources.qrc"
 	"../qkan/linkflaechen/resources.qrc"
 	"../qkan/tools/resources.qrc"
