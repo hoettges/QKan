@@ -204,7 +204,7 @@ class LinkFlConfig(ClassObject):
     suchradius: int = 50
 
 
-class ChoiceConfig(ClassObject):
+class SelectionConfig(ClassObject):
     abflussparameter: list = []
     flaechen_abflussparam: list = []
     hal_entw: list = []
@@ -263,7 +263,7 @@ class ToolsConfig(ClassObject):
         ]
 
         def __str__(self):
-            return "<CheckExport *hidden in __str__*>"
+            return "<RunoffParams *hidden in __str__*>"
 
     apply_qkan_template: bool = True
     logeditor: str = ""
@@ -284,7 +284,7 @@ class Config(ClassObject):
     # ---
     adapt: AdaptConfig = AdaptConfig()
     check_export: CheckExport = CheckExport()
-    choices: ChoiceConfig = ChoiceConfig()
+    selections: SelectionConfig = SelectionConfig()
     database: DatabaseConfig = DatabaseConfig()
     dyna: DynaConfig = DynaConfig()
     he: HEConfig = HEConfig()
