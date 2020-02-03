@@ -242,7 +242,7 @@ def export2he8(
                 auswahl=auswahl, id0=id0
             )
 
-            if not dbQK.sql(sql, "dbHE: export_schaechte (3)"):
+            if not dbQK.sql(sql, "dbQK: export_schaechte (3)"):
                 return False
 
             nextid += idmax - idmin + 1
@@ -353,7 +353,7 @@ def export2he8(
                 auswahl=auswahl, id0=id0
             )
 
-            if not dbQK.sql(sql, "dbHE: export_speicher (2)"):
+            if not dbQK.sql(sql, "dbQK: export_speicher (2)"):
                 return False
 
             nextid += idmax - idmin + 1

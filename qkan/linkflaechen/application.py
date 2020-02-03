@@ -672,7 +672,11 @@ class LinkFl:
 
         # Fangradius für Anfang der Anbindungslinie
         # Kann über Menü "Optionen" eingegeben werden
+        if "fangradius" in QKan.config:
         fangradius = QKan.config.fangradius
+        else:
+            fangradius = u"0.1"
+        self.dlg_cl.tf_fangradius.setText(str(fangradius))
 
         # Festlegung, ob sich der Abstand auf die Flächenkante oder deren Mittelpunkt bezieht
         bezug_abstand = QKan.config.linkflaechen.bezug_abstand
@@ -719,6 +723,7 @@ class LinkFl:
             flaechen_bereinigen: bool = self.dlg_cl.cb_geomMakeValid.isChecked()
             links_in_tezg: bool = self.dlg_cl.cb_linksInTezg.isChecked()
             mit_verschneidung: bool = self.dlg_cl.cb_regardTezg.isChecked()
+            fangradius = self.dlg_cl.tf_fangradius.text()
 
             # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
             # iface.messageBar().pushMessage(u"Bedienerfehler: ",
@@ -1201,7 +1206,10 @@ class LinkFl:
         self.dlg_ul.tf_qkDB.setText(database_QKan)
 
         # Festlegung des Fangradius
+        if "fangradius" in QKan.config:
         fangradius = QKan.config.fangradius
+        else:
+            fangradius = u"0.1"
         self.dlg_ul.tf_fangradius.setText(str(fangradius))
         logger.debug("fangradius: {}".format(fangradius))
 
@@ -1223,6 +1231,7 @@ class LinkFl:
             # Inhalte aus Formular lesen
             delete_geom_none: bool = self.dlg_ul.cb_deleteGeomNone.isChecked()
             flaechen_bereinigen: bool = self.dlg_ul.cb_geomMakeValid.isChecked()
+            fangradius = self.dlg_ul.tf_fangradius.text()
 
             # config schreiben
             QKan.config.linkflaechen.delete_geom_none = delete_geom_none

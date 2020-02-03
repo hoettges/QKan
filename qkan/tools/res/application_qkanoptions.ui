@@ -22,21 +22,42 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>520</y>
-     <width>291</width>
-     <height>32</height>
+     <y>501</y>
+     <width>301</width>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="sizeIncrement">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="baseSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
-     <pointsize>10</pointsize>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
    <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Datenimport starten ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optionen speichern&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="statusTip">
+    <string>Optionen speichern</string>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -54,7 +75,7 @@
      <x>20</x>
      <y>20</y>
      <width>441</width>
-     <height>121</height>
+     <height>101</height>
     </rect>
    </property>
    <property name="font">
@@ -71,7 +92,7 @@
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>255</x>
+      <x>285</x>
       <y>30</y>
       <width>31</width>
       <height>16</height>
@@ -98,9 +119,9 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>30</y>
-      <width>151</width>
+      <width>171</width>
       <height>20</height>
      </rect>
     </property>
@@ -128,7 +149,7 @@
    <widget class="QLineEdit" name="tf_fangradius">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>210</x>
       <y>30</y>
       <width>70</width>
       <height>20</height>
@@ -150,9 +171,9 @@
    <widget class="QPushButton" name="pb_fangradiusDefault">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>320</x>
       <y>30</y>
-      <width>80</width>
+      <width>101</width>
       <height>20</height>
      </rect>
     </property>
@@ -177,9 +198,9 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>30</x>
       <y>60</y>
-      <width>161</width>
+      <width>171</width>
       <height>21</height>
      </rect>
     </property>
@@ -207,7 +228,7 @@
    <widget class="QLabel" name="label_26">
     <property name="geometry">
      <rect>
-      <x>255</x>
+      <x>285</x>
       <y>60</y>
       <width>31</width>
       <height>21</height>
@@ -234,9 +255,9 @@
    <widget class="QPushButton" name="pb_mindestflaecheDefault">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>320</x>
       <y>60</y>
-      <width>80</width>
+      <width>101</width>
       <height>20</height>
      </rect>
     </property>
@@ -261,7 +282,7 @@
    <widget class="QLineEdit" name="tf_mindestflaeche">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>210</x>
       <y>60</y>
       <width>70</width>
       <height>20</height>
@@ -285,7 +306,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>150</y>
+     <y>130</y>
      <width>441</width>
      <height>61</height>
     </rect>
@@ -304,7 +325,7 @@
    <widget class="QLineEdit" name="tf_max_loops">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>210</x>
       <y>30</y>
       <width>70</width>
       <height>20</height>
@@ -326,9 +347,9 @@
    <widget class="QPushButton" name="pb_max_loopsDefault">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>320</x>
       <y>30</y>
-      <width>80</width>
+      <width>101</width>
       <height>20</height>
      </rect>
     </property>
@@ -353,9 +374,9 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>5</x>
+      <x>14</x>
       <y>20</y>
-      <width>160</width>
+      <width>181</width>
       <height>30</height>
      </rect>
     </property>
@@ -386,7 +407,7 @@ Haltungen pro Strang:</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>220</y>
+     <y>200</y>
      <width>441</width>
      <height>71</height>
     </rect>
@@ -407,7 +428,7 @@ Haltungen pro Strang:</string>
      <rect>
       <x>30</x>
       <y>20</y>
-      <width>140</width>
+      <width>191</width>
       <height>20</height>
      </rect>
     </property>
@@ -437,7 +458,7 @@ Haltungen pro Strang:</string>
      <rect>
       <x>30</x>
       <y>40</y>
-      <width>251</width>
+      <width>311</width>
       <height>20</height>
      </rect>
     </property>
@@ -464,7 +485,7 @@ Haltungen pro Strang:</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>300</y>
+     <y>280</y>
      <width>441</width>
      <height>71</height>
     </rect>
@@ -519,7 +540,7 @@ Haltungen pro Strang:</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>380</y>
+     <y>360</y>
      <width>441</width>
      <height>121</height>
     </rect>
@@ -540,7 +561,7 @@ Haltungen pro Strang:</string>
      <rect>
       <x>20</x>
       <y>30</y>
-      <width>131</width>
+      <width>161</width>
       <height>21</height>
      </rect>
     </property>
@@ -581,7 +602,7 @@ Haltungen pro Strang:</string>
      <rect>
       <x>30</x>
       <y>60</y>
-      <width>251</width>
+      <width>311</width>
       <height>21</height>
      </rect>
     </property>
@@ -597,7 +618,7 @@ Haltungen pro Strang:</string>
      <string>Optional: Editor zum Anzeigen der Log-Datei</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="pb_selectLogeditor">
@@ -622,9 +643,9 @@ Haltungen pro Strang:</string>
    <widget class="QPushButton" name="pb_openOptionsfile">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>200</x>
       <y>30</y>
-      <width>161</width>
+      <width>181</width>
       <height>21</height>
      </rect>
     </property>

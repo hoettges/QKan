@@ -410,83 +410,67 @@ class ExportToHE8:
             cbox.setChecked(checked)
             return checked
 
+        def cb_setfalse(name, cbox, default):
+            """Die selbe Funktion wie vor, deaktiviert jedoch die Optionen,
+               weil die entsprechende Funktion noch nicht fertig ist"""
+            checked = False
+            cbox.setChecked(checked)
+            return checked
+
         export_schaechte = cb_set(
-            "export_schaechte", self.dlg.cb_export_schaechte, True
-        )
-        export_auslaesse = cb_set(
-            "export_auslaesse", self.dlg.cb_export_auslaesse, True
-        )
+            "export_schaechte", self.dlg.cb_export_schaechte, True)
+        export_auslaesse = cb_setfalse(
+            "export_auslaesse", self.dlg.cb_export_auslaesse, True)
         export_speicher = cb_set("export_speicher", self.dlg.cb_export_speicher, True)
         export_haltungen = cb_set(
-            "export_haltungen", self.dlg.cb_export_haltungen, True
-        )
-        export_pumpen = cb_set("export_pumpen", self.dlg.cb_export_pumpen, False)
-        export_wehre = cb_set("export_wehre", self.dlg.cb_export_wehre, False)
+            "export_haltungen", self.dlg.cb_export_haltungen, True)
+        export_pumpen = cb_setfalse("export_pumpen", self.dlg.cb_export_pumpen, False) 
+        export_wehre = cb_setfalse("export_wehre", self.dlg.cb_export_wehre, False) 
         export_flaechenrw = cb_set(
-            "export_flaechenrw", self.dlg.cb_export_flaechenrw, True
-        )
-        export_einleitdirekt = cb_set(
-            "export_einleitdirekt", self.dlg.cb_export_einleitdirekt, True
-        )
-        export_aussengebiete = cb_set(
-            "export_aussengebiete", self.dlg.cb_export_aussengebiete, True
-        )
-        export_abflussparameter = cb_set(
-            "export_abflussparameter", self.dlg.cb_export_abflussparameter, True
-        )
-        export_regenschreiber = cb_set(
-            "export_regenschreiber", self.dlg.cb_export_regenschreiber, False
-        )
-        export_rohrprofile = cb_set(
-            "export_rohrprofile", self.dlg.cb_export_rohrprofile, False
-        )
-        export_speicherkennlinien = cb_set(
-            "export_speicherkennlinien", self.dlg.cb_export_speicherkennlinien, False
-        )
-        export_bodenklassen = cb_set(
-            "export_bodenklassen", self.dlg.cb_export_bodenklassen, False
-        )
+            "export_flaechenrw", self.dlg.cb_export_flaechenrw, True)
+        export_einleitdirekt = cb_setfalse(
+            "export_einleitdirekt", self.dlg.cb_export_einleitdirekt, True)
+        export_aussengebiete = cb_setfalse(
+            "export_aussengebiete", self.dlg.cb_export_aussengebiete, True)
+        export_abflussparameter = cb_setfalse(
+            "export_abflussparameter", self.dlg.cb_export_abflussparameter, True)
+        export_regenschreiber = cb_setfalse(
+            "export_regenschreiber", self.dlg.cb_export_regenschreiber, False) 
+        export_rohrprofile = cb_setfalse(
+            "export_rohrprofile", self.dlg.cb_export_rohrprofile, False) 
+        export_speicherkennlinien = cb_setfalse(
+            "export_speicherkennlinien", self.dlg.cb_export_speicherkennlinien, False) 
+        export_bodenklassen = cb_setfalse(
+            "export_bodenklassen", self.dlg.cb_export_bodenklassen, False) 
 
         modify_schaechte = cb_set(
-            "modify_schaechte", self.dlg.cb_modify_schaechte, False
-        )
-        modify_auslaesse = cb_set(
-            "modify_auslaesse", self.dlg.cb_modify_auslaesse, False
-        )
+            "modify_schaechte", self.dlg.cb_modify_schaechte, False)
+        modify_auslaesse = cb_setfalse(
+            "modify_auslaesse", self.dlg.cb_modify_auslaesse, False) 
         modify_speicher = cb_set("modify_speicher", self.dlg.cb_modify_speicher, False)
         modify_haltungen = cb_set(
-            "modify_haltungen", self.dlg.cb_modify_haltungen, False
-        )
-        modify_pumpen = cb_set("modify_pumpen", self.dlg.cb_modify_pumpen, False)
-        modify_wehre = cb_set("modify_wehre", self.dlg.cb_modify_wehre, False)
+            "modify_haltungen", self.dlg.cb_modify_haltungen, False) 
+        modify_pumpen = cb_setfalse("modify_pumpen", self.dlg.cb_modify_pumpen, False) 
+        modify_wehre = cb_setfalse("modify_wehre", self.dlg.cb_modify_wehre, False) 
         modify_flaechenrw = cb_set(
-            "modify_flaechenrw", self.dlg.cb_modify_flaechenrw, False
-        )
-        modify_einleitdirekt = cb_set(
-            "modify_einleitdirekt", self.dlg.cb_modify_einleitdirekt, False
-        )
-        modify_aussengebiete = cb_set(
-            "modify_aussengebiete", self.dlg.cb_modify_aussengebiete, False
-        )
-        modify_abflussparameter = cb_set(
-            "modify_abflussparameter", self.dlg.cb_modify_abflussparameter, False
-        )
-        modify_regenschreiber = cb_set(
-            "modify_regenschreiber", self.dlg.cb_modify_regenschreiber, False
-        )
-        modify_rohrprofile = cb_set(
-            "modify_rohrprofile", self.dlg.cb_modify_rohrprofile, False
-        )
-        modify_speicherkennlinien = cb_set(
-            "modify_speicherkennlinien", self.dlg.cb_modify_speicherkennlinien, False
-        )
-        modify_bodenklassen = cb_set(
-            "modify_bodenklassen", self.dlg.cb_modify_bodenklassen, False
-        )
+            "modify_flaechenrw", self.dlg.cb_modify_flaechenrw, False)
+        modify_einleitdirekt = cb_setfalse(
+            "modify_einleitdirekt", self.dlg.cb_modify_einleitdirekt, False) 
+        modify_aussengebiete = cb_setfalse(
+            "modify_aussengebiete", self.dlg.cb_modify_aussengebiete, False) 
+        modify_abflussparameter = cb_setfalse(
+            "modify_abflussparameter", self.dlg.cb_modify_abflussparameter, False) 
+        modify_regenschreiber = cb_setfalse(
+            "modify_regenschreiber", self.dlg.cb_modify_regenschreiber, False) 
+        modify_rohrprofile = cb_setfalse(
+            "modify_rohrprofile", self.dlg.cb_modify_rohrprofile, False) 
+        modify_speicherkennlinien = cb_setfalse(
+            "modify_speicherkennlinien", self.dlg.cb_modify_speicherkennlinien, False) 
+        modify_bodenklassen = cb_setfalse(
+            "modify_bodenklassen", self.dlg.cb_modify_bodenklassen, False) 
 
-        combine_einleitdirekt = cb_set(
-            "combine_einleitdirekt", self.dlg.cb_combine_einleitdirekt, True
-        )
+        combine_einleitdirekt = cb_setfalse(
+            "combine_einleitdirekt", self.dlg.cb_combine_einleitdirekt, True)
 
         # Check, ob die relevanten Layer nicht editable sind.
         if (

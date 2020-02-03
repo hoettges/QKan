@@ -270,9 +270,9 @@
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>0</x>
       <y>310</y>
-      <width>151</width>
+      <width>171</width>
       <height>20</height>
      </rect>
     </property>
@@ -300,7 +300,7 @@
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>430</x>
       <y>310</y>
       <width>141</width>
       <height>20</height>
@@ -322,6 +322,9 @@
     </property>
     <property name="text">
      <string>aufzuteilende Flächen</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="lf_anzahl_flaechsec">
@@ -360,9 +363,9 @@
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>250</x>
       <y>310</y>
-      <width>91</width>
+      <width>101</width>
       <height>20</height>
      </rect>
     </property>
@@ -384,7 +387,7 @@
      <string>ganze Flächen</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="label_16">
@@ -392,7 +395,7 @@
      <rect>
       <x>650</x>
       <y>310</y>
-      <width>61</width>
+      <width>81</width>
       <height>20</height>
      </rect>
     </property>
@@ -422,7 +425,7 @@
      <rect>
       <x>30</x>
       <y>50</y>
-      <width>201</width>
+      <width>211</width>
       <height>31</height>
      </rect>
     </property>
@@ -449,7 +452,7 @@ parameter berücksichtigen</string>
      <rect>
       <x>260</x>
       <y>50</y>
-      <width>201</width>
+      <width>221</width>
       <height>31</height>
      </rect>
     </property>
@@ -476,7 +479,7 @@ rungssysteme berücksichtigen</string>
      <rect>
       <x>490</x>
       <y>50</y>
-      <width>201</width>
+      <width>221</width>
       <height>31</height>
      </rect>
     </property>
@@ -505,7 +508,7 @@ berücksichtigen</string>
      <x>20</x>
      <y>380</y>
      <width>731</width>
-     <height>171</height>
+     <height>151</height>
     </rect>
    </property>
    <property name="font">
@@ -550,9 +553,9 @@ berücksichtigen</string>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>80</y>
-      <width>71</width>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
@@ -603,7 +606,7 @@ berücksichtigen</string>
      <rect>
       <x>20</x>
       <y>50</y>
-      <width>191</width>
+      <width>221</width>
       <height>17</height>
      </rect>
     </property>
@@ -653,9 +656,9 @@ berücksichtigen</string>
    <widget class="QCheckBox" name="cb_autokorrektur">
     <property name="geometry">
      <rect>
-      <x>350</x>
+      <x>310</x>
       <y>40</y>
-      <width>360</width>
+      <width>411</width>
       <height>30</height>
      </rect>
     </property>
@@ -682,9 +685,9 @@ berücksichtigen</string>
    <widget class="QCheckBox" name="cb_linksInTezg">
     <property name="geometry">
      <rect>
-      <x>350</x>
+      <x>310</x>
       <y>20</y>
-      <width>360</width>
+      <width>411</width>
       <height>30</height>
      </rect>
     </property>
@@ -711,9 +714,9 @@ berücksichtigen</string>
    <widget class="QCheckBox" name="cb_regardTezg">
     <property name="geometry">
      <rect>
-      <x>350</x>
+      <x>310</x>
       <y>80</y>
-      <width>231</width>
+      <width>341</width>
       <height>30</height>
      </rect>
     </property>
@@ -740,9 +743,9 @@ berücksichtigen</string>
    <widget class="QCheckBox" name="cb_geomMakeValid">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>120</y>
-      <width>201</width>
+      <x>310</x>
+      <y>110</y>
+      <width>241</width>
       <height>30</height>
      </rect>
     </property>
@@ -764,6 +767,83 @@ berücksichtigen</string>
     </property>
     <property name="text">
      <string>Flächenobjekte bereinigen</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>Fangradius:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tf_fangradius">
+    <property name="geometry">
+     <rect>
+      <x>125</x>
+      <y>110</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximaler Abstand vom Ende der Verbidnungslinie zur zugeordneten Haltung (für manuell erstellte Verbindungslinien)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Maximaler Abstand vom Ende der Verbidnungslinie zur zugeordneten Haltung (für manuell erstellte Verbindungslinien)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>110</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="statusTip">
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen"/>
+    </property>
+    <property name="text">
+     <string>m</string>
     </property>
    </widget>
   </widget>
