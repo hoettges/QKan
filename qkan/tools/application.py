@@ -318,6 +318,17 @@ class QKanTools:
 
             QKan.config.save()
 
+            # Modulaufruf in Logdatei schreiben
+            logger.debug(f"""QKan-Modul Aufruf
+                qgsadapt(
+                    {project_template},
+                    {self.database_QKan},
+                    {self.epsg},
+                    {project_file},
+                    {self.apply_qkan_template},
+                    {"SpatiaLite"},
+                )""")
+
             qgsadapt(
                 project_template,
                 self.database_QKan,
@@ -632,7 +643,7 @@ class QKanTools:
         # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
         liste_teilgebiete = []
         if "liste_teilgebiete" in QKan.config:
-            liste_teilgebiete = QKan.config.choices.teilgebiete
+            liste_teilgebiete = QKan.config.selections.teilgebiete
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = '''SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'''
@@ -657,7 +668,7 @@ class QKanTools:
         # Anlegen der Tabelle zur Auswahl der Abflussparameter
 
         # Zunächst wird die Liste der beim letzten Mal gewählten Abflussparameter aus config gelesen
-        liste_abflussparameter = QKan.config.choices.abflussparameter
+        liste_abflussparameter = QKan.config.selections.abflussparameter
 
         # Abfragen der Tabelle abflussparameter nach Abflussparametern
         sql = '''SELECT "apnam" FROM "abflussparameter" GROUP BY "apnam"'''
@@ -749,13 +760,25 @@ class QKanTools:
                 )
 
             # Konfigurationsdaten schreiben
-            QKan.config.choices.abflussparameter = liste_abflussparameter
-            QKan.config.choices.teilgebiete = liste_teilgebiete
+            QKan.config.selections.abflussparameter = liste_abflussparameter
+            QKan.config.selections.teilgebiete = liste_teilgebiete
             QKan.config.database.qkan = database_QKan
             QKan.config.tools.runoffmodeltype_choice = runoffmodeltype_choice
             QKan.config.tools.runoffparamstype_choice = runoffparamstype_choice
 
             QKan.config.save()
+
+            # Modulaufruf in Logdatei schreiben
+            logger.debug(f"""QKan-Modul Aufruf
+                setRunoffparams(
+                    {self.dbQK},
+                    {runoffparamstype_choice},
+                    {runoffmodeltype_choice},
+                    {runoffparamsfunctions},
+                    {liste_teilgebiete},
+                    {liste_abflussparameter},
+                    {datenbanktyp},
+                )""")
 
             setRunoffparams(
                 self.dbQK,
@@ -1055,36 +1078,22 @@ class QKanTools:
             QKan.config.save()
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
-                """qkan-Modul:\n        layersadapt(
-                database_QKan={database_QKan}), 
-                projectTemplate={projectTemplate}, 
-                dbIsUptodate={dbIsUptodate}, 
-                qkanDBUpdate={qkanDBUpdate}, 
-                adapt_db={adapt_db}, 
-                adapt_table_lookups={adapt_table_lookups}, 
-                adapt_forms={adapt_forms}, 
-                adapt_kbs={adapt_kbs}, 
-                update_node_type={update_node_type}, 
-                zoom_alles={zoom_alles}, 
-                fehlende_layer_ergaenzen ={fehlende_layer_ergaenzen}, 
-                adapt_selected = {adapt_selected}, 
-                dbtyp = {dbtyp})""".format(
-                    database_QKan=self.database_QKan,
-                    projectTemplate=self.projectTemplate,
-                    qkanDBUpdate=self.qkanDBUpdate,
-                    dbIsUptodate=self.dbIsUptodate,
-                    adapt_db=adapt_db,
-                    adapt_table_lookups=adapt_table_lookups,
-                    adapt_forms=adapt_forms,
-                    adapt_kbs=adapt_kbs,
-                    update_node_type=update_node_type,
-                    zoom_alles=zoom_alles,
-                    fehlende_layer_ergaenzen=fehlende_layer_ergaenzen,
-                    adapt_selected=adapt_selected,
-                    dbtyp="SpatiaLite",
-                )
-            )
+            logger.debug(f"""QKan-Modul Aufruf
+                layersadapt(
+                    {self.database_QKan},
+                    {self.projectTemplate},
+                    {self.dbIsUptodate},
+                    {self.qkanDBUpdate},
+                    {adapt_db},
+                    {adapt_table_lookups},
+                    {adapt_forms},
+                    {adapt_kbs},
+                    {update_node_type},
+                    {zoom_alles},
+                    {fehlende_layer_ergaenzen},
+                    {adapt_selected},
+                    "SpatiaLite",
+                )""")
 
             layersadapt(
                 self.database_QKan,

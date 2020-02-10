@@ -346,7 +346,7 @@ class ExportToKP:
             # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
             # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-            liste_teilgebiete = QKan.config.choices.teilgebiete
+            liste_teilgebiete = QKan.config.selections.teilgebiete
 
             # Abfragen der Tabelle teilgebiete nach Teilgebieten
             sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -446,7 +446,7 @@ class ExportToKP:
                 )
 
             # Konfigurationsdaten schreiben
-            QKan.config.choices.teilgebiete = liste_teilgebiete
+            QKan.config.selections.teilgebiete = liste_teilgebiete
             QKan.config.database.qkan = database_QKan
             QKan.config.dyna.autonummerierung = autonummerierung_dyna
             QKan.config.dyna.bef_choice = dynabef_choice

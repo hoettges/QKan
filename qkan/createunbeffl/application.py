@@ -391,7 +391,6 @@ class CreateUnbefFl:
             # substitute with your code.
             # pass
 
-            # Start der Verarbeitung
             liste_selAbflparamTeilgeb = self.listselectedTabitems(
                 self.dlg.tw_selAbflparamTeilgeb
             )
@@ -403,6 +402,20 @@ class CreateUnbefFl:
             QKan.config.autokorrektur = autokorrektur
             QKan.config.save()
 
+            # Start der Verarbeitung
+
+            # Modulaufruf in Logdatei schreiben
+            logger.debug(f"""QKan-Modul Aufruf
+                createUnbefFlaechen(
+                {self.iface}, 
+                {self.dbQK}, 
+                {liste_selAbflparamTeilgeb}, 
+                {autokorrektur}
+                )""")
+
             createUnbefFlaechen(
-                self.iface, self.dbQK, liste_selAbflparamTeilgeb, autokorrektur
+                self.iface, 
+                self.dbQK, 
+                liste_selAbflparamTeilgeb, 
+                autokorrektur
             )

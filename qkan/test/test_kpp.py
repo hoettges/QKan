@@ -35,7 +35,7 @@ class TestKpp(QgisTest):
             dynafile=str(dynafile),
             database_QKan=str(database_qkan),
             projectfile=str(project_file),
-            epsg="3044",
+            epsg=3044,
             dbtyp="SpatiaLite",
         )
 

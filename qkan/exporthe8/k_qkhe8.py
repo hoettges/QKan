@@ -79,10 +79,10 @@ def export2he8(
 
     :fangradius:            Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine 
                             Haltung bzw. ein Einleitpunkt zugeordnet wird. 
-    :type fangradius:       Float
+    :type fangradius:       float
 
     :mindestflaeche:        Mindestflächengröße bei Einzelflächen und Teilflächenstücken
-    :type mindestflaeche:   Real
+    :type mindestflaeche:   float
 
     :mit_verschneidung:     Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
     :type mit_verschneidung: Boolean

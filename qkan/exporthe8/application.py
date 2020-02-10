@@ -550,7 +550,7 @@ class ExportToHE8:
         # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
         # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-        liste_teilgebiete = QKan.config.choices.teilgebiete
+        liste_teilgebiete = QKan.config.selections.teilgebiete
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
@@ -681,7 +681,7 @@ class ExportToHE8:
 
             # Konfigurationsdaten schreiben
             QKan.config.autokorrektur = autokorrektur
-            QKan.config.choices.teilgebiete = liste_teilgebiete
+            QKan.config.selections.teilgebiete = liste_teilgebiete
             QKan.config.database.qkan = database_QKan
             QKan.config.database.type = datenbanktyp
             QKan.config.fangradius = fangradius
@@ -694,6 +694,25 @@ class ExportToHE8:
                 setattr(QKan.config.check_export, el, check_export[el])
 
             QKan.config.save()
+
+            # Start der Verarbeitung
+
+            # Modulaufruf in Logdatei schreiben
+            logger.debug(f"""QKan-Modul Aufruf
+                export2he8(
+                {self.iface},
+                {database_HE},
+                {dbtemplate_HE},
+                {self.dbQK},
+                {liste_teilgebiete},
+                {autokorrektur},
+                {fangradius},
+                {mindestflaeche},
+                {mit_verschneidung},
+                {exportFlaechenHE8},
+                {datenbanktyp},
+                {check_export},
+            )""")
 
             if not export2he8(
                 self.iface,

@@ -211,7 +211,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
     :type projectfile:      String
 
     :epsg:                  EPSG-Nummer 
-    :type epsg:             String
+    :type epsg:             int
 
     :dbtyp:                 Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:            String
@@ -790,13 +790,9 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
 
         # Geo-Objekt erzeugen
         if dbtyp == "SpatiaLite":
-            geom = u"MakeLine(MakePoint({0:},{1:},{4:s}),MakePoint({2:},{3:},{4:}))".format(
-                xob, yob, xun, yun, epsg
-            )
+            geom = f"MakeLine(MakePoint({xob},{yob},{epsg}),MakePoint({xun},{yun},{epsg}))"
         elif dbtyp == "postgis":
-            geom = u"ST_MakeLine(ST_SetSRID(ST_MakePoint({0:},{1:}),{4:s}),ST_SetSRID(ST_MakePoint({2:},{3:}),{4:}))".format(
-                xob, yob, xun, yun, epsg
-            )
+            geom = f"ST_MakeLine(ST_SetSRID(ST_MakePoint({xob},{yob}),{epsg}),ST_SetSRID(ST_MakePoint({xun},{yun}),{epsg}))"
         else:
             fehlermeldung(
                 "Programmfehler!",
@@ -893,7 +889,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
         ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
         GROUP BY dyna12.schoben"""
 
-    dbQK.sql(sql)
+    if not dbQK.sql(sql, "importkanaldaten_dyna (11)"):
+        return None
     daten = dbQK.fetchall()
 
     # Schachtdaten aufbereiten und in die QKan-DB schreiben
@@ -939,12 +936,11 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
         # Geo-Objekte erzeugen
 
         if dbtyp == "SpatiaLite":
-            geop = u"MakePoint({0:},{1:},{2:})".format(xsch, ysch, epsg)
-            geom = u"CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))".format(
-                xsch, ysch, (1.0 if durchm == "NULL" else durchm / 1000.0), epsg
-            )
+            geop = f"MakePoint({xsch},{ysch},{epsg})"
+            du = (1.0 if durchm == "NULL" else durchm / 1000.0)
+            geom = f"CastToMultiPolygon(MakePolygon(MakeCircle({xsch},{ysch},{du},{epsg})))"
         elif dbtyp == "postgis":
-            geop = u"ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})".format(xsch, ysch, epsg)
+            geop = f"ST_SetSRID(ST_MakePoint({xsch},{ysch}),{epsg})"
         else:
             fehlermeldung(
                 "Programmfehler!",
@@ -1009,7 +1005,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
         ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
         GROUP BY dyna41.schnam"""
 
-    dbQK.sql(sql)
+    if not dbQK.sql(sql, "importkanaldaten_dyna (14)"):
+        return None
     daten = dbQK.fetchall()
 
     # Auslassdaten aufbereiten und in die QKan-DB schreiben
@@ -1055,12 +1052,11 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
         # Geo-Objekte erzeugen
 
         if dbtyp == "SpatiaLite":
-            geop = u"MakePoint({0:},{1:},{2:})".format(xsch, ysch, epsg)
-            geom = u"CastToMultiPolygon(MakePolygon(MakeCircle({0:},{1:},{2:},{3:})))".format(
-                xsch, ysch, (1.0 if durchm == "NULL" else durchm / 1000.0), epsg
-            )
+            geop = f"MakePoint({xsch},{ysch},{epsg})"
+            du = (1.0 if durchm == "NULL" else durchm / 1000.0)
+            geom = f"CastToMultiPolygon(MakePolygon(MakeCircle({xsch},{ysch},{du},{epsg})))"
         elif dbtyp == "postgis":
-            geop = u"ST_SetSRID(ST_MakePoint({0:},{1:}),{2:})".format(xsch, ysch, epsg)
+            geop = f"ST_SetSRID(ST_MakePoint({xsch},{ysch}),{epsg})"
         else:
             fehlermeldung(
                 "Programmfehler!",
@@ -1293,22 +1289,22 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
         # Projektionssystem anpassen --------------------------------------------------------------
 
         for tag_spatialrefsys in root.findall(
-            u".//mapcanvas/destinationsrs/spatialrefsys"
+            ".//projectCrs/spatialrefsys"
         ):
             tag_spatialrefsys.clear()
 
-            elem = ET.SubElement(tag_spatialrefsys, u"proj4")
+            elem = ET.SubElement(tag_spatialrefsys, "proj4")
             elem.text = proj4text
-            elem = ET.SubElement(tag_spatialrefsys, u"srid")
+            elem = ET.SubElement(tag_spatialrefsys, "srid")
             elem.text = u"{}".format(srid)
-            elem = ET.SubElement(tag_spatialrefsys, u"authid")
+            elem = ET.SubElement(tag_spatialrefsys, "authid")
             elem.text = u"EPSG: {}".format(srid)
-            elem = ET.SubElement(tag_spatialrefsys, u"description")
+            elem = ET.SubElement(tag_spatialrefsys, "description")
             elem.text = description
-            elem = ET.SubElement(tag_spatialrefsys, u"projectionacronym")
+            elem = ET.SubElement(tag_spatialrefsys, "projectionacronym")
             elem.text = projectionacronym
             if ellipsoidacronym is not None:
-                elem = ET.SubElement(tag_spatialrefsys, u"ellipsoidacronym")
+                elem = ET.SubElement(tag_spatialrefsys, "ellipsoidacronym")
                 elem.text = ellipsoidacronym
 
         # Pfad zur QKan-Datenbank anpassen
@@ -1316,11 +1312,11 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
         for tag_datasource in root.findall(u".//projectlayers/maplayer/datasource"):
             text = tag_datasource.text
             tag_datasource.text = (
-                u"dbname='" + datasource + u"' " + text[text.find(u"table=") :]
+                "dbname='" + datasource + "' " + text[text.find("table=") :]
             )
 
         qgsxml.write(projectfile)  # writing modified project file
-        logger.debug(u"Projektdatei: {}".format(projectfile))
+        logger.debug("Projektdatei: {}".format(projectfile))
         # logger.debug(u'encoded string: {}'.format(tex))
 
     # ------------------------------------------------------------------------------

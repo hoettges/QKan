@@ -55,11 +55,11 @@ def createlinkfl(
     mit_verschneidung=False,
     autokorrektur=True,
     flaechen_bereinigen=False,
-    suchradius=50,
+    suchradius=50.,
     mindestflaeche=0.5,
     fangradius=0.1,
     bezug_abstand=enums.BezugAbstand.KANTE,
-    epsg=u"25832",
+    epsg=25832,
     dbtyp=u"SpatiaLite",
 ):
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
@@ -90,17 +90,17 @@ def createlinkfl(
     :type flaechen_bereinigen: Boolean
 
     :suchradius: Suchradius in der SQL-Abfrage
-    :type suchradius: Real
+    :type suchradius: float
 
     :mindestflaeche: Mindestflächengröße bei Einzelflächen und Teilflächenstücken
-    :type mindestflaeche: Real
+    :type mindestflaeche: float
 
     :bezug_abstand: Bestimmt, ob in der SQL-Abfrage der Mittelpunkt oder die
                     nächste Kante der Fläche berücksichtigt wird
     :type bezug_abstand: String
 
     :epsg: Nummer des Projektionssystems
-    :type epsg: String
+    :type epsg: int
 
     :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:    String
@@ -493,7 +493,7 @@ def createlinkfl(
 
 
 def createlinksw(
-    dbQK, liste_teilgebiete, suchradius=50, epsg=u"25832", dbtyp=u"SpatiaLite"
+    dbQK, liste_teilgebiete, suchradius=50., epsg=25832, dbtyp=u"SpatiaLite"
 ):
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -504,10 +504,10 @@ def createlinksw(
     :type liste_teilgebiete: list of String
 
     :suchradius: Suchradius in der SQL-Abfrage
-    :type suchradius: Real
+    :type suchradius: float
 
     :epsg: Nummer des Projektionssystems
-    :type epsg: String
+    :type epsg: int
 
     :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
     :type dbtyp:    String
@@ -675,7 +675,7 @@ def assigntgeb(
     tablist,
     autokorrektur,
     flaechen_bereinigen=False,
-    bufferradius=u"0",
+    bufferradius=0.,
     dbtyp=u"SpatiaLite",
 ):
     """Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
@@ -746,7 +746,7 @@ def assigntgeb(
     for table, geom in tablist:
 
         if auswahltyp == enums.AuswahlTyp.WITHIN:
-            if bufferradius == "0" or bufferradius.strip == "":
+            if bufferradius <= 0.00001:
                 sql = u"""
                 UPDATE {table} SET teilgebiet = 
                 (	SELECT teilgebiete.tgnam
@@ -764,7 +764,6 @@ def assigntgeb(
                 """.format(
                     table=table,
                     geom=geom,
-                    bufferradius=bufferradius,
                     auswahl_1=auswahl_1,
                 )
             else:

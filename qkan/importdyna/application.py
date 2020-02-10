@@ -197,20 +197,14 @@ class ImportFromDyna:
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.info(
-                """qkan-Modul:\n        importKanaldaten(
-                dynafile='{dynafile}', 
-                database_QKan='{database_QKan}', 
-                projectfile='{projectfile}', 
-                epsg='{epsg}', 
-                dbtyp = '{dbtyp}')""".format(
-                    dynafile=dynafile,
-                    database_QKan=database_qkan,
-                    projectfile=projectfile,
-                    epsg=epsg,
-                    dbtyp="SpatiaLite",
-                )
-            )
+            logger.debug(f"""QKan-Modul Aufruf
+                importKanaldaten(
+                    {dynafile}, 
+                    {database_qkan}, 
+                    {projectfile}, 
+                    {epsg}, 
+                    "SpatiaLite",
+                )""")
 
             importKanaldaten(
                 dynafile, database_qkan, projectfile, epsg, "SpatiaLite"

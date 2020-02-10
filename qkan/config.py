@@ -198,10 +198,10 @@ class LinkFlConfig(ClassObject):
     # Linkflaechen
     auswahltyp: enums.AuswahlTyp = enums.AuswahlTyp.WITHIN
     bezug_abstand: enums.BezugAbstand = enums.BezugAbstand.KANTE
-    bufferradius: int = 0
+    bufferradius: float = 0.
     delete_geom_none: bool = True
     links_in_tezg: bool = True
-    suchradius: int = 50
+    suchradius: float = 50.
 
 
 class SelectionConfig(ClassObject):

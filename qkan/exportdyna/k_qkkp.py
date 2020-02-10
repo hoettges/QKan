@@ -798,7 +798,7 @@ def exportKanaldaten(
 
     :fangradius:            Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine
                             Haltung bzw. ein Einleitpunkt zugeordnet wird.
-    :type fangradius:       Float
+    :type fangradius:       float
 
     :datenbanktyp:          Typ der Datenbank (SpatiaLite, PostGIS)
     :type datenbanktyp:     String
