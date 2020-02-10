@@ -51,7 +51,6 @@ def setRunoffparams(
     runoffparamsfunctions,
     liste_teilgebiete,
     liste_abflussparameter,
-    datenbanktyp,
 ):
     """Berechnet Oberlächenabflussparameter für HYSTEM/EXTRAN 7 und DYNA/Kanal++.
 

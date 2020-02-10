@@ -32,9 +32,10 @@ import logging
 import os
 import xml.etree.ElementTree as ET
 
+from qkan import QKan, enums
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
 from qgis.utils import pluginDirectory
-from qkan import QKan
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung
 
@@ -195,7 +196,7 @@ class rahmen:
 # Hauptprogramm
 
 
-def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLite"):
+def importKanaldaten(dynafile, database_QKan, projectfile, epsg):
 
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -212,9 +213,6 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
 
     :epsg:                  EPSG-Nummer 
     :type epsg:             int
-
-    :dbtyp:                 Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:            String
 
     :returns: void
     """
@@ -789,14 +787,14 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
         # [tt.decode('iso-8859-1') for tt in (haltnam_ansi, schoben_ansi, schunten_ansi)]
 
         # Geo-Objekt erzeugen
-        if dbtyp == "SpatiaLite":
+        if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
             geom = f"MakeLine(MakePoint({xob},{yob},{epsg}),MakePoint({xun},{yun},{epsg}))"
-        elif dbtyp == "postgis":
+        elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
             geom = f"ST_MakeLine(ST_SetSRID(ST_MakePoint({xob},{yob}),{epsg}),ST_SetSRID(ST_MakePoint({xun},{yun}),{epsg}))"
         else:
             fehlermeldung(
                 "Programmfehler!",
-                "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(dbtyp),
+                "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(QKan.config.database.type),
             )
 
         # Datensatz aufbereiten in die QKan-DB schreiben
@@ -935,16 +933,16 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
 
         # Geo-Objekte erzeugen
 
-        if dbtyp == "SpatiaLite":
+        if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
             geop = f"MakePoint({xsch},{ysch},{epsg})"
             du = (1.0 if durchm == "NULL" else durchm / 1000.0)
             geom = f"CastToMultiPolygon(MakePolygon(MakeCircle({xsch},{ysch},{du},{epsg})))"
-        elif dbtyp == "postgis":
+        elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
             geop = f"ST_SetSRID(ST_MakePoint({xsch},{ysch}),{epsg})"
         else:
             fehlermeldung(
                 "Programmfehler!",
-                "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(dbtyp),
+                "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(QKan.config.database.type),
             )
 
         # Datensatz in die QKan-DB schreiben
@@ -1051,11 +1049,11 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg, dbtyp="SpatiaLi
 
         # Geo-Objekte erzeugen
 
-        if dbtyp == "SpatiaLite":
+        if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
             geop = f"MakePoint({xsch},{ysch},{epsg})"
             du = (1.0 if durchm == "NULL" else durchm / 1000.0)
             geom = f"CastToMultiPolygon(MakePolygon(MakeCircle({xsch},{ysch},{du},{epsg})))"
-        elif dbtyp == "postgis":
+        elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
             geop = f"ST_SetSRID(ST_MakePoint({xsch},{ysch}),{epsg})"
         else:
             fehlermeldung(

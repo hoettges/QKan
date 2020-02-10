@@ -71,7 +71,6 @@ def layersadapt(
     zoom_alles,
     fehlende_layer_ergaenzen,
     anpassen_auswahl: enums.SelectedLayers,
-    dbtyp="spatialite",
 ):
     """Anpassen von Projektlayern an den QKan-Standard
     Voraussetzungen: keine
@@ -111,9 +110,6 @@ def layersadapt(
 
     :anpassen_auswahl:                              Wahl der anzupassenden Layer
     :type anpassen_auswahl:                         enums.SelectedLayers
-
-    :dbtyp:                                         Typ der Datenbank (spatialite, postgis)
-    :type dbtyp:                                    string
 
     :returns: void
     """
@@ -189,7 +185,7 @@ def layersadapt(
                 uri.setDatabase(database_QKan)
                 uri.setDataSource(sql, table, geom_column)
                 try:
-                    layer = QgsVectorLayer(uri.uri(), layername, "spatialite")
+                    layer = QgsVectorLayer(uri.uri(), layername, enums.QKanDBChoice.SPATIALITE.value)
                 except BaseException as err:
                     fehlermeldung(
                         "Fehler in k_layersadapt (11): {}".format(err),
@@ -313,7 +309,7 @@ def layersadapt(
                 newdatasource = "dbname='{dbname}' table=\"{table}\" sql={sql}".format(
                     dbname=database_QKan, table=table, geom=geom, sql=sql
                 )
-            layer.setDataSource(newdatasource, layername, "spatialite")
+            layer.setDataSource(newdatasource, layername, enums.QKanDBChoice.SPATIALITE.value)
             logger.debug("\nAnbindung neue QKanDB: {}\n".format(newdatasource))
 
         if anpassen_Projektionssystem:

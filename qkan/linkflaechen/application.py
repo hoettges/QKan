@@ -519,7 +519,7 @@ class LinkFl:
                     self.dlg_mg.tw_gruppenattr.setRowHeight(i, 20)
 
     def reloadgrouptgb(self):
-        reloadgroup(self.dbQK, self.gruppe, dbtyp=u"SpatiaLite")
+        reloadgroup(self.dbQK, self.gruppe)
         iface.messageBar().pushMessage(
             u"Fertig!", u"Teilgebiete wurden geladen!", level=Qgis.Info
         )
@@ -530,7 +530,7 @@ class LinkFl:
             kommentar = self.dlg_mg.tf_kommentar.toPlainText()
             if kommentar is None:
                 kommentar = u""
-            storegroup(self.dbQK, neuegruppe, kommentar, dbtyp=u"SpatiaLite")
+            storegroup(self.dbQK, neuegruppe, kommentar)
             self.showgroups()
             iface.messageBar().pushMessage(
                 u"Fertig!", u"Teilgebiete wurden gespeichert", level=Qgis.Info
@@ -751,19 +751,19 @@ class LinkFl:
             # Modulaufruf in Logdatei schreiben
             logger.debug(f"""QKan-Modul Aufruf
                 createlinkfl(
-                {self.dbQK},
-                {liste_flaechen_abflussparam},
-                {liste_hal_entw},
-                {liste_teilgebiete},
-                {links_in_tezg},
-                {mit_verschneidung},
-                {autokorrektur},
-                {flaechen_bereinigen},
-                {suchradius},
-                {mindestflaeche},
-                {fangradius},
-                {bezug_abstand},
-                {epsg},
+                    self.dbQK,
+                    {liste_flaechen_abflussparam},
+                    {liste_hal_entw},
+                    {liste_teilgebiete},
+                    {links_in_tezg},
+                    {mit_verschneidung},
+                    {autokorrektur},
+                    {flaechen_bereinigen},
+                    {suchradius},
+                    {mindestflaeche},
+                    {fangradius},
+                    {bezug_abstand},
+                    {epsg},
             )""")
 
             createlinkfl(
@@ -791,7 +791,7 @@ class LinkFl:
                 uri.setDatabase(database_QKan)
                 uri.setDataSource(u"", u"linkfl", u"glink")
                 vlayer = QgsVectorLayer(
-                    uri.uri(), u"Anbindungen Flächen", u"spatialite"
+                    uri.uri(), u"Anbindungen Flächen", enums.QKanDBChoice.SPATIALITE.value
                 )
                 QgsProject.instance().addMapLayer(vlayer)
 
@@ -931,10 +931,10 @@ class LinkFl:
             # Modulaufruf in Logdatei schreiben
             logger.debug(f"""QKan-Modul Aufruf
                 createlinksw(
-                {self.dbQK}, 
-                {liste_teilgebiete}, 
-                {suchradius}, 
-                {epsg},
+                    self.dbQK, 
+                    {liste_teilgebiete}, 
+                    {suchradius}, 
+                    {epsg},
             )""")
 
             createlinksw(
@@ -952,7 +952,7 @@ class LinkFl:
                 uri.setDatabase(database_QKan)
                 uri.setDataSource(u"", u"linksw", u"glink")
                 vlayer = QgsVectorLayer(
-                    uri.uri(), u"Anbindungen Direkteinleitungen", u"spatialite"
+                    uri.uri(), u"Anbindungen Direkteinleitungen", enums.QKanDBChoice.SPATIALITE.value
                 )
                 QgsProject.instance().addMapLayer(vlayer)
 
@@ -1097,21 +1097,21 @@ class LinkFl:
             # Modulaufruf in Logdatei schreiben
             logger.debug(f"""QKan-Modul Aufruf
                 assigntgeb(
-                {self.dbQK},
-                {auswahltyp},
-                {liste_teilgebiete},
-                [
-                    [u"haltungen", "geom"],
-                    [u"flaechen", "geom"],
-                    [u"schaechte", "geop"],
-                    [u"einleit", "geom"],
-                    [u"tezg", "geom"],
-                    [u"linksw", "glink"],
-                    [u"linkfl", "glink"],
-                ],
-                {autokorrektur},
-                {flaechen_bereinigen},
-                {bufferradius},
+                    self.dbQK,
+                    {auswahltyp},
+                    {liste_teilgebiete},
+                    [
+                        [u"haltungen", "geom"],
+                        [u"flaechen", "geom"],
+                        [u"schaechte", "geop"],
+                        [u"einleit", "geom"],
+                        [u"tezg", "geom"],
+                        [u"linksw", "glink"],
+                        [u"linkfl", "glink"],
+                    ],
+                    {autokorrektur},
+                    {flaechen_bereinigen},
+                    {bufferradius},
             )""")
 
             assigntgeb(

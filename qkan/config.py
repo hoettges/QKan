@@ -182,7 +182,7 @@ class CheckExport(TempStorage):
 
 class DatabaseConfig(ClassObject):
     qkan: str = ""
-    type: str = "spatialite"
+    type: enums.QKanDBChoice = enums.QKanDBChoice.SPATIALITE
 
 
 class DynaConfig(ClassObject):

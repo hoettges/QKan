@@ -321,12 +321,11 @@ class QKanTools:
             # Modulaufruf in Logdatei schreiben
             logger.debug(f"""QKan-Modul Aufruf
                 qgsadapt(
-                    {project_template},
-                    {self.database_QKan},
+                    "{project_template}",
+                    "{self.database_QKan}",
                     {self.epsg},
-                    {project_file},
+                    "{project_file}",
                     {self.apply_qkan_template},
-                    {"SpatiaLite"},
                 )""")
 
             qgsadapt(
@@ -335,7 +334,6 @@ class QKanTools:
                 self.epsg,
                 project_file,
                 self.apply_qkan_template,
-                u"SpatiaLite",
             )
 
     # ----------------------------------------------------------------------------------------------------
@@ -419,9 +417,9 @@ class QKanTools:
         # Optionen zum Typ der QKan-Datenbank
         datenbanktyp = QKan.config.database.type
 
-        if datenbanktyp == u"spatialite":
+        if datenbanktyp == enums.QKanDBChoice.SPATIALITE:
             self.dlgop.rb_spatialite.setChecked(True)
-        # elif datenbanktyp == u'postgis':
+        # elif datenbanktyp == enums.QKanDBChoice.POSTGIS:
         # self.dlgop.rb_postgis.setChecked(True)
 
         self.epsg = QKan.config.epsg
@@ -451,9 +449,9 @@ class QKanTools:
             max_loops: int = int(self.dlgop.tf_max_loops.text())
             self.logeditor: str = self.dlgop.tf_logeditor.text().strip()
             if self.dlgop.rb_spatialite.isChecked():
-                datenbanktyp = "spatialite"
+                datenbanktyp = enums.QKanDBChoice.SPATIALITE
             # elif self.dlgop.rb_postgis.isChecked():
-            # datenbanktyp = u'postgis'
+            # datenbanktyp = enums.QKanDBChoice.POSTGIS
             else:
                 fehlermeldung(
                     "tools.application.run",
@@ -771,13 +769,12 @@ class QKanTools:
             # Modulaufruf in Logdatei schreiben
             logger.debug(f"""QKan-Modul Aufruf
                 setRunoffparams(
-                    {self.dbQK},
+                    self.dbQK,
                     {runoffparamstype_choice},
                     {runoffmodeltype_choice},
                     {runoffparamsfunctions},
                     {liste_teilgebiete},
                     {liste_abflussparameter},
-                    {datenbanktyp},
                 )""")
 
             setRunoffparams(
@@ -787,7 +784,6 @@ class QKanTools:
                 runoffparamsfunctions,
                 liste_teilgebiete,
                 liste_abflussparameter,
-                datenbanktyp,
             )
 
     # -----------------------------------------------------------------------------------------------------
@@ -1080,8 +1076,8 @@ class QKanTools:
             # Modulaufruf in Logdatei schreiben
             logger.debug(f"""QKan-Modul Aufruf
                 layersadapt(
-                    {self.database_QKan},
-                    {self.projectTemplate},
+                    "{self.database_QKan}",
+                    "{self.projectTemplate}",
                     {self.dbIsUptodate},
                     {self.qkanDBUpdate},
                     {adapt_db},
@@ -1092,7 +1088,6 @@ class QKanTools:
                     {zoom_alles},
                     {fehlende_layer_ergaenzen},
                     {adapt_selected},
-                    "SpatiaLite",
                 )""")
 
             layersadapt(
@@ -1108,5 +1103,4 @@ class QKanTools:
                 zoom_alles,
                 fehlende_layer_ergaenzen,
                 adapt_selected,
-                u"SpatiaLite",
             )

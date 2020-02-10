@@ -60,7 +60,6 @@ def createlinkfl(
     fangradius=0.1,
     bezug_abstand=enums.BezugAbstand.KANTE,
     epsg=25832,
-    dbtyp=u"SpatiaLite",
 ):
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -101,9 +100,6 @@ def createlinkfl(
 
     :epsg: Nummer des Projektionssystems
     :type epsg: int
-
-    :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:    String
 
     :returns: void
 
@@ -493,7 +489,7 @@ def createlinkfl(
 
 
 def createlinksw(
-    dbQK, liste_teilgebiete, suchradius=50., epsg=25832, dbtyp=u"SpatiaLite"
+    dbQK, liste_teilgebiete, suchradius=50., epsg=25832
 ):
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -509,9 +505,6 @@ def createlinksw(
     :epsg: Nummer des Projektionssystems
     :type epsg: int
 
-    :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:    String
-    
     :returns: void
     """
 
@@ -676,7 +669,6 @@ def assigntgeb(
     autokorrektur,
     flaechen_bereinigen=False,
     bufferradius=0.,
-    dbtyp=u"SpatiaLite",
 ):
     """Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
        Teilgebiete zu. Falls sich mehrere dieser Teilgebiete überlappen, ist das Resultat zufällig eines von diesen. 
@@ -697,9 +689,6 @@ def assigntgeb(
     
     :flaechen_bereinigen: Vor der Bearbeitung werden die Tabellen "flaechen" und "tezg" mit MakeValid korrigiert
     :type flaechen_bereinigen: Boolean
-    
-    :dbtyp:                 Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:            String
     
     :returns:               void
     """
@@ -840,7 +829,7 @@ def assigntgeb(
 # -------------------------------------------------------------------------------------------------------------
 
 
-def reloadgroup(dbQK, gruppenname, dbtyp=u"SpatiaLite"):
+def reloadgroup(dbQK, gruppenname):
     """Lädt die unter einem Gruppennamen gespeicherten Teilgebietszuordnungen zurück in die Tabellen 
        "haltungen", "schaechte", "flaechen", "tezg", "linkfl", "linksw", "einleit"
 
@@ -850,9 +839,6 @@ def reloadgroup(dbQK, gruppenname, dbtyp=u"SpatiaLite"):
     :gruppenname: Bezeichnung der Gruppe, unter der die Teilgebietszuordnungen abgelegt wurden.
     :type gruppenname: String
 
-    :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:    String
-    
     :returns: void
     """
 
@@ -910,7 +896,7 @@ def reloadgroup(dbQK, gruppenname, dbtyp=u"SpatiaLite"):
 # -------------------------------------------------------------------------------------------------------------
 
 
-def storegroup(dbQK, gruppenname, kommentar, dbtyp=u"SpatiaLite"):
+def storegroup(dbQK, gruppenname, kommentar):
     """Speichert die aktuellen Teilgebietszuordnungen der Tabellen 
        "haltungen", "schaechte", "flaechen", "tezg", "linkfl", "linksw", "einleit"
        unter einem neuen Gruppennamen
@@ -921,9 +907,6 @@ def storegroup(dbQK, gruppenname, kommentar, dbtyp=u"SpatiaLite"):
     :gruppenname: Bezeichnung der Gruppe, unter der die Teilgebietszuordnungen abgelegt werden.
     :type gruppenname: String
 
-    :dbtyp:         Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:    String
-    
     :returns: void
     """
 

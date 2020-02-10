@@ -43,3 +43,8 @@ class RunOffParamsType(enum.Enum):
     ITWH = "itwh"
     DYNA = "dyna"
     MANIAK = "maniak"
+
+
+class QKanDBChoice(enum.Enum):
+    SPATIALITE = "spatialite"
+    POSTGIS    = "postgis"

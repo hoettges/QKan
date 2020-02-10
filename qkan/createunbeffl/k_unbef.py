@@ -32,8 +32,7 @@ import logging
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar
 from qkan.database.qkan_utils import checknames, fehlermeldung
-
-# import tempfile
+from qkan import enums
 
 logger = logging.getLogger(u"QKan.createunbeffl.k_unbef")
 
@@ -48,7 +47,7 @@ progress_bar = None
 
 
 def createUnbefFlaechen(
-    iface, dbQK, liste_selAbflparamTeilgeb, autokorrektur, dbtyp="spatialite"
+    iface, dbQK, liste_selAbflparamTeilgeb, autokorrektur
 ):
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -63,9 +62,6 @@ def createUnbefFlaechen(
                             werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
                             abgebrochen.
     :type autokorrektur:    String
-    
-    :dbtyp:                 Typ der Datenbank (spatialite, postgis)
-    :type dbtyp:            String
     
     :returns:               void
     

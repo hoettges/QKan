@@ -285,8 +285,6 @@ class ExportToKP:
         self.dlg.tf_KP_dest.setText(QKan.config.dyna.file)
         self.dlg.tf_KP_template.setText(QKan.config.dyna.template)
 
-        datenbanktyp = QKan.config.database.type  # Es gibt noch keine Wahlmöglichkeit
-
         # Übernahme der Quelldatenbank:
         # Wenn ein Projekt geladen ist, wird die Quelldatenbank daraus übernommen.
         # Wenn dies nicht der Fall ist, wird die Quelldatenbank aus der
@@ -464,36 +462,22 @@ class ExportToKP:
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.info(
-                """qkan-Modul:\n        exportKanaldaten(
-                iface, 
-                dynafile='{dynafile}', 
-                template_dyna='{template_dyna}', 
-                dbQK=qbQK, 
-                dynabef_choice='{dynabef_choice}', 
-                dynaprof_choice='{dynaprof_choice}',
-                liste_teilgebiete='{liste_teilgebiete}', 
-                profile_ergaenzen={profile_ergaenzen}, 
-                autonum_dyna={autonummerierung_dyna}, 
-                mit_verschneidung={mit_verschneidung}, 
-                fangradius={fangradius}, 
-                mindestflaeche={mindestflaeche}, 
-                max_loops={max_loops}, 
-                datenbanktyp='{datenbanktyp}')""".format(
-                    dynafile=dynafile,
-                    template_dyna=template_dyna,
-                    dynabef_choice=dynabef_choice,
-                    dynaprof_choice=dynaprof_choice,
-                    liste_teilgebiete=liste_teilgebiete,
-                    profile_ergaenzen=profile_ergaenzen,
-                    autonummerierung_dyna=autonummerierung_dyna,
-                    mit_verschneidung=mit_verschneidung,
-                    fangradius=fangradius,
-                    mindestflaeche=mindestflaeche,
-                    max_loops=max_loops,
-                    datenbanktyp="SpatiaLite",
-                )
-            )
+            logger.debug(f"""QKan-Modul Aufruf
+                exportKanaldaten(
+                    iface,
+                    "{dynafile}",
+                    "{template_dyna}",
+                    {self.dbQK},
+                    {dynabef_choice},
+                    {dynaprof_choice},
+                    {liste_teilgebiete},
+                    {profile_ergaenzen},
+                    {autonummerierung_dyna},
+                    {mit_verschneidung},
+                    {fangradius},
+                    {mindestflaeche},
+                    {max_loops},
+            )""")
 
             exportKanaldaten(
                 iface,
@@ -509,5 +493,6 @@ class ExportToKP:
                 fangradius,
                 mindestflaeche,
                 max_loops,
-                datenbanktyp,
             )
+
+            del self.dbQK

@@ -5,7 +5,7 @@ import typing
 
 from qgis.core import Qgis, QgsMessageLog, QgsProject
 from qgis.utils import iface
-from qkan import QKan
+from qkan import QKan, enums
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u"QKan.database.qkan_utils")
@@ -284,7 +284,7 @@ def get_editable_layers():
     return elayers
 
 
-def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp=u"spatialite"):
+def checknames(dbQK, tab, attr, prefix, autokorrektur):
     """Prüft, ob in der Tabelle {tab} im Attribut {attr} eindeutige Namen enthalten sind. 
     Falls nicht, werden Namen vergeben, die sich aus {prefix} und ROWID zusammensetzen
 
@@ -305,9 +305,6 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp=u"spatialite"):
                         werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
                         abgebrochen.
     :type autokorrektur:   String
-    
-    :dbtyp:             Typ der Datenbank (spatialite, postgis)
-    :type dbtyp:        String
     
     :returns:           Ergebnis der Prüfung bzw. Korrektur
     :type returns:      Boolean
@@ -402,7 +399,7 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur, dbtyp=u"spatialite"):
 
 
 def checkgeom(
-    dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete=[], dbtyp=u"spatialite"
+    dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete=[]
 ):
     """Prüft, ob in der Tabelle {tab} im Attribut {attrgeo} ein Geoobjekt vorhanden ist. 
 
@@ -419,9 +416,6 @@ def checkgeom(
                         werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
                         abgebrochen.
     :type autokorrektur:   String
-    
-    :dbtyp:             Typ der Datenbank (spatialite, postgis)
-    :type dbtyp:        String
     
     :returns:           Ergebnis der Prüfung bzw. Korrektur
     :type returns:      Boolean

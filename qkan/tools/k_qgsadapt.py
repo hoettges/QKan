@@ -47,7 +47,6 @@ def qgsadapt(
     epsg,
     projectFile,
     setPathToTemplateDir=True,
-    dbtyp=u"SpatiaLite",
 ):
     """Lädt eine (Vorlage-) Projektdatei (*.qgs) und adaptiert diese auf eine QKan-Datenbank an.
     Anschließend wird dieses Projekt geladen.
@@ -64,9 +63,6 @@ def qgsadapt(
 
     :setPathToTemplateDir:      Option, ob das Suchverzeichnis auf das Template-Verzeichnis gesetzt werden soll.
     :type setPathToTemplateDir: Boolean
-
-    :dbtyp:                     Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:                String
 
     :returns: void
     """

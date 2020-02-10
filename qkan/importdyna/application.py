@@ -27,7 +27,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog
 
 # from qgis.utils import iface
-from qkan import QKan
+from qkan import QKan, enums
 
 # Initialize Qt resources from file resources.py
 # noinspection PyUnresolvedReferences
@@ -199,13 +199,15 @@ class ImportFromDyna:
             # Modulaufruf in Logdatei schreiben
             logger.debug(f"""QKan-Modul Aufruf
                 importKanaldaten(
-                    {dynafile}, 
-                    {database_qkan}, 
-                    {projectfile}, 
+                    "{dynafile}", 
+                    "{database_qkan}", 
+                    "{projectfile}", 
                     {epsg}, 
-                    "SpatiaLite",
                 )""")
 
             importKanaldaten(
-                dynafile, database_qkan, projectfile, epsg, "SpatiaLite"
+                dynafile, 
+                database_qkan, 
+                projectfile, 
+                epsg,
             )

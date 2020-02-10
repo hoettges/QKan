@@ -31,6 +31,7 @@ from qgis.PyQt.QtWidgets import QProgressBar
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_database import versionolder
 from qkan.database.qkan_utils import checknames, fehlermeldung, fortschritt, meldung
+from qkan import QKan, enums
 
 # Referenzlisten
 from qkan.database.reflists import abflusstypen
@@ -55,7 +56,6 @@ def export2he8(
     mindestflaeche=0.5,
     mit_verschneidung=True,
     exportFlaechenHE8=True,
-    datenbanktyp="spatialite",
     check_export={},
 ):
     """Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE8-SQLite-Datenbank.
@@ -86,9 +86,6 @@ def export2he8(
 
     :mit_verschneidung:     Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
     :type mit_verschneidung: Boolean
-
-    :datenbanktyp:          Typ der Datenbank (SpatiaLite, PostGIS)
-    :type datenbanktyp:     String
 
     :check_export:          Liste von Export-Optionen
     :type check_export:     Dictionary

@@ -772,7 +772,6 @@ def exportKanaldaten(
     fangradius=0.1,
     mindestflaeche=0.5,
     max_loops=1000,
-    datenbanktyp=u"spatialite",
 ):
     """Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE-Firebird-Datenbank.
 
@@ -800,9 +799,6 @@ def exportKanaldaten(
                             Haltung bzw. ein Einleitpunkt zugeordnet wird.
     :type fangradius:       float
 
-    :datenbanktyp:          Typ der Datenbank (SpatiaLite, PostGIS)
-    :type datenbanktyp:     String
-
     :check_export:          Liste von Export-Optionen
     :type check_export:     Dictionary
 
@@ -826,12 +822,14 @@ def exportKanaldaten(
             u"Fehler beim Update der Flächen-Verknüpfungen (dyna.export 1)",
             u"Der logische Cache konnte nicht aktualisiert werden.",
         )
+        return False
 
     if not updatelinksw(dbQK, fangradius):
         fehlermeldung(
             u"Fehler beim Update der Einzeleinleiter-Verknüpfungen (dyna.export 1)",
             u"Der logische Cache konnte nicht aktualisiert werden.",
         )
+        return False
 
     # DYNA-Vorlagedatei lesen. Dies geschieht zu Beginn, damit Zieldatei selbst Vorlage sein kann!
     try:
@@ -843,7 +841,6 @@ def exportKanaldaten(
                 repr(template_dyna)
             ),
         )
-        del dbQK
         return False
 
     # DYNA-Datei löschen, falls schon vorhanden
@@ -857,7 +854,6 @@ def exportKanaldaten(
                     repr(dynafile)
                 ),
             )
-            del dbQK
             return False
 
     fortschritt(u"DYNA-Datei aus Vorlage kopiert...", 0.01)
@@ -1248,7 +1244,6 @@ def exportKanaldaten(
                 u"Fehler in den Profildaten",
                 u"Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage ",
             )
-            del dbQK
             return False
 
     elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
@@ -1297,14 +1292,12 @@ def exportKanaldaten(
                 u"Fehler in den Profildaten",
                 u"Es gibt Profile ohne eine DYNA-Nummer (kp_key)",
             )
-            del dbQK
             return False
         elif fehler == 2:
             fehlermeldung(
                 u"Fehler in den Profildaten",
                 u"Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage vorhanden sind",
             )
-            del dbQK
             return False
 
     # Schreiben der DYNA-Datei ------------------------------------------------------------------------
@@ -1415,8 +1408,6 @@ def exportKanaldaten(
                 typ41 = True
                 # df.write(z)
                 continue
-
-    del dbQK
 
     fortschritt(u"Ende...", 1)
     progress_bar.setValue(100)

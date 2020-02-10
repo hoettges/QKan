@@ -26,7 +26,7 @@ from qgis.core import Qgis, QgsProject
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, QTranslator, qVersion
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 from qgis.utils import pluginDirectory
-from qkan import QKan
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
     fehlermeldung,
@@ -606,7 +606,6 @@ class ExportToHE8:
             database_QKan: str = self.dlg.tf_QKanDB.text()
             database_HE: str = self.dlg.tf_heDB_dest.text()
             dbtemplate_HE: str = self.dlg.tf_heDB_template.text()
-            datenbanktyp: str = "spatialite"
             autokorrektur: bool = self.dlg.cb_autokorrektur.isChecked()
             mit_verschneidung: bool = self.dlg.cb_regardTezg.isChecked()
 
@@ -683,7 +682,6 @@ class ExportToHE8:
             QKan.config.autokorrektur = autokorrektur
             QKan.config.selections.teilgebiete = liste_teilgebiete
             QKan.config.database.qkan = database_QKan
-            QKan.config.database.type = datenbanktyp
             QKan.config.fangradius = fangradius
             QKan.config.he.database = database_HE
             QKan.config.he.template = dbtemplate_HE
@@ -700,17 +698,16 @@ class ExportToHE8:
             # Modulaufruf in Logdatei schreiben
             logger.debug(f"""QKan-Modul Aufruf
                 export2he8(
-                {self.iface},
-                {database_HE},
-                {dbtemplate_HE},
-                {self.dbQK},
+                self.iface,
+                "{database_HE}",
+                "{dbtemplate_HE}",
+                self.dbQK,
                 {liste_teilgebiete},
                 {autokorrektur},
                 {fangradius},
                 {mindestflaeche},
                 {mit_verschneidung},
                 {exportFlaechenHE8},
-                {datenbanktyp},
                 {check_export},
             )""")
 
@@ -725,7 +722,6 @@ class ExportToHE8:
                 mindestflaeche,
                 mit_verschneidung,
                 exportFlaechenHE8,
-                datenbanktyp,
                 check_export,
             ):
                 del self.dbQK

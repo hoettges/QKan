@@ -36,7 +36,6 @@ class TestKpp(QgisTest):
             database_QKan=str(database_qkan),
             projectfile=str(project_file),
             epsg=3044,
-            dbtyp="SpatiaLite",
         )
 
         LOGGER.debug("erg (Validate_KPP_Import): %s", erg)
@@ -74,7 +73,6 @@ class TestKpp(QgisTest):
             fangradius=0.1,
             mindestflaeche=0.5,
             max_loops=1000,
-            datenbanktyp="SpatiaLite",
         )
 
         LOGGER.debug("erg (Validate_KPP_export): %s", erg)
