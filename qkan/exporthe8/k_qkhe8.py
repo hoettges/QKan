@@ -95,13 +95,13 @@ def export2he8(
 
     # Statusmeldung in der Anzeige
     global progress_bar
-    progress_bar = QProgressBar(iface.messageBar())
-    progress_bar.setRange(0, 100)
-    status_message = iface.messageBar().createMessage(
-        "", "Export in Arbeit. Bitte warten."
-    )
-    status_message.layout().addWidget(progress_bar)
-    iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
+    #progress_bar = QProgressBar(iface.messageBar())
+    #progress_bar.setRange(0, 100)
+    #status_message = iface.messageBar().createMessage(
+    #    "", "Export in Arbeit. Bitte warten."
+    #)
+    #status_message.layout().addWidget(progress_bar)
+    #iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # Referenzliste der Abflusstypen für HYSTEM-EXTRAN
     he_fltyp_ref = abflusstypen("he")
@@ -129,7 +129,7 @@ def export2he8(
         )
         return False
     fortschritt("SQLite-Datenbank aus Vorlage kopiert...", 0.01)
-    progress_bar.setValue(1)
+    #progress_bar.setValue(1)
 
     # Verbindung zur Hystem-Extran-Datenbank
 
@@ -162,7 +162,7 @@ def export2he8(
             auswahl = ""
 
         fortschritt("Export Schaechte Teil 1...", 0.1)
-        progress_bar.setValue(15)
+        #progress_bar.setValue(15)
 
         if check_export["modify_schaechte"]:
             sql = """
@@ -248,7 +248,7 @@ def export2he8(
 
             fortschritt("{} Schaechte eingefuegt".format(nextid - nr0), 0.30)
 
-        progress_bar.setValue(30)
+        #progress_bar.setValue(30)
 
     # --------------------------------------------------------------------------------------------
     # Export der Speicherbauwerke
@@ -265,7 +265,7 @@ def export2he8(
             auswahl = ""
 
         fortschritt("Export Speicherschaechte...", 0.35)
-        progress_bar.setValue(35)
+        #progress_bar.setValue(35)
 
         # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
         if check_export["modify_speicher"]:
@@ -290,7 +290,7 @@ def export2he8(
                   ON schaechte.simstatus = st.bezeichnung
                   WHERE schaechte.schnam = he.Speicherschacht.Name and schaechte.schachttyp = 'Speicher'{auswahl})
                 WHERE he.Speicherschacht.Name IN 
-                      (SELECT schnam FROM schaechte WHERE schaechte.schachttyp = 'Speicherschacht'{auswahl})
+                      (SELECT schnam FROM schaechte WHERE schaechte.schachttyp = 'Speicher'{auswahl})
                 """.format(
                 auswahl=auswahl
             )
@@ -345,7 +345,7 @@ def export2he8(
                 LEFT JOIN simulationsstatus AS st
                 ON schaechte.simstatus = st.bezeichnung
                 WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Speicherschacht) and 
-                      schaechte.schachttyp = 'Speicherschacht'{auswahl}
+                      schaechte.schachttyp = 'Speicher'{auswahl}
             """.format(
                 auswahl=auswahl, id0=id0
             )
@@ -359,67 +359,9 @@ def export2he8(
 
             fortschritt("{} Speicher eingefuegt".format(nextid - nr0), 0.40)
 
-        # --------------------------------------------------------------------------------------------
-        # Export der Kennlinien der Speicherbauwerke - nur wenn auch Speicher exportiert werden
-
-        if (
-            check_export["export_speicherkennlinien"]
-            or check_export["modify_speicherkennlinien"]
-        ):
-
-            sql = """SELECT sl.schnam, sl.wspiegel - sc.sohlhoehe AS wtiefe, sl.oberfl
-                      FROM speicherkennlinien AS sl
-                      JOIN schaechte AS sc ON sl.schnam = sc.schnam
-                      ORDER BY sc.schnam, sl.wspiegel"""
-
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_speicherkennlinien"):
-                del dbHE
-                return False
-
-            spnam = None  # Zähler für Speicherkennlinien
-
-            for attr in dbQK.fetchall():
-
-                # In allen Feldern None durch NULL ersetzen
-                (schnam, wtiefe, oberfl) = ("NULL" if el is None else el for el in attr)
-
-                # Einfuegen in die Datenbank
-
-                if schnam in refid_speicher:
-                    if spnam == "NULL" or schnam != spnam:
-                        spnam = schnam
-                        reihenfolge = 1
-                    else:
-                        schnam = spnam
-                        reihenfolge += 1
-
-                    # Ändern vorhandener Datensätze entfällt bei Tabellendaten
-
-                    # Einfuegen in die Datenbank
-                    if check_export["export_speicherkennlinien"]:
-                        sql = """
-                            INSERT INTO Tabelleninhalte
-                            ( KeyWert, Wert, Reihenfolge, Id)
-                            SELECT
-                              {wtiefe}, {oberfl}, {reihenfolge}, {id};
-                        """.format(
-                            wtiefe=wtiefe,
-                            oberfl=oberfl,
-                            reihenfolge=reihenfolge,
-                            id=refid_speicher[schnam],
-                        )
-                        # print(sql)
-
-                        if not dbHE.sql(sql, "dbHE: export_speicherkennlinien"):
-                            return False
-
-            dbHE.commit()
-
-            fortschritt("{} Speicher eingefuegt".format(nextid - nr0), 0.40)
-    progress_bar.setValue(45)
-
     # --------------------------------------------------------------------------------------------
     # Export der Auslaesse
+    #
 
     if check_export["export_auslaesse"] or check_export["modify_auslaesse"]:
 
@@ -430,6 +372,108 @@ def export2he8(
             )
         else:
             auswahl = ""
+
+        fortschritt("Export Auslässe...", 0.40)
+        #progress_bar.setValue(40)
+
+        # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
+        if check_export["modify_auslaesse"]:
+
+            sql = """
+                UPDATE he.Auslass SET
+                (   Sohlhoehe, Gelaendehoehe, 
+                    Scheitelhoehe,
+                    Planungsstatus,
+                    LastModified, Kommentar, Geometry
+                    ) =
+                ( SELECT
+                    schaechte.sohlhoehe AS sohlhoehe, 
+                    schaechte.deckelhoehe AS gelaendehoehe,
+                    schaechte.deckelhoehe AS scheitelhoehe,
+                    st.he_nr AS planungsstatus, 
+                    strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                    kommentar AS kommentar,
+                    SetSrid(schaechte.geop, -1) AS geometry
+                  FROM schaechte
+                  LEFT JOIN simulationsstatus AS st
+                  ON schaechte.simstatus = st.bezeichnung
+                  WHERE schaechte.schnam = he.Auslass.Name and schaechte.schachttyp = 'Auslass'{auswahl})
+                WHERE he.Auslass.Name IN 
+                      (SELECT schnam FROM schaechte WHERE schaechte.schachttyp = 'Auslass'{auswahl})
+                """.format(
+                auswahl=auswahl
+            )
+
+            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_auslaesse (1)"):
+                return False
+
+        # Einfuegen in die Datenbank
+        if check_export["export_auslaesse"]:
+
+            nr0 = nextid
+            refid_speicher = {}
+
+            # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+            sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
+            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_schaechte (2)"):
+                return False
+
+            data = dbQK.fetchone()
+            if len(data) == 2:
+                idmin, idmax = data
+            else:
+                fehlermeldung(
+                    "Fehler (35) in QKan_Export",
+                    f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
+                )
+            nr0 = nextid
+            id0 = nextid - idmin
+
+            sql = """
+                INSERT INTO he.Auslass
+                ( Id, Name, Typ, Sohlhoehe,
+                  Gelaendehoehe, Art, AnzahlKanten,
+                  Scheitelhoehe, HoeheVollfuellung,
+                  Planungsstatus,
+                  LastModified, Kommentar, Geometry)
+                SELECT
+                  schaechte.rowid + {id0} AS id, 
+                  schaechte.schnam AS name, 
+                  1 AS typ, 
+                  schaechte.sohlhoehe AS sohlhoehe, 
+                  schaechte.deckelhoehe AS gelaendehoehe,
+                  1 AS art, 
+                  2 AS anzahlkanten, 
+                  schaechte.deckelhoehe AS scheitelhoehe,
+                  schaechte.deckelhoehe AS hoehevollfuellung,
+                  st.he_nr AS planungsstatus, 
+                  strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                  kommentar AS kommentar,
+                  SetSrid(schaechte.geop, -1) AS geometry
+                FROM schaechte
+                LEFT JOIN simulationsstatus AS st
+                ON schaechte.simstatus = st.bezeichnung
+                WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Auslass) and 
+                      schaechte.schachttyp = 'Speicher'{auswahl}
+            """.format(
+                auswahl=auswahl, id0=id0
+            )
+
+            if not dbQK.sql(sql, "dbQK: export_speicher (2)"):
+                return False
+
+            nextid += idmax - idmin + 1
+            dbQK.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
+            dbQK.commit()
+
+            fortschritt("{} Speicher eingefuegt".format(nextid - nr0), 0.40)
+
+
+
+
+
+
+
 
         sql = """
             SELECT
@@ -558,7 +602,7 @@ def export2he8(
         dbHE.commit()
 
         fortschritt("{} Auslässe eingefuegt".format(nextid - nr0), 0.40)
-    progress_bar.setValue(50)
+    #progress_bar.setValue(50)
 
     # --------------------------------------------------------------------------------------------
     # Export der Pumpen
@@ -701,7 +745,7 @@ def export2he8(
         dbHE.commit()
 
         fortschritt("{} Pumpen eingefuegt".format(nextid - nr0), 0.40)
-    progress_bar.setValue(60)
+    #progress_bar.setValue(60)
 
     # --------------------------------------------------------------------------------------------
     # Export der Wehre
@@ -882,7 +926,7 @@ def export2he8(
         dbHE.commit()
 
         fortschritt("{} Wehre eingefuegt".format(nextid - nr0), 0.40)
-    progress_bar.setValue(60)
+    #progress_bar.setValue(60)
 
     # --------------------------------------------------------------------------------------------
     # Export der Haltungen
@@ -1033,7 +1077,7 @@ def export2he8(
 
             fortschritt("Ca. {} Haltungen eingefuegt".format(nextid - nr0), 0.60)
 
-        progress_bar.setValue(70)
+        #progress_bar.setValue(70)
 
     # --------------------------------------------------------------------------------------------
     # Export der Bodenklassen
@@ -1156,7 +1200,7 @@ def export2he8(
         dbHE.commit()
 
         fortschritt("{} Bodenklassen eingefuegt".format(nextid - nr0), 0.62)
-    progress_bar.setValue(80)
+    #progress_bar.setValue(80)
 
     # --------------------------------------------------------------------------------------------
     # Export der Abflussparameter
@@ -1339,7 +1383,7 @@ def export2he8(
         dbHE.commit()
 
         fortschritt("{} Abflussparameter eingefuegt".format(nextid - nr0), 0.65)
-    progress_bar.setValue(85)
+    #progress_bar.setValue(85)
 
     # ------------------------------------------------------------------------------------------------
     # Export der Regenschreiber
@@ -1444,7 +1488,7 @@ def export2he8(
         dbHE.commit()
 
         fortschritt("{} Regenschreiber eingefuegt".format(nextid - nr0), 0.68)
-    progress_bar.setValue(90)
+    #progress_bar.setValue(90)
 
     # ------------------------------------------------------------------------------------------------
     # Export der Flächen
@@ -1761,7 +1805,7 @@ def export2he8(
         if nr0:
             fortschritt("{} Flaechen eingefuegt".format(nextid - nr0), 0.80)
 
-    progress_bar.setValue(90)
+    #progress_bar.setValue(90)
 
     # ------------------------------------------------------------------------------------------------
     # Export der Direkteinleitungen
@@ -2380,6 +2424,75 @@ def export2he8(
     # del dbQK
 
     fortschritt("Ende...", 1)
-    progress_bar.setValue(100)
-    status_message.setText("Datenexport abgeschlossen.")
+    #progress_bar.setValue(100)
+    #status_message.setText("Datenexport abgeschlossen.")
     # status_message.setLevel(Qgis.Success)
+
+dummy = __name__
+
+
+if __name__ == '__console__' or __name__ == "__main__":
+
+    from qkan.database.dbfunc import DBConnection
+    from pathlib import Path
+    import tempfile
+    import datetime
+    from qgis.utils import iface
+
+    #logger = logging.getLogger("QKan")
+    formatter = logging.Formatter(
+        fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    file_handler = logging.FileHandler(
+        Path(tempfile.gettempdir())
+        / "QKan_{}.log".format(datetime.datetime.today().strftime("%Y-%m-%d"))
+    )
+    #stream_handler = logging.StreamHandler()
+
+    file_handler.setFormatter(formatter)
+    #stream_handler.setFormatter(formatter)
+
+    file_handler.setLevel(logging.DEBUG)
+    #stream_handler.setLevel(logging.DEBUG)
+
+    logger.setLevel(logging.DEBUG)
+    if not logger.handlers:
+        logger.addHandler(file_handler)
+        #logger.addHandler(stream_handler)
+
+    #logger.debug(f'Aufruf von k_qkhe8 aus der QGIS-Konsole: {__name__}')
+
+    database_QKan = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/work/itwh.sqlite'
+    dbQK = DBConnection(
+        dbname=database_QKan
+    )  # Datenbankobjekt der QKan-Datenbank zum Lesen
+    if not dbQK.connected:
+        logger.error(
+            u"Fehler in exportdyna.application:\n",
+            u"QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
+                database_QKan
+            ),
+        )
+
+    export2he8(
+        iface,
+        "C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/work/erg/itwh.idbm",
+        "C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/work/muster_vorlage.idbm",
+        dbQK,
+        [],
+        False,
+        0.1,
+        0.5,
+        True,
+        False,
+        {'export_schaechte': True, 'export_auslaesse': False, 'export_speicher': True, 'export_haltungen': True,
+         'export_pumpen': False, 'export_wehre': False, 'export_flaechenrw': True, 'export_einleitdirekt': False,
+         'export_aussengebiete': False, 'export_abflussparameter': False, 'export_regenschreiber': False,
+         'export_rohrprofile': False, 'export_speicherkennlinien': False, 'export_bodenklassen': False,
+         'modify_schaechte': True, 'modify_auslaesse': False, 'modify_speicher': True, 'modify_haltungen': True,
+         'modify_pumpen': False, 'modify_wehre': False, 'modify_flaechenrw': True, 'modify_einleitdirekt': False,
+         'modify_aussengebiete': False, 'modify_abflussparameter': False, 'modify_regenschreiber': False,
+         'modify_rohrprofile': False, 'modify_speicherkennlinien': False, 'modify_bodenklassen': False,
+         'combine_einleitdirekt': False},
+    )
