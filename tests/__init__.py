@@ -10,7 +10,7 @@ from qgis.gui import QgisInterface
 from qgis.testing import start_app, unittest
 from qkan import QKan
 
-LOGGER = logging.getLogger("QGIS")
+LOGGER = logging.getLogger("QKan.tests")
 
 BASE_DIR = Path(__file__).parent
 

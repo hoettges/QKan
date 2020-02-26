@@ -8,7 +8,7 @@ from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.exportdyna.k_qkkp import exportKanaldaten
 from qkan.importdyna.import_from_dyna import importKanaldaten
-from qkan.test import BASE_DIR, LOGGER, QgisTest
+from tests import BASE_DIR, LOGGER, QgisTest
 
 
 class TestKpp(QgisTest):
