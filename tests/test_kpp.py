@@ -8,7 +8,7 @@ from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.exportdyna.k_qkkp import exportKanaldaten
 from qkan.importdyna.import_from_dyna import importKanaldaten
-from tests import BASE_DIR, LOGGER, QgisTest
+from tests import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 
 
 class TestKpp(QgisTest):
@@ -17,19 +17,13 @@ class TestKpp(QgisTest):
         super().setUpClass()
 
         # Extract files
-        with ZipFile(BASE_DIR / "data/kpp.zip") as z:
-            z.extractall(BASE_DIR / "data")
-
-            for name in z.namelist():
-                name = BASE_DIR / "data" / name
-                if name not in cls.files:
-                    cls.files.append(name)
+        with ZipFile(BASE_DATA / "kpp.zip") as z:
+            z.extractall(BASE_WORK)
 
     def test_import(self):
-        database_qkan = BASE_DIR / "data/Oleanderweg.sqlite"
-        dynafile = BASE_DIR / "data/Oleanderweg.ein"
-        project_file = BASE_DIR / "data/plan.qgs"
-        self.files += [database_qkan, dynafile, project_file]
+        database_qkan = BASE_WORK / "Oleanderweg.sqlite"
+        dynafile = BASE_WORK / "Oleanderweg.ein"
+        project_file = BASE_WORK / "plan.qgs"
 
         erg = importKanaldaten(
             dynafile=str(dynafile),
@@ -45,11 +39,10 @@ class TestKpp(QgisTest):
         # self.assertTrue(False, "Fehlernachricht")
 
     def test_export(self):
-        database_qkan = BASE_DIR / "data/nette.sqlite"
-        dynafile = BASE_DIR / "data/nette.ein"
-        project_file = BASE_DIR / "data/plan_export.qgs"
-        template_dyna = BASE_DIR / "data/dyna_vorlage.ein"
-        self.files += [database_qkan, dynafile, project_file, template_dyna]
+        database_qkan = BASE_WORK / "nette.sqlite"
+        dynafile = BASE_WORK / "nette.ein"
+        project_file = BASE_WORK / "plan_export.qgs"
+        template_dyna = BASE_WORK / "dyna_vorlage.ein"
 
         project = QgsProject.instance()
         project.read(str(project_file))
