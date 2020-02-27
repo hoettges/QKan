@@ -7,7 +7,7 @@ from unittest import mock
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow
 # noinspection PyUnresolvedReferences
-from qgis.gui import QgisInterface
+from qgis.gui import QgisInterface, QgsMessageBar
 from qgis.testing import start_app, unittest
 
 from qkan import QKan
@@ -22,8 +22,9 @@ BASE_WORK = BASE_DIR / "work"
 def iface():
     _iface = mock.Mock(spec=QgisInterface)
 
-    _mainwindow = QMainWindow()
-    _iface.mainWindow.return_value = _mainwindow
+    _iface.mainWindow.return_value = QMainWindow()
+    _iface.messageBar.return_value = QgsMessageBar()
+
     return _iface
 
 
