@@ -196,7 +196,7 @@ class rahmen:
 # Hauptprogramm
 
 
-def importKanaldaten(dynafile, database_QKan, projectfile, epsg):
+def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
 
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -1332,3 +1332,5 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg):
     project = QgsProject.instance()
     # project.read(QFileInfo(projectfile))
     project.read(projectfile)  # read the new project file
+
+    return True

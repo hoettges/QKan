@@ -2437,7 +2437,23 @@ if __name__ == '__console__' or __name__ == "__main__":
     from pathlib import Path
     import tempfile
     import datetime
-    from qgis.utils import iface
+
+    from qgis.core import *
+
+    # Supply path to qgis install location
+    QgsApplication.setPrefixPath("C:/Program Files/QGIS 3.4/apps/qgis-ltr", True)
+
+    # Create a reference to the QgsApplication.  Setting the
+    # second argument to False disables the GUI.
+    qgs = QgsApplication([], True)
+
+    # Load providers
+    qgs.initQgis()
+
+    iface = QgisInterface()
+
+    # Write your code here to load some layers, use processing
+    # algorithms, etc.
 
     #logger = logging.getLogger("QKan")
     formatter = logging.Formatter(
@@ -2496,3 +2512,8 @@ if __name__ == '__console__' or __name__ == "__main__":
          'modify_rohrprofile': False, 'modify_speicherkennlinien': False, 'modify_bodenklassen': False,
          'combine_einleitdirekt': False},
     )
+
+    # Finally, exitQgis() is called to remove the
+    # provider and layer registries from memory
+    qgs.exitQgis()
+

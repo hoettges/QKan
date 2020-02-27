@@ -9,15 +9,15 @@ from qkan.database.dbfunc import DBConnection
 from qkan.exportdyna.k_qkkp import exportKanaldaten
 from qkan.importdyna.import_from_dyna import importKanaldaten
 from tests import BASE_DATA, BASE_WORK, LOGGER, QgisTest
+from qkan.tools.k_layersadapt import layersadapt
 
-
-class TestKpp(QgisTest):
+class Kpp2TestQKan(QgisTest):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
 
         # Extract files
-        with ZipFile(BASE_DATA / "kpp.zip") as z:
+        with ZipFile(BASE_DATA / "val_dynaImport.zip") as z:
             z.extractall(BASE_WORK)
 
     def test_import(self):
@@ -38,6 +38,15 @@ class TestKpp(QgisTest):
 
         # self.assertTrue(False, "Fehlernachricht")
 
+class TestQKan2Kpp(QgisTest):
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+
+        # Extract files
+        with ZipFile(BASE_DATA / "val_dynaExport.zip") as z:
+            z.extractall(BASE_WORK)
+
     def test_export(self):
         database_qkan = BASE_WORK / "nette.sqlite"
         dynafile = BASE_WORK / "nette.ein"
@@ -47,6 +56,21 @@ class TestKpp(QgisTest):
         project = QgsProject.instance()
         project.read(str(project_file))
         LOGGER.debug("Geladene Projektdatei: %s", project.fileName())
+
+        layersadapt(
+            database_QKan= str(database_qkan),
+            projectTemplate= "",
+            dbIsUptodate= False,
+            qkanDBUpdate= True,
+            anpassen_Datenbankanbindung= False,
+            anpassen_Wertebeziehungen_in_Tabellen= False,
+            anpassen_Formulare= False,
+            anpassen_Projektionssystem= False,
+            aktualisieren_Schachttypen= False,
+            zoom_alles= False,
+            fehlende_layer_ergaenzen= False,
+            anpassen_auswahl= enums.SelectedLayers.NONE,
+        )
 
         db = DBConnection(dbname=str(database_qkan))
         if not db.connected:
@@ -73,6 +97,7 @@ class TestKpp(QgisTest):
             LOGGER.info("Nicht ausgeführt, weil zuerst QKan-DB aktualisiert wurde.!")
 
         del db
+
 
 
 if __name__ == "__main__":

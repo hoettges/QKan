@@ -31,6 +31,7 @@ class QmlChoice(enum.Enum):
 class SelectedLayers(enum.Enum):
     ALL = "alle_anpassen"
     SELECTED = "auswahl_anpassen"
+    NONE = "None"                       # für Tests
 
 
 class RunOffModelType(enum.Enum):

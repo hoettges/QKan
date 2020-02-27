@@ -115,14 +115,6 @@ def layersadapt(
     """
 
     # -----------------------------------------------------------------------------------------------------
-    # QKan-Projekt
-    project = QgsProject.instance()
-
-    if project.count() == 0:
-        fehlermeldung("Benutzerfehler: ", "Es ist kein Projekt geladen.")
-        return
-
-    # -----------------------------------------------------------------------------------------------------
     # Datenbankverbindungen
 
     # qkanDBUpdate: mit Update
@@ -147,6 +139,24 @@ def layersadapt(
 
     actversion = dbQK.actversion
     logger.debug("actversion: {}".format(actversion))
+
+    if not(anpassen_auswahl or
+           anpassen_Formulare or
+           anpassen_Projektionssystem or
+           anpassen_Wertebeziehungen_in_Tabellen or
+           aktualisieren_Schachttypen or
+           fehlende_layer_ergaenzen
+    ):
+        del dbQK
+        return True
+
+    # -----------------------------------------------------------------------------------------------------
+    # QKan-Projekt
+    project = QgsProject.instance()
+
+    if project.count() == 0:
+        fehlermeldung("Benutzerfehler: ", "Es ist kein Projekt geladen.")
+        return
 
     # Projekt auf aktuelle Version updaten
     qgsActualVersion()
@@ -250,9 +260,13 @@ def layersadapt(
 
         selectedLayers = iface.layerTreeCanvasBridge().rootGroup().checkedLayers()
         selectedLayerNames = [lay.name() for lay in selectedLayers]
-    else:
+    elif anpassen_auswahl == enums.SelectedLayers.ALL:
         legendLayers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
         selectedLayerNames = [lay.name() for lay in legendLayers]
+    elif anpassen_auswahl == enums.SelectedLayers.NONE:
+        selectedLayerNames = []
+    else:
+        logger.error(f'Fehler in anpassen_auswahl: {anpassen_auswahl}\nWert ist nicht definiert (enums.py)')
 
     logger.debug("k_layersadapt (9), selectedLayerNames: {}".format(selectedLayerNames))
 
@@ -285,7 +299,7 @@ def layersadapt(
                     layername
                 ),
             )
-            # del dbQK
+            del dbQK
             return False
         elif len(qgsLayers) == 0:
             layerNotQkanMeldung = True
@@ -380,6 +394,7 @@ def layersadapt(
                                 f"Fehler in k_layersadapt (12) in layer {layername}: {err}",
                                 "Möglicherweise ist der Template-Projektdatei fehlerhaft",
                             )
+                            del dbQK
                             return False
                         options["Layer"] = projectLayerName
                     ews = QgsEditorWidgetSetup(type, options)
@@ -404,7 +419,7 @@ def layersadapt(
         evalNodeTypes(dbQK)  # in qkan.database.qkan_utils
 
     del qgsxml
-    # del dbQK
+    del dbQK
 
     project.setTitle("QKan Version {}".format(qgsVersion()))
 
