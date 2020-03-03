@@ -472,6 +472,7 @@ class LinkFl:
 
         sql = u"""SELECT grnam FROM gruppen GROUP BY grnam"""
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.showgroups (1)"):
+            del self.dbQK
             return False
         daten = self.dbQK.fetchall()
 
@@ -502,6 +503,7 @@ class LinkFl:
                 gruppe=self.gruppe
             )
             if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.listGroupAttr (1)"):
+                del self.dbQK
                 return False
             daten = self.dbQK.fetchall()
             logger.debug(u"\ndaten: {}".format(str(daten)))  # debug
@@ -519,7 +521,10 @@ class LinkFl:
                     self.dlg_mg.tw_gruppenattr.setRowHeight(i, 20)
 
     def reloadgrouptgb(self):
-        reloadgroup(self.dbQK, self.gruppe)
+        if not reloadgroup(self.dbQK, self.gruppe
+        ):
+            del self.dbQK
+            
         iface.messageBar().pushMessage(
             u"Fertig!", u"Teilgebiete wurden geladen!", level=Qgis.Info
         )
@@ -530,7 +535,10 @@ class LinkFl:
             kommentar = self.dlg_mg.tf_kommentar.toPlainText()
             if kommentar is None:
                 kommentar = u""
-            storegroup(self.dbQK, neuegruppe, kommentar)
+            if not storegroup(self.dbQK, neuegruppe, kommentar
+            ):
+                del self.dbQK
+
             self.showgroups()
             iface.messageBar().pushMessage(
                 u"Fertig!", u"Teilgebiete wurden gespeichert", level=Qgis.Info
@@ -580,6 +588,7 @@ class LinkFl:
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen (1)"):
+            del self.dbQK
             return False
 
         sql = u"""INSERT INTO teilgebiete (tgnam)
@@ -588,6 +597,7 @@ class LinkFl:
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen (1)"):
+            del self.dbQK
             return False
 
         self.dbQK.commit()
@@ -595,6 +605,7 @@ class LinkFl:
         # Abfragen der Tabelle flaechen nach verwendeten Abflussparametern
         sql = u"SELECT abflussparameter FROM flaechen GROUP BY abflussparameter"
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinefl (1)"):
+            del self.dbQK
             return False
         daten = self.dbQK.fetchall()
         # logger.debug(u'\ndaten: {}'.format(str(daten)))  # debug
@@ -617,6 +628,7 @@ class LinkFl:
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
         sql = u'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinefl (2)"):
+            del self.dbQK
             return False
         daten = self.dbQK.fetchall()
         self.dlg_cl.lw_hal_entw.clear()
@@ -634,6 +646,7 @@ class LinkFl:
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinefl (3)"):
+            del self.dbQK
             return False
         daten = self.dbQK.fetchall()
         self.dlg_cl.lw_teilgebiete.clear()
@@ -687,6 +700,7 @@ class LinkFl:
             self.dlg_cl.rb_abstandmittelpunkt.setChecked(True)
         else:
             fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
+            del self.dbQK
             return False
 
         self.countselectionfl()
@@ -717,6 +731,7 @@ class LinkFl:
                 bezug_abstand = enums.BezugAbstand.MITTELPUNKT
             else:
                 fehlermeldung(u"Fehler im Programmcode", u"Nicht definierte Option")
+                del self.dbQK
                 return False
 
             autokorrektur: bool = self.dlg_cl.cb_autokorrektur.isChecked()
@@ -766,7 +781,7 @@ class LinkFl:
                     {epsg},
             )""")
 
-            createlinkfl(
+            if not createlinkfl(
                 self.dbQK,
                 liste_flaechen_abflussparam,
                 liste_hal_entw,
@@ -780,7 +795,8 @@ class LinkFl:
                 fangradius,
                 bezug_abstand,
                 epsg,
-            )
+            ):
+                del self.dbQK
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
@@ -844,6 +860,7 @@ class LinkFl:
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         if not self.dbQK.sql(sql, u"LinkFl.run_createlinesw (1)"):
+            del self.dbQK
             return False
 
         sql = u"""INSERT INTO teilgebiete (tgnam)
@@ -852,6 +869,7 @@ class LinkFl:
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         if not self.dbQK.sql(sql, u"LinkFl.run_createlinesw (2)"):
+            del self.dbQK
             return False
 
         self.dbQK.commit()
@@ -859,6 +877,7 @@ class LinkFl:
         # Abfragen der Tabelle haltungen nach vorhandenen Entwässerungsarten
         sql = u'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinesw (1)"):
+            del self.dbQK
             return False
         daten = self.dbQK.fetchall()
         self.dlg_sw.lw_hal_entw.clear()
@@ -876,6 +895,7 @@ class LinkFl:
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_createlinesw (2)"):
+            del self.dbQK
             return False
         daten = self.dbQK.fetchall()
         self.dlg_sw.lw_teilgebiete.clear()
@@ -937,11 +957,15 @@ class LinkFl:
                     {epsg},
             )""")
 
-            createlinksw(
+            if not createlinksw(
                 self.dbQK, 
                 liste_teilgebiete, 
                 suchradius, 
-                epsg)
+                epsg
+            ):
+                del self.dbQK
+                return False
+
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
@@ -1035,6 +1059,7 @@ class LinkFl:
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = u'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         if not self.dbQK.sql(sql, u"QKan_LinkFlaechen.run_assigntgeb (1)"):
+            del self.dbQK
             return False
         daten = self.dbQK.fetchall()
         self.dlg_at.lw_teilgebiete.clear()
@@ -1054,6 +1079,7 @@ class LinkFl:
             self.enable_bufferradius(False)
         else:
             fehlermeldung(u"Fehler im Programmcode (3)", u"Nicht definierte Option")
+            del self.dbQK
             return False
 
         # Festlegung des Pufferradius
@@ -1076,6 +1102,7 @@ class LinkFl:
                 auswahltyp = enums.AuswahlTyp.OVERLAPS
             else:
                 fehlermeldung(u"Fehler im Programmcode (4)", u"Nicht definierte Option")
+                del self.dbQK
                 return False
 
             autokorrektur: bool = self.dlg_at.cb_autokorrektur.isChecked()
@@ -1114,7 +1141,7 @@ class LinkFl:
                     {bufferradius},
             )""")
 
-            assigntgeb(
+            if not assigntgeb(
                 self.dbQK,
                 auswahltyp,
                 liste_teilgebiete,
@@ -1130,7 +1157,9 @@ class LinkFl:
                 autokorrektur,
                 flaechen_bereinigen,
                 bufferradius,
-            )
+            ):
+                del self.dbQK
+                return False
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
@@ -1290,12 +1319,17 @@ class LinkFl:
 
             # Start der Verarbeitung
             if self.dlg_ul.cb_linkfl.isChecked():
-                updatelinkfl(
+                if not updatelinkfl(
                     self.dbQK, fangradius, flaechen_bereinigen, delete_geom_none
-                )
+                ):
+                    del self.dbQK
+                    return False
 
             if self.dlg_ul.cb_linksw.isChecked():
-                updatelinksw(self.dbQK, fangradius, delete_geom_none)
+                if not updatelinksw(self.dbQK, fangradius, delete_geom_none
+                ):
+                    del self.dbQK
+                    return False
 
             meldung(u"Fertig!", u"Bereinigung Flächenverknüpfungen abgeschlossen.")
 

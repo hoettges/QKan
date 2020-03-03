@@ -622,6 +622,7 @@ class QKanTools:
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         if not self.dbQK.sql(sql, u"QKan_Tools.application.run (1) "):
+            del self.dbQK
             return False
 
         # Check, ob alle Abflussparameter in Flächen auch in Tabelle "abflussparameter" enthalten
@@ -632,6 +633,7 @@ class QKanTools:
                 abflussparameter NOT IN (SELECT apnam FROM abflussparameter)
                 GROUP BY abflussparameter"""
         if not self.dbQK.sql(sql, u"QKan_Tools.application.run (2) "):
+            del self.dbQK
             return False
 
         self.dbQK.commit()
@@ -646,6 +648,7 @@ class QKanTools:
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = '''SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'''
         if not self.dbQK.sql(sql, u"QKan_Tools.application.run (4) "):
+            del self.dbQK
             return False
         daten = self.dbQK.fetchall()
         self.dlgro.lw_teilgebiete.clear()
@@ -671,6 +674,7 @@ class QKanTools:
         # Abfragen der Tabelle abflussparameter nach Abflussparametern
         sql = '''SELECT "apnam" FROM "abflussparameter" GROUP BY "apnam"'''
         if not self.dbQK.sql(sql, u"QKan_Tools.application.run (4) "):
+            del self.dbQK
             return False
         daten = self.dbQK.fetchall()
         self.dlgro.lw_abflussparameter.clear()
@@ -785,6 +789,7 @@ class QKanTools:
                 liste_teilgebiete,
                 liste_abflussparameter,
             )
+        del self.dbQK
 
     # -----------------------------------------------------------------------------------------------------
     # Anpassen/Ergänzen von QKan-Layern

@@ -93,6 +93,7 @@ def qgsadapt(
     try:
         dbQK.sql(sql)
     except BaseException as e:
+        del dbQK
         fehlermeldung("SQL-Fehler", str(e))
         fehlermeldung("Fehler in qgsadapt", u"\nFehler in sql_zoom: \n" + sql + "\n\n")
 
@@ -112,6 +113,7 @@ def qgsadapt(
             WHERE Lower(f_table_name) = Lower('schaechte')
             AND Lower(f_geometry_column) = Lower('geom')"""
     if not dbQK.sql(sql, "k_qgsadapt (1)"):
+        del dbQK
         return None
 
     srid = dbQK.fetchone()[0]

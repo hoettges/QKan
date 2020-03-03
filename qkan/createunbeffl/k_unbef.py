@@ -232,7 +232,6 @@ def createUnbefFlaechen(
     progress_bar.setValue(90)
 
     dbQK.commit()
-    del dbQK
 
     # Karte aktualisieren
     iface.mapCanvas().refreshAllLayers()

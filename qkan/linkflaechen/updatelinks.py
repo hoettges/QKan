@@ -73,20 +73,18 @@ def updatelinkfl(
     if flaechen_bereinigen:
         sql = """UPDATE flaechen SET geom=MakeValid(geom)"""
         if not dbQK.sql(sql, u"k_link.createlinkfl (1)"):
-            del dbQK
             # progress_bar.reset()
             return False
         sql = """UPDATE tezg SET geom=MakeValid(geom)"""
         if not dbQK.sql(sql, u"k_link.createlinkfl (2)"):
-            del dbQK
             # progress_bar.reset()
             return False
         # Flächen prüfen und ggfs. Meldung anzeigen
-        check_flaechenbilanz(dbQK)
+        if not check_flaechenbilanz(dbQK):
+            return False
 
     # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
     if not checknames(dbQK, u"flaechen", u"flnam", u"f_", True):
-        del dbQK
         return False
 
     # Löschen von Datensätzen ohne Linienobjekt

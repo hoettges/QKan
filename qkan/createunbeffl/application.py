@@ -209,6 +209,7 @@ class CreateUnbefFl:
         )
 
         if not self.dbQK.sql(sql, u"QKan.CreateUnbefFlaechen (5)"):
+            del self.dbQK
             return False
 
         data = self.dbQK.fetchone()
@@ -284,6 +285,7 @@ class CreateUnbefFl:
             WHERE bodenklasse IS NOT NULL AND trim(bodenklasse) <> ''"""
 
         if not self.dbQK.sql(sql, u"createunbeffl.run (1)"):
+            del self.dbQK
             return False
 
         data = self.dbQK.fetchone()
@@ -302,6 +304,7 @@ class CreateUnbefFl:
                         ds
                     )
                     if not self.dbQK.sql(sql, u"createunbeffl.run (2)"):
+                        del self.dbQK
                         return False
             else:
                 fehlermeldung(
@@ -346,6 +349,7 @@ class CreateUnbefFl:
                             ON bk.bknam = ap.bodenklasse
                             GROUP BY abflussparameter, teilgebiet"""
         if not self.dbQK.sql(sql, u"createunbeffl.run (4)"):
+            del self.dbQK
             return None
 
         self.listetezg = self.dbQK.fetchall()
@@ -413,9 +417,13 @@ class CreateUnbefFl:
                     {autokorrektur}
                 )""")
 
-            createUnbefFlaechen(
+            if not createUnbefFlaechen(
                 self.iface, 
                 self.dbQK, 
                 liste_selAbflparamTeilgeb, 
                 autokorrektur
-            )
+            ):
+                del self.dbQK
+                return False
+
+    

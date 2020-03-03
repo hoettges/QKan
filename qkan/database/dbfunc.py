@@ -43,7 +43,7 @@ progress_bar = None
 
 
 # Pruefung, ob in Tabellen oder Spalten unerlaubte Zeichen enthalten sind
-def checknames(text):
+def checkchars(text):
     """ Pruefung auf nicht erlaubte Zeichen in Tabellen- und Spaltennamen.
 
         :param text: zu pruefende Bezeichnung einer Tabelle oder Tabellenspalte
@@ -196,7 +196,7 @@ class DBConnection:
             self.tabname = t_tab.split("=")[1].strip('"')
 
             # Pruefung auf korrekte Zeichen in Namen
-            if not checknames(self.tabname):
+            if not checkchars(self.tabname):
                 fehlermeldung(
                     "Fehler",
                     "Unzulaessige Zeichen in Tabellenname: {}".format(self.tabname),
@@ -303,7 +303,6 @@ class DBConnection:
             )
             # if transaction:
             # self.cursl.commit("ROLLBACK;")
-            self.__del__()
             return False
 
     def fetchall(self):

@@ -6,6 +6,7 @@ import typing
 from qgis.core import Qgis, QgsMessageLog, QgsProject
 from qgis.utils import iface
 from qkan import QKan, enums
+import math
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger(u"QKan.database.qkan_utils")
@@ -424,7 +425,7 @@ def checkgeom(
     # ----------------------------------------------------------------------------------------------------------------
     # Prüfung, ob das Geoobjekt in Spalte attrgeo existiert
 
-    # Einschränkung auf ausgewähtle Teilgebiete
+    # Einschränkung auf ausgewählte Teilgebiete
     if len(liste_teilgebiete) != 0:
         auswahl = u" AND {tab}.teilgebiet in ('{lis}')".format(
             lis=u"', '".join(liste_teilgebiete), tab=tab
@@ -556,6 +557,7 @@ def check_flaechenbilanz(dbQK):
             u"Differenz in Bilanz der Haltungsflächen!",
             u'Öffnen Sie den Layer "Prüfung Haltungsflächenbilanz"',
         )
+    return True
 
 
 def evalNodeTypes(dbQK):
@@ -637,21 +639,96 @@ def evalNodeTypes(dbQK):
           WHERE t_hun.pk IS NULL AND t_hob.pk IS NULL)"""
 
     if not dbQK.sql(sql_typAnf, u"importkanaldaten_he (39)"):
-        return None
+        return False
 
     if not dbQK.sql(sql_typEnd, u"importkanaldaten_he (40)"):
-        return None
+        return False
 
     if not dbQK.sql(sql_typHoch, u"importkanaldaten_he (41)"):
-        return None
+        return False
 
     if not dbQK.sql(sql_typTief, u"importkanaldaten_he (42)"):
-        return None
+        return False
 
     if not dbQK.sql(sql_typZweig, u"importkanaldaten_he (43)"):
-        return None
+        return False
 
     if not dbQK.sql(sql_typEinzel, u"importkanaldaten_he (44)"):
-        return None
+        return False
 
     dbQK.commit()
+
+
+# Funktion zur formatierten Ausgabe von Fließkommazahlen
+
+
+def formf(zahl, anz):
+    """Formatiert eine Fließkommazahl so, dass sie in einer vorgegebenen Anzahl von Zeichen
+       mit maximaler Genauigkeit dargestellt werden kann.
+    """
+    if anz == 0 or anz is None:
+        return ""
+    if zahl is None:
+        if anz == 1:
+            erg = "."
+        else:
+            erg = "{}0.".format(" " * (anz - 2))
+        return erg
+    elif zahl == 0:
+        return " " * (anz - 1) + "0"
+    elif zahl < 0:
+        logger.error(
+            u"Fehler in k_qkkp.formf (2): Zahl ist negativ\nzahl = {}\nanz = {}\n".format(
+                zahl, anz
+            )
+        )
+        return None
+
+    # try:
+    nv = int(math.log10(zahl))  # Anzahl Stellen vor dem Komma.
+    # except BaseException as err:
+    # fehlermeldung(u'Fehler in k_qkkp.formf (1): {}'.format(err),
+    # u'zahl = {}, anz = {}'.format(zahl, anz))
+
+    dez = True  # In der Zahl kommt ein Dezimalkomma vor. Wird benötigt wenn
+    # Nullen am Ende gelöscht werden sollen
+
+    # Prüfung, ob Zahl (auch nach Rundung!) kleiner 1 ist, so dass die führende Null weggelassen
+    # werden kann
+
+    if round(zahl, anz - 1) < 1:
+        fmt = "{0:" + "{:d}.{:d}f".format(anz + 1, anz - 1) + "}"
+        erg = fmt.format(zahl)[1:]
+    else:
+        if int(math.log10(round(zahl, 0))) + 1 > anz:
+            logger.error(
+                u"Fehler in k_qkkp.formf (3): Zahl ist zu groß!\nzahl = {}\nanz = {}\n".format(
+                    zahl, anz
+                )
+            )
+            return None
+        # Korrektur von nv, für den Fall, dass zahl nahe an nächster 10-Potenz
+        nv = int(math.log10(round(zahl, max(0, anz - 2 - nv))))
+        if nv + 1 == anz:
+            # Genau soviel Platz wie Vorkommastellen
+            fmt = "{0:" + "{:d}.{:d}f".format(anz, anz - 1 - nv) + "}"
+            dez = False  # Nullen am Ende dürfen nicht gelöscht werden
+        elif nv + 1 == anz - 1:
+            # Platz für alle Vorkommastellen und das Dezimalzeichen (dieses muss ergänzt werden)
+            fmt = "{0:" + "{:d}.{:d}f".format(anz, anz - 2 - nv) + "}."
+            dez = False  # obsolet, weil Dezimalpunkt am Ende
+        elif nv + 1 < anz - 1:
+            # Platz für mindestens eine Nachkommastelle
+            fmt = "{0:" + "{:d}.{:d}f".format(anz, anz - 2 - nv) + "}"
+        else:
+            logger.error(
+                u"Fehler in k_qkkp.formf (2):\nzahl = {}\nanz = {}\n".format(zahl, anz)
+            )
+            return None
+        erg = fmt.format(zahl)
+
+        # Nullen am Ende löschen
+        if dez:
+            fmt = "{0:>" + "{:d}s".format(anz) + "}"
+            erg = fmt.format(erg.rstrip("0"))
+    return erg

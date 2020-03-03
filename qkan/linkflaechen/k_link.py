@@ -150,7 +150,8 @@ def createlinkfl(
             progress_bar.reset()
             return False
         # Flächen prüfen und ggfs. Meldung anzeigen
-        check_flaechenbilanz(dbQK)
+        if not check_flaechenbilanz(dbQK):
+            return False
 
     # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
     if not checknames(dbQK, u"flaechen", u"flnam", u"f_", autokorrektur):
@@ -719,9 +720,11 @@ def assigntgeb(
             progress_bar.reset()
             return False
         # Flächen prüfen und ggfs. Meldung anzeigen
-        check_flaechenbilanz(dbQK)
+        if not check_flaechenbilanz(dbQK):
+            return False
 
     if not checknames(dbQK, u"teilgebiete", u"tgnam", u"tg_", autokorrektur):
+        del dbQK
         return False
 
     if len(liste_teilgebiete) != 0:

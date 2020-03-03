@@ -248,7 +248,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                 database_QKan
             ),
         )
-        return None
+        return False
 
     # # Referenztabellen laden.
 
@@ -346,7 +346,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
 
     for sql in sqllist:
         if not dbQK.sql(sql, u"importkanaldaten_dyna create tab_typ12"):
-            return None
+            del dbQK
+            return False
 
     # Initialisierung von Parametern für die nachfolgende Leseschleife
 
@@ -477,7 +478,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                             )
                             logger.debug(u"sql = {}".format(sql))
                             if not dbQK.sql(sql, u"importkanaldaten_kp (1)"):
-                                return None
+                                del dbQK
+                                return False
 
                         if zeile[0:2] != "++":
                             # Profilname
@@ -506,7 +508,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                     ks_key=ks_key, ks=ks
                 )
                 if not dbQK.sql(sql, u"importkanaldaten_kp (2)"):
-                    return None
+                    del dbQK
+                    return False
 
             elif zeile[0:2] == u"12":
 
@@ -587,7 +590,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                             u"12er: Wert Nr. {} - {}\nZeile: {}".format(n, err, zeile)
                         )
                         del dbQK
-                        return None
+                        return False
 
                     try:
                         sql = u"""INSERT INTO dyna12
@@ -629,7 +632,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                     except BaseException as err:
                         logger.error("12er: {}\n{}".format(err, zeile))
                     if not dbQK.sql(sql, u"importkanaldaten_dyna import typ12"):
-                        return None
+                        del dbQK
+                        return False
 
             elif zeile[0:2] == u"41":
 
@@ -669,7 +673,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                 except BaseException as err:
                     logger.error(u"16er: {}\n{}".format(err, zeile))
                 if not dbQK.sql(sql, u"importkanaldaten_dyna typ16"):
-                    return None
+                    del dbQK
+                    return False
     except BaseException as err:
         fehlermeldung(
             u"Dateifehler",
@@ -677,7 +682,7 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
         )
         logger.error(u"12er: Wert Nr. {} - {}\nZeile: {}".format(n, err, zeile))
         del dbQK
-        return None
+        return False
 
     # ------------------------------------------------------------------------------
     # Profile aus DYNA-Datei in Tabelle profile ergänzen
@@ -691,7 +696,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
             WHERE profile.profilnam = dynaprofil.profilnam and profile.kp_key <> dynaprofil.profil_key)"""
 
     if not dbQK.sql(sql, "importkanaldaten_dyna profile-1"):
-        return None
+        del dbQK
+        return False
 
     # 2. Neue Profile aus DYNA hinzufügen
 
@@ -704,7 +710,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
             FROM profile WHERE kp_key IS NOT NULL)"""
 
     if not dbQK.sql(sql, "importkanaldaten_dyna profile-2"):
-        return None
+        del dbQK
+        return False
 
     # ------------------------------------------------------------------------------
     # Haltungsdaten
@@ -754,7 +761,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
         GROUP BY dyna12.kanalnummer, dyna12.haltungsnummer"""
 
     if not dbQK.sql(sql, "importkanaldaten_dyna (7)"):
-        return None
+        del dbQK
+        return False
     daten = dbQK.fetchall()
 
     # Haltungsdaten in die QKan-DB schreiben
@@ -854,7 +862,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
             )
 
         if not dbQK.sql(sql, "importkanaldaten_dyna (9a)"):
-            return None
+            del dbQK
+            return False
 
     dbQK.commit()
 
@@ -888,7 +897,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
         GROUP BY dyna12.schoben"""
 
     if not dbQK.sql(sql, "importkanaldaten_dyna (11)"):
-        return None
+        del dbQK
+        return False
     daten = dbQK.fetchall()
 
     # Schachtdaten aufbereiten und in die QKan-DB schreiben
@@ -968,7 +978,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                 geom=geom,
             )
             if not dbQK.sql(sql, "importkanaldaten_dyna (13)"):
-                return None
+                del dbQK
+                return False
         except BaseException as e:
             fehlermeldung("SQL-Fehler", str(e))
             fehlermeldung(
@@ -1004,7 +1015,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
         GROUP BY dyna41.schnam"""
 
     if not dbQK.sql(sql, "importkanaldaten_dyna (14)"):
-        return None
+        del dbQK
+        return False
     daten = dbQK.fetchall()
 
     # Auslassdaten aufbereiten und in die QKan-DB schreiben
@@ -1084,7 +1096,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                 geom=geom,
             )
             if not dbQK.sql(sql, "importkanaldaten_dyna (16)"):
-                return None
+                del dbQK
+                return False
         except BaseException as e:
             fehlermeldung("SQL-Fehler", str(e))
             fehlermeldung(
@@ -1105,7 +1118,10 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                     max(ysch) AS ymax
              FROM schaechte"""
     try:
-        dbQK.sql(sql)
+        if not dbQK.sql(sql, "importkanaldaten_dyna (17)"
+        ):
+            del dbQK
+            return False
     except BaseException as e:
         fehlermeldung("SQL-Fehler", str(e))
         fehlermeldung(
@@ -1129,7 +1145,8 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
             WHERE Lower(f_table_name) = Lower('schaechte')
             AND Lower(f_geometry_column) = Lower('geom')"""
     if not dbQK.sql(sql, "importkanaldaten_dyna (37)"):
-        return None
+        del dbQK
+        return False
 
     srid = dbQK.fetchone()[0]
     try:

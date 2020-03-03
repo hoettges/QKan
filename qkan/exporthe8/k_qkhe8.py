@@ -2419,14 +2419,12 @@ def export2he8(
 
         fortschritt("{} Aussengebiete eingefuegt".format(nextid - nr0), 0.98)
 
-    # Zum Schluss: Schließen der Datenbankverbindungen
-
-    # del dbQK
-
     fortschritt("Ende...", 1)
     #progress_bar.setValue(100)
     #status_message.setText("Datenexport abgeschlossen.")
     # status_message.setLevel(Qgis.Success)
+
+    return True
 
 dummy = __name__
 
@@ -2516,4 +2514,4 @@ if __name__ == '__console__' or __name__ == "__main__":
     # Finally, exitQgis() is called to remove the
     # provider and layer registries from memory
     qgs.exitQgis()
-
+    

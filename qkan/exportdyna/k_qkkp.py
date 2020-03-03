@@ -27,7 +27,7 @@ from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
 
 from qkan import enums
-from qkan.database.qkan_utils import fehlermeldung, fortschritt, meldung
+from qkan.database.qkan_utils import fehlermeldung, fortschritt, meldung, formf
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 logger = logging.getLogger("QKan.exportdyna.k_qkkp")
@@ -36,81 +36,6 @@ progress_bar = None
 
 
 # Hilfsfunktionen --------------------------------------------------------------------------
-
-# Funktion zur formatierten Ausgabe von Fließkommazahlen
-
-
-def formf(zahl, anz):
-    """Formatiert eine Fließkommazahl so, dass sie in einer vorgegebenen Anzahl von Zeichen
-       mit maximaler Genauigkeit dargestellt werden kann.
-    """
-    if anz == 0 or anz is None:
-        return ""
-    if zahl is None:
-        if anz == 1:
-            erg = "."
-        else:
-            erg = "{}0.".format(" " * (anz - 2))
-        return erg
-    elif zahl == 0:
-        return " " * (anz - 1) + "0"
-    elif zahl < 0:
-        logger.error(
-            u"Fehler in k_qkkp.formf (2): Zahl ist negativ\nzahl = {}\nanz = {}\n".format(
-                zahl, anz
-            )
-        )
-        return None
-
-    # try:
-    nv = int(math.log10(zahl))  # Anzahl Stellen vor dem Komma.
-    # except BaseException as err:
-    # fehlermeldung(u'Fehler in k_qkkp.formf (1): {}'.format(err),
-    # u'zahl = {}, anz = {}'.format(zahl, anz))
-
-    dez = True  # In der Zahl kommt ein Dezimalkomma vor. Wird benötigt wenn
-    # Nullen am Ende gelöscht werden sollen
-
-    # Prüfung, ob Zahl (auch nach Rundung!) kleiner 1 ist, so dass die führende Null weggelassen
-    # werden kann
-
-    if round(zahl, anz - 1) < 1:
-        fmt = "{0:" + "{:d}.{:d}f".format(anz + 1, anz - 1) + "}"
-        erg = fmt.format(zahl)[1:]
-    else:
-        if int(math.log10(round(zahl, 0))) + 1 > anz:
-            logger.error(
-                u"Fehler in k_qkkp.formf (3): Zahl ist zu groß!\nzahl = {}\nanz = {}\n".format(
-                    zahl, anz
-                )
-            )
-            return None
-        # Korrektur von nv, für den Fall, dass zahl nahe an nächster 10-Potenz
-        nv = int(math.log10(round(zahl, max(0, anz - 2 - nv))))
-        if nv + 1 == anz:
-            # Genau soviel Platz wie Vorkommastellen
-            fmt = "{0:" + "{:d}.{:d}f".format(anz, anz - 1 - nv) + "}"
-            dez = False  # Nullen am Ende dürfen nicht gelöscht werden
-        elif nv + 1 == anz - 1:
-            # Platz für alle Vorkommastellen und das Dezimalzeichen (dieses muss ergänzt werden)
-            fmt = "{0:" + "{:d}.{:d}f".format(anz, anz - 2 - nv) + "}."
-            dez = False  # obsolet, weil Dezimalpunkt am Ende
-        elif nv + 1 < anz - 1:
-            # Platz für mindestens eine Nachkommastelle
-            fmt = "{0:" + "{:d}.{:d}f".format(anz, anz - 2 - nv) + "}"
-        else:
-            logger.error(
-                u"Fehler in k_qkkp.formf (2):\nzahl = {}\nanz = {}\n".format(zahl, anz)
-            )
-            return None
-        erg = fmt.format(zahl)
-
-        # Nullen am Ende löschen
-        if dez:
-            fmt = "{0:>" + "{:d}s".format(anz) + "}"
-            erg = fmt.format(erg.rstrip("0"))
-    return erg
-
 
 # Funktion zur Umwandlung der Neigungsklassen
 def fneigkl(neigung):
@@ -149,42 +74,42 @@ def write12(
     """Schreiben der DYNA-Typ12-Datenzeilen
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type dbQK:             DBConnection
+    :type:                  DBConnection
 
     :df:                    zu Schreibende DYNA-Datei
-    :type df:               String
+    :type:                  String
 
     :dynakeys_id:           Liste der DYNA-Schlüssel für Rauheitsbeiwerte, Material und Regenspende
-    :type dbQK:             List
+    :type:                  List
 
     :dynakeys_ks:           Liste der Rauheitsbeiwerte in der DYNA-Datei
-    :type dbQK:             List
+    :type:                  List
 
     :mindestflaeche:        Mindestflächengröße, ab der Flächenobjekte berücksichtigt werden
-    :type dbQK:             Float
+    :type:                  Float
 
     :mit_verschneidung:     Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
-    :type mit_verschneidung: Boolean
+    :type:                  Boolean
 
     :dynaprof_choice:       Option, wie die Zuordnung der Querprofile aus QKan zu den in der DYNA-Datei
                             vorhandenen erfolgt: Über den gemeinsamen Profilnamen oder den gemeinsamen Profilkey
-    :type dynaprof_choice:  enums.ProfChoice
+    :type:                  enums.ProfChoice
 
     :dynabef_choice:        Option für die Haltungsgesamtfläche: Bestimmung als Summe der Einzelflächen
                             oder über das tezg-Flächenobjekt
-    :type dynabef_choice:   enums.BefChoice
+    :type:                  enums.BefChoice
 
     :dynaprof_nam:          Liste der Querprofilnamen aus der Vorlage-DYNA-Datei
-    :type dbQK:             List
+    :type:                  List
 
     :dynaprof_key:          Liste der Querprofilschlüssel aus der Vorlage-DYNA-Datei
-    :type dbQK:             List
+    :type:                  List
 
     :ausw_and:              SQL-Textbaustein, um eine Bedingung mit "AND" anzuhängen
-    :type dbQK:             String
+    :type:                  String
 
     :auswahl:               SQL-Textbaustein mit der Bedingung zur Filterung auf eine Liste von Teilgebieten
-    :type dbQK:             String
+    :type:                  String
 
     :returns: void
     """

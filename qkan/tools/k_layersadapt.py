@@ -140,8 +140,7 @@ def layersadapt(
     actversion = dbQK.actversion
     logger.debug("actversion: {}".format(actversion))
 
-    if not(anpassen_auswahl or
-           anpassen_Formulare or
+    if not(anpassen_Formulare or
            anpassen_Projektionssystem or
            anpassen_Wertebeziehungen_in_Tabellen or
            aktualisieren_Schachttypen or
@@ -156,6 +155,7 @@ def layersadapt(
 
     if project.count() == 0:
         fehlermeldung("Benutzerfehler: ", "Es ist kein Projekt geladen.")
+        del dbQK
         return
 
     # Projekt auf aktuelle Version updaten
@@ -201,6 +201,7 @@ def layersadapt(
                         "Fehler in k_layersadapt (11): {}".format(err),
                         "layername: {}".format(layername),
                     )
+                    del dbQK
                     return False
                 project.addMapLayer(layer, False)
                 atcGroup = layersRoot.findGroup(group)
@@ -341,6 +342,7 @@ def layersadapt(
                     table=table, geom=geom
                 )
                 if not dbQK.sql(sql, "dbQK: k_layersadapt (1)"):
+                    del dbQK
                     return False
 
                 data = dbQK.fetchone()

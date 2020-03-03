@@ -8,7 +8,7 @@ from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.exportdyna.k_qkkp import exportKanaldaten
 from qkan.importdyna.import_from_dyna import importKanaldaten
-from tests import BASE_DATA, BASE_WORK, LOGGER, QgisTest
+from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from qkan.tools.k_layersadapt import layersadapt
 
 class TestKpp2QKan(QgisTest):
@@ -35,7 +35,6 @@ class TestKpp2QKan(QgisTest):
         LOGGER.debug("erg (Validate_KPP_Import): %s", erg)
         if not erg:
             LOGGER.info("Nicht ausgeführt, weil zuerst QKan-DB aktualisiert wurde.!")
-
         # self.assertTrue(False, "Fehlernachricht")
 
 class TestQKan2Kpp(QgisTest):
@@ -97,6 +96,7 @@ class TestQKan2Kpp(QgisTest):
             LOGGER.info("Nicht ausgeführt, weil zuerst QKan-DB aktualisiert wurde.!")
 
         del db
+        # self.assertTrue(False, "Fehlernachricht")
 
 
 

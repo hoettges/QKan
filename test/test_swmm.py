@@ -4,10 +4,14 @@ from zipfile import ZipFile
 from qgis.core import QgsProject
 from qgis.testing import unittest
 
+import sys, os
+
+sys.path.append(os.path.join(os.path.split(__file__)[0],'..'))
+
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.exportswmm.k_qksw import exportKanaldaten
-from tests import BASE_DATA, BASE_WORK, LOGGER, QgisTest
+from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from qkan.tools.k_layersadapt import layersadapt
 
 class TestSwmm2QKan(QgisTest):
@@ -50,7 +54,7 @@ class TestQKan2Swmm(QgisTest):
     def test_export(self):
         database_qkan = BASE_WORK / "nette.sqlite"
         swmmfile = BASE_WORK / "nette.inp"
-        template_swmm = BASE_WORK / "swmm_vorlage.ein"
+        template_swmm = BASE_WORK / "swmm_vorlage.inp"
 
         layersadapt(
             database_QKan= str(database_qkan),
@@ -68,10 +72,11 @@ class TestQKan2Swmm(QgisTest):
         )
 
         erg = exportKanaldaten(
-            iface=iface,
+            iface=self.iface,
             databaseQKan=str(database_qkan),
             templateSwmm=str(template_swmm),
             ergfileSwmm=str(swmmfile),
+            mit_verschneidung=True,
             liste_teilgebiete=['Fa20', 'Fa22', 'Fa23', 'Fa25'],
         )
 

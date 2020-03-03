@@ -368,7 +368,9 @@ class ExportToKP:
 
             # Ereignis bei Auswahländerung in Liste Teilgebiete
 
-        self.countselection()
+        if not self.countselection():
+            del self.dbQK
+            return False
 
         # Autokorrektur
         self.dlg.cb_profile_ergaenzen.setChecked(QKan.config.dyna.profile_ergaenzen)

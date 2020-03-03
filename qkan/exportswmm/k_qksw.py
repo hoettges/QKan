@@ -8,7 +8,7 @@
                               -------------------
                             begin                : 2015-08-10
                             git sha              : $Format:%H$
-                            copyright            : (C) 2015 by J�rg H�ttges / FH Aachen
+                            copyright            : (C) 2015 by Jörg Höttges / FH Aachen
                             email                : hoettges@fh-aachen.de
  ***************************************************************************/
 
@@ -24,14 +24,14 @@ Transfer von Kanaldaten aus QKan nach SWMM 5.0.1
 
 ----------------------------------------------------------------------------------"""
 
-from qgis.utils import pluginDirectory
-import os
-import json
-import time
 import math
 import logging
-# from qgis.core import *
-# import qgis.utils
+
+from qkan.database.dbfunc import DBConnection
+
+logger = logging.getLogger("QKan.exportswmm")
+
+progress_bar = None
 
 # --------------------------------------------------------------------------------------------------
 # Start des eigentlichen Programms
@@ -45,13 +45,14 @@ def exportKanaldaten(
     databaseQKan,
     templateSwmm,
     ergfileSwmm,
+    mit_verschneidung,
     liste_teilgebiete,
 ):
     """
     :iface:                 QGIS-Interface zur GUI
     :type:                  QgisInterface
 
-    :database_QKan:         Pfad zur QKan-Datenbank
+    :databaseQKan:         Pfad zur QKan-Datenbank
     :type:                  string
 
     :templateSwmm:          Vorlage für die zu erstellende SWMM-Datei
@@ -59,6 +60,9 @@ def exportKanaldaten(
 
     :ergfileSwmm:           Ergebnisdatei für SWMM
     :type:                  string
+
+    :mit_verschneidung:     Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
+    :type:                  Boolean
 
     :liste_teilgebiete:     Liste der ausgewählten Teilgebiete
     :type:                  string
@@ -78,12 +82,12 @@ def exportKanaldaten(
 
     # Verbindung zur Spatialite-Datenbank mit den Kanaldaten
 
-    self.dbQK = DBConnection(
-        dbname=database_QKan
+    dbQK = DBConnection(
+        dbname=databaseQKan
     )  # Datenbankobjekt der QKan-Datenbank zum Lesen
-    if not self.dbQK.connected:
+    if not dbQK.connected:
         logger.error("""Fehler in exportSwmm:
-            QKan-Datenbank {database_QKan} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!"""
+            QKan-Datenbank {databaseQKan} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!"""
         )
         return None
 
@@ -107,6 +111,129 @@ def exportKanaldaten(
     else:
         auswahl = ""
 
+    # Verschneidung nur, wenn (mit_verschneidung)
+    if mit_verschneidung:
+        case_verschneidung = u"""
+                CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom 
+                ELSE CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3)) END AS geom"""
+        join_verschneidung = u"""
+            LEFT JOIN tezg AS tg
+            ON lf.tezgnam = tg.flnam"""
+        tezg_verschneidung = u"""area(tg.geom) AS fltezg,"""
+    else:
+        case_verschneidung = u"fl.geom AS geom"
+        join_verschneidung = ""
+        tezg_verschneidung = u"0 AS fltezg,"
+
+    # wdistbef ist die mit der (Teil-) Fläche gewichtete Fließlänge zur Haltung für die befestigten Flächen zu
+    # einer Haltung,
+    # wdistdur entsprechend für die durchlässigen Flächen.
+
+    sql = u"""
+        WITH flintersect AS (
+            SELECT lf.flnam AS flnam, lf.haltnam AS haltnam, 
+                CASE fl.neigkl
+                    WHEN 0 THEN 0.5
+                    WHEN 1 THEN 2.5
+                    WHEN 2 THEN 7.0
+                    WHEN 3 THEN 12.0
+                    ELSE 20.0
+                    END AS neigung, 
+                fl.abflussparameter AS abflussparameter, 
+                {tezg_verschneidung}
+                {case_verschneidung}
+            FROM linkfl AS lf
+            INNER JOIN flaechen AS fl
+            ON lf.flnam = fl.flnam{join_verschneidung}),
+        halflaech AS (
+            SELECT
+                fi.haltnam AS haltnam, 
+                coalesce(ap.endabflussbeiwert, 1.0) AS abflussbeiwert, 
+                sum(CASE ap.bodenklasse IS NULL 
+                    WHEN 1 THEN area(fi.geom)/10000.
+                    ELSE 0 END) AS flbef,
+                sum(CASE ap.bodenklasse IS NULL 
+                    WHEN 1 THEN 0
+                    ELSE area(fi.geom)/10000. END) AS fldur,
+                sum(CASE ap.bodenklasse IS NULL 
+                    WHEN 1 THEN distance(fi.geom,h.geom)*area(fi.geom)/10000.
+                           ELSE 0 END) AS wdistbef,
+                sum(CASE ap.bodenklasse IS NULL 
+                    WHEN 1 THEN 0
+                           ELSE distance(fi.geom,h.geom)*area(fi.geom)/10000. END) AS wdistdur,
+                sum(area(fi.geom)/10000.) AS flges,
+                fi.fltezg AS fltezg,
+                distance(fi.geom,h.geom) AS disttezg, 
+                sum(neigung*area(fi.geom)/10000.) AS wneigung
+            FROM flintersect AS fi
+            LEFT JOIN abflussparameter AS ap
+            ON fi.abflussparameter = ap.apnam
+            INNER JOIN haltungen AS h 
+            ON fi.haltnam = h.haltnam
+            WHERE area(fi.geom) > {mindestflaeche}{ausw_and}{auswahl}
+            GROUP BY fi.haltnam),
+        einleitsw AS (
+            SELECT haltnam, sum(zufluss) AS zufluss
+            FROM einleit
+            GROUP BY haltnam
+        )
+        SELECT 
+            d.kanalnummer AS kanalnummer,
+            d.haltungsnummer AS haltungsnummer, 
+            h.laenge AS laenge,
+            so.deckelhoehe AS deckelhoehe, 
+            coalesce(h.sohleoben, so.sohlhoehe) AS sohleob,
+            coalesce(h.sohleunten, su.sohlhoehe) AS sohleun,
+            '0' AS material, 
+            {sql_prof1}, 
+            h.hoehe*1000. AS profilhoehe, 
+            h.ks AS ks, 
+            f.flbef*abflussbeiwert AS flbef, 
+            f.flges AS flges,
+            f.wdistbef/(f.flbef + 0.00000001) AS distbef,
+            f.wdistdur/(f.fldur + 0.00000001) AS distdur,
+            f.fltezg AS fltezg,
+            f.disttezg AS disttezg,
+            3 AS abfltyp, 
+            e.zufluss AS qzu, 
+            0 AS ewdichte, 
+            0 AS tgnr, 
+            f.wneigung/(f.flges + 0.00000001) AS neigung,
+            a.kp_nr AS entwart, 
+            0 AS haltyp,
+            h.schoben AS schoben, 
+            h.schunten AS schunten,
+            so.xsch AS xob, 
+            so.ysch AS yob
+        FROM haltungen AS h
+        INNER JOIN dynahal AS d
+        ON h.pk = d.pk
+        INNER JOIN schaechte AS so
+        ON h.schoben = so.schnam
+        INNER JOIN schaechte AS su
+        ON h.schunten = su.schnam{sql_prof2}
+        LEFT JOIN halflaech AS f
+        ON h.haltnam = f.haltnam
+        LEFT JOIN einleitsw AS e
+        ON e.haltnam = h.haltnam
+        LEFT JOIN entwaesserungsarten AS a
+        ON h.entwart = a.bezeichnung
+    """.format(
+        mindestflaeche=mindestflaeche,
+        ausw_and=ausw_and,
+        auswahl=auswahl,
+        sql_prof1=sql_prof1,
+        sql_prof2=sql_prof2,
+        case_verschneidung=case_verschneidung,
+        join_verschneidung=join_verschneidung,
+        tezg_verschneidung=tezg_verschneidung,
+    )
+
+    if not dbQK.sql(sql, u"dbQK: k_qkkp.write12 (1)"):
+        return False
+
+
+
 
     sql = f"""
         SELECT
@@ -123,7 +250,9 @@ def exportKanaldaten(
             Intersects(f.geom,g.geom){auswahl}
         GROUP BY f.flnam"""
 
-    cursl.execute(sql)
+    if not dbQK.sql(sql, "dbQK: k_layersadapt (1)"):
+        del dbQK
+        return False
 
     datasc = ''          # Datenzeilen subcatchments
     datasa = ''          # Datenzeilen subareas
@@ -150,6 +279,7 @@ def exportKanaldaten(
     # [DWF]
 
     #fortschritt('Flaechen...',0.08)
+    progress_bar.setValue(20)
 
     sql = '''SELECT
         f.schnam AS outlet,
@@ -194,6 +324,7 @@ def exportKanaldaten(
     # [COORDINATES]
 
     #fortschritt('Schaechte...',0.30)
+    progress_bar.setValue(30)
 
     sql = '''SELECT
         s.schnam AS name, X(geop) AS xsch, Y(geop) AS ysch, s.sohlhoehe AS elevation, s.deckelhoehe - s.sohlhoehe AS maxdepth,
@@ -260,6 +391,7 @@ def exportKanaldaten(
     # [XSECTIONS]
 
     #fortschritt('Haltungen...',0.60)
+    progress_bar.setValue(40)
 
     sql = '''SELECT
         h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, rohrtyp, hoehe, breite
@@ -295,6 +427,7 @@ def exportKanaldaten(
     # [PUMPS] + [CURVES]
 
     #fortschritt('Pumpen...',0.70)
+    progress_bar.setValue(50)
 
     sql = '''SELECT
         p.name AS name,
@@ -339,6 +472,7 @@ def exportKanaldaten(
     # [XSECTIONS] zusaetzlich fuer Wehre
 
     #fortschritt('Wehre...',0.75)
+    progress_bar.setValue(60)
 
     sql = '''SELECT
         w.name AS name,
@@ -380,6 +514,7 @@ def exportKanaldaten(
     # [Polygons]
 
     #fortschritt('Flaechen...',0.60)
+    progress_bar.setValue(70)
 
     sql = '''SELECT f.flnam, AsText(f.geom) AS punkte FROM flaechen AS f
     JOIN
@@ -411,6 +546,7 @@ def exportKanaldaten(
     # [SYMBOLS]
 
     #fortschritt('Regenmesser...',0.92)
+    progress_bar.setValue(80)
 
     sql = '''SELECT f.regnr FROM flaechen AS f
     JOIN
@@ -437,6 +573,7 @@ def exportKanaldaten(
     # [MAP]
 
     #fortschritt('Kartenausdehnung...',0.95)
+    progress_bar.setValue(90)
 
     sql = '''SELECT
         min(X(geop)) AS xmin, min(y(geop)) AS ymin, max(X(geop)) AS xmax, max(y(geop)) AS ymax
@@ -478,14 +615,15 @@ def exportKanaldaten(
     consl.close()
 
     #fortschritt('Ende...',1)
+    progress_bar.setValue(100)
 
 if __name__ in ('__main__', '__console__'):
-    database_QKan = 'C:/FHAC/Bayernallee/Abschlussarbeiten/Bachelorarbeiten/lippina_jonas_375255/eigene Versuche/qgis/kanalnetz.sqlite'
+    databaseQKan = 'C:/FHAC/Bayernallee/Abschlussarbeiten/Bachelorarbeiten/lippina_jonas_375255/eigene Versuche/qgis/kanalnetz.sqlite'
     templateSwmm = 'C:/FHAC/Bayernallee/Abschlussarbeiten/Bachelorarbeiten/lippina_jonas_375255/eigene Versuche/swmm/kanalvorlage.inp'
     ergfileSwmm = 'C:/FHAC/Bayernallee/Abschlussarbeiten/Bachelorarbeiten/lippina_jonas_375255/eigene Versuche/swmm/netteb.inp'
 
     main(
-        database_QKan,
+        databaseQKan,
         templateSwmm,
         ergfileSwmm,
     )

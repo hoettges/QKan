@@ -108,14 +108,12 @@ class FBConnection:
             fehlermeldung(
                 u"QKan.FBConnection: Datenbankzugriff gesperrt, moeglicherweise durch eine andere Anwendung?"
             )
-            self.__del__()
             return False
         except BaseException as err:
             fehlermeldung(
                 u"SQL-Fehler in {e}".format(e=errormessage),
                 u"{e}\n{s}".format(e=repr(err), s=sql),
             )
-            self.__del__()
             return False
 
     def fetchall(self):

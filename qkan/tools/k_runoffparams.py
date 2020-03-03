@@ -329,7 +329,6 @@ def setRunoffparams(
     progress_bar.setValue(90)
 
     dbQK.commit()
-    del dbQK
 
     QgsMessageLog.logMessage(
         message="\nOberflächenabflussparameter sind berechnet und eingetragen!",

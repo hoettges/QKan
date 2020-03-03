@@ -367,6 +367,7 @@ class ExportToHE8:
             self.dlg.lf_anzahl_haltungen.setText(str(daten[0]))
         else:
             self.dlg.lf_anzahl_haltungen.setText("0")
+        return True
 
     # -------------------------------------------------------------------------
     # Funktion zur Zusammenstellung einer Auswahlliste für eine SQL-Abfrage
@@ -527,6 +528,7 @@ class ExportToHE8:
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         if not self.dbQK.sql(sql, u"QKan_ExportHE.application.run (1) "):
+            del self.dbQK
             return False
 
         sql = u"""INSERT INTO teilgebiete (tgnam)
@@ -535,6 +537,7 @@ class ExportToHE8:
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         if not self.dbQK.sql(sql, u"QKan_ExportHE.application.run (2) "):
+            del self.dbQK
             return False
 
         sql = u"""INSERT INTO teilgebiete (tgnam)
@@ -543,6 +546,7 @@ class ExportToHE8:
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         if not self.dbQK.sql(sql, u"QKan_ExportHE.application.run (3) "):
+            del self.dbQK
             return False
 
         self.dbQK.commit()
@@ -555,6 +559,7 @@ class ExportToHE8:
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         if not self.dbQK.sql(sql, u"QKan_ExportHE.application.run (4) "):
+            del self.dbQK
             return False
         daten = self.dbQK.fetchall()
         self.dlg.lw_teilgebiete.clear()
@@ -573,7 +578,9 @@ class ExportToHE8:
 
         # Ereignis bei Auswahländerung in Liste Teilgebiete
 
-        self.countselection()
+        if not self.countselection():
+            del self.dbQK
+            return False
 
         # Autokorrektur
         self.dlg.cb_autokorrektur.setChecked(QKan.config.autokorrektur)
@@ -589,7 +596,9 @@ class ExportToHE8:
         # Kann über Menü "Optionen" eingegeben werden
         mindestflaeche = QKan.config.mindestflaeche
 
-        self.countselection()
+        if not self.countselection():
+            del self.dbQK
+            return False
 
         # Formular anzeigen
 
