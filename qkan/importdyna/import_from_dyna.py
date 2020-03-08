@@ -37,7 +37,7 @@ from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProj
 from qgis.utils import pluginDirectory
 from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung
+from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung, fzahl
 
 logger = logging.getLogger("QKan.importdyna.import_from_dyna")
 
@@ -216,23 +216,6 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
 
     :returns: void
     """
-
-    # Hilfsfunktionen
-    # ------------------------------------------------------------------------------
-    def zahl(text, n=0.0, default=0.0):
-        """Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
-           enthalten ist, werden n Nachkommastellen angenommen"""
-        zahl = text.strip()
-        if zahl == "":
-            return default
-        elif "." in zahl:
-            try:
-                return float(zahl)
-            except BaseException as err:
-                logger.error("10: {}".format(err))
-                return None
-        else:
-            return float(zahl) / 10.0 ** n
 
     # ------------------------------------------------------------------------------
     # Datenbankverbindungen
@@ -530,25 +513,25 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                     try:
                         strschluessel = zeile[2:6].strip()
                         n = 2
-                        laenge = zahl(zeile[17:24], 2)
+                        laenge = fzahl(zeile[17:24], 2)
                         n = 5
-                        deckeloben = zahl(zeile[24:31], 3)
+                        deckeloben = fzahl(zeile[24:31], 3)
                         n = 6
-                        sohleoben = zahl(zeile[31:38], 3)
+                        sohleoben = fzahl(zeile[31:38], 3)
                         n = 7
-                        sohleunten = zahl(zeile[38:45], 3)
+                        sohleunten = fzahl(zeile[38:45], 3)
                         n = 8
                         material = zeile[45:46]
                         n = 9
                         profil_key = zeile[46:48].strip()
                         n = 10
-                        hoehe = zahl(zeile[48:52], 0) / 1000.0
+                        hoehe = fzahl(zeile[48:52], 0) / 1000.0
                         n = 11
                         ks_key = zeile[52:53].strip()
                         n = 12
-                        flaeche = zahl(zeile[71:76], 2) * 10000.0
+                        flaeche = fzahl(zeile[71:76], 2) * 10000.0
                         n = 20
-                        flaecheund = round(zahl(zeile[53:55]) / 100.0 * flaeche, 1)
+                        flaecheund = round(fzahl(zeile[53:55]) / 100.0 * flaeche, 1)
                         n = 13
                         qgewerbeind = zeile[55:56].strip()
                         n = 14
@@ -556,13 +539,13 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                         n = 15
                         zuflussid = zeile[57:58]
                         n = 16
-                        qzu = zahl(zeile[58:63], 1)
+                        qzu = fzahl(zeile[58:63], 1)
                         n = 17
                         if status_einw:
-                            ew = zahl(zeile[63:66])
+                            ew = fzahl(zeile[63:66])
                             n = 18
                         else:
-                            ew = zahl(zeile[63:66]) * flaeche / 10000.0
+                            ew = fzahl(zeile[63:66]) * flaeche / 10000.0
                         flaechenid = zeile[66:71]
                         n = 19
                         neigkl = int("0" + zeile[76:77].strip())
@@ -577,11 +560,11 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                         n = 25
                         schunten = zeile[94:106].strip()
                         n = 26
-                        xob = zahl(zeile[106:120])
+                        xob = fzahl(zeile[106:120])
                         n = 27
-                        yob = zahl(zeile[120:134])
+                        yob = fzahl(zeile[120:134])
                         n = 28
-                        schdmoben = zahl(zeile[180:187])
+                        schdmoben = fzahl(zeile[180:187])
                     except BaseException as err:
                         fehlermeldung(
                             u"Programmfehler", u"import_from_dyna.importKanaldaten (1)"
@@ -643,11 +626,11 @@ def importKanaldaten(dynafile, database_QKan, projectfile, epsg = 25832):
                     n = 2  # wegen der eigenwilligen DYNA-Logik für Kanalnamen;
                     haltungsnummer = zeile[14:17]
                     n = 3
-                    deckelhoehe = zahl(zeile[24:31], 3)
+                    deckelhoehe = fzahl(zeile[24:31], 3)
                     n = 4
-                    xkoor = zahl(zeile[31:45], 0)
+                    xkoor = fzahl(zeile[31:45], 0)
                     n = 5
-                    ykoor = zahl(zeile[45:59], 0)
+                    ykoor = fzahl(zeile[45:59], 0)
                     n = 6
                     schnam = zeile[59:71].strip()
                     n = 7

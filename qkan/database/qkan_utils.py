@@ -38,7 +38,7 @@ def fortschritt(text, prozent=0):
     )
 
 
-def fehlermeldung(title, text=u""):
+def fehlermeldung(title, text=""):
     logger.error("{:s} {:s}".format(title, text))
     QgsMessageLog.logMessage(
         message="{:s} {:s}".format(title, text), level=Qgis.Critical
@@ -659,8 +659,7 @@ def evalNodeTypes(dbQK):
     dbQK.commit()
 
 
-# Funktion zur formatierten Ausgabe von Fließkommazahlen
-
+# Funktionen zur formatierten Ein- und Ausgabe von Fließkommazahlen
 
 def formf(zahl, anz):
     """Formatiert eine Fließkommazahl so, dass sie in einer vorgegebenen Anzahl von Zeichen
@@ -732,3 +731,20 @@ def formf(zahl, anz):
             fmt = "{0:>" + "{:d}s".format(anz) + "}"
             erg = fmt.format(erg.rstrip("0"))
     return erg
+
+
+    def fzahl(text, n=0.0, default=0.0):
+        """Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
+           enthalten ist, werden n Nachkommastellen angenommen"""
+        zahl = text.strip()
+        if zahl == "":
+            return default
+        elif "." in zahl:
+            try:
+                return float(zahl)
+            except BaseException as err:
+                logger.error("10: {}".format(err))
+                return None
+        else:
+            return float(zahl) / 10.0 ** n
+

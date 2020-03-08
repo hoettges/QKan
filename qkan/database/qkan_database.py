@@ -22,7 +22,7 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.0.10"  # Version der QKan-Datenbank
+__dbVersion__ = "3.0.11"  # Version der QKan-Datenbank
 __qgsVersion__ = (
     "3.1.1"
 )  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
@@ -805,10 +805,11 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     pk INTEGER PRIMARY KEY,
     flnam TEXT,
     haltnam TEXT,
-    neigkl INTEGER DEFAULT 1,
-    regenschreiber TEXT,
+    neigkl INTEGER DEFAULT 1,   -- Werte [1-5], als Vorgabe fuer automatisch erzeugte unbef Flaechen
+    befgrad REAL,               -- (-) Befestigungsgrad absolut, nur optional fuer SWMM und HE6
+    regenschreiber TEXT,        -- Regenschreiber beziehen sich auf Zieldaten
     teilgebiet TEXT,
-    abflussparameter TEXT,
+    abflussparameter TEXT,      -- als Vorgabe fuer automatisch erzeugte unbef Flaechen
     kommentar TEXT,
     createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
 

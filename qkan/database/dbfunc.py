@@ -2287,6 +2287,23 @@ class DBConnection:
                 self.versionlis = [3, 0, 10]
 
             # ------------------------------------------------------------------------------------
+            if versionolder(self.versionlis, [3, 0, 11]):
+
+                # Zusätzliches Attribut befgrad in tezg -----------------------------
+
+                sql = """
+                    ALTER TABLE tezg ADD COLUMN befgrad REAL"""
+
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.0.11-1)"):
+                    return False
+
+                self.commit()
+
+                # Versionsnummer hochsetzen
+
+                self.versionlis = [3, 0, 11]
+
+            # ------------------------------------------------------------------------------------
             # Aktuelle Version in Tabelle "info" schreiben
 
             sql = """UPDATE info SET value = '{}' WHERE subject = 'version'""".format(
