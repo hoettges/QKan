@@ -2287,7 +2287,7 @@ class DBConnection:
                 self.versionlis = [3, 0, 10]
 
             # ------------------------------------------------------------------------------------
-            if versionolder(self.versionlis, [3, 0, 11]):
+            if versionolder(self.versionlis, [3, 1, 2]):
 
                 # Zusätzliches Attribut befgrad in tezg -----------------------------
 
@@ -2301,7 +2301,7 @@ class DBConnection:
 
                 # Versionsnummer hochsetzen
 
-                self.versionlis = [3, 0, 11]
+                self.versionlis = [3, 1, 2]
 
             # ------------------------------------------------------------------------------------
             # Aktuelle Version in Tabelle "info" schreiben
