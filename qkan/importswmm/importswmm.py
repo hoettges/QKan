@@ -2,6 +2,8 @@
 
 import os
 from pathlib import Path
+#from qkan.database.dbfunc import DBConnection
+#from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung, fzahl
 
 __author__ = "Joerg Hoettges"
 __date__ = "März 2020"
@@ -275,7 +277,13 @@ class SWMM():
 
             
     def subareas(self):
-        pass                    # in QKan nicht verwaltet
+        pass                    # zu schreiben: Yi-Chan
+
+
+
+
+
+
 
     def symbols(self):
         pass                    # in QKan nicht verwaltet
