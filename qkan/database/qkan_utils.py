@@ -733,18 +733,18 @@ def formf(zahl, anz):
     return erg
 
 
-    def fzahl(text, n=0.0, default=0.0):
-        """Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
-           enthalten ist, werden n Nachkommastellen angenommen"""
-        zahl = text.strip()
-        if zahl == "":
-            return default
-        elif "." in zahl:
-            try:
-                return float(zahl)
-            except BaseException as err:
-                logger.error("10: {}".format(err))
-                return None
-        else:
-            return float(zahl) / 10.0 ** n
+def fzahl(text, n=0.0, default=0.0):
+    """Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
+       enthalten ist, werden n Nachkommastellen angenommen"""
+    zahl = text.strip()
+    if zahl == "":
+        return default
+    elif "." in zahl:
+        try:
+            return float(zahl)
+        except BaseException as err:
+            logger.error("10: {}".format(err))
+            return None
+    else:
+        return float(zahl) / 10.0 ** n
 

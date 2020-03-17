@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 
-import os
-from pathlib import Path
-#from qkan.database.dbfunc import DBConnection
-#from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung, fzahl
-
 __author__ = "Joerg Hoettges"
 __date__ = "März 2020"
 __copyright__ = "(C) 2020, Joerg Hoettges"
 
+import os
+from pathlib import Path
+from qkan.database.dbfunc import DBConnection
+from qgis.utils import pluginDirectory
+import xml.etree.ElementTree as ET
+from qgis.core import QgsCoordinateReferenceSystem
+
+import logging
+
+logger = logging.getLogger("QKan.importdyna.import_from_dyna")
 
 # Hilfsfunktionen, werden wenn Sie in QKan integriert sind importiert
 # from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung, fzahl
@@ -35,20 +40,20 @@ def fzahl(text, n=0.0, default=0.0):
     else:
         return float(zahl) / 10.0 ** n
 
-def kstFromKr(kr):
+def kstFromKs(ks):
     """Umrechnung des Wertes für die äquivalente Sandrauheit k in die Rauheit nach Manning-Strickler"""
     C_Chezy = 25.68
-    erg = C_Chezy / kr ** (1/6)
+    erg = C_Chezy / ks ** (1/6)
     return erg
 
-def krFromKst(kst):
+def ksFromKst(kst):
     """Umrechnung des Wertes für die äquivalente Sandrauheit k in die Rauheit nach Manning-Strickler"""
     C_Chezy = 25.68
     erg = (C_Chezy / kst) ** 6
     return erg
 
 
-class DBConnection():
+class DBConnection_local():
     """Ersetzt während der Entwicklungszeit den Datenbankzugriff"""
     def __init__(self, dbname, epsg=25832):
         self.sqlobject = Path(dbname).open("w")
@@ -66,23 +71,27 @@ class DBConnection():
             self.sqlobject.write('\n\n')
         except BaseException as err:
             self.error(
-                "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=sqlinfo),
+                "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=err),
                 "{e}\n{s}".format(e=repr(err), s=sql),
             )
             return False
 
         return True
 
-class SWMM():
-    def __init__(self, inpfile, database_QKan, epsg=25832, dbtyp="SpatiaLite"):
+class SWMM:
+    def __init__(self, inpfile, database_QKan, projectfile,  epsg=25832, dbtyp="SpatiaLite"):
         self.epsg = epsg
         self.dbtyp = dbtyp
         self.inpobject = Path(inpfile)
         self.data = {}
+        self.database_QKan = database_QKan
+        self.projectfile = projectfile
 
         self.dbQK = DBConnection(
             dbname=database_QKan, epsg=epsg
         )  # Datenbankobjekt der QKan-Datenbank zum Schreiben
+
+        self.connected = self.dbQK.connected
 
         if not self.dbQK.connected:
             fehlermeldung(
@@ -91,10 +100,10 @@ class SWMM():
                     database_QKan
                 ),
             )
-            return False
 
-    # def __del__(self):
-    #    del self.dbQK
+    def __del__(self):
+        self.dbQK.commit()
+        del self.dbQK
 
     def read(self):
         with self.inpobject.open("r") as inp:
@@ -199,11 +208,20 @@ class SWMM():
         data = self.data.get("subcatchments", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            name = line[0:0]
-            regenschreiber = line[0:0]
-            
-            
+            name = line[0:17].strip()
+            regenschreiber = line[17:34].strip()
 
+            sql = f"""
+                INSERT into flaechen (
+                    flnam, regenschreiber)
+                VALUES (
+                    '{name}', '{regenschreiber}')
+                """
+            if not self.dbQK.sql(sql):
+                del self.dbQK
+                return False
+
+        return True
 
     def polygons(self):
         """Liest die Polygone zu den bereits angelegten tezg-Flächen ein"""
@@ -248,16 +266,27 @@ class SWMM():
         data = self.data.get("conduits", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            haltnam = line[0:0]
-            schoben = line[0:0]
-            schunten = line[0:0]
-            laenge = line[0:0]
-            
-            # Rauheitsbeiwerte
-            mannings_n = fzahl(line[0:0])
-            kst = 1/mannings_n                      # interessant: die Einheit von mannings_n ist s/m**(1/3)!
-            ks = f'{krFromKst(kst)}'
+            haltnam = line[0:17].strip()
+            schoben = line[17:34].strip()
+            schunten = line[34:51].strip()
+            laenge = line[51:62].strip()
 
+            # Rauheitsbeiwerte
+            mannings_n = fzahl(line[0:0])           # todo
+            kst = 1/mannings_n                      # interessant: die Einheit von mannings_n ist s/m**(1/3)!
+            ks = ksFromKst(kst)
+
+            sql = f"""
+                INSERT into haltungen (
+                    haltnam, schoben, schunten, laenge, ks)
+                VALUES (
+                    '{haltnam}', '{schoben}', '{schunten}', {laenge}, {ks})
+                """
+            if not self.dbQK.sql(sql):
+                del self.dbQK
+                return False
+
+        return True
             # todo: SQL-Anweisung wie oben ergänzen
 
     def xsections(self):
@@ -267,23 +296,250 @@ class SWMM():
         data = self.data.get("xsections", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            haltnam = line[0:0]
-            profilnam = line[0:0]               # shape
-            hoehe = line[0:0]                   # Geom1
-            breite = line[0:0]                  # Geom2
-            barrels = line[0:0]                 # Falls > 1, muss die Haltung mehrfach angelegt werden
-            
+            haltnam = line[0:17].strip()
+            profilnam = line[17:30].strip()               # shape
+            hoehe = line[30:47].strip()                   # Geom1
+            breite = line[47:58].strip()                  # Geom2
+            barrels = line[80:91].strip()                 # Falls > 1, muss die Haltung mehrfach angelegt werden
+
+            sql = f"""
+                UPDATE haltungen SET (
+                    profilnam, hoehe, breite) = 
+                (   '{profilnam}', {hoehe}, {breite})
+                WHERE haltnam = '{haltnam}'
+                """
+            if not self.dbQK.sql(sql):
+                del self.dbQK
+                return False
+
+        return True
+
             # todo: SQL-Anweisung wie oben ergänzen
 
-            
+
+    def writeProjektfile(self):
+        # --------------------------------------------------------------------------
+        # Zoom-Bereich für die Projektdatei vorbereiten
+        sql = """SELECT min(xsch) AS xmin, 
+                        max(xsch) AS xmax, 
+                        min(ysch) AS ymin, 
+                        max(ysch) AS ymax
+                 FROM schaechte"""
+        try:
+            if not self.dbQK.sql(sql, "importkanaldaten_dyna (17)"
+                            ):
+                del self.dbQK
+                return False
+        except BaseException as e:
+            fehlermeldung("SQL-Fehler", str(e))
+            fehlermeldung(
+                "Fehler in QKan_Import_from_KP", "\nFehler in sql_zoom: \n" + sql + "\n\n"
+            )
+
+        daten = self.dbQK.fetchone()
+        try:
+            zoomxmin, zoomxmax, zoomymin, zoomymax = daten
+        except BaseException as e:
+            fehlermeldung("SQL-Fehler", str(e))
+            fehlermeldung(
+                "Fehler in QKan_Import_from_KP",
+                "\nFehler in sql_zoom; daten= " + str(daten) + "\n",
+            )
+
+        # --------------------------------------------------------------------------
+        # Projektionssystem für die Projektdatei vorbereiten
+        sql = """SELECT srid
+                FROM geom_cols_ref_sys
+                WHERE Lower(f_table_name) = Lower('schaechte')
+                AND Lower(f_geometry_column) = Lower('geom')"""
+        if not self.dbQK.sql(sql, "importkanaldaten_dyna (37)"):
+            del self.dbQK
+            return False
+
+        srid = self.dbQK.fetchone()[0]
+        try:
+            crs = QgsCoordinateReferenceSystem(srid, QgsCoordinateReferenceSystem.EpsgCrsId)
+            srsid = crs.srsid()
+            proj4text = crs.toProj4()
+            description = crs.description()
+            projectionacronym = crs.projectionAcronym()
+            if "ellipsoidAcronym" in dir(crs):
+                ellipsoidacronym = crs.ellipsoidAcronym()
+            else:
+                ellipsoidacronym = None
+        except BaseException as e:
+            srid, srsid, proj4text, description, projectionacronym, ellipsoidacronym = (
+                "dummy",
+                "dummy",
+                "dummy",
+                "dummy",
+                "dummy",
+                "dummy",
+            )
+
+            fehlermeldung('\nFehler in "daten"', str(e))
+            fehlermeldung(
+                "Fehler in QKan_Import_from_KP",
+                "\nFehler bei der Ermittlung der srid: \n" + str(daten),
+            )
+
+        # --------------------------------------------------------------------------
+        # Projektdatei schreiben, falls ausgewählt
+
+        if self.projectfile is not None and self.projectfile != "":
+            templatepath = os.path.join(pluginDirectory("qkan"), "templates")
+            projecttemplate = os.path.join(templatepath, "projekt.qgs")
+            projectpath = os.path.dirname(self.projectfile)
+            if os.path.dirname(self.database_QKan) == projectpath:
+                datasource = self.database_QKan.replace(os.path.dirname(self.database_QKan), ".")
+            else:
+                datasource = self.database_QKan
+
+            # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
+            # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
+            tabliste = [
+                "einleit",
+                "einzugsgebiete",
+                "flaechen",
+                "haltungen",
+                "linkfl",
+                "linksw",
+                "pumpen",
+                "schaechte",
+                "teilgebiete",
+                "tezg",
+                "wehre",
+            ]
+
+            # Liste der QKan-Formulare, um individuell erstellte Formulare von der Bearbeitung auszuschliessen
+            formsliste = [
+                "qkan_abflussparameter.ui",
+                "qkan_anbindungageb.ui",
+                "qkan_anbindungeinleit.ui",
+                "qkan_anbindungflaechen.ui",
+                "qkan_auslaesse.ui",
+                "qkan_auslasstypen.ui",
+                "qkan_aussengebiete.ui",
+                "qkan_bodenklassen.ui",
+                "qkan_einleit.ui",
+                "qkan_einzugsgebiete.ui",
+                "qkan_entwaesserungsarten.ui",
+                "qkan_flaechen.ui",
+                "qkan_haltungen.ui",
+                "qkan_profildaten.ui",
+                "qkan_profile.ui",
+                "qkan_pumpen.ui",
+                "qkan_pumpentypen.ui",
+                "qkan_schaechte.ui",
+                "qkan_simulationsstatus.ui",
+                "qkan_speicher.ui",
+                "qkan_speicherkennlinien.ui",
+                "qkan_swref.ui",
+                "qkan_teilgebiete.ui",
+                "qkan_tezg.ui",
+                "qkan_wehre.ui",
+            ]
+
+            # Lesen der Projektdatei ------------------------------------------------------------------
+            qgsxml = ET.parse(projecttemplate)
+            root = qgsxml.getroot()
+
+            # Projektionssystem anpassen --------------------------------------------------------------
+
+            for tag_maplayer in root.findall(".//projectlayers/maplayer"):
+                tag_datasource = tag_maplayer.find("./datasource")
+                tex = tag_datasource.text
+                # Nur QKan-Tabellen bearbeiten
+                if tex[tex.index(u'table="') + 7:].split(u'" ')[0] in tabliste:
+
+                    # <extend> löschen
+                    for tag_extent in tag_maplayer.findall("./extent"):
+                        tag_maplayer.remove(tag_extent)
+
+                    for tag_spatialrefsys in tag_maplayer.findall("./srs/spatialrefsys"):
+                        tag_spatialrefsys.clear()
+
+                        elem = ET.SubElement(tag_spatialrefsys, "proj4")
+                        elem.text = proj4text
+                        elem = ET.SubElement(tag_spatialrefsys, "srsid")
+                        elem.text = "{}".format(srsid)
+                        elem = ET.SubElement(tag_spatialrefsys, "srid")
+                        elem.text = "{}".format(srid)
+                        elem = ET.SubElement(tag_spatialrefsys, "authid")
+                        elem.text = "EPSG: {}".format(srid)
+                        elem = ET.SubElement(tag_spatialrefsys, "description")
+                        elem.text = description
+                        elem = ET.SubElement(tag_spatialrefsys, "projectionacronym")
+                        elem.text = projectionacronym
+                        if ellipsoidacronym is not None:
+                            elem = ET.SubElement(tag_spatialrefsys, "ellipsoidacronym")
+                            elem.text = ellipsoidacronym
+
+            # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
+
+            formspath = os.path.join(pluginDirectory("qkan"), "forms")
+            for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
+                tag_editform = tag_maplayer.find(u"./editform")
+                if tag_editform.text:
+                    dateiname = os.path.basename(tag_editform.text)
+                    if dateiname in formsliste:
+                        # Nur QKan-Tabellen bearbeiten
+                        tag_editform.text = os.path.join(formspath, dateiname)
+
+            # Zoom für Kartenfenster einstellen -------------------------------------------------------
+
+            if not isinstance(zoomxmin, (int, float)):
+                zoomxmin = 0.0
+                zoomxmax = 100.0
+                zoomymin = 0.0
+                zoomymax = 100.0
+
+            for tag_extent in root.findall(u".//mapcanvas/extent"):
+                elem = tag_extent.find(u"./xmin")
+                elem.text = "{:.3f}".format(zoomxmin)
+                elem = tag_extent.find(u"./ymin")
+                elem.text = "{:.3f}".format(zoomymin)
+                elem = tag_extent.find(u"./xmax")
+                elem.text = "{:.3f}".format(zoomxmax)
+                elem = tag_extent.find(u"./ymax")
+                elem.text = "{:.3f}".format(zoomymax)
+
+            # Projektionssystem anpassen --------------------------------------------------------------
+
+            for tag_spatialrefsys in root.findall(
+                    ".//projectCrs/spatialrefsys"
+            ):
+                tag_spatialrefsys.clear()
+
+                elem = ET.SubElement(tag_spatialrefsys, "proj4")
+                elem.text = proj4text
+                elem = ET.SubElement(tag_spatialrefsys, "srid")
+                elem.text = "{}".format(srid)
+                elem = ET.SubElement(tag_spatialrefsys, "authid")
+                elem.text = "EPSG: {}".format(srid)
+                elem = ET.SubElement(tag_spatialrefsys, "description")
+                elem.text = description
+                elem = ET.SubElement(tag_spatialrefsys, "projectionacronym")
+                elem.text = projectionacronym
+                if ellipsoidacronym is not None:
+                    elem = ET.SubElement(tag_spatialrefsys, "ellipsoidacronym")
+                    elem.text = ellipsoidacronym
+
+            # Pfad zur QKan-Datenbank anpassen
+
+            for tag_datasource in root.findall(u".//projectlayers/maplayer/datasource"):
+                text = tag_datasource.text
+                tag_datasource.text = (
+                        "dbname='" + datasource + "' " + text[text.find("table="):]
+                )
+
+            qgsxml.write(self.projectfile)  # writing modified project file
+            logger.debug("Projektdatei: {}".format(self.projectfile))
+            # logger.debug(u'encoded string: {}'.format(tex))
+
+
     def subareas(self):
-        pass                    # zu schreiben: Yi-Chan
-
-
-
-
-
-
+        pass                    # in QKan nicht verwaltet
 
     def symbols(self):
         pass                    # in QKan nicht verwaltet
@@ -333,29 +589,53 @@ class SWMM():
     def vertices(self):
         pass                    # in QKan nicht verwaltet
 
-def readKanaldaten(inpfile: str, sqlcommandfile: str):
+def importKanaldaten(inpfile: str, database_QKan: str, projectfile: str, epsg: int = 3044):
     """Ruft die Klasse SWMM zur Verarbeitung der Daten auf"""
 
     if not os.path.exists(inpfile):
         return False
 
-    swmm = SWMM(inpfile, sqlcommandfile)
+    swmm = SWMM(
+        inpfile,
+        database_QKan,
+        projectfile,
+        epsg=25832,
+        dbtyp="SpatiaLite"
+    )
+
+    if not swmm.connected:
+        return False
+
     swmm.read()
 
     print(swmm.title)
     #print(swmm.options)        # wird nicht benötigt
 
     if not swmm.junctions():
-        fehlermeldung('Fehler in readKanaldaten', 'junctions()')
+        fehlermeldung('Fehler in importKanaldaten', 'junctions()')
     if not swmm.coordinates():
-        fehlermeldung('Fehler in readKanaldaten', 'coordinates()')
+        fehlermeldung('Fehler in importKanaldaten', 'coordinates()')
+    if not swmm.subcatchments():
+        fehlermeldung('Fehler in importKanaldaten', 'subcatchments()')
     if not swmm.polygons():
-        fehlermeldung('Fehler in readKanaldaten', 'polygons()')
+        fehlermeldung('Fehler in importKanaldaten', 'polygons()')
+#    if not swmm.conduits():
+#        fehlermeldung('Fehler in importKanaldaten', 'conduits()')
+#    if not swmm.xsections():
+#        fehlermeldung('Fehler in importKanaldaten', 'xsections()')
 
     # from pprint import pprint
 
     # pprint(swmm.data)
 
+    # --------------------------------------------------------------------------
+    # Datenbankverbindungen schliessen
+
+    swmm.writeProjektfile()
+
+    del swmm
+
+    return True
 
 if __name__ == "__main__" or __name__ == "console":
-    readKanaldaten("tutorial.inp", "sqlcommands.sql")
+    importKanaldaten("tutorial.inp", "sqlcommands.sql")

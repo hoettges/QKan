@@ -11,6 +11,7 @@ sys.path.append(os.path.join(os.path.split(__file__)[0],'..'))
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.exportswmm.k_qksw import exportKanaldaten
+from qkan.importswmm.importswmm import importKanaldaten
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from qkan.tools.k_layersadapt import layersadapt
 
@@ -25,12 +26,27 @@ class TestSwmm2QKan(QgisTest):
             z.extractall(BASE_WORK)
 
     def test_import(self):
-        database_qkan = BASE_WORK / "Oleanderweg.sqlite"
-        swmmfile = BASE_WORK / "Oleanderweg.ein"
+        database_qkan = BASE_WORK / "tutorial.sqlite"
+        swmmfile = BASE_WORK / "tutorial.inp"
         project_file = BASE_WORK / "plan.qgs"
 
+        layersadapt(
+            database_QKan= str(database_qkan),
+            projectTemplate= "",
+            dbIsUptodate= False,
+            qkanDBUpdate= True,
+            anpassen_Datenbankanbindung= False,
+            anpassen_Wertebeziehungen_in_Tabellen= False,
+            anpassen_Formulare= False,
+            anpassen_Projektionssystem= False,
+            aktualisieren_Schachttypen= False,
+            zoom_alles= False,
+            fehlende_layer_ergaenzen= False,
+            anpassen_auswahl= enums.SelectedLayers.NONE,
+        )
+
         erg = importKanaldaten(
-            swmmfile=str(swmmfile),
+            inpfile=str(swmmfile),
             database_QKan=str(database_qkan),
             projectfile=str(project_file),
             epsg=3044,
