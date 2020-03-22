@@ -6,7 +6,7 @@ from qgis.testing import unittest
 
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
-from qkan.exportdyna.k_qkkp import exportKanaldaten
+from qkan.exportdyna.export_to_dyna import exportKanaldaten
 from qkan.importdyna.import_from_dyna import importKanaldaten
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from qkan.tools.k_layersadapt import layersadapt

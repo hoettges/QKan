@@ -41,7 +41,7 @@ from . import resources
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
 from .application_dialog import ExportToKPDialog
-from .k_qkkp import exportKanaldaten
+from .export_to_dyna import exportKanaldaten
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger("QKan.exportdyna.application")

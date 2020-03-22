@@ -37,7 +37,7 @@ from qkan.database.qkan_utils import (
 # noinspection PyUnresolvedReferences
 from . import resources
 from .application_dialog import ExportToHE8Dialog
-from .k_qkhe8 import export2he8
+from .export_to_he8 import exporthe8
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger("QKan.exporthe8.application")
@@ -706,7 +706,7 @@ class ExportToHE8:
 
             # Modulaufruf in Logdatei schreiben
             logger.debug(f"""QKan-Modul Aufruf
-                export2he8(
+                exporthe8(
                 self.iface,
                 "{database_HE}",
                 "{dbtemplate_HE}",
@@ -720,7 +720,7 @@ class ExportToHE8:
                 {check_export},
             )""")
 
-            if not export2he8(
+            if not exporthe8(
                 self.iface,
                 database_HE,
                 dbtemplate_HE,

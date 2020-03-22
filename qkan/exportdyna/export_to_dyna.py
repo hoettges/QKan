@@ -6,7 +6,7 @@
 
   Transfer von Kanaldaten aus einer QKan-Datenbank nach HYSTEM EXTRAN 7.6
 
-  | Dateiname            : k_qkhe.py
+  | Dateiname            : export_to_dyna.py
   | Date                 : Februar 2017
   | Copyright            : (C) 2016 by Joerg Hoettges
   | Email                : hoettges@fh-aachen.de
@@ -30,7 +30,7 @@ from qkan import enums
 from qkan.database.qkan_utils import fehlermeldung, fortschritt, meldung, formf
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
-logger = logging.getLogger("QKan.exportdyna.k_qkkp")
+logger = logging.getLogger("QKan.exportdyna.export_to_dyna")
 
 progress_bar = None
 
@@ -51,7 +51,7 @@ def fneigkl(neigung):
             return nkl
     else:
         fehlermeldung(
-            u"Programmfehler in k_qkkp.fneigkl!", u"Neigungsklasse fehlerhaft"
+            u"Programmfehler in export_to_dyna.fneigkl!", u"Neigungsklasse fehlerhaft"
         )
         return 0.0
 
@@ -128,7 +128,7 @@ def write12(
         ON h.profilnam = p.profilnam"""
     else:
         logger.error(
-            u"Fehler in k_qkkp.write12: Unbekannte Option in dynaprof_choice: {}".format(
+            u"Fehler in export_to_dyna.write12: Unbekannte Option in dynaprof_choice: {}".format(
                 dynaprof_choice
             )
         )
@@ -251,7 +251,7 @@ def write12(
         tezg_verschneidung=tezg_verschneidung,
     )
 
-    if not dbQK.sql(sql, u"dbQK: k_qkkp.write12 (1)"):
+    if not dbQK.sql(sql, u"dbQK: export_to_dyna.write12 (1)"):
         return False
 
     fortschritt(u"Export Datensätze Typ12", 0.3)
@@ -316,7 +316,7 @@ def write12(
             # ))
         except BaseException as err:
             fehlermeldung(
-                u"Fehler in k_qkkp.write12 (2): {}".format(err),
+                u"Fehler in export_to_dyna.write12 (2): {}".format(err),
                 u"ks {} konnte in dynakeys_ks nicht gefunden werden\ndynakeys_ks = {}".format(
                     ks, str(dynakeys_ks)
                 ),
@@ -374,7 +374,7 @@ def write12(
                 profilkey = dynaprof_key[dynaprof_nam.index(profilid)]
             except BaseException as err:
                 fehlermeldung(
-                    u"Fehler in k_qkkp.write12 (3): {}".format(err),
+                    u"Fehler in export_to_dyna.write12 (3): {}".format(err),
                     u"Profilkey {id} konnte in interner Zuordnungsliste nicht gefunden werden\n",
                 )
                 logger.debug("dynprof_nam: {}".format(", ".join(dynaprof_nam)))
@@ -533,7 +533,7 @@ def write16(dbQK, df, ausw_and, auswahl):
         ausw_and=ausw_and, ausw_tab=ausw_tab, auswahl=auswahl
     )
 
-    if not dbQK.sql(sql, u"dbQK: k_qkkp.write16 (1)"):
+    if not dbQK.sql(sql, u"dbQK: export_to_dyna.write16 (1)"):
         return False
 
     akt_schnam = ""  # Identifiziert Datensätze zum gleichen Knoten
@@ -659,7 +659,7 @@ def write41(dbQK, df, ausw_and, auswahl):
         ausw_and=ausw_and, ausw_tab=ausw_tab, auswahl=auswahl
     )
 
-    if not dbQK.sql(sql, u"dbQK: k_qkkp.write41 (1)"):
+    if not dbQK.sql(sql, u"dbQK: export_to_dyna.write41 (1)"):
         return False
 
     for attr in dbQK.fetchall():
@@ -823,7 +823,7 @@ def exportKanaldaten(
             ausw_where=ausw_where, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: k_qkkp.init_dynahal (1)"):
+        if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (1)"):
             return False
 
         dbQK.commit()
@@ -861,7 +861,7 @@ def exportKanaldaten(
             ausw_and=ausw_and, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: k_qkkp.init_dynahal (2)"):
+        if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (2)"):
             return False
 
         # Zurücksetzen von "kanalnummer" und "haltungsnummer"
@@ -874,7 +874,7 @@ def exportKanaldaten(
             ausw_where=ausw_where, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: k_qkkp.init_dynahal (3)"):
+        if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (3)"):
             return False
 
         # Nummerierung der Anfangshaltungen
@@ -888,7 +888,7 @@ def exportKanaldaten(
                 ausw_and=ausw_and, auswahl=auswahl
             )
 
-        if not dbQK.sql(sql, u"dbQK: k_qkkp.init_dynahal (4)"):
+        if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (4)"):
             return False
 
         dbQK.commit()
@@ -922,14 +922,14 @@ def exportKanaldaten(
                 ausw_and=ausw_and, auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, u"dbQK: k_qkkp.init_dynahal (5)"):
+            if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (5)"):
                 return False
 
             sql = u"""
                 SELECT changes();
                 """
 
-            if not dbQK.sql(sql, u"dbQK: k_qkkp.init_dynahal (6)"):
+            if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (6)"):
                 return False
 
             nchange = int(dbQK.fetchone()[0])  # Zahl der zuletzt geänderten Datensätze
@@ -956,7 +956,7 @@ def exportKanaldaten(
         sql = u"""DELETE FROM dynahal"""
         if not dbQK.sql(
             sql,
-            u"dbQK: k_qkkp.init_dynahal (7): Daten in Tabelle dynahal konnten nicht gelöscht werden",
+            u"dbQK: export_to_dyna.init_dynahal (7): Daten in Tabelle dynahal konnten nicht gelöscht werden",
         ):
             return False
 
@@ -975,7 +975,7 @@ def exportKanaldaten(
             ausw_and=ausw_and, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: k_qkkp.init_dynahal (8)"):
+        if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (8)"):
             return False
 
     progress_bar.setValue(20)
@@ -1024,7 +1024,7 @@ def exportKanaldaten(
         FROM haltungen
         GROUP BY ks
     """
-    if not dbQK.sql(sql, u"QKan_ExportDYNA.k_qkkp (1) "):
+    if not dbQK.sql(sql, u"QKan_ExportDYNA.export_to_dyna (1) "):
         return False
 
     daten = dbQK.fetchall()
@@ -1099,7 +1099,7 @@ def exportKanaldaten(
                         dynaprof_key.append(profil_key)
                         dynaprof_nam.append(profilnam)
                         logger.debug(
-                            u"k_qkkp.exportKanaldaten (2): profilnam = {}".format(
+                            u"export_to_dyna.exportKanaldaten (2): profilnam = {}".format(
                                 profilnam
                             )
                         )
@@ -1137,7 +1137,7 @@ def exportKanaldaten(
             ausw_where=ausw_where, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: QKan_ExportDYNA.k_qkkp.profile (1)"):
+        if not dbQK.sql(sql, u"dbQK: QKan_ExportDYNA.export_to_dyna.profile (1)"):
             return False
 
         daten = dbQK.fetchall()
@@ -1151,7 +1151,7 @@ def exportKanaldaten(
                     u"{pn}".format(pn=profil_new),
                 )
                 logger.debug(
-                    u"k_qkkp.exportKanaldaten (1): dynaprof_nam = {}".format(
+                    u"export_to_dyna.exportKanaldaten (1): dynaprof_nam = {}".format(
                         ", ".join(dynaprof_nam)
                     )
                 )
@@ -1160,7 +1160,7 @@ def exportKanaldaten(
                             VALUES ('{pn}')""".format(
                         pn=profil_new
                     )
-                    if not dbQK.sql(sql, u"dbQK: k_qkkp.exportKanaldaten (1)"):
+                    if not dbQK.sql(sql, u"dbQK: export_to_dyna.exportKanaldaten (1)"):
                         return False
                     dbQK.commit()
                 fehler = 2
@@ -1180,7 +1180,7 @@ def exportKanaldaten(
             ausw_where=ausw_where, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: QKan_ExportDYNA.k_qkkp.profile (2)"):
+        if not dbQK.sql(sql, u"dbQK: QKan_ExportDYNA.export_to_dyna.profile (2)"):
             return False
 
         daten = dbQK.fetchall()
@@ -1201,7 +1201,7 @@ def exportKanaldaten(
                             VALUES ('{pn}', '{id}')""".format(
                         pn=profilnam, id=profil_key
                     )
-                    if not dbQK.sql(sql, u"dbQK: k_qkkp.exportKanaldaten (1)"):
+                    if not dbQK.sql(sql, u"dbQK: export_to_dyna.exportKanaldaten (1)"):
                         return False
                     dbQK.commit()
                 fehler = 2

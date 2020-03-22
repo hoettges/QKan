@@ -6,7 +6,7 @@
 
   Transfer von Kanaldaten aus einer QKan-Datenbank nach HYSTEM EXTRAN 8
 
-  | Dateiname            : k_qkhe8.py
+  | Dateiname            : export_to_he8.py
   | Date                 : September 2019
   | Copyright            : (C) 2019 by Joerg Hoettges
   | Email                : hoettges@fh-aachen.de
@@ -37,7 +37,7 @@ from qkan import QKan, enums
 from qkan.database.reflists import abflusstypen
 from qkan.linkflaechen.updatelinks import updatelinkageb, updatelinkfl, updatelinksw
 
-logger = logging.getLogger("QKan.exporthe.k_qkhe8")
+logger = logging.getLogger("QKan.exporthe.export_to_he8")
 
 progress_bar = None
 
@@ -45,7 +45,7 @@ progress_bar = None
 # Hauptprogramm ---------------------------------------------------------------------------------------------
 
 
-def export2he8(
+def exporthe8(
     iface,
     database_HE,
     dbtemplate_HE,
@@ -134,7 +134,7 @@ def export2he8(
     # Verbindung zur Hystem-Extran-Datenbank
 
     sql = f'ATTACH DATABASE "{database_HE}" AS he'
-    if not dbQK.sql(sql, "dbQK: k_qkhe8.attach_he8"):
+    if not dbQK.sql(sql, "dbQK: export_to_he8.attach_he8"):
         return False
 
     # --------------------------------------------------------------------------------------------
@@ -192,7 +192,7 @@ def export2he8(
                 auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_schaechte (1)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_schaechte (1)"):
                 return False
 
         # Einfuegen in die Datenbank
@@ -200,7 +200,7 @@ def export2he8(
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_schaechte (2)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
                 return False
 
             data = dbQK.fetchone()
@@ -295,7 +295,7 @@ def export2he8(
                 auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_speicher (1)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_speicher (1)"):
                 return False
 
         # Einfuegen in die Datenbank
@@ -306,7 +306,7 @@ def export2he8(
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_schaechte (2)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
                 return False
 
             data = dbQK.fetchone()
@@ -404,7 +404,7 @@ def export2he8(
                 auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_auslaesse (1)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_auslaesse (1)"):
                 return False
 
         # Einfuegen in die Datenbank
@@ -415,7 +415,7 @@ def export2he8(
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_schaechte (2)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
                 return False
 
             data = dbQK.fetchone()
@@ -490,7 +490,7 @@ def export2he8(
             auswahl
         )
 
-        if not dbQK.sql(sql, "dbQK: k_qkhe8.export_auslaesse"):
+        if not dbQK.sql(sql, "dbQK: export_to_he8.export_auslaesse"):
             del dbHE
             return False
 
@@ -639,7 +639,7 @@ def export2he8(
             auswahl
         )
 
-        if not dbQK.sql(sql, "dbQK: k_qkhe8.export_pumpen"):
+        if not dbQK.sql(sql, "dbQK: export_to_he8.export_pumpen"):
             del dbHE
             return False
 
@@ -786,7 +786,7 @@ def export2he8(
             auswahl
         )
 
-        if not dbQK.sql(sql, "dbQK: k_qkhe8.export_wehre"):
+        if not dbQK.sql(sql, "dbQK: export_to_he8.export_wehre"):
             del dbHE
             return False
 
@@ -1007,7 +1007,7 @@ def export2he8(
                 attrsnew=attrsnew, fieldsnew=fieldsnew, auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_haltungen (1)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_haltungen (1)"):
                 return False
 
         # Einfuegen in die Datenbank
@@ -1015,7 +1015,7 @@ def export2he8(
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_haltungen (2)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_haltungen (2)"):
                 return False
 
             data = dbQK.fetchone()
@@ -1068,7 +1068,7 @@ def export2he8(
                 attrsnew=attrsnew, fieldsnew=fieldsnew, auswahl=auswahl, id0=id0
             )
 
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_haltungen (3)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_haltungen (3)"):
                 return False
 
             nextid += idmax - idmin + 1
@@ -1100,7 +1100,7 @@ def export2he8(
             auswahl
         )
 
-        if not dbQK.sql(sql, "dbQK: k_qkhe8.export_bodenklassen"):
+        if not dbQK.sql(sql, "dbQK: export_to_he8.export_bodenklassen"):
             del dbHE
             return False
 
@@ -1225,7 +1225,7 @@ def export2he8(
             auswahl
         )
 
-        if not dbQK.sql(sql, "dbQK: k_qkhe8.export_abflussparameter"):
+        if not dbQK.sql(sql, "dbQK: export_to_he8.export_abflussparameter"):
             del dbHE
             return False
 
@@ -1403,7 +1403,7 @@ def export2he8(
         # Regenschreiber berücksichtigen nicht ausgewählte Teilgebiete
         sql = """SELECT regenschreiber FROM flaechen GROUP BY regenschreiber"""
 
-        if not dbQK.sql(sql, "dbQK: k_qkhe8.export_regenschreiber"):
+        if not dbQK.sql(sql, "dbQK: export_to_he8.export_regenschreiber"):
             del dbHE
             return False
 
@@ -1704,14 +1704,14 @@ def export2he8(
                         join_verschneidung=join_verschneidung,
                         expr_verschneidung=expr_verschneidung)
 
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_flaechenrw (1)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_flaechenrw (1)"):
                 return False
 
         if check_export["export_flaechenrw"]:
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM linkfl"
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_haltungen (2)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_haltungen (2)"):
                 return False
 
             data = dbQK.fetchone()
@@ -1795,7 +1795,7 @@ def export2he8(
                     id0=id0,
                 )
 
-                if not dbQK.sql(sql, "dbQK: k_qkhe8.export_flaechenrw (2)"):
+                if not dbQK.sql(sql, "dbQK: export_to_he8.export_flaechenrw (2)"):
                     return False
 
                 nextid += idmax - idmin + 1
@@ -1848,7 +1848,7 @@ def export2he8(
 
         sql = "SELECT count(*) AS anz FROM einzugsgebiete"
 
-        if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (1)"):
+        if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (1)"):
             del dbHE
             return False
 
@@ -1864,7 +1864,7 @@ def export2he8(
                 (einzugsgebiet <> '')
             """
 
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (2)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (2)"):
                 del dbHE
                 return False
 
@@ -1881,7 +1881,7 @@ def export2he8(
                     createdat=createdat
                 )
 
-                if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (3)"):
+                if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (3)"):
                     del dbHE
                     return False
 
@@ -1891,7 +1891,7 @@ def export2he8(
                 # Liste der in allen Einwohnerpunkten vorkommenden Einzugsgebiete
                 sql = """SELECT einzugsgebiet FROM einleit WHERE einzugsgebiet is not NULL GROUP BY einzugsgebiet"""
 
-                if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (4)"):
+                if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (4)"):
                     del dbHE
                     return False
 
@@ -1907,7 +1907,7 @@ def export2he8(
                         tgnam=tgb[0], createdat=createdat
                     )
 
-                    if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (5)"):
+                    if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (5)"):
                         del dbHE
                         return False
 
@@ -1925,7 +1925,7 @@ def export2he8(
                     WHERE einzugsgebiete.pk IS NULL
                 """
 
-                if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (6)"):
+                if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (6)"):
                     del dbHE
                     return False
 
@@ -1945,7 +1945,7 @@ def export2he8(
                 INNER JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
             """
 
-            if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (7)"):
+            if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (7)"):
                 del dbHE
                 return False
 
@@ -1956,7 +1956,7 @@ def export2he8(
                     # 2.1.1 Es existiert genau ein Einzugsgebiet ---------------------------------------------
                     sql = """UPDATE einleit SET einzugsgebiet = (SELECT tgnam FROM einzugsgebiete GROUP BY tgnam)"""
 
-                    if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (8)"):
+                    if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (8)"):
                         del dbHE
                         return False
 
@@ -1971,7 +1971,7 @@ def export2he8(
                           WHERE within(einleit.geom, einzugsgebiete.geom) 
                               and einleit.geom IS NOT NULL and einzugsgebiete.geom IS NOT NULL)"""
 
-                    if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (9)"):
+                    if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (9)"):
                         del dbHE
                         return False
 
@@ -1988,7 +1988,7 @@ def export2he8(
                         LEFT JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
                         WHERE einzugsgebiete.pk IS NULL
                     """
-                    if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (10)"):
+                    if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (10)"):
                         del dbHE
                         return False
 
@@ -2010,7 +2010,7 @@ def export2he8(
                     WHERE einzugsgebiete.pk is NULL
                 """
 
-                if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einzugsgebiete (11)"):
+                if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (11)"):
                     del dbHE
                     return False
 
@@ -2106,7 +2106,7 @@ def export2he8(
 
         logger.debug("\nSQL-4e:\n{}\n".format(sql))
 
-        if not dbQK.sql(sql, "dbQK: k_qkhe8.export_einleitdirekt (6)"):
+        if not dbQK.sql(sql, "dbQK: export_to_he8.export_einleitdirekt (6)"):
             del dbHE
             return False
 
@@ -2297,7 +2297,7 @@ def export2he8(
 
         logger.debug("\nSQL-4e:\n{}\n".format(sql))
 
-        if not dbQK.sql(sql, "dbQK: k_qkhe8.export_aussengebiete (6)"):
+        if not dbQK.sql(sql, "dbQK: export_to_he8.export_aussengebiete (6)"):
             del dbHE
             return False
 
@@ -2475,7 +2475,7 @@ if __name__ == '__console__' or __name__ == "__main__":
         logger.addHandler(file_handler)
         #logger.addHandler(stream_handler)
 
-    #logger.debug(f'Aufruf von k_qkhe8 aus der QGIS-Konsole: {__name__}')
+    #logger.debug(f'Aufruf von export_to_he8 aus der QGIS-Konsole: {__name__}')
 
     database_QKan = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/work/itwh.sqlite'
     dbQK = DBConnection(
@@ -2489,7 +2489,7 @@ if __name__ == '__console__' or __name__ == "__main__":
             ),
         )
 
-    export2he8(
+    exporthe8(
         iface,
         "C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/work/erg/itwh.idbm",
         "C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/work/muster_vorlage.idbm",
