@@ -159,9 +159,42 @@ class SWMM:
 
             sql = f"""
                 INSERT into schaechte (
-                    schnam, sohlhoehe, deckelhoehe, ueberstauflaeche)
+                    schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
                 VALUES (
-                    '{name}', {elevation}, {elevation} + {maxdepth}, {areaPonded})
+                    '{name}', {elevation}, {elevation} + {maxdepth}, {areaPonded}, 'Schacht')
+                """
+            if not self.dbQK.sql(sql):
+                del self.dbQK
+                return False
+
+        return True
+
+    def outfalls(self):
+        """Liest die Ausläufe ein. Rest siehe coordinates"""
+
+        outtypes = {
+            'FREE': 'frei',
+            'NORMAL': 'normal',
+            'FIXED': 'konstant',
+            'TIDAL': 'Tide',
+            'TIMESERIES': 'Zeitreihe'
+        }
+
+        data = self.data.get("outfalls", [])
+        for line in data:
+            name = line[0:17].strip()  # schnam
+            elevation = line[17:28].strip()  # sohlhoehe
+            outtype = line[28:39].strip()  # Auslasstyp
+            if outtype != '':
+                auslasstyp = outtypes[outtype]
+            else:
+                auslasstyp = 'frei'
+
+            sql = f"""
+                INSERT into schaechte (
+                    schnam, sohlhoehe, auslasstyp, schachttyp)
+                VALUES (
+                    '{name}', {elevation}, '{auslasstyp}', 'Auslass')
                 """
             if not self.dbQK.sql(sql):
                 del self.dbQK
@@ -272,35 +305,59 @@ class SWMM:
             laenge = line[51:62].strip()
 
             # Rauheitsbeiwerte
-            mannings_n = fzahl(line[0:0])           # todo
+            mannings_n = fzahl(line[62:73])
             kst = 1/mannings_n                      # interessant: die Einheit von mannings_n ist s/m**(1/3)!
             ks = ksFromKst(kst)
 
             sql = f"""
                 INSERT into haltungen (
-                    haltnam, schoben, schunten, laenge, ks)
+                    haltnam, schoben, schunten, laenge, ks, entwart, simstatus)
                 VALUES (
-                    '{haltnam}', '{schoben}', '{schunten}', {laenge}, {ks})
+                    '{haltnam}', '{schoben}', '{schunten}', {laenge}, {ks}, 'Regenwasser', 'vorhanden')
                 """
             if not self.dbQK.sql(sql):
                 del self.dbQK
                 return False
 
+        # Haltungsobjekte mithilfe der Schachtkoordinaten erzeugen
+        sql = f"""
+            UPDATE haltungen 
+            SET geom = (
+                SELECT
+                    MakeLine(schob.geop, schun.geop)
+                FROM
+                    schaechte AS schob,
+                    schaechte AS schun
+                WHERE schob.schnam = haltungen.schoben AND schun.schnam = haltungen.schunten
+            )
+            """
+        if not self.dbQK.sql(sql):
+            del self.dbQK
+            return False
+
         return True
-            # todo: SQL-Anweisung wie oben ergänzen
 
     def xsections(self):
         """Liest die Profildaten zu den Haltungen ein. Dabei werden sowohl Haltungsdaten ergänzt
         als auch Profildaten erfasst"""
 
+        profiltypes = {
+            'CIRCULAR': 'Kreisquerschnitt'
+        }
+
         data = self.data.get("xsections", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
             haltnam = line[0:17].strip()
-            profilnam = line[17:30].strip()               # shape
+            xsection = line[17:30].strip()               # shape
             hoehe = line[30:47].strip()                   # Geom1
             breite = line[47:58].strip()                  # Geom2
             barrels = line[80:91].strip()                 # Falls > 1, muss die Haltung mehrfach angelegt werden
+
+            if xsection in profiltypes:
+                profilnam = profiltypes[xsection]
+            else:
+                profilnam = 'Kreisquerschnitt'
 
             sql = f"""
                 UPDATE haltungen SET (
@@ -556,9 +613,6 @@ class SWMM:
     def infiltration(self):
         pass                    # in QKan nicht verwaltet
 
-    def outfalls(self):
-        pass                    # in QKan nicht verwaltet
-
     def pollutants(self):
         pass                    # in QKan nicht verwaltet
 
@@ -613,16 +667,18 @@ def importKanaldaten(inpfile: str, database_QKan: str, projectfile: str, epsg: i
 
     if not swmm.junctions():
         fehlermeldung('Fehler in importKanaldaten', 'junctions()')
+    if not swmm.outfalls():
+        fehlermeldung('Fehler in importKanaldaten', 'outfalls()')
     if not swmm.coordinates():
         fehlermeldung('Fehler in importKanaldaten', 'coordinates()')
+    if not swmm.conduits():
+        fehlermeldung('Fehler in importKanaldaten', 'conduits()')
+    if not swmm.xsections():
+        fehlermeldung('Fehler in importKanaldaten', 'xsections()')
     if not swmm.subcatchments():
         fehlermeldung('Fehler in importKanaldaten', 'subcatchments()')
     if not swmm.polygons():
         fehlermeldung('Fehler in importKanaldaten', 'polygons()')
-#    if not swmm.conduits():
-#        fehlermeldung('Fehler in importKanaldaten', 'conduits()')
-#    if not swmm.xsections():
-#        fehlermeldung('Fehler in importKanaldaten', 'xsections()')
 
     # from pprint import pprint
 

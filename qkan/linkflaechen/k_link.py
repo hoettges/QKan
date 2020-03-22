@@ -47,6 +47,7 @@ progress_bar = None
 
 
 def createlinkfl(
+    iface,
     dbQK,
     liste_flaechen_abflussparam,
     liste_hal_entw,
@@ -490,7 +491,11 @@ def createlinkfl(
 
 
 def createlinksw(
-    dbQK, liste_teilgebiete, suchradius=50., epsg=25832
+    iface,
+    dbQK,
+    liste_teilgebiete,
+    suchradius=50.,
+    epsg=25832
 ):
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
