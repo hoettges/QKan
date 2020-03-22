@@ -15,6 +15,7 @@ from qkan.linkflaechen.k_link import createlinkfl, createlinksw
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from qkan.tools.k_layersadapt import layersadapt
 
+# Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
 class TestLinkfl(QgisTest):
     """Test des Moduls Linkfl"""
     @classmethod
@@ -26,11 +27,11 @@ class TestLinkfl(QgisTest):
             z.extractall(BASE_WORK)
 
     def test_linkfl(self):
-        database_qkan = BASE_WORK / "nette.sqlite"
+        database_qkan = str(BASE_WORK / "nette.sqlite")
 
         # Aktualisierung der Datenbank auf aktuelle Version
         layersadapt(
-            database_QKan= str(database_qkan),
+            database_QKan= database_qkan,
             projectTemplate= "",
             dbIsUptodate= False,
             qkanDBUpdate= True,
@@ -45,7 +46,7 @@ class TestLinkfl(QgisTest):
         )
 
         # Anbindung an die Datenbank, weil Module mit QKan-Objekt aufgerufen werden.
-        db = DBConnection(dbname=str(database_qkan))
+        db = DBConnection(dbname=database_qkan)
         if not db.connected:
             raise Exception("Datenbank nicht gefunden oder nicht aktuell.")
 

@@ -6,53 +6,53 @@ from qgis.testing import unittest
 
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
-from qkan.exportdyna.k_qkkp import exportKanaldaten
-from qkan.importdyna.import_from_dyna import importKanaldaten
+from qkan_he7.exporthe.k_qkhe import exportKanaldaten
+from qkan_he7.importhe.import_from_he import importKanaldaten
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from qkan.tools.k_layersadapt import layersadapt
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
-class TestKpp2QKan(QgisTest):
+class TestHE7QKan(QgisTest):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
 
         # Extract files
-        with ZipFile(BASE_DATA / "test_dynaImport.zip") as z:
+        with ZipFile(BASE_DATA / "test_he7Import.zip") as z:
             z.extractall(BASE_WORK)
 
     def test_import(self):
-        database_qkan = str(BASE_WORK / "Oleanderweg.sqlite")
-        dynafile = str(BASE_WORK / "Oleanderweg.ein")
+        database_qkan = str(BASE_WORK / "itwh.sqlite")
+        he7file = str(BASE_WORK / "muster-modelldatenbank.idbf")
         project_file = str(BASE_WORK / "plan.qgs")
 
         erg = importKanaldaten(
-            dynafile=dynafile,
+            database_HE=he7file,
             database_QKan=database_qkan,
             projectfile=project_file,
-            epsg=3044,
+            epsg=31467,
         )
 
-        LOGGER.debug("erg (Validate_KPP_Import): %s", erg)
+        LOGGER.debug("erg (Validate_HE7_Import): %s", erg)
         if not erg:
-            LOGGER.info("Nicht ausgeführt, weil zuerst QKan-DB aktualisiert wurde.!")
+            LOGGER.info("Fehler in TestHE7QKan")
         # self.assertTrue(False, "Fehlernachricht")
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
-class TestQKan2Kpp(QgisTest):
+class TestQKanHE7(QgisTest):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
 
         # Extract files
-        with ZipFile(BASE_DATA / "test_dynaExport.zip") as z:
+        with ZipFile(BASE_DATA / "test_he7Export.zip") as z:
             z.extractall(BASE_WORK)
 
     def test_export(self):
-        database_qkan = str(BASE_WORK / "nette.sqlite")
-        dynafile = str(BASE_WORK / "nette.ein")
+        database_qkan = str(BASE_WORK / "modell.sqlite")
+        database_he7 = str(BASE_WORK / "modell.idbf")
         #project_file = str(BASE_WORK / "plan_export.qgs")
-        template_dyna = str(BASE_WORK / "dyna_vorlage.ein")
+        template_he7 = str(BASE_WORK / "muster_nur_bauwerke.idbf")
 
         #project = QgsProject.instance()
         #project.read(project_file)
@@ -77,30 +77,36 @@ class TestQKan2Kpp(QgisTest):
         if not db.connected:
             raise Exception("Datenbank nicht gefunden oder nicht aktuell.")
 
+        exportChoice = {'export_schaechte': True, 'export_auslaesse': False, 'export_speicher': True, 'export_haltungen': True,
+             'export_pumpen': False, 'export_wehre': False, 'export_flaechenrw': True, 'export_einleitdirekt': False,
+             'export_aussengebiete': False, 'export_abflussparameter': False, 'export_regenschreiber': False,
+             'export_rohrprofile': False, 'export_speicherkennlinien': False, 'export_bodenklassen': False,
+             'modify_schaechte': True, 'modify_auslaesse': False, 'modify_speicher': True, 'modify_haltungen': True,
+             'modify_pumpen': False, 'modify_wehre': False, 'modify_flaechenrw': True, 'modify_einleitdirekt': False,
+             'modify_aussengebiete': False, 'modify_abflussparameter': False, 'modify_regenschreiber': False,
+             'modify_rohrprofile': False, 'modify_speicherkennlinien': False, 'modify_bodenklassen': False,
+             'combine_flaechenrw': False, 'combine_einleitdirekt': False}
+
         erg = exportKanaldaten(
             self.iface,
-            dynafile=dynafile,
-            template_dyna=template_dyna,
+            database_HE=database_he7,
+            dbtemplate_HE=template_he7,
             dbQK=db,
-            dynabef_choice=enums.BefChoice.FLAECHEN,
-            dynaprof_choice=enums.ProfChoice.PROFILNAME,
-            liste_teilgebiete="[]",
-            profile_ergaenzen=True,
-            autonum_dyna=True,
-            mit_verschneidung=True,
+            liste_teilgebiete =[],
+            autokorrektur=False,
             fangradius=0.1,
             mindestflaeche=0.5,
-            max_loops=1000,
+            mit_verschneidung=True,
+            exportFlaechenHE8=False,
+            check_export=exportChoice,
         )
 
-        LOGGER.debug("erg (Validate_KPP_export): %s", erg)
+        LOGGER.debug("erg (Validate_HE7_export): %s", erg)
         if not erg:
             LOGGER.info("Nicht ausgeführt, weil zuerst QKan-DB aktualisiert wurde.!")
 
         del db
         # self.assertTrue(False, "Fehlernachricht")
-
-
 
 if __name__ == "__main__":
     unittest.main()

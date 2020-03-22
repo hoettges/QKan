@@ -29,7 +29,6 @@ import os
 
 import firebirdsql
 from qgis.core import Qgis
-from qgis.utils import iface
 
 from .qkan_utils import fehlermeldung
 
@@ -58,19 +57,15 @@ class FBConnection:
                 )
                 self.curfb = self.confb.cursor()
             except:
-                iface.messageBar().pushMessage(
-                    "Fehler",
-                    u"Fehler beim Anbinden der ITWH-Datenbank {:s}!\nAbbruch!".format(
-                        dbname
-                    ),
-                    level=Qgis.Critical,
+
+                logger.debug(
+                    "Fehler beim Anbinden der ITWH-Datenbank {:s}!\nAbbruch!".format(
+                        dbname)
                 )
                 self.confb = None
         else:
-            iface.messageBar().pushMessage(
-                "Fehler",
-                u"ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!".format(dbname),
-                level=Qgis.Critical,
+            logger.debug(
+                "Fehler: ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!".format(dbname)
             )
             self.confb = None
 

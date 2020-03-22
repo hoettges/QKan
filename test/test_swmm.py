@@ -15,6 +15,7 @@ from qkan.importswmm.importswmm import importKanaldaten
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from qkan.tools.k_layersadapt import layersadapt
 
+# Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
 class TestSwmm2QKan(QgisTest):
     """Aktuell nur als Vorlage. Muss noch programmiert werden"""
     @classmethod
@@ -26,12 +27,12 @@ class TestSwmm2QKan(QgisTest):
             z.extractall(BASE_WORK)
 
     def test_import(self):
-        database_qkan = BASE_WORK / "tutorial.sqlite"
-        swmmfile = BASE_WORK / "tutorial.inp"
-        project_file = BASE_WORK / "plan.qgs"
+        database_qkan = str(BASE_WORK / "tutorial.sqlite")
+        swmmfile = str(BASE_WORK / "tutorial.inp")
+        project_file = str(BASE_WORK / "plan.qgs")
 
         layersadapt(
-            database_QKan= str(database_qkan),
+            database_QKan= database_qkan,
             projectTemplate= "",
             dbIsUptodate= False,
             qkanDBUpdate= True,
@@ -46,9 +47,9 @@ class TestSwmm2QKan(QgisTest):
         )
 
         erg = importKanaldaten(
-            inpfile=str(swmmfile),
-            database_QKan=str(database_qkan),
-            projectfile=str(project_file),
+            inpfile=swmmfile,
+            database_QKan=database_qkan,
+            projectfile=project_file,
             epsg=3044,
         )
 
@@ -58,6 +59,7 @@ class TestSwmm2QKan(QgisTest):
 
         # self.assertTrue(False, "Fehlernachricht")
 
+# Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
 class TestQKan2Swmm(QgisTest):
     @classmethod
     def setUpClass(cls) -> None:
@@ -68,12 +70,12 @@ class TestQKan2Swmm(QgisTest):
             z.extractall(BASE_WORK)
 
     def test_export(self):
-        database_qkan = BASE_WORK / "nette.sqlite"
-        swmmfile = BASE_WORK / "nette.inp"
-        template_swmm = BASE_WORK / "swmm_vorlage.inp"
+        database_qkan = str(BASE_WORK / "nette.sqlite")
+        swmmfile = str(BASE_WORK / "nette.inp")
+        template_swmm = str(BASE_WORK / "swmm_vorlage.inp")
 
         layersadapt(
-            database_QKan= str(database_qkan),
+            database_QKan= database_qkan,
             projectTemplate= "",
             dbIsUptodate= False,
             qkanDBUpdate= True,
@@ -89,9 +91,9 @@ class TestQKan2Swmm(QgisTest):
 
         erg = exportKanaldaten(
             iface=self.iface,
-            databaseQKan=str(database_qkan),
-            templateSwmm=str(template_swmm),
-            ergfileSwmm=str(swmmfile),
+            databaseQKan=database_qkan,
+            templateSwmm=template_swmm,
+            ergfileSwmm=swmmfile,
             mit_verschneidung=True,
             liste_teilgebiete=['Fa20', 'Fa22', 'Fa23', 'Fa25'],
         )
