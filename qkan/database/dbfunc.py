@@ -235,7 +235,7 @@ class DBConnection:
         """
         try:
             self.consl.close()
-            logger.debug("Verbindung zur Datenbank {dbname} wieder geloest.")
+            logger.debug(f"Verbindung zur Datenbank {self.dbname} wieder geloest.")
         except BaseException as err:
             fehlermeldung(
                 "Fehler in dbfunc.DBConnection:",

@@ -11,13 +11,13 @@ function Pause-Exit($code)
     [void][System.Console]::ReadKey($true)
     exit $code
 }
-if ($inst = Get-ItemProperty -Path "HKLM:\SOFTWARE\QGIS 3.4" -Name InstallPath -ErrorAction SilentlyContinue)
+if ($inst = Get-ItemProperty -Path "HKLM:\SOFTWARE\QGIS 3.10" -Name InstallPath -ErrorAction SilentlyContinue)
 {
     $path = $inst.InstallPath
 }
 else
 {
-    $path = Read-Host -Prompt "Could not find installation path of QGIS 3.4.`nPlease enter it manually"
+    $path = Read-Host -Prompt "Could not find installation path of QGIS 3.10.`nPlease enter it manually"
 }
 
 if ([string]::IsNullOrEmpty($path))
@@ -28,11 +28,11 @@ if ([string]::IsNullOrEmpty($path))
 
 Write-Host "Using '$path'"
 
-$PYTHON = $path + "\bin\python-qgis.bat"
+$PYTHON = $path + "\bin\python-qgis-ltr.bat"
 
 if (-not (Test-Path $PYTHON))
 {
-    Write-Error -Message "python-qgis.bat seems to be missing in your installation. Aborting."
+    Write-Error -Message "python-qgis-ltr.bat seems to be missing in your installation. Aborting."
     Pause-Exit(1)
 }
 
