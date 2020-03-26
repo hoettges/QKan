@@ -13,7 +13,7 @@ from qgis.core import QgsCoordinateReferenceSystem
 
 import logging
 
-logger = logging.getLogger("QKan.importdyna.import_from_dyna")
+logger = logging.getLogger("QKan.importswmm.import_from_swmm")
 
 # Hilfsfunktionen, werden wenn Sie in QKan integriert sind importiert
 # from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung, fzahl
@@ -95,15 +95,14 @@ class SWMM:
 
         if not self.dbQK.connected:
             fehlermeldung(
-                "Fehler in import_from_dyna:\n",
+                "Fehler in import_from_swmm:\n",
                 "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
                     database_QKan
                 ),
             )
 
-    def __del__(self):
-        self.dbQK.commit()
-        del self.dbQK
+    # def __del__(self):
+    #     del self.dbQK
 
     def read(self):
         with self.inpobject.open("r") as inp:
@@ -167,6 +166,8 @@ class SWMM:
                 del self.dbQK
                 return False
 
+        self.dbQK.commit()
+
         return True
 
     def outfalls(self):
@@ -199,6 +200,8 @@ class SWMM:
             if not self.dbQK.sql(sql):
                 del self.dbQK
                 return False
+
+        self.dbQK.commit()
 
         return True
 
@@ -234,6 +237,8 @@ class SWMM:
                 del self.dbQK
                 return False
 
+        self.dbQK.commit()
+
         return True
 
     def subcatchments(self):
@@ -254,6 +259,8 @@ class SWMM:
                 del self.dbQK
                 return False
 
+        self.dbQK.commit()
+
         return True
 
     def polygons(self):
@@ -273,23 +280,26 @@ class SWMM:
                 if nampoly != '':
                     # Polygon schreiben
                     coords = ' '.join([f'{x},{y}' for x,y in zip(xlis, ylis)])
-                    geom = f'MULTIPOLYGON((({coords})), {self.epsg})'
+                    geom = f"GeomFromText('MULTIPOLYGON((({coords})), {self.epsg})')"
                     sql = f"""
-                        UPDATE schaechte SET geom = {geom}
-                        WHERE schnam = '{name}'
+                        UPDATE flaechen SET geom = {geom}
+                        WHERE flnam = '{nampoly}'
                         """
                     if not self.dbQK.sql(sql):
                         del self.dbQK
                         return False
+                nampoly = name
                 # Listen zurücksetzen
                 xlis = []                               # x-Koordinaten zum Polygon
                 ylis = []                               # y-Koordinaten zum Polygon
-            if nampoly == 'ende':
+            if name == 'ende':
                 continue                                # Letzte Zeile ist nur ein dummy
 
             # Koordinaten des Eckpunktes übernehmen
             xlis.append(xsch)
             ylis.append(ysch)
+
+        self.dbQK.commit()
 
         return True
 
@@ -335,6 +345,8 @@ class SWMM:
             del self.dbQK
             return False
 
+        self.dbQK.commit()
+
         return True
 
     def xsections(self):
@@ -369,6 +381,8 @@ class SWMM:
                 del self.dbQK
                 return False
 
+        self.dbQK.commit()
+
         return True
 
             # todo: SQL-Anweisung wie oben ergänzen
@@ -383,7 +397,7 @@ class SWMM:
                         max(ysch) AS ymax
                  FROM schaechte"""
         try:
-            if not self.dbQK.sql(sql, "importkanaldaten_dyna (17)"
+            if not self.dbQK.sql(sql, "importkanaldaten_swmm (17)"
                             ):
                 del self.dbQK
                 return False
@@ -409,7 +423,7 @@ class SWMM:
                 FROM geom_cols_ref_sys
                 WHERE Lower(f_table_name) = Lower('schaechte')
                 AND Lower(f_geometry_column) = Lower('geom')"""
-        if not self.dbQK.sql(sql, "importkanaldaten_dyna (37)"):
+        if not self.dbQK.sql(sql, "importkanaldaten_swmm (37)"):
             del self.dbQK
             return False
 
@@ -453,7 +467,7 @@ class SWMM:
                 datasource = self.database_QKan
 
             # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
-            # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
+            # Liste steht in 3 Modulen: tools.k_tools, importswmm.import_from_swmm, importhe.import_from_he
             tabliste = [
                 "einleit",
                 "einzugsgebiete",
