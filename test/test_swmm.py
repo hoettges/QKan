@@ -23,7 +23,7 @@ class TestSwmm2QKan(QgisTest):
         super().setUpClass()
 
         # Extract files
-        with ZipFile(BASE_DATA / "test_swmmImport.zip") as z:
+        with ZipFile(BASE_DATA / "test_swmmImport2.zip") as z:
             z.extractall(BASE_WORK)
 
     def test_import(self):

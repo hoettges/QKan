@@ -79,13 +79,14 @@ class DBConnection_local():
         return True
 
 class SWMM:
-    def __init__(self, inpfile, database_QKan, projectfile,  epsg=25832, dbtyp="SpatiaLite"):
+    def __init__(self, inpfile, database_QKan, projectfile, offset=[0., 0.], epsg=25832, dbtyp="SpatiaLite"):
         self.epsg = epsg
         self.dbtyp = dbtyp
         self.inpobject = Path(inpfile)
         self.data = {}
         self.database_QKan = database_QKan
         self.projectfile = projectfile
+        self.xoffset, self.yoffset = offset
 
         self.dbQK = DBConnection(
             dbname=database_QKan, epsg=epsg
@@ -162,7 +163,7 @@ class SWMM:
                 VALUES (
                     '{name}', {elevation}, {elevation} + {maxdepth}, {areaPonded}, 'Schacht')
                 """
-            if not self.dbQK.sql(sql):
+            if not self.dbQK.sql(sql, repeatmessage=True):
                 del self.dbQK
                 return False
 
@@ -209,9 +210,9 @@ class SWMM:
         """Liest die Koordinaten zu den bereits angelegten Schaechten ein"""
         data = self.data.get("coordinates", [])
         for line in data:
-            name = line[0:17].strip()           # schnam
-            xsch = line[17:36].strip()          # xsch
-            ysch = line[36:54].strip()          # ysch
+            name = line[0:17].strip()                                               # schnam
+            xsch = fzahl(line[17:36].strip(),3,self.xoffset) + self.xoffset         # xsch
+            ysch = fzahl(line[36:54].strip(),3,self.yoffset) + self.yoffset         # ysch
 
             # Geo-Objekte erzeugen
 
@@ -272,20 +273,20 @@ class SWMM:
         nampoly = ''                            # Solange der Name gleich bleibt, gehören 
                                                 # die Eckpunkte zum selben Polygon (tezg-Fläche)
         for line in data:
-            name = line[0:17].strip()           # schnam
-            xsch = line[17:36].strip()          # xsch
-            ysch = line[36:54].strip()          # ysch
+            name = line[0:17].strip()                               # schnam
+            xsch = fzahl(line[17:36].strip(), 3, self.xoffset) + self.xoffset        # xsch
+            ysch = fzahl(line[36:54].strip(), 3, self.yoffset) + self.yoffset        # ysch
 
             if nampoly != name:
                 if nampoly != '':
                     # Polygon schreiben
-                    coords = ' '.join([f'{x},{y}' for x,y in zip(xlis, ylis)])
-                    geom = f"GeomFromText('MULTIPOLYGON((({coords})), {self.epsg})')"
+                    coords = ', '.join([f'{x} {y}' for x,y in zip(xlis, ylis)])
+                    geom = f"GeomFromText('MULTIPOLYGON((({coords})))', {self.epsg})"
                     sql = f"""
                         UPDATE flaechen SET geom = {geom}
                         WHERE flnam = '{nampoly}'
                         """
-                    if not self.dbQK.sql(sql):
+                    if not self.dbQK.sql(sql, repeatmessage=True):
                         del self.dbQK
                         return False
                 nampoly = name
@@ -349,6 +350,39 @@ class SWMM:
 
         return True
 
+    def vertices(self):
+        data = self.data.get("vertices", [])
+        data.append('ende')  # Trick, damit am Ende das letzte Polygon geschrieben wird
+
+        namvor = ''     # Solange der Name gleich bleibt, gehören
+                        # die Eckpunkte zur selben Haltung
+        npt = 2         # Punkt, der eingefügt werden muss
+
+        for line in data:
+            name = line[0:17].strip()  # schnam
+            xsch = fzahl(line[17:37].strip(), 3, self.xoffset) + self.xoffset  # xsch
+            ysch = fzahl(line[36:56].strip(), 3, self.yoffset) + self.yoffset  # ysch
+
+            if name == namvor:
+                npt += 1
+            else:
+                npt = 2
+
+            sql = f"""
+                UPDATE haltungen SET geom = AddPoint(geom, MakePoint({xsch}, {ysch}, {self.epsg}), {npt})
+                WHERE halnam = '{name}'
+                """
+
+            if not self.dbQK.sql(sql, repeatmessage=True):
+                del self.dbQK
+                return False
+
+            namvor = name
+
+        self.dbQK.commit()
+
+        return True
+
     def xsections(self):
         """Liest die Profildaten zu den Haltungen ein. Dabei werden sowohl Haltungsdaten ergänzt
         als auch Profildaten erfasst"""
@@ -365,6 +399,10 @@ class SWMM:
             hoehe = line[30:47].strip()                   # Geom1
             breite = line[47:58].strip()                  # Geom2
             barrels = line[80:91].strip()                 # Falls > 1, muss die Haltung mehrfach angelegt werden
+
+            if xsection == 'IRREGULAR':
+                hoehe = 'NULL'
+                breite = 'NULL'
 
             if xsection in profiltypes:
                 profilnam = profiltypes[xsection]
@@ -654,9 +692,6 @@ class SWMM:
     def map(self):
         pass                    # in QKan nicht verwaltet
 
-    def vertices(self):
-        pass                    # in QKan nicht verwaltet
-
 def importKanaldaten(inpfile: str, database_QKan: str, projectfile: str, epsg: int = 3044):
     """Ruft die Klasse SWMM zur Verarbeitung der Daten auf"""
 
@@ -667,6 +702,7 @@ def importKanaldaten(inpfile: str, database_QKan: str, projectfile: str, epsg: i
         inpfile,
         database_QKan,
         projectfile,
+        offset=[380000., 57100000.],
         epsg=25832,
         dbtyp="SpatiaLite"
     )
