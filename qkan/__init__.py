@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import QAction, QMenu
 from .config import Config
 
 
+# noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
     qkan = QKan(iface)
     return qkan
@@ -76,17 +77,19 @@ class QKan:
         from .createunbeffl import CreateUnbefFl
         from .importdyna import ImportFromDyna
         from .exportdyna import ExportToKP
-        from .linkflaechen import application as linkflaechen
+        from .linkflaechen import LinkFl
         from .tools import QKanTools
         from .exporthe8 import ExportToHE8
+        # from .xmlporter import XmlPorter
 
         self.plugins = [
             CreateUnbefFl(iface),
             ImportFromDyna(iface),
             ExportToKP(iface),
-            linkflaechen.LinkFl(iface),
+            LinkFl(iface),
             QKanTools(iface),
             ExportToHE8(iface),
+            # XmlPorter(iface),
         ]
 
         actions = self.iface.mainWindow().menuBar().actions()
@@ -100,6 +103,7 @@ class QKan:
         self.toolbar = self.iface.addToolBar("QKan")
         self.toolbar.setObjectName("QKan")
 
+    # noinspection PyPep8Naming
     def initGui(self):
         # Create and insert QKan menu after the 3rd menu
         if self.menu is None:

@@ -42,6 +42,7 @@ $RESOURCE_FILES=@(
 	"../qkan/exporthe8/resources.qrc"
 	"../qkan/importdyna/resources.qrc"
 	"../qkan/linkflaechen/resources.qrc"
+	"../qkan/xmlporter/resources.qrc"
 	"../qkan/tools/resources.qrc"
 )
 

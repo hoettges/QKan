@@ -30,13 +30,16 @@
     </font>
    </property>
    <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Datenimport starten ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string notr="true"/>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+   <property name="centerButtons">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QGroupBox" name="groupBox">
@@ -51,7 +54,7 @@
    <property name="title">
     <string>Datenbank</string>
    </property>
-   <widget class="QLineEdit" name="tf_database_QKan">
+   <widget class="QLineEdit" name="tf_database">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -61,7 +64,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectdatabase_QKan">
+   <widget class="QPushButton" name="pb_database">
     <property name="geometry">
      <rect>
       <x>420</x>
@@ -110,7 +113,7 @@
    <property name="title">
     <string>Exportdatei</string>
    </property>
-   <widget class="QLineEdit" name="tf_xmlExportFile">
+   <widget class="QLineEdit" name="tf_export">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -120,7 +123,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectXmlExportFile">
+   <widget class="QPushButton" name="pb_export">
     <property name="geometry">
      <rect>
       <x>420</x>
