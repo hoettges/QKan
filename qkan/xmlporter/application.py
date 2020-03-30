@@ -17,7 +17,7 @@ from qkan.tools.k_qgsadapt import qgsadapt
 
 # noinspection PyUnresolvedReferences
 from . import resources
-from ._export import export_kanaldaten
+from ._export import ExportTask
 from ._import import ImportTask
 from .application_dialog import ExportDialog, ImportDialog
 
@@ -110,7 +110,7 @@ class XmlPorter:
                 )
 
             # Run export
-            export_kanaldaten(db_qkan, export_file)
+            ExportTask(db_qkan, export_file).run()
 
     def run_import(self):
         self.import_dlg.show()

@@ -157,7 +157,6 @@ def geo_hydro() -> str:
     return geom
 
 
-# TODO: DRY loops
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask:
     def __init__(self, db_qkan: DBConnection, xml_file: str):
