@@ -234,16 +234,16 @@ def get_database_QKan(silent=False) -> typing.Tuple[typing.Optional[str], int]:
         if not silent:
             fehlermeldung(
                 "Fehler in Layerliste:",
-                'Layer "Schächte und Flächen exisitieren nicht"',
+                'Layer "Schächte und Flächen existieren nicht"',
             )
         return None, 0
     elif dbname_f is not None:
         if not silent:
-            warnung("Fehler in Layerliste:", 'Layer "Schächte exisitiert nicht"')
+            warnung("Fehler in Layerliste:", 'Layer "Schächte existiert nicht"')
         return dbname_f, epsg_f
     elif dbname_s is not None:
         if not silent:
-            warnung("Fehler in Layerliste:", 'Layer "Flächen exisitiert nicht"')
+            warnung("Fehler in Layerliste:", 'Layer "Flächen existiert nicht"')
         return dbname_s, epsg_s
     else:
         if not silent:

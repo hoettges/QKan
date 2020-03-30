@@ -46,9 +46,8 @@ class QKan:
         stream_handler.setLevel(logging.DEBUG)
 
         self.logger.setLevel(logging.DEBUG)
-        if not self.logger.handlers:
-            self.logger.addHandler(file_handler)
-            self.logger.addHandler(stream_handler)
+        self.logger.addHandler(file_handler)
+        self.logger.addHandler(stream_handler)
 
         # Init config
         try:

@@ -82,7 +82,7 @@ class ExportToHE8:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 08.02.2017)
 
-        logger.info("\n\nQKan_ExportHE8 initialisiert...")
+        logger.info("QKan_ExportHE8 initialisiert...")
 
         # --------------------------------------------------------------------------
         # Pfad zum Arbeitsverzeichnis sicherstellen
