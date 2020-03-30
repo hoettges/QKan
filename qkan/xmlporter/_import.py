@@ -82,12 +82,22 @@ class Pumpe(ClassObject):
 # endregion
 
 
-def _strip_float(value: typing.Union[str, float], default: float = 0.0):
+def _strip_float(value: typing.Union[str, float], default: float = 0.0) -> float:
     if isinstance(value, float):
         return value
 
     if isinstance(value, str) and value.strip() != "":
         return float(value)
+
+    return default
+
+
+def _strip_int(value: typing.Union[str, int], default: int = 0) -> int:
+    if isinstance(value, int):
+        return value
+
+    if isinstance(value, str) and value.strip() != "":
+        return int(value)
 
     return default
 
@@ -99,7 +109,7 @@ def _consume_smp_block(
     knoten_typ = 0
 
     for _schacht in _block.findall("d:Knoten", NS):
-        knoten_typ = int(_schacht.findtext("d:KnotenTyp", -1, NS))
+        knoten_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, NS))
 
     smp = _block.find(
         "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='SMP']",
@@ -255,7 +265,7 @@ class ImportTask:
                     durchm=1.0,  # TODO: Not listed in ISYBAU?
                     entwart=block.findtext("d:Entwaesserungsart", "not found", NS),
                     knotentyp=knoten_typ,
-                    simstatus=int(block.findtext("d:Status", 0, NS)),
+                    simstatus=_strip_int(block.findtext("d:Status", 0, NS)),
                     kommentar=block.findtext("d:Kommentar", "-", NS),
                 )
 
@@ -349,7 +359,7 @@ class ImportTask:
                     durchm=0.5,
                     entwart="",
                     knotentyp=knoten_typ,
-                    simstatus=int(block.findtext("d:Status", 0, NS)),
+                    simstatus=_strip_int(block.findtext("d:Status", 0, NS)),
                     kommentar=block.findtext("d:Kommentar", "-", NS),
                 )
 
@@ -400,7 +410,7 @@ class ImportTask:
                 name = block.findtext("d:Objektbezeichnung", "not found", NS)
 
                 for _schacht in block.findall("d:Knoten", NS):
-                    knoten_typ = int(_schacht.findtext("d:KnotenTyp", -1, NS))
+                    knoten_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, NS))
 
                 smp = block.find(
                     "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='KOP']",
@@ -433,7 +443,7 @@ class ImportTask:
                     durchm=0.5,
                     entwart="",
                     knotentyp=knoten_typ,
-                    simstatus=int(block.findtext("d:Status", 0, NS)),
+                    simstatus=_strip_int(block.findtext("d:Status", 0, NS)),
                     kommentar=block.findtext("d:Kommentar", "-", NS),
                 )
 
@@ -546,7 +556,7 @@ class ImportTask:
                     profilnam=profilnam,
                     entwart=block.findtext("d:Entwaesserungsart", "not found", NS),
                     ks=1.5,  # in Hydraulikdaten enthalten.
-                    simstatus=int(block.findtext("d:Status", 0, NS)),
+                    simstatus=_strip_int(block.findtext("d:Status", 0, NS)),
                     kommentar=block.findtext("d:Kommentar", "-", NS),
                     xschob=xschob,
                     yschob=yschob,
@@ -756,7 +766,7 @@ class ImportTask:
             for block in blocks:
                 yield Pumpe(
                     pnam=block.findtext("d:Objektbezeichnung", "not found", NS),
-                    simstatus=int(block.findtext("d:Status", 0, NS)),
+                    simstatus=_strip_int(block.findtext("d:Status", 0, NS)),
                     kommentar=block.findtext("d:Kommentar", "-", NS),
                 )
 
@@ -776,7 +786,7 @@ class ImportTask:
                 # TODO: Does <HydraulikObjekt> even contain multiple <Pumpe>?
                 # `_pumpe = block.find("d:Pumpe", NS)` should be used if it does not
                 for _pumpe in block.findall("d:Pumpe", NS):
-                    _pumpentyp = int(_pumpe.findtext("d:PumpenTyp", -1, NS))
+                    _pumpentyp = _strip_int(_pumpe.findtext("d:PumpenTyp", -1, NS))
                     schoben = _pumpe.findtext("d:SchachtZulauf", "not found", NS)
                     schunten = _pumpe.findtext("d:SchachtAblauf", "not found", NS)
                     steuersch = _pumpe.findtext("d:Steuerschacht", "not found", NS)

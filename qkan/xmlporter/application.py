@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication, QStandardPaths
 from qgis.core import (
     Qgis,
     QgsCoordinateReferenceSystem,
@@ -29,7 +29,11 @@ class XmlPorter:
         self.iface = iface
 
         # noinspection PyArgumentList
-        self.default_dir = Path(QgsProject.instance().fileName()).parent
+        project_path = QgsProject.instance().fileName()
+        if project_path:
+            self.default_dir = Path(QgsProject.instance().fileName()).parent
+        else:
+            self.default_dir = Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
 
         self.export_dlg = ExportDialog(default_dir=self.default_dir, tr=self.tr)
         self.import_dlg = ImportDialog(default_dir=self.default_dir, tr=self.tr)
@@ -194,3 +198,4 @@ class XmlPorter:
                     project = QgsProject.instance()
                     project.read(QKan.config.project.file)
                     project.reloadAllLayers()
+                    # TODO: Some layers don't have a valid EPSG attached or wrong coordinates

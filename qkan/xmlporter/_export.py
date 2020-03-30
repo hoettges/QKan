@@ -32,7 +32,8 @@ def _create_children_text(
 # noinspection PyPep8Naming
 def SubElementText(parent: Element, name: str, text: typing.Union[str, int]):
     s = SubElement(parent, name)
-    s.text = str(text)
+    if text is not None:
+        s.text = str(text)
     return s
 
 
@@ -154,7 +155,11 @@ class ExportTask:
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
             _create_children_text(
                 abw,
-                {"Objektbezeichnung": attr[0], "Status": self.mapper_simstatus.get(attr[9], -1), "Objektart": None},
+                {
+                    "Objektbezeichnung": attr[0],
+                    "Status": self.mapper_simstatus.get(attr[9], -1),
+                    "Objektart": None,
+                },
             )
             SubElement(SubElement(abw, "Knoten"), "Bauwerk")
 
@@ -200,7 +205,7 @@ class ExportTask:
             )
 
             knoten = SubElement(abw, "Knoten")
-            SubElementText(knoten, "Knotentyp", attr[9])
+            SubElementText(knoten, "KnotenTyp", attr[9])  # TODO: Is None sometimes
             _create_children(
                 SubElement(knoten, "Bauwerk"), ["Bauwerktyp", "Auslaufbauwerk"]
             )
@@ -344,7 +349,7 @@ class ExportTask:
             )
 
             knoten = SubElement(abw, "Knoten")
-            SubElementText(knoten, "Knotentyp", attr[9])
+            SubElementText(knoten, "KnotenTyp", attr[9])  # TODO: Is None sometimes
             bauwerk = SubElement(knoten, "Bauwerk")
             SubElement(bauwerk, "Bauwerkstyp")
             _create_children(
