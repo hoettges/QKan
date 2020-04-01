@@ -31,7 +31,7 @@ class XmlPorter:
         # noinspection PyArgumentList
         project_path = QgsProject.instance().fileName()
         if project_path:
-            self.default_dir = Path(QgsProject.instance().fileName()).parent
+            self.default_dir = Path(project_path).parent
         else:
             self.default_dir = Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
 
