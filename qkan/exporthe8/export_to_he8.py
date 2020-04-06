@@ -1642,70 +1642,92 @@ def exporthe8(
 
         if check_export["modify_flaechenrw"]:
 
-            sql = """
-            WITH flintersect AS (
-              SELECT substr(printf('%s-%d', fl.flnam, lf.pk),1,30) AS flnam, 
-                ha.haltnam AS haltnam, fl.neigkl AS neigkl,
-                at.he_nr AS abflusstyp, 
-                CASE WHEN ap.bodenklasse IS NULL THEN 0 ELSE 1 END AS typbef, 
-                lf.speicherzahl AS speicherzahl, lf.speicherkonst AS speicherkonst,
-                lf.fliesszeitflaeche AS fliesszeitflaeche, lf.fliesszeitkanal AS fliesszeitkanal,
-                CASE WHEN {case_verschneidung} THEN area(fl.geom)/10000 
-                ELSE area({expr_verschneidung})/10000 
-                END AS flaeche, 
-                fl.regenschreiber AS regenschreiber,
-                coalesce(ft.he_nr, 0) AS flaechentypnr, 
-                fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
-                fl.kommentar AS kommentar,
-                CASE WHEN {case_verschneidung} THEN fl.geom
-                ELSE {expr_verschneidung} 
-                END AS geom
-              FROM linkfl AS lf
-              INNER JOIN flaechen AS fl
-              ON lf.flnam = fl.flnam
-              INNER JOIN haltungen AS ha
-              ON lf.haltnam = ha.haltnam
-              LEFT JOIN abflusstypen AS at
-              ON lf.abflusstyp = at.abflusstyp
-              LEFT JOIN abflussparameter AS ap
-              ON fl.abflussparameter = ap.apnam
-              LEFT JOIN flaechentypen AS ft
-              ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl_a}), 
-              flupdate AS (
-                SELECT flnam FROM flintersect 
-                WHERE flaeche*10000 > {mindestflaeche} and flaeche IS NOT NULL)
-            UPDATE he.Flaeche SET (
-              Haltung, Groesse, Regenschreiber, Flaechentyp, 
-              BerechnungSpeicherkonstante, Typ, AnzahlSpeicher,
-              Speicherkonstante, 
-              Schwerpunktlaufzeit,
-              FliesszeitOberflaeche, LaengsteFliesszeitKanal,
-              Parametersatz, Neigungsklasse, 
-              LastModified,
-              Kommentar, 
-              Geometry) = 
-            ( SELECT 
-                haltnam AS Haltung, flaeche AS Groesse, regenschreiber AS Regenschreiber, 
-                flaechentypnr AS Flaechentyp, 
-                abflusstyp AS BerechnungSpeicherkonstante, typbef AS Typ, speicherzahl AS AnzahlSpeicher, 
-                speicherkonst AS Speicherkonstante, 
-                coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
-                fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
-                abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
-                coalesce(createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
-                kommentar AS Kommentar, 
-                SetSrid(geom, -1) AS geometry
-              FROM flintersect AS fi
-              WHERE flnam = he.Flaeche.Name and flaeche*10000 > {mindestflaeche} and flaeche IS NOT NULL
-            ) WHERE he.Flaeche.Name IN flupdate
-            """.format( \
-                        mindestflaeche=mindestflaeche, auswahl_a=auswahl_a, 
-                        case_verschneidung=case_verschneidung, 
+            # aus Performancegründen wird die Auswahl der zu bearbeitenden Flächen in eine
+            # temporäre Tabelle tempfl geschrieben
+            sqllis = \
+                (
+                    """CREATE TEMP TABLE IF NOT EXISTS flupdate (flnam TEXT)""",
+
+                    """DELETE FROM flupdate"""
+
+                    f"""
+                    INSERT INTO flupdate (flnam)
+                      SELECT substr(printf('%s-%d', fl.flnam, lf.pk),1,30) AS flnam 
+                      FROM linkfl AS lf
+                      INNER JOIN flaechen AS fl
+                      ON lf.flnam = fl.flnam
+                      INNER JOIN haltungen AS ha
+                      ON lf.haltnam = ha.haltnam
+                      LEFT JOIN abflusstypen AS at
+                      ON lf.abflusstyp = at.abflusstyp
+                      LEFT JOIN abflussparameter AS ap
+                      ON fl.abflussparameter = ap.apnam
+                      LEFT JOIN flaechentypen AS ft
+                      ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl_a}""",
+
+                    """
+                    WITH flintersect AS (
+                      SELECT substr(printf('%s-%d', fl.flnam, lf.pk),1,30) AS flnam, 
+                        ha.haltnam AS haltnam, fl.neigkl AS neigkl,
+                        at.he_nr AS abflusstyp, 
+                        CASE WHEN ap.bodenklasse IS NULL THEN 0 ELSE 1 END AS typbef, 
+                        lf.speicherzahl AS speicherzahl, lf.speicherkonst AS speicherkonst,
+                        lf.fliesszeitflaeche AS fliesszeitflaeche, lf.fliesszeitkanal AS fliesszeitkanal,
+                        CASE WHEN {case_verschneidung} THEN area(fl.geom)/10000 
+                        ELSE area({expr_verschneidung})/10000 
+                        END AS flaeche, 
+                        fl.regenschreiber AS regenschreiber,
+                        coalesce(ft.he_nr, 0) AS flaechentypnr, 
+                        fl.abflussparameter AS abflussparameter, fl.createdat AS createdat,
+                        fl.kommentar AS kommentar,
+                        CASE WHEN {case_verschneidung} THEN fl.geom
+                        ELSE {expr_verschneidung} 
+                        END AS geom
+                      FROM linkfl AS lf
+                      INNER JOIN flaechen AS fl
+                      ON lf.flnam = fl.flnam
+                      INNER JOIN haltungen AS ha
+                      ON lf.haltnam = ha.haltnam
+                      LEFT JOIN abflusstypen AS at
+                      ON lf.abflusstyp = at.abflusstyp
+                      LEFT JOIN abflussparameter AS ap
+                      ON fl.abflussparameter = ap.apnam
+                      LEFT JOIN flaechentypen AS ft
+                      ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl_a})
+                    UPDATE he.Flaeche SET (
+                      Haltung, Groesse, Regenschreiber, Flaechentyp, 
+                      BerechnungSpeicherkonstante, Typ, AnzahlSpeicher,
+                      Speicherkonstante, 
+                      Schwerpunktlaufzeit,
+                      FliesszeitOberflaeche, LaengsteFliesszeitKanal,
+                      Parametersatz, Neigungsklasse, 
+                      LastModified,
+                      Kommentar, 
+                      Geometry) = 
+                    ( SELECT 
+                        haltnam AS Haltung, flaeche AS Groesse, regenschreiber AS Regenschreiber, 
+                        flaechentypnr AS Flaechentyp, 
+                        abflusstyp AS BerechnungSpeicherkonstante, typbef AS Typ, speicherzahl AS AnzahlSpeicher, 
+                        speicherkonst AS Speicherkonstante, 
+                        coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
+                        fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
+                        abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
+                        coalesce(createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                        kommentar AS Kommentar, 
+                        SetSrid(geom, -1) AS geometry
+                      FROM flintersect AS fi
+                      WHERE flnam = he.Flaeche.Name and flaeche*10000 > {mindestflaeche} and flaeche IS NOT NULL
+                    ) WHERE he.Flaeche.Name IN (SELECT flnam FROM flupdate)
+                    """.format( \
+                        mindestflaeche=mindestflaeche, auswahl_a=auswahl_a,
+                        case_verschneidung=case_verschneidung,
                         join_verschneidung=join_verschneidung,
                         expr_verschneidung=expr_verschneidung)
+                )
 
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_flaechenrw (1)"):
-                return False
+            for sql in sqllis:
+                if not dbQK.sql(sql, "dbQK: export_to_he8.export_flaechenrw (1)"):
+                    return False
 
         if check_export["export_flaechenrw"]:
 
