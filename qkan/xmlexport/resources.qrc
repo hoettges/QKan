@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/xmlexport" >
-        <file>icon.png</file>
-    </qresource>
-</RCC>

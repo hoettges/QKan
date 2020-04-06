@@ -90,7 +90,7 @@ class QKanTools:
         # Anfang Eigene Funktionen -------------------------------------------------
         # (jh, 12.06.2017)
 
-        logger.info(u"\n\nQKan_Tools initialisiert...")
+        logger.info("QKan_Tools initialisiert...")
 
         # Pfad zum Vorlagenverzeichnis sicherstellen
         self.templateDir = os.path.join(pluginDirectory("qkan"), u"templates")
@@ -331,7 +331,6 @@ class QKanTools:
             qgsadapt(
                 project_template,
                 self.database_QKan,
-                self.epsg,
                 project_file,
                 self.apply_qkan_template,
             )

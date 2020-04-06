@@ -274,6 +274,7 @@ class DBConnection:
         return epsg
 
     def sql(self, sql, sqlinfo="allgemein", repeatmessage=False, transaction=False):
+        # TODO: Safe SQL queries with parameter binding
         """Fuehrt eine SQL-Abfrage aus."""
 
         try:

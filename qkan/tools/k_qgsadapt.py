@@ -42,11 +42,10 @@ progress_bar = None
 
 
 def qgsadapt(
-    projectTemplate,
-    qkanDB,
-    epsg,
-    projectFile,
-    setPathToTemplateDir=True,
+    projectTemplate: str,
+    qkanDB: str,
+    projectFile: str,
+    setPathToTemplateDir: bool = True,
 ):
     """Lädt eine (Vorlage-) Projektdatei (*.qgs) und adaptiert diese auf eine QKan-Datenbank an.
     Anschließend wird dieses Projekt geladen.

@@ -274,6 +274,12 @@ class ToolsConfig(ClassObject):
     runoffparamstype_choice: enums.RunOffParamsType = enums.RunOffParamsType.MANIAK
 
 
+class XmlConfig(ClassObject):
+    export_file: str = ""
+    import_file: str = ""
+    init_database: bool = True
+
+
 class Config(ClassObject):
     autokorrektur: bool = True
     epsg: int = 25832
@@ -291,6 +297,7 @@ class Config(ClassObject):
     linkflaechen: LinkFlConfig = LinkFlConfig()
     project: ProjectConfig = ProjectConfig()
     tools: ToolsConfig = ToolsConfig()
+    xml: XmlConfig = XmlConfig()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
