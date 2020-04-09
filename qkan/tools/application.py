@@ -323,9 +323,9 @@ class QKanTools:
                 qgsadapt(
                     "{project_template}",
                     "{self.database_QKan}",
-                    {self.epsg},
                     "{project_file}",
                     {self.apply_qkan_template},
+                    epsg = None, 
                 )""")
 
             qgsadapt(
@@ -333,6 +333,7 @@ class QKanTools:
                 self.database_QKan,
                 project_file,
                 self.apply_qkan_template,
+                epsg = None,
             )
 
     # ----------------------------------------------------------------------------------------------------

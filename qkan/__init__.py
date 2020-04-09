@@ -76,20 +76,22 @@ class QKan:
 
         from .createunbeffl import CreateUnbefFl
         from .importdyna import ImportFromDyna
+        from .swmmporter import ImportFromSWMM
         from .exportdyna import ExportToKP
         from .linkflaechen import LinkFl
         from .tools import QKanTools
         from .exporthe8 import ExportToHE8
-        # from .xmlporter import XmlPorter
+        from .xmlporter import XmlPorter
 
         self.plugins = [
             CreateUnbefFl(iface),
             ImportFromDyna(iface),
+            ImportFromSWMM(iface),
             ExportToKP(iface),
             LinkFl(iface),
             QKanTools(iface),
             ExportToHE8(iface),
-            # XmlPorter(iface),
+            XmlPorter(iface),
         ]
 
         actions = self.iface.mainWindow().menuBar().actions()

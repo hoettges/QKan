@@ -53,31 +53,6 @@ def ksFromKst(kst):
     return erg
 
 
-class DBConnection_local():
-    """Ersetzt während der Entwicklungszeit den Datenbankzugriff"""
-    def __init__(self, dbname, epsg=25832):
-        self.sqlobject = Path(dbname).open("w")
-        self.connected = True
-
-    def error(self, title, meldung):
-        """Ersetzt während der Entwicklungszeit den logger-Befehl"""
-        self.sqlobject.write(f"Fehler {title}: {meldung}")
-
-    def sql(self, sqltext):
-        """Führt den SQL-Befehl aus"""
-        sql = sqltext.strip().replace("\n                ","\n")
-        try:
-            self.sqlobject.write(sql)
-            self.sqlobject.write('\n\n')
-        except BaseException as err:
-            self.error(
-                "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=err),
-                "{e}\n{s}".format(e=repr(err), s=sql),
-            )
-            return False
-
-        return True
-
 class SWMM:
     def __init__(self, inpfile, database_QKan, projectfile, offset=[0., 0.], epsg=25832, dbtyp="SpatiaLite"):
         self.epsg = epsg

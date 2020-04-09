@@ -193,6 +193,14 @@ class DynaConfig(ClassObject):
     profile_ergaenzen: bool = True
     template: str = ""
 
+class SWMMConfig(ClassObject):
+    autonummerierung: bool = False
+    #bef_choice: enums.BefChoice = enums.BefChoice.FLAECHEN
+    file: str = ""
+    #prof_choice: enums.ProfChoice = enums.ProfChoice.PROFILNAME
+    profile_ergaenzen: bool = True
+    template: str = ""
+
 
 class LinkFlConfig(ClassObject):
     # Linkflaechen
@@ -293,6 +301,7 @@ class Config(ClassObject):
     selections: SelectionConfig = SelectionConfig()
     database: DatabaseConfig = DatabaseConfig()
     dyna: DynaConfig = DynaConfig()
+    swmm: SWMMConfig = SWMMConfig()
     he: HEConfig = HEConfig()
     linkflaechen: LinkFlConfig = LinkFlConfig()
     project: ProjectConfig = ProjectConfig()

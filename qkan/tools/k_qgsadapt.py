@@ -46,6 +46,7 @@ def qgsadapt(
     qkanDB: str,
     projectFile: str,
     setPathToTemplateDir: bool = True,
+    epsg: int = None,
 ):
     """Lädt eine (Vorlage-) Projektdatei (*.qgs) und adaptiert diese auf eine QKan-Datenbank an.
     Anschließend wird dieses Projekt geladen.
@@ -62,6 +63,9 @@ def qgsadapt(
 
     :setPathToTemplateDir:      Option, ob das Suchverzeichnis auf das Template-Verzeichnis gesetzt werden soll.
     :type setPathToTemplateDir: Boolean
+
+    :epsg:                      EPSG-Code. Falls nicht vorgegeben, wird dieser aus der Tabelle 'schaechte' gelesen
+    :tpye epsg:                 Integer
 
     :returns: void
     """
@@ -106,16 +110,21 @@ def qgsadapt(
         )
 
     # --------------------------------------------------------------------------
-    # Projektionssystem für die Projektdatei vorbereiten
-    sql = """SELECT srid
-            FROM geom_cols_ref_sys
-            WHERE Lower(f_table_name) = Lower('schaechte')
-            AND Lower(f_geometry_column) = Lower('geom')"""
-    if not dbQK.sql(sql, "k_qgsadapt (1)"):
-        del dbQK
-        return None
+    # Projektionssystem für die Projektdatei vorbereiten,
+    # außer: Wenn epsg aus Parameterliste vorgegeben, dann übernehmen
+    if epsg:
+        srid = epsg
+    else:
+        sql = """SELECT srid
+                FROM geom_cols_ref_sys
+                WHERE Lower(f_table_name) = Lower('schaechte')
+                AND Lower(f_geometry_column) = Lower('geom')"""
+        if not dbQK.sql(sql, "k_qgsadapt (1)"):
+            del dbQK
+            return None
 
-    srid = dbQK.fetchone()[0]
+        srid = dbQK.fetchone()[0]
+
     try:
         crs = QgsCoordinateReferenceSystem(srid, QgsCoordinateReferenceSystem.EpsgCrsId)
         srsid = crs.srsid()

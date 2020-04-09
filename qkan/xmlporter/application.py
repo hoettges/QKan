@@ -190,7 +190,7 @@ class XmlPorter:
                         Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
                     )
                     qgsadapt(
-                        str(template_project), database_qkan, QKan.config.project.file
+                        str(template_project), database_qkan, QKan.config.project.file, epsg
                     )
 
                     # Load generated project
