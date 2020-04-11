@@ -331,6 +331,11 @@ class DBConnection:
 
     # Versionskontrolle der QKan-Datenbank
 
+    def rowcount(self):
+        """Gibt die Anzahl zuletzt geänderte Datensätze zurück"""
+
+        return self.cursl.rowcount
+
     def checkVersion(self):
         """Prüft die Version der Datenbank. 
 
@@ -2295,7 +2300,7 @@ class DBConnection:
                 sql = """
                     ALTER TABLE tezg ADD COLUMN befgrad REAL"""
 
-                if not self.sql(sql, "dbfunc.DBConnection.version (3.0.11-1)"):
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.2-1)"):
                     return False
 
                 self.commit()
@@ -2303,6 +2308,73 @@ class DBConnection:
                 # Versionsnummer hochsetzen
 
                 self.versionlis = [3, 1, 2]
+
+            # ------------------------------------------------------------------------------------
+            if versionolder(self.versionlis, [3, 1, 3]):
+
+                # Flächen können auch an Schächte angeschlossen sein. Dies gilt bei 
+                # folgenden Programmen:
+                # SWMM, Mike Urban
+
+                sql = """
+                    ALTER TABLE flaechen ADD COLUMN schnam TEXT"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-1)"):
+                    return False
+                self.commit()
+
+                sql = """
+                    ALTER TABLE tezg ADD COLUMN schnam TEXT"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-2)"):
+                    return False
+                self.commit()
+
+                sql = """
+                    ALTER TABLE tezg ADD COLUMN neigung REAL"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-3)"):
+                    return False
+                self.commit()
+
+                sql = """
+                    ALTER TABLE linkfl ADD COLUMN schnam TEXT"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-4)"):
+                    return False
+                self.commit()
+
+                sql = """
+                    ALTER TABLE linksw ADD COLUMN schnam TEXT"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-5)"):
+                    return False
+                self.commit()
+
+                sql = """
+                    ALTER TABLE einleit ADD COLUMN schnam TEXT"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-6)"):
+                    return False
+                self.commit()
+
+                sql = """
+                    ALTER TABLE einleit ADD COLUMN schnam TEXT"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-6)"):
+                    return False
+                self.commit()
+
+                # Zusätzliche Parameter für SWMM
+
+                sql = """
+                    ALTER TABLE abflussparameter ADD COLUMN rauheit_kst REAL"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-6)"):
+                    return False
+                self.commit()
+
+                sql = """
+                    ALTER TABLE abflussparameter ADD COLUMN pctZero REAL"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-6)"):
+                    return False
+                self.commit()
+
+                # Versionsnummer hochsetzen
+
+                self.versionlis = [3, 1, 3]
 
             # ------------------------------------------------------------------------------------
             # Aktuelle Version in Tabelle "info" schreiben

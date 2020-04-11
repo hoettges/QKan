@@ -222,14 +222,17 @@ class SWMM:
         data = self.data.get("subcatchments", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            name = line[0:17].strip()
-            regenschreiber = line[17:34].strip()
+            name = line[0:16].strip()
+            regenschreiber = line[17:33].strip()
+            schnam = line[34:50].strip()
+            befgrad = fzahl(line[61:69].strip())
+            neigung = fzahl(line[78:86].strip())
 
             sql = f"""
-                INSERT into flaechen (
-                    flnam, regenschreiber)
+                INSERT into tezg (
+                    flnam, regenschreiber, schnam,befgrad, neigung)
                 VALUES (
-                    '{name}', '{regenschreiber}')
+                    '{name}', '{regenschreiber}', '{schnam}', {befgrad}, {neigung})
                 """
             if not self.dbQK.sql(sql):
                 del self.dbQK
@@ -258,7 +261,7 @@ class SWMM:
                     coords = ', '.join([f'{x} {y}' for x,y in zip(xlis, ylis)])
                     geom = f"GeomFromText('MULTIPOLYGON((({coords})))', {self.epsg})"
                     sql = f"""
-                        UPDATE flaechen SET geom = {geom}
+                        UPDATE tezg SET geom = {geom}
                         WHERE flnam = '{nampoly}'
                         """
                     if not self.dbQK.sql(sql, repeatmessage=True):

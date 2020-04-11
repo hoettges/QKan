@@ -26,6 +26,8 @@ Transfer von Kanaldaten aus QKan nach SWMM 5.0.1
 
 import math
 import logging
+from qgis.PyQt.QtWidgets import QProgressBar
+from qkan import QKan
 
 from qkan.database.dbfunc import DBConnection
 
@@ -75,6 +77,18 @@ def exportKanaldaten(
     # Roaming-Verzeichnis befindet (abrufbar mit site.getuserbase()
     # Andere Tabellen sind in diesem Quellcode integriert, wie z. B. ref_typen
 
+    iface = QKan.instance.iface
+
+    # Create progress bar
+    progress_bar = QProgressBar(iface.messageBar())
+    progress_bar.setRange(0, 100)
+
+    status_message = iface.messageBar().createMessage(
+        "", "Export in Arbeit. Bitte warten..."
+    )
+    status_message.layout().addWidget(progress_bar)
+    iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
+
     # Einlesen der Vorlagedatei
 
     with open(templateSwmm) as swvorlage:
@@ -97,6 +111,7 @@ def exportKanaldaten(
     datacu = ''          # Datenzeilen für [CURVES]
 
     # --------------------------------------------------------------------------------------------------
+    # Flächen. Die Daten müssen in mehrere Sektoren der *.inp-Datei geschrieben werden:
     # [SUBCATCHMENTS]
     # [SUBAREAS]
     # [INFILTRATION]
@@ -105,171 +120,128 @@ def exportKanaldaten(
 
     # Nur Daten fuer ausgewaehlte Teilgebiete
     if len(liste_teilgebiete) != 0:
-        auswahl = " AND schaechte.teilgebiet in ('{}')".format(
+        auswahlw = " WHERE teilgebiet in ('{}')".format(
             "', '".join(liste_teilgebiete)
         )
     else:
-        auswahl = ""
+        auswahlw = ""
+    auswahla = auswahlw.replace(' WHERE teilgebiet ', ' AND teilgebiet ')
 
-    # Verschneidung nur, wenn (mit_verschneidung)
-    if mit_verschneidung:
-        case_verschneidung = u"""
-                CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom 
-                ELSE CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3)) END AS geom"""
-        join_verschneidung = u"""
-            LEFT JOIN tezg AS tg
-            ON lf.tezgnam = tg.flnam"""
-        tezg_verschneidung = u"""area(tg.geom) AS fltezg,"""
-    else:
-        case_verschneidung = u"fl.geom AS geom"
-        join_verschneidung = ""
-        tezg_verschneidung = u"0 AS fltezg,"
+    # Erläuterung der Vorgehensweise für [SUBAREAS]:
+    # Für jede tezg muss es zwei Datensätze in der Taelle abflussparameter geben: Eine für befestigte
+    # und eine für durchlässige Flächen. Dies wird in QKan gekennzeichnet durch:
+    # bodenklasse IS NULL or bodenklasse = ''
+    # Falls keine solchen Datensätze für die zu exportierenden tezg vorliegen, werden diese hier angelegt
 
-    # wdistbef ist die mit der (Teil-) Fläche gewichtete Fließlänge zur Haltung für die befestigten Flächen zu
-    # einer Haltung,
-    # wdistdur entsprechend für die durchlässigen Flächen.
+    numChanged = 0      # Für Meldung, falls Daten ergänzt wurden
 
-    sql = u"""
-        WITH flintersect AS (
-            SELECT lf.flnam AS flnam, lf.haltnam AS haltnam, 
-                CASE fl.neigkl
-                    WHEN 0 THEN 0.5
-                    WHEN 1 THEN 2.5
-                    WHEN 2 THEN 7.0
-                    WHEN 3 THEN 12.0
-                    ELSE 20.0
-                    END AS neigung, 
-                fl.abflussparameter AS abflussparameter, 
-                {tezg_verschneidung}
-                {case_verschneidung}
-            FROM linkfl AS lf
-            INNER JOIN flaechen AS fl
-            ON lf.flnam = fl.flnam{join_verschneidung}),
-        halflaech AS (
-            SELECT
-                fi.haltnam AS haltnam, 
-                coalesce(ap.endabflussbeiwert, 1.0) AS abflussbeiwert, 
-                sum(CASE ap.bodenklasse IS NULL 
-                    WHEN 1 THEN area(fi.geom)/10000.
-                    ELSE 0 END) AS flbef,
-                sum(CASE ap.bodenklasse IS NULL 
-                    WHEN 1 THEN 0
-                    ELSE area(fi.geom)/10000. END) AS fldur,
-                sum(CASE ap.bodenklasse IS NULL 
-                    WHEN 1 THEN distance(fi.geom,h.geom)*area(fi.geom)/10000.
-                           ELSE 0 END) AS wdistbef,
-                sum(CASE ap.bodenklasse IS NULL 
-                    WHEN 1 THEN 0
-                           ELSE distance(fi.geom,h.geom)*area(fi.geom)/10000. END) AS wdistdur,
-                sum(area(fi.geom)/10000.) AS flges,
-                fi.fltezg AS fltezg,
-                distance(fi.geom,h.geom) AS disttezg, 
-                sum(neigung*area(fi.geom)/10000.) AS wneigung
-            FROM flintersect AS fi
-            LEFT JOIN abflussparameter AS ap
-            ON fi.abflussparameter = ap.apnam
-            INNER JOIN haltungen AS h 
-            ON fi.haltnam = h.haltnam
-            WHERE area(fi.geom) > {mindestflaeche}{ausw_and}{auswahl}
-            GROUP BY fi.haltnam),
-        einleitsw AS (
-            SELECT haltnam, sum(zufluss) AS zufluss
-            FROM einleit
-            GROUP BY haltnam
-        )
-        SELECT 
-            d.kanalnummer AS kanalnummer,
-            d.haltungsnummer AS haltungsnummer, 
-            h.laenge AS laenge,
-            so.deckelhoehe AS deckelhoehe, 
-            coalesce(h.sohleoben, so.sohlhoehe) AS sohleob,
-            coalesce(h.sohleunten, su.sohlhoehe) AS sohleun,
-            '0' AS material, 
-            {sql_prof1}, 
-            h.hoehe*1000. AS profilhoehe, 
-            h.ks AS ks, 
-            f.flbef*abflussbeiwert AS flbef, 
-            f.flges AS flges,
-            f.wdistbef/(f.flbef + 0.00000001) AS distbef,
-            f.wdistdur/(f.fldur + 0.00000001) AS distdur,
-            f.fltezg AS fltezg,
-            f.disttezg AS disttezg,
-            3 AS abfltyp, 
-            e.zufluss AS qzu, 
-            0 AS ewdichte, 
-            0 AS tgnr, 
-            f.wneigung/(f.flges + 0.00000001) AS neigung,
-            a.kp_nr AS entwart, 
-            0 AS haltyp,
-            h.schoben AS schoben, 
-            h.schunten AS schunten,
-            so.xsch AS xob, 
-            so.ysch AS yob
-        FROM haltungen AS h
-        INNER JOIN dynahal AS d
-        ON h.pk = d.pk
-        INNER JOIN schaechte AS so
-        ON h.schoben = so.schnam
-        INNER JOIN schaechte AS su
-        ON h.schunten = su.schnam{sql_prof2}
-        LEFT JOIN halflaech AS f
-        ON h.haltnam = f.haltnam
-        LEFT JOIN einleitsw AS e
-        ON e.haltnam = h.haltnam
-        LEFT JOIN entwaesserungsarten AS a
-        ON h.entwart = a.bezeichnung
-    """.format(
-        mindestflaeche=mindestflaeche,
-        ausw_and=ausw_and,
-        auswahl=auswahl,
-        sql_prof1=sql_prof1,
-        sql_prof2=sql_prof2,
-        case_verschneidung=case_verschneidung,
-        join_verschneidung=join_verschneidung,
-        tezg_verschneidung=tezg_verschneidung,
-    )
-
-    if not dbQK.sql(sql, u"dbQK: k_qkkp.write12 (1)"):
-        return False
-
-
-
-
+    # Hinzufügen fehlender abflussparameter für befestigte Flächen
     sql = f"""
-        SELECT
-            f.flnam AS name,
-            '1' AS rain_gage,
-            f.schnam AS outlet,
-            f.aek AS area,
-            f.aekbef/aek*100 AS imperv
-        FROM
-            flaechen AS f
-        JOIN
-            gebiete AS g
-        ON 
-            Intersects(f.geom,g.geom){auswahl}
-        GROUP BY f.flnam"""
+        INSERT INTO abflussparameter (
+            apnam, anfangsabflussbeiwert, endabflussbeiwert, 
+            benetzungsverlust, muldenverlust, benetzung_startwert, 
+            mulden_startwert, rauheit_kst, pctZero, bodenklasse, 
+            kommentar, 
+            createdat)
+        SELECT 
+            tg.abflussparameter, 0.25, 0.85, 
+            0.7, 1.8, 0., 
+            0., 1./0.015, 0.06*2.54, NULL, 
+            'Automatisch ergänzt für SWMM-Export',
+            strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) AS createdat
+        FROM tezg AS tg
+        LEFT JOIN abflussparameter AS ap
+        ON tg.abflussparameter = ap.apnam and (ap.bodenklasse IS NULL OR ap.bodenklasse = '')
+        WHERE ap.apnam IS NULL
+        GROUP BY tg.abflussparameter"""
 
-    if not dbQK.sql(sql, "dbQK: k_layersadapt (1)"):
+    if not dbQK.sql(sql, u"dbQK: exportSWMM (1)"):
         del dbQK
         return False
 
-    datasc = ''          # Datenzeilen subcatchments
-    datasa = ''          # Datenzeilen subareas
-    datain = ''          # Datenzeilen infiltration
+    numChanged += dbQK.rowcount()
+
+    # Hinzufügen fehlender abflussparameter für durchlässige Flächen
+    sql = f"""
+        INSERT INTO abflussparameter (
+            apnam, anfangsabflussbeiwert, endabflussbeiwert, 
+            benetzungsverlust, muldenverlust, benetzung_startwert, 
+            mulden_startwert, rauheit_kst, pctZero, bodenklasse, 
+            kommentar, 
+            createdat)
+        SELECT 
+            tg.abflussparameter, 0.5, 0.5, 
+            2.0, 5.0, 0., 
+            0., 1./0.024, 0.3*2.54, NULL, 
+            'Automatisch ergänzt für SWMM-Export',
+            strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) AS createdat
+        FROM tezg AS tg
+        LEFT JOIN abflussparameter AS ap
+        ON tg.abflussparameter = ap.apnam and ap.bodenklasse IS NOT NULL AND ap.bodenklasse <> ''
+        WHERE ap.apnam IS NULL
+        GROUP BY tg.abflussparameter"""
+
+    if not dbQK.sql(sql, u"dbQK: exportSWMM (2)"):
+        del dbQK
+        return False
+
+    numChanged += dbQK.rowcount()
+
+    if numChanged > 0:
+        status_message.setText(f"Es wurden {numChanged} Abflussparameter hinzugefügt!")
+
+    sql = f"""
+        SELECT
+            tg.flnam AS name,
+            tg.regenschreiber AS rain_gage,
+            tg.schnam AS outlet,
+            area(tg.geom)/10000. AS area,
+            pow(area(tg.geom), 0.5)*1.3 AS width                        -- 1.3: pauschaler Faktor für SWMM
+            tg.befgrad AS imperv,
+            tg.neigung AS neigung,
+            tg.abflussparameter AS abflussparameter, 
+            apbef.rauheit_kst AS nImperv, 
+            apdur.rauheit_kst AS nPerv,
+            apbef.muldenverlust AS sImperv, 
+            apdur.muldenverlust AS sPerv,
+            apbef.pctZero AS pctZero, 
+            bk.infiltrationsrateende*60 AS maxRate,                     -- mm/min -> mm/h
+            bk.infiltrationsrateanfang*60 AS minRate,
+            bk.rueckgangskonstante/24. AS decay,                        -- 1/d -> 1/h 
+            1/(coalesce(bk.regenerationskonstante, 1./7.) AS dryTime,   -- 1/d -> d 
+            bk.saettigungswassergehalt AS maxInfil
+        FROM tezg AS tg
+        JOIN abflussparameter AS apbef
+        ON tg.abflussparameter = ap.apnam and (apbef.bodenklasse IS NULL OR apbef.bodenklasse = '')
+        JOIN abflussparameter AS apdur
+        ON tg.abflussparameter = ap.apnam and apdur.bodenklasse IS NOT NULL AND apdur.bodenklasse <> ''
+        JOIN bodenklassen AS bk
+        ON apdur.bodenklasse = bodenklasse.bknam
+        {auswahlw}"""
+
+    if not dbQK.sql(sql, u"dbQK: exportSWMM (3)"):
+        del dbQK
+        return False
+
+    datasc = ''          # Datenzeilen [subcatchments]
+    datasa = ''          # Datenzeilen [subareas]
+    datain = ''          # Datenzeilen [infiltration]
 
     for b in cursl.fetchall():
 
         # In allen Feldern None durch NULL ersetzen
-        c = ['NULL' if el is None else el for el in b]
+        (name_1, rain_gage, outlet_1, area_1, imperv, neigung) = \
+            ['NULL' if el is None else el for el in b]
 
         # In allen Namen Leerzeichen durch '_' ersetzen
-        c[0] = c[0].replace(' ','_')
-        c[2] = c[2].replace(' ','_')
+        name = name_1.replace(' ','_')
+        outlet = outlet_1.replace(' ','_')
 
-        datasc += '{0:<16s} {1:<16s} {2:<16s} {3:<8.2f} {4:<8.2f} {5:<8.2f} 0.5      0                        \n'.format(c[0],c[1],c[2],c[3],c[4],c[3]**0.5*100.)
-        datasa += '{0:<16s} 0.01       0.1        2.50       8.00       25         OUTLET    \n'.format(c[0])
-        datain += '{0:<16s} 3.5        0.5        0.26      \n'.format(c[0])
+        datasc += f'{name:<16s} {rain_gage:<16s} {outlet:<16s} {area:<8.2f} ' \
+                  f'{imperv:<8.1f} {width:<8.0f} {neigung:<8.1f} 0                        \n'
+        datasa += f'{name:<16s} {nImperv:<8.3f} {nPerv:<8.2f} {sImperv:<8.2f} {sPerv:<8.1f} ' \
+                  f'{pctZero:<8.0f} OUTLET    \n'
+        datain += f'{name:<16s} {maxRate:<8.1f} {minRate:<8.1f} {decay:<8.1f} {dryTime:<8.0f} {maxInfil}\n'
 
     swdaten = swdaten.replace('{SUBCATCHMENTS}\n',datasc)
     swdaten = swdaten.replace('{SUBAREAS}\n',datasa)

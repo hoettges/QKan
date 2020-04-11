@@ -22,7 +22,7 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.1.2"  # Version der QKan-Datenbank
+__dbVersion__ = "3.1.3"  # Version der QKan-Datenbank
 __qgsVersion__ = (
     "3.1.1"
 )  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
@@ -667,6 +667,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     pk INTEGER PRIMARY KEY,
     flnam TEXT,
     haltnam TEXT,
+    schnam TEXT,
     neigkl INTEGER DEFAULT 0,
     teilgebiet TEXT,
     regenschreiber TEXT,
@@ -712,6 +713,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     pk INTEGER PRIMARY KEY,
     flnam TEXT,
     haltnam TEXT,
+    schnam TEXT,
     tezgnam TEXT,
     teilgebiet TEXT,
     abflusstyp TEXT,
@@ -763,6 +765,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     pk INTEGER PRIMARY KEY,
     elnam TEXT,
     haltnam TEXT,
+    schnam TEXT,
     teilgebiet TEXT)"""
 
     try:
@@ -801,11 +804,14 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     # Teileinzugsgebiete ------------------------------------------------------------------
 
-    sql = """CREATE TABLE tezg (
+    sql = """-- Haltungsflächen. Verschneidung, Verwaltung der Befestigungsgrade (alte Programme)
+    CREATE TABLE tezg (
     pk INTEGER PRIMARY KEY,
     flnam TEXT,
     haltnam TEXT,
+    schnam TEXT,
     neigkl INTEGER DEFAULT 1,   -- Werte [1-5], als Vorgabe fuer automatisch erzeugte unbef Flaechen
+    neigung REAL,               -- absolute Neigung (%)
     befgrad REAL,               -- (-) Befestigungsgrad absolut, nur optional fuer SWMM und HE6
     regenschreiber TEXT,        -- Regenschreiber beziehen sich auf Zieldaten
     teilgebiet TEXT,
@@ -845,6 +851,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     pk INTEGER PRIMARY KEY,
     elnam TEXT,
     haltnam TEXT,
+    schnam TEXT,
     teilgebiet TEXT, 
     zufluss REAL,
     ew REAL,
@@ -1063,6 +1070,8 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     muldenverlust REAL, 
     benetzung_startwert REAL, 
     mulden_startwert REAL, 
+    rauheit_kst REAL,                       -- Rauheit Stricklerbeiwert = 1/n
+    pctZero REAL,                           -- SWMM: % Zero-Imperv
     bodenklasse TEXT, 
     flaechentyp INTEGER, 
     kommentar TEXT, 
@@ -1149,12 +1158,12 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     sql = """CREATE TABLE bodenklassen (
     pk INTEGER PRIMARY KEY, 
     bknam TEXT, 
-    infiltrationsrateanfang REAL,
-    infiltrationsrateende REAL,
-    infiltrationsratestart REAL,
-    rueckgangskonstante REAL,
-    regenerationskonstante REAL,
-    saettigungswassergehalt REAL,
+    infiltrationsrateanfang REAL,               -- (mm/min)
+    infiltrationsrateende REAL,                 -- (mm/min)
+    infiltrationsratestart REAL,                -- (mm/min)
+    rueckgangskonstante REAL,                   -- (1/d)
+    regenerationskonstante REAL,                -- (1/d)
+    saettigungswassergehalt REAL,               -- (mm)
     kommentar TEXT, 
     createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
 
