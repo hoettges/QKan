@@ -128,7 +128,7 @@ def createlinkfl(
     """
 
     # Statusmeldung in der Anzeige
-    global progress_bar
+    # global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(

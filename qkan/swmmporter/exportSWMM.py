@@ -30,6 +30,7 @@ from qgis.PyQt.QtWidgets import QProgressBar
 from qkan import QKan
 
 from qkan.database.dbfunc import DBConnection
+from qkan.database.qkan_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger("QKan.exportswmm")
 
@@ -208,7 +209,7 @@ def exportKanaldaten(
             bk.infiltrationsrateende*60 AS maxRate,                     -- mm/min -> mm/h
             bk.infiltrationsrateanfang*60 AS minRate,
             bk.rueckgangskonstante/24. AS decay,                        -- 1/d -> 1/h 
-            1/(coalesce(bk.regenerationskonstante, 1./7.) AS dryTime,   -- 1/d -> d 
+            1/(coalesce(bk.regenerationskonstante, 1./7.) AS dryTime,   -- 1/d -> d , Standardwert aus SWMM-Testdaten
             bk.saettigungswassergehalt AS maxInfil
         FROM tezg AS tg
         JOIN abflussparameter AS apbef
@@ -230,7 +231,9 @@ def exportKanaldaten(
     for b in cursl.fetchall():
 
         # In allen Feldern None durch NULL ersetzen
-        (name_1, rain_gage, outlet_1, area_1, imperv, neigung) = \
+        (name_1, rain_gage, outlet_1, area, width, imperv, neigung, abflussparameter,
+         nImperv, nPerv, sImperv, sPerv, pctZero, maxRate, minRate, decay,
+         dryTime, maxInfil) = \
             ['NULL' if el is None else el for el in b]
 
         # In allen Namen Leerzeichen durch '_' ersetzen
@@ -254,16 +257,12 @@ def exportKanaldaten(
     progress_bar.setValue(20)
 
     sql = '''SELECT
-        f.schnam AS outlet,
-        sum(f.ew*g.wverbrauch/86400) AS dwinflowf,
-        sum(f.aek*g.ewdichte*wverbrauch/86400) AS dwinflowg
+        e.schnam AS node,
+        sum(e.zufluss) AS value
     FROM
-        flaechen AS f
-    JOIN
-        gebiete AS g
-    ON 
-        Intersects(f.geom,g.geom) and g.teilgebiet in ('Fa20', 'Fa22', 'Fa23', 'Fa25')
-    GROUP BY f.schnam'''
+        einleit AS e
+        {auswahlw}
+    GROUP BY e.schnam'''
 
     cursl.execute(sql)
 
@@ -272,91 +271,101 @@ def exportKanaldaten(
     for b in cursl.fetchall():
 
         # In allen Feldern None durch NULL ersetzen
-        c = ['NULL' if el is None else el for el in b]
+        (node_t, value) = ['NULL' if el is None else el for el in b]
 
         # In allen Namen Leerzeichen durch '_' ersetzen
-        c[0] = c[0].replace(' ','_')
+        node = node_t.replace(' ','_')
 
-        # Schmutzwasserzufluss alternativ aus Flaechen oder Gebieten
-        if c[1] != 'NULL':
-              dwf = c[1]
-        elif c[2] != 'NULL':
-              dwf = c[2]
-        else:
-              dwf = 0.
+        datadw += '{node:<16s} FLOW             {value:<10.4f} \n'
 
-        datadw += '{0:<16s} FLOW             {1:<10.4f} "Tag_EW"\n'.format(c[0],dwf)
+    if '[DWF]' in swdaten:
+        swdaten = swdaten.replace('{DWF}\n',datadw)
+    else:
+        meldung(f'Template in Abschnitt [DWF]: ',
+                'Abschnitt nicht vorhanden und wurde am Ende ergänzt')
 
-    swdaten = swdaten.replace('{DWF}\n',datadw)
+        swdaten += \
+            '\n[DWF]' \
+            ';;                                Average    Time' \
+            ';;Node           Parameter        Value      Patterns' \
+            ';;-------------- ---------------- ---------- ----------\n'
+
+        swdaten += datadw
 
     # --------------------------------------------------------------------------------------------------
     # [JUNCTIONS]
-    # [OUTFALLS]
-    # [STORAGE]
     # [COORDINATES]
 
     #fortschritt('Schaechte...',0.30)
     progress_bar.setValue(30)
 
     sql = '''SELECT
-        s.schnam AS name, X(geop) AS xsch, Y(geop) AS ysch, s.sohlhoehe AS elevation, s.deckelhoehe - s.sohlhoehe AS maxdepth,
-        u.schoben AS auslassnam,
-        p.schoben AS speicher_nam
-    FROM
-    (  schaechte AS s
-    JOIN
-        gebiete AS g
-    ON 
-        (Intersects(s.geop,g.geom) and g.teilgebiet in ('Fa20', 'Fa22', 'Fa23', 'Fa25')))
-    LEFT JOIN
-        auslaesse AS u
-    ON u.schoben = s.schnam
-    LEFT JOIN
-        speicher AS p
-    ON p.schoben = s.schnam
-    GROUP BY s.schnam
+        s.schnam AS name, 
+        s.sohlhoehe AS invertElevation, 
+        s.deckelhoehe - s.sohlhoehe AS maxDepth, 
+        0 AS initDepth, 
+        0 AS surchargeDepth,
+        1000 AS pondedArea,   
+        X(geop) AS xsch, Y(geop) AS ysch,  
+    FROM schaechte AS s
+    WHERE s.schachttyp = 'Schacht'
     '''
     cursl.execute(sql)
 
-    dataju = ''          # Datenzeilen
-    dataou = ''          # Datenzeilen
-    datast = ''          # Datenzeilen
-    # datacu = ''          # Datenzeilen, ist schon oben initialisiert worden
-    dataco = ''          # Datenzeilen
+    dataju = ''          # Datenzeilen [JUNCTIONS]
+    # datacu = ''          # Datenzeilen [CURVES], ist schon oben initialisiert worden
+    dataco = ''          # Datenzeilen [COORDINATES]
 
     for b in cursl.fetchall():
 
         # In allen Feldern None durch NULL ersetzen
-        c = ['NULL' if el is None else el for el in b]
+        (name_t, invertElevation, maxDepth, initDepth, surchargeDepth, pondedArea, xsch, ysch,) = \
+            ['NULL' if el is None else el for el in b]
 
         # In allen Namen Leerzeichen durch '_' ersetzen
-        c[0] = c[0].replace(' ','_')
-        c[5] = c[5].replace(' ','_')
-        c[6] = c[6].replace(' ','_')
+        name = name_t.replace(' ','_')
 
-        if c[5] != 'NULL':
-              # [OUTFALLS]
-              dataou += '{:<16s} {:<10.3f} FREE                        NO                       \n'.format(c[0],c[3])
-        elif c[6] != 'NULL':
-              # [STORAGE]
-              datast += '{:<16s} {:<8.3f} 4          0          TABULAR    sp_{:<24}  0        0       \n'.format(c[0],c[3],c[0])
-
-              # [CURVES]
-              if len(datacu) >0:
-                      datacu += ';\n'                                                                                # ';' falls schon Datensätze
-              datacu += 'sp_{:<13s} Storage    0          500       \n'.format(c[0][:13])
-              datacu += 'sp_{:<13s}            5          500       \n'.format(c[0][:13])
-        else:
-              # [JUNCTIONS]
-              dataju += '{:<16s} {:<10.3f} {:<10.3f} 0          0          0         \n'.format(c[0],c[3],c[4])
+        # [JUNCTIONS]
+        dataju += f'{name:<16s} {invertElevation:<10.3f} {maxDepth:<10.3f} {initDepth:<10.3f} ' \
+                  f'{surchargeDepth:<10.3f} {pondedArea:<10.1f}\n'
 
         # [COORDINATES]
-        dataco += '{:<16s} {:<18.3f} {:<18.3f}\n'.format(c[0],c[1],c[2])
+        dataco += f'{name:<16s} {xsch:<18.3f} {ysch:<18.3f}\n'
 
-    swdaten = swdaten.replace('{JUNCTIONS}\n',dataju)
+    # swdaten = swdaten.replace('{JUNCTIONS}\n',dataju)         # siehe unten
+    # swdaten = swdaten.replace('{COORDINATES}\n',dataco)       # siehe unten
+
+    # --------------------------------------------------------------------------------------------------
+    # [JUNCTIONS]
+    # [OUTFALLS]
+
+    dataou = ''          # Datenzeilen [OUTFALLS]
+    # dataco = ''          # Datenzeilen [COORDINATES], ist schon oben initialisiert worden
+
+    dataou += '{:<16s} {:<10.3f} FREE                        NO                       \n'.format(c[0], c[3])
+
     swdaten = swdaten.replace('{OUTFALLS}\n',dataou)
+    swdaten = swdaten.replace('{JUNCTIONS}\n',dataju)
+
+    # todo
+
+    # --------------------------------------------------------------------------------------------------
+    # [JUNCTIONS]
+    # [STORAGE]
+
+    datast = ''          # Datenzeilen [STORAGE]
+    # dataco = ''          # Datenzeilen [COORDINATES], ist schon oben initialisiert worden
+
+    datast += '{:<16s} {:<8.3f} 4          0          TABULAR    sp_{:<24}  0        0       \n'.format(c[0], c[3], c[0])
+    if len(datacu) > 0:
+        datacu += ';\n'  # ';' falls schon Datensätze
+    datacu += 'sp_{:<13s} Storage    0          500       \n'.format(c[0][:13])
+    datacu += 'sp_{:<13s}            5          500       \n'.format(c[0][:13])
+
+    swdaten = swdaten.replace('{JUNCTIONS}\n',dataju)       # Daten aus mehreren Abschnitten!
     swdaten = swdaten.replace('{STORAGE}\n',datast)
-    swdaten = swdaten.replace('{COORDINATES}\n',dataco)
+
+    # todo
 
     # --------------------------------------------------------------------------------------------------
     # [CONDUITS]

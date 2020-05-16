@@ -766,6 +766,7 @@ class LinkFl:
             # Modulaufruf in Logdatei schreiben
             logger.debug(f"""QKan-Modul Aufruf
                 createlinkfl(
+                    iface, 
                     self.dbQK,
                     {liste_flaechen_abflussparam},
                     {liste_hal_entw},
@@ -782,6 +783,7 @@ class LinkFl:
             )""")
 
             if not createlinkfl(
+                iface,
                 self.dbQK,
                 liste_flaechen_abflussparam,
                 liste_hal_entw,

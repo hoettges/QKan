@@ -2352,23 +2352,17 @@ class DBConnection:
                     return False
                 self.commit()
 
-                sql = """
-                    ALTER TABLE einleit ADD COLUMN schnam TEXT"""
-                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-6)"):
-                    return False
-                self.commit()
-
                 # Zusätzliche Parameter für SWMM
 
                 sql = """
                     ALTER TABLE abflussparameter ADD COLUMN rauheit_kst REAL"""
-                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-6)"):
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-7)"):
                     return False
                 self.commit()
 
                 sql = """
                     ALTER TABLE abflussparameter ADD COLUMN pctZero REAL"""
-                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-6)"):
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.3-8)"):
                     return False
                 self.commit()
 
