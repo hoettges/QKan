@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/qkan/dataswmm" >
-        <file>icon_importSWMM.png</file>
+    <qresource prefix="/plugins/qkan/swmmporter" >
+        <file>res/icon_importSWMM.png</file>
     </qresource>
 </RCC>

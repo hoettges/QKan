@@ -100,7 +100,7 @@ class ImportFromSWMM:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ":/plugins/qkan/swmmporter/icon_importSWMM.png"
+        icon_path = ":/plugins/qkan/swmmporter/res/icon_importSWMM.png"
         QKan.instance.add_action(
             icon_path,
             text=self.tr(u"Import aus SWMM-Datei (*.INP)"), # QGIS中ICON旁的文字
