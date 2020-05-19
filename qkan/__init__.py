@@ -82,7 +82,7 @@ class QKan:
         from .tools import QKanTools
         from .exporthe8 import ExportToHE8
         from .xmlporter import XmlPorter
-        from .surfaceTools import SurfaceTools
+        # from .surfaceTools import SurfaceTools
 
         self.plugins = [
             CreateUnbefFl(iface),
@@ -93,7 +93,7 @@ class QKan:
             QKanTools(iface),
             ExportToHE8(iface),
             XmlPorter(iface),
-            SurfaceTools(iface),
+            # SurfaceTools(iface),
         ]
 
         actions = self.iface.mainWindow().menuBar().actions()
