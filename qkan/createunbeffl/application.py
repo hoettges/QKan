@@ -81,20 +81,18 @@ class CreateUnbefFl:
 
         if data is None:
             if QKan.config.autokorrektur:
-                daten = [
-                    u"'$Default_Unbef', u'von QKan ergänzt', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'"
-                ]
-
-                for ds in daten:
-                    sql = u"""INSERT INTO abflussparameter
-                             ( 'apnam', 'kommentar', 'anfangsabflussbeiwert', 'endabflussbeiwert', 'benetzungsverlust', 
-                               'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
-                               'createdat') Values ({})""".format(
-                        ds
+                sql = """
+                INSERT INTO abflussparameter
+                    ('apnam', 'kommentar', 'anfangsabflussbeiwert', 'endabflussbeiwert', 'benetzungsverlust', 
+                    'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
+                    'createdat') 
+                VALUES (
+                    '$Default_Unbef', 'von QKan ergänzt', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'
                     )
-                    if not self.dbQK.sql(sql, u"createunbeffl.run (2)"):
-                        del self.dbQK
-                        return False
+                """
+                if not self.db_qkan.sql(sql, "createunbeffl.run (2)"):
+                    del self.db_qkan
+                    return False
             else:
                 fehlermeldung(
                     "Datenfehler: ",
