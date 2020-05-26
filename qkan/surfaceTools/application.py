@@ -33,7 +33,6 @@ from qkan import QKan, enums
 # noinspection PyUnresolvedReferences
 from . import resources
 
-# Import the code for the dialog
 from .application_dialog import SurfaceToolDialog
 from .surfaceTool import FlaechenVerarbeitung
 
@@ -54,7 +53,6 @@ class SurfaceTools:
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
 
-        # Create the dialog (after translation) and keep reference
         self.dlg = SurfaceToolDialog()
 
         # # Declare instance attributes

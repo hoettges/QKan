@@ -10,7 +10,7 @@ from qgis.core import (
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
 
-from qkan import QKan
+from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.tools.k_qgsadapt import qgsadapt
@@ -28,12 +28,7 @@ class XmlPorter:
     def __init__(self, iface: QgisInterface):
         self.iface = iface
 
-        # noinspection PyArgumentList
-        project_path = QgsProject.instance().fileName()
-        if project_path:
-            self.default_dir = Path(project_path).parent
-        else:
-            self.default_dir = Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
+        self.default_dir = get_default_dir()
 
         self.export_dlg = ExportDialog(default_dir=self.default_dir, tr=self.tr)
         self.import_dlg = ImportDialog(default_dir=self.default_dir, tr=self.tr)
@@ -190,7 +185,10 @@ class XmlPorter:
                         Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
                     )
                     qgsadapt(
-                        str(template_project), database_qkan, QKan.config.project.file, epsg
+                        str(template_project),
+                        database_qkan,
+                        QKan.config.project.file,
+                        epsg=epsg,
                     )
 
                     # Load generated project

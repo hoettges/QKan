@@ -33,7 +33,6 @@ from qkan import QKan, enums
 # noinspection PyUnresolvedReferences
 from . import resources
 
-# Import the code for the dialog
 from .application_dialog import ImportSWMMDialog
 from .importSWMM import importKanaldaten
 
@@ -103,7 +102,7 @@ class ImportFromSWMM:
         icon_path = ":/plugins/qkan/swmmporter/res/icon_importSWMM.png"
         QKan.instance.add_action(
             icon_path,
-            text=self.tr(u"Import aus SWMM-Datei (*.INP)"), # QGIS中ICON旁的文字
+            text=self.tr("Import aus SWMM-Datei (*.INP)"), # QGIS中ICON旁的文字
             callback=self.run,
             parent=self.iface.mainWindow(),
         )
@@ -115,7 +114,7 @@ class ImportFromSWMM:
     # (jh, 09.10.2016)
 
     def select_SWMMFile(self):
-        u"""DYNA (*.ein) -datei auswählen"""
+        """DYNA (*.ein) -datei auswählen"""
 
         filename, __ = QFileDialog.getOpenFileName(
             self.dlg,

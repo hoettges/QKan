@@ -219,7 +219,7 @@ def layersadapt(
             else:
                 logger.debug("k_layersadapt: Layer nicht ergänzt: {}".format(layername))
         # else:
-        # logger.debug(u"k_layersadapt: Layer schon vorhanden: {}".format(layername))
+        # logger.debug("k_layersadapt: Layer schon vorhanden: {}".format(layername))
 
     # Dictionary, das alle LayerIDs aus der Template-Projektdatei den entsprechenden (QKan-) LayerIDs
     # des aktuell geladenen Projekts zuordnet. Diese Liste wird bei der Korrektur der Wertelisten
@@ -426,7 +426,7 @@ def layersadapt(
     project.setTitle("QKan Version {}".format(qgsVersion()))
 
     # if status_neustart:
-    # meldung(u"Achtung! Benutzerhinweis!", u"Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
+    # meldung("Achtung! Benutzerhinweis!", "Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
     # return False
 
     # Zoom auf alles

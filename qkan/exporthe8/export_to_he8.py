@@ -2,36 +2,20 @@
 
 """
   Export Kanaldaten nach HYSTEM-EXTRAN 8
-  ======================================
-
   Transfer von Kanaldaten aus einer QKan-Datenbank nach HYSTEM EXTRAN 8
-
-  | Dateiname            : export_to_he8.py
-  | Date                 : September 2019
-  | Copyright            : (C) 2019 by Joerg Hoettges
-  | Email                : hoettges@fh-aachen.de
-  | git sha              : $Format:%H$
-
-  This program is free software; you can redistribute it and/or modify  
-  it under the terms of the GNU General Public License as published by  
-  the Free Software Foundation; either version 2 of the License, or     
-  (at your option) any later version.                                  
-
 """
 
 import logging
 import os
 import shutil
 import time
-import typing
 
-import qgis
-from qgis.core import Qgis
-from qgis.PyQt.QtWidgets import QProgressBar
-from qkan.database.dbfunc import DBConnection
+import typing
+from qgis.gui import QgisInterface
+
 from qkan.database.qkan_database import versionolder
 from qkan.database.qkan_utils import checknames, fehlermeldung, fortschritt, meldung
-from qkan import QKan, enums
+from qkan.database.dbfunc import DBConnection
 
 # Referenzlisten
 from qkan.database.reflists import abflusstypen
@@ -42,74 +26,56 @@ logger = logging.getLogger("QKan.exporthe.export_to_he8")
 progress_bar = None
 
 
-# Hauptprogramm ---------------------------------------------------------------------------------------------
-
-
 def exporthe8(
-    iface,
-    database_HE,
-    dbtemplate_HE,
-    dbQK,
-    liste_teilgebiete,
-    autokorrektur,
-    fangradius=0.1,
-    mindestflaeche=0.5,
-    mit_verschneidung=True,
-    exportFlaechenHE8=True,
-    check_export={},
+    database_he: str,
+    dbtemplate_he: str,
+    db_qkan: DBConnection,
+    liste_teilgebiete: typing.List[str],
+    autokorrektur: bool,
+    fangradius: float = 0.1,
+    mindestflaeche: float = 0.5,
+    mit_verschneidung: bool = True,
+    export_flaechen_he8: bool = True,
+    check_export: dict = None,
 ):
-    """Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE8-SQLite-Datenbank.
-
-    :database_HE:           Pfad zur HE8-SQLite-Datenbank
-    :type database_HE:      string
-
-    :dbtemplate_HE:         Vorlage für die zu erstellende HE8-SQLite-Datenbank
-    :type dbtemplate_HE:    string
-
-    :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type dbQK:             DBConnection
-
-    :liste_teilgebiete:     Liste der ausgewählten Teilgebiete
-    :type liste_teilgebiete: String
-
-    :autokorrektur:         Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
-                            werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
-                            abgebrochen.
-    :type autokorrektur:    String
-
-    :fangradius:            Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine 
-                            Haltung bzw. ein Einleitpunkt zugeordnet wird. 
-    :type fangradius:       float
-
-    :mindestflaeche:        Mindestflächengröße bei Einzelflächen und Teilflächenstücken
-    :type mindestflaeche:   float
-
-    :mit_verschneidung:     Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
-    :type mit_verschneidung: Boolean
-
-    :check_export:          Liste von Export-Optionen
-    :type check_export:     Dictionary
-
-    :returns:               void
     """
+    Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE8-SQLite-Datenbank.
+
+    :param database_he:         Pfad zur HE8-SQLite-Datenbank
+    :param dbtemplate_he:       Vorlage für die zu erstellende HE8-SQLite-Datenbank
+    :param db_qkan:                Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :param liste_teilgebiete:   Liste der ausgewählten Teilgebiete
+    :param autokorrektur:       Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
+                                werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
+                                abgebrochen.
+    :param fangradius:          Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine
+                                Haltung bzw. ein Einleitpunkt zugeordnet wird.
+    :param mindestflaeche:      Mindestflächengröße bei Einzelflächen und Teilflächenstücken
+    :param mit_verschneidung:   Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
+    :param export_flaechen_he8:
+    :param check_export:        Liste von Export-Optionen
+    """
+
+    if check_export is None:
+        check_export = {}
 
     # Statusmeldung in der Anzeige
     global progress_bar
-    #progress_bar = QProgressBar(iface.messageBar())
-    #progress_bar.setRange(0, 100)
-    #status_message = iface.messageBar().createMessage(
+    # progress_bar = QProgressBar(iface.messageBar())
+    # progress_bar.setRange(0, 100)
+    # status_message = iface.messageBar().createMessage(
     #    "", "Export in Arbeit. Bitte warten."
-    #)
-    #status_message.layout().addWidget(progress_bar)
-    #iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
+    # )
+    # status_message.layout().addWidget(progress_bar)
+    # iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # Referenzliste der Abflusstypen für HYSTEM-EXTRAN
     he_fltyp_ref = abflusstypen("he")
 
     # ITWH-Datenbank aus gewählter Vorlage kopieren
-    if os.path.exists(database_HE):
+    if os.path.exists(database_he):
         try:
-            os.remove(database_HE)
+            os.remove(database_he)
         except BaseException as err:
             fehlermeldung(
                 "Fehler (33) in QKan_Export",
@@ -119,22 +85,22 @@ def exporthe8(
             )
             return False
     try:
-        shutil.copyfile(dbtemplate_HE, database_HE)
+        shutil.copyfile(dbtemplate_he, database_he)
     except BaseException as err:
         fehlermeldung(
             "Fehler (34) in QKan_Export",
             "Kopieren der Vorlage HE-Datenbank fehlgeschlagen: {}\nVorlage: {}\nZiel: {}\n".format(
-                repr(err), dbtemplate_HE, database_HE
+                repr(err), dbtemplate_he, database_he
             ),
         )
         return False
     fortschritt("SQLite-Datenbank aus Vorlage kopiert...", 0.01)
-    #progress_bar.setValue(1)
+    # progress_bar.setValue(1)
 
     # Verbindung zur Hystem-Extran-Datenbank
 
-    sql = f'ATTACH DATABASE "{database_HE}" AS he'
-    if not dbQK.sql(sql, "dbQK: export_to_he8.attach_he8"):
+    sql = f'ATTACH DATABASE "{database_he}" AS he'
+    if not db_qkan.sql(sql, "dbQK: export_to_he8.attach_he8"):
         return False
 
     # --------------------------------------------------------------------------------------------
@@ -142,11 +108,11 @@ def exporthe8(
     # vergeben werden!!! Ein Grund ist, dass (u.a.?) die Tabelle "tabelleninhalte" mit verschiedenen
     # Tabellen verknuepft ist und dieser ID eindeutig sein muss.
 
-    dbQK.sql("SELECT NextId, Version FROM he.Itwh$ProgInfo")
-    data = dbQK.fetchone()
+    db_qkan.sql("SELECT NextId, Version FROM he.Itwh$ProgInfo")
+    data = db_qkan.fetchone()
     nextid = int(data[0]) + 1
-    heDBVersion = data[1].split(".")
-    logger.debug("HE IDBF-Version {}".format(heDBVersion))
+    he_db_version = data[1].split(".")
+    logger.debug("HE IDBF-Version {}".format(he_db_version))
 
     # --------------------------------------------------------------------------------------------
     # Export der Schaechte
@@ -162,7 +128,7 @@ def exporthe8(
             auswahl = ""
 
         fortschritt("Export Schaechte Teil 1...", 0.1)
-        #progress_bar.setValue(15)
+        # progress_bar.setValue(15)
 
         if check_export["modify_schaechte"]:
             sql = """
@@ -192,7 +158,7 @@ def exporthe8(
                 auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_schaechte (1)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_schaechte (1)"):
                 return False
 
         # Einfuegen in die Datenbank
@@ -200,10 +166,10 @@ def exporthe8(
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
                 return False
 
-            data = dbQK.fetchone()
+            data = db_qkan.fetchone()
             if len(data) == 2:
                 idmin, idmax = data
             else:
@@ -239,16 +205,16 @@ def exporthe8(
                 auswahl=auswahl, id0=id0
             )
 
-            if not dbQK.sql(sql, "dbQK: export_schaechte (3)"):
+            if not db_qkan.sql(sql, "dbQK: export_schaechte (3)"):
                 return False
 
             nextid += idmax - idmin + 1
-            dbQK.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
-            dbQK.commit()
+            db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
+            db_qkan.commit()
 
             fortschritt("{} Schaechte eingefuegt".format(nextid - nr0), 0.30)
 
-        #progress_bar.setValue(30)
+        # progress_bar.setValue(30)
 
     # --------------------------------------------------------------------------------------------
     # Export der Speicherbauwerke
@@ -265,7 +231,7 @@ def exporthe8(
             auswahl = ""
 
         fortschritt("Export Speicherschaechte...", 0.35)
-        #progress_bar.setValue(35)
+        # progress_bar.setValue(35)
 
         # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
         if check_export["modify_speicher"]:
@@ -295,7 +261,7 @@ def exporthe8(
                 auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_speicher (1)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_speicher (1)"):
                 return False
 
         # Einfuegen in die Datenbank
@@ -306,10 +272,10 @@ def exporthe8(
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
                 return False
 
-            data = dbQK.fetchone()
+            data = db_qkan.fetchone()
             if len(data) == 2:
                 idmin, idmax = data
             else:
@@ -350,12 +316,12 @@ def exporthe8(
                 auswahl=auswahl, id0=id0
             )
 
-            if not dbQK.sql(sql, "dbQK: export_speicher (2)"):
+            if not db_qkan.sql(sql, "dbQK: export_speicher (2)"):
                 return False
 
             nextid += idmax - idmin + 1
-            dbQK.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
-            dbQK.commit()
+            db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
+            db_qkan.commit()
 
             fortschritt("{} Speicher eingefuegt".format(nextid - nr0), 0.40)
 
@@ -374,7 +340,7 @@ def exporthe8(
             auswahl = ""
 
         fortschritt("Export Auslässe...", 0.40)
-        #progress_bar.setValue(40)
+        # progress_bar.setValue(40)
 
         # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
         if check_export["modify_auslaesse"]:
@@ -404,7 +370,7 @@ def exporthe8(
                 auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_auslaesse (1)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_auslaesse (1)"):
                 return False
 
         # Einfuegen in die Datenbank
@@ -415,10 +381,10 @@ def exporthe8(
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
                 return False
 
-            data = dbQK.fetchone()
+            data = db_qkan.fetchone()
             if len(data) == 2:
                 idmin, idmax = data
             else:
@@ -459,21 +425,14 @@ def exporthe8(
                 auswahl=auswahl, id0=id0
             )
 
-            if not dbQK.sql(sql, "dbQK: export_speicher (2)"):
+            if not db_qkan.sql(sql, "dbQK: export_speicher (2)"):
                 return False
 
             nextid += idmax - idmin + 1
-            dbQK.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
-            dbQK.commit()
+            db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
+            db_qkan.commit()
 
             fortschritt("{} Speicher eingefuegt".format(nextid - nr0), 0.40)
-
-
-
-
-
-
-
 
         sql = """
             SELECT
@@ -490,7 +449,7 @@ def exporthe8(
             auswahl
         )
 
-        if not dbQK.sql(sql, "dbQK: export_to_he8.export_auslaesse"):
+        if not db_qkan.sql(sql, "dbQK: export_to_he8.export_auslaesse"):
             del dbHE
             return False
 
@@ -498,7 +457,7 @@ def exporthe8(
 
         fortschritt("Export Auslässe...", 0.20)
 
-        for attr in dbQK.fetchall():
+        for attr in db_qkan.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
             (
@@ -602,7 +561,7 @@ def exporthe8(
         dbHE.commit()
 
         fortschritt("{} Auslässe eingefuegt".format(nextid - nr0), 0.40)
-    #progress_bar.setValue(50)
+    # progress_bar.setValue(50)
 
     # --------------------------------------------------------------------------------------------
     # Export der Pumpen
@@ -639,7 +598,7 @@ def exporthe8(
             auswahl
         )
 
-        if not dbQK.sql(sql, "dbQK: export_to_he8.export_pumpen"):
+        if not db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen"):
             del dbHE
             return False
 
@@ -647,7 +606,7 @@ def exporthe8(
 
         fortschritt("Export Pumpen...", 0.60)
 
-        for attr in dbQK.fetchall():
+        for attr in db_qkan.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
             (
@@ -745,7 +704,7 @@ def exporthe8(
         dbHE.commit()
 
         fortschritt("{} Pumpen eingefuegt".format(nextid - nr0), 0.40)
-    #progress_bar.setValue(60)
+    # progress_bar.setValue(60)
 
     # --------------------------------------------------------------------------------------------
     # Export der Wehre
@@ -786,7 +745,7 @@ def exporthe8(
             auswahl
         )
 
-        if not dbQK.sql(sql, "dbQK: export_to_he8.export_wehre"):
+        if not db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre"):
             del dbHE
             return False
 
@@ -794,7 +753,7 @@ def exporthe8(
 
         fortschritt("Export Wehre...", 0.65)
 
-        for attr in dbQK.fetchall():
+        for attr in db_qkan.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
             (
@@ -926,7 +885,7 @@ def exporthe8(
         dbHE.commit()
 
         fortschritt("{} Wehre eingefuegt".format(nextid - nr0), 0.40)
-    #progress_bar.setValue(60)
+    # progress_bar.setValue(60)
 
     # --------------------------------------------------------------------------------------------
     # Export der Haltungen
@@ -948,11 +907,11 @@ def exporthe8(
             auswahl = ""
 
         # Varianten abhängig von HE-Version
-        if versionolder(heDBVersion[0:2], ["7", "8"], 2):
+        if versionolder(he_db_version[0:2], ["7", "8"], 2):
             logger.debug("Version vor 7.8 erkannt")
             fieldsnew = ""
             attrsnew = ""
-        elif versionolder(heDBVersion[0:2], ["7", "9"], 2):
+        elif versionolder(he_db_version[0:2], ["7", "9"], 2):
             logger.debug("Version vor 7.9 erkannt")
             fieldsnew = ", 0 AS einzugsgebiet, 0 as konstanterzuflusstezg"
             attrsnew = ", Einzugsgebiet, KonstanterZuflussTezg"
@@ -1007,7 +966,7 @@ def exporthe8(
                 attrsnew=attrsnew, fieldsnew=fieldsnew, auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_haltungen (1)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_haltungen (1)"):
                 return False
 
         # Einfuegen in die Datenbank
@@ -1015,10 +974,10 @@ def exporthe8(
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_haltungen (2)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_haltungen (2)"):
                 return False
 
-            data = dbQK.fetchone()
+            data = db_qkan.fetchone()
             if len(data) == 2:
                 idmin, idmax = data
             else:
@@ -1068,16 +1027,16 @@ def exporthe8(
                 attrsnew=attrsnew, fieldsnew=fieldsnew, auswahl=auswahl, id0=id0
             )
 
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_haltungen (3)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_haltungen (3)"):
                 return False
 
             nextid += idmax - idmin + 1
-            dbQK.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
-            dbQK.commit()
+            db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
+            db_qkan.commit()
 
             fortschritt("Ca. {} Haltungen eingefuegt".format(nextid - nr0), 0.60)
 
-        #progress_bar.setValue(70)
+        # progress_bar.setValue(70)
 
     # --------------------------------------------------------------------------------------------
     # Export der Bodenklassen
@@ -1100,13 +1059,13 @@ def exporthe8(
             auswahl
         )
 
-        if not dbQK.sql(sql, "dbQK: export_to_he8.export_bodenklassen"):
+        if not db_qkan.sql(sql, "dbQK: export_to_he8.export_bodenklassen"):
             del dbHE
             return False
 
         nr0 = nextid
 
-        for attr in dbQK.fetchall():
+        for attr in db_qkan.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
             (
@@ -1200,7 +1159,7 @@ def exporthe8(
         dbHE.commit()
 
         fortschritt("{} Bodenklassen eingefuegt".format(nextid - nr0), 0.62)
-    #progress_bar.setValue(80)
+    # progress_bar.setValue(80)
 
     # --------------------------------------------------------------------------------------------
     # Export der Abflussparameter
@@ -1225,7 +1184,7 @@ def exporthe8(
             auswahl
         )
 
-        if not dbQK.sql(sql, "dbQK: export_to_he8.export_abflussparameter"):
+        if not db_qkan.sql(sql, "dbQK: export_to_he8.export_abflussparameter"):
             del dbHE
             return False
 
@@ -1233,7 +1192,7 @@ def exporthe8(
 
         fortschritt("Export Abflussparameter...", 0.7)
 
-        for attr in dbQK.fetchall():
+        for attr in db_qkan.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
             (
@@ -1383,7 +1342,7 @@ def exporthe8(
         dbHE.commit()
 
         fortschritt("{} Abflussparameter eingefuegt".format(nextid - nr0), 0.65)
-    #progress_bar.setValue(85)
+    # progress_bar.setValue(85)
 
     # ------------------------------------------------------------------------------------------------
     # Export der Regenschreiber
@@ -1403,11 +1362,11 @@ def exporthe8(
         # Regenschreiber berücksichtigen nicht ausgewählte Teilgebiete
         sql = """SELECT regenschreiber FROM flaechen GROUP BY regenschreiber"""
 
-        if not dbQK.sql(sql, "dbQK: export_to_he8.export_regenschreiber"):
+        if not db_qkan.sql(sql, "dbQK: export_to_he8.export_regenschreiber"):
             del dbHE
             return False
 
-        attr = dbQK.fetchall()
+        attr = db_qkan.fetchall()
         if attr == [(None,)]:
             reglis = tuple(["Regenschreiber1"])
             logger.debug(
@@ -1437,7 +1396,7 @@ def exporthe8(
             )
 
         if not dbHE.sql(sql, "dbHE: export_regenschreiber (1)"):
-            del dbQK
+            del db_qkan
             return False
 
         attr = dbHE.fetchall()
@@ -1488,12 +1447,16 @@ def exporthe8(
         dbHE.commit()
 
         fortschritt("{} Regenschreiber eingefuegt".format(nextid - nr0), 0.68)
-    #progress_bar.setValue(90)
+    # progress_bar.setValue(90)
 
     # ------------------------------------------------------------------------------------------------
     # Export der Flächen
 
-    if check_export["export_flaechenrw"] or check_export["modify_flaechenrw"] or exportFlaechenHE8:
+    if (
+        check_export["export_flaechenrw"]
+        or check_export["modify_flaechenrw"]
+        or export_flaechen_he8
+    ):
         """
         Export der Flaechendaten
 
@@ -1517,13 +1480,13 @@ def exporthe8(
 
         Befestigte Flächen"""
 
-        nr0 = None      # Für Fortschrittsmeldung
+        nr0 = None  # Für Fortschrittsmeldung
 
         # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
-        if not checknames(dbQK, "flaechen", "flnam", "f_", autokorrektur):
+        if not checknames(db_qkan, "flaechen", "flnam", "f_", autokorrektur):
             return False
 
-        if not updatelinkfl(dbQK, fangradius):
+        if not updatelinkfl(db_qkan, fangradius):
             fehlermeldung(
                 "Fehler beim Update der Flächen-Verknüpfungen",
                 "Der logische Cache konnte nicht aktualisiert werden.",
@@ -1558,14 +1521,14 @@ def exporthe8(
 
         # Einfuegen der Flächendaten in die QKan-Datenbank, Tabelle "flaechen_he8"
 
-        if exportFlaechenHE8:
+        if export_flaechen_he8:
 
             logger.debug("Export flaechen_he8 aktiviert")
 
             # Vorbereitung: Leeren der Tabelle "flaechen_he8"
 
             sql = "DELETE FROM flaechen_he8"
-            if not dbQK.sql(sql, "dbQK: k_qkhe.exportFlaechenHE8.delete"):
+            if not db_qkan.sql(sql, "dbQK: k_qkhe.exportFlaechenHE8.delete"):
                 del dbHE
                 return False
 
@@ -1637,20 +1600,17 @@ def exporthe8(
                 "Abfrage zum Export der Flächendaten nach HE8: \n{}".format(sql)
             )
 
-            if not dbQK.sql(sql, "dbQK: k_qkhe.export_flaechenhe8"):
+            if not db_qkan.sql(sql, "dbQK: k_qkhe.export_flaechenhe8"):
                 return False
 
         if check_export["modify_flaechenrw"]:
 
             # aus Performancegründen wird die Auswahl der zu bearbeitenden Flächen in eine
             # temporäre Tabelle tempfl geschrieben
-            sqllis = \
-                (
-                    """CREATE TEMP TABLE IF NOT EXISTS flupdate (flnam TEXT)""",
-
-                    """DELETE FROM flupdate"""
-
-                    f"""
+            sqllis = (
+                """CREATE TEMP TABLE IF NOT EXISTS flupdate (flnam TEXT)""",
+                """DELETE FROM flupdate"""
+                f"""
                     INSERT INTO flupdate (flnam)
                       SELECT substr(printf('%s-%d', fl.flnam, lf.pk),1,30) AS flnam 
                       FROM linkfl AS lf
@@ -1664,8 +1624,7 @@ def exporthe8(
                       ON fl.abflussparameter = ap.apnam
                       LEFT JOIN flaechentypen AS ft
                       ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl_a}""",
-
-                    """
+                """
                     WITH flintersect AS (
                       SELECT substr(printf('%s-%d', fl.flnam, lf.pk),1,30) AS flnam, 
                         ha.haltnam AS haltnam, fl.neigkl AS neigkl,
@@ -1718,25 +1677,27 @@ def exporthe8(
                       FROM flintersect AS fi
                       WHERE flnam = he.Flaeche.Name and flaeche*10000 > {mindestflaeche} and flaeche IS NOT NULL
                     ) WHERE he.Flaeche.Name IN (SELECT flnam FROM flupdate)
-                    """.format( \
-                        mindestflaeche=mindestflaeche, auswahl_a=auswahl_a,
-                        case_verschneidung=case_verschneidung,
-                        join_verschneidung=join_verschneidung,
-                        expr_verschneidung=expr_verschneidung)
-                )
+                    """.format(
+                    mindestflaeche=mindestflaeche,
+                    auswahl_a=auswahl_a,
+                    case_verschneidung=case_verschneidung,
+                    join_verschneidung=join_verschneidung,
+                    expr_verschneidung=expr_verschneidung,
+                ),
+            )
 
             for sql in sqllis:
-                if not dbQK.sql(sql, "dbQK: export_to_he8.export_flaechenrw (1)"):
+                if not db_qkan.sql(sql, "dbQK: export_to_he8.export_flaechenrw (1)"):
                     return False
 
         if check_export["export_flaechenrw"]:
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM linkfl"
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_haltungen (2)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_haltungen (2)"):
                 return False
 
-            data = dbQK.fetchone()
+            data = db_qkan.fetchone()
             if len(data) == 2:
                 idmin, idmax = data
                 logger.debug(f"idmin = {idmin}\nidmax = {idmax}\n")
@@ -1817,17 +1778,17 @@ def exporthe8(
                     id0=id0,
                 )
 
-                if not dbQK.sql(sql, "dbQK: export_to_he8.export_flaechenrw (2)"):
+                if not db_qkan.sql(sql, "dbQK: export_to_he8.export_flaechenrw (2)"):
                     return False
 
                 nextid += idmax - idmin + 1
-                dbQK.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
-        dbQK.commit()
+                db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {nextid}")
+        db_qkan.commit()
 
         if nr0:
             fortschritt("{} Flaechen eingefuegt".format(nextid - nr0), 0.80)
 
-    #progress_bar.setValue(90)
+    # progress_bar.setValue(90)
 
     # ------------------------------------------------------------------------------------------------
     # Export der Direkteinleitungen
@@ -1870,11 +1831,11 @@ def exporthe8(
 
         sql = "SELECT count(*) AS anz FROM einzugsgebiete"
 
-        if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (1)"):
+        if not db_qkan.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (1)"):
             del dbHE
             return False
 
-        anztgb = int(dbQK.fetchone()[0])
+        anztgb = int(db_qkan.fetchone()[0])
         if anztgb == 0:
             # 1 Kein Einzugsgebiet in QKan -----------------------------------------------------------------
             createdat = time.strftime("%d.%m.%Y %H:%M:%S", time.localtime())
@@ -1886,11 +1847,11 @@ def exporthe8(
                 (einzugsgebiet <> '')
             """
 
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (2)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (2)"):
                 del dbHE
                 return False
 
-            anz = int(dbQK.fetchone()[0])
+            anz = int(db_qkan.fetchone()[0])
             if anz == 0:
                 # 1.1 Kein Einwohnerpunkt mit Einzugsgebiet ----------------------------------------------------
                 sql = """
@@ -1903,21 +1864,25 @@ def exporthe8(
                     createdat=createdat
                 )
 
-                if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (3)"):
+                if not db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_einzugsgebiete (3)"
+                ):
                     del dbHE
                     return False
 
-                dbQK.commit()
+                db_qkan.commit()
             else:
                 # 1.2 Einwohnerpunkte mit Einzugsgebiet ----------------------------------------------------
                 # Liste der in allen Einwohnerpunkten vorkommenden Einzugsgebiete
                 sql = """SELECT einzugsgebiet FROM einleit WHERE einzugsgebiet is not NULL GROUP BY einzugsgebiet"""
 
-                if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (4)"):
+                if not db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_einzugsgebiete (4)"
+                ):
                     del dbHE
                     return False
 
-                listeilgeb = dbQK.fetchall()
+                listeilgeb = db_qkan.fetchall()
                 for tgb in listeilgeb:
                     sql = """
                        INSERT INTO einzugsgebiete
@@ -1929,11 +1894,13 @@ def exporthe8(
                         tgnam=tgb[0], createdat=createdat
                     )
 
-                    if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (5)"):
+                    if not db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_einzugsgebiete (5)"
+                    ):
                         del dbHE
                         return False
 
-                    dbQK.commit()
+                    db_qkan.commit()
                     meldung(
                         "Tabelle 'einzugsgebiete':\n",
                         "Es wurden {} Einzugsgebiete hinzugefügt".format(len(tgb)),
@@ -1947,11 +1914,13 @@ def exporthe8(
                     WHERE einzugsgebiete.pk IS NULL
                 """
 
-                if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (6)"):
+                if not db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_einzugsgebiete (6)"
+                ):
                     del dbHE
                     return False
 
-                anz = int(dbQK.fetchone()[0])
+                anz = int(db_qkan.fetchone()[0])
                 if anz > 0:
                     meldung(
                         "Fehlerhafte Daten in Tabelle 'einleit':",
@@ -1967,22 +1936,24 @@ def exporthe8(
                 INNER JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
             """
 
-            if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (7)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (7)"):
                 del dbHE
                 return False
 
-            anz = int(dbQK.fetchone()[0])
+            anz = int(db_qkan.fetchone()[0])
             if anz == 0:
                 # 2.1 Keine Einleitpunkte mit Einzugsgebiet ----------------------------------------------------
                 if anztgb == 1:
                     # 2.1.1 Es existiert genau ein Einzugsgebiet ---------------------------------------------
                     sql = """UPDATE einleit SET einzugsgebiet = (SELECT tgnam FROM einzugsgebiete GROUP BY tgnam)"""
 
-                    if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (8)"):
+                    if not db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_einzugsgebiete (8)"
+                    ):
                         del dbHE
                         return False
 
-                    dbQK.commit()
+                    db_qkan.commit()
                     meldung(
                         "Tabelle 'einleit':\n",
                         "Alle Einleitpunkte in der Tabelle 'einleit' wurden einem Einzugsgebiet zugeordnet",
@@ -1993,11 +1964,13 @@ def exporthe8(
                           WHERE within(einleit.geom, einzugsgebiete.geom) 
                               and einleit.geom IS NOT NULL and einzugsgebiete.geom IS NOT NULL)"""
 
-                    if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (9)"):
+                    if not db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_einzugsgebiete (9)"
+                    ):
                         del dbHE
                         return False
 
-                    dbQK.commit()
+                    db_qkan.commit()
                     meldung(
                         "Tabelle 'einleit':\n",
                         "Alle Einleitpunkte in der Tabelle 'einleit' wurden dem Einzugsgebiet zugeordnet, in dem sie liegen.",
@@ -2010,11 +1983,13 @@ def exporthe8(
                         LEFT JOIN einzugsgebiete ON einleit.einzugsgebiet = einzugsgebiete.tgnam
                         WHERE einzugsgebiete.pk IS NULL
                     """
-                    if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (10)"):
+                    if not db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_einzugsgebiete (10)"
+                    ):
                         del dbHE
                         return False
 
-                    anz = int(dbQK.fetchone()[0])
+                    anz = int(db_qkan.fetchone()[0])
                     if anz > 0:
                         meldung(
                             "Fehlerhafte Daten in Tabelle 'einleit':",
@@ -2032,11 +2007,13 @@ def exporthe8(
                     WHERE einzugsgebiete.pk is NULL
                 """
 
-                if not dbQK.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (11)"):
+                if not db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_einzugsgebiete (11)"
+                ):
                     del dbHE
                     return False
 
-                anz = int(dbQK.fetchone()[0])
+                anz = int(db_qkan.fetchone()[0])
                 if anz > 0:
                     meldung(
                         "Fehlerhafte Daten in Tabelle 'einleit':",
@@ -2074,12 +2051,12 @@ def exporthe8(
 
         # Vorbereitung einleit: Falls elnam leer ist, plausibel ergänzen:
 
-        if not checknames(dbQK, "einleit", "elnam", "e_", autokorrektur):
-            del dbQK
+        if not checknames(db_qkan, "einleit", "elnam", "e_", autokorrektur):
+            del db_qkan
             del dbHE
             return False
 
-        if not updatelinksw(dbQK, fangradius):
+        if not updatelinksw(db_qkan, fangradius):
             del dbHE  # Im Fehlerfall wird dbQK in updatelinksw geschlossen.
             fehlermeldung(
                 "Fehler beim Update der Einzeleinleiter-Verknüpfungen",
@@ -2128,7 +2105,7 @@ def exporthe8(
 
         logger.debug("\nSQL-4e:\n{}\n".format(sql))
 
-        if not dbQK.sql(sql, "dbQK: export_to_he8.export_einleitdirekt (6)"):
+        if not db_qkan.sql(sql, "dbQK: export_to_he8.export_einleitdirekt (6)"):
             del dbHE
             return False
 
@@ -2137,7 +2114,7 @@ def exporthe8(
         fortschritt("Export Einzeleinleiter (direkt)...", 0.92)
 
         # Varianten abhängig von HE-Version
-        if versionolder(heDBVersion[0:2], ["7", "9"], 2):
+        if versionolder(he_db_version[0:2], ["7", "9"], 2):
             logger.debug("Version vor 7.9 erkannt")
             fieldsnew = ""
             attrsnew = ""
@@ -2148,7 +2125,7 @@ def exporthe8(
             attrsnew = ", ZUFLUSSOBERERSchacht"
             valuesnew = ", 0"
 
-        for b in dbQK.fetchall():
+        for b in db_qkan.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
             (
@@ -2282,7 +2259,7 @@ def exporthe8(
         # Aktualisierung der Anbindungen, insbesondere wird der richtige Schacht in die
         # Tabelle "aussengebiete" eingetragen.
 
-        if not updatelinkageb(dbQK, fangradius):
+        if not updatelinkageb(db_qkan, fangradius):
             del dbHE  # Im Fehlerfall wird dbQK in updatelinkageb geschlossen.
             fehlermeldung(
                 "Fehler beim Update der Außengebiete-Verknüpfungen",
@@ -2319,19 +2296,31 @@ def exporthe8(
 
         logger.debug("\nSQL-4e:\n{}\n".format(sql))
 
-        if not dbQK.sql(sql, "dbQK: export_to_he8.export_aussengebiete (6)"):
+        if not db_qkan.sql(sql, "dbQK: export_to_he8.export_aussengebiete (6)"):
             del dbHE
             return False
 
         nr0 = nextid
 
         fortschritt("Export Außengebiete...", 0.92)
-        for b in dbQK.fetchall():
+        for b in db_qkan.fetchall():
 
             # In allen Feldern None durch NULL ersetzen
-            gebnam, xel, yel, schnam, hoeheob, hoeheun, fliessweg, gesflaeche, basisabfluss, cn, regenschreiber, kommentar, createdat_t = (
-                "NULL" if el is None else el for el in b
-            )
+            (
+                gebnam,
+                xel,
+                yel,
+                schnam,
+                hoeheob,
+                hoeheun,
+                fliessweg,
+                gesflaeche,
+                basisabfluss,
+                cn,
+                regenschreiber,
+                kommentar,
+                createdat_t,
+            ) = ("NULL" if el is None else el for el in b)
 
             if createdat_t == "NULL":
                 createdat = time.strftime("%d.%m.%Y %H:%M:%S", time.localtime())
@@ -2442,16 +2431,16 @@ def exporthe8(
         fortschritt("{} Aussengebiete eingefuegt".format(nextid - nr0), 0.98)
 
     fortschritt("Ende...", 1)
-    #progress_bar.setValue(100)
-    #status_message.setText("Datenexport abgeschlossen.")
+    # progress_bar.setValue(100)
+    # status_message.setText("Datenexport abgeschlossen.")
     # status_message.setLevel(Qgis.Success)
 
     return True
 
+
 dummy = __name__
 
-
-if __name__ == '__console__' or __name__ == "__main__":
+if __name__ == "__console__" or __name__ == "__main__":
 
     from qkan.database.dbfunc import DBConnection
     from pathlib import Path
@@ -2475,7 +2464,7 @@ if __name__ == '__console__' or __name__ == "__main__":
     # Write your code here to load some layers, use processing
     # algorithms, etc.
 
-    #logger = logging.getLogger("QKan")
+    # logger = logging.getLogger("QKan")
     formatter = logging.Formatter(
         fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
@@ -2484,35 +2473,34 @@ if __name__ == '__console__' or __name__ == "__main__":
         Path(tempfile.gettempdir())
         / "QKan_{}.log".format(datetime.datetime.today().strftime("%Y-%m-%d"))
     )
-    #stream_handler = logging.StreamHandler()
+    # stream_handler = logging.StreamHandler()
 
     file_handler.setFormatter(formatter)
-    #stream_handler.setFormatter(formatter)
+    # stream_handler.setFormatter(formatter)
 
     file_handler.setLevel(logging.DEBUG)
-    #stream_handler.setLevel(logging.DEBUG)
+    # stream_handler.setLevel(logging.DEBUG)
 
     logger.setLevel(logging.DEBUG)
     if not logger.handlers:
         logger.addHandler(file_handler)
-        #logger.addHandler(stream_handler)
+        # logger.addHandler(stream_handler)
 
-    #logger.debug(f'Aufruf von export_to_he8 aus der QGIS-Konsole: {__name__}')
+    # logger.debug(f'Aufruf von export_to_he8 aus der QGIS-Konsole: {__name__}')
 
-    database_QKan = 'C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/work/itwh.sqlite'
+    database_QKan = "C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/work/itwh.sqlite"
     dbQK = DBConnection(
         dbname=database_QKan
     )  # Datenbankobjekt der QKan-Datenbank zum Lesen
     if not dbQK.connected:
         logger.error(
-            u"Fehler in exportdyna.application:\n",
-            u"QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
+            "Fehler in exportdyna.application:\n",
+            "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
                 database_QKan
             ),
         )
 
     exporthe8(
-        iface,
         "C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/work/erg/itwh.idbm",
         "C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_validate/work/muster_vorlage.idbm",
         dbQK,
@@ -2522,18 +2510,39 @@ if __name__ == '__console__' or __name__ == "__main__":
         0.5,
         True,
         False,
-        {'export_schaechte': True, 'export_auslaesse': False, 'export_speicher': True, 'export_haltungen': True,
-         'export_pumpen': False, 'export_wehre': False, 'export_flaechenrw': True, 'export_einleitdirekt': False,
-         'export_aussengebiete': False, 'export_abflussparameter': False, 'export_regenschreiber': False,
-         'export_rohrprofile': False, 'export_speicherkennlinien': False, 'export_bodenklassen': False,
-         'modify_schaechte': True, 'modify_auslaesse': False, 'modify_speicher': True, 'modify_haltungen': True,
-         'modify_pumpen': False, 'modify_wehre': False, 'modify_flaechenrw': True, 'modify_einleitdirekt': False,
-         'modify_aussengebiete': False, 'modify_abflussparameter': False, 'modify_regenschreiber': False,
-         'modify_rohrprofile': False, 'modify_speicherkennlinien': False, 'modify_bodenklassen': False,
-         'combine_einleitdirekt': False},
+        {
+            "export_schaechte": True,
+            "export_auslaesse": False,
+            "export_speicher": True,
+            "export_haltungen": True,
+            "export_pumpen": False,
+            "export_wehre": False,
+            "export_flaechenrw": True,
+            "export_einleitdirekt": False,
+            "export_aussengebiete": False,
+            "export_abflussparameter": False,
+            "export_regenschreiber": False,
+            "export_rohrprofile": False,
+            "export_speicherkennlinien": False,
+            "export_bodenklassen": False,
+            "modify_schaechte": True,
+            "modify_auslaesse": False,
+            "modify_speicher": True,
+            "modify_haltungen": True,
+            "modify_pumpen": False,
+            "modify_wehre": False,
+            "modify_flaechenrw": True,
+            "modify_einleitdirekt": False,
+            "modify_aussengebiete": False,
+            "modify_abflussparameter": False,
+            "modify_regenschreiber": False,
+            "modify_rohrprofile": False,
+            "modify_speicherkennlinien": False,
+            "modify_bodenklassen": False,
+            "combine_einleitdirekt": False,
+        },
     )
 
     # Finally, exitQgis() is called to remove the
     # provider and layer registries from memory
     qgs.exitQgis()
-    

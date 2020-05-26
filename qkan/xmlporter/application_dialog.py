@@ -14,7 +14,7 @@ EXPORT_CLASS, _ = uic.loadUiType(
 
 
 class _Dialog(QDialog):
-    def __init__(self, default_dir: os.PathLike, tr: typing.Callable, parent=None):
+    def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
@@ -36,7 +36,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
     cb_export_pumpen: QCheckBox
     cb_export_wehre: QCheckBox
 
-    def __init__(self, default_dir: os.PathLike, tr: typing.Callable, parent=None):
+    def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
         # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
         self.setupUi(self)
@@ -106,7 +106,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
 
     epsg: QgsProjectionSelectionWidget
 
-    def __init__(self, default_dir: os.PathLike, tr=typing.Callable, parent=None):
+    def __init__(self, default_dir: str, tr=typing.Callable, parent=None):
         # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
         self.setupUi(self)

@@ -2,37 +2,25 @@
 
 """
   Export Kanaldaten in eine DYNA-Datei (*.ein)
-  ====================================
-
   Transfer von Kanaldaten aus einer QKan-Datenbank nach HYSTEM EXTRAN 7.6
-
-  | Dateiname            : export_to_dyna.py
-  | Date                 : Februar 2017
-  | Copyright            : (C) 2016 by Joerg Hoettges
-  | Email                : hoettges@fh-aachen.de
-  | git sha              : $Format:%H$
-
-  This program is free software; you can redistribute it and/or modify  
-  it under the terms of the GNU General Public License as published by  
-  the Free Software Foundation; either version 2 of the License, or     
-  (at your option) any later version.                                  
-
 """
 
 import logging
-import math
 import os
+import typing
 
-from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.core import Qgis
+from qgis.gui import QgisInterface
 
+from qkan.database.dbfunc import DBConnection
 from qkan import enums
-from qkan.database.qkan_utils import fehlermeldung, fortschritt, meldung, formf
+from qkan.database.qkan_utils import fehlermeldung, formf, fortschritt, meldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 logger = logging.getLogger("QKan.exportdyna.export_to_dyna")
 
-progress_bar = None
+progress_bar: typing.Optional[QProgressBar] = None
 
 
 # Hilfsfunktionen --------------------------------------------------------------------------
@@ -51,67 +39,53 @@ def fneigkl(neigung):
             return nkl
     else:
         fehlermeldung(
-            u"Programmfehler in export_to_dyna.fneigkl!", u"Neigungsklasse fehlerhaft"
+            "Programmfehler in export_to_dyna.fneigkl!", "Neigungsklasse fehlerhaft"
         )
         return 0.0
 
 
 # Funktionen zum Schreiben der DYNA-Daten. Werden aus exportKanaldaten aufgerufen
 def write12(
-    dbQK,
-    df,
-    dynakeys_id,
-    dynakeys_ks,
-    mindestflaeche,
-    mit_verschneidung,
+    db_qkan: DBConnection,
+    db_handle: typing.TextIO,
+    dynakeys_id: typing.List[str],
+    dynakeys_ks: typing.List[typing.Union[str, float]],
+    mindestflaeche: float,
+    mit_verschneidung: bool,
     dynaprof_choice: enums.ProfChoice,
     dynabef_choice: enums.BefChoice,
-    dynaprof_nam,
-    dynaprof_key,
-    ausw_and,
-    auswahl,
+    dynaprof_nam: typing.List[str],
+    dynaprof_key: typing.List[str],
+    ausw_and: str,
+    auswahl: str,
 ):
     """Schreiben der DYNA-Typ12-Datenzeilen
 
-    :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type:                  DBConnection
-
-    :df:                    zu Schreibende DYNA-Datei
-    :type:                  String
-
-    :dynakeys_id:           Liste der DYNA-Schlüssel für Rauheitsbeiwerte, Material und Regenspende
-    :type:                  List
-
-    :dynakeys_ks:           Liste der Rauheitsbeiwerte in der DYNA-Datei
-    :type:                  List
-
-    :mindestflaeche:        Mindestflächengröße, ab der Flächenobjekte berücksichtigt werden
-    :type:                  Float
-
-    :mit_verschneidung:     Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
-    :type:                  Boolean
-
-    :dynaprof_choice:       Option, wie die Zuordnung der Querprofile aus QKan zu den in der DYNA-Datei
-                            vorhandenen erfolgt: Über den gemeinsamen Profilnamen oder den gemeinsamen Profilkey
-    :type:                  enums.ProfChoice
-
-    :dynabef_choice:        Option für die Haltungsgesamtfläche: Bestimmung als Summe der Einzelflächen
-                            oder über das tezg-Flächenobjekt
-    :type:                  enums.BefChoice
-
-    :dynaprof_nam:          Liste der Querprofilnamen aus der Vorlage-DYNA-Datei
-    :type:                  List
-
-    :dynaprof_key:          Liste der Querprofilschlüssel aus der Vorlage-DYNA-Datei
-    :type:                  List
-
-    :ausw_and:              SQL-Textbaustein, um eine Bedingung mit "AND" anzuhängen
-    :type:                  String
-
-    :auswahl:               SQL-Textbaustein mit der Bedingung zur Filterung auf eine Liste von Teilgebieten
-    :type:                  String
-
-    :returns: void
+    :param db_qkan              Datenbankobjekt, das die Verknüpfung zur
+                                QKan-SpatiaLite-Datenbank verwaltet.
+    :param db_handle:           Zu Schreibende DYNA-Datei
+    :param dynakeys_id:         Liste der DYNA-Schlüssel für Rauheitsbeiwerte,
+                                Material und Regenspende
+    :param dynakeys_ks:         Liste der Rauheitsbeiwerte in der DYNA-Datei
+    :param mindestflaeche:      Mindestflächengröße, ab der Flächenobjekte
+                                berücksichtigt werden
+    :param mit_verschneidung:   Flächen werden mit Haltungsflächen verschnitten
+                                (abhängig von Attribut "aufteilen")
+    :param dynaprof_choice:     Option, wie die Zuordnung der Querprofile aus
+                                QKan zu den in der DYNA-Datei vorhandenen
+                                erfolgt: Über den gemeinsamen Profilnamen oder
+                                den gemeinsamen Profilkey
+    :param dynabef_choice:      Option für die Haltungsgesamtfläche: Bestimmung
+                                als Summe der Einzelflächen oder über das
+                                tezg-Flächenobjekt
+    :param dynaprof_nam:        Liste der Querprofilnamen aus der
+                                Vorlage-DYNA-Datei
+    :param dynaprof_key:        Liste der Querprofilschlüssel aus der
+                                Vorlage-DYNA-Datei
+    :param ausw_and:            SQL-Textbaustein, um eine Bedingung mit "AND"
+                                anzuhängen
+    :param auswahl:             SQL-Textbaustein mit der Bedingung zur Filterung
+                                auf eine Liste von Teilgebieten
     """
 
     # Optionen zur Berechnung der befestigten Flächen
@@ -119,39 +93,40 @@ def write12(
 
     # Optionen zur Zuordnung des Profilschlüssels
     if dynaprof_choice == enums.ProfChoice.PROFILNAME:
-        sql_prof1 = u"h.profilnam AS profilid"
+        sql_prof1 = "h.profilnam AS profilid"
         sql_prof2 = ""
     elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
-        sql_prof1 = u"p.kp_key AS profilid"
+        sql_prof1 = "p.kp_key AS profilid"
         sql_prof2 = """
         INNER JOIN profile as p
         ON h.profilnam = p.profilnam"""
     else:
         logger.error(
-            u"Fehler in export_to_dyna.write12: Unbekannte Option in dynaprof_choice: {}".format(
+            "Fehler in export_to_dyna.write12: Unbekannte Option in dynaprof_choice: {}".format(
                 dynaprof_choice
             )
         )
+        raise Exception()
 
     # Verschneidung nur, wenn (mit_verschneidung)
     if mit_verschneidung:
-        case_verschneidung = u"""
+        case_verschneidung = """
                 CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom 
                 ELSE CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3)) END AS geom"""
-        join_verschneidung = u"""
+        join_verschneidung = """
             LEFT JOIN tezg AS tg
             ON lf.tezgnam = tg.flnam"""
-        tezg_verschneidung = u"""area(tg.geom) AS fltezg,"""
+        tezg_verschneidung = """area(tg.geom) AS fltezg,"""
     else:
-        case_verschneidung = u"fl.geom AS geom"
+        case_verschneidung = "fl.geom AS geom"
         join_verschneidung = ""
-        tezg_verschneidung = u"0 AS fltezg,"
+        tezg_verschneidung = "0 AS fltezg,"
 
     # wdistbef ist die mit der (Teil-) Fläche gewichtete Fließlänge zur Haltung für die befestigten Flächen zu
     # einer Haltung,
     # wdistdur entsprechend für die durchlässigen Flächen.
 
-    sql = u"""
+    sql = """
         WITH flintersect AS (
             SELECT lf.flnam AS flnam, lf.haltnam AS haltnam, 
                 CASE fl.neigkl
@@ -166,7 +141,7 @@ def write12(
                 {case_verschneidung}
             FROM linkfl AS lf
             INNER JOIN flaechen AS fl
-            ON lf.flnam = fl.flnam{join_verschneidung}),
+            ON lf.flnam = fl.flnam {join_verschneidung}),
         halflaech AS (
             SELECT
                 fi.haltnam AS haltnam, 
@@ -251,15 +226,15 @@ def write12(
         tezg_verschneidung=tezg_verschneidung,
     )
 
-    if not dbQK.sql(sql, u"dbQK: export_to_dyna.write12 (1)"):
+    if not db_qkan.sql(sql, "dbQK: export_to_dyna.write12 (1)"):
         return False
 
-    fortschritt(u"Export Datensätze Typ12", 0.3)
+    fortschritt("Export Datensätze Typ12", 0.3)
     progress_bar.setValue(30)
-    # createdat = time.strftime(u'%d.%m.%Y %H:%M:%S', time.localtime())
+    # createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
 
     # Lesen der Daten aus der SQL-Abfrage und Schreiben in die DYNA-Datei --------------------
-    for attr in dbQK.fetchall():
+    for attr in db_qkan.fetchall():
 
         # Attribute in Variablen speichern
         (
@@ -304,23 +279,24 @@ def write12(
         # Schlüssel für DYNA einsetzen
         try:
             kskey = dynakeys_id[
-                [u"{0:10.6f}".format(kb) for kb in dynakeys_ks].index(
-                    u"{0:10.6f}".format(ks)
+                ["{0:10.6f}".format(kb) for kb in dynakeys_ks].index(
+                    "{0:10.6f}".format(ks)
                 )
             ]
-            # logger.debug(u'ks= {0:10.6f}\ndynakeys_ks= {1:s}\ndynakeys_id= {2:s}\nkskey= {3:s}'.format(
+            # logger.debug('ks= {0:10.6f}\ndynakeys_ks= {1:s}\ndynakeys_id= {2:s}\nkskey= {3:s}'.format(
             # ks,
-            # ', '.join([u'{0:10.6f}'.format(kb) for kb in dynakeys_ks]),
+            # ', '.join(['{0:10.6f}'.format(kb) for kb in dynakeys_ks]),
             # ', '.join(dynakeys_id),
             # kskey
             # ))
         except BaseException as err:
             fehlermeldung(
-                u"Fehler in export_to_dyna.write12 (2): {}".format(err),
-                u"ks {} konnte in dynakeys_ks nicht gefunden werden\ndynakeys_ks = {}".format(
+                "Fehler in export_to_dyna.write12 (2): {}".format(err),
+                "ks {} konnte in dynakeys_ks nicht gefunden werden\ndynakeys_ks = {}".format(
                     ks, str(dynakeys_ks)
                 ),
             )
+            raise err
 
         if flges is None:
             flges_t = "     "
@@ -329,6 +305,9 @@ def write12(
             neigung_t = "       0"
             distbef_t = "       0"
             distdur_t = "       0"
+
+            # XXX: TODO: befgrad/neigkl undefined
+            befgrad, neigkl = 0, 0
         else:
             if dynabef_choice == enums.BefChoice.FLAECHEN:
                 if flges != 0:
@@ -337,10 +316,15 @@ def write12(
                         0, min(99, int(round(befgrad, 0)))
                     )  # runden auf ganze Werte und Begrenzung auf 0 .. 99
                     neigkl = fneigkl(neigung)
-
+                else:
+                    # XXX: TODO: befgrad/neigkl undefined
+                    befgrad, neigkl = 0, 0
             elif dynabef_choice == enums.BefChoice.TEZG:
                 if fltezg == 0:
                     flges = 0
+
+                    # XXX: TODO: befgrad/neigkl undefined
+                    befgrad, neigkl = 0, 0
                 else:
                     flges = fltezg
                     befgrad = flbef / flges * 100.0
@@ -350,7 +334,11 @@ def write12(
                     neigkl = fneigkl(neigung)
 
                     # Berechnungen der Fließlänge für die durchlässigen Flächen
+                    # XXX: TODO: wdistbef undefined
+                    wdistbef = 0
                     distdur = (disttezg * flges - wdistbef) / (flges - flbef)
+            else:
+                raise Exception()
 
             # Vorbereitung der Ausgabefelder für DYNA
             if flges == 0:
@@ -374,13 +362,16 @@ def write12(
                 profilkey = dynaprof_key[dynaprof_nam.index(profilid)]
             except BaseException as err:
                 fehlermeldung(
-                    u"Fehler in export_to_dyna.write12 (3): {}".format(err),
-                    u"Profilkey {id} konnte in interner Zuordnungsliste nicht gefunden werden\n",
+                    "Fehler in export_to_dyna.write12 (3): {}".format(err),
+                    "Profilkey {id} konnte in interner Zuordnungsliste nicht gefunden werden\n",
                 )
                 logger.debug("dynprof_nam: {}".format(", ".join(dynaprof_nam)))
+                raise err
 
         elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
             profilkey = profilid
+        else:
+            raise Exception()
 
         try:
             zeile = (
@@ -425,10 +416,10 @@ def write12(
             # 'qzu = {}\n'.format(qzu) + \
             # 'ewdichte = {}\n'.format(ewdichte))
 
-            df.write(zeile)
+            db_handle.write(zeile)
         except BaseException as err:
             fehlermeldung(
-                u"Fehler in QKan_ExportDYNA.write12: {}\n".format(err),
+                "Fehler in QKan_ExportDYNA.write12: {}\n".format(err),
                 "Datentypfehler in Variablenliste:\n"
                 + "kanalnummer = {}\n".format(kanalnummer)
                 + "haltungsnummer = {}\n".format(haltungsnummer)
@@ -459,22 +450,16 @@ def write12(
     return True
 
 
-def write16(dbQK, df, ausw_and, auswahl):
-    """Schreiben der DYNA-Typ16-Datenzeilen
+def write16(
+    db_qkan: DBConnection, db_handle: typing.TextIO, ausw_and: str, auswahl: str
+):
+    """
+    Schreiben der DYNA-Typ16-Datenzeilen
 
-    :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type dbQK:             DBConnection
-
-    :df:                    zu Schreibende DYNA-Datei
-    :type df:               String
-
-    :ausw_and:              SQL-Textbaustein, um eine Bedingung mit "AND" anzuhängen
-    :type dbQK:             String
-
-    :auswahl:               SQL-Textbaustein mit der Bedingung zur Filterung auf eine Liste von Teilgebieten
-    :type dbQK:             String
-
-    :returns: void
+    :param db_qkan:     Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :param db_handle:   Zu schreibende DYNA-Datei
+    :paran ausw_and:    SQL-Textbaustein, um eine Bedingung mit "AND" anzuhängen
+    :param auswahl:     SQL-Textbaustein mit der Bedingung zur Filterung auf eine Liste von Teilgebieten
     """
 
     # SQL-Baustein, um die Bedingung {auswahl} um den Tabellennamen zu ergänzen
@@ -484,7 +469,7 @@ def write16(dbQK, df, ausw_and, auswahl):
         ausw_tab = "s."
 
     # Zusammenstellen der Daten.
-    sql = u"""
+    sql = """
         WITH v_anzan AS
     (   SELECT h.schunten, count(*) AS anzahl
         FROM haltungen AS h
@@ -533,7 +518,7 @@ def write16(dbQK, df, ausw_and, auswahl):
         ausw_and=ausw_and, ausw_tab=ausw_tab, auswahl=auswahl
     )
 
-    if not dbQK.sql(sql, u"dbQK: export_to_dyna.write16 (1)"):
+    if not db_qkan.sql(sql, "dbQK: export_to_dyna.write16 (1)"):
         return False
 
     akt_schnam = ""  # Identifiziert Datensätze zum gleichen Knoten
@@ -541,8 +526,10 @@ def write16(dbQK, df, ausw_and, auswahl):
     zeilan = ""
     zeilab = ""
     zeilkn = None
+    # XXX: TODO: akt_i undefined
+    akt_i = 0
 
-    for i, attr in enumerate(dbQK.fetchall()):
+    for i, attr in enumerate(db_qkan.fetchall()):
 
         # Attribute in Variablen speichern
         (
@@ -560,7 +547,7 @@ def write16(dbQK, df, ausw_and, auswahl):
             if i > 0:
                 # Dies darf erst ab 2. gelesener Zeile geschehen...
 
-                df.write("{0:15s}{1:}{2:}\n".format(zeilkn, zeilan, zeilab))
+                db_handle.write("{0:15s}{1:}{2:}\n".format(zeilkn, zeilan, zeilab))
                 zeilan = ""
                 zeilab = ""
 
@@ -613,27 +600,21 @@ def write16(dbQK, df, ausw_and, auswahl):
     else:
         # Letzter Typ16-Datensatz kann erst jetzt geschrieben werden.
         if zeilkn is not None:
-            df.write("{0:15s}{1:}{2:}\n".format(zeilkn, zeilan, zeilab))
+            db_handle.write("{0:15s}{1:}{2:}\n".format(zeilkn, zeilan, zeilab))
 
     return True
 
 
-def write41(dbQK, df, ausw_and, auswahl):
-    """Schreiben der DYNA-Typ41-Datenzeilen (Endschächte = Auslässe)
+def write41(
+    db_qkan: DBConnection, db_handle: typing.TextIO, ausw_and: str, auswahl: str
+):
+    """
+    Schreiben der DYNA-Typ41-Datenzeilen (Endschächte = Auslässe)
 
-    :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type dbQK:             DBConnection
-
-    :df:                    zu Schreibende DYNA-Datei
-    :type df:               String
-
-    :ausw_and:              SQL-Textbaustein, um eine Bedingung mit "AND" anzuhängen
-    :type dbQK:             String
-
-    :auswahl:               SQL-Textbaustein mit der Bedingung zur Filterung auf eine Liste von Teilgebieten
-    :type dbQK:             String
-
-    :returns: void
+    :param db_qkan:     Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :param db_handle:   Zu schreibende DYNA-Datei
+    :param ausw_and:    SQL-Textbaustein, um eine Bedingung mit "AND" anzuhängen
+    :param auswahl:     SQL-Textbaustein mit der Bedingung zur Filterung auf eine Liste von Teilgebieten
     """
 
     # SQL-Baustein, um die Bedingung {auswahl} um den Tabellennamen zu ergänzen
@@ -643,7 +624,7 @@ def write41(dbQK, df, ausw_and, auswahl):
         ausw_tab = "s."
 
     # Zusammenstellen der Daten.
-    sql = u"""
+    sql = """
         SELECT
             d.kanalnummer AS kanalnummer,
             d.haltungsnummer AS haltungsnummer,
@@ -659,10 +640,10 @@ def write41(dbQK, df, ausw_and, auswahl):
         ausw_and=ausw_and, ausw_tab=ausw_tab, auswahl=auswahl
     )
 
-    if not dbQK.sql(sql, u"dbQK: export_to_dyna.write41 (1)"):
+    if not db_qkan.sql(sql, "dbQK: export_to_dyna.write41 (1)"):
         return False
 
-    for attr in dbQK.fetchall():
+    for attr in db_qkan.fetchall():
         # Attribute in Variablen speichern
         (kanalnummer, haltungsnummer, deckelhoehe, xsch, ysch, schnam) = attr
 
@@ -670,7 +651,7 @@ def write41(dbQK, df, ausw_and, auswahl):
         xsch_t = formf(xsch, 14)
         ysch_t = formf(ysch, 14)
 
-        df.write(
+        db_handle.write(
             "41    {kanalnummer:>8s}{haltungsnummer:>3s}       ".format(
                 kanalnummer=kanalnummer, haltungsnummer=haltungsnummer
             )
@@ -683,52 +664,40 @@ def write41(dbQK, df, ausw_and, auswahl):
 
 
 # Hauptfunktion ----------------------------------------------------------------------------
-def exportKanaldaten(
-    iface,
-    dynafile,
-    template_dyna,
-    dbQK,
+def export_kanaldaten(
+    iface: QgisInterface,
+    dynafile: str,
+    template_dyna: str,
+    db_qkan: DBConnection,
     dynabef_choice: enums.BefChoice,
     dynaprof_choice: enums.ProfChoice,
-    liste_teilgebiete,
-    profile_ergaenzen,
-    autonum_dyna,
-    mit_verschneidung,
+    liste_teilgebiete: typing.List[str],
+    profile_ergaenzen: bool,
+    autonum_dyna: bool,
+    mit_verschneidung: bool,
     fangradius=0.1,
     mindestflaeche=0.5,
     max_loops=1000,
-):
+) -> bool:
     """Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE-Firebird-Datenbank.
 
-    :dynafile:              Zu Schreibende DYNA-Datei; kann mit Vorlagedatei identisch sein
-    :type dynafile:         string
+    :param iface:
+    :param dynafile:            Zu Schreibende DYNA-Datei; kann mit Vorlagedatei identisch sein
+    :param template_dyna:       Vorlage-DYNA-Datei
+    :param db_qkan:             Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :param dynabef_choice:
+    :param dynaprof_choice:
+    :param liste_teilgebiete:   Liste der ausgewählten Teilgebiete
+    :param profile_ergaenzen:   Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
+                                werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
+                                abgebrochen.
+    :param autonum_dyna:        Sollen die Haltungen in der DYNA-Zusatztabelle nummeriert werden?
+    :param mit_verschneidung:
+    :param fangradius:          Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine
+                                Haltung bzw. ein Einleitpunkt zugeordnet wird.
+    :param mindestflaeche:
+    :param max_loops:
 
-    :template_dyna:         Vorlage-DYNA-Datei
-    :type template_dyna:    string
-
-    :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type dbQK:             DBConnection
-
-    :liste_teilgebiete:     Liste der ausgewählten Teilgebiete
-    :type liste_teilgebiete: String
-
-    :profile_ergaenzen:     Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
-                            werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
-                            abgebrochen.
-    :type profile_ergaenzen: Boolean
-
-    :autonum_dyna:          Sollen die Haltungen in der DYNA-Zusatztabelle nummeriert werden?
-    :type autonum_dyna:     Boolean
-
-    :fangradius:            Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine
-                            Haltung bzw. ein Einleitpunkt zugeordnet wird.
-    :type fangradius:       float
-
-    :check_export:          Liste von Export-Optionen
-    :type check_export:     Dictionary
-
-    :returns:               Erfolgsstatus
-    :type returns:          Boolean
     """
 
     # Statusmeldung in der Anzeige
@@ -736,23 +705,23 @@ def exportKanaldaten(
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(
-        u"", u"Export in Arbeit. Bitte warten."
+        "", "Export in Arbeit. Bitte warten."
     )
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
     # Aktualisierung der Verknüpfungen
-    if not updatelinkfl(dbQK, fangradius):
+    if not updatelinkfl(db_qkan, fangradius):
         fehlermeldung(
-            u"Fehler beim Update der Flächen-Verknüpfungen (dyna.export 1)",
-            u"Der logische Cache konnte nicht aktualisiert werden.",
+            "Fehler beim Update der Flächen-Verknüpfungen (dyna.export 1)",
+            "Der logische Cache konnte nicht aktualisiert werden.",
         )
         return False
 
-    if not updatelinksw(dbQK, fangradius):
+    if not updatelinksw(db_qkan, fangradius):
         fehlermeldung(
-            u"Fehler beim Update der Einzeleinleiter-Verknüpfungen (dyna.export 1)",
-            u"Der logische Cache konnte nicht aktualisiert werden.",
+            "Fehler beim Update der Einzeleinleiter-Verknüpfungen (dyna.export 1)",
+            "Der logische Cache konnte nicht aktualisiert werden.",
         )
         return False
 
@@ -761,7 +730,7 @@ def exportKanaldaten(
         dynatemplate = open(template_dyna, encoding="windows-1252").readlines()
     except IOError as err:
         fehlermeldung(
-            u"Fehler (32) in QKan_ExportDYNA {}".format(err),
+            "Fehler (32) in QKan_ExportDYNA {}".format(err),
             "Die Vorlage-DYNA-Datei ist nicht vorhanden: {}".format(
                 repr(template_dyna)
             ),
@@ -774,40 +743,40 @@ def exportKanaldaten(
             os.remove(dynafile)
         except BaseException as err:
             fehlermeldung(
-                u"Fehler (33) in QKan_ExportDYNA {}".format(err),
+                "Fehler (33) in QKan_ExportDYNA {}".format(err),
                 "Die DYNA-Datei ist schon vorhanden und kann nicht ersetzt werden: {}".format(
                     repr(dynafile)
                 ),
             )
             return False
 
-    fortschritt(u"DYNA-Datei aus Vorlage kopiert...", 0.01)
+    fortschritt("DYNA-Datei aus Vorlage kopiert...", 0.01)
     progress_bar.setValue(1)
 
     # --------------------------------------------------------------------------------------------------
     # Zur Abschaetzung der voraussichtlichen Laufzeit
 
-    dbQK.sql(u"SELECT count(*) AS n FROM schaechte")
-    anzdata = float(dbQK.fetchone()[0])
-    fortschritt(u"Anzahl Schächte: {}".format(anzdata))
+    db_qkan.sql("SELECT count(*) AS n FROM schaechte")
+    anzdata = float(db_qkan.fetchone()[0])
+    fortschritt("Anzahl Schächte: {}".format(anzdata))
 
-    dbQK.sql(u"SELECT count(*) AS n FROM haltungen")
-    anzdata += float(dbQK.fetchone()[0])
-    fortschritt(u"Anzahl Haltungen: {}".format(anzdata))
+    db_qkan.sql("SELECT count(*) AS n FROM haltungen")
+    anzdata += float(db_qkan.fetchone()[0])
+    fortschritt("Anzahl Haltungen: {}".format(anzdata))
 
-    dbQK.sql(u"SELECT count(*) AS n FROM flaechen")
-    anzdata += float(dbQK.fetchone()[0]) * 2
-    fortschritt(u"Anzahl Flächen: {}".format(anzdata))
+    db_qkan.sql("SELECT count(*) AS n FROM flaechen")
+    anzdata += float(db_qkan.fetchone()[0]) * 2
+    fortschritt("Anzahl Flächen: {}".format(anzdata))
 
     # Nur Daten fuer ausgewaehlte Teilgebiete
     if len(liste_teilgebiete) != 0:
-        ausw_where = u""" WHERE """
-        ausw_and = u""" AND """
-        auswahl = u"""teilgebiet in ('{}')""".format(u"', '".join(liste_teilgebiete))
+        ausw_where = """ WHERE """
+        ausw_and = """ AND """
+        auswahl = """teilgebiet in ('{}')""".format("', '".join(liste_teilgebiete))
     else:
-        ausw_where = u""
-        ausw_and = u""
-        auswahl = u""
+        ausw_where = ""
+        ausw_and = ""
+        auswahl = ""
 
     # --------------------------------------------------------------------------------------------
     # Haltungsnummerierung, falls aktiviert
@@ -816,21 +785,21 @@ def exportKanaldaten(
     if autonum_dyna:
 
         # Zurücksetzen von "kanalnummer" und "haltungsnummer"
-        sql = u"""
+        sql = """
             UPDATE dynahal
             SET kanalnummer = NULL,
-                haltungsnummer = NULL{ausw_where}{auswahl}""".format(
+                haltungsnummer = NULL {ausw_where}{auswahl}""".format(
             ausw_where=ausw_where, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (1)"):
+        if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (1)"):
             return False
 
-        dbQK.commit()
+        db_qkan.commit()
 
         # Einfügen der Haltungsdaten in die Zusatztabelle "dynahal"
 
-        sql = u"""
+        sql = """
             WITH halnumob AS (
                 SELECT schunten, count(*) AS anzahl
                 FROM haltungen
@@ -861,12 +830,12 @@ def exportKanaldaten(
             ausw_and=ausw_and, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (2)"):
+        if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (2)"):
             return False
 
         # Zurücksetzen von "kanalnummer" und "haltungsnummer"
 
-        sql = u"""
+        sql = """
             UPDATE dynahal
             SET kanalnummer = NULL,
                 haltungsnummer = NULL
@@ -874,13 +843,13 @@ def exportKanaldaten(
             ausw_where=ausw_where, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (3)"):
+        if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (3)"):
             return False
 
         # Nummerierung der Anfangshaltungen
 
         if len(liste_teilgebiete) == 0:
-            sql = u"""
+            sql = """
                 UPDATE dynahal
                 SET kanalnummer = ROWID, haltungsnummer = 1
                 WHERE anzobob <> 1 OR anzobun <> 1
@@ -888,10 +857,10 @@ def exportKanaldaten(
                 ausw_and=ausw_and, auswahl=auswahl
             )
 
-        if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (4)"):
+        if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (4)"):
             return False
 
-        dbQK.commit()
+        db_qkan.commit()
 
         # Weitergabe der Nummerierung an die Folgehaltung im selben Strang,
         # solange change() nicht 0 zurückgibt
@@ -902,7 +871,7 @@ def exportKanaldaten(
 
         while (nchange > 0) and (max_loops > nlimit):
             nlimit += 1
-            sql = u"""
+            sql = """
                 UPDATE dynahal
                 SET 
                     kanalnummer = 
@@ -922,30 +891,33 @@ def exportKanaldaten(
                 ausw_and=ausw_and, auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (5)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (5)"):
                 return False
 
-            sql = u"""
+            sql = """
                 SELECT changes();
                 """
 
-            if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (6)"):
+            if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (6)"):
                 return False
 
-            nchange = int(dbQK.fetchone()[0])  # Zahl der zuletzt geänderten Datensätze
+            nchange = int(
+                db_qkan.fetchone()[0]
+            )  # Zahl der zuletzt geänderten Datensätze
             changelog.append(nchange)
 
-        dbQK.commit()
+        db_qkan.commit()
 
         if nlimit >= max_loops:
             fehlermeldung(
-                u"Fehler in QKan_ExportDYNA",
-                u"{} Schleifendurchläufe in der Autonummerierung. Gegebenenfalls muss max_loops in der config-Datei angepasst werden...",
+                "Fehler in QKan_ExportDYNA",
+                f"{nlimit} Schleifendurchläufe in der Autonummerierung. "
+                f"Gegebenenfalls muss max_loops in der config-Datei angepasst werden...",
             )
 
         logger.debug(
-            u"Anzahl Änderungen für DYNA:\n{}".format(
-                u", ".join([str(n) for n in changelog])
+            "Anzahl Änderungen für DYNA:\n{}".format(
+                ", ".join([str(n) for n in changelog])
             )
         )
 
@@ -953,14 +925,15 @@ def exportKanaldaten(
         # Keine Autonummerierung. Dann müssen die Haltungsnamen so vergeben sein, dass sich Kanal- und Haltungs-
         # nummer daraus wieder herstellen lassen (8 Zeichen für Kanal + "-" + 3 Zeichen für Haltungsnummer).
 
-        sql = u"""DELETE FROM dynahal"""
-        if not dbQK.sql(
+        # noinspection SqlWithoutWhere
+        sql = "DELETE FROM dynahal;"
+        if not db_qkan.sql(
             sql,
-            u"dbQK: export_to_dyna.init_dynahal (7): Daten in Tabelle dynahal konnten nicht gelöscht werden",
+            "dbQK: export_to_dyna.init_dynahal (7): Daten in Tabelle dynahal konnten nicht gelöscht werden",
         ):
             return False
 
-        sql = u"""
+        sql = """
             INSERT INTO dynahal
             (pk, haltnam, kanalnummer, haltungsnummer, schoben, schunten, teilgebiet)
             SELECT
@@ -975,7 +948,7 @@ def exportKanaldaten(
             ausw_and=ausw_and, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: export_to_dyna.init_dynahal (8)"):
+        if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (8)"):
             return False
 
     progress_bar.setValue(20)
@@ -1013,24 +986,24 @@ def exportKanaldaten(
         if z[:6] == "++SCHL":
             typ05 = True
     else:
-        dynakeys_id = [u"0", u"1", u"2", u"3", u"4", u"5", u"6", u"7", u"8", u"9"]
-        dynakeys_mat = [u"Az", u"B", u"Stz"]
+        dynakeys_id = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+        dynakeys_mat = ["Az", "B", "Stz"]
         dynakeys_ks = [0.0, 0.4, 0.75, 1.5]
 
     # Prüfung, ob alle Werte, die in der QKan-Datenbank vorkommen, bereits vorhanden sind.
 
-    sql = u"""
+    sql = """
         SELECT printf('%10.6f',ks) AS ks
         FROM haltungen
         GROUP BY ks
     """
-    if not dbQK.sql(sql, u"QKan_ExportDYNA.export_to_dyna (1) "):
+    if not db_qkan.sql(sql, "QKan_ExportDYNA.export_to_dyna (1) "):
         return False
 
-    daten = dbQK.fetchall()
+    daten = db_qkan.fetchall()
     for kslis in daten:
         ks_new = kslis[0]
-        if ks_new not in [u"{0:10.6f}".format(ks) for ks in dynakeys_ks]:
+        if ks_new not in ["{0:10.6f}".format(ks) for ks in dynakeys_ks]:
             dynakeys_ks.append(ks_new)
 
     # So viele Schlüssel ergänzen, bis Anzahl in dynakeys_ks erreicht (meistens schon der Fall...)
@@ -1038,7 +1011,7 @@ def exportKanaldaten(
     while len(dynakeys_ks) > len(dynakeys_id):
         n = ord(next_id) + 1
         if n == 58:
-            next_id = u"A"
+            next_id = "A"
         else:
             next_id = chr(n)
         dynakeys_id.append(next_id)
@@ -1099,15 +1072,15 @@ def exportKanaldaten(
                         dynaprof_key.append(profil_key)
                         dynaprof_nam.append(profilnam)
                         logger.debug(
-                            u"export_to_dyna.exportKanaldaten (2): profilnam = {}".format(
+                            "export_to_dyna.exportKanaldaten (2): profilnam = {}".format(
                                 profilnam
                             )
                         )
-                        # sql = u'''INSERT INTO dynaprofil (profil_key, profilnam, breite, hoehe)
+                        # sql = '''INSERT INTO dynaprofil (profil_key, profilnam, breite, hoehe)
                         # VALUES ('{key}', '{nam}', {br}, {ho})'''.format(
                         # key=profil_key, nam=profilnam, br=breite, ho=hoehe)
-                        # logger.debug(u'sql = {}'.format(sql))
-                        # if not dbQK.sql(sql, u'importkanaldaten_kp (1)'):
+                        # logger.debug('sql = {}'.format(sql))
+                        # if not dbQK.sql(sql, 'importkanaldaten_kp (1)'):
                         # return None
 
                     if zeile[0:2] != "++":
@@ -1121,7 +1094,7 @@ def exportKanaldaten(
                         x1 = None
 
         # Optionen und Daten
-        if zeile[0:6] == u"++QUER":
+        if zeile[0:6] == "++QUER":
             profilmodus = 0
 
     # Prüfen, ob alle in den zu exportierenden Daten enthaltenen Profile schon definiert sind.
@@ -1131,27 +1104,27 @@ def exportKanaldaten(
     if dynaprof_choice == enums.ProfChoice.PROFILNAME:
         # Die DYNA-Schlüssel werden entsprechend der DYNA-Vorlagedatei vergeben. Daher braucht
         # nur das Vorhandensein der Profilnamen geprüft zu werden.
-        sql = u"""SELECT profilnam
-                FROM haltungen{ausw_where}{auswahl}
+        sql = """SELECT profilnam
+                FROM haltungen {ausw_where}{auswahl}
                 GROUP BY profilnam""".format(
             ausw_where=ausw_where, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: QKan_ExportDYNA.export_to_dyna.profile (1)"):
+        if not db_qkan.sql(sql, "dbQK: QKan_ExportDYNA.export_to_dyna.profile (1)"):
             return False
 
-        daten = dbQK.fetchall()
+        daten = db_qkan.fetchall()
         for profil in daten:
             profil_new = profil[0]
             if profil_new not in dynaprof_nam:
                 meldung(
-                    u"Fehlende Profildaten in DYNA-Vorlagedatei {fn}".format(
+                    "Fehlende Profildaten in DYNA-Vorlagedatei {fn}".format(
                         fn=template_dyna
                     ),
-                    u"{pn}".format(pn=profil_new),
+                    "{pn}".format(pn=profil_new),
                 )
                 logger.debug(
-                    u"export_to_dyna.exportKanaldaten (1): dynaprof_nam = {}".format(
+                    "export_to_dyna.exportKanaldaten (1): dynaprof_nam = {}".format(
                         ", ".join(dynaprof_nam)
                     )
                 )
@@ -1160,68 +1133,74 @@ def exportKanaldaten(
                             VALUES ('{pn}')""".format(
                         pn=profil_new
                     )
-                    if not dbQK.sql(sql, u"dbQK: export_to_dyna.exportKanaldaten (1)"):
+                    if not db_qkan.sql(
+                        sql, "dbQK: export_to_dyna.exportKanaldaten (1)"
+                    ):
                         return False
-                    dbQK.commit()
+                    db_qkan.commit()
                 fehler = 2
         if fehler == 2:
             fehlermeldung(
-                u"Fehler in den Profildaten",
-                u"Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage ",
+                "Fehler in den Profildaten",
+                "Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage ",
             )
             return False
 
     elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
-        sql = u"""SELECT p.kp_key, h.profilnam
+        sql = """SELECT p.kp_key, h.profilnam
                 FROM haltungen AS h
                 LEFT JOIN profile AS p
-                ON h.profilnam = p.profilnam{ausw_where}{auswahl}
+                ON h.profilnam = p.profilnam {ausw_where}{auswahl}
                 GROUP BY p.kp_key""".format(
             ausw_where=ausw_where, auswahl=auswahl
         )
 
-        if not dbQK.sql(sql, u"dbQK: QKan_ExportDYNA.export_to_dyna.profile (2)"):
+        if not db_qkan.sql(sql, "dbQK: QKan_ExportDYNA.export_to_dyna.profile (2)"):
             return False
 
-        daten = dbQK.fetchall()
+        daten = db_qkan.fetchall()
         for profil in daten:
             profil_key, profilnam = profil
             if profil_key is None:
                 profil_key = "NULL"
             if profil_key not in dynaprof_key:
                 meldung(
-                    u"Fehlende Profildaten in DYNA-Vorlagedatei {fn}".format(
+                    "Fehlende Profildaten in DYNA-Vorlagedatei {fn}".format(
                         fn=template_dyna
                     ),
-                    u"{id}".format(id=profil_key),
+                    "{id}".format(id=profil_key),
                 )
-                logger.debug(u"dynaprof_key = {}".format(", ".join(dynaprof_key)))
+                logger.debug("dynaprof_key = {}".format(", ".join(dynaprof_key)))
                 if profile_ergaenzen:
                     sql = """INSERT INTO profile (profilnam, kp_key)
                             VALUES ('{pn}', '{id}')""".format(
                         pn=profilnam, id=profil_key
                     )
-                    if not dbQK.sql(sql, u"dbQK: export_to_dyna.exportKanaldaten (1)"):
+                    if not db_qkan.sql(
+                        sql, "dbQK: export_to_dyna.exportKanaldaten (1)"
+                    ):
                         return False
-                    dbQK.commit()
+                    db_qkan.commit()
                 fehler = 2
             elif profil_key is None:
+                # XXX: TODO: profil_new undefined
+                profil_new = profilnam
                 fehlermeldung(
-                    u"Fehlende ID in DYNA-Vorlagedatei {fn}".format(fn=template_dyna),
-                    u"Es fehlt die ID für Profil {pn}".format(pn=profil_new),
+                    "Fehlende ID in DYNA-Vorlagedatei {fn}".format(fn=template_dyna),
+                    "Es fehlt die ID für Profil {pn}".format(pn=profil_new),
                 )
                 fehler = max(fehler, 1)  # fehler = 2 hat Priorität
 
         if fehler == 1:
             fehlermeldung(
-                u"Fehler in den Profildaten",
-                u"Es gibt Profile ohne eine DYNA-Nummer (kp_key)",
+                "Fehler in den Profildaten",
+                "Es gibt Profile ohne eine DYNA-Nummer (kp_key)",
             )
             return False
         elif fehler == 2:
             fehlermeldung(
-                u"Fehler in den Profildaten",
-                u"Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage vorhanden sind",
+                "Fehler in den Profildaten",
+                "Es gibt Profile in den Haltungsdaten, die nicht in der DYNA-Vorlage vorhanden sind",
             )
             return False
 
@@ -1255,7 +1234,7 @@ def exportKanaldaten(
                     # Jetzt werden alle neuen Typ-05-Datensätze geschrieben
                     for id, mat, kb in zip(dynakeys_id, dynakeys_mat, dynakeys_ks):
                         df.write(
-                            u"05 {id:1s} {mat:4s} {sp:10.6f}{kb:10.6f}{ks:10.6f}\n".format(
+                            "05 {id:1s} {mat:4s} {sp:10.6f}{kb:10.6f}{ks:10.6f}\n".format(
                                 id=id[:1], mat=mat[:4], sp=0, kb=kb, ks=0
                             ).replace(
                                 "  0.000000", "          "
@@ -1270,7 +1249,7 @@ def exportKanaldaten(
                     # Sobald nächster Block erreicht, ist Typ12 beendet
                     # Jetzt werden alle neuen Typ-12-Datensätze geschrieben
                     if not write12(
-                        dbQK,
+                        db_qkan,
                         df,
                         dynakeys_id,
                         dynakeys_ks,
@@ -1292,7 +1271,7 @@ def exportKanaldaten(
                 if z[:2] == "++":
                     # Sobald nächster Block erreicht, ist Typ16 beendet
                     # Jetzt werden alle neuen Typ-16-Datensätze geschrieben
-                    if not write16(dbQK, df, ausw_and, auswahl):
+                    if not write16(db_qkan, df, ausw_and, auswahl):
                         return False
                     typ16 = False
                     df.write(z)
@@ -1303,7 +1282,7 @@ def exportKanaldaten(
                 if z[:2] == "++":
                     # Sobald nächster Block erreicht, ist Typ41 beendet
                     # Jetzt werden alle neuen Typ-41-Datensätze geschrieben
-                    if not write41(dbQK, df, ausw_and, auswahl):
+                    if not write41(db_qkan, df, ausw_and, auswahl):
                         return False
                     typ41 = False
                     df.write(z)
@@ -1334,8 +1313,8 @@ def exportKanaldaten(
                 # df.write(z)
                 continue
 
-    fortschritt(u"Ende...", 1)
+    fortschritt("Ende...", 1)
     progress_bar.setValue(100)
-    status_message.setText(u"Datenexport abgeschlossen.")
+    status_message.setText("Datenexport abgeschlossen.")
     status_message.setLevel(Qgis.Success)
     return True

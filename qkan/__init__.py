@@ -8,9 +8,11 @@ import typing
 from pathlib import Path
 
 import qgis
-from PyQt5.QtCore import QCoreApplication, QSettings, QTranslator
+from PyQt5.QtCore import QCoreApplication, QSettings, QStandardPaths, QTranslator
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QMenu
+from PyQt5.QtWidgets import QAction, QListWidget, QMenu, QWidget
+from qgis.core import QgsProject
+from qgis.utils import pluginDirectory
 
 from .config import Config
 
@@ -21,9 +23,11 @@ def classFactory(iface):  # pylint: disable=invalid-name
     return qkan
 
 
+# TODO: getOpenFilename/getSaveFilename(dialog, title, dir=self.default_dir, extensions)
 class QKan:
     instance = None  # type: QKan
     config: typing.Optional[Config] = None
+    template_dir: str = None
 
     def __init__(self, iface: qgis.gui.QgisInterface):
         QKan.instance = self
@@ -34,10 +38,10 @@ class QKan:
             fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
         )
-        file_handler = logging.FileHandler(
-            Path(tempfile.gettempdir())
-            / "QKan_{}.log".format(datetime.datetime.today().strftime("%Y-%m-%d"))
+        self.log_path = Path(tempfile.gettempdir()) / "QKan_{}.log".format(
+            datetime.datetime.today().strftime("%Y-%m-%d")
         )
+        file_handler = logging.FileHandler(self.log_path)
         stream_handler = logging.StreamHandler()
 
         file_handler.setFormatter(formatter)
@@ -60,8 +64,10 @@ class QKan:
 
         # QGIS
         self.iface = iface
-        self.plugin_dir = os.path.dirname(__file__)
         self.actions = []
+
+        # Set default template directory
+        QKan.template_dir = os.path.join(pluginDirectory("qkan"), "templates")
 
         # Plugins
         self.instances = []
@@ -82,6 +88,7 @@ class QKan:
         from .tools import QKanTools
         from .exporthe8 import ExportToHE8
         from .xmlporter import XmlPorter
+
         # from .surfaceTools import SurfaceTools
 
         self.plugins = [
@@ -183,50 +190,33 @@ class QKan:
         icon_path: str,
         text: str,
         callback: typing.Callable,
-        enabled_flag=True,
-        add_to_menu=True,
-        add_to_toolbar=True,
-        status_tip=None,
-        whats_this=None,
-        parent=None,
-    ):
-        """Add a toolbar icon to the toolbar.
+        enabled_flag: bool = True,
+        add_to_menu: bool = True,
+        add_to_toolbar: bool = True,
+        status_tip: str = None,
+        whats_this: str = None,
+        parent: QWidget = None,
+    ) -> QAction:
+        """Add a toolbar icon to the toolbar/menu.
 
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
-
-        :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
-        :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.__actions list.
-        :rtype: QAction
+        :param icon_path:       Path to the icon for this action. Can be a resource
+                                path (e.g. ':/plugins/foo/bar.png') or a normal
+                                file system path.
+        :param text:            Text that should be shown in menu items for this action.
+        :param callback:        Function to be called when the action is triggered.
+        :param enabled_flag:    A flag indicating if the action should be enabled
+                                by default. Defaults to True.
+        :param add_to_menu:     Flag indicating whether the action should also
+                                be added to the menu. Defaults to True.
+        :param add_to_toolbar:  Flag indicating whether the action should also
+                                be added to the toolbar. Defaults to True.
+        :param status_tip:      Optional text to show in a popup when mouse pointer
+                                hovers over the action.
+        :param whats_this:      Optional text to show in the status bar when the
+                                mouse pointer hovers over the action.
+        :param parent:          Parent widget for the new action. Defaults None.
+        :returns:               The action that was created. Note that the action is also
+                                added to self.actions.
         """
 
         icon = QIcon(icon_path)
@@ -249,3 +239,31 @@ class QKan:
         self.actions.append(action)
 
         return action
+
+
+def get_default_dir() -> str:
+    """
+    A helper method that returns the path of the currently opened project
+    *or* the user's default directory
+    """
+
+    # noinspection PyArgumentList
+    project_path = QgsProject.instance().fileName()
+    if project_path:
+        return str(Path(project_path).parent.absolute())
+    else:
+        return str(
+            Path(
+                QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1]
+            ).absolute()
+        )
+
+
+def list_selected_items(list_widget: QListWidget) -> typing.List[str]:
+    """
+    Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
+
+    :param list_widget: Liste aller Widgets
+    """
+
+    return [_.text() for _ in list_widget.selectedItems()]

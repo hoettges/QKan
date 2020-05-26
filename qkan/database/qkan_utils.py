@@ -9,7 +9,7 @@ from qkan import QKan, enums
 import math
 
 # Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger(u"QKan.database.qkan_utils")
+logger = logging.getLogger("QKan.database.qkan_utils")
 
 
 # Fortschritts- und Fehlermeldungen
@@ -33,7 +33,7 @@ def fortschritt(text, prozent=0):
     logger.debug("{:s} ({:.0f}%)".format(text, prozent * 100))
     QgsMessageLog.logMessage(
         message="{:s} ({:.0f}%)".format(text, prozent * 100),
-        tag=u"Link Flächen: ",
+        tag="Link Flächen: ",
         level=Qgis.Info,
     )
 
@@ -47,7 +47,7 @@ def fehlermeldung(title, text=""):
 
     # Protokolldatei anzeigen
 
-    # dnam = dt.today().strftime(u"%Y%m%d")
+    # dnam = dt.today().strftime("%Y%m%d")
     # fnam = os.path.join(tempfile.gettempdir(), u'QKan{}.log'.format(dnam))
     # os.startfile(fnam)
 
@@ -68,7 +68,7 @@ def getLayerConfigFromQgsTemplate(qgsxml, layername):
     :type:              dict of string: tuple of String, dict of Strings
     """
 
-    lntext = u"projectlayers/maplayer[layername='{ln}']".format(ln=layername)
+    lntext = "projectlayers/maplayer[layername='{ln}']".format(ln=layername)
     node_maplayer = qgsxml.find(lntext)
     fieldnodes = node_maplayer.findall("./fieldConfiguration/field")
 
@@ -118,12 +118,12 @@ def listQkanLayers(qgsTemplate=None):
 
     if not qgsTemplate:
         return {}
-        # templateDir = os.path.join(pluginDirectory('qkan'), u"templates")
+        # templateDir = os.path.join(pluginDirectory('qkan'), "templates")
         # qgsTemplate = os.path.join(templateDir, 'Projekt.qgs')
 
     qgsxml = et.ElementTree()
     qgsxml.parse(qgsTemplate)
-    tagGroup = u"layer-tree-group/layer-tree-group"
+    tagGroup = "layer-tree-group/layer-tree-group"
     qgsGroups = qgsxml.findall(tagGroup)
     qkanLayers = {}
     for group in qgsGroups:
@@ -134,7 +134,7 @@ def listQkanLayers(qgsTemplate=None):
             layerSource = layer.attrib["source"]
             dbname, table, geom, sql = get_qkanlayerAttributes(layerSource)
             qkanLayers[layerName] = [table, geom, sql, groupName]
-    logger.debug(u"qkanLayers: \n{}".format(qkanLayers))
+    logger.debug("qkanLayers: \n{}".format(qkanLayers))
     return qkanLayers
 
 
@@ -178,11 +178,11 @@ def get_qkanlayerAttributes(source):
     :rtype:         tuple
     """
 
-    posDbname = source.find(u"dbname=")
-    posTable = source.find(u" table=", posDbname + 1)
-    posGeomStart = source.find(u" (", posTable + 6)
-    posGeomEnd = source.find(u") ", posGeomStart + 2)
-    posSql = source.find(u" sql=", posGeomEnd + 1)
+    posDbname = source.find("dbname=")
+    posTable = source.find(" table=", posDbname + 1)
+    posGeomStart = source.find(" (", posTable + 6)
+    posGeomEnd = source.find(") ", posGeomStart + 2)
+    posSql = source.find(" sql=", posGeomEnd + 1)
 
     if posSql < 0:
         return "", "", "", ""
@@ -273,13 +273,13 @@ def get_editable_layers():
             lyattr = {}
 
             # Attributstring für Layer splitten
-            for le in lay.source().split(u" "):
-                if u"=" in le:
-                    key, value = le.split(u"=", 1)
-                    lyattr[key] = value.strip(u'"').strip(u"'")
+            for le in lay.source().split(" "):
+                if "=" in le:
+                    key, value = le.split("=", 1)
+                    lyattr[key] = value.strip(u'"').strip("'")
 
             # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
-            if u"table" in lyattr and u"dbname" in lyattr:
+            if "table" in lyattr and "dbname" in lyattr:
                 if lay.isEditable():
                     elayers.add(lyattr["table"])
     return elayers
@@ -314,13 +314,13 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur):
     # ----------------------------------------------------------------------------------------------------------------
     # Prüfung, ob Objektnamen leer oder NULL sind:
 
-    sql = u"""SELECT {attr}
+    sql = """SELECT {attr}
             FROM {tab}
             WHERE {attr} IS NULL or trim({attr}) = ''""".format(
         tab=tab, attr=attr
     )
 
-    if not dbQK.sql(sql, u"QKan.qgis_utils.checknames (1)"):
+    if not dbQK.sql(sql, "QKan.qgis_utils.checknames (1)"):
         return False
 
     daten = dbQK.fetchall()
@@ -328,23 +328,23 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur):
     if len(daten) > 0:
         if autokorrektur:
             meldung(
-                u"Automatische Korrektur von Daten: ",
+                "Automatische Korrektur von Daten: ",
                 u'In der Tabelle "{tab}" wurden leere Namen im Feld "{attr}" aufgefüllt'.format(
                     tab=tab, attr=attr
                 ),
             )
 
-            sql = u"""UPDATE {tab}
+            sql = """UPDATE {tab}
                 SET {attr} = printf('{prefix}%d', ROWID)
                 WHERE {attr} IS NULL or trim({attr}) = ''""".format(
                 tab=tab, attr=attr, prefix=prefix
             )
 
-            if not dbQK.sql(sql, u"QKan.qgis_utils.checknames (2)"):
+            if not dbQK.sql(sql, "QKan.qgis_utils.checknames (2)"):
                 return False
         else:
             fehlermeldung(
-                u"Datenfehler",
+                "Datenfehler",
                 u'In der Tabelle "{tab}" gibt es leere Namen im Feld "{attr}". Abbruch!'.format(
                     tab=tab, attr=attr
                 ),
@@ -354,13 +354,13 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur):
     # ----------------------------------------------------------------------------------------------------------------
     # Prüfung, ob Objektnamen mehrfach vergeben sind.
 
-    sql = u"""SELECT {attr}, count(*) AS anzahl
+    sql = """SELECT {attr}, count(*) AS anzahl
             FROM {tab}
             GROUP BY {attr}
             HAVING anzahl > 1 OR {attr} IS NULL""".format(
         tab=tab, attr=attr
     )
-    if not dbQK.sql(sql, u"QKan.qgis_utils.checknames (3)"):
+    if not dbQK.sql(sql, "QKan.qgis_utils.checknames (3)"):
         return False
 
     daten = dbQK.fetchall()
@@ -368,13 +368,13 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur):
     if len(daten) > 0:
         if autokorrektur:
             meldung(
-                u"Automatische Korrektur von Daten: ",
+                "Automatische Korrektur von Daten: ",
                 u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}"'.format(
                     tab=tab, attr=attr
                 ),
             )
 
-            sql = u"""WITH doppelte AS
+            sql = """WITH doppelte AS
                 (   SELECT {attr}, count(*) AS anzahl
                     FROM {tab}
                     GROUP BY {attr}
@@ -385,11 +385,11 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur):
                 tab=tab, attr=attr, prefix=prefix
             )
 
-            if not dbQK.sql(sql, u"QKan.qgis_utils.checknames (4)"):
+            if not dbQK.sql(sql, "QKan.qgis_utils.checknames (4)"):
                 return False
         else:
             fehlermeldung(
-                u"Datenfehler",
+                "Datenfehler",
                 u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}". Abbruch!'.format(
                     tab=tab, attr=attr
                 ),
@@ -427,18 +427,18 @@ def checkgeom(
 
     # Einschränkung auf ausgewählte Teilgebiete
     if len(liste_teilgebiete) != 0:
-        auswahl = u" AND {tab}.teilgebiet in ('{lis}')".format(
-            lis=u"', '".join(liste_teilgebiete), tab=tab
+        auswahl = " AND {tab}.teilgebiet in ('{lis}')".format(
+            lis="', '".join(liste_teilgebiete), tab=tab
         )
     else:
         auswahl = ""
 
-    sql = u"""SELECT count(*) AS anzahl
+    sql = """SELECT count(*) AS anzahl
             FROM {tab}
             WHERE {tab}.{attrgeo} IS NULL{auswahl}""".format(
         tab=tab, attrgeo=attrgeo, auswahl=auswahl
     )
-    if not dbQK.sql(sql, u"QKan.qgis_utils.checkgeom (1)"):
+    if not dbQK.sql(sql, "QKan.qgis_utils.checkgeom (1)"):
         return False
 
     daten = dbQK.fetchone()
@@ -446,24 +446,24 @@ def checkgeom(
     if daten[0] > 0:
         if autokorrektur:
             meldung(
-                u"Automatische Korrektur von Daten: ",
+                "Automatische Korrektur von Daten: ",
                 (
                     u'In der Tabelle "{tab}" wurden leere Geo-Objekte gefunden. '
-                    u"Diese Datensätze wurden gelöscht"
+                    "Diese Datensätze wurden gelöscht"
                 ).format(tab=tab, attrgeo=attrgeo),
             )
 
-            sql = u"""DELETE
+            sql = """DELETE
                 FROM {tab}
                 WHERE {attrgeo} IS NULL{auswahl}""".format(
                 tab=tab, attrgeo=attrgeo, auswahl=auswahl
             )
 
-            if not dbQK.sql(sql, u"QKan.qgis_utils.checkgeom (2)"):
+            if not dbQK.sql(sql, "QKan.qgis_utils.checkgeom (2)"):
                 return False
         else:
             fehlermeldung(
-                u"Datenfehler",
+                "Datenfehler",
                 u'In der Tabelle "{tab}" gibt es leere Geoobjekte. Abbruch!'.format(
                     tab=tab, attrgeo=attrgeo
                 ),
@@ -473,7 +473,7 @@ def checkgeom(
     return True
 
 
-def sqlconditions(keyword, attrlis, valuelis2):
+def sqlconditions(keyword: str, attrlis: typing.List[str], valuelis2: typing.List[typing.List[str]]):
     """stellt Attribut- und Wertelisten zu einem SQL-String zusammen.
     
     :keywort:       logischer Operator, mit dem der SQL-Text an den vorhandenen
@@ -502,10 +502,10 @@ def sqlconditions(keyword, attrlis, valuelis2):
 
     if len(attrlis) != len(valuelis2):
         fehlermeldung(
-            u"Fehler in qkan_utils.sqlconditions:",
-            u"Anzahl an Attributen und Wertlisten stimmt nicht ueberein: \n"
-            + u"attrlis= {}\n".format(attrlis)
-            + u"valuelis2= {}\n".format(valuelis2),
+            "Fehler in qkan_utils.sqlconditions:",
+            "Anzahl an Attributen und Wertlisten stimmt nicht ueberein: \n"
+            + "attrlis= {}\n".format(attrlis)
+            + "valuelis2= {}\n".format(valuelis2),
         )
 
     condlis = []  # Liste der einzelnen SQL-Conditions
@@ -513,12 +513,12 @@ def sqlconditions(keyword, attrlis, valuelis2):
     for attr, valuelis in zip(attrlis, valuelis2):
         if len(valuelis) != 0:
             condlis.append(
-                u"{attr} in ('{values}')".format(
-                    attr=attr, values=u"', '".join(valuelis)
+                "{attr} in ('{values}')".format(
+                    attr=attr, values="', '".join(valuelis)
                 )
             )
     if len(condlis) != 0:
-        auswahl = u" {keyword} {conds}".format(
+        auswahl = " {keyword} {conds}".format(
             keyword=keyword, conds=" AND ".join(condlis)
         )
     else:
@@ -534,27 +534,27 @@ def check_flaechenbilanz(dbQK):
     :type dbQK:         Class FBConnection
     """
 
-    sql = u"""SELECT * FROM v_flaechen_check"""
+    sql = """SELECT * FROM v_flaechen_check"""
 
-    if not dbQK.sql(sql, u"qkan_utils.check_flaechenbilanz (1)"):
+    if not dbQK.sql(sql, "qkan_utils.check_flaechenbilanz (1)"):
         return False
 
     daten = dbQK.fetchone()
     if daten is not None:
         meldung(
-            u"Differenz in Flächenbilanz!",
+            "Differenz in Flächenbilanz!",
             u'Öffnen Sie den Layer "Prüfung Flächenbilanz"',
         )
 
-    sql = u"""SELECT * FROM v_tezg_check"""
+    sql = """SELECT * FROM v_tezg_check"""
 
-    if not dbQK.sql(sql, u"qkan_utils.check_flaechenbilanz (2)"):
+    if not dbQK.sql(sql, "qkan_utils.check_flaechenbilanz (2)"):
         return False
 
     daten = dbQK.fetchone()
     if daten is not None:
         meldung(
-            u"Differenz in Bilanz der Haltungsflächen!",
+            "Differenz in Bilanz der Haltungsflächen!",
             u'Öffnen Sie den Layer "Prüfung Haltungsflächenbilanz"',
         )
     return True
@@ -564,7 +564,7 @@ def evalNodeTypes(dbQK):
     """Schachttypen auswerten. Dies geschieht ausschließlich mit SQL-Abfragen"""
 
     # -- Anfangsschächte: Schächte ohne Haltung oben
-    sql_typAnf = u"""
+    sql_typAnf = """
         UPDATE schaechte SET knotentyp = 'Anfangsschacht' WHERE schaechte.schnam IN
         (SELECT t_sch.schnam
         FROM schaechte AS t_sch 
@@ -575,7 +575,7 @@ def evalNodeTypes(dbQK):
         WHERE t_hun.pk IS NULL)"""
 
     # -- Endschächte: Schächte ohne Haltung unten
-    sql_typEnd = u"""
+    sql_typEnd = """
         UPDATE schaechte SET knotentyp = 'Endschacht' WHERE schaechte.schnam IN
         (SELECT t_sch.schnam
         FROM schaechte AS t_sch 
@@ -586,7 +586,7 @@ def evalNodeTypes(dbQK):
         WHERE t_hun.pk IS NULL)"""
 
     # -- Hochpunkt:
-    sql_typHoch = u"""
+    sql_typHoch = """
         UPDATE schaechte SET knotentyp = 'Hochpunkt' WHERE schaechte.schnam IN
         ( SELECT t_sch.schnam
           FROM schaechte AS t_sch 
@@ -602,7 +602,7 @@ def evalNodeTypes(dbQK):
                 ifnull(t_hun.sohleoben,t_sch.sohlhoehe)>ifnull(t_hun.sohleunten,t_sun.sohlhoehe))"""
 
     # -- Tiefpunkt:
-    sql_typTief = u"""
+    sql_typTief = """
         UPDATE schaechte SET knotentyp = 'Tiefpunkt' WHERE schaechte.schnam IN
         ( SELECT t_sch.schnam
           FROM schaechte AS t_sch 
@@ -618,7 +618,7 @@ def evalNodeTypes(dbQK):
                 ifnull(t_hun.sohleoben,t_sch.sohlhoehe)<ifnull(t_hun.sohleunten,t_sun.sohlhoehe))"""
 
     # -- Verzweigung:
-    sql_typZweig = u"""
+    sql_typZweig = """
         UPDATE schaechte SET knotentyp = 'Verzweigung' WHERE schaechte.schnam IN
         ( SELECT t_sch.schnam
           FROM schaechte AS t_sch 
@@ -628,7 +628,7 @@ def evalNodeTypes(dbQK):
           HAVING count(*) > 1)"""
 
     # -- Einzelschacht:
-    sql_typEinzel = u"""
+    sql_typEinzel = """
         UPDATE schaechte SET knotentyp = 'Einzelschacht' WHERE schaechte.schnam IN
         ( SELECT t_sch.schnam 
           FROM schaechte AS t_sch 
@@ -638,22 +638,22 @@ def evalNodeTypes(dbQK):
           ON t_sch.schnam = t_hob.schunten
           WHERE t_hun.pk IS NULL AND t_hob.pk IS NULL)"""
 
-    if not dbQK.sql(sql_typAnf, u"importkanaldaten_he (39)"):
+    if not dbQK.sql(sql_typAnf, "importkanaldaten_he (39)"):
         return False
 
-    if not dbQK.sql(sql_typEnd, u"importkanaldaten_he (40)"):
+    if not dbQK.sql(sql_typEnd, "importkanaldaten_he (40)"):
         return False
 
-    if not dbQK.sql(sql_typHoch, u"importkanaldaten_he (41)"):
+    if not dbQK.sql(sql_typHoch, "importkanaldaten_he (41)"):
         return False
 
-    if not dbQK.sql(sql_typTief, u"importkanaldaten_he (42)"):
+    if not dbQK.sql(sql_typTief, "importkanaldaten_he (42)"):
         return False
 
-    if not dbQK.sql(sql_typZweig, u"importkanaldaten_he (43)"):
+    if not dbQK.sql(sql_typZweig, "importkanaldaten_he (43)"):
         return False
 
-    if not dbQK.sql(sql_typEinzel, u"importkanaldaten_he (44)"):
+    if not dbQK.sql(sql_typEinzel, "importkanaldaten_he (44)"):
         return False
 
     dbQK.commit()
@@ -677,7 +677,7 @@ def formf(zahl, anz):
         return " " * (anz - 1) + "0"
     elif zahl < 0:
         logger.error(
-            u"Fehler in k_qkkp.formf (2): Zahl ist negativ\nzahl = {}\nanz = {}\n".format(
+            "Fehler in k_qkkp.formf (2): Zahl ist negativ\nzahl = {}\nanz = {}\n".format(
                 zahl, anz
             )
         )
@@ -701,7 +701,7 @@ def formf(zahl, anz):
     else:
         if int(math.log10(round(zahl, 0))) + 1 > anz:
             logger.error(
-                u"Fehler in k_qkkp.formf (3): Zahl ist zu groß!\nzahl = {}\nanz = {}\n".format(
+                "Fehler in k_qkkp.formf (3): Zahl ist zu groß!\nzahl = {}\nanz = {}\n".format(
                     zahl, anz
                 )
             )
@@ -721,7 +721,7 @@ def formf(zahl, anz):
             fmt = "{0:" + "{:d}.{:d}f".format(anz, anz - 2 - nv) + "}"
         else:
             logger.error(
-                u"Fehler in k_qkkp.formf (2):\nzahl = {}\nanz = {}\n".format(zahl, anz)
+                "Fehler in k_qkkp.formf (2):\nzahl = {}\nanz = {}\n".format(zahl, anz)
             )
             return None
         erg = fmt.format(zahl)

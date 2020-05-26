@@ -43,3 +43,5 @@ sicher/
 
 #FreeFileSync
 sync.ffs_db
+
+.mypy_cache/

@@ -43,10 +43,10 @@ class Navigator:
         :return: Gibt ein Routen-Objekt zurück mit allen Haltungen und Schächten
         :rtype: list
         """
-        self.log.debug(u"Übergebene Schächte:\t{}".format(nodes))
+        self.log.debug("Übergebene Schächte:\t{}".format(nodes))
         endpoint = nodes[0]
         startpoint = nodes[0]
-        statement = u"""
+        statement = """
         SELECT sohlhoehe FROM schaechte WHERE schnam="{}"
         """
         self.db.sql(statement.format(nodes[0]))
@@ -61,8 +61,8 @@ class Navigator:
             elif value > max_value:
                 max_value = value
                 startpoint = n
-        self.log.info(u"Start- und Endpunkt wurden gesetzt")
-        self.log.debug(u"Startpunkt:\t{}\nEndpunkt:\t{}".format(startpoint, endpoint))
+        self.log.info("Start- und Endpunkt wurden gesetzt")
+        self.log.debug("Startpunkt:\t{}\nEndpunkt:\t{}".format(startpoint, endpoint))
         nodes.remove(startpoint)
         nodes.remove(endpoint)
         if len(nodes) == 0:

@@ -33,7 +33,7 @@ from qgis.utils import iface
 from qkan import enums
 from qkan.database.qkan_utils import sqlconditions
 
-logger = logging.getLogger(u"QKan.tools.k_runoffparams")
+logger = logging.getLogger("QKan.tools.k_runoffparams")
 
 progress_bar = None
 
@@ -83,17 +83,17 @@ def setRunoffparams(
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(
-        u"Info", u"Oberflächenabflussparameter werden berechnet... Bitte warten."
+        "Info", "Oberflächenabflussparameter werden berechnet... Bitte warten."
     )
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
-    # status_message.setText(u"Erzeugung von unbefestigten Flächen ist in Arbeit.")
+    # status_message.setText("Erzeugung von unbefestigten Flächen ist in Arbeit.")
     progress_bar.setValue(1)
 
     # Beide Funktionen werden in einer for-Schleife abgearbeitet
     funlis = getattr(runoffparamsfunctions, runoffparamstype_choice.value)
-    # logger.debug(u"\nfunlis:\n{}".format(funlis))
+    # logger.debug("\nfunlis:\n{}".format(funlis))
     kriterienlis = ["IS NULL", "IS NOT NULL"]
 
     # Auswahl der zu bearbeitenden Flächen
@@ -159,7 +159,7 @@ def setRunoffparams(
                 )""".format(
                 auswahl=auswahl, fun=fun, kriterium=kriterium
             )
-            if not dbQK.sql(sql, u"QKan.tools.setRunoffparams (1)"):
+            if not dbQK.sql(sql, "QKan.tools.setRunoffparams (1)"):
                 return False
 
     elif runoffmodeltype_choice == enums.RunOffModelType.SPEICHERKASKADE:
@@ -214,7 +214,7 @@ def setRunoffparams(
                 )""".format(
                 auswahl=auswahl, fun=fun, kriterium=kriterium
             )
-            if not dbQK.sql(sql, u"QKan.tools.setRunoffparams (2)"):
+            if not dbQK.sql(sql, "QKan.tools.setRunoffparams (2)"):
                 return False
 
         # Fließzeit Oberfläche
@@ -268,7 +268,7 @@ def setRunoffparams(
                 )""".format(
                 auswahl=auswahl, fun=fun, kriterium=kriterium
             )
-            if not dbQK.sql(sql, u"QKan.tools.setRunoffparams (3)"):
+            if not dbQK.sql(sql, "QKan.tools.setRunoffparams (3)"):
                 return False
 
     elif runoffmodeltype_choice == enums.RunOffModelType.SCHWERPUNKTLAUFZEIT:
@@ -322,10 +322,10 @@ def setRunoffparams(
                 )""".format(
                 auswahl=auswahl, fun=fun, kriterium=kriterium
             )
-            if not dbQK.sql(sql, u"QKan.tools.setRunoffparams (4)"):
+            if not dbQK.sql(sql, "QKan.tools.setRunoffparams (4)"):
                 return False
 
-    # status_message.setText(u"Erzeugung von unbefestigten Flächen")
+    # status_message.setText("Erzeugung von unbefestigten Flächen")
     progress_bar.setValue(90)
 
     dbQK.commit()
@@ -337,6 +337,6 @@ def setRunoffparams(
 
     progress_bar.setValue(100)
     status_message.setText(
-        u"Oberflächenabflussparameter sind berechnet und eingetragen!"
+        "Oberflächenabflussparameter sind berechnet und eingetragen!"
     )
     status_message.setLevel(Qgis.Success)

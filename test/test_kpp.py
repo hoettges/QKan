@@ -6,8 +6,8 @@ from qgis.testing import unittest
 
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
-from qkan.exportdyna.export_to_dyna import exportKanaldaten
-from qkan.importdyna.import_from_dyna import importKanaldaten
+from qkan.exportdyna.export_to_dyna import export_kanaldaten
+from qkan.importdyna.import_from_dyna import import_kanaldaten
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from qkan.tools.k_layersadapt import layersadapt
 
@@ -26,9 +26,9 @@ class TestKpp2QKan(QgisTest):
         dynafile = str(BASE_WORK / "Oleanderweg.ein")
         project_file = str(BASE_WORK / "plan.qgs")
 
-        erg = importKanaldaten(
+        erg = import_kanaldaten(
             dynafile=dynafile,
-            database_QKan=database_qkan,
+            database_qkan=database_qkan,
             projectfile=project_file,
             epsg=3044,
         )
@@ -77,11 +77,11 @@ class TestQKan2Kpp(QgisTest):
         if not db.connected:
             raise Exception("Datenbank nicht gefunden oder nicht aktuell.")
 
-        erg = exportKanaldaten(
+        erg = export_kanaldaten(
             self.iface,
             dynafile=dynafile,
             template_dyna=template_dyna,
-            dbQK=db,
+            db_qkan=db,
             dynabef_choice=enums.BefChoice.FLAECHEN,
             dynaprof_choice=enums.ProfChoice.PROFILNAME,
             liste_teilgebiete="[]",

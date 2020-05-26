@@ -59,7 +59,7 @@ def checkchars(text):
 class DBConnection:
     """SpatiaLite Datenbankobjekt"""
 
-    def __init__(self, dbname=None, tabObject=None, epsg=25832, qkanDBUpdate=False):
+    def __init__(self, dbname=None, tabObject=None, epsg: int=25832, qkanDBUpdate=False):
         """Constructor. Überprüfung, ob die QKan-Datenbank die aktuelle Version hat, mit dem Attribut isCurrentVersion. 
 
         :param dbname:      Pfad zur SpatiaLite-Datenbankdatei. Falls nicht vorhanden, 
@@ -71,7 +71,6 @@ class DBConnection:
         :type tabObject:    QgsVectorLayer
 
         :param epsg:        EPSG-Code aller Tabellen in einer neuen Datenbank
-        :type epsg:         string
 
         :qkanDBUpdate:      Bei veralteter Datenbankversion automatisch Update durchführen. Achtung:
                             Nach Durchführung muss k_layersadapt mindestens mit den Optionen 
@@ -100,7 +99,6 @@ class DBConnection:
         self.sqlcount = 0
 
         self.actversion = dbVersion()
-        self.templatepath = os.path.join(pluginDirectory("qkan"), "templates")
 
         # QKan-Datenbank ist auf dem aktuellen Stand.
         self.isCurrentVersion = True
@@ -111,6 +109,8 @@ class DBConnection:
         # reload = True: Datenbank wurde aktualisiert und dabei sind gravierende Änderungen aufgetreten,
         # die ein Neuladen des Projektes erforderlich machen
         self.reload = False
+
+        self.versiondbQK = "unknown"
 
         if dbname is not None:
             # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
@@ -160,14 +160,14 @@ class DBConnection:
                     level=Qgis.Info,
                 )
 
-                datenbank_QKan_Template = os.path.join(self.templatepath, "qkan.sqlite")
+                datenbank_QKan_Template = os.path.join(QKan.template_dir, "qkan.sqlite")
                 try:
                     shutil.copyfile(datenbank_QKan_Template, dbname)
                 except BaseException as err:
                     fehlermeldung(
                         "Fehler in dbfunc.DBConnection:\n{}\n".format(err),
                         "Kopieren von: {}\nnach: {}\n nicht möglich".format(
-                            self.templatepath, dbname
+                            QKan.template_dir, dbname
                         ),
                     )
                     self.connected = False  # Verbindungsstatus zur Kontrolle

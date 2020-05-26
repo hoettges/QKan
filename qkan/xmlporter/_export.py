@@ -187,7 +187,7 @@ class ExportTask:
         WHERE schaechte.schachttyp = 'Auslass'
         """
 
-        if not self.db_qkan.sql(sql, u"dbQK: export_auslaesse"):
+        if not self.db_qkan.sql(sql, u"db_qkan: export_auslaesse"):
             return False
 
         fortschritt("Export Auslässe...", 0.20)
