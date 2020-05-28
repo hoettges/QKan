@@ -3,12 +3,10 @@
 LinkFlaechenToHaltungDialog
 Verknüpft Flächen mit nächster Haltung
 """
-import datetime
 import logging
 import os
 import site
 import subprocess
-import tempfile
 import typing
 import webbrowser
 from pathlib import Path
@@ -26,7 +24,7 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QRadioButton,
 )
-from qgis._gui import QgsProjectionSelectionWidget
+from qgis.gui import QgsProjectionSelectionWidget
 
 from qkan import QKan, list_selected_items
 from qkan.database.qkan_utils import meldung, sqlconditions
@@ -507,7 +505,9 @@ class RunoffParamsDialog(QDialog, FORM_CLASS_runoffparams):
 
         sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
 
-        if not self.plugin.db_qkan.sql(sql, "QKan_Tools.application.dlgro_countselection (1)"):
+        if not self.plugin.db_qkan.sql(
+            sql, "QKan_Tools.application.dlgro_countselection (1)"
+        ):
             return False
         daten = self.plugin.db_qkan.fetchone()
         if not (daten is None):

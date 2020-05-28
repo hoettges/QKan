@@ -20,15 +20,12 @@ from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface
 
-from database.dbfunc import DBConnection
+from qkan.database.dbfunc import DBConnection
 from qkan import enums
 from qkan.database.qkan_utils import check_flaechenbilanz, checknames, fehlermeldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 logger = logging.getLogger("QKan.linkflaechen.k_link")
-
-progress_bar = None
-
 
 # ------------------------------------------------------------------------------
 # Erzeugung der graphischen Verknüpfungen für Flächen
@@ -91,7 +88,6 @@ def createlinkfl(
     """
 
     # Statusmeldung in der Anzeige
-    # global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(
@@ -466,7 +462,6 @@ def createlinksw(
     # (für POINT gibt es keinen MBR?)
 
     # Statusmeldung in der Anzeige
-    global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(
@@ -631,7 +626,6 @@ def assigntgeb(
     """
 
     # Statusmeldung in der Anzeige
-    global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(
@@ -769,7 +763,6 @@ def reload_group(iface: QgisInterface, db_qkan: DBConnection, gruppenname: str):
     """
 
     # Statusmeldung in der Anzeige
-    global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(
@@ -833,7 +826,6 @@ def store_group(
     """
 
     # Statusmeldung in der Anzeige
-    global progress_bar
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(

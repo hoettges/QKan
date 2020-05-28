@@ -167,6 +167,7 @@ class ImportFromSWMM:
         self.dlg.tf_qkanDB.setText(QKan.config.database.qkan)
         self.dlg.tf_SWMMFile.setText(QKan.config.dyna.file)
 
+        # noinspection PyCallByClass
         self.dlg.qsw_epsg.setCrs(
             QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg)
         )

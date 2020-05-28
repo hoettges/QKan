@@ -196,6 +196,7 @@ class QKanTools:
         # self.dlgop.rb_postgis.setChecked(True)
 
         epsg = QKan.config.epsg
+        # noinspection PyCallByClass
         self.dlgop.qsw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(epsg))
 
         self.dlgop.tf_logeditor.setText(QKan.config.tools.logeditor)

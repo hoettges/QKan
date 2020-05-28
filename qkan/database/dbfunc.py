@@ -1,34 +1,21 @@
 # -*- coding: utf-8 -*-
 
 """
+Datenbankmanagement
 
-  Datenbankmanagement
-  ===================
-
-  Definition einer Klasse mit Methoden fuer den Zugriff auf
-  eine SpatiaLite-Datenbank.
-
-  | Dateiname            : dbfunc.py
-  | Date                 : September 2016
-  | Copyright            : (C) 2016 by Joerg Hoettges
-  | Email                : hoettges@fh-aachen.de
-
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
-
+Definition einer Klasse mit Methoden fuer den Zugriff auf
+eine SpatiaLite-Datenbank.
 """
 import datetime
 import logging
 import os
 import shutil
 
-from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.utils import pluginDirectory, spatialite_connect
-from qkan import QKan
+from qgis.core import Qgis
+from qgis.utils import spatialite_connect
 
+from qkan import QKan
 from .qkan_database import createdbtables, dbVersion, versionolder
 from .qkan_utils import fehlermeldung, meldung
 

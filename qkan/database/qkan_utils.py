@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import math
 import typing
 
 from qgis.core import Qgis, QgsMessageLog, QgsProject
 from qgis.utils import iface
-from qkan import QKan, enums
-import math
+
+from qkan import QKan
+
+if typing.TYPE_CHECKING:
+    from .fbfunc import FBConnection
+    from .dbfunc import DBConnection
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger("QKan.database.qkan_utils")
@@ -276,7 +281,7 @@ def get_editable_layers():
             for le in lay.source().split(" "):
                 if "=" in le:
                     key, value = le.split("=", 1)
-                    lyattr[key] = value.strip(u'"').strip("'")
+                    lyattr[key] = value.strip('"').strip("'")
 
             # Falls Abschnitte 'table' und 'dbname' existieren, handelt es sich um einen Datenbank-Layer
             if "table" in lyattr and "dbname" in lyattr:
@@ -285,67 +290,59 @@ def get_editable_layers():
     return elayers
 
 
-def checknames(dbQK, tab, attr, prefix, autokorrektur):
-    """Prüft, ob in der Tabelle {tab} im Attribut {attr} eindeutige Namen enthalten sind. 
+def checknames(
+    db_qkan: "DBConnection", tab: str, attr: str, prefix: str, autokorrektur: bool
+) -> bool:
+    """Prüft, ob in der Tabelle {tab} im Attribut {attr} eindeutige Namen enthalten sind.
     Falls nicht, werden Namen vergeben, die sich aus {prefix} und ROWID zusammensetzen
 
-    :dbQK:              Typ der Datenbank (spatialite, postgis)
-    :type dbQK:         Class DBConnection
-    
-    :tab:               Name der Tabelle
-    :type tab:          String
-    
-    :attr:              Name des Attributs, das die eindeutige Bezeichnung enthalten soll
-    :type attr:         String
-    
-    :prefix:            Kürzel, das bei fehlenden oder nicht eindeutigen Bezeichnungen vor 
-                        die ROWID gesetzt wird
-    :type prefix:       String
-    
-    :autokorrektur:     Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
-                        werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
-                        abgebrochen.
-    :type autokorrektur:   String
-    
-    :returns:           Ergebnis der Prüfung bzw. Korrektur
-    :type returns:      Boolean
+    :param db_qkan:         Typ der Datenbank (spatialite, postgis)
+    :param tab:             Name der Tabelle
+    :param attr:            Name des Attributs, das die eindeutige Bezeichnung enthalten soll
+    :param prefix:          Kürzel, das bei fehlenden oder nicht eindeutigen Bezeichnungen vor
+                            die ROWID gesetzt wird
+    :param autokorrektur:   Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
+                            werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
+                            abgebrochen.
+
+    :returns:               Ergebnis der Prüfung bzw. Korrektur
     """
 
     # ----------------------------------------------------------------------------------------------------------------
     # Prüfung, ob Objektnamen leer oder NULL sind:
 
-    sql = """SELECT {attr}
-            FROM {tab}
-            WHERE {attr} IS NULL or trim({attr}) = ''""".format(
-        tab=tab, attr=attr
-    )
+    sql = f"""
+    SELECT {attr}
+    FROM {tab}
+    WHERE {attr} IS NULL or trim({attr}) = ''
+    """
 
-    if not dbQK.sql(sql, "QKan.qgis_utils.checknames (1)"):
+    if not db_qkan.sql(sql, "QKan.qgis_utils.checknames (1)"):
         return False
 
-    daten = dbQK.fetchall()
+    daten = db_qkan.fetchall()
 
     if len(daten) > 0:
         if autokorrektur:
             meldung(
                 "Automatische Korrektur von Daten: ",
-                u'In der Tabelle "{tab}" wurden leere Namen im Feld "{attr}" aufgefüllt'.format(
+                'In der Tabelle "{tab}" wurden leere Namen im Feld "{attr}" aufgefüllt'.format(
                     tab=tab, attr=attr
                 ),
             )
 
-            sql = """UPDATE {tab}
+            sql = f"""
+                UPDATE {tab}
                 SET {attr} = printf('{prefix}%d', ROWID)
-                WHERE {attr} IS NULL or trim({attr}) = ''""".format(
-                tab=tab, attr=attr, prefix=prefix
-            )
+                WHERE {attr} IS NULL or trim({attr}) = ''
+            """
 
-            if not dbQK.sql(sql, "QKan.qgis_utils.checknames (2)"):
+            if not db_qkan.sql(sql, "QKan.qgis_utils.checknames (2)"):
                 return False
         else:
             fehlermeldung(
                 "Datenfehler",
-                u'In der Tabelle "{tab}" gibt es leere Namen im Feld "{attr}". Abbruch!'.format(
+                'In der Tabelle "{tab}" gibt es leere Namen im Feld "{attr}". Abbruch!'.format(
                     tab=tab, attr=attr
                 ),
             )
@@ -354,43 +351,45 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur):
     # ----------------------------------------------------------------------------------------------------------------
     # Prüfung, ob Objektnamen mehrfach vergeben sind.
 
-    sql = """SELECT {attr}, count(*) AS anzahl
-            FROM {tab}
-            GROUP BY {attr}
-            HAVING anzahl > 1 OR {attr} IS NULL""".format(
-        tab=tab, attr=attr
-    )
-    if not dbQK.sql(sql, "QKan.qgis_utils.checknames (3)"):
+    sql = f"""
+        SELECT {attr}, count(*) AS anzahl
+        FROM {tab}
+        GROUP BY {attr}
+        HAVING anzahl > 1 OR {attr} IS NULL
+    """
+    if not db_qkan.sql(sql, "QKan.qgis_utils.checknames (3)"):
         return False
 
-    daten = dbQK.fetchall()
+    daten = db_qkan.fetchall()
 
     if len(daten) > 0:
         if autokorrektur:
             meldung(
                 "Automatische Korrektur von Daten: ",
-                u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}"'.format(
+                'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}"'.format(
                     tab=tab, attr=attr
                 ),
             )
 
-            sql = """WITH doppelte AS
-                (   SELECT {attr}, count(*) AS anzahl
+            sql = f"""
+            WITH doppelte AS
+                (
+                    SELECT {attr}, count(*) AS anzahl
                     FROM {tab}
                     GROUP BY {attr}
-                    HAVING anzahl > 1 OR {attr} IS NULL)
-                UPDATE {tab}
-                SET {attr} = printf('{prefix}%d', ROWID)
-                WHERE {attr} IN (SELECT {attr} FROM doppelte)""".format(
-                tab=tab, attr=attr, prefix=prefix
-            )
+                    HAVING anzahl > 1 OR {attr} IS NULL
+                )
+            UPDATE {tab}
+            SET {attr} = printf('{prefix}%d', ROWID)
+            WHERE {attr} IN (SELECT {attr} FROM doppelte)
+            """
 
-            if not dbQK.sql(sql, "QKan.qgis_utils.checknames (4)"):
+            if not db_qkan.sql(sql, "QKan.qgis_utils.checknames (4)"):
                 return False
         else:
             fehlermeldung(
                 "Datenfehler",
-                u'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}". Abbruch!'.format(
+                'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}". Abbruch!'.format(
                     tab=tab, attr=attr
                 ),
             )
@@ -400,26 +399,22 @@ def checknames(dbQK, tab, attr, prefix, autokorrektur):
 
 
 def checkgeom(
-    dbQK, tab, attrgeo, autokorrektur, liste_teilgebiete=[]
-):
-    """Prüft, ob in der Tabelle {tab} im Attribut {attrgeo} ein Geoobjekt vorhanden ist. 
+    db_qkan: "DBConnection",
+    tab: str,
+    attrgeo: str,
+    autokorrektur: bool,
+    liste_teilgebiete: typing.List[str],
+) -> bool:
+    """
+    Prüft, ob in der Tabelle {tab} im Attribut {attrgeo} ein Geoobjekt vorhanden ist.
 
-    :dbQK:              Typ der Datenbank (spatialite, postgis)
-    :type dbQK:         Class DBConnection
-    
-    :tab:               Name der Tabelle
-    :type tab:          String
-    
-    :attrgeo:           Name des Geo-Attributs, das auf Existenz geprüft werden soll
-    :type attr:         String
-
-    :autokorrektur:        Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
-                        werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
-                        abgebrochen.
-    :type autokorrektur:   String
-    
-    :returns:           Ergebnis der Prüfung bzw. Korrektur
-    :type returns:      Boolean
+    :param db_qkan:         Typ der Datenbank (spatialite, postgis)
+    :param tab:             Name der Tabelle
+    :param attrgeo:         Name des Geo-Attributs, das auf Existenz geprüft werden soll
+    :param  autokorrektur:  Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
+                            werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
+                            abgebrochen.
+    :param liste_teilgebiete:
     """
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -433,38 +428,38 @@ def checkgeom(
     else:
         auswahl = ""
 
-    sql = """SELECT count(*) AS anzahl
-            FROM {tab}
-            WHERE {tab}.{attrgeo} IS NULL{auswahl}""".format(
-        tab=tab, attrgeo=attrgeo, auswahl=auswahl
-    )
-    if not dbQK.sql(sql, "QKan.qgis_utils.checkgeom (1)"):
+    sql = f"""
+        SELECT count(*) AS anzahl
+        FROM {tab}
+        WHERE {tab}.{attrgeo} IS NULL{auswahl}
+    """
+    if not db_qkan.sql(sql, "QKan.qgis_utils.checkgeom (1)"):
         return False
 
-    daten = dbQK.fetchone()
+    daten = db_qkan.fetchone()
 
     if daten[0] > 0:
         if autokorrektur:
             meldung(
                 "Automatische Korrektur von Daten: ",
                 (
-                    u'In der Tabelle "{tab}" wurden leere Geo-Objekte gefunden. '
+                    'In der Tabelle "{tab}" wurden leere Geo-Objekte gefunden. '
                     "Diese Datensätze wurden gelöscht"
                 ).format(tab=tab, attrgeo=attrgeo),
             )
 
-            sql = """DELETE
+            sql = f"""
+                DELETE
                 FROM {tab}
-                WHERE {attrgeo} IS NULL{auswahl}""".format(
-                tab=tab, attrgeo=attrgeo, auswahl=auswahl
-            )
+                WHERE {attrgeo} IS NULL {auswahl}
+                """
 
-            if not dbQK.sql(sql, "QKan.qgis_utils.checkgeom (2)"):
+            if not db_qkan.sql(sql, "QKan.qgis_utils.checkgeom (2)"):
                 return False
         else:
             fehlermeldung(
                 "Datenfehler",
-                u'In der Tabelle "{tab}" gibt es leere Geoobjekte. Abbruch!'.format(
+                'In der Tabelle "{tab}" gibt es leere Geoobjekte. Abbruch!'.format(
                     tab=tab, attrgeo=attrgeo
                 ),
             )
@@ -473,22 +468,20 @@ def checkgeom(
     return True
 
 
-def sqlconditions(keyword: str, attrlis: typing.List[str], valuelis2: typing.List[typing.List[str]]):
-    """stellt Attribut- und Wertelisten zu einem SQL-String zusammen.
-    
-    :keywort:       logischer Operator, mit dem der SQL-Text an den vorhandenen
-                    SQL-Text angehängt werden soll
-    :type keyword:  string
+def sqlconditions(
+    keyword: str, attrlis: typing.List[str], valuelis2: typing.List[typing.List[str]]
+):
+    """
+    Stellt Attribut- und Wertelisten zu einem SQL-String zusammen.
 
-    :attrlis:       Liste von Attribunten, ggfs. mit Tabellennamen. Anzahl muss mit 
-                    valuelis2 korrespondieren
-    :type attrlis:  list of strings
+    :param keyword:     logischer Operator, mit dem der SQL-Text an den vorhandenen
+                        SQL-Text angehängt werden soll
+    :param attrlis:     Liste von Attribunten, ggfs. mit Tabellennamen. Anzahl muss mit
+                        valuelis2 korrespondieren
+    :param valuelis2:   Liste aus Listen mit Werten. Anzahl muss mit attrlis korrespondieren
 
-    :valuelis2:     Liste aus Listen mit Werten. Anzahl muss mit attrlis korrespondieren
-    :type valuelis2:list of lists
+    :returns:           Anhang zu einem SQL-Statement mit führendem Leerzeichen
 
-    :returns:       Anhang zu einem SQL-Statement mit führendem Leerzeichen
-    
     Example: sqlconditions('WHERE', ('flaechen.teilgebiet', 'flaechen.abflussparameter'),
                                     (liste_teilegebiete, liste_abflussparamerer))
     """
@@ -513,9 +506,7 @@ def sqlconditions(keyword: str, attrlis: typing.List[str], valuelis2: typing.Lis
     for attr, valuelis in zip(attrlis, valuelis2):
         if len(valuelis) != 0:
             condlis.append(
-                "{attr} in ('{values}')".format(
-                    attr=attr, values="', '".join(valuelis)
-                )
+                "{attr} in ('{values}')".format(attr=attr, values="', '".join(valuelis))
             )
     if len(condlis) != 0:
         auswahl = " {keyword} {conds}".format(
@@ -527,35 +518,35 @@ def sqlconditions(keyword: str, attrlis: typing.List[str], valuelis2: typing.Lis
     return auswahl
 
 
-def check_flaechenbilanz(dbQK):
-    """stellt Attribut- und Wertelisten zu einem SQL-String zusammen.
+def check_flaechenbilanz(db_qkan: "FBConnection"):
+    """
+    Stellt Attribut- und Wertelisten zu einem SQL-String zusammen.
 
-    :dbQK:              Typ der Datenbank (spatialite, postgis)
-    :type dbQK:         Class FBConnection
+    :param db_qkan:     Typ der Datenbank (spatialite, postgis)
     """
 
     sql = """SELECT * FROM v_flaechen_check"""
 
-    if not dbQK.sql(sql, "qkan_utils.check_flaechenbilanz (1)"):
+    if not db_qkan.sql(sql, "qkan_utils.check_flaechenbilanz (1)"):
         return False
 
-    daten = dbQK.fetchone()
+    daten = db_qkan.fetchone()
     if daten is not None:
         meldung(
             "Differenz in Flächenbilanz!",
-            u'Öffnen Sie den Layer "Prüfung Flächenbilanz"',
+            'Öffnen Sie den Layer "Prüfung Flächenbilanz"',
         )
 
     sql = """SELECT * FROM v_tezg_check"""
 
-    if not dbQK.sql(sql, "qkan_utils.check_flaechenbilanz (2)"):
+    if not db_qkan.sql(sql, "qkan_utils.check_flaechenbilanz (2)"):
         return False
 
-    daten = dbQK.fetchone()
+    daten = db_qkan.fetchone()
     if daten is not None:
         meldung(
             "Differenz in Bilanz der Haltungsflächen!",
-            u'Öffnen Sie den Layer "Prüfung Haltungsflächenbilanz"',
+            'Öffnen Sie den Layer "Prüfung Haltungsflächenbilanz"',
         )
     return True
 
@@ -661,6 +652,7 @@ def evalNodeTypes(dbQK):
 
 # Funktionen zur formatierten Ein- und Ausgabe von Fließkommazahlen
 
+
 def formf(zahl, anz):
     """Formatiert eine Fließkommazahl so, dass sie in einer vorgegebenen Anzahl von Zeichen
        mit maximaler Genauigkeit dargestellt werden kann.
@@ -747,4 +739,3 @@ def fzahl(text, n=0.0, default=0.0):
             return None
     else:
         return float(zahl) / 10.0 ** n
-
