@@ -124,7 +124,7 @@ class QKanTools:
         self.dlgpr.cb_applyQKanTemplate.setChecked(self.apply_qkan_template)
 
         # Status initialisieren
-        self.dlgpr_applyQKanTemplate()
+        self.dlgpr.click_apply_template()
 
         # show the dialog
         self.dlgpr.show()
@@ -196,7 +196,7 @@ class QKanTools:
         # self.dlgop.rb_postgis.setChecked(True)
 
         epsg = QKan.config.epsg
-        # noinspection PyCallByClass
+        # noinspection PyCallByClass,PyArgumentList
         self.dlgop.qsw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(epsg))
 
         self.dlgop.tf_logeditor.setText(QKan.config.tools.logeditor)
@@ -254,27 +254,27 @@ class QKanTools:
         # Wenn dies nicht der Fall ist, wird die Quelldatenbank aus der
         # json-Datei übernommen.
 
-        database_QKan, epsg = get_database_QKan()
-        if not database_QKan:
+        database_qkan, epsg = get_database_QKan()
+        if not database_qkan:
             logger.error(
                 "tools.application: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
             return False
-        self.dlgro.tf_QKanDB.setText(database_QKan)
+        self.dlgro.tf_QKanDB.setText(database_qkan)
 
         manningrauheit_bef = QKan.config.tools.manningrauheit_bef
         manningrauheit_dur = QKan.config.tools.manningrauheit_dur
 
         # Datenbankverbindung für Abfragen
-        self.dbQK = DBConnection(
-            dbname=database_QKan
+        self.db_qkan = DBConnection(
+            dbname=database_qkan
         )  # Datenbankobjekt der QKan-Datenbank zum Lesen
 
-        if not self.dbQK.connected:
+        if not self.db_qkan.connected:
             fehlermeldung(
                 "Fehler in tools.application.runoffparams:\n",
                 "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_QKan
+                    database_qkan
                 ),
             )
             return None
@@ -286,8 +286,8 @@ class QKanTools:
                 WHERE teilgebiet IS NOT NULL AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
-        if not self.dbQK.sql(sql, "QKan_Tools.application.run (1) "):
-            del self.dbQK
+        if not self.db_qkan.sql(sql, "QKan_Tools.application.run (1) "):
+            del self.db_qkan
             return False
 
         # Check, ob alle Abflussparameter in Flächen auch in Tabelle "abflussparameter" enthalten
@@ -297,11 +297,11 @@ class QKanTools:
                 WHERE abflussparameter IS NOT NULL AND
                 abflussparameter NOT IN (SELECT apnam FROM abflussparameter)
                 GROUP BY abflussparameter"""
-        if not self.dbQK.sql(sql, "QKan_Tools.application.run (2) "):
-            del self.dbQK
+        if not self.db_qkan.sql(sql, "QKan_Tools.application.run (2) "):
+            del self.db_qkan
             return False
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
         # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
@@ -310,10 +310,10 @@ class QKanTools:
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = '''SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'''
-        if not self.dbQK.sql(sql, "QKan_Tools.application.run (4) "):
-            del self.dbQK
+        if not self.db_qkan.sql(sql, "QKan_Tools.application.run (4) "):
+            del self.db_qkan
             return False
-        daten = self.dbQK.fetchall()
+        daten = self.db_qkan.fetchall()
         self.dlgro.lw_teilgebiete.clear()
 
         for ielem, elem in enumerate(daten):
@@ -336,10 +336,10 @@ class QKanTools:
 
         # Abfragen der Tabelle abflussparameter nach Abflussparametern
         sql = '''SELECT "apnam" FROM "abflussparameter" GROUP BY "apnam"'''
-        if not self.dbQK.sql(sql, "QKan_Tools.application.run (4) "):
-            del self.dbQK
+        if not self.db_qkan.sql(sql, "QKan_Tools.application.run (4) "):
+            del self.db_qkan
             return False
-        daten = self.dbQK.fetchall()
+        daten = self.db_qkan.fetchall()
         self.dlgro.lw_abflussparameter.clear()
 
         for ielem, elem in enumerate(daten):
@@ -355,7 +355,7 @@ class QKanTools:
                 # if len(daten) == 1:
                 # self.dlgro.lw_abflussparameter.setCurrentRow(0)
 
-        self.dlgro_countselection()
+        self.dlgro.count_selection()
 
         # Funktionen zur Berechnung des Oberflächenabflusses
         # Werden nur gelesen
@@ -381,7 +381,7 @@ class QKanTools:
             self.dlgro.rb_schwerpunktlaufzeit.setChecked(True)
 
         # Status Radiobuttons initialisieren
-        self.dlgro_activateitwh()
+        self.dlgro.toggle_itwh()
         # Datenbanktyp
         datenbanktyp = QKan.config.database.type
 
@@ -402,7 +402,7 @@ class QKanTools:
             )
 
             # Eingaben aus Formular übernehmen
-            database_QKan: str = self.dlgro.tf_QKanDB.text()
+            database_qkan: str = self.dlgro.tf_QKanDB.text()
             if self.dlgro.rb_itwh.isChecked():
                 runoffparamstype_choice = enums.RunOffParamsType.ITWH
             elif self.dlgro.rb_dyna.isChecked():
@@ -429,7 +429,7 @@ class QKanTools:
             # Konfigurationsdaten schreiben
             QKan.config.selections.abflussparameter = liste_abflussparameter
             QKan.config.selections.teilgebiete = liste_teilgebiete
-            QKan.config.database.qkan = database_QKan
+            QKan.config.database.qkan = database_qkan
             QKan.config.tools.runoffmodeltype_choice = runoffmodeltype_choice
             QKan.config.tools.runoffparamstype_choice = runoffparamstype_choice
 
@@ -449,19 +449,20 @@ class QKanTools:
             )
 
             setRunoffparams(
-                self.dbQK,
+                self.db_qkan,
                 runoffparamstype_choice,
                 runoffmodeltype_choice,
                 runoffparamsfunctions,
                 liste_teilgebiete,
                 liste_abflussparameter,
             )
-        del self.dbQK
+        del self.db_qkan
 
     def run_layersadapt(self):
         """Anpassen oder Ergänzen von Layern entsprechend der QKan-Datenstrukturen"""
 
         # QKan-Projekt
+        # noinspection PyArgumentList
         project = QgsProject.instance()
 
         if project.count() == 0:
@@ -485,7 +486,7 @@ class QKanTools:
             self.default_dir = os.path.dirname(self.db_qkan)
         self.dlgla.tf_qkanDB.setText(self.db_qkan)
 
-        dbQK = DBConnection(
+        db_qkan = DBConnection(
             dbname=self.db_qkan, qkanDBUpdate=False
         )  # Datenbankobjekt der QKan-Datenbank
         # qkanDBUpdate: mit Update
@@ -493,17 +494,17 @@ class QKanTools:
         # Falls die Datenbank nicht aktuell ist (self.dbIsUptodate = False), werden alle Elemente im Formular
         # deaktiviert. Nur der Checkbutton zur Aktualisierung der Datenbank bleibt aktiv und es erscheint
         # eine Information.
-        self.dbIsUptodate = dbQK.isCurrentVersion
+        self.db_is_uptodate = db_qkan.isCurrentVersion
 
         # Datenbank wieder schließen.
-        del dbQK
+        del db_qkan
 
-        self.dlgla.gb_projectTemplate.setEnabled(self.dbIsUptodate)
-        self.dlgla.gb_LayersAdapt.setEnabled(self.dbIsUptodate)
-        self.dlgla.gb_selectLayers.setEnabled(self.dbIsUptodate)
-        self.dlgla.gb_setNodeTypes.setEnabled(self.dbIsUptodate)
-        self.dlgla.gb_updateQkanDB.setEnabled(not self.dbIsUptodate)
-        self.dlgla.cb_qkanDBUpdate.setChecked(not self.dbIsUptodate)
+        self.dlgla.gb_projectTemplate.setEnabled(self.db_is_uptodate)
+        self.dlgla.gb_LayersAdapt.setEnabled(self.db_is_uptodate)
+        self.dlgla.gb_selectLayers.setEnabled(self.db_is_uptodate)
+        self.dlgla.gb_setNodeTypes.setEnabled(self.db_is_uptodate)
+        self.dlgla.gb_updateQkanDB.setEnabled(not self.db_is_uptodate)
+        self.dlgla.cb_qkanDBUpdate.setChecked(not self.db_is_uptodate)
 
         # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen
         self.apply_qkan_template = QKan.config.tools.apply_qkan_template
@@ -570,9 +571,9 @@ class QKanTools:
         # self.qkanDBUpdate = True
 
         # Status initialisieren
-        self.dlgla_enableQkanDB()
-        self.dlgla_applyQKanTemplate()
-        self.dlgla_enableProjectTemplateGroup()
+        self.dlgla.click_enable_qkan_db()
+        self.dlgla.click_apply_template()
+        self.dlgla.enable_project_template_group()
 
         # -----------------------------------------------------------------------------------------------------
         # show the dialog
@@ -585,7 +586,7 @@ class QKanTools:
 
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
-            self.qkanDBUpdate: bool = self.dlgla.cb_qkanDBUpdate.isChecked()
+            self.qkan_db_update: bool = self.dlgla.cb_qkanDBUpdate.isChecked()
             # Achtung: Beeinflusst auch
             #  - adapt_table_lookups
             #  - adapt_selected
@@ -593,7 +594,7 @@ class QKanTools:
             self.db_qkan: str = self.dlgla.tf_qkanDB.text()
             adapt_db: bool = self.dlgla.cb_adaptDB.isChecked()
             adapt_table_lookups: bool = (
-                self.dlgla.cb_adaptTableLookups.isChecked() or self.qkanDBUpdate
+                self.dlgla.cb_adaptTableLookups.isChecked() or self.qkan_db_update
             )
             adapt_forms: bool = self.dlgla.cb_adaptForms.isChecked()
             adapt_kbs: bool = self.dlgla.cb_adaptKBS.isChecked()
@@ -607,7 +608,7 @@ class QKanTools:
 
             # Optionen zur Berücksichtigung der vorhandenen Tabellen
             fehlende_layer_ergaenzen: bool = self.dlgla.cb_completeLayers.isChecked()
-            if self.dlgla.rb_adaptAll.isChecked() or self.qkanDBUpdate:
+            if self.dlgla.rb_adaptAll.isChecked() or self.qkan_db_update:
                 adapt_selected = enums.SelectedLayers.ALL
             elif self.dlgla.rb_adaptSelected.isChecked():
                 adapt_selected = enums.SelectedLayers.SELECTED
@@ -621,7 +622,7 @@ class QKanTools:
             QKan.config.adapt.database = adapt_db
             QKan.config.adapt.forms = adapt_forms
             QKan.config.adapt.kbs = adapt_kbs
-            QKan.config.adapt.qkan_db_update = self.qkanDBUpdate
+            QKan.config.adapt.qkan_db_update = self.qkan_db_update
             QKan.config.adapt.selected_layers = adapt_selected
             QKan.config.adapt.table_lookups = adapt_table_lookups
             QKan.config.adapt.update_node_type = update_node_type
@@ -636,8 +637,8 @@ class QKanTools:
                 layersadapt(
                     "{self.db_qkan}",
                     "{self.projectTemplate}",
-                    {self.dbIsUptodate},
-                    {self.qkanDBUpdate},
+                    {self.db_is_uptodate},
+                    {self.qkan_db_update},
                     {adapt_db},
                     {adapt_table_lookups},
                     {adapt_forms},
@@ -652,8 +653,8 @@ class QKanTools:
             layersadapt(
                 self.db_qkan,
                 self.projectTemplate,
-                self.dbIsUptodate,
-                self.qkanDBUpdate,
+                self.db_is_uptodate,
+                self.qkan_db_update,
                 adapt_db,
                 adapt_table_lookups,
                 adapt_forms,
