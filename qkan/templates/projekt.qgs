@@ -7782,7 +7782,7 @@ def my_form_open(dialog, layer, feature):
       <editable/>
       <labelOnTop/>
       <widgets/>
-      <previewExpression>COALESCE( format('%1',"he_nr"), '&lt;NULL>' ) + ' - '+&#xd;&#xd;&#xd;&#xd;&#xd;
+      <previewExpression>COALESCE( format('%1',"he_nr"), '&lt;NULL>' ) + ' - ' +
  COALESCE( "profilnam", '&lt;NULL>' )</previewExpression>
       <mapTip></mapTip>
     </maplayer>
@@ -12654,7 +12654,34 @@ def my_form_open(dialog, layer, feature):
       <ProjectionsEnabled type="int">1</ProjectionsEnabled>
     </SpatialRefSys>
     <Macros>
-      <pythonCode type="QString"></pythonCode>
+      <pythonCode type="QString">def openProject():
+    """Check actual version of database and project file"""
+
+    from qgis.core import QgsProject
+    from qkan.database.dbfunc import DBConnection
+    from qkan.database.qkan_utils import get_database_QKan, warnung
+    import logging
+
+    logger = logging.getLogger("QKan.openProject")
+    lis = logger.handlers
+    print(f'Logger handlers: {lis}')
+
+    logger.debug('openProjekt started\n')
+
+    database_qkan, _ = get_database_QKan(silent=True)
+    db_qkan = DBConnection(dbname=database_qkan)
+    isActual = db_qkan.isCurrentVersion
+    if not isActual:
+        warnung(
+            'Versionskontrolle', 
+            'Die Datenbank muss aktualisiert werden!')
+
+def saveProject():
+    pass
+
+def closeProject():
+    pass
+      </pythonCode>
     </Macros>
     <WMSRootName type="QString"></WMSRootName>
     <WCSUrl type="QString"></WCSUrl>

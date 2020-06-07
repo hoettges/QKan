@@ -194,3 +194,5 @@ class ExportToKPDialog(QDialog, FORM_CLASS):
             self.lf_anzahl_haltungen.setText(str(daten[0]))
         else:
             self.lf_anzahl_haltungen.setText("0")
+
+        return True

@@ -125,7 +125,7 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>290</x>
       <y>80</y>
       <width>131</width>
       <height>21</height>
@@ -151,7 +151,7 @@
    <widget class="QLineEdit" name="tf_fangradius">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>300</x>
       <y>100</y>
       <width>61</width>
       <height>20</height>
@@ -164,10 +164,10 @@
      </font>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="lf_unit_fangradius">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>366</x>
       <y>100</y>
       <width>21</width>
       <height>21</height>
@@ -283,6 +283,25 @@
     </property>
     <property name="text">
      <string>Flächenobjekte bereinigen</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lf_warning">
+    <property name="geometry">
+     <rect>
+      <x>381</x>
+      <y>100</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Warnung</string>
     </property>
    </widget>
   </widget>

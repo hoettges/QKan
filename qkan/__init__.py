@@ -42,17 +42,17 @@ class QKan:
             datetime.datetime.today().strftime("%Y-%m-%d")
         )
         file_handler = logging.FileHandler(self.log_path)
-        stream_handler = logging.StreamHandler()
+        # stream_handler = logging.StreamHandler()
 
         file_handler.setFormatter(formatter)
-        stream_handler.setFormatter(formatter)
+        # stream_handler.setFormatter(formatter)
 
         file_handler.setLevel(logging.DEBUG)
-        stream_handler.setLevel(logging.DEBUG)
+        # stream_handler.setLevel(logging.DEBUG)
 
         self.logger.setLevel(logging.DEBUG)
         self.logger.addHandler(file_handler)
-        self.logger.addHandler(stream_handler)
+        # self.logger.addHandler(stream_handler)
 
         # Init config
         try:

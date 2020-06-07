@@ -416,6 +416,11 @@ def layersadapt(
     # if layerNotQkanMeldung:
     # meldung(u'Information zu den Layern', u'Es wurden Layer gefunden, die nicht zum QKan-Standard gehörten. Eine Liste steht in der LOG-Datei...')
 
+    # Projektmakros
+    rltext = 'properties/Macros/pythonCode'
+    macrotext = qgsxml.findtext(rltext)
+    project.writeEntry("Macros", "/pythonCode", macrotext)
+
     if aktualisieren_Schachttypen:
         # Schachttypen auswerten
         evalNodeTypes(dbQK)  # in qkan.database.qkan_utils

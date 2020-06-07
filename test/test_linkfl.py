@@ -53,7 +53,7 @@ class TestLinkfl(QgisTest):
 
         # Erzeugen der unbefestigten Flächen
         erg = create_unpaved_areas(
-            self.iface, db_qkan=db, liste_selAbflparamTeilgeb=[], autokorrektur=False
+            self.iface, db_qkan=db, selected_abflparam=[], autokorrektur=False
         )
 
         LOGGER.debug("erg (Validate_createUnbefFlaechen): %s", erg)

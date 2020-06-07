@@ -814,19 +814,19 @@ berücksichtigen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximaler Abstand vom Ende der Verbidnungslinie zur zugeordneten Haltung (für manuell erstellte Verbindungslinien)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximaler Abstand vom Ende der Verbidnungslinie zur zugeordneten Haltung (für manuell erstellte Verbindungslinien). Empfohlener Wert: 0.1&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Maximaler Abstand vom Ende der Verbidnungslinie zur zugeordneten Haltung (für manuell erstellte Verbindungslinien)</string>
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Maximaler Abstand vom Ende der Verbidnungslinie zur zugeordneten Haltung (für manuell erstellte Verbindungslinien). Empfohlener Wert: 0.1</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_10">
+   <widget class="QLabel" name="lf_unit_fangradius">
     <property name="geometry">
      <rect>
       <x>200</x>
       <y>110</y>
       <width>31</width>
-      <height>16</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -844,6 +844,28 @@ berücksichtigen</string>
     </property>
     <property name="text">
      <string>m</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lf_warning">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>219</x>
+      <y>110</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Warnung</string>
     </property>
    </widget>
   </widget>
