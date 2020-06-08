@@ -89,7 +89,7 @@
    <property name="title">
     <string>Anbindung an Haltungen</string>
    </property>
-   <widget class="QLabel" name="label_9">
+   <widget class="QLabel" name="lf_unit_fangradius">
     <property name="geometry">
      <rect>
       <x>285</x>
@@ -162,10 +162,10 @@
      </font>
     </property>
     <property name="toolTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximaler Abstand vom Ende der Anbindungslinie zur Haltung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximaler Abstand vom Ende der Verbidnungslinie zur zugeordneten Haltung (für manuell erstellte Verbindungslinien). Empfohlener Wert: 0.1&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Maximaler Abstand vom Ende der Anbindungslinie zur Haltung</string>
+     <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Maximaler Abstand vom Ende der Verbidnungslinie zur zugeordneten Haltung (für manuell erstellte Verbindungslinien). Empfohlener Wert: 0.1</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pb_fangradiusDefault">
@@ -299,6 +299,19 @@
     </property>
     <property name="statusTip">
      <string extracomment="Radius zur Berücksichtigung von Flächen um die Haltungen">Mindestgröße zur Berücksichtigung von Flächen</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lf_warning">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>10</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
     </property>
    </widget>
   </widget>

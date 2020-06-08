@@ -323,6 +323,7 @@ class QKanOptionsDialog(QDialog, FORM_CLASS_qkanoptions):
         self.pb_openOptionsfile.clicked.connect(self.click_open_settings)
         self.pb_selectLogeditor.clicked.connect(self.select_log_editor)
         # self.rb_itwh.toggled.connect(self.dlgro_activatedyna)
+        self.tf_fangradius.textChanged.connect(self.changed_tf_fangradius)
 
     def click_reset_fangradius(self):
         self.tf_fangradius.setText("0.1")
@@ -382,6 +383,23 @@ class QKanOptionsDialog(QDialog, FORM_CLASS_qkanoptions):
         if os.path.dirname(filename) == "":
             # Textfeld wieder deaktivieren
             self.tf_logeditor.setEnabled(False)
+
+    def changed_tf_fangradius(self):
+        """Gibt eine Warnung, falls Fangradius zu groß"""
+        try:
+            fangradius = float(self.tf_fangradius.text().replace(',', '.'))
+        except:
+            return
+        if fangradius > 0.5:
+            self.tf_fangradius.setStyleSheet("border: 2px solid red; color: red")
+            self.lf_warning.setText("Wert zu groß!")
+            self.lf_warning.setStyleSheet("color: red; font: bold;")
+            self.lf_unit_fangradius.setStyleSheet("color: red")
+        else:
+            self.tf_fangradius.setStyleSheet("border: 1px solid black;")
+            self.lf_warning.setText("")
+            self.lf_warning.setStyleSheet("color: black; font: bold;")
+            self.lf_unit_fangradius.setStyleSheet("color: black")
 
 
 class RunoffParamsDialog(QDialog, FORM_CLASS_runoffparams):

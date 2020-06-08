@@ -339,7 +339,6 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
         self.cb_selHalActive.stateChanged.connect(self.click_hal_selection)
         self.cb_selTgbActive.stateChanged.connect(self.click_tgb_selection)
         self.button_box.helpRequested.connect(click_help_sw)
-        self.tf_fangradius.textChanged.connect(self.changed_tf_fangradius)
 
     def click_lw_hal_entw(self):
         """Reaktion auf Klick in Tabelle"""
@@ -386,23 +385,6 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
 
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
-
-    def changed_tf_fangradius(self):
-        """Gibt eine Warnung, falls Fangradius zu groß"""
-        try:
-            fangradius = float(self.tf_fangradius.text().replace(',', '.'))
-        except:
-            return
-        if fangradius > 0.5:
-            self.tf_fangradius.setStyleSheet("border: 2px solid red; color: red")
-            self.lf_warning.setText("Wert zu groß!")
-            self.lf_warning.setStyleSheet("color: red; font: bold;")
-            self.lf_unit_fangradius.setStyleSheet("color: red")
-        else:
-            self.tf_fangradius.setStyleSheet("border: 1px solid black;")
-            self.lf_warning.setText("")
-            self.lf_warning.setStyleSheet("color: black; font: bold;")
-            self.lf_unit_fangradius.setStyleSheet("color: black")
 
     def count_selection(self):
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
@@ -474,6 +456,25 @@ class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
+
+        self.tf_fangradius.textChanged.connect(self.changed_tf_fangradius)
+
+    def changed_tf_fangradius(self):
+        """Gibt eine Warnung, falls Fangradius zu groß"""
+        try:
+            fangradius = float(self.tf_fangradius.text().replace(',', '.'))
+        except:
+            return
+        if fangradius > 0.5:
+            self.tf_fangradius.setStyleSheet("border: 2px solid red; color: red")
+            self.lf_warning.setText("Wert zu groß!")
+            self.lf_warning.setStyleSheet("color: red; font: bold;")
+            self.lf_unit_fangradius.setStyleSheet("color: red")
+        else:
+            self.tf_fangradius.setStyleSheet("border: 1px solid black;")
+            self.lf_warning.setText("")
+            self.lf_warning.setStyleSheet("color: black; font: bold;")
+            self.lf_unit_fangradius.setStyleSheet("color: black")
 
 
 class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):
