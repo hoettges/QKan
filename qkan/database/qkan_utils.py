@@ -189,9 +189,6 @@ def get_qkanlayerAttributes(source):
     posGeomEnd = source.find(") ", posGeomStart + 2)
     posSql = source.find(" sql=", posGeomEnd + 1)
 
-    if posSql < 0:
-        return "", "", "", ""
-
     dbname = source[posDbname + 8 : posTable - 1].strip()
 
     if posGeomStart < 0 or posGeomStart > posSql:

@@ -150,7 +150,25 @@ class DBConnection:
                 datenbank_QKan_Template = os.path.join(QKan.template_dir, "qkan.sqlite")
                 try:
                     shutil.copyfile(datenbank_QKan_Template, dbname)
+
+                    self.consl = spatialite_connect(database=dbname)
+                    self.cursl = self.consl.cursor()
+
+                    # sql = 'SELECT InitSpatialMetadata()'
+                    # self.cursl.execute(sql)
+
+                    QKan.instance.iface.messageBar().pushMessage(
+                        "Information", "SpatiaLite-Datenbank ist erstellt!", level=Qgis.Info
+                    )
+                    if not createdbtables(
+                        self.consl, self.cursl, self.actversion, self.epsg
+                    ):
+                        fehlermeldung(
+                            "Fehler",
+                            "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
+                    )
                 except BaseException as err:
+                    logger.debug(f'Datenbank ist nicht vorhanden: {dbname}')
                     fehlermeldung(
                         "Fehler in dbfunc.DBConnection:\n{}\n".format(err),
                         "Kopieren von: {}\nnach: {}\n nicht möglich".format(
@@ -159,23 +177,6 @@ class DBConnection:
                     )
                     self.connected = False  # Verbindungsstatus zur Kontrolle
                     self.consl = None
-
-                self.consl = spatialite_connect(database=dbname)
-                self.cursl = self.consl.cursor()
-
-                # sql = 'SELECT InitSpatialMetadata()'
-                # self.cursl.execute(sql)
-
-                QKan.instance.iface.messageBar().pushMessage(
-                    "Information", "SpatiaLite-Datenbank ist erstellt!", level=Qgis.Info
-                )
-                if not createdbtables(
-                    self.consl, self.cursl, self.actversion, self.epsg
-                ):
-                    fehlermeldung(
-                        "Fehler",
-                        "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
-                    )
         elif tabObject is not None:
             tabconnect = tabObject.publicSource()
             t_db, t_tab, t_geo, t_sql = tuple(tabconnect.split())
@@ -2356,6 +2357,88 @@ class DBConnection:
                 # Versionsnummer hochsetzen
 
                 self.versionlis = [3, 1, 3]
+
+            # ------------------------------------------------------------------------------------
+            if versionolder(self.versionlis, [3, 1, 4]):
+
+                # Trigger zur Erstellung der Geoobjekte
+
+                sql = """-- Haltungsgeoobjekt anlegen beim Einfügen neuer Datensätze aus Schachtobjekten
+                    CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_haltungen
+                        AFTER INSERT ON haltungen FOR EACH ROW
+                    WHEN
+                        new.geom IS NULL
+                    BEGIN
+                        UPDATE haltungen SET geom =
+                        (   SELECT MakeLine(schob.geop, schun.geop)
+                            FROM schaechte AS schob, 
+                                 schaechte AS schun
+                            WHERE schob.schnam = new.schoben AND
+                                  schun.schnam = new.schunten)
+                        WHERE haltungen.pk = new.pk;
+                    END;"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.4-1)"):
+                    return False
+                self.commit()
+
+                sql = f"""-- Schachtgeoobjekt anlegen beim Einfügen neuer Datensätze
+                    CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_schaechte 
+                       AFTER INSERT ON schaechte FOR EACH ROW
+                    WHEN
+                        new.geom IS NULL AND
+                        new.geop IS NULL
+                    BEGIN
+                        UPDATE schaechte SET geop = 
+                            MakePoint(new.xsch, new.ysch, {self.epsg})
+                        WHERE schaechte.pk = new.pk;
+                        UPDATE schaechte SET geom = 
+                            CastToMultiPolygon(MakePolygon(MakeCircle(new.xsch, new.ysch, 
+                                coalesce(new.durchm / 1000, 1), {self.epsg})))
+                        WHERE schaechte.pk = new.pk;
+                    END;"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.4-2)"):
+                    return False
+                self.commit()
+
+                sql = """-- Pumpengeoobjekt anlegen beim Einfügen neuer Datensätze aus Schachtobjekten
+                    CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_pumpen
+                        AFTER INSERT ON pumpen FOR EACH ROW
+                    WHEN
+                        new.geom IS NULL
+                    BEGIN
+                        UPDATE pumpen SET geom =
+                        (   SELECT MakeLine(schob.geop, schun.geop)
+                            FROM schaechte AS schob, 
+                                 schaechte AS schun
+                            WHERE schob.schnam = new.schoben AND
+                                  schun.schnam = new.schunten)
+                        WHERE pumpen.pk = new.pk;
+                    END;"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.4-3)"):
+                    return False
+                self.commit()
+
+                sql = """-- Wehrgeoobjekt anlegen beim Einfügen neuer Datensätze aus Schachtobjekten
+                    CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_wehre
+                        AFTER INSERT ON wehre FOR EACH ROW
+                    WHEN
+                        new.geom IS NULL
+                    BEGIN
+                        UPDATE wehre SET geom =
+                        (   SELECT MakeLine(schob.geop, schun.geop)
+                            FROM schaechte AS schob, 
+                                 schaechte AS schun
+                            WHERE schob.schnam = new.schoben AND
+                                  schun.schnam = new.schunten)
+                        WHERE wehre.pk = new.pk;
+                    END;"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.4-4)"):
+                    return False
+                self.commit()
+
+                # Versionsnummer hochsetzen
+
+                self.versionlis = [3, 1, 4]
 
             # ------------------------------------------------------------------------------------
             # Aktuelle Version in Tabelle "info" schreiben
