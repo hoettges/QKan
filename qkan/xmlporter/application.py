@@ -180,6 +180,9 @@ class XmlPorter:
                     imp = ImportTask(db_qkan, import_file)
                     imp.run()
 
+                    del db_qkan
+                    logger.debug("Closed DB")
+
                     # TODO: Replace with QKan.config.project.template?
                     template_project = (
                         Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"

@@ -11,44 +11,58 @@ from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fortschritt
 
-logger = logging.getLogger("QKan.xml.export")
-
-
-def _create_children(parent: Element, names: typing.List[str]):
-    for child in names:
-        SubElement(parent, child)
-
-
-def _create_children_text(
-    parent: Element, children: typing.Dict[str, typing.Union[str, int]]
-):
-    for name, text in children.items():
-        if text is None:
-            SubElement(parent, name)
-        else:
-            SubElementText(parent, name, str(text))
-
-
-# noinspection PyPep8Naming
-def SubElementText(parent: Element, name: str, text: typing.Union[str, int]):
-    s = SubElement(parent, name)
-    if text is not None:
-        s.text = str(text)
-    return s
-
+logger = logging.getLogger("QKan.he8.export")
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ExportTask:
-    def __init__(self, db_qkan: DBConnection, export_file: str):
+    def __init__(self,
+        database_he: str,
+        dbtemplate_he: str,
+        db_qkan: DBConnection,
+        liste_teilgebiete: typing.List[str],
+        autokorrektur: bool,
+        fangradius: float = 0.1,
+        mindestflaeche: float = 0.5,
+        mit_verschneidung: bool = True,
+        export_flaechen_he8: bool = True,
+        check_export: dict = {},
+    ):
+        """
+        Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE8-SQLite-Datenbank.
+
+        :param database_he:         Pfad zur HE8-SQLite-Datenbank
+        :param dbtemplate_he:       Vorlage für die zu erstellende HE8-SQLite-Datenbank
+        :param db_qkan:                Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+        :param liste_teilgebiete:   Liste der ausgewählten Teilgebiete
+        :param autokorrektur:       Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
+                                    werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
+                                    abgebrochen.
+        :param fangradius:          Suchradius, mit dem an den Enden der Verknüpfungen (linkfl, linksw) eine
+                                    Haltung bzw. ein Einleitpunkt zugeordnet wird.
+        :param mindestflaeche:      Mindestflächengröße bei Einzelflächen und Teilflächenstücken
+        :param mit_verschneidung:   Flächen werden mit Haltungsflächen verschnitten (abhängig von Attribut "aufteilen")
+        :param export_flaechen_he8:
+        :param check_export:        Liste von Export-Optionen
+        """
+
+        self.database_he = database_he
+        self.dbtemplate_he = dbtemplate_he
         self.db_qkan = db_qkan
-        self.export_file = export_file
+        self.liste_teilgebiete = liste_teilgebiete
+        self.autokorrektur = autokorrektur
+        self.fangradius = fangradius
+        self.mindestflaeche = mindestflaeche
+        self.mit_verschneidung = mit_verschneidung
+        self.export_flaechen_he8 = export_flaechen_he8
+        self.check_export = check_export
 
-        # XML base
-        self.stamm = None
-        self.hydraulik_objekte = None
-
-        # Mappings
-        self.mapper_simstatus: typing.Dict[int, str] = {}
+        if os.path.exists(database_he):
+            try:
+                shutil.copyfile(dbtemplate_he, database_he)
+            except BaseException as err:
+                fehlermeldung("Fehler in Export nach HE8",
+                              "Fehler beim Kopieren der Vorlage: \n   {self.dbtemplate_he}\n" + \
+                              "nach Ziel: {self.database_he}\n"
 
     def _export_wehre(self):
         if not getattr(QKan.config.check_export, "export_wehre", True):
@@ -509,50 +523,6 @@ class ExportTask:
         status_message.layout().addWidget(progress_bar)
         iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
-        # Init status mapper
-        if not self.db_qkan.sql(
-            "SELECT he_nr, bezeichnung FROM simulationsstatus",
-            "xml_export simulationsstatus",
-        ):
-            raise Exception("Failed to init SIMSTATUS mapper")
-        for row in self.db_qkan.fetchall():
-            self.mapper_simstatus[row[1]] = row[0]
-
-        # region Create XML structure
-        root = Element(
-            "Identifikation", {"xmlns": "http://www.ofd-hannover.la/Identifikation"}
-        )
-        SubElementText(root, "Version", "2013-02")
-
-        admin_daten = SubElement(root, "Admindaten")
-        _create_children(
-            SubElement(admin_daten, "Liegenschaft"),
-            ["Liegenschaftsnummer", "Liegenschaftsbezeichnung"],
-        )
-
-        daten_kollektive = SubElement(root, "Datenkollektive")
-        _create_children_text(
-            daten_kollektive,
-            {
-                "Datenstatus": None,
-                "Erstellungsdatum": None,
-                "Kommentar": "Created with QKan's XML export module",
-            },
-        )
-        SubElement(SubElement(daten_kollektive, "Kennungen"), "Kollektiv")
-
-        self.stamm = SubElement(daten_kollektive, "Stammdatenkollektiv")
-        _create_children(self.stamm, ["Kennung", "Beschreibung"])
-
-        hydro_kollektiv = SubElement(daten_kollektive, "Hydraulikdatenkollektiv")
-        _create_children(
-            hydro_kollektiv,
-            ["Kennung", "Beschreibung", "Flaechen", "Systembelastungen"],
-        )
-        rechen = SubElement(hydro_kollektiv, "Rechennetz")
-        SubElement(rechen, "Stammdatenkennung")
-        self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekte")
-        # endregion
 
         # Export
         self._export_wehre()

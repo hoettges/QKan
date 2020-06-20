@@ -224,6 +224,31 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         )
         consl.close()
         return False
+
+    sql = """-- Haltungsgeoobjekt anlegen beim Einfügen neuer Datensätze aus Schachtobjekten
+        CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_haltungen
+            AFTER INSERT ON haltungen FOR EACH ROW
+        WHEN
+            new.geom IS NULL
+        BEGIN
+            UPDATE haltungen SET geom =
+            (   SELECT MakeLine(schob.geop, schun.geop)
+                FROM schaechte AS schob, 
+                     schaechte AS schun
+                WHERE schob.schnam = new.schoben AND
+                      schun.schnam = new.schunten)
+            WHERE haltungen.pk = new.pk;
+        END;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "Haltungen" konnte ein Trigger nicht angelegt werden.',
+        )
+        consl.close()
+        return False
+
     consl.commit()
 
     # Schaechte ----------------------------------------------------------------
@@ -239,7 +264,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     durchm REAL,
     druckdicht INTEGER DEFAULT 0, 
     ueberstauflaeche REAL DEFAULT 0,
-    entwart TEXT DEFAULT "Regenwasser",
+    entwart TEXT DEFAULT 'Regenwasser',
     strasse TEXT,
     teilgebiet TEXT,
     knotentyp TEXT,
@@ -272,6 +297,31 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+
+    sql = f"""-- Schachtgeoobjekt anlegen beim Einfügen neuer Datensätze
+        CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_schaechte 
+           AFTER INSERT ON schaechte FOR EACH ROW
+        WHEN
+            new.geom IS NULL AND
+            new.geop IS NULL
+        BEGIN
+            UPDATE schaechte SET geop = 
+                MakePoint(new.xsch, new.ysch, {epsg})
+            WHERE schaechte.pk = new.pk;
+            UPDATE schaechte SET geom = 
+                CastToMultiPolygon(MakePolygon(MakeCircle(new.xsch, new.ysch, 
+                    coalesce(new.durchm / 1000, 1), {epsg})))
+            WHERE schaechte.pk = new.pk;
+        END;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "Schaechte" konnte ein Trigger nicht angelegt werden.',
         )
         consl.close()
         return False
@@ -498,6 +548,30 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         consl.close()
         return False
 
+    sql = """-- Pumpengeoobjekt anlegen beim Einfügen neuer Datensätze aus Schachtobjekten
+        CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_pumpen
+            AFTER INSERT ON pumpen FOR EACH ROW
+        WHEN
+            new.geom IS NULL
+        BEGIN
+            UPDATE pumpen SET geom =
+            (   SELECT MakeLine(schob.geop, schun.geop)
+                FROM schaechte AS schob, 
+                     schaechte AS schun
+                WHERE schob.schnam = new.schoben AND
+                      schun.schnam = new.schunten)
+            WHERE pumpen.pk = new.pk;
+        END;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "Pumpen" konnte ein Trigger nicht angelegt werden.',
+        )
+        consl.close()
+        return False
+
     consl.commit()
 
     # Wehre --------------------------------------------------------------------
@@ -538,6 +612,30 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+
+    sql = """-- Wehrgeoobjekt anlegen beim Einfügen neuer Datensätze aus Schachtobjekten
+        CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_wehre
+            AFTER INSERT ON wehre FOR EACH ROW
+        WHEN
+            new.geom IS NULL
+        BEGIN
+            UPDATE wehre SET geom =
+            (   SELECT MakeLine(schob.geop, schun.geop)
+                FROM schaechte AS schob, 
+                     schaechte AS schun
+                WHERE schob.schnam = new.schoben AND
+                      schun.schnam = new.schunten)
+            WHERE wehre.pk = new.pk;
+        END;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "Wehre" konnte ein Trigger nicht angelegt werden.',
         )
         consl.close()
         return False

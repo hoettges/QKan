@@ -129,43 +129,43 @@ def _consume_smp_block(
     return name, knoten_typ, xsch, ysch, sohlhoehe
 
 
-def geo_smp(_schacht: Schacht) -> typing.Tuple[str, str]:
-    """
-    Returns geom, geom SQL expressions
-    """
-    db_type = QKan.config.database.type
-    if db_type == enums.QKanDBChoice.SPATIALITE:
-        geop = f"MakePoint({_schacht.xsch}, {_schacht.ysch}, {QKan.config.epsg})"
-        geom = (
-            "CastToMultiPolygon(MakePolygon("
-            f"MakeCircle({_schacht.xsch}, {_schacht.ysch}, {_schacht.durchm / 1000}, {QKan.config.epsg})"
-            "))"
-        )
-    elif db_type == enums.QKanDBChoice.POSTGIS:
-        geop = f"ST_SetSRID(ST_MakePoint({_schacht.xsch},{_schacht.ysch}),{QKan.config.epsg})"
-        geom = ""  # TODO: GEOM is missing
-    else:
-        raise Exception("Unimplemented database type: {}".format(db_type))
-
-    return geop, geom
-
-
-def geo_hydro() -> str:
-    db_type = QKan.config.database.type
-    if db_type == enums.QKanDBChoice.SPATIALITE:
-        geom = (
-            f"MakeLine(MakePoint(SCHOB.xsch, SCHOB.ysch, {QKan.config.epsg}), "
-            f"MakePoint(SCHUN.xsch, SCHUN.ysch, {QKan.config.epsg}))"
-        )
-    elif db_type == enums.QKanDBChoice.POSTGIS:
-        geom = (
-            f"ST_MakeLine(ST_SetSRID(ST_MakePoint(SCHOB.xsch, SCHOB.ysch, {QKan.config.epsg}),"
-            f"ST_SetSRID(ST_MakePoint(SCHUN.xsch, SCHUN.ysch, {QKan.config.epsg}))"
-        )
-    else:
-        raise Exception("Unimplemented database type: {}".format(db_type))
-    return geom
-
+# def geo_smp(_schacht: Schacht) -> typing.Tuple[str, str]:
+#     """
+#     Returns geom, geom SQL expressions
+#     """
+#     db_type = QKan.config.database.type
+#     if db_type == enums.QKanDBChoice.SPATIALITE:
+#         geop = f"MakePoint({_schacht.xsch}, {_schacht.ysch}, {QKan.config.epsg})"
+#         geom = (
+#             "CastToMultiPolygon(MakePolygon("
+#             f"MakeCircle({_schacht.xsch}, {_schacht.ysch}, {_schacht.durchm / 1000}, {QKan.config.epsg})"
+#             "))"
+#         )
+#     elif db_type == enums.QKanDBChoice.POSTGIS:
+#         geop = f"ST_SetSRID(ST_MakePoint({_schacht.xsch},{_schacht.ysch}),{QKan.config.epsg})"
+#         geom = ""  # TODO: GEOM is missing
+#     else:
+#         raise Exception("Unimplemented database type: {}".format(db_type))
+#
+#     return geop, geom
+#
+#
+# def geo_hydro() -> str:
+#     db_type = QKan.config.database.type
+#     if db_type == enums.QKanDBChoice.SPATIALITE:
+#         geom = (
+#             f"MakeLine(MakePoint(SCHOB.xsch, SCHOB.ysch, {QKan.config.epsg}), "
+#             f"MakePoint(SCHUN.xsch, SCHUN.ysch, {QKan.config.epsg}))"
+#         )
+#     elif db_type == enums.QKanDBChoice.POSTGIS:
+#         geom = (
+#             f"ST_MakeLine(ST_SetSRID(ST_MakePoint(SCHOB.xsch, SCHOB.ysch, {QKan.config.epsg}),"
+#             f"ST_SetSRID(ST_MakePoint(SCHUN.xsch, SCHUN.ysch, {QKan.config.epsg}))"
+#         )
+#     else:
+#         raise Exception("Unimplemented database type: {}".format(db_type))
+#     return geom
+#
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask:
@@ -191,9 +191,6 @@ class ImportTask:
         self._haltungen()
         self._wehre()
         self._pumpen()
-
-        del self.db_qkan
-        logger.debug("Closed DB")
 
         return True
 
@@ -302,31 +299,35 @@ class ImportTask:
                     return None
 
             # Geo-Objekte
-            db_type = QKan.config.database.type
-            if db_type == enums.QKanDBChoice.SPATIALITE:
-                geop = f"MakePoint({schacht.xsch}, {schacht.ysch}, {QKan.config.epsg})"
-                geom = (
-                    "CastToMultiPolygon(MakePolygon("
-                    f"MakeCircle({schacht.xsch}, {schacht.ysch}, {schacht.durchm / 1000}, {QKan.config.epsg})"
-                    "))"
-                )
-            elif db_type == enums.QKanDBChoice.POSTGIS:
-                geop = f"ST_SetSRID(ST_MakePoint({schacht.xsch},{schacht.ysch}),{QKan.config.epsg})"
-                geom = ""  # TODO: GEOM is missing
-            else:
-                fehlermeldung(
-                    "Programmfehler!", "Datenbanktyp ist fehlerhaft.\nAbbruch!",
-                )
-                return None
+            # db_type = QKan.config.database.type
+            # if db_type == enums.QKanDBChoice.SPATIALITE:
+            #     geop = f"MakePoint({schacht.xsch}, {schacht.ysch}, {QKan.config.epsg})"
+            #     geom = (
+            #         "CastToMultiPolygon(MakePolygon("
+            #         f"MakeCircle({schacht.xsch}, {schacht.ysch}, {schacht.durchm / 1000}, {QKan.config.epsg})"
+            #         "))"
+            #     )
+            # elif db_type == enums.QKanDBChoice.POSTGIS:
+            #     geop = f"ST_SetSRID(ST_MakePoint({schacht.xsch},{schacht.ysch}),{QKan.config.epsg})"
+            #     geom = ""  # TODO: GEOM is missing
+            # else:
+            #     fehlermeldung(
+            #         "Programmfehler!", "Datenbanktyp ist fehlerhaft.\nAbbruch!",
+            #     )
+            #     return None
 
             sql = f"""
             INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
-                    schachttyp, simstatus, kommentar, geop, geom)
+                    schachttyp, simstatus, kommentar)
             VALUES ('{schacht.schnam}', {schacht.xsch}, {schacht.ysch}, {schacht.sohlhoehe}, {schacht.deckelhoehe}, 
-                    {schacht.durchm}, '{entwart}', 'Schacht', '{simstatus}', '{schacht.kommentar}', {geop}, {geom})
+                    {schacht.durchm}, '{entwart}', 'Schacht', '{simstatus}', '{schacht.kommentar}')
             """
             if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
                 return None
+
+        if not self.db_qkan.sql("UPDATE schaechte SET (geom, geop) = (geom, geop)",
+                                "xml_import Schächte [3a]"):
+            return None
 
         self.db_qkan.commit()
 
@@ -380,17 +381,20 @@ class ImportTask:
                     return None
 
             # Geo-Objekte
-            geop, geom = geo_smp(auslass)
+            # geop, geom = geo_smp(auslass)
 
             sql = f"""
             INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
-                    schachttyp, simstatus, kommentar, geop, geom)
+                    schachttyp, simstatus, kommentar)
             VALUES ('{auslass.schnam}', {auslass.xsch}, {auslass.ysch}, {auslass.sohlhoehe}, {auslass.deckelhoehe}, 
-                        {auslass.durchm}, '{auslass.entwart}', 'Auslass', '{simstatus}', '{auslass.kommentar}', {geop}, 
-                    {geom})
+                        {auslass.durchm}, '{auslass.entwart}', 'Auslass', '{simstatus}', '{auslass.kommentar}')
             """
             if not self.db_qkan.sql(sql, "xml_import Auslässe [2]"):
                 return None
+
+        if not self.db_qkan.sql("UPDATE schaechte SET (geom, geop) = (geom, geop)",
+                                "xml_import Auslässe [2a]"):
+            return None
 
         self.db_qkan.commit()
 
@@ -463,17 +467,22 @@ class ImportTask:
                     return None
 
             # Geo-Objekte
-            geop, geom = geo_smp(speicher)
+            # geop, geom = geo_smp(speicher)
 
             sql = f"""
             INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
-                    schachttyp, simstatus, kommentar, geop, geom)
+                    schachttyp, simstatus, kommentar)
             VALUES ('{speicher.schnam}', {speicher.xsch}, {speicher.ysch}, {speicher.sohlhoehe}, {speicher.deckelhoehe}, 
-                {speicher.durchm}, '{speicher.entwart}', 'Speicher', '{simstatus}', '{speicher.kommentar}', {geop}, 
-                {geom})
+                {speicher.durchm}, '{speicher.entwart}', 'Speicher', '{simstatus}', '{speicher.kommentar}')
             """
             if not self.db_qkan.sql(sql, "xml_import Speicher [2]"):
                 return None
+
+        if not self.db_qkan.sql("UPDATE schaechte SET (geom, geop) = (geom, geop)",
+                                "xml_import Speicher [2a]"):
+            return None
+
+        self.db_qkan.commit()
 
     def _haltungen(self):
         def _iter() -> typing.Iterator[Haltung]:
@@ -636,30 +645,30 @@ class ImportTask:
                     return None
 
             # Geo
-            db_type = QKan.config.database.type
-            if db_type == enums.QKanDBChoice.SPATIALITE:
-                geom = (
-                    f"MakeLine(MakePoint({haltung.xschob},{haltung.yschob},{QKan.config.epsg}),"
-                    f"MakePoint({haltung.xschun},{haltung.yschun},{QKan.config.epsg}))"
-                )
-            elif db_type == enums.QKanDBChoice.POSTGIS:
-                geom = (
-                    f"ST_MakeLine(ST_SetSRID(ST_MakePoint({haltung.xschob},{haltung.yschob},{QKan.config.epsg}),"
-                    f"ST_SetSRID(ST_MakePoint({haltung.xschun},{haltung.yschun}),{QKan.config.epsg}))"
-                )
-            else:
-                fehlermeldung(
-                    "Programmfehler!", "Datenbanktyp ist fehlerhaft.\nAbbruch!",
-                )
-                return None
+            # db_type = QKan.config.database.type
+            # if db_type == enums.QKanDBChoice.SPATIALITE:
+            #     geom = (
+            #         f"MakeLine(MakePoint({haltung.xschob},{haltung.yschob},{QKan.config.epsg}),"
+            #         f"MakePoint({haltung.xschun},{haltung.yschun},{QKan.config.epsg}))"
+            #     )
+            # elif db_type == enums.QKanDBChoice.POSTGIS:
+            #     geom = (
+            #         f"ST_MakeLine(ST_SetSRID(ST_MakePoint({haltung.xschob},{haltung.yschob},{QKan.config.epsg}),"
+            #         f"ST_SetSRID(ST_MakePoint({haltung.xschun},{haltung.yschun}),{QKan.config.epsg}))"
+            #     )
+            # else:
+            #     fehlermeldung(
+            #         "Programmfehler!", "Datenbanktyp ist fehlerhaft.\nAbbruch!",
+            #     )
+            #     return None
 
             sql = f"""
                 INSERT INTO haltungen 
-                    (geom, haltnam, schoben, schunten, 
+                    (haltnam, schoben, schunten, 
                     hoehe, breite, laenge, sohleoben, sohleunten, deckeloben, deckelunten, 
                     profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
                 VALUES (
-                    {geom}, '{haltung.haltnam}', '{haltung.schoben}', '{haltung.schunten}', {haltung.hoehe},
+                    '{haltung.haltnam}', '{haltung.schoben}', '{haltung.schunten}', {haltung.hoehe},
                     {haltung.breite}, {haltung.laenge}, {haltung.sohleoben}, {haltung.sohleunten}, 
                     {haltung.deckeloben}, {haltung.deckelunten}, '{haltung.profilnam}', '{entwart}', 
                     0, '{simstatus}', '{haltung.kommentar}', '{haltung.xschob}', '{haltung.xschun}', 
@@ -669,6 +678,10 @@ class ImportTask:
 
             if not self.db_qkan.sql(sql, "xml_import Haltungen [3]"):
                 return None
+
+        if not self.db_qkan.sql("UPDATE haltungen SET geom = geom",
+                                "xml_import Haltungen [3a]"):
+            return None
 
         self.db_qkan.commit()
 
@@ -733,7 +746,7 @@ class ImportTask:
                 )
 
         for wehr in _iter():
-            geom = geo_hydro()
+            # geom = geo_hydro()
 
             # Bei den Wehren muessen im Gegensatz zu den Haltungen die
             # Koordinaten aus den Schachtdaten entnommen werden.
@@ -742,15 +755,19 @@ class ImportTask:
 
             sql = f"""
                 INSERT INTO wehre 
-                                (wnam, schoben, schunten, wehrtyp, schwellenhoehe, kammerhoehe, laenge, uebeiwert, geom)
+                                (wnam, schoben, schunten, wehrtyp, schwellenhoehe, kammerhoehe, laenge, uebeiwert)
                 SELECT '{wehr.wnam}', '{wehr.schoben}', '{wehr.schunten}', '{wehr.wehrtyp}', {wehr.schwellenhoehe}, 
-                        {wehr.kammerhoehe}, {wehr.laenge}, {wehr.uebeiwert}, {geom}
+                        {wehr.kammerhoehe}, {wehr.laenge}, {wehr.uebeiwert}
                 FROM schaechte AS SCHOB, schaechte AS SCHUN
                 WHERE SCHOB.schnam = '{wehr.schoben}' AND SCHUN.schnam = '{wehr.schunten}'
                 """
 
             if not self.db_qkan.sql(sql, "xml_import Wehre [1]"):
                 return None
+
+        if not self.db_qkan.sql("UPDATE wehre SET geom = geom",
+                                "xml_import Wehre [1a]"):
+            return None
 
         self.db_qkan.commit()
 
@@ -806,7 +823,7 @@ class ImportTask:
                 )
 
         for pumpe in _iter2():
-            geom = geo_hydro()
+            # geom = geo_hydro()
 
             if pumpe.pumpentyp in self.mapper_pump:
                 pumpentyp = self.mapper_pump[pumpe.pumpentyp]
@@ -823,14 +840,18 @@ class ImportTask:
             # in der Tabelle "schaechte" gespeichert werden.
             sql = f"""
                 INSERT INTO pumpen 
-                    (pnam, volanf, volges, sohle, schoben, schunten, pumpentyp, steuersch, geom)
+                    (pnam, volanf, volges, sohle, schoben, schunten, pumpentyp, steuersch)
                 SELECT '{pumpe.pnam}', {pumpe.volanf}, {pumpe.volges}, {pumpe.sohle}, '{pumpe.schoben}', 
-                        '{pumpe.schunten}', '{pumpentyp}', '{pumpe.steuersch}', {geom}
+                        '{pumpe.schunten}', '{pumpentyp}', '{pumpe.steuersch}'
                 FROM schaechte AS SCHOB, schaechte AS SCHUN
                 WHERE SCHOB.schnam = '{pumpe.schoben}' AND SCHUN.schnam = '{pumpe.schunten}'"""
 
-            if not self.db_qkan.sql(sql, "xml_import Pumpe [2]"):
+            if not self.db_qkan.sql(sql, "xml_import Pumpen [2]"):
                 return None
+
+        if not self.db_qkan.sql("UPDATE pumpen SET geom = geom",
+                                "xml_import Pumpen [2a]"):
+            return None
 
         self.db_qkan.commit()
 

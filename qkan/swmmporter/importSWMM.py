@@ -193,7 +193,6 @@ class SWMM:
 
             #if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
             geop = f"MakePoint({xsch},{ysch},{self.epsg})"
-            du = 1.0
             geom = f"CastToMultiPolygon(MakePolygon(MakeCircle({xsch}, {ysch}, {du}, {self.epsg})))"
             #elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
             #    geop = f"ST_SetSRID(ST_MakePoint({xsch}, {ysch}), {self.epsg})"
@@ -202,6 +201,8 @@ class SWMM:
             #        "Programmfehler!",
             #        "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(QKan.config.database.type),
             #    )
+
+            du = 1.0
 
             sql = f"""
                 UPDATE schaechte SET (
