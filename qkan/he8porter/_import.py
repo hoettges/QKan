@@ -50,10 +50,7 @@ class ImportTask:
             'Schacht' AS schachttyp,
             Planungsstatus AS simstatus, 
             Kommentar AS kommentar, 
-            Lastmodified AS createdat,
-            SetSrid(Geometry, {QKan.config.epsg}) AS geop, 
-            CastToMultiPolygon(MakePolygon(MakeCircle(x(Geometry),y(Geometry),
-                    coalesce(DURCHMESSER/1000., 1.0),{QKan.config.epsg}))) AS geom
+            Lastmodified AS createdat
         FROM he.Schacht"""
 
         if not self.db_qkan.sql(sql, "he8_import Schächte"):
@@ -82,10 +79,7 @@ class ImportTask:
             'Auslass' AS schachttyp,
             Planungsstatus AS simstatus, 
             Kommentar AS kommentar, 
-            Lastmodified AS createdat,
-            SetSrid(Geometry, {QKan.config.epsg}) AS geop, 
-            CastToMultiPolygon(MakePolygon(MakeCircle(x(Geometry),y(Geometry),
-                    coalesce(Durchmesser/1000., 1.0),{QKan.config.epsg}))) AS geom
+            Lastmodified AS createdat
         FROM he.Auslass"""
 
         if not self.db_qkan.sql(sql, "he8_import Auslässe"):
@@ -114,10 +108,7 @@ class ImportTask:
             'Speicher' AS schachttyp,
             Planungsstatus AS simstatus, 
             Kommentar AS kommentar, 
-            Lastmodified AS createdat,
-            SetSrid(Geometry, {QKan.config.epsg}) AS geop, 
-            CastToMultiPolygon(MakePolygon(MakeCircle(x(Geometry),y(Geometry),
-                    coalesce(Durchmesser/1000., 1.0),{QKan.config.epsg}))) AS geom
+            Lastmodified AS createdat
         FROM he.Speicher"""
 
         if not self.db_qkan.sql(sql, "he8_import Speicher"):

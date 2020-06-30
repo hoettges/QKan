@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>534</width>
-    <height>320</height>
+    <height>291</height>
    </rect>
   </property>
   <property name="font">
@@ -21,8 +21,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>250</y>
+     <x>130</x>
+     <y>240</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -96,14 +96,17 @@
    <widget class="QPushButton" name="pb_selectqkanDB">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>440</x>
       <y>40</y>
       <width>30</width>
       <height>20</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank auswählen und optional erstellen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad und Dateinamen der QKan-Datenbank festlegen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Pfad und Dateinamen der QKan-Datenbank festlegen</string>
     </property>
     <property name="text">
      <string>...</string>
@@ -114,8 +117,8 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>410</width>
-      <height>20</height>
+      <width>421</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -125,7 +128,10 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QKan - Zieldatenbank (wird ggfs. neu angelegt)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Neue QKan - Datenbank mit leeren Tabellen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Neue QKan - Datenbank mit leeren Tabellen</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -139,6 +145,12 @@
       <width>321</width>
       <height>27</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Auswahl der Projektionssystems</string>
+    </property>
+    <property name="statusTip">
+     <string>Auswahl der Projektionssystems</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
@@ -166,7 +178,7 @@
    <widget class="QPushButton" name="pb_selectProjectFile">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>441</x>
       <y>150</y>
       <width>30</width>
       <height>20</height>
@@ -182,7 +194,7 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>11</x>
       <y>130</y>
       <width>301</width>
       <height>21</height>
@@ -206,8 +218,8 @@
      <rect>
       <x>10</x>
       <y>150</y>
-      <width>420</width>
-      <height>20</height>
+      <width>421</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
