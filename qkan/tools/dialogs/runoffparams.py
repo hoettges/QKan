@@ -1,0 +1,148 @@
+import os
+import typing
+import webbrowser
+from pathlib import Path
+
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import (
+    QCheckBox,
+    QDialogButtonBox,
+    QLabel,
+    QListWidget,
+    QRadioButton,
+)
+
+from qkan import list_selected_items
+from qkan.database.qkan_utils import sqlconditions
+from . import QKanDBDialog, logger
+
+if typing.TYPE_CHECKING:
+    from qkan.tools.application import QKanTools
+
+FORM_CLASS_runoffparams, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "..", "res", "application_runoffparams.ui")
+)
+
+
+def click_help():
+    helpfile = (
+        Path(__file__).parent.parent.parent
+        / "doc/sphinx/build/html/Qkan_Formulare.html"
+    )
+    webbrowser.open_new_tab(
+        str(helpfile) + "#berechnung-von-oberflachenabflussparametern"
+    )
+
+
+class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):
+    button_box: QDialogButtonBox
+
+    cb_selParActive: QCheckBox
+    cb_selTgbActive: QCheckBox
+
+    lf_anzahl_flaechen: QLabel
+
+    lw_abflussparameter: QListWidget
+    lw_teilgebiete: QListWidget
+
+    rb_dyna: QRadioButton
+    rb_fliesszeiten: QRadioButton
+    rb_itwh: QRadioButton
+    rb_kaskade: QRadioButton
+    rb_maniak: QRadioButton
+    rb_schwerpunktlaufzeit: QRadioButton
+
+    def __init__(self, plugin: "QKanTools", parent=None):
+        super().__init__(plugin, parent)
+
+        self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
+        self.lw_abflussparameter.itemClicked.connect(self.click_lw_abflussparam)
+        self.cb_selTgbActive.stateChanged.connect(self.click_tgb_selection)
+        self.cb_selParActive.stateChanged.connect(self.click_par_selection)
+        self.button_box.helpRequested.connect(click_help)
+        self.rb_itwh.toggled.connect(self.toggle_itwh)
+
+    def click_lw_teilgebiete(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.cb_selTgbActive.setChecked(True)
+        self.count_selection()
+
+    def click_lw_abflussparam(self):
+        """Reaktion auf Klick in Tabelle"""
+
+        self.cb_selParActive.setChecked(True)
+        self.count_selection()
+
+    def click_tgb_selection(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.cb_selTgbActive.isChecked():
+            # Nix tun ...
+            logger.debug("\nChecked = True")
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.lw_teilgebiete.count()
+            for i in range(anz):
+                item = self.lw_teilgebiete.item(i)
+                item.setSelected(False)
+                # self.lw_teilgebiete.setItemSelected(item, False)
+
+            # Anzahl in der Anzeige aktualisieren
+            self.count_selection()
+
+    def click_par_selection(self):
+        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+
+        # Checkbox hat den Status nach dem Klick
+        if self.cb_selParActive.isChecked():
+            # Nix tun ...
+            logger.debug("\nChecked = True")
+        else:
+            # Auswahl deaktivieren und Liste zurücksetzen
+            anz = self.lw_abflussparameter.count()
+            for i in range(anz):
+                item = self.lw_abflussparameter.item(i)
+                item.setSelected(False)
+                # self.lw_abflussparameter.setItemSelected(item, False)
+
+            # Anzahl in der Anzeige aktualisieren
+            self.count_selection()
+
+    def toggle_itwh(self):
+        """Reagiert auf Auswahl itwh und deaktiviert entsprechend die Option Fließzeiten"""
+
+        if self.rb_itwh.isChecked():
+            if self.rb_fliesszeiten.isChecked():
+                self.rb_kaskade.setChecked(True)
+            self.rb_fliesszeiten.setEnabled(False)
+        else:
+            self.rb_fliesszeiten.setEnabled(True)
+
+    def count_selection(self):
+        """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
+        der betroffenen Flächen und Haltungen"""
+        liste_teilgebiete: typing.List[str] = list_selected_items(self.lw_teilgebiete)
+        liste_abflussparameter: typing.List[str] = list_selected_items(
+            self.lw_abflussparameter
+        )
+
+        # Auswahl der zu bearbeitenden Flächen
+        auswahl = sqlconditions(
+            "WHERE",
+            ["teilgebiet", "abflussparameter"],
+            [liste_teilgebiete, liste_abflussparameter],
+        )
+
+        sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
+
+        if not self.plugin.db_qkan.sql(
+            sql, "QKan_Tools.application.dlgro_countselection (1)"
+        ):
+            return False
+        daten = self.plugin.db_qkan.fetchone()
+        if not (daten is None):
+            self.lf_anzahl_flaechen.setText(str(daten[0]))
+        else:
+            self.lf_anzahl_flaechen.setText("0")

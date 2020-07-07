@@ -12,7 +12,6 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QListWidgetItem
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
-from qgis.utils import pluginDirectory
 
 from qkan import QKan, enums, get_default_dir, list_selected_items
 from qkan.database.dbfunc import DBConnection
@@ -22,14 +21,15 @@ from qkan.database.qkan_utils import (
     get_editable_layers,
     warnung,
 )
+
 # noinspection PyUnresolvedReferences
 from . import resources
-from .application_dialog import (
-    LayersAdaptDialog,
-    QKanOptionsDialog,
-    QgsAdaptDialog,
-    RunoffParamsDialog,
-)
+from .dialogs.empty_db import EmptyDBDialog
+from .dialogs.layersadapt import LayersAdaptDialog
+from .dialogs.qgsadapt import QgsAdaptDialog
+from .dialogs.qkanoptions import QKanOptionsDialog
+from .dialogs.read_data import ReadDataDialog
+from .dialogs.runoffparams import RunoffParamsDialog
 from .k_layersadapt import layersadapt
 from .k_qgsadapt import qgsadapt
 from .k_runoffparams import setRunoffparams
@@ -49,6 +49,8 @@ class QKanTools:
         self.dlgop = QKanOptionsDialog(self)
         self.dlgpr = QgsAdaptDialog(self)
         self.dlgro = RunoffParamsDialog(self)
+        self.dlgedb = EmptyDBDialog(self)
+        self.dlgrd = ReadDataDialog(self)
 
         logger.info("QKan_Tools initialisiert...")
 
@@ -98,6 +100,8 @@ class QKanTools:
         self.dlgop.close()
         self.dlgpr.close()
         self.dlgro.close()
+        self.dlgedb.close()
+        self.dlgrd.close()
 
     def run_qgsadapt(self):
         """Erstellen einer Projektdatei aus einer Vorlage"""
@@ -261,9 +265,6 @@ class QKanTools:
             )
             return False
         self.dlgro.tf_QKanDB.setText(database_qkan)
-
-        manningrauheit_bef = QKan.config.tools.manningrauheit_bef
-        manningrauheit_dur = QKan.config.tools.manningrauheit_dur
 
         # Datenbankverbindung für Abfragen
         self.db_qkan = DBConnection(

@@ -93,7 +93,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectqkanDB">
+   <widget class="QPushButton" name="pb_selectQKanDB">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -112,7 +112,7 @@
      <string>...</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_database">
+   <widget class="QLineEdit" name="tf_qkanDB">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -213,7 +213,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_project">
+   <widget class="QLineEdit" name="tf_projectFile">
     <property name="geometry">
      <rect>
       <x>10</x>
