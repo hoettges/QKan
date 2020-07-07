@@ -19,6 +19,10 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
+test_*/
+test_*.zip
+*.sqlite
+*.xml
 
 # Translations
 *.mo

@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from qgis.PyQt.QtCore import QCoreApplication, QStandardPaths
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     Qgis,
     QgsCoordinateReferenceSystem,
@@ -14,7 +14,6 @@ from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.tools.k_qgsadapt import qgsadapt
-
 # noinspection PyUnresolvedReferences
 from . import resources
 from ._export import ExportTask
@@ -161,7 +160,7 @@ class XmlPorter:
 
                     logger.info("Creating DB")
                     db_qkan = DBConnection(
-                        dbname=database_qkan, epsg=str(QKan.config.epsg)
+                        dbname=database_qkan, epsg=QKan.config.epsg
                     )
 
                     if not db_qkan:

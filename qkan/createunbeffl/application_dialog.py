@@ -28,7 +28,7 @@ FORM_CLASS, _ = uic.loadUiType(
 def click_help():
     """Reaktion auf Klick auf Help-Schaltfläche"""
     helpfile = (
-        Path(__file__).parent / ".." / "doc/sphinx/build/html/Qkan_Formulare.html",
+        Path(__file__).parent / ".." / "doc/sphinx/build/html/Qkan_Formulare.html"
     )
     webbrowser.open_new_tab(str(helpfile) + "#erzeugen-der-unbefestigten-flachen")
 
