@@ -283,7 +283,7 @@ class LayersAdaptDialog(QDialog, FORM_CLASS_layersadapt):
 
         # noinspection PyArgumentList,PyCallByClass
         filename, __ = QFileDialog.getOpenFileName(
-            self.dlgla, "Projektdatei als Vorlage auswählen", template_dir, "*.qgs"
+            self, "Projektdatei als Vorlage auswählen", template_dir, "*.qgs"
         )
         if os.path.dirname(filename) != "":
             self.tf_projectTemplate.setText(filename)
@@ -376,7 +376,7 @@ class QKanOptionsDialog(QDialog, FORM_CLASS_qkanoptions):
 
         # noinspection PyArgumentList,PyCallByClass
         filename, __ = QFileDialog.getOpenFileName(
-            self.dlgop, "Alternativen Texteditor auswählen", "c:/", "*.exe"
+            self, "Alternativen Texteditor auswählen", "c:/", "*.exe"
         )
         QKan.config.tools.logeditor = filename
         self.tf_logeditor.setText(filename)
