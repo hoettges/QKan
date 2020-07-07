@@ -9,7 +9,7 @@ from qgis.core import Qgis
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fortschritt
+from qkan.database.qkan_utils import fortschritt, fehlermeldung
 
 logger = logging.getLogger("QKan.he8.export")
 
@@ -62,7 +62,7 @@ class ExportTask:
             except BaseException as err:
                 fehlermeldung("Fehler in Export nach HE8",
                               "Fehler beim Kopieren der Vorlage: \n   {self.dbtemplate_he}\n" + \
-                              "nach Ziel: {self.database_he}\n"
+                              "nach Ziel: {self.database_he}\n")
 
     def _export_wehre(self):
         if not getattr(QKan.config.check_export, "export_wehre", True):

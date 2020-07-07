@@ -86,7 +86,8 @@ class QKan:
         from .exportdyna import ExportToKP
         from .linkflaechen import LinkFl
         from .tools import QKanTools
-        from .exporthe8 import ExportToHE8
+        from .he8porter import He8Porter
+        # from .exporthe8 import ExportToHE8
         from .xmlporter import XmlPorter
 
         # from .surfaceTools import SurfaceTools
@@ -98,7 +99,8 @@ class QKan:
             ExportToKP(iface),
             LinkFl(iface),
             QKanTools(iface),
-            ExportToHE8(iface),
+            He8Porter(iface),
+            # ExportToHE8(iface),
             XmlPorter(iface),
             # SurfaceTools(iface),
         ]

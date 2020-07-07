@@ -73,31 +73,17 @@ class He8Porter:
             self.export_dlg.tf_database.setText(database_qkan)
 
         if self.export_dlg.exec_():
-            export_file = self.export_dlg.tf_export.text()
-            database_qkan = self.export_dlg.tf_database.text()
 
-            # Save to config
-            QKan.config.database.qkan = database_qkan
-            QKan.config.he8.export_file = export_file
+            # Read from form and save to config
+            QKan.config.database.qkan = database_qkan = self.export_dlg.tf_database.text()
+            QKan.config.he8.export_file = export_file = self.export_dlg.tf_export.text()
 
-            QKan.config.check_export.export_schaechte = (
-                self.export_dlg.cb_export_schaechte.isChecked()
-            )
-            QKan.config.check_export.export_auslaesse = (
-                self.export_dlg.cb_export_auslaesse.isChecked()
-            )
-            QKan.config.check_export.export_speicher = (
-                self.export_dlg.cb_export_speicher.isChecked()
-            )
-            QKan.config.check_export.export_haltungen = (
-                self.export_dlg.cb_export_haltungen.isChecked()
-            )
-            QKan.config.check_export.export_pumpen = (
-                self.export_dlg.cb_export_pumpen.isChecked()
-            )
-            QKan.config.check_export.export_wehre = (
-                self.export_dlg.cb_export_wehre.isChecked()
-            )
+            QKan.config.check_export.export_schaechte = self.export_dlg.cb_export_schaechte.isChecked()
+            QKan.config.check_export.export_auslaesse = self.export_dlg.cb_export_auslaesse.isChecked()
+            QKan.config.check_export.export_speicher = self.export_dlg.cb_export_speicher.isChecked()
+            QKan.config.check_export.export_haltungen = self.export_dlg.cb_export_haltungen.isChecked()
+            QKan.config.check_export.export_pumpen = self.export_dlg.cb_export_pumpen.isChecked()
+            QKan.config.check_export.export_wehre = self.export_dlg.cb_export_wehre.isChecked()
 
             QKan.config.save()
 
@@ -126,15 +112,12 @@ class He8Porter:
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
-            QKan.config.he8.init_database = (
-                self.import_dlg.cb_import_tabinit.isChecked()
-            )
-            QKan.config.database.qkan = (
-                database_qkan
-            ) = self.import_dlg.tf_database.text()
-            QKan.config.project.file = self.import_dlg.tf_project.text()
 
-            import_file = self.import_dlg.tf_import.text()
+            # Read from form and save to config
+            QKan.config.database.qkan = database_qkan = self.import_dlg.tf_database.text()
+            QKan.config.project.file = self.import_dlg.tf_project.text()
+            QKan.config.he8.import_file = import_file = self.import_dlg.tf_import.text()
+
             if not import_file:
                 fehlermeldung("Fehler beim Import", "Es wurde keine Datei ausgewählt!")
                 self.iface.messageBar().pushMessage(
@@ -144,8 +127,6 @@ class He8Porter:
                 )
                 return
             else:
-                QKan.config.he8.import_file = import_file
-
                 crs: QgsCoordinateReferenceSystem = self.import_dlg.epsg.crs()
 
                 try:

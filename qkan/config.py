@@ -222,12 +222,22 @@ class SelectionConfig(ClassObject):
 class HEConfig(ClassObject):
     database: str = ""
     database_erg: str = ""
-    database_erg_fb: str = ""
-    database_fb: str = ""
+    # database_erg_fb: str = ""
+    # database_fb: str = ""
     qml_choice: enums.QmlChoice = enums.QmlChoice.UEBH
     qml_file_results: str = ""
     template: str = ""
-    template_fb: str = ""
+    # template_fb: str = ""
+
+
+class HE8Config(ClassObject):
+    database: str = ""
+    database_erg: str = ""
+    qml_choice: enums.QmlChoice = enums.QmlChoice.UEBH
+    qml_file_results: str = ""
+    template: str = ""
+    import_file: str = ""
+    export_file: str = ""
 
 
 class ProjectConfig(ClassObject):
@@ -303,6 +313,7 @@ class Config(ClassObject):
     dyna: DynaConfig = DynaConfig()
     swmm: SWMMConfig = SWMMConfig()
     he: HEConfig = HEConfig()
+    he8: HE8Config = HE8Config()
     linkflaechen: LinkFlConfig = LinkFlConfig()
     project: ProjectConfig = ProjectConfig()
     tools: ToolsConfig = ToolsConfig()

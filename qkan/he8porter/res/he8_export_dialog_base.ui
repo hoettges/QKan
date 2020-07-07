@@ -99,7 +99,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectQKanDB">
+   <widget class="QPushButton" name="pb_database">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -118,7 +118,7 @@
      <string>...</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_QKanDB">
+   <widget class="QLineEdit" name="tf_database">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -190,7 +190,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_heDB_dest">
+   <widget class="QLineEdit" name="tf_export">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -212,7 +212,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectHeDB_dest">
+   <widget class="QPushButton" name="pb_export">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -231,7 +231,7 @@
      <string>...</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectHeDB_template">
+   <widget class="QPushButton" name="pb_template">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -272,7 +272,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_heDB_template">
+   <widget class="QLineEdit" name="tf_template">
     <property name="geometry">
      <rect>
       <x>20</x>

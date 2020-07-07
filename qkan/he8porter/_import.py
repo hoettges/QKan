@@ -35,8 +35,7 @@ class ImportTask:
             durchm, 
             druckdicht, 
             entwart, schachttyp, simstatus, 
-            kommentar, createdat, 
-            geop, geom
+            kommentar, createdat
         )
         SELECT 
             Name AS schnam,
@@ -67,8 +66,7 @@ class ImportTask:
             schnam, xsch, ysch, 
             sohlhoehe, deckelhoehe, 
             schachttyp, simstatus, 
-            kommentar, createdat, 
-            geop, geom
+            kommentar, createdat
         )
         SELECT 
             Name AS schnam,
@@ -96,8 +94,7 @@ class ImportTask:
             schnam, xsch, ysch, 
             sohlhoehe, deckelhoehe, 
             schachttyp, simstatus, 
-            kommentar, createdat, 
-            geop, geom
+            kommentar, createdat
         )
         SELECT 
             Name AS schnam,
@@ -109,7 +106,7 @@ class ImportTask:
             Planungsstatus AS simstatus, 
             Kommentar AS kommentar, 
             Lastmodified AS createdat
-        FROM he.Speicher"""
+        FROM he.Speicherschacht"""
 
         if not self.db_qkan.sql(sql, "he8_import Speicher"):
             return False
@@ -127,9 +124,9 @@ class ImportTask:
         )
         SELECT 
             Sonderprofilbezeichnung, 68
-        FROM a.Rohr
-        INNER JOIN a.Sonderprofil
-        ON a.Rohr.SonderprofilbezeichnungRef = a.Sonderprofil.Id
+        FROM he.Rohr
+        INNER JOIN he.Sonderprofil
+        ON he.Rohr.SonderprofilbezeichnungRef = he.Sonderprofil.Id
         GROUP BY 
             Profiltyp, Sonderprofilbezeichnung, SonderprofilbezeichnungRef
         """
@@ -146,8 +143,7 @@ class ImportTask:
             profilnam, entwart, 
             ks, simstatus, 
             kommentar, createdat, 
-            xschob, yschob, xschun, yschun, 
-            geom
+            xschob, yschob, xschun, yschun
         )
         SELECT 
             ro.Name AS haltnam, 
@@ -171,15 +167,14 @@ class ImportTask:
             x(PointN(ro.Geometry, 1)) AS xschob, 
             y(PointN(ro.Geometry, 1)) AS yschob,
             x(PointN(ro.Geometry, -1)) AS xschun, 
-            y(PointN(ro.Geometry, -1)) AS yschun,
-            SetSrid(ro.Geometry, {QKan.config.epsg}) AS geom
-        FROM a.Rohr AS ro
-        INNER JOIN (SELECT Name, Deckelhoehe FROM a.Schacht
-             UNION SELECT Name, Gelaendehoehe AS Deckelhoehe FROM a.Speicherschacht) AS so
+            y(PointN(ro.Geometry, -1)) AS yschun
+        FROM he.Rohr AS ro
+        INNER JOIN (SELECT Name, Deckelhoehe FROM he.Schacht
+             UNION SELECT Name, Gelaendehoehe AS Deckelhoehe FROM he.Speicherschacht) AS so
         ON ro.Schachtoben = so.Name 
-        INNER JOIN (SELECT Name, Deckelhoehe FROM a.Schacht
-             UNION SELECT Name, Gelaendehoehe AS Deckelhoehe FROM a.Auslass
-             UNION SELECT Name, Gelaendehoehe AS Deckelhoehe FROM a.Speicherschacht) AS su
+        INNER JOIN (SELECT Name, Deckelhoehe FROM he.Schacht
+             UNION SELECT Name, Gelaendehoehe AS Deckelhoehe FROM he.Auslass
+             UNION SELECT Name, Gelaendehoehe AS Deckelhoehe FROM he.Speicherschacht) AS su
         ON ro.Schachtunten = su.Name
         LEFT JOIN profile AS pr
         ON ro.Profiltyp = pr.he_nr
@@ -189,7 +184,11 @@ class ImportTask:
         ON si.he_nr = ro.Planungsstatus
         """
 
-        if not self.db_qkan.sql(sql, "he8_import Haltungen"):
+        if not self.db_qkan.sql(sql, "he8_import Haltungen (1)"):
+            return None
+
+        # idk why this is necessary...
+        if not self.db_qkan.sql("UPDATE haltungen SET geom = geom", "he8_import Haltungen (2)"):
             return None
 
         self.db_qkan.commit()
@@ -203,8 +202,7 @@ class ImportTask:
             wnam, schoben, schunten, 
             wehrtyp, schwellenhoehe, kammerhoehe, 
             laenge, uebeiwert, simstatus, 
-            kommentar, createdat, 
-            geom)
+            kommentar, createdat)
         SELECT 
             we.Name AS wnam,
             we.Schachtoben AS schoben, 
@@ -216,20 +214,23 @@ class ImportTask:
             we.Ueberfallbeiwert AS uebeiwert,
             si.bezeichnung AS simstatus, 
             we.Kommentar AS kommentar, 
-            we.Lastmodified AS createdat, 
-            SetSrid(we.Geometry, {QKan.config.epsg}) AS geom
-        FROM a.Wehr AS we
-        LEFT JOIN (SELECT Name, Deckelhoehe FROM a.Schacht
-             UNION SELECT Name, Gelaendehoehe AS deckelhoehe FROM a.Speicherschacht) AS so
+            we.Lastmodified AS createdat
+        FROM he.Wehr AS we
+        LEFT JOIN (SELECT Name, Deckelhoehe FROM he.Schacht
+             UNION SELECT Name, Gelaendehoehe AS deckelhoehe FROM he.Speicherschacht) AS so
         ON we.Schachtoben = so.Name 
-        LEFT JOIN (SELECT Name, Deckelhoehe FROM a.Schacht
-             UNION SELECT Name, Gelaendehoehe AS deckelhoehe FROM a.Auslass
-             UNION SELECT Name, Gelaendehoehe AS deckelhoehe FROM a.Speicherschacht) AS su
+        LEFT JOIN (SELECT Name, Deckelhoehe FROM he.Schacht
+             UNION SELECT Name, Gelaendehoehe AS deckelhoehe FROM he.Auslass
+             UNION SELECT Name, Gelaendehoehe AS deckelhoehe FROM he.Speicherschacht) AS su
         ON we.Schachtunten = su.Name
         LEFT JOIN simulationsstatus AS si 
         ON si.he_nr = we.Planungsstatus"""
 
-        if not self.db_qkan.sql(sql, "he8_import Wehre"):
+        if not self.db_qkan.sql(sql, "he8_import Wehre (1)"):
+            return None
+
+        # idk why this is necessary...
+        if not self.db_qkan.sql("UPDATE wehre SET geom = geom", "he8_import Wehre (2)"):
             return None
 
         self.db_qkan.commit()
@@ -241,7 +242,7 @@ class ImportTask:
         sql = f"""
         INSERT INTO pumpen (
             pnam, schoben, schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, 
-            simstatus, kommentar, createdat, geom)
+            simstatus, kommentar, createdat)
         SELECT 
             pu.Name AS pnam, 
             pu.Schachtoben AS schoben, 
@@ -252,22 +253,35 @@ class ImportTask:
             pu.Ausschalthoehe AS ausschalthoehe,
             si.bezeichnung AS simstatus, 
             pu.Kommentar AS kommentar, 
-            pu.Lastmodified AS createdat, 
-            SetSrid(pu.Geometry, {QKan.config.epsg}) AS geom
-        FROM a.Pumpe AS pu
-        LEFT JOIN (SELECT Name FROM a.Schacht
-             UNION SELECT Name FROM a.Speicherschacht) AS so
+            pu.Lastmodified AS createdat
+        FROM he.Pumpe AS pu
+        LEFT JOIN (SELECT Name FROM he.Schacht
+             UNION SELECT Name FROM he.Speicherschacht) AS so
         ON pu.Schachtoben = SO.Name 
-        LEFT JOIN (SELECT Name FROM a.Schacht
-             UNION SELECT Name FROM a.Auslass
-             UNION SELECT Name FROM a.Speicherschacht) AS su
+        LEFT JOIN (SELECT Name FROM he.Schacht
+             UNION SELECT Name FROM he.Auslass
+             UNION SELECT Name FROM he.Speicherschacht) AS su
         ON pu.Schachtunten = su.Name
         LEFT JOIN simulationsstatus AS si 
-        ON si.he_nr = we.Planungsstatus
+        ON si.he_nr = pu.Planungsstatus
         LEFT JOIN pumpentypen AS pt 
         ON pt.he_nr = pu.Typ"""
 
-        if not self.db_qkan.sql(sql, "he8_import Pumpen"):
+        if not self.db_qkan.sql(sql, "he8_import Pumpen (1)"):
+            return None
+
+        # idk why this is necessary...
+        if not self.db_qkan.sql("UPDATE pumpen SET geom = geom", "he8_import Pumpen (2)"):
             return None
 
         self.db_qkan.commit()
+
+
+    def _flaechen(self):
+        """Import der Flächen"""
+
+        sql = f"""
+        INSERT INTO flaechen ( 
+            flnam, haltnam, schnam, neigkl, teilgebiet, regenschreiber, 
+            abflussparameter, aufteilen, kommentar, createdat, geom)        
+        """

@@ -25,6 +25,7 @@ class _Dialog(QDialog):
 class ExportDialog(_Dialog, EXPORT_CLASS):
     tf_database: QLineEdit
     tf_export: QLineEdit
+    tf_template: QLineEdit
 
     pb_database: QPushButton
     pb_export: QPushButton
@@ -44,10 +45,12 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
         # Attach events
         self.pb_database.clicked.connect(self.select_database)
         self.pb_export.clicked.connect(self.select_export)
+        self.pb_template.clicked.connect(self.select_template)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
         self.tf_export.setText(QKan.config.he8.export_file)
+        self.tf_template.setText(QKan.config.he8.export_file)
         self.cb_export_schaechte.setChecked(
             getattr(QKan.config.check_export, "export_schaechte", True)
         )
@@ -67,14 +70,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
             getattr(QKan.config.check_export, "export_wehre", True)
         )
 
-    def select_export(self):
-        # noinspection PyArgumentList,PyCallByClass
-        filename, _ = QFileDialog.getSaveFileName(
-            self, self.tr("Zu erstellende HE8-Datei"), self.default_dir, "*.idbm",
-        )
-        if filename:
-            self.tf_export.setText(filename)
-
     def select_database(self):
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getOpenFileName(
@@ -86,6 +81,22 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
 
         if filename:
             self.tf_database.setText(filename)
+
+    def select_template(self):
+        # noinspection PyArgumentList,PyCallByClass
+        filename, _ = QFileDialog.getSaveFileName(
+            self, self.tr("Vorlage für die zu erstellende HE8-Datei"), self.default_dir, "*.idbm",
+        )
+        if filename:
+            self.tf_template.setText(filename)
+
+    def select_export(self):
+        # noinspection PyArgumentList,PyCallByClass
+        filename, _ = QFileDialog.getSaveFileName(
+            self, self.tr("Zu erstellende HE8-Datei"), self.default_dir, "*.idbm",
+        )
+        if filename:
+            self.tf_export.setText(filename)
 
 
 IMPORT_CLASS, _ = uic.loadUiType(
