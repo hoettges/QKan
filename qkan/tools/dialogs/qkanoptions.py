@@ -109,7 +109,7 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):
 
         # noinspection PyArgumentList,PyCallByClass
         filename, __ = QFileDialog.getOpenFileName(
-            self.dlgop, "Alternativen Texteditor auswählen", "c:/", "*.exe"
+            self, "Alternativen Texteditor auswählen", "c:/", "*.exe"
         )
         QKan.config.tools.logeditor = filename
         self.tf_logeditor.setText(filename)
