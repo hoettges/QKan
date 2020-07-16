@@ -468,4 +468,4 @@ def layersadapt(
 
     return True
 
-def dbAdapt(database_QKan):
+#def dbAdapt(database_QKan):
