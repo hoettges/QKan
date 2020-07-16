@@ -127,35 +127,38 @@ def qgsActualVersion(update=True, warning=False):
     logger.debug("actQgsVersion: {}".format(actQgsVersion))
     logger.debug("curQgsVersion: {}".format(curQgsVersion))
 
-    isActual = not versionolder(actQgsVersionLis, curQgsVersionLis)
-    if not isActual:
-        if warning:
-            meldung(
-                "Warnung: ",
-                "Das geladene Projekt entspricht nicht der aktuellen Version. ",
-            )
-        if update:
+    # Änderungen an den Layern werden nur in layersadapt vorgenommen.
 
-            # Bis Version 2.5.11
-            if versionolder(actQgsVersionLis, [2, 5, 12]):
-                wlayers = [la for la in layers if la.name() == "Abflussparameter"]
-                if len(wlayers) != 1:
-                    logger.debug(
-                        'Fehler in Layerliste: Es gibt mehr als einen Layer "Abflussparameter"'
-                    )
-                    layerList = [la.name() for la in layers]
-                    logger.debug("layerList: {}".format(layerList))
-                    return False
-                wlayer = wlayers[0]
-                logger.debug("vorher: wlayer.name(): {}".format(wlayer.name()))
-                wlayer.setName("Abflussparameter HE")
-                logger.debug("nachher: wlayer.name(): {}".format(wlayer.name()))
-
-                project = QgsProject.instance()
-                project.setTitle("QKan Version {}".format(qgsVersion()))
-
-            isActual = True
-    return isActual
+    #
+    # isActual = not versionolder(actQgsVersionLis, curQgsVersionLis)
+    # if not isActual:
+    #     if warning:
+    #         meldung(
+    #             "Warnung: ",
+    #             "Das geladene Projekt entspricht nicht der aktuellen Version. ",
+    #         )
+    #     if update:
+    #
+    #         # Bis Version 2.5.11
+    #         if versionolder(actQgsVersionLis, [2, 5, 12]):
+    #             wlayers = [la for la in layers if la.name() == "Abflussparameter"]
+    #             if len(wlayers) != 1:
+    #                 logger.debug(
+    #                     'Fehler in Layerliste: Es gibt mehr als einen Layer "Abflussparameter"'
+    #                 )
+    #                 layerList = [la.name() for la in layers]
+    #                 logger.debug("layerList: {}".format(layerList))
+    #                 return False
+    #             wlayer = wlayers[0]
+    #             logger.debug("vorher: wlayer.name(): {}".format(wlayer.name()))
+    #             wlayer.setName("Abflussparameter HE")
+    #             logger.debug("nachher: wlayer.name(): {}".format(wlayer.name()))
+    #
+    #             project = QgsProject.instance()
+    #             project.setTitle("QKan Version {}".format(qgsVersion()))
+    #
+    #         isActual = True
+    # return isActual
 
 
 # Erzeuge QKan-Tabellen

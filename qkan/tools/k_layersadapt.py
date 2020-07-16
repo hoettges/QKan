@@ -119,7 +119,7 @@ def layersadapt(
 
     # qkanDBUpdate: mit Update
     dbQK = DBConnection(
-        dbname=database_QKan, qkanDBUpdate=qkanDBUpdate
+        dbname=database_QKan, qkanDBUpdate=False
     )  # Datenbankobjekt der QKan-Datenbank
 
     if not dbQK.connected:
@@ -158,7 +158,7 @@ def layersadapt(
         del dbQK
         return
 
-    # Projekt auf aktuelle Version updaten
+    # Projekt auf aktuelle Version setzen. Es werden keine Layer geändert.
     qgsActualVersion()
 
     # Vorlage-Projektdatei. Falls Standard oder keine Vorgabe, wird die Standard-Projektdatei verwendet
@@ -198,7 +198,7 @@ def layersadapt(
                     layer = QgsVectorLayer(uri.uri(), layername, enums.QKanDBChoice.SPATIALITE.value)
                 except BaseException as err:
                     fehlermeldung(
-                        "Fehler in k_layersadapt (11): {}".format(err),
+                        "Fehler in k_layersadapt (1): {}".format(err),
                         "layername: {}".format(layername),
                     )
                     del dbQK
@@ -269,7 +269,7 @@ def layersadapt(
     else:
         logger.error(f'Fehler in anpassen_auswahl: {anpassen_auswahl}\nWert ist nicht definiert (enums.py)')
 
-    logger.debug("k_layersadapt (9), selectedLayerNames: {}".format(selectedLayerNames))
+    logger.debug("k_layersadapt (2), selectedLayerNames: {}".format(selectedLayerNames))
 
     layerNotQkanMeldung = (
         False
@@ -280,12 +280,16 @@ def layersadapt(
     formsDir = os.path.join(pluginDirectory("qkan"), "forms")
 
     for layername in selectedLayerNames:
+        # Nur Layer behandeln, die in der Vorlage-Projektdatei enthalten sind, d.h. QKan-Layer sind.
+        if layername not in qkanLayers:
+            continue
+
         layerobjects = project.mapLayersByName(layername)
         if len(layerobjects) == 0:
-            logger.info(
-                "Projektlayer {} ist in QKan-Template nicht enthalten".format(layername)
+            logger.error(
+                f"QKan-Fehler: Projektlayer {layername} konnte im Projekt nicht gefunden werden"
             )
-            continue
+            return False
         else:
             layer = layerobjects[0]
 
@@ -314,6 +318,8 @@ def layersadapt(
         if anpassen_Datenbankanbindung:
             datasource = layer.source()
             dbname, table, geom, sql = get_qkanlayerAttributes(datasource)
+            # logger.debug(f"datasource: {datasource}")
+            # logger.debug(f"\nDatenbankanbindung\n  dbname: {dbname}\n  table: {table}\n  geom: {geom}\n  sql: {sql}")
             if geom != "":
                 # Vektorlayer
                 newdatasource = "dbname='{dbname}' table=\"{table}\" ({geom}) sql={sql}".format(
@@ -332,6 +338,8 @@ def layersadapt(
             logger.debug("anpassen_Projektionssystem...")
             datasource = layer.source()
             dbname, table, geom, sql = get_qkanlayerAttributes(datasource)
+            # logger.debug(f"datasource: {datasource}")
+            # logger.debug(f"\nDatenbankanbindung\n  dbname: {dbname}\n  table: {table}\n  geom: {geom}\n  sql: {sql}")
             logger.debug("Prüfe KBS von Tabelle {}".format(table))
             if geom != "":
                 # Nur für Vektorlayer
@@ -341,7 +349,7 @@ def layersadapt(
                         AND Lower(f_geometry_column) = Lower('{geom}')""".format(
                     table=table, geom=geom
                 )
-                if not dbQK.sql(sql, "dbQK: k_layersadapt (1)"):
+                if not dbQK.sql(sql, "dbQK: k_layersadapt (3)"):
                     del dbQK
                     return False
 
@@ -393,7 +401,7 @@ def layersadapt(
                             projectLayerName = layerIdList[templateLayerName]
                         except BaseException as err:
                             fehlermeldung(
-                                f"Fehler in k_layersadapt (12) in layer {layername}: {err}",
+                                f"Fehler in k_layersadapt (4) in layer {layername}: {err}",
                                 "Möglicherweise ist der Template-Projektdatei fehlerhaft",
                             )
                             del dbQK
@@ -425,9 +433,6 @@ def layersadapt(
         # Schachttypen auswerten
         evalNodeTypes(dbQK)  # in qkan.database.qkan_utils
 
-    del qgsxml
-    del dbQK
-
     project.setTitle("QKan Version {}".format(qgsVersion()))
 
     # if status_neustart:
@@ -436,10 +441,19 @@ def layersadapt(
 
     # Zoom auf alles
     if zoom_alles:
+        # Tabellenstatistik aktualisieren, damit Zoom alles richtig funktioniert ...
+        sql = 'SELECT UpdateLayerStatistics()'
+        if not dbQK.sql(sql, "dbQK: k_layersadapt (5)"):
+            del dbQK
+            return False
+
         canvas = iface.mapCanvas()
         canvas.zoomToFullExtent()
 
-    # Noch zu bearbeiten:
+    del qgsxml
+    del dbQK
+
+    # Todo:
     #  - Sicherungskopie der Datenbank, falls Versionsupdate
 
     # ------------------------------------------------------------------------------
@@ -453,3 +467,5 @@ def layersadapt(
     )
 
     return True
+
+def dbAdapt(database_QKan):

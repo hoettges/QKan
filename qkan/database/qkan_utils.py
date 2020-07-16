@@ -183,26 +183,52 @@ def get_qkanlayerAttributes(source):
     :rtype:         tuple
     """
 
-    posDbname = source.find("dbname=")
-    posTable = source.find(" table=", posDbname + 1)
-    posGeomStart = source.find(" (", posTable + 6)
-    posGeomEnd = source.find(") ", posGeomStart + 2)
-    posSql = source.find(" sql=", posGeomEnd + 1)
+    parts = source.split(" ")
 
-    dbname = source[posDbname + 8 : posTable - 1].strip()
-
-    if posGeomStart < 0 or posGeomStart > posSql:
+    elem = [elem.split('dbname=')[1] for elem in parts if elem[:6] == 'dbname']
+    if len(elem) == 1:
+        dbname = elem[0][1:-1]
+    else:
+        dbname = ""
+    elem = [elem.split('table=')[1] for elem in parts if elem[:5] == 'table']
+    if len(elem) == 1:
+        table = elem[0][1:-1]
+    else:
+        table = ""
+    elem = [elem for elem in parts if elem[:1] == '(']
+    if len(elem) == 1:
+        geom = elem[0][1:-1]
+    else:
         geom = ""
-        posGeomStart = posSql
+
+    posSql = source.find("sql=")
+    if posSql >= 0:
+        sql = source[posSql + 4:]
     else:
-        geom = source[posGeomStart + 2 : posGeomEnd].strip()
-
-    table = source[posTable + 8 : posGeomStart - 1].strip()
-
-    if posSql < 0:
         sql = ""
-    else:
-        sql = source[posSql + 5 :].strip()
+
+    return dbname, table, geom, sql
+
+    # posDbname = source.find("dbname=")
+    # posTable = source.find("' table=", posDbname + 1)
+    # posGeomStart = source.find(" (", posTable + 7)
+    # posGeomEnd = source.find(")", posGeomStart + 2)
+    # posSql = source.find(" sql=", posGeomEnd + 1)
+    #
+    # dbname = source[posDbname + 8 : posTable].strip()
+    #
+    # if posGeomStart < 0:
+    #     geom = ""
+    #     posGeomStart = posSql
+    # else:
+    #     geom = source[posGeomStart + 2 : posGeomEnd].strip()
+    #
+    # table = source[posTable + 8 : posGeomStart - 1].strip()
+    #
+    # if posSql < 0:
+    #     sql = ""
+    # else:
+    #     sql = source[posSql + 5 :].strip()
 
     return dbname, table, geom, sql
 
