@@ -92,22 +92,12 @@ Tabelle zur Auswahl der zu exportierenden Daten
 Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann der Export auf ausgewählte Teilgebiete beschränkt werden.
 
 
-.. index:: Projektlayer zurücksetzen (Menü)
+.. index:: Projektlayer aktualisieren (Menü)
 
-Projektlayer auf QKan-Standard setzen
--------------------------------------
-
-
-Datenbank und Projekt auf aktuelle Version setzen
-+++++++++++++++++++++++++++++++++++++++++++++++++
+Projektlayer aktualisieren
+--------------------------
 
 Dieses Modul ist vor allem hilfreich, um Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellen Stand zu bringen. Neben Änderungen an der Datenbankstruktur sind dabei meistens auch Anpassungen an den Projektlayern notwendig. Wählen Sie dazu in dem :ref:`Formular<image_qkan_layersadapt>` unter der Überschrift "QKan-Datenbank" die Option "auf aktuelle Version anpassen" (4). Es wird automatisch sichergestellt, dass die Wertbeziehungen (Überschrift "Layer anpassen") aktualisiert werden. Weiterhin ist es empfehlenswert, unter der gleichen Überschrift auch die Option "Formularanbindungen auf QKan-Standard setzen" aktiviert ist. 
-
-
-Projektdatei auf andere Datenbank übertragen
-++++++++++++++++++++++++++++++++++++++++++++
-
-Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdarstellungen enthalten und quasi "Firmenstandards" darstellen. Solch eine Projektdatei kann folgendermaßen auf ein anderes Projekt übertragen werden: 
 
 1. Aktivieren Sie "QKan-Standard verwenden". Falls Sie eine andere aktuelle Projektdatei verwenden wollen, können Sie diese unter "Einstellungen aus Projektdatei übernehmen" mit der Schaltfläche [...] rechts daneben auswählen. 
 2. Wählen unter der Überschrift "Layer anpassen" Sie die Option "Datenbankanbindung der Layer anpassen" und wählen Sie Ihre Datenbank aus, an die das Projekt angebunden werden soll. Aktivieren Sie auch die Übrigen Optionen unter dieser Überschrift
@@ -117,6 +107,32 @@ Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdars
 
 .. _image_qkan_layersadapt:
 .. image:: .\QKan_Bilder\qkan_layersadapt.png
+
+
+
+.. index:: Datenbank aktualisieren
+
+Datenbank aktualisieren
+-----------------------
+
+Diese Funktion wird beim Aufruf vieler Plugins immer dann automatisch aufgerufen. wenn QKan feststellt, dass die geladene QKan-Datenbank nicht mehr auf dem aktuellen Stand ist. 
+Dabei wird das aktuell geladene Projekt geschlossen. Falls Ihre Projektdatei nach dem Laden geändert 
+wurde, können Sie mit den Optionsfeldern auswählen, ob die Projektdatei vor der Aktualisierung noch gespeichert werden soll. 
+
+
+.. index:: Projektdatei übertragen
+
+Projektdatei auf andere Datenbank übertragen
+--------------------------------------------
+
+Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdarstellungen enthalten und quasi "Firmenstandards" darstellen. Solch eine Projektdatei kann mit dem :ref:`Formular<image_qkan_qgsAdapt>` folgendermaßen auf ein anderes Projekt übertragen werden: 
+
+1. Wählen Sie die einzubindende QKan-Datenbank. 
+2. Wählen Sie die Projektdatei, die Sie mit dieser Datenbank verknüpfen möchten. Sie können stattdessen auch die QKan-Standardvorlage verwenden. 
+3. Wählen Sie den Pfad der neu zu erstellenden Projektdatei aus. 
+
+.. _image_qkan_qgsAdapt:
+.. image:: .\QKan_Bilder\qkan_qgsAdapt.png
 
 
 

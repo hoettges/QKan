@@ -20,6 +20,13 @@ FORM_CLASS_qgsadapt, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "..", "res", "application_qgsadapt.ui")
 )
 
+def click_help():
+    helpfile = (
+        Path(__file__).parent.parent.parent
+        / "doc/sphinx/build/html/Qkan_Formulare.html"
+    )
+    webbrowser.open_new_tab(str(helpfile) + "#projektdatei-ubertragen")
+
 
 class QgsAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_qgsadapt):
     button_box: QDialogButtonBox

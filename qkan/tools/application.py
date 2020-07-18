@@ -17,6 +17,7 @@ from qkan import QKan, enums, get_default_dir, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
     fehlermeldung,
+    meldung,
     get_database_QKan,
     get_editable_layers,
     warnung,
@@ -30,9 +31,11 @@ from .dialogs.qgsadapt import QgsAdaptDialog
 from .dialogs.qkanoptions import QKanOptionsDialog
 from .dialogs.read_data import ReadDataDialog
 from .dialogs.runoffparams import RunoffParamsDialog
+from .dialogs.dbAdapt import DbAdaptDialog
 from .k_layersadapt import layersadapt
 from .k_qgsadapt import qgsadapt
 from .k_runoffparams import setRunoffparams
+from .k_dbAdapt import dbAdapt
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger("QKan.tools.application")
@@ -51,6 +54,7 @@ class QKanTools:
         self.dlgro = RunoffParamsDialog(self)
         self.dlgedb = EmptyDBDialog(self)
         self.dlgrd = ReadDataDialog(self)
+        self.dlgdb = DbAdaptDialog(self)
 
         logger.info("QKan_Tools initialisiert...")
 
@@ -95,6 +99,14 @@ class QKanTools:
             parent=self.iface.mainWindow(),
         )
 
+        icon_dbAdapt_path = ":/plugins/qkan/tools/res/icon_dbAdapt.png"
+        QKan.instance.add_action(
+            icon_dbAdapt_path,
+            text=self.tr("QKan-Datenbank aktualisieren"),
+            callback=self.run_dbAdapt,
+            parent=self.iface.mainWindow(),
+        )
+
     def unload(self):
         self.dlgla.close()
         self.dlgop.close()
@@ -102,6 +114,7 @@ class QKanTools:
         self.dlgro.close()
         self.dlgedb.close()
         self.dlgrd.close()
+        self.dlgdb.close()
 
     def run_qgsadapt(self):
         """Erstellen einer Projektdatei aus einer Vorlage"""
@@ -119,7 +132,6 @@ class QKanTools:
             )  # bereits geladene QKan-Datenbank übernehmen
         else:
             self.db_qkan = QKan.config.database.qkan
-            self.dlgpr.tf_qkanDB.setText(self.db_qkan)
             self.default_dir = os.path.dirname(self.db_qkan)
         self.dlgpr.tf_qkanDB.setText(self.db_qkan)
 
@@ -488,7 +500,7 @@ class QKanTools:
         self.dlgla.tf_qkanDB.setText(self.db_qkan)
 
         db_qkan = DBConnection(
-            dbname=self.db_qkan, qkanDBUpdate=False
+            dbname=self.db_qkan
         )  # Datenbankobjekt der QKan-Datenbank
         # qkanDBUpdate: mit Update
 
@@ -500,12 +512,9 @@ class QKanTools:
         # Datenbank wieder schließen.
         del db_qkan
 
-        self.dlgla.gb_projectTemplate.setEnabled(self.db_is_uptodate)
-        self.dlgla.gb_LayersAdapt.setEnabled(self.db_is_uptodate)
-        self.dlgla.gb_selectLayers.setEnabled(self.db_is_uptodate)
-        self.dlgla.gb_setNodeTypes.setEnabled(self.db_is_uptodate)
-        self.dlgla.gb_updateQkanDB.setEnabled(not self.db_is_uptodate)
-        self.dlgla.cb_qkanDBUpdate.setChecked(not self.db_is_uptodate)
+        if not self.db_is_uptodate:
+            fehlermeldung('Versionskontrolle', 'Die QKan-Datenbank ist nicht aktuell')
+            return False
 
         # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen
         self.apply_qkan_template = QKan.config.tools.apply_qkan_template
@@ -572,7 +581,6 @@ class QKanTools:
         # self.qkanDBUpdate = True
 
         # Status initialisieren
-        self.dlgla.click_enable_qkan_db()
         self.dlgla.click_apply_template()
         self.dlgla.enable_project_template_group()
 
@@ -587,16 +595,9 @@ class QKanTools:
 
             # Inhalte aus Formular lesen --------------------------------------------------------------
 
-            self.qkan_db_update: bool = self.dlgla.cb_qkanDBUpdate.isChecked()
-            # Achtung: Beeinflusst auch
-            #  - adapt_table_lookups
-            #  - adapt_selected
-
             self.db_qkan: str = self.dlgla.tf_qkanDB.text()
             adapt_db: bool = self.dlgla.cb_adaptDB.isChecked()
-            adapt_table_lookups: bool = (
-                self.dlgla.cb_adaptTableLookups.isChecked() or self.qkan_db_update
-            )
+            adapt_table_lookups: bool = self.dlgla.cb_adaptTableLookups.isChecked()
             adapt_forms: bool = self.dlgla.cb_adaptForms.isChecked()
             adapt_kbs: bool = self.dlgla.cb_adaptKBS.isChecked()
             update_node_type: bool = self.dlgla.cb_updateNodetype.isChecked()
@@ -609,7 +610,7 @@ class QKanTools:
 
             # Optionen zur Berücksichtigung der vorhandenen Tabellen
             fehlende_layer_ergaenzen: bool = self.dlgla.cb_completeLayers.isChecked()
-            if self.dlgla.rb_adaptAll.isChecked() or self.qkan_db_update:
+            if self.dlgla.rb_adaptAll.isChecked():
                 adapt_selected = enums.SelectedLayers.ALL
             elif self.dlgla.rb_adaptSelected.isChecked():
                 adapt_selected = enums.SelectedLayers.SELECTED
@@ -623,7 +624,6 @@ class QKanTools:
             QKan.config.adapt.database = adapt_db
             QKan.config.adapt.forms = adapt_forms
             QKan.config.adapt.kbs = adapt_kbs
-            QKan.config.adapt.qkan_db_update = self.qkan_db_update
             QKan.config.adapt.selected_layers = adapt_selected
             QKan.config.adapt.table_lookups = adapt_table_lookups
             QKan.config.adapt.update_node_type = update_node_type
@@ -638,8 +638,6 @@ class QKanTools:
                 layersadapt(
                     "{self.db_qkan}",
                     "{self.projectTemplate}",
-                    {self.db_is_uptodate},
-                    {self.qkan_db_update},
                     {adapt_db},
                     {adapt_table_lookups},
                     {adapt_forms},
@@ -654,8 +652,6 @@ class QKanTools:
             layersadapt(
                 self.db_qkan,
                 self.projectTemplate,
-                self.db_is_uptodate,
-                self.qkan_db_update,
                 adapt_db,
                 adapt_table_lookups,
                 adapt_forms,
@@ -664,4 +660,79 @@ class QKanTools:
                 zoom_alles,
                 fehlende_layer_ergaenzen,
                 adapt_selected,
+            )
+
+    def run_dbAdapt(self):
+        """Aktualisiert die QKan-Datenbank"""
+
+        # Falls eine Datenbank angebunden ist, wird diese zunächst in das Formular eingetragen.
+        self.db_qkan, epsg = get_database_QKan(silent=True)
+
+        if self.db_qkan:
+            self.default_dir = os.path.dirname(
+                self.db_qkan
+            )  # bereits geladene QKan-Datenbank übernehmen
+        else:
+            self.db_qkan = QKan.config.database.qkan
+            self.default_dir = os.path.dirname(self.db_qkan)
+        self.dlgdb.tf_qkanDB.setText(self.db_qkan)
+
+        db_qkan = DBConnection(
+            dbname=self.db_qkan
+        )  # Datenbankobjekt der QKan-Datenbank
+        # qkanDBUpdate: mit Update
+        db_status = db_qkan.isCurrentVersion            # Ist die Datenbank aktuell?
+        del db_qkan
+
+        if db_status:
+            meldung('Information', 'QKan-Datenbank ist aktuell')
+            return True
+
+        # Falls Projektdatei geändert wurde, Gruppe zum Speichern der Projektdatei anzeigen
+        project = QgsProject.instance()
+        projectIsDirty = project.isDirty()
+        self.dlgdb.gb_updateQkanDB.setEnabled(projectIsDirty)
+
+        logger.debug('QKan.tools.application.run_dbAdapt: before dlgdb.show()')
+
+        # show the dialog
+        self.dlgdb.show()
+
+        logger.debug('QKan.tools.application.run_dbAdapt: before dlgdb.exec_()')
+
+        # Run the dialog event loop
+        result = self.dlgdb.exec_()
+
+        logger.debug('QKan.tools.application.run_dbAdapt: after dlgdb.exec_()')
+
+        # See if OK was pressed
+        if result:
+
+            self.db_qkan: str = self.dlgdb.tf_qkanDB.text()
+            project_file: str = self.dlgdb.tf_projectFile.text()
+
+            # Konfigurationsdaten schreiben -----------------------------
+            QKan.config.database.qkan = self.db_qkan
+
+            if projectIsDirty:
+                QKan.config.project.file = project_file
+            else:
+                project_file = None
+
+            QKan.config.save()
+
+            # Modulaufruf in Logdatei schreiben
+            logger.debug(
+                f"""QKan-Modul Aufruf
+                dbAdapt(
+                    "{self.db_qkan}",
+                    "{project_file}",
+                    "{project}", 
+                )"""
+            )
+
+            dbAdapt(
+                self.db_qkan,
+                project_file,
+                project,
             )

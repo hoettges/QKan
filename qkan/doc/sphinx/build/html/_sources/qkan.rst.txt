@@ -1,3 +1,0 @@
-.. include:: Qkan_flaechen.rst
-.. include:: Qkan_aufsetzen.rst
-.. include:: Qkan_Videoanleitungen.rst

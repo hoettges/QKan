@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>493</width>
-    <height>386</height>
+    <height>450</height>
    </rect>
   </property>
   <property name="font">
@@ -22,7 +22,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>320</y>
+     <y>390</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -48,9 +48,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>190</y>
+     <y>280</y>
      <width>451</width>
-     <height>101</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="font">
@@ -63,7 +63,7 @@
     <string comment="Pfade der Import- und Exportdatenbank"/>
    </property>
    <property name="title">
-    <string>Vorlage-Projektdatei</string>
+    <string>Neue Projektdatei</string>
    </property>
    <property name="flat">
     <bool>false</bool>
@@ -71,150 +71,6 @@
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>301</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Vorlage-Projektdatei (*.qgs):</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_selectProjectTemplate">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>70</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Suchfenster öffnen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Suchfenster öffnen ...</string>
-    </property>
-    <property name="text">
-     <string>...</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="tf_projectTemplate">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>70</y>
-      <width>391</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektdatei, die als Vorlage verwendet werden soll&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Projektdatei, die als Vorlage verwendet werden soll</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_applyQKanTemplate">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>241</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Suche der Vorlageprojektdatei beginnt im Template-Verzeichnis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Suchverzeichnis vor Vorlageprojektdatei auf Template-Verzeichnis setzen</string>
-    </property>
-    <property name="text">
-     <string>Standard-QKan-Vorlage verwenden</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>451</width>
-     <height>161</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="toolTip">
-    <string comment="Nach dem Import eine Projektdatei neu erzeugen und speichern (optional)"/>
-   </property>
-   <property name="title">
-    <string>Projektdatei erzeugen</string>
-   </property>
-   <property name="flat">
-    <bool>false</bool>
-   </property>
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>301</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Erzeugte Projektdatei speichern als ... (*.qgs):</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pb_selectProjectFile">
     <property name="geometry">
      <rect>
@@ -256,12 +112,63 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>301</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Erzeugte Projektdatei speichern als ... (*.qgs):</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>451</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string comment="Nach dem Import eine Projektdatei neu erzeugen und speichern (optional)"/>
+   </property>
+   <property name="title">
+    <string>QKan-Datenbank</string>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <widget class="QCheckBox" name="cb_qkanDBUpdate">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>130</y>
-      <width>241</width>
+      <y>80</y>
+      <width>321</width>
       <height>17</height>
      </rect>
     </property>
@@ -273,20 +180,20 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Struktur der QKan-Datenbank wird auf den aktuellen Stand angepasst. Dabei werden auch die Eingabeformulare aktualisiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Struktur der QKan-Datenbank wird auf den aktuellen Stand angepasst. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>Struktur der QKan-Datenbank wird auf den aktuellen Stand angepasst.</string>
     </property>
     <property name="text">
-     <string>QKan-Datenbank aktualisieren</string>
+     <string>QKan-Datenbank aktualisieren, falls ältere Version</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pb_selectQKanDB">
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>100</y>
+      <y>40</y>
       <width>31</width>
       <height>21</height>
      </rect>
@@ -305,7 +212,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>100</y>
+      <y>40</y>
       <width>391</width>
       <height>20</height>
      </rect>
@@ -330,7 +237,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>80</y>
+      <y>20</y>
       <width>291</width>
       <height>21</height>
      </rect>
@@ -343,10 +250,122 @@
      </font>
     </property>
     <property name="text">
-     <string>QKan-Datenbank einbinden (*.sqlite):</string>
+     <string>QKan-Datenbank (*.sqlite):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>451</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Projektdatei als Vorlage</string>
+   </property>
+   <widget class="QLineEdit" name="tf_projectTemplate">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>70</y>
+      <width>391</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektdatei, die als Vorlage verwendet werden soll&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Projektdatei, die als Vorlage verwendet werden soll</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>301</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Vorlage-Projektdatei (*.qgs):</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_applyQKanTemplate">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>241</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Suche der Vorlageprojektdatei beginnt im Template-Verzeichnis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Suchverzeichnis vor Vorlageprojektdatei auf Template-Verzeichnis setzen</string>
+    </property>
+    <property name="text">
+     <string>Standard-QKan-Vorlage verwenden</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_selectProjectTemplate">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>70</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Suchfenster öffnen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Suchfenster öffnen ...</string>
+    </property>
+    <property name="text">
+     <string>...</string>
     </property>
    </widget>
   </widget>

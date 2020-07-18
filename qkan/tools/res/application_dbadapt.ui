@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
-    <height>275</height>
+    <width>491</width>
+    <height>274</height>
    </rect>
   </property>
   <property name="font">
@@ -21,8 +21,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>210</y>
+     <x>120</x>
+     <y>220</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -52,7 +52,7 @@
     <rect>
      <x>20</x>
      <y>20</y>
-     <width>420</width>
+     <width>451</width>
      <height>71</height>
     </rect>
    </property>
@@ -70,7 +70,7 @@
    <widget class="QPushButton" name="pb_selectQKanDB">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>410</x>
       <y>30</y>
       <width>30</width>
       <height>21</height>
@@ -91,7 +91,7 @@
      <rect>
       <x>9</x>
       <y>30</y>
-      <width>361</width>
+      <width>391</width>
       <height>20</height>
      </rect>
     </property>
@@ -113,12 +113,15 @@
    </widget>
   </widget>
   <widget class="QGroupBox" name="gb_updateQkanDB">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>110</y>
-     <width>420</width>
-     <height>71</height>
+     <width>451</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="font">
@@ -130,59 +133,70 @@
     </font>
    </property>
    <property name="title">
-    <string>vor Schließen der Projektdatei ...</string>
+    <string>Geänderte Projektdatei ...</string>
    </property>
-   <widget class="QRadioButton" name="rbSave">
+   <widget class="QPushButton" name="pb_selectProjectFile">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>20</y>
-      <width>321</width>
+      <x>410</x>
+      <y>50</y>
+      <width>31</width>
       <height>21</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Soll das Projekt vor der Bearbeitung gespeichert werden?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Suchfenster öffnen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Projekt vor der Bearbeitung speichern</string>
+     <string>Suchfenster öffnen ...</string>
     </property>
     <property name="text">
-     <string>Änderungen speichern</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
+     <string>...</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="rbDiscard">
+   <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>40</y>
+      <x>10</x>
+      <y>30</y>
       <width>301</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Projektdatei speichern als ... (*.qgs):</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tf_projectFile">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>391</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
       <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Soll das Projekt vor der Bearbeitung verworfen werden?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad der neu erzeugten Projektdatei&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
-    <property name="statusTip">
-     <string>Projekt vor der Bearbeitung verwerfen</string>
-    </property>
-    <property name="text">
-     <string>Änderungen verwerfenn</string>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
   </widget>

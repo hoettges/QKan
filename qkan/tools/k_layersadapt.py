@@ -61,8 +61,6 @@ progress_bar = None
 def layersadapt(
     database_QKan,
     projectTemplate,
-    dbIsUptodate,
-    qkanDBUpdate,
     anpassen_Datenbankanbindung,
     anpassen_Wertebeziehungen_in_Tabellen,
     anpassen_Formulare,
@@ -77,12 +75,6 @@ def layersadapt(
 
     :database_QKan:                                 Ziel-Datenbank, auf die die Projektdatei angepasst werden soll
     :type database_QKan:                            String
-
-    :dbIsUptodate:                                  verweist das Projekt auf eine aktuelle Datenbank?
-    :type dbIsUptodate:                             Boolean
-
-    :qkanDBUpdate:                                  Datenbank aktualisieren
-    :type qkanDBUpdate:                             Boolean
 
     :projectTemplate:                               Vorlage-Projektdatei für die anzupassenden Layereigenschaften
     :type projectTemplate:                          String
@@ -117,24 +109,14 @@ def layersadapt(
     # -----------------------------------------------------------------------------------------------------
     # Datenbankverbindungen
 
-    # qkanDBUpdate: mit Update
     dbQK = DBConnection(
-        dbname=database_QKan, qkanDBUpdate=False
+        dbname=database_QKan
     )  # Datenbankobjekt der QKan-Datenbank
 
     if not dbQK.connected:
-        if not qkanDBUpdate:
-            warnung(
-                "Versionsfehler",
-                "QKan-Datenbank ist nicht aktuell, aber die Anpassung ist deaktiviert. Abbruch.",
-            )
-            # logger.debug(u'k_layersadapt: QKan-Datenbank ist nicht aktuell, aber die Anpassung ist deaktiviert. Abbruch')
-        else:
-            # logger.debug(u'k_layersadapt: QKan-Datenbank wurde aktualisiert, Neuladen des Projektes erforderlich')
-            meldung(
-                "Update der Datenbank erfolgreich!",
-                "Bitte aktualisieren Sie alle entsprechenden Projekte!",
-            )
+        fehlermeldung('Programmfehler in QKan.tools.k_layersadapt.layersadapt()',
+                      'Datenbank konnte nicht verbunden werden'
+        )
         return False
 
     actversion = dbQK.actversion

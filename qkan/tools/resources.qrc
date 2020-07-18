@@ -4,5 +4,6 @@
         <file>res/icon_layersadapt.png</file>
         <file>res/icon_qkanoptions.png</file>
         <file>res/icon_runoffparams.png</file>
+        <file>res/icon_dbAdapt.png</file>
     </qresource>
 </RCC>

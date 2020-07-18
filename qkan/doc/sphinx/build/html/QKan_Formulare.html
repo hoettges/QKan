@@ -103,15 +103,9 @@ Dieses kann aus mehreren Flächenteilen bestehen.</p>
 <p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann der Export auf ausgewählte Teilgebiete beschränkt werden.</p>
 </div>
 </div>
-<div class="section" id="projektlayer-auf-qkan-standard-setzen">
-<span id="index-5"></span><h2>3.6. Projektlayer auf QKan-Standard setzen<a class="headerlink" href="#projektlayer-auf-qkan-standard-setzen" title="Link zu dieser Überschrift">¶</a></h2>
-<div class="section" id="datenbank-und-projekt-auf-aktuelle-version-setzen">
-<h3>3.6.1. Datenbank und Projekt auf aktuelle Version setzen<a class="headerlink" href="#datenbank-und-projekt-auf-aktuelle-version-setzen" title="Link zu dieser Überschrift">¶</a></h3>
+<div class="section" id="projektlayer-aktualisieren">
+<span id="index-5"></span><h2>3.6. Projektlayer aktualisieren<a class="headerlink" href="#projektlayer-aktualisieren" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Dieses Modul ist vor allem hilfreich, um Projekte, die noch auf einer älteren QKan-Version basieren, auf den aktuellen Stand zu bringen. Neben Änderungen an der Datenbankstruktur sind dabei meistens auch Anpassungen an den Projektlayern notwendig. Wählen Sie dazu in dem <a class="reference internal" href="#image-qkan-layersadapt"><span class="std std-ref">Formular</span></a> unter der Überschrift &#8220;QKan-Datenbank&#8221; die Option &#8220;auf aktuelle Version anpassen&#8221; (4). Es wird automatisch sichergestellt, dass die Wertbeziehungen (Überschrift &#8220;Layer anpassen&#8221;) aktualisiert werden. Weiterhin ist es empfehlenswert, unter der gleichen Überschrift auch die Option &#8220;Formularanbindungen auf QKan-Standard setzen&#8221; aktiviert ist.</p>
-</div>
-<div class="section" id="projektdatei-auf-andere-datenbank-ubertragen">
-<h3>3.6.2. Projektdatei auf andere Datenbank übertragen<a class="headerlink" href="#projektdatei-auf-andere-datenbank-ubertragen" title="Link zu dieser Überschrift">¶</a></h3>
-<p>Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdarstellungen enthalten und quasi &#8220;Firmenstandards&#8221; darstellen. Solch eine Projektdatei kann folgendermaßen auf ein anderes Projekt übertragen werden:</p>
 <ol class="arabic simple">
 <li>Aktivieren Sie &#8220;QKan-Standard verwenden&#8221;. Falls Sie eine andere aktuelle Projektdatei verwenden wollen, können Sie diese unter &#8220;Einstellungen aus Projektdatei übernehmen&#8221; mit der Schaltfläche [...] rechts daneben auswählen.</li>
 <li>Wählen unter der Überschrift &#8220;Layer anpassen&#8221; Sie die Option &#8220;Datenbankanbindung der Layer anpassen&#8221; und wählen Sie Ihre Datenbank aus, an die das Projekt angebunden werden soll. Aktivieren Sie auch die Übrigen Optionen unter dieser Überschrift</li>
@@ -121,11 +115,26 @@ Dieses kann aus mehreren Flächenteilen bestehen.</p>
 </ol>
 <img alt="_images/qkan_layersadapt.png" id="image-qkan-layersadapt" src="_images/qkan_layersadapt.png" />
 </div>
+<div class="section" id="datenbank-aktualisieren">
+<span id="index-6"></span><h2>3.7. Datenbank aktualisieren<a class="headerlink" href="#datenbank-aktualisieren" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Diese Funktion wird beim Aufruf vieler Plugins immer dann automatisch aufgerufen. wenn QKan feststellt, dass die geladene QKan-Datenbank nicht mehr auf dem aktuellen Stand ist.
+Dabei wird das aktuell geladene Projekt geschlossen. Falls Ihre Projektdatei nach dem Laden geändert
+wurde, können Sie mit den Optionsfeldern auswählen, ob die Projektdatei vor der Aktualisierung noch gespeichert werden soll.</p>
+</div>
+<div class="section" id="projektdatei-auf-andere-datenbank-ubertragen">
+<span id="index-7"></span><h2>3.8. Projektdatei auf andere Datenbank übertragen<a class="headerlink" href="#projektdatei-auf-andere-datenbank-ubertragen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdarstellungen enthalten und quasi &#8220;Firmenstandards&#8221; darstellen. Solch eine Projektdatei kann mit dem <a class="reference internal" href="#image-qkan-qgsadapt"><span class="std std-ref">Formular</span></a> folgendermaßen auf ein anderes Projekt übertragen werden:</p>
+<ol class="arabic simple">
+<li>Wählen Sie die einzubindende QKan-Datenbank.</li>
+<li>Wählen Sie die Projektdatei, die Sie mit dieser Datenbank verknüpfen möchten. Sie können stattdessen auch die QKan-Standardvorlage verwenden.</li>
+<li>Wählen Sie den Pfad der neu zu erstellenden Projektdatei aus.</li>
+</ol>
+<img alt="_images/qkan_qgsAdapt.png" id="image-qkan-qgsadapt" src="_images/qkan_qgsAdapt.png" />
 </div>
 <div class="section" id="allgemeine-funktionselemente-in-formularen">
-<h2>3.7. Allgemeine Funktionselemente in Formularen<a class="headerlink" href="#allgemeine-funktionselemente-in-formularen" title="Link zu dieser Überschrift">¶</a></h2>
+<h2>3.9. Allgemeine Funktionselemente in Formularen<a class="headerlink" href="#allgemeine-funktionselemente-in-formularen" title="Link zu dieser Überschrift">¶</a></h2>
 <div class="section" id="auswahl-in-listen">
-<span id="selectiontable"></span><h3>3.7.1. Auswahl in Listen<a class="headerlink" href="#auswahl-in-listen" title="Link zu dieser Überschrift">¶</a></h3>
+<span id="selectiontable"></span><h3>3.9.1. Auswahl in Listen<a class="headerlink" href="#auswahl-in-listen" title="Link zu dieser Überschrift">¶</a></h3>
 <p>Für die Auswahl von Zeilen in der Tabelle stehen folgende Funktionen zur Verfügung:</p>
 <blockquote>
 <div><ul class="simple">
@@ -170,13 +179,11 @@ in der Auswahltabelle angeklickt wird, wird die Auswahl automatisch aktiviert</p
 <li><a class="reference internal" href="#tabelle-zur-auswahl-der-zu-exportierenden-daten">3.5.1. Tabelle zur Auswahl der zu exportierenden Daten</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#projektlayer-auf-qkan-standard-setzen">3.6. Projektlayer auf QKan-Standard setzen</a><ul>
-<li><a class="reference internal" href="#datenbank-und-projekt-auf-aktuelle-version-setzen">3.6.1. Datenbank und Projekt auf aktuelle Version setzen</a></li>
-<li><a class="reference internal" href="#projektdatei-auf-andere-datenbank-ubertragen">3.6.2. Projektdatei auf andere Datenbank übertragen</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#allgemeine-funktionselemente-in-formularen">3.7. Allgemeine Funktionselemente in Formularen</a><ul>
-<li><a class="reference internal" href="#auswahl-in-listen">3.7.1. Auswahl in Listen</a></li>
+<li><a class="reference internal" href="#projektlayer-aktualisieren">3.6. Projektlayer aktualisieren</a></li>
+<li><a class="reference internal" href="#datenbank-aktualisieren">3.7. Datenbank aktualisieren</a></li>
+<li><a class="reference internal" href="#projektdatei-auf-andere-datenbank-ubertragen">3.8. Projektdatei auf andere Datenbank übertragen</a></li>
+<li><a class="reference internal" href="#allgemeine-funktionselemente-in-formularen">3.9. Allgemeine Funktionselemente in Formularen</a><ul>
+<li><a class="reference internal" href="#auswahl-in-listen">3.9.1. Auswahl in Listen</a></li>
 </ul>
 </li>
 </ul>

@@ -12654,17 +12654,20 @@ def my_form_open(dialog, layer, feature):
       <ProjectionsEnabled type="int">1</ProjectionsEnabled>
     </SpatialRefSys>
     <Macros>
-      <pythonCode type="QString">def openProject():
-    """Check actual version of database and project file"""
+      <pythonCode type="QString">from qgis.core import QgsProject
+from qkan.database.dbfunc import DBConnection
+from qkan.database.qkan_utils import get_database_QKan, warnung
+import logging
+from qkan.tools.application import QKanTools
+from qgis.gui import QgisInterface
+from qkan import QKan
 
-    from qgis.core import QgsProject
-    from qkan.database.dbfunc import DBConnection
-    from qkan.database.qkan_utils import get_database_QKan, warnung
-    import logging
+def openProject():
+    """Check actual version of database and project file"""
 
     logger = logging.getLogger("QKan.openProject")
     lis = logger.handlers
-    print(f'Logger handlers: {lis}')
+    # print(f'Logger handlers: {lis}')
 
     logger.debug('openProjekt started\n')
 
@@ -12672,6 +12675,9 @@ def my_form_open(dialog, layer, feature):
     db_qkan = DBConnection(dbname=database_qkan)
     isActual = db_qkan.isCurrentVersion
     if not isActual:
+        iface = QKan.instance.iface
+        qkt = QKanTools(iface)
+        qkt.run_dbAdapt()
         warnung(
             'Versionskontrolle', 
             'Die Datenbank muss aktualisiert werden!')

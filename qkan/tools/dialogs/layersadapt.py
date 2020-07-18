@@ -32,7 +32,7 @@ def click_help():
         Path(__file__).parent.parent.parent
         / "doc/sphinx/build/html/Qkan_Formulare.html"
     )
-    webbrowser.open_new_tab(str(helpfile) + "#projektlayer-auf-qkan-standard-setzen")
+    webbrowser.open_new_tab(str(helpfile) + "#projektlayer-aktualisieren")
 
 
 class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
@@ -52,7 +52,6 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
     gb_projectTemplate: QGroupBox
     gb_selectLayers: QGroupBox
     gb_setNodeTypes: QGroupBox
-    gb_updateQkanDB: QGroupBox
 
     lb_projectTemplate: QLabel
 
@@ -66,34 +65,18 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
     def __init__(self, plugin: "QKanTools", parent=None):
         super().__init__(plugin, parent)
 
-        self.cb_adaptDB.clicked.connect(self.click_enable_qkan_db)
         self.pb_selectProjectTemplate.clicked.connect(self.select_project_template)
         self.button_box.helpRequested.connect(click_help)
-        self.cb_adaptForms.clicked.connect(self.click_adapt_forms)
+        # self.cb_adaptForms.clicked.connect(self.click_adapt_forms)
         self.cb_adaptTableLookups.clicked.connect(self.click_adapt_table_lookups)
         self.cb_adaptKBS.clicked.connect(self.click_adapt_kbs)
         self.cb_applyQKanTemplate.clicked.connect(self.click_apply_template)
-        self.cb_qkanDBUpdate.clicked.connect(self.click_qkan_db_update)
 
     def select_qkan_db(self):
         self.cb_adaptDB.setChecked(True)  # automatisch aktivieren
         super().select_qkan_db()
 
-    def click_enable_qkan_db(self):
-        """Aktiviert oder deaktiviert das Textfeld für die Datenbankanbindung"""
-
-        checked = self.cb_adaptDB.isChecked()
-
-        self.tf_qkanDB.setEnabled(checked)
-        # self.pb_selectQKanDB.setEnabled(checked)
-
-        self.click_adapt_kbs()  # Korrigiert ggfs. cb_adaptKBS
-
-    def click_adapt_forms(self):
-        self.click_qkan_db_update()
-
     def click_adapt_table_lookups(self):
-        self.click_qkan_db_update()
         self.enable_project_template_group()
 
     def click_adapt_kbs(self):
@@ -109,23 +92,6 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
                     "Bei einer Anpassung der Layeranbindungen muss auch die Anpassung des KBS aktiviert sein!",
                 )
             self.cb_adaptKBS.setChecked(True)
-
-    def click_qkan_db_update(self):
-        """
-        Setzt cb_adaptTableLookups, wenn cb_qkanDBUpdate gesetzt
-        """
-
-        if self.cb_qkanDBUpdate.isChecked():
-            if not self.cb_adaptTableLookups.isChecked():
-                meldung(
-                    "",
-                    "Bei einem Update der QKan-Datenbank muss auch die "
-                    "Anpassung von Wertbeziehungungen und Formularanbindungen "
-                    "aktiviert sein!",
-                )
-
-            self.cb_adaptTableLookups.setChecked(True)
-            # self.click_adapt_table_lookups()
 
     def click_apply_template(self):
         """Aktiviert oder deaktiviert das Textfeld für die Template-Projektdatei"""

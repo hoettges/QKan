@@ -127,10 +127,10 @@ class DBConnection:
                             "dbfunc: Update aktiviert. Deshalb wird Datenbank aktualisiert"
                         )
                         self.updateversion()
-                        if self.reload:
-                            logger.debug("dbfunc: Datenbank muss neu geladen werden")
-                            self.connected = False
-                            self.consl.close()
+                        # if self.reload:
+                        #     logger.debug("dbfunc: Datenbank muss neu geladen werden")
+                        #     self.connected = False
+                        #     self.consl.close()
                     else:
                         meldung(
                             f"Projekt muss aktualisiert werden. Die QKan-Version der Datenbank {self.versiondbQK} stimmt nicht ",
