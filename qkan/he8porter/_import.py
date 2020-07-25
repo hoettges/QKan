@@ -8,22 +8,35 @@ from qkan.database.qkan_utils import fehlermeldung
 
 logger = logging.getLogger("QKan.he8.import")
 
+
 class ImportTask:
     def __init__(self, db_qkan: DBConnection):
         self.db_qkan = db_qkan
 
+        self.append = QKan.config.check_import.append or QKan.config.check_import.synch
+        self.update = QKan.config.check_import.update or QKan.config.check_import.synch
+        self.delete = QKan.config.check_import.synch
+
+        self.epsg = QKan.config.epsg
+
     def run(self):
-        result = all([ 
-            self._schaechte(), 
-            self._auslaesse(), 
+
+        result = all([
+            self._profile(),
+            self._bodenklassen(),
+            self._abflussparameter(),
+            self._schaechte(),
+            self._auslaesse(),
             self._speicher(), 
             self._haltungen(), 
             self._wehre(), 
-            self._pumpen()
+            self._pumpen(),
+            self._flaechen(),
+            self._einleitdirekt(),
+            self._aussengebiete()
         ])
 
         return result
-
 
     def _schaechte(self):
         """Import der Schächte"""
@@ -38,25 +51,30 @@ class ImportTask:
             kommentar, createdat
         )
         SELECT 
-            Name AS schnam,
-            x(Geometry) AS xsch, 
-            y(Geometry) AS ysch, 
-            Sohlhoehe AS sohlhoehe, 
-            Deckelhoehe AS deckelhoehe, 
-            Durchmesser AS durchm, 
-            Druckdichterdeckel AS druckdicht, 
-            Kanalart AS entwart, 
+            sh.Name AS schnam,
+            x(sh.Geometry) AS xsch, 
+            y(sh.Geometry) AS ysch, 
+            sh.Sohlhoehe AS sohlhoehe, 
+            sh.Deckelhoehe AS deckelhoehe, 
+            sh.Durchmesser AS durchm, 
+            sh.Druckdichterdeckel AS druckdicht, 
+            sh.Kanalart AS entwart, 
             'Schacht' AS schachttyp,
-            Planungsstatus AS simstatus, 
-            Kommentar AS kommentar, 
-            Lastmodified AS createdat
-        FROM he.Schacht"""
+            sh.Planungsstatus AS simstatus, 
+            sh.Kommentar AS kommentar, 
+            sh.Lastmodified AS createdat
+        FROM he.Schacht AS sh
+        LEFT JOIN schaechte AS sq
+        ON sh.Name = sq.schnam
+        WHERE sq.pk IS NULL
+        """
 
         if not self.db_qkan.sql(sql, "he8_import Schächte"):
             return False
 
         self.db_qkan.commit()
 
+        return True
 
     def _auslaesse(self):
         """Import der Auslässe"""
@@ -69,22 +87,27 @@ class ImportTask:
             kommentar, createdat
         )
         SELECT 
-            Name AS schnam,
-            x(Geometry) AS xsch, 
-            y(Geometry) AS ysch, 
-            Sohlhoehe AS sohlhoehe, 
-            Gelaendehoehe AS deckelhoehe, 
+            al.Name AS schnam,
+            x(al.Geometry) AS xsch, 
+            y(al.Geometry) AS ysch, 
+            al.Sohlhoehe AS sohlhoehe, 
+            al.Gelaendehoehe AS deckelhoehe, 
             'Auslass' AS schachttyp,
-            Planungsstatus AS simstatus, 
-            Kommentar AS kommentar, 
-            Lastmodified AS createdat
-        FROM he.Auslass"""
+            al.Planungsstatus AS simstatus, 
+            al.Kommentar AS kommentar, 
+            al.Lastmodified AS createdat
+        FROM he.Auslass AS al
+        LEFT JOIN schaechte AS sq
+        ON al.Name = sq.schnam
+        WHERE sq.pk IS NULL
+        """
 
         if not self.db_qkan.sql(sql, "he8_import Auslässe"):
             return False
 
         self.db_qkan.commit()
 
+        return True
 
     def _speicher(self):
         """Import der Speicher"""
@@ -97,24 +120,29 @@ class ImportTask:
             kommentar, createdat
         )
         SELECT 
-            Name AS schnam,
-            x(Geometry) AS xsch, 
-            y(Geometry) AS ysch, 
-            Sohlhoehe AS sohlhoehe, 
-            Gelaendehoehe AS deckelhoehe, 
+            sp.Name AS schnam,
+            x(sp.Geometry) AS xsch, 
+            y(sp.Geometry) AS ysch, 
+            sp.Sohlhoehe AS sohlhoehe, 
+            sp.Gelaendehoehe AS deckelhoehe, 
             'Speicher' AS schachttyp,
-            Planungsstatus AS simstatus, 
-            Kommentar AS kommentar, 
-            Lastmodified AS createdat
-        FROM he.Speicherschacht"""
+            sp.Planungsstatus AS simstatus, 
+            sp.Kommentar AS kommentar, 
+            sp.Lastmodified AS createdat
+        FROM he.Speicherschacht AS sp
+        LEFT JOIN schaechte AS sq
+        ON sp.Name = sq.schnam
+        WHERE sq.pk IS NULL
+        """
 
         if not self.db_qkan.sql(sql, "he8_import Speicher"):
             return False
 
         self.db_qkan.commit()
 
+        return True
 
-    def _haltungen(self):
+    def _profile(self):
         """Import der Haltungen"""
 
         # Profilnummern aller Sonderprofile ergänzen. 
@@ -123,20 +151,26 @@ class ImportTask:
             profilnam, he_nr
         )
         SELECT 
-            Sonderprofilbezeichnung, 68
-        FROM he.Rohr
-        INNER JOIN he.Sonderprofil
-        ON he.Rohr.SonderprofilbezeichnungRef = he.Sonderprofil.Id
+            hh.Sonderprofilbezeichnung, 68
+        FROM he.Rohr AS hh
+        INNER JOIN he.Sonderprofil AS sp
+        ON hh.SonderprofilbezeichnungRef = sp.Id
+        LEFT JOIN profile AS pr
+        ON pr.profilnam = hh.Sonderprofilbezeichnung
+        WHERE pr.pk IS NULL
         GROUP BY 
-            Profiltyp, Sonderprofilbezeichnung, SonderprofilbezeichnungRef
+            Profiltyp, hh.Sonderprofilbezeichnung, hh.SonderprofilbezeichnungRef
         """
 
         if not self.db_qkan.sql(sql, "he8_import Sonderprofile"):
             return None
 
+    def _haltungen(self):
+        """Import der Haltungen"""
+
         # Haltungen
         sql = f"""
-        INSERT INTO haltungen  (
+        INSERT INTO haltungen (
             haltnam, schoben, schunten, 
             hoehe, breite, laenge, 
             sohleoben, sohleunten, deckeloben, deckelunten, 
@@ -193,6 +227,7 @@ class ImportTask:
 
         self.db_qkan.commit()
 
+        return True
 
     def _wehre(self):
         """Import der Wehre"""
@@ -235,6 +270,7 @@ class ImportTask:
 
         self.db_qkan.commit()
 
+        return True
 
     def _pumpen(self):
         """Import der Pumpen"""
@@ -276,12 +312,251 @@ class ImportTask:
 
         self.db_qkan.commit()
 
+        return True
 
     def _flaechen(self):
         """Import der Flächen"""
 
         sql = f"""
         INSERT INTO flaechen ( 
-            flnam, haltnam, schnam, neigkl, teilgebiet, regenschreiber, 
-            abflussparameter, aufteilen, kommentar, createdat, geom)        
+            flnam, haltnam, neigkl, regenschreiber, 
+            abflussparameter, aufteilen, kommentar, createdat, geom
+        ) 
+        SELECT
+            fl.Name AS flnam, 
+            fl.Haltung AS haltnam, 
+            fl.Neigungsklasse AS neigkl, 
+            fl.Regenschreiber AS regenschreiber, 
+            fl.Parametersatz AS abflussparameter,
+            false AS aufteilen, 
+            fl.Kommentar AS kommentar, 
+            fl.Lastmodified AS createdat, 
+            SetSRID(fl.Geometry, {self.epsg}) AS geom
+        FROM he.Flaeche AS fl
+        """
+
+        if not self.db_qkan.sql(sql, "he8_import Flaechen (1)"):
+            return None
+
+        self.db_qkan.commit()
+
+        return True
+
+    def _abflussparameter(self):
+        """Import der Abflussbeiwerte
+
+        Es werden nur die in QKan fehlenden Abflussbeiwerte, die in der
+        HE-Datenbank in Flächen verwendet werden, importiert"""
+
+        sql = """
+        INSERT INTO abflussparameter (
+            apnam, anfangsabflussbeiwert, endabflussbeiwert, 
+            benetzungsverlust, muldenverlust, 
+            benetzung_startwert, mulden_startwert, 
+            bodenklasse, kommentar, createdat 
+        )
+        SELECT 
+            ap_he.name AS apnam, 
+            ap_he.AbflussbeiwertAnfang AS anfangsabflussbeiwert,
+            ap_he.AbflussbeiwertEnde AS endabflussbeiwert,
+            ap_he.Benetzungsverlust AS benetzungsverlust, 
+            ap_he.Muldenverlust AS muldenverlust,
+            ap_he.BenetzungSpeicherStart AS benetzung_startwert, 
+            ap_he.MuldenauffuellgradStart AS mulden_startwert, 
+            ap_he.Bodenklasse AS bodenklasse,
+            ap_he.Kommentar AS kommentar, 
+            ap_he.Lastmodified AS createdat 
+        FROM he.AbflussParameter AS ap_he
+        LEFT JOIN abflussparameter as ap_qk
+        ON ap_he.Name = ap_qk.apnam
+        INNER JOIN he.Flaeche AS fl_he
+        ON fl_he.Parametersatz = ap_he.Name
+        WHERE ap_qk.pk IS NULL
+        GROUP BY ap_qk.apnam
+        """
+
+        if not self.db_qkan.sql(sql, "he8_import Abflussparameter (1)"):
+            return None
+
+        self.db_qkan.commit()
+
+        return True
+
+    def _bodenklassen(self):
+        """Import der Bodenklassen
+
+        Es werden nur die in QKan fehlenden Bodenklassen, die in der
+        HE-Datenbank in Abflussparametern verwendet werden, importiert"""
+
+        sql = """
+        INSERT INTO bodenklassen (
+            bknam, infiltrationsrateanfang, infiltrationsrateende, 
+            infiltrationsratestart, rueckgangskonstante, 
+            regenerationskonstante, saettigungswassergehalt, 
+            kommentar, createdat
+        )
+        SELECT
+            bk_he.Name AS bknam, 
+            bk_he.InfiltrationsrateAnfang AS infiltrationsrateanfang, 
+            bk_he.InfiltrationsrateEnde AS infiltrationsrateende, 
+            bk_he.InfiltrationsrateStart AS infiltrationsratestart, 
+            bk_he.Rueckgangskonstante AS rueckgangskonstante, 
+            bk_he.Regenerationskonstante AS regenerationskonstante, 
+            bk_he.Saettigungswassergehalt AS saettigungswassergehalt, 
+            bk_he.Kommentar AS kommentar, 
+            bk_he.LastModified AS createdat
+        FROM he.Bodenklasse AS bk_he
+        LEFT JOIN bodenklassen AS bk_qk
+        ON bk_he.Name = bk_qk.bknam
+        INNER JOIN he.abflussparameter AS ap_he
+        ON ap_he.bodenklasse = bk_he.Name
+        WHERE bk_qk.pk IS NULL
+        """
+
+        if not self.db_qkan.sql(sql, "he8_import Bodenklassen (1)"):
+            return None
+
+        self.db_qkan.commit()
+
+        return True
+
+    def _aussengebiete(self):
+        """Import der Aussengebiete"""
+
+        sql = f"""
+        INSERT INTO aussengebiete (
+            gebnam, schnam, 
+            hoeheob, hoeheun, 
+            fliessweg, basisabfluss, 
+            cn, regenschreiber,
+            kommentar, createdat, 
+            geom 
+        )
+        SELECT
+            ag_he.Name AS gebnam, 
+            ag_he.Schacht AS schnam, 
+            ag_he.HoeheOben AS hoeheob, 
+            ag_he.HoeheUnten AS hoeheun, 
+            ag_he.FliessLaenge AS fliessweg, 
+            ag_he.BasisZufluss AS basisabfluss, 
+            ag_he.CNMittelwert AS cn, 
+            ag_he.Regenschreiber AS regenschreiber, 
+            ag_he.Kommentar AS kommentar, 
+            ag_he.LastModified AS createdat,
+            CastToMultiPolygon(
+                CastToPolygon(
+                    MakeCircle(
+                        x(ag_he.Geometry),
+                        y(ag_he.Geometry),
+                        sqrt(ag_he.Gesamtflaeche), 
+                        {self.epsg}
+            )   )   ) AS geom
+        FROM he.Aussengebiet AS ag_he
+        LEFT JOIN aussengebiete AS ag_qk
+        ON ag_he.Name = ag_qk.gebnam
+        WHERE ag_qk.pk IS NULL
+        """
+
+        if not self.db_qkan.sql(sql, "he8_import Außengebiete (1)"):
+            return None
+
+        self.db_qkan.commit()
+
+        return True
+
+    def _einleitdirekt(self):
+        """Import der Direkteinleiter"""
+
+        sql = """
+        INSERT INTO einleit (
+            elnam, haltnam, 
+            zufluss, ew, 
+            einzugsgebiet,
+            kommentar, createdat
+        )
+        SELECT
+            el_he.Name AS elnam,
+            el_he.Rohr AS haltnam,
+            el_he.Zufluss AS zufluss,
+            el_he.Einwohner AS ew,
+            el_he.Teileinzugsgebiet AS einzugsgebiet,
+            el_he.Kommentar AS kommentar,
+            el_he.LastModified AS createdat
+        FROM Einzeleinleiter AS el_he
+        LEFT JOIN einleit AS el_qk
+        ON el_he.Name = el_qk.elnam
+        WHERE el_qk.pk IS NULL
+        """
+
+        if not self.db_qkan.sql(sql, "he8_import Direkteinleiter (1)"):
+            return None
+
+        self.db_qkan.commit()
+
+        return True
+
+    def _einzugsgebiet(self):
+        """Import der Einzugsgebiete"""
+
+        sql = """
+        INSERT INTO einzugsgebiete (
+            tgnam, ewdichte, wverbrauch, stdmittel,
+            fremdwas, kommentar, createdat
+        ) 
+        SELECT 
+            eg_he.Name AS tgnam,
+            eg_he.Einwohnerdichte AS ewdichte,
+            eg_he.Wasserverbrauch AS wverbrauch,
+            eg_he.Stundenmittel AS stdmittel,
+            eg_he.Fremdwasseranteil AS fremdwas,
+            eg_he.Kommentar AS kommentar,
+            eg_he.LastModified AS createdat
+        FROM Teileinzugsgebiet AS eg_he
+        LEFT JOIN einzugsgebiete AS eg_qk
+        ON eg_he.Name = eg_qk.elnam
+        WHERE eg_qk.pk IS NULL
+            """
+        if not self.db_qkan.sql(sql, "he8_import Einzugsgebiete (1)"):
+            return None
+
+        self.db_qkan.commit()
+
+        return True
+
+    def _tezg(self):
+        """Import der Haltungsflaechen (tezg)
+
+        Diese sind in HYSTEM-EXTRAN zusätzlich markiert als
+         - Einzugsfläche
+         - Haltungsfläche
+         - TWEinzugsfläche
+
+        Dieses Attribut wird nicht in QKan übernommen. Allerdings kann
+        der Flächentyp selektiert werden.
+        """
+
+        choice_ef = str(QKan.config.check_import.tezg_ef)
+        choice_hf = str(QKan.config.check_import.tezg_hf)
+        choice_tf = str(QKan.config.check_import.tezg_tf)
+
+        sql = f"""
+        INSERT INTO tezg (
+            flnam, haltnam, 
+            kommentar, createdat, 
+            geom
+        )
+        SELECT
+            eg_he.Name AS flnam, 
+            eg_he.Haltung AS haltnam, 
+            eg_he.Kommentar AS kommentar, 
+            eg_he.LastModified AS createdat, 
+            SetSRID(eg_he.Geometry, {self.epsg}) AS geom
+        FROM GipsEinzugsflaeche AS eg_he
+        LEFT JOIN tezg AS eg_qk
+        ON eg_he.Name = eg_qk.elnam
+        WHERE (
+            (IsEinzugsflaeche and {choice_ef}) or
+            (IsHaltungsflaeche and {choice_hf}) or
+            (IsTwEinzugsflaeche and {choice_tf})
+        ) and eg_qk.pk IS NULL 
         """

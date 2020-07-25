@@ -180,6 +180,41 @@ class CheckExport(TempStorage):
         return "<CheckExport *hidden in __str__*>"
 
 
+class CheckImport(ClassObject):
+    """Auswahl der zu importierenden Datenbestände
+    Bei 'Aktionen' kann die Methode der Synchronisation ausgewählt werden.
+    Dabei basieren die Aktion auf einem Abgleich zwischen Quell- und Zieldaten
+    Achtung: Falls eine Beschränkung auf Teilgebiete aktiviert ist, bezieht
+    sich die Synchronisation nur auf die gewählten Teilgebiete!
+    
+    """
+    # Tabellen mit Geo-Objekten
+    schaechte: bool = True
+    auslaesse: bool = True
+    speicher: bool = True
+    haltungen: bool = True
+    pumpen: bool = True
+    wehre: bool = True
+    flaechen: bool = True
+    einleitdirekt:bool = True
+    aussengebiete:bool = True
+
+    # Haltungsflächen aus GIPS, drei Typen in einer Tabelle
+    tezg_ef: bool = True
+    tezg_hf: bool = True
+    tezg_tf: bool = True
+
+    # Referenztabellen
+    abflussparameter: bool = True
+    bodenklassen: bool = True
+    rohrprofile: bool = True
+
+    # Aktionen
+    append: bool = True             # Daten hinzufügen
+    update: bool = False             # Daten ändern
+    synch: bool = False             # Daten löschen
+
+
 class DatabaseConfig(ClassObject):
     qkan: str = ""
     type: enums.QKanDBChoice = enums.QKanDBChoice.SPATIALITE
@@ -308,6 +343,7 @@ class Config(ClassObject):
     # ---
     adapt: AdaptConfig = AdaptConfig()
     check_export: CheckExport = CheckExport()
+    check_import: CheckImport = CheckImport()
     selections: SelectionConfig = SelectionConfig()
     database: DatabaseConfig = DatabaseConfig()
     dyna: DynaConfig = DynaConfig()

@@ -36,7 +36,7 @@ from qgis.utils import iface, pluginDirectory
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 
-logger = logging.getLogger(u"QKan.tools.k_qgsadapt")
+logger = logging.getLogger("QKan.tools.k_qgsadapt")
 
 progress_bar = None
 
@@ -45,7 +45,6 @@ def qgsadapt(
     projectTemplate: str,
     qkanDB: str,
     projectFile: str,
-    setPathToTemplateDir: bool = True,
     epsg: int = None,
 ):
     """Lädt eine (Vorlage-) Projektdatei (*.qgs) und adaptiert diese auf eine QKan-Datenbank an.
@@ -60,9 +59,6 @@ def qgsadapt(
 
     :projectFile:               Zu Erzeugende Projektdatei
     :type projectFile:          String
-
-    :setPathToTemplateDir:      Option, ob das Suchverzeichnis auf das Template-Verzeichnis gesetzt werden soll.
-    :type setPathToTemplateDir: Boolean
 
     :epsg:                      EPSG-Code. Falls nicht vorgegeben, wird dieser aus der Tabelle 'schaechte' gelesen
     :tpye epsg:                 Integer
@@ -79,8 +75,8 @@ def qgsadapt(
 
     if not dbQK.connected:
         fehlermeldung(
-            u"Fehler in k_qgsadapt:\n",
-            u"QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
+            "Fehler in k_qgsadapt:\n",
+            "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
                 qkanDB
             ),
         )
@@ -88,7 +84,7 @@ def qgsadapt(
 
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten
-    sql = u"""SELECT min(xsch) AS xmin, 
+    sql = """SELECT min(xsch) AS xmin, 
                     max(xsch) AS xmax, 
                     min(ysch) AS ymin, 
                     max(ysch) AS ymax
@@ -98,7 +94,7 @@ def qgsadapt(
     except BaseException as e:
         del dbQK
         fehlermeldung("SQL-Fehler", str(e))
-        fehlermeldung("Fehler in qgsadapt", u"\nFehler in sql_zoom: \n" + sql + "\n\n")
+        fehlermeldung("Fehler in qgsadapt", "\nFehler in sql_zoom: \n" + sql + "\n\n")
 
     daten = dbQK.fetchone()
     try:
@@ -106,7 +102,7 @@ def qgsadapt(
     except BaseException as e:
         fehlermeldung("SQL-Fehler", str(e))
         fehlermeldung(
-            "Fehler in qgsadapt", u"\nFehler in sql_zoom; daten= " + str(daten) + "\n"
+            "Fehler in qgsadapt", "\nFehler in sql_zoom; daten= " + str(daten) + "\n"
         )
 
     # --------------------------------------------------------------------------
@@ -114,6 +110,7 @@ def qgsadapt(
     # außer: Wenn epsg aus Parameterliste vorgegeben, dann übernehmen
     if epsg:
         srid = epsg
+        logger.debug(f"Vorgabe epsg: {epsg}")
     else:
         sql = """SELECT srid
                 FROM geom_cols_ref_sys
@@ -148,7 +145,7 @@ def qgsadapt(
         fehlermeldung('\nFehler in "daten"', str(e))
         fehlermeldung(
             "Fehler in qgsadapt",
-            u"\nFehler bei der Ermittlung der srid: \n" + str(daten),
+            "\nFehler bei der Ermittlung der srid: \n" + str(daten),
         )
 
     # --------------------------------------------------------------------------
@@ -159,33 +156,33 @@ def qgsadapt(
     # --------------------------------------------------------------------------
     # Projektdatei schreiben, falls ausgewählt
 
-    if projectFile is None or projectFile == u"":
-        fehlermeldung(u"Bedienerfehler!", u"Es wurde keine Projektdatei ausgewählt")
+    if projectFile is None or projectFile == "":
+        fehlermeldung("Bedienerfehler!", "Es wurde keine Projektdatei ausgewählt")
         return False
 
-    if setPathToTemplateDir:
-        templatepath = os.path.join(pluginDirectory("qkan"), u"templates")
+    if not projectTemplate:
+        projectTemplate = os.path.join(pluginDirectory("qkan"), "templates", "projekt.qgs")
 
     projectpath = os.path.dirname(projectFile)
     if os.path.dirname(qkanDB) == projectpath:
-        datasource = qkanDB.replace(os.path.dirname(qkanDB), u".")
+        datasource = qkanDB.replace(os.path.dirname(qkanDB), ".")
     else:
         datasource = qkanDB
 
     # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
     # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
     tabliste = [
-        u"einleit",
-        u"einzugsgebiete",
-        u"flaechen",
-        u"haltungen",
-        u"linkfl",
-        u"linksw",
-        u"pumpen",
-        u"schaechte",
-        u"teilgebiete",
-        u"tezg",
-        u"wehre",
+        "einleit",
+        "einzugsgebiete",
+        "flaechen",
+        "haltungen",
+        "linkfl",
+        "linksw",
+        "pumpen",
+        "schaechte",
+        "teilgebiete",
+        "tezg",
+        "wehre",
     ]
 
     # Liste der QKan-Formulare, um individuell erstellte Formulare von der Bearbeitung auszuschliessen
@@ -230,8 +227,8 @@ def qgsadapt(
 
     # Projektionssystem anpassen --------------------------------------------------------------
 
-    for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
-        tag_datasource = tag_maplayer.find(u"./datasource")
+    for tag_maplayer in root.findall(".//projectlayers/maplayer"):
+        tag_datasource = tag_maplayer.find("./datasource")
         tex = tag_datasource.text
         # Nur QKan-Tabellen bearbeiten
         if 'table="' in tex:
@@ -239,37 +236,37 @@ def qgsadapt(
             if tex[tex.index(u'table="') + 7 :].split(u'" ')[0] in tabliste:
 
                 # <extend> löschen
-                for tag_extent in tag_maplayer.findall(u"./extent"):
+                for tag_extent in tag_maplayer.findall("./extent"):
                     tag_maplayer.remove(tag_extent)
 
-                for tag_spatialrefsys in tag_maplayer.findall(u"./srs/spatialrefsys"):
+                for tag_spatialrefsys in tag_maplayer.findall("./srs/spatialrefsys"):
                     tag_spatialrefsys.clear()
 
-                    elem = ElementTree.SubElement(tag_spatialrefsys, u"proj4")
+                    elem = ElementTree.SubElement(tag_spatialrefsys, "proj4")
                     elem.text = proj4text
-                    elem = ElementTree.SubElement(tag_spatialrefsys, u"srsid")
-                    elem.text = u"{}".format(srsid)
-                    elem = ElementTree.SubElement(tag_spatialrefsys, u"srid")
-                    elem.text = u"{}".format(srid)
-                    elem = ElementTree.SubElement(tag_spatialrefsys, u"authid")
-                    elem.text = u"EPSG: {}".format(srid)
-                    elem = ElementTree.SubElement(tag_spatialrefsys, u"description")
-                    elem.text = description
-                    elem = ElementTree.SubElement(
-                        tag_spatialrefsys, u"projectionacronym"
-                    )
-                    elem.text = projectionacronym
-                    if ellipsoidacronym is not None:
-                        elem = ElementTree.SubElement(
-                            tag_spatialrefsys, u"ellipsoidacronym"
-                        )
-                        elem.text = ellipsoidacronym
+                    elem = ElementTree.SubElement(tag_spatialrefsys, "srsid")
+                    elem.text = "{}".format(srsid)
+                    # elem = ElementTree.SubElement(tag_spatialrefsys, "srid")
+                    # elem.text = "{}".format(srid)
+                    elem = ElementTree.SubElement(tag_spatialrefsys, "authid")
+                    elem.text = "EPSG:{}".format(srid)
+                    # elem = ElementTree.SubElement(tag_spatialrefsys, "description")
+                    # elem.text = description
+                    # elem = ElementTree.SubElement(
+                    #     tag_spatialrefsys, "projectionacronym"
+                    # )
+                    # elem.text = projectionacronym
+                    # if ellipsoidacronym is not None:
+                    #     elem = ElementTree.SubElement(
+                    #         tag_spatialrefsys, "ellipsoidacronym"
+                    #     )
+                    #     elem.text = ellipsoidacronym
 
     # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
 
-    formspath = os.path.join(pluginDirectory("qkan"), u"forms")
-    for tag_maplayer in root.findall(u".//projectlayers/maplayer"):
-        tag_editform = tag_maplayer.find(u"./editform")
+    formspath = os.path.join(pluginDirectory("qkan"), "forms")
+    for tag_maplayer in root.findall(".//projectlayers/maplayer"):
+        tag_editform = tag_maplayer.find("./editform")
         if tag_editform is not None:
             formpath = tag_editform.text
             if formpath is not None:
@@ -281,45 +278,68 @@ def qgsadapt(
     # Zoom für Kartenfenster einstellen -------------------------------------------------------
 
     if type(zoomxmin) is type(1.0):
-        for tag_extent in root.findall(u".//mapcanvas/extent"):
-            elem = tag_extent.find(u"./xmin")
-            elem.text = u"{:.3f}".format(zoomxmin)
-            elem = tag_extent.find(u"./ymin")
-            elem.text = u"{:.3f}".format(zoomymin)
-            elem = tag_extent.find(u"./xmax")
-            elem.text = u"{:.3f}".format(zoomxmax)
-            elem = tag_extent.find(u"./ymax")
-            elem.text = u"{:.3f}".format(zoomymax)
+        for tag_extent in root.findall(".//mapcanvas/extent"):
+            elem = tag_extent.find("./xmin")
+            elem.text = "{:.3f}".format(zoomxmin)
+            elem = tag_extent.find("./ymin")
+            elem.text = "{:.3f}".format(zoomymin)
+            elem = tag_extent.find("./xmax")
+            elem.text = "{:.3f}".format(zoomxmax)
+            elem = tag_extent.find("./ymax")
+            elem.text = "{:.3f}".format(zoomymax)
 
-    # Projektionssystem anpassen --------------------------------------------------------------
+    # Projektionssystem des Plans anpassen --------------------------------------------------------------
 
-    for tag_spatialrefsys in root.findall(u".//mapcanvas/destinationsrs/spatialrefsys"):
+    for tag_spatialrefsys in root.findall(".//mapcanvas/destinationsrs/spatialrefsys"):
         tag_spatialrefsys.clear()
 
-        elem = ElementTree.SubElement(tag_spatialrefsys, u"proj4")
+        elem = ElementTree.SubElement(tag_spatialrefsys, "proj4")
         elem.text = proj4text
-        elem = ElementTree.SubElement(tag_spatialrefsys, u"srid")
-        elem.text = u"{}".format(srid)
-        elem = ElementTree.SubElement(tag_spatialrefsys, u"authid")
-        elem.text = u"EPSG: {}".format(srid)
-        elem = ElementTree.SubElement(tag_spatialrefsys, u"description")
-        elem.text = description
-        elem = ElementTree.SubElement(tag_spatialrefsys, u"projectionacronym")
-        elem.text = projectionacronym
+        # elem = ElementTree.SubElement(tag_spatialrefsys, "srid")
+        # elem.text = "{}".format(srid)
+        elem = ElementTree.SubElement(tag_spatialrefsys, "srsid")
+        elem.text = "{}".format(srsid)
+        elem = ElementTree.SubElement(tag_spatialrefsys, "authid")
+        elem.text = "EPSG:{}".format(srid)
+        # elem = ElementTree.SubElement(tag_spatialrefsys, "description")
+        # elem.text = description
+        # elem = ElementTree.SubElement(tag_spatialrefsys, "projectionacronym")
+        # elem.text = projectionacronym
         if ellipsoidacronym is not None:
-            elem = ElementTree.SubElement(tag_spatialrefsys, u"ellipsoidacronym")
+            elem = ElementTree.SubElement(tag_spatialrefsys, "ellipsoidacronym")
+            elem.text = ellipsoidacronym
+
+    # Projektionssystem von QGIS anpassen --------------------------------------------------------------
+
+    for tag_spatialrefsys in root.findall(".//projectCrs/spatialrefsys"):
+        tag_spatialrefsys.clear()
+
+        elem = ElementTree.SubElement(tag_spatialrefsys, "proj4")
+        elem.text = proj4text
+        # elem = ElementTree.SubElement(tag_spatialrefsys, "srid")
+        # elem.text = "{}".format(srid)
+        elem = ElementTree.SubElement(tag_spatialrefsys, "srsid")
+        elem.text = "{}".format(srsid)
+        elem = ElementTree.SubElement(tag_spatialrefsys, "authid")
+        elem.text = "EPSG:{}".format(srid)
+        # elem = ElementTree.SubElement(tag_spatialrefsys, "description")
+        # elem.text = description
+        # elem = ElementTree.SubElement(tag_spatialrefsys, "projectionacronym")
+        # elem.text = projectionacronym
+        if ellipsoidacronym is not None:
+            elem = ElementTree.SubElement(tag_spatialrefsys, "ellipsoidacronym")
             elem.text = ellipsoidacronym
 
     # Pfad zur QKan-Datenbank anpassen
 
-    for tag_datasource in root.findall(u".//projectlayers/maplayer/datasource"):
+    for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
         text = tag_datasource.text
         tag_datasource.text = (
-            u"dbname='" + datasource + u"' " + text[text.find(u"table=") :]
+            "dbname='" + datasource + "' " + text[text.find("table=") :]
         )
 
     qgsxml.write(projectFile)  # writing modified project file
-    logger.debug(u"Projektdatei: {}".format(projectFile))
+    logger.debug("Projektdatei: {}".format(projectFile))
     # logger.debug(u'encoded string: {}'.format(tex))
 
     # ------------------------------------------------------------------------------

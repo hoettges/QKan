@@ -115,8 +115,31 @@ class He8Porter:
 
             # Read from form and save to config
             QKan.config.database.qkan = database_qkan = self.import_dlg.tf_database.text()
-            QKan.config.project.file = self.import_dlg.tf_project.text()
+            QKan.config.project.file = project_file = self.import_dlg.tf_project.text()
             QKan.config.he8.import_file = import_file = self.import_dlg.tf_import.text()
+
+            QKan.config.check_import.haltungen = self.import_dlg.cb_haltungen.isChecked()
+            QKan.config.check_import.schaechte = self.import_dlg.cb_schaechte.isChecked()
+            QKan.config.check_import.auslaesse = self.import_dlg.cb_auslaesse.isChecked()
+            QKan.config.check_import.speicher = self.import_dlg.cb_speicher.isChecked()
+            QKan.config.check_import.pumpen = self.import_dlg.cb_pumpen.isChecked()
+            QKan.config.check_import.wehre = self.import_dlg.cb_wehre.isChecked()
+            QKan.config.check_import.rohrprofile = self.import_dlg.cb_rohrprofile.isChecked()
+            QKan.config.check_import.regenschreiber = self.import_dlg.cb_regenschreiber.isChecked()
+            QKan.config.check_import.abflussparameter = self.import_dlg.cb_abflussparameter.isChecked()
+            QKan.config.check_import.bodenklassen = self.import_dlg.cb_bodenklassen.isChecked()
+            QKan.config.check_import.einleitdirekt = self.import_dlg.cb_einleitdirekt.isChecked()
+            QKan.config.check_import.aussengebiete = self.import_dlg.cb_aussengebiete.isChecked()
+
+            QKan.config.check_import.tezg_ef = self.import_dlg.cb_tezg_ef.isChecked()
+            QKan.config.check_import.tezg_hf = self.import_dlg.cb_tezg_hf.isChecked()
+            QKan.config.check_import.tezg_tf = self.import_dlg.cb_tezg_tf.isChecked()
+
+            QKan.config.check_import.append = self.import_dlg.rb_append.isChecked()
+            QKan.config.check_import.update = self.import_dlg.rb_update.isChecked()
+            QKan.config.check_import.synch = self.import_dlg.rb_synch.isChecked()
+
+            QKan.config.save()
 
             if not import_file:
                 fehlermeldung("Fehler beim Import", "Es wurde keine Datei ausgewählt!")
@@ -127,7 +150,7 @@ class He8Porter:
                 )
                 return
             else:
-                crs: QgsCoordinateReferenceSystem = self.import_dlg.epsg.crs()
+                crs: QgsCoordinateReferenceSystem = self.import_dlg.pw_epsg.crs()
 
                 try:
                     epsg = int(crs.postgisSrid())
@@ -153,7 +176,7 @@ class He8Porter:
 
                     logger.info("Creating DB")
                     db_qkan = DBConnection(
-                        dbname=database_qkan, epsg=str(QKan.config.epsg)
+                        dbname=database_qkan, epsg=QKan.config.epsg
                     )
 
                     if not db_qkan:

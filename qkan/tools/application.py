@@ -185,7 +185,6 @@ class QKanTools:
                 project_template,
                 self.db_qkan,
                 project_file,
-                self.apply_qkan_template,
                 epsg=None,
             )
 
@@ -571,14 +570,6 @@ class QKanTools:
         # Checkbox: QKan-Standard anwenden
         self.apply_qkan_template = QKan.config.tools.apply_qkan_template
         self.dlgla.cb_applyQKanTemplate.setChecked(self.apply_qkan_template)
-
-        # # Checkbox: QKan-Datenbank aktualisieren
-        # if self.dbIsUptodate:
-        # self.qkanDBUpdate = QKan.config.tools.qkan_db_update
-        # else:
-        # self.qkanDBUpdate = True
-        # else:
-        # self.qkanDBUpdate = True
 
         # Status initialisieren
         self.dlgla.click_apply_template()

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>804</width>
-    <height>581</height>
+    <width>726</width>
+    <height>441</height>
    </rect>
   </property>
   <property name="font">
@@ -21,8 +21,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>510</y>
+     <x>250</x>
+     <y>390</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -44,12 +44,12 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="gb_db_he">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>20</y>
-     <width>491</width>
+     <width>401</width>
      <height>131</height>
     </rect>
    </property>
@@ -96,7 +96,7 @@
    <widget class="QPushButton" name="pb_import">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>360</x>
       <y>40</y>
       <width>30</width>
       <height>20</height>
@@ -114,7 +114,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>410</width>
+      <width>341</width>
       <height>20</height>
      </rect>
     </property>
@@ -134,8 +134,8 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>90</y>
+      <x>10</x>
+      <y>70</y>
       <width>101</width>
       <height>21</height>
      </rect>
@@ -153,10 +153,10 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QgsProjectionSelectionWidget" name="epsg">
+   <widget class="QgsProjectionSelectionWidget" name="pw_epsg">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>10</x>
       <y>90</y>
       <width>321</width>
       <height>27</height>
@@ -164,12 +164,12 @@
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2">
+  <widget class="QGroupBox" name="gb_prjectfile">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>390</y>
-     <width>491</width>
+     <x>10</x>
+     <y>290</y>
+     <width>411</width>
      <height>81</height>
     </rect>
    </property>
@@ -216,7 +216,7 @@
    <widget class="QPushButton" name="pb_project">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>370</x>
       <y>40</y>
       <width>30</width>
       <height>20</height>
@@ -234,7 +234,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>420</width>
+      <width>351</width>
       <height>20</height>
      </rect>
     </property>
@@ -252,13 +252,13 @@
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_3">
+  <widget class="QGroupBox" name="gb_db_qkan">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>200</y>
-     <width>491</width>
-     <height>111</height>
+     <y>180</y>
+     <width>401</width>
+     <height>81</height>
     </rect>
    </property>
    <property name="font">
@@ -304,7 +304,7 @@
    <widget class="QPushButton" name="pb_database">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>360</x>
       <y>40</y>
       <width>30</width>
       <height>20</height>
@@ -322,7 +322,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>410</width>
+      <width>341</width>
       <height>20</height>
      </rect>
     </property>
@@ -339,46 +339,14 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_teilgebiet">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>70</y>
-      <width>201</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>70</y>
-      <width>211</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Optional: Bezeichnung des Teilgebietes:</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-   </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_4">
+  <widget class="QGroupBox" name="gb_action">
    <property name="geometry">
     <rect>
-     <x>530</x>
+     <x>440</x>
      <y>20</y>
-     <width>251</width>
-     <height>451</height>
+     <width>271</width>
+     <height>291</height>
     </rect>
    </property>
    <property name="font">
@@ -399,10 +367,219 @@
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <widget class="QCheckBox" name="cb_export_haltungen">
+   <widget class="QCheckBox" name="cb_haltungen">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
+      <y>20</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Haltungen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_schaechte">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schächte importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_flaechenrw">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flächenobjekte und Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_auslaesse">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auslässe importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_speicher">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Speicherbauwerke importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_pumpen">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>40</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pumpen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_wehre">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>60</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wehre importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_rohrprofile">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>140</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sonderprofile importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_regenschreiber">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
       <y>120</y>
       <width>21</width>
       <height>20</height>
@@ -415,7 +592,7 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Regenschreiber importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
@@ -424,11 +601,11 @@
      <string/>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_export_schaechte">
+   <widget class="QCheckBox" name="cb_abflussparameter">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>50</y>
+      <x>150</x>
+      <y>100</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -440,7 +617,7 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Abflussparameter importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
@@ -449,11 +626,11 @@
      <string/>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_export_flaechenrw">
+   <widget class="QCheckBox" name="cb_bodenklassen">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>210</y>
+      <x>150</x>
+      <y>160</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -465,216 +642,7 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_export_auslaesse">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>70</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_export_speicher">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>90</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_export_pumpen">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>150</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_export_wehre">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>170</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_export_rohrprofile">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>330</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_export_regenschreiber">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>310</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_export_abflussparameter">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>290</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_export_bodenklassen">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>360</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bodenklassen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
@@ -686,9 +654,9 @@
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>120</y>
-      <width>91</width>
+      <x>170</x>
+      <y>20</y>
+      <width>71</width>
       <height>20</height>
      </rect>
     </property>
@@ -700,7 +668,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Haltungen:</string>
+     <string>Haltungen</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_14">
@@ -709,9 +677,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>150</y>
-      <width>91</width>
+      <x>170</x>
+      <y>40</y>
+      <width>71</width>
       <height>20</height>
      </rect>
     </property>
@@ -723,7 +691,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Pumpen:</string>
+     <string>Pumpen</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_15">
@@ -732,9 +700,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>170</y>
-      <width>91</width>
+      <x>170</x>
+      <y>60</y>
+      <width>71</width>
       <height>20</height>
      </rect>
     </property>
@@ -746,14 +714,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Wehre:</string>
+     <string>Wehre</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_16">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>50</y>
+      <x>40</x>
+      <y>20</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -766,14 +734,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Schächte:</string>
+     <string>Schächte</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_17">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>70</y>
+      <x>40</x>
+      <y>40</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -795,8 +763,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>90</y>
+      <x>40</x>
+      <y>60</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -809,14 +777,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Speicher:</string>
+     <string>Speicher</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_19">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>210</y>
+      <x>40</x>
+      <y>100</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -829,14 +797,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Flächen (RW):</string>
+     <string>Flächen (RW)</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_21">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>290</y>
+      <x>170</x>
+      <y>100</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -849,14 +817,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Abflussparameter:</string>
+     <string>Abflussparameter</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>310</y>
+      <x>170</x>
+      <y>120</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -869,14 +837,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Regenschreiber:</string>
+     <string>Regenschreiber</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_23">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>330</y>
+      <x>170</x>
+      <y>140</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -889,14 +857,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Rohrprofile:</string>
+     <string>Sonderprofile</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_24">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>360</y>
+      <x>170</x>
+      <y>160</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -909,127 +877,33 @@
      </font>
     </property>
     <property name="text">
-     <string>Bodenklassen:</string>
+     <string>Bodenklassen</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_20">
+   <widget class="QLabel" name="label_33">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>120</y>
+      <width>91</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>SW-Einleiter</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_einleitdirekt">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>30</y>
-      <width>51</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Daten</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_27">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>20</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>neue
-hinzufügen</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_28">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>20</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>vorhandene
-ändern</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_schaechte">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>50</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_rohrprofile">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>330</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_haltungen">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
       <y>120</y>
       <width>21</width>
       <height>20</height>
@@ -1042,444 +916,7 @@ hinzufügen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_bodenklassen">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>360</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_auslaesse">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>70</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_pumpen">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>150</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_abflussparameter">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>290</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_speicher">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>90</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_regenschreiber">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>310</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tabellendaten für Regenschreiber können nicht aktualisiert werden. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_flaechenrw">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>210</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_wehre">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>170</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_30">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>400</y>
-      <width>31</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="gesamte Spalte aktivieren"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="gesamte Spalte aktivieren"/>
-    </property>
-    <property name="text">
-     <string>alle:</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_exportall">
-    <property name="geometry">
-     <rect>
-      <x>129</x>
-      <y>400</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="gesamte Spalte aktivieren"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="gesamte Spalte aktivieren"/>
-    </property>
-    <property name="text">
-     <string>+</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_modifyall">
-    <property name="geometry">
-     <rect>
-      <x>189</x>
-      <y>400</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="gesamte Spalte aktivieren"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="gesamte Spalte aktivieren"/>
-    </property>
-    <property name="text">
-     <string>+</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_exportnone">
-    <property name="geometry">
-     <rect>
-      <x>129</x>
-      <y>420</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="gesamte Spalte deaktivieren"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="gesamte Spalte deaktivieren"/>
-    </property>
-    <property name="text">
-     <string>-</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pb_modifynone">
-    <property name="geometry">
-     <rect>
-      <x>189</x>
-      <y>420</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="gesamte Spalte deaktivieren"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="gesamte Spalte deaktivieren"/>
-    </property>
-    <property name="text">
-     <string>-</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_31">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>420</y>
-      <width>41</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string extracomment="gesamte Spalte deaktivieren"/>
-    </property>
-    <property name="statusTip">
-     <string extracomment="gesamte Spalte deaktivieren"/>
-    </property>
-    <property name="text">
-     <string>keiner:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_33">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>230</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>SW-Einleiter:</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_modify_einleitdirekt">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>230</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_export_einleitdirekt">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>230</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
@@ -1492,35 +929,9 @@ hinzufügen</string>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>190</y>
-      <width>201</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>270</y>
-      <width>201</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>380</y>
-      <width>201</width>
-      <height>21</height>
+      <y>80</y>
+      <width>251</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="orientation">
@@ -1530,8 +941,8 @@ hinzufügen</string>
    <widget class="QLabel" name="label_35">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>250</y>
+      <x>40</x>
+      <y>140</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -1544,14 +955,14 @@ hinzufügen</string>
      </font>
     </property>
     <property name="text">
-     <string>Außengebiete:</string>
+     <string>Außengebiete</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_modify_aussengebiete">
+   <widget class="QCheckBox" name="cb_aussengebiete">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>250</y>
+      <x>20</x>
+      <y>140</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1563,7 +974,7 @@ hinzufügen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Daten in QKan ändern die entsprechenden Datensätze in der HYSTEM-EXTRAN-Datenbank&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Außengebiete importieren und Kreisflächen aus Flächenzahl erzeugen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
@@ -1572,11 +983,44 @@ hinzufügen</string>
      <string/>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_export_aussengebiete">
+   <widget class="Line" name="line_3">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>250</y>
+      <x>10</x>
+      <y>180</y>
+      <width>251</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_26">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>199</y>
+      <width>161</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Haltungsfläche, markiert als:</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_tezg_ef">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>221</y>
       <width>21</width>
       <height>20</height>
      </rect>
@@ -1588,13 +1032,220 @@ hinzufügen</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Daten aus QKan in der HYSTEM-EXTRAN-Datenbank hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;Einzugsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_27">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>220</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Einzugsflächen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_tezg_hf">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>241</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;Haltungsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_28">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>240</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Haltungsflächen</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_29">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>259</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>TW-Einzugsflächen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_tezg_tf">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>260</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;TW-Einzugsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>320</y>
+     <width>271</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Aktionen beim Import</string>
+   </property>
+   <widget class="QRadioButton" name="rb_synch">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>20</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>Hinzufügen, aktualisieren und Löschen von Datensätzen in der QKan-Datenbank</string>
+    </property>
+    <property name="statusTip">
+     <string>Synchronisation der QKan-Daten</string>
+    </property>
+    <property name="text">
+     <string>synchronisieren</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_update">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>20</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Überschreiben aller Attribute von bereits vorhandenen Datensätzen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Aktualisieren bereits vorhandenen Datensätzen. </string>
+    </property>
+    <property name="text">
+     <string>ändern</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_append">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hinzufügen noch nicht vorhandene Datensätze&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Hinzufügen noch nicht vorhandene Datensätze</string>
+    </property>
+    <property name="text">
+     <string>hinzufügen</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
