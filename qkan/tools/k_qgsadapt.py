@@ -29,7 +29,7 @@ __copyright__ = "(C) 2016, Joerg Hoettges"
 
 import logging
 import os
-from xml.etree import ElementTree
+from xml.etree import ElementTree as ET
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem
 from qgis.utils import iface, pluginDirectory
@@ -42,67 +42,53 @@ progress_bar = None
 
 
 def qgsadapt(
-    projectTemplate: str,
-    qkanDB: str,
-    projectFile: str,
+    projecttemplate: str,
+    database_QKan: str,
+    dbQK: DBConnection,
+    projectfile: str,
     epsg: int = None,
 ):
     """Lädt eine (Vorlage-) Projektdatei (*.qgs) und adaptiert diese auf eine QKan-Datenbank an.
     Anschließend wird dieses Projekt geladen.
     Voraussetzungen: keine
 
-    :projectTemplate:           Vorlage-Projektdatei
+    :projecttemplate:           Vorlage-Projektdatei
     :type database:             String
 
-    :qkanDB:                    Ziel-Datenbank, auf die die Projektdatei angepasst werden soll
-    :type qkanDB:               String
+    :database_QKan:             Ziel-Datenbank, auf die die Projektdatei angepasst werden soll
+    :type database_QKan:        String
 
-    :projectFile:               Zu Erzeugende Projektdatei
-    :type projectFile:          String
+    :projectfile:               Zu Erzeugende Projektdatei
+    :type projectfile:          String
 
     :epsg:                      EPSG-Code. Falls nicht vorgegeben, wird dieser aus der Tabelle 'schaechte' gelesen
-    :tpye epsg:                 Integer
+    :type epsg:                 Integer
 
-    :returns: void
+    :returns:                   Success
+    :type:                      Boolean
     """
-
-    # ------------------------------------------------------------------------------
-    # Datenbankverbindungen
-
-    dbQK = DBConnection(
-        dbname=qkanDB
-    )  # Datenbankobjekt der QKan-Datenbank zum Schreiben
-
-    if not dbQK.connected:
-        fehlermeldung(
-            "Fehler in k_qgsadapt:\n",
-            "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                qkanDB
-            ),
-        )
-        return None
 
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten
-    sql = """SELECT min(xsch) AS xmin, 
-                    max(xsch) AS xmax, 
-                    min(ysch) AS ymin, 
-                    max(ysch) AS ymax
+    sql = """SELECT min(x(coalesce(geop, centroid(geom)))) AS xmin, 
+                    max(x(coalesce(geop, centroid(geom)))) AS xmax, 
+                    min(y(coalesce(geop, centroid(geom)))) AS ymin, 
+                    max(y(coalesce(geop, centroid(geom)))) AS ymax
              FROM schaechte"""
     try:
         dbQK.sql(sql)
-    except BaseException as e:
-        del dbQK
-        fehlermeldung("SQL-Fehler", str(e))
+    except BaseException as err:
+        fehlermeldung("SQL-Fehler", repr(err))
         fehlermeldung("Fehler in qgsadapt", "\nFehler in sql_zoom: \n" + sql + "\n\n")
+        return False
 
     daten = dbQK.fetchone()
     try:
         zoomxmin, zoomxmax, zoomymin, zoomymax = daten
-    except BaseException as e:
-        fehlermeldung("SQL-Fehler", str(e))
+    except BaseException as err:
+        fehlermeldung("SQL-Fehler", repr(err))
         fehlermeldung(
-            "Fehler in qgsadapt", "\nFehler in sql_zoom; daten= " + str(daten) + "\n"
+            "\nFehler in sql_zoom; daten= " + str(daten) + "\n",
         )
 
     # --------------------------------------------------------------------------
@@ -117,22 +103,20 @@ def qgsadapt(
                 WHERE Lower(f_table_name) = Lower('schaechte')
                 AND Lower(f_geometry_column) = Lower('geom')"""
         if not dbQK.sql(sql, "k_qgsadapt (1)"):
-            del dbQK
-            return None
+            return False
 
         srid = dbQK.fetchone()[0]
-
     try:
         crs = QgsCoordinateReferenceSystem(srid, QgsCoordinateReferenceSystem.EpsgCrsId)
         srsid = crs.srsid()
         proj4text = crs.toProj4()
-        description = crs.description()
-        projectionacronym = crs.projectionAcronym()
-        if "ellipsoidacronym" in dir(crs):
-            ellipsoidacronym = crs.ellipsoidAcronym()
-        else:
-            ellipsoidacronym = None
-    except BaseException as e:
+        # description = crs.description()
+        # projectionacronym = crs.projectionAcronym()
+        # if "ellipsoidacronym" in dir(crs):
+        #     ellipsoidacronym = crs.ellipsoidacronym()
+        # else:
+        #     ellipsoidacronym = None
+    except BaseException as err:
         srid, srsid, proj4text, description, projectionacronym, ellipsoidacronym = (
             "dummy",
             "dummy",
@@ -142,97 +126,79 @@ def qgsadapt(
             "dummy",
         )
 
-        fehlermeldung('\nFehler in "daten"', str(e))
+        fehlermeldung('\nFehler in "daten"', repr(err))
         fehlermeldung(
             "Fehler in qgsadapt",
             "\nFehler bei der Ermittlung der srid: \n" + str(daten),
         )
 
     # --------------------------------------------------------------------------
-    # Datenbankverbindungen schliessen
-
-    del dbQK
-
-    # --------------------------------------------------------------------------
     # Projektdatei schreiben, falls ausgewählt
 
-    if projectFile is None or projectFile == "":
-        fehlermeldung("Bedienerfehler!", "Es wurde keine Projektdatei ausgewählt")
-        return False
+    if projectfile is not None and projectfile != "":
+        templatepath = os.path.join(pluginDirectory("qkan"), "templates")
+        projecttemplate = os.path.join(templatepath, "projekt.qgs")
+        projectpath = os.path.dirname(projectfile)
+        if os.path.dirname(database_QKan) == projectpath:
+            datasource = database_QKan.replace(os.path.dirname(database_QKan), ".")
+        else:
+            datasource = database_QKan
 
-    if not projectTemplate:
-        projectTemplate = os.path.join(pluginDirectory("qkan"), "templates", "projekt.qgs")
+        # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
+        # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
+        tabliste = [
+            "einleit",
+            "einzugsgebiete",
+            "flaechen",
+            "haltungen",
+            "linkfl",
+            "linksw",
+            "pumpen",
+            "schaechte",
+            "teilgebiete",
+            "tezg",
+            "wehre",
+        ]
 
-    projectpath = os.path.dirname(projectFile)
-    if os.path.dirname(qkanDB) == projectpath:
-        datasource = qkanDB.replace(os.path.dirname(qkanDB), ".")
-    else:
-        datasource = qkanDB
+        # Liste der QKan-Formulare, um individuell erstellte Formulare von der Bearbeitung auszuschliessen
+        formsliste = [
+            "qkan_abflussparameter.ui",
+            "qkan_anbindungageb.ui",
+            "qkan_anbindungeinleit.ui",
+            "qkan_anbindungflaechen.ui",
+            "qkan_auslaesse.ui",
+            "qkan_auslasstypen.ui",
+            "qkan_aussengebiete.ui",
+            "qkan_bodenklassen.ui",
+            "qkan_einleit.ui",
+            "qkan_einzugsgebiete.ui",
+            "qkan_entwaesserungsarten.ui",
+            "qkan_flaechen.ui",
+            "qkan_haltungen.ui",
+            "qkan_profildaten.ui",
+            "qkan_profile.ui",
+            "qkan_pumpen.ui",
+            "qkan_pumpentypen.ui",
+            "qkan_schaechte.ui",
+            "qkan_simulationsstatus.ui",
+            "qkan_speicher.ui",
+            "qkan_speicherkennlinien.ui",
+            "qkan_swref.ui",
+            "qkan_teilgebiete.ui",
+            "qkan_tezg.ui",
+            "qkan_wehre.ui",
+        ]
 
-    # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
-    # Liste steht in 3 Modulen: tools.k_tools, importdyna.import_from_dyna, importhe.import_from_he
-    tabliste = [
-        "einleit",
-        "einzugsgebiete",
-        "flaechen",
-        "haltungen",
-        "linkfl",
-        "linksw",
-        "pumpen",
-        "schaechte",
-        "teilgebiete",
-        "tezg",
-        "wehre",
-    ]
+        # Lesen der Projektdatei ------------------------------------------------------------------
+        qgsxml = ET.parse(projecttemplate)
+        root = qgsxml.getroot()
 
-    # Liste der QKan-Formulare, um individuell erstellte Formulare von der Bearbeitung auszuschliessen
-    formsliste = [
-        "qkan_abflussparameter.ui",
-        "qkan_anbindungageb.ui",
-        "qkan_anbindungeinleit.ui",
-        "qkan_anbindungflaechen.ui",
-        "qkan_auslaesse.ui",
-        "qkan_auslasstypen.ui",
-        "qkan_aussengebiete.ui",
-        "qkan_bodenklassen.ui",
-        "qkan_einleit.ui",
-        "qkan_einzugsgebiete.ui",
-        "qkan_entwaesserungsarten.ui",
-        "qkan_flaechen.ui",
-        "qkan_haltungen.ui",
-        "qkan_profildaten.ui",
-        "qkan_profile.ui",
-        "qkan_pumpen.ui",
-        "qkan_pumpentypen.ui",
-        "qkan_schaechte.ui",
-        "qkan_simulationsstatus.ui",
-        "qkan_speicher.ui",
-        "qkan_speicherkennlinien.ui",
-        "qkan_swref.ui",
-        "qkan_teilgebiete.ui",
-        "qkan_tezg.ui",
-        "qkan_wehre.ui",
-    ]
+        # Projektionssystem anpassen --------------------------------------------------------------
 
-    # Lesen der Projektdatei ------------------------------------------------------------------
-    try:
-        qgsxml = ElementTree.parse(projectTemplate)
-    except BaseException as e:
-        fehlermeldung(
-            "\nFehler in qgsadapt: ",
-            u'\nDatei "{}" konnte nicht gelesen werden'.format(projectTemplate),
-        )
-
-    root = qgsxml.getroot()
-
-    # Projektionssystem anpassen --------------------------------------------------------------
-
-    for tag_maplayer in root.findall(".//projectlayers/maplayer"):
-        tag_datasource = tag_maplayer.find("./datasource")
-        tex = tag_datasource.text
-        # Nur QKan-Tabellen bearbeiten
-        if 'table="' in tex:
-            # Nur diese Tabellen können QKan-Tabellen sein...
+        for tag_maplayer in root.findall(".//projectlayers/maplayer"):
+            tag_datasource = tag_maplayer.find("./datasource")
+            tex = tag_datasource.text
+            # Nur QKan-Tabellen bearbeiten
             if tex[tex.index(u'table="') + 7 :].split(u'" ')[0] in tabliste:
 
                 # <extend> löschen
@@ -242,42 +208,41 @@ def qgsadapt(
                 for tag_spatialrefsys in tag_maplayer.findall("./srs/spatialrefsys"):
                     tag_spatialrefsys.clear()
 
-                    elem = ElementTree.SubElement(tag_spatialrefsys, "proj4")
+                    elem = ET.SubElement(tag_spatialrefsys, "proj4")
                     elem.text = proj4text
-                    elem = ElementTree.SubElement(tag_spatialrefsys, "srsid")
+                    elem = ET.SubElement(tag_spatialrefsys, "srsid")
                     elem.text = "{}".format(srsid)
-                    # elem = ElementTree.SubElement(tag_spatialrefsys, "srid")
+                    # elem = ET.SubElement(tag_spatialrefsys, "srid")
                     # elem.text = "{}".format(srid)
-                    elem = ElementTree.SubElement(tag_spatialrefsys, "authid")
+                    elem = ET.SubElement(tag_spatialrefsys, "authid")
                     elem.text = "EPSG:{}".format(srid)
-                    # elem = ElementTree.SubElement(tag_spatialrefsys, "description")
+                    # elem = ET.SubElement(tag_spatialrefsys, "description")
                     # elem.text = description
-                    # elem = ElementTree.SubElement(
-                    #     tag_spatialrefsys, "projectionacronym"
-                    # )
+                    # elem = ET.SubElement(tag_spatialrefsys, "projectionacronym")
                     # elem.text = projectionacronym
                     # if ellipsoidacronym is not None:
-                    #     elem = ElementTree.SubElement(
-                    #         tag_spatialrefsys, "ellipsoidacronym"
-                    #     )
+                    #     elem = ET.SubElement(tag_spatialrefsys, "ellipsoidacronym")
                     #     elem.text = ellipsoidacronym
 
-    # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
+        # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
 
-    formspath = os.path.join(pluginDirectory("qkan"), "forms")
-    for tag_maplayer in root.findall(".//projectlayers/maplayer"):
-        tag_editform = tag_maplayer.find("./editform")
-        if tag_editform is not None:
-            formpath = tag_editform.text
-            if formpath is not None:
-                dateiname = os.path.basename(formpath)
+        formspath = os.path.join(pluginDirectory("qkan"), "forms")
+        for tag_maplayer in root.findall(".//projectlayers/maplayer"):
+            tag_editform = tag_maplayer.find("./editform")
+            if tag_editform.text:
+                dateiname = os.path.basename(tag_editform.text)
                 if dateiname in formsliste:
                     # Nur QKan-Tabellen bearbeiten
                     tag_editform.text = os.path.join(formspath, dateiname)
 
-    # Zoom für Kartenfenster einstellen -------------------------------------------------------
+        # Zoom für Kartenfenster einstellen -------------------------------------------------------
 
-    if type(zoomxmin) is type(1.0):
+        if not isinstance(zoomxmin, (int, float)):
+            zoomxmin = 0.0
+            zoomxmax = 100.0
+            zoomymin = 0.0
+            zoomymax = 100.0
+
         for tag_extent in root.findall(".//mapcanvas/extent"):
             elem = tag_extent.find("./xmin")
             elem.text = "{:.3f}".format(zoomxmin)
@@ -288,74 +253,76 @@ def qgsadapt(
             elem = tag_extent.find("./ymax")
             elem.text = "{:.3f}".format(zoomymax)
 
-    # Projektionssystem des Plans anpassen --------------------------------------------------------------
+        # Projektionssystem des Plans anpassen --------------------------------------------------------------
 
-    for tag_spatialrefsys in root.findall(".//mapcanvas/destinationsrs/spatialrefsys"):
-        tag_spatialrefsys.clear()
+        for tag_spatialrefsys in root.findall(".//mapcanvas/destinationsrs/spatialrefsys"):
+            tag_spatialrefsys.clear()
 
-        elem = ElementTree.SubElement(tag_spatialrefsys, "proj4")
-        elem.text = proj4text
-        # elem = ElementTree.SubElement(tag_spatialrefsys, "srid")
-        # elem.text = "{}".format(srid)
-        elem = ElementTree.SubElement(tag_spatialrefsys, "srsid")
-        elem.text = "{}".format(srsid)
-        elem = ElementTree.SubElement(tag_spatialrefsys, "authid")
-        elem.text = "EPSG:{}".format(srid)
-        # elem = ElementTree.SubElement(tag_spatialrefsys, "description")
-        # elem.text = description
-        # elem = ElementTree.SubElement(tag_spatialrefsys, "projectionacronym")
-        # elem.text = projectionacronym
-        if ellipsoidacronym is not None:
-            elem = ElementTree.SubElement(tag_spatialrefsys, "ellipsoidacronym")
-            elem.text = ellipsoidacronym
+            elem = ET.SubElement(tag_spatialrefsys, "proj4")
+            elem.text = proj4text
+            # elem = ET.SubElement(tag_spatialrefsys, "srid")
+            # elem.text = "{}".format(srid)
+            elem = ET.SubElement(tag_spatialrefsys, "srsid")
+            elem.text = "{}".format(srsid)
+            elem = ET.SubElement(tag_spatialrefsys, "authid")
+            elem.text = "EPSG:{}".format(srid)
+            # elem = ET.SubElement(tag_spatialrefsys, "description")
+            # elem.text = description
+            # elem = ET.SubElement(tag_spatialrefsys, "projectionacronym")
+            # elem.text = projectionacronym
+            # if ellipsoidacronym is not None:
+            #     elem = ET.SubElement(tag_spatialrefsys, "ellipsoidacronym")
+            #     elem.text = ellipsoidacronym
 
-    # Projektionssystem von QGIS anpassen --------------------------------------------------------------
+        # Projektionssystem von QGIS anpassen --------------------------------------------------------------
 
-    for tag_spatialrefsys in root.findall(".//projectCrs/spatialrefsys"):
-        tag_spatialrefsys.clear()
+        for tag_spatialrefsys in root.findall(".//projectCrs/spatialrefsys"):
+            tag_spatialrefsys.clear()
 
-        elem = ElementTree.SubElement(tag_spatialrefsys, "proj4")
-        elem.text = proj4text
-        # elem = ElementTree.SubElement(tag_spatialrefsys, "srid")
-        # elem.text = "{}".format(srid)
-        elem = ElementTree.SubElement(tag_spatialrefsys, "srsid")
-        elem.text = "{}".format(srsid)
-        elem = ElementTree.SubElement(tag_spatialrefsys, "authid")
-        elem.text = "EPSG:{}".format(srid)
-        # elem = ElementTree.SubElement(tag_spatialrefsys, "description")
-        # elem.text = description
-        # elem = ElementTree.SubElement(tag_spatialrefsys, "projectionacronym")
-        # elem.text = projectionacronym
-        if ellipsoidacronym is not None:
-            elem = ElementTree.SubElement(tag_spatialrefsys, "ellipsoidacronym")
-            elem.text = ellipsoidacronym
+            elem = ET.SubElement(tag_spatialrefsys, "proj4")
+            elem.text = proj4text
+            # elem = ET.SubElement(tag_spatialrefsys, "srid")
+            # elem.text = "{}".format(srid)
+            elem = ET.SubElement(tag_spatialrefsys, "srsid")
+            elem.text = "{}".format(srsid)
+            elem = ET.SubElement(tag_spatialrefsys, "authid")
+            elem.text = "EPSG:{}".format(srid)
+            # elem = ET.SubElement(tag_spatialrefsys, "description")
+            # elem.text = description
+            # elem = ET.SubElement(tag_spatialrefsys, "projectionacronym")
+            # elem.text = projectionacronym
+            # if ellipsoidacronym is not None:
+            #     elem = ET.SubElement(tag_spatialrefsys, "ellipsoidacronym")
+            #     elem.text = ellipsoidacronym
 
-    # Pfad zur QKan-Datenbank anpassen
+        # Pfad zur QKan-Datenbank anpassen
 
-    for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
-        text = tag_datasource.text
-        tag_datasource.text = (
-            "dbname='" + datasource + "' " + text[text.find("table=") :]
-        )
+        for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
+            text = tag_datasource.text
+            tag_datasource.text = (
+                "dbname='" + datasource + "' " + text[text.find("table=") :]
+            )
 
-    qgsxml.write(projectFile)  # writing modified project file
-    logger.debug("Projektdatei: {}".format(projectFile))
-    # logger.debug(u'encoded string: {}'.format(tex))
+        qgsxml.write(projectfile)  # writing modified project file
+        logger.debug("Projektdatei: {}".format(projectfile))
+        # logger.debug(u'encoded string: {}'.format(tex))
 
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
 
-    iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage(
-        "Information",
-        "Projektdatei ist angepasst und muss neu geladen werden!",
-        level=Qgis.Info,
-    )
+    # iface.mainWindow().statusBar().clearMessage()
+    # iface.messageBar().pushMessage(
+        # "Information",
+        # "Projektdatei ist angepasst und muss neu geladen werden!",
+        # level=Qgis.Info,
+    # )
 
     # Importiertes Projekt laden
     # project = QgsProject.instance()
     # canvas = QgsMapCanvas(None)
     # bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(),
     # canvas)  # synchronise the loaded project with the canvas
-    # project.read(QFileInfo(projectFile))  # read the new project file
+    # project.read(QFileInfo(projectfile))  # read the new project file
     # logger.debug(u'Geladene Projektdatei: {}   ({})'.format(project.fileName()))
+
+    return True

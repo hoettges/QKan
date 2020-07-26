@@ -175,18 +175,35 @@ class QKanTools:
                 qgsadapt(
                     "{project_template}",
                     "{self.db_qkan}",
+                    {dbQK},
                     "{project_file}",
-                    {self.apply_qkan_template},
-                    epsg = None, 
+                    epsg = {epsg}, 
                 )"""
             )
+
+            # ------------------------------------------------------------------------------
+            # Datenbankverbindungen
+
+            dbQK = DBConnection(dbname=self.db_qkan)  # QKan-Datenbankobjekt zum Schreiben
+
+            if not dbQK.connected:
+                fehlermeldung(
+                    "Fehler in k_qgsadapt:\n",
+                    "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
+                        qkanDB
+                    ),
+                )
+                return None
 
             qgsadapt(
                 project_template,
                 self.db_qkan,
+                dbQK,
                 project_file,
-                epsg=None,
+                epsg=epsg,
             )
+
+            del dbQK                                # Datenbankanbindung schließen
 
     def run_qkanoptions(self):
         """Bearbeitung allgemeiner QKan-Optionen"""

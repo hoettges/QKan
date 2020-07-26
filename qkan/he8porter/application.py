@@ -200,16 +200,20 @@ class He8Porter:
                     imp = ImportTask(db_qkan)
                     imp.run()
                     
-                    del db_qkan
-                    logger.debug("Closed DB")
-
                     # TODO: Replace with QKan.config.project.template?
                     template_project = (
                         Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
                     )
                     qgsadapt(
-                        str(template_project), database_qkan, QKan.config.project.file, epsg
+                        str(template_project),
+                        database_qkan,
+                        db_qkan,
+                        QKan.config.project.file,
+                        epsg
                     )
+
+                    del db_qkan
+                    logger.debug("Closed DB")
 
                     # Load generated project
                     # noinspection PyArgumentList
