@@ -30,7 +30,9 @@ class ImportTask:
             self._pumpen(),
             self._flaechen(),
             self._einleitdirekt(),
-            self._aussengebiete()
+            self._aussengebiete(),
+            self._einzugsgebiet(),
+            self._tezg()
         ])
 
         return result
