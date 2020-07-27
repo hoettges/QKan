@@ -1,10 +1,7 @@
 import logging
-import typing
 
-from qkan import QKan, enums
-from qkan.config import ClassObject
+from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung
 
 logger = logging.getLogger("QKan.he8.import")
 
@@ -218,7 +215,7 @@ class ImportTask:
         ON si.he_nr = ro.Planungsstatus
         """
 
-        if not self.db_qkan.sql(sql, "he8_import Haltungen (1)"):
+        if not self.db_qkan.sql(sql, "he8_import Haltungen"):
             return None
 
         # idk why this is necessary...
@@ -261,7 +258,7 @@ class ImportTask:
         LEFT JOIN simulationsstatus AS si 
         ON si.he_nr = we.Planungsstatus"""
 
-        if not self.db_qkan.sql(sql, "he8_import Wehre (1)"):
+        if not self.db_qkan.sql(sql, "he8_import Wehre"):
             return None
 
         # idk why this is necessary...
@@ -303,7 +300,7 @@ class ImportTask:
         LEFT JOIN pumpentypen AS pt 
         ON pt.he_nr = pu.Typ"""
 
-        if not self.db_qkan.sql(sql, "he8_import Pumpen (1)"):
+        if not self.db_qkan.sql(sql, "he8_import Pumpen"):
             return None
 
         # idk why this is necessary...
@@ -335,7 +332,7 @@ class ImportTask:
         FROM he.Flaeche AS fl
         """
 
-        if not self.db_qkan.sql(sql, "he8_import Flaechen (1)"):
+        if not self.db_qkan.sql(sql, "he8_import Flaechen"):
             return None
 
         self.db_qkan.commit()
@@ -375,7 +372,7 @@ class ImportTask:
         GROUP BY ap_qk.apnam
         """
 
-        if not self.db_qkan.sql(sql, "he8_import Abflussparameter (1)"):
+        if not self.db_qkan.sql(sql, "he8_import Abflussparameter"):
             return None
 
         self.db_qkan.commit()
@@ -413,7 +410,7 @@ class ImportTask:
         WHERE bk_qk.pk IS NULL
         """
 
-        if not self.db_qkan.sql(sql, "he8_import Bodenklassen (1)"):
+        if not self.db_qkan.sql(sql, "he8_import Bodenklassen"):
             return None
 
         self.db_qkan.commit()
@@ -457,7 +454,7 @@ class ImportTask:
         WHERE ag_qk.pk IS NULL
         """
 
-        if not self.db_qkan.sql(sql, "he8_import Außengebiete (1)"):
+        if not self.db_qkan.sql(sql, "he8_import Außengebiete"):
             return None
 
         self.db_qkan.commit()
@@ -488,7 +485,7 @@ class ImportTask:
         WHERE el_qk.pk IS NULL
         """
 
-        if not self.db_qkan.sql(sql, "he8_import Direkteinleiter (1)"):
+        if not self.db_qkan.sql(sql, "he8_import Direkteinleiter"):
             return None
 
         self.db_qkan.commit()
@@ -516,7 +513,7 @@ class ImportTask:
         ON eg_he.Name = eg_qk.elnam
         WHERE eg_qk.pk IS NULL
             """
-        if not self.db_qkan.sql(sql, "he8_import Einzugsgebiete (1)"):
+        if not self.db_qkan.sql(sql, "he8_import Einzugsgebiete"):
             return None
 
         self.db_qkan.commit()
@@ -560,3 +557,9 @@ class ImportTask:
             (IsTwEinzugsflaeche and {choice_tf})
         ) and eg_qk.pk IS NULL 
         """
+        if not self.db_qkan.sql(sql, "he8_import Haltungsflächen"):
+            return None
+
+        self.db_qkan.commit()
+
+        return True
