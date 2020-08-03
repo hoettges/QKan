@@ -372,7 +372,7 @@
      <rect>
       <x>150</x>
       <y>20</y>
-      <width>21</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -389,7 +389,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Haltungen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_schaechte">
@@ -397,7 +397,7 @@
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>21</width>
+      <width>81</width>
       <height>20</height>
      </rect>
     </property>
@@ -414,15 +414,15 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Schächte</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_flaechenrw">
+   <widget class="QCheckBox" name="cb_flaechen">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>100</y>
-      <width>21</width>
+      <width>101</width>
       <height>20</height>
      </rect>
     </property>
@@ -439,7 +439,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Flächen (RW)</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_auslaesse">
@@ -447,7 +447,7 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>21</width>
+      <width>81</width>
       <height>20</height>
      </rect>
     </property>
@@ -464,7 +464,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Auslässe</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_speicher">
@@ -475,7 +475,7 @@
      <rect>
       <x>20</x>
       <y>60</y>
-      <width>21</width>
+      <width>81</width>
       <height>20</height>
      </rect>
     </property>
@@ -492,7 +492,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Speicher</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_pumpen">
@@ -503,7 +503,7 @@
      <rect>
       <x>150</x>
       <y>40</y>
-      <width>21</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -520,7 +520,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Pumpen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_wehre">
@@ -531,7 +531,7 @@
      <rect>
       <x>150</x>
       <y>60</y>
-      <width>21</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -548,15 +548,15 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Wehre</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_rohrprofile">
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>140</y>
-      <width>21</width>
+      <y>120</y>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -573,32 +573,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_regenschreiber">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>120</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Regenschreiber importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string/>
+     <string>Sonderprofile</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_abflussparameter">
@@ -606,7 +581,7 @@
      <rect>
       <x>150</x>
       <y>100</y>
-      <width>21</width>
+      <width>121</width>
       <height>20</height>
      </rect>
     </property>
@@ -623,15 +598,15 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Abflussparameter</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_bodenklassen">
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>160</y>
-      <width>21</width>
+      <y>140</y>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
@@ -648,256 +623,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_13">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>20</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Haltungen</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_14">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>40</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Pumpen</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_15">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>60</y>
-      <width>71</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Wehre</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_16">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>20</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Schächte</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_17">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>40</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Auslässe</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_18">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>60</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Speicher</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_19">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>100</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Flächen (RW)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_21">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>100</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Abflussparameter</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_22">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>120</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Regenschreiber</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_23">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>140</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Sonderprofile</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_24">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>160</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
      <string>Bodenklassen</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_33">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>120</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>SW-Einleiter</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_einleitdirekt">
@@ -905,7 +631,7 @@
      <rect>
       <x>20</x>
       <y>120</y>
-      <width>21</width>
+      <width>101</width>
       <height>20</height>
      </rect>
     </property>
@@ -922,7 +648,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>SW-Einleiter</string>
     </property>
    </widget>
    <widget class="Line" name="line">
@@ -931,31 +657,11 @@
       <x>10</x>
       <y>80</y>
       <width>251</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_35">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>140</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Außengebiete</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_aussengebiete">
@@ -963,7 +669,7 @@
      <rect>
       <x>20</x>
       <y>140</y>
-      <width>21</width>
+      <width>101</width>
       <height>20</height>
      </rect>
     </property>
@@ -980,7 +686,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Außengebiete</string>
     </property>
    </widget>
    <widget class="Line" name="line_3">
@@ -1021,7 +727,7 @@
      <rect>
       <x>20</x>
       <y>221</y>
-      <width>21</width>
+      <width>121</width>
       <height>20</height>
      </rect>
     </property>
@@ -1038,26 +744,6 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_27">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>220</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
      <string>Einzugsflächen</string>
     </property>
    </widget>
@@ -1066,7 +752,7 @@
      <rect>
       <x>20</x>
       <y>241</y>
-      <width>21</width>
+      <width>121</width>
       <height>20</height>
      </rect>
     </property>
@@ -1083,47 +769,7 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_28">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>240</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
      <string>Haltungsflächen</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_29">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>259</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>TW-Einzugsflächen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_tezg_tf">
@@ -1131,7 +777,7 @@
      <rect>
       <x>20</x>
       <y>260</y>
-      <width>21</width>
+      <width>121</width>
       <height>20</height>
      </rect>
     </property>
@@ -1148,7 +794,32 @@
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string/>
+     <string>TW-Einzugsflächen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_einzugsgebiete">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>160</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsgeebiete importieren (enthält nur Attributdaten)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Einzugsgebiete</string>
     </property>
    </widget>
   </widget>

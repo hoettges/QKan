@@ -1,3 +1,5 @@
+import os, shutil
+import typing
 import logging
 from pathlib import Path
 
@@ -29,14 +31,7 @@ class He8Porter:
         self.iface = iface
 
         # noinspection PyArgumentList
-        project_path = QgsProject.instance().fileName()
-        if project_path:
-            self.default_dir = Path(project_path).parent
-        else:
-            self.default_dir = Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
-
-        self.export_dlg = ExportDialog(default_dir=self.default_dir, tr=self.tr)
-        self.import_dlg = ImportDialog(default_dir=self.default_dir, tr=self.tr)
+        self.db_qkan: typing.Optional[DBConnection] = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -65,27 +60,61 @@ class He8Porter:
         self.import_dlg.close()
 
     def run_export(self):
-        self.export_dlg.show()
+
+        project_path = QgsProject.instance().fileName()
+        logger.debug(f"he8porter.application.He8Porter.__init__:\nproject_path: {project_path}")
+        if project_path:
+            default_dir = Path(project_path).parent
+        else:
+            default_dir = Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
+
+        self.export_dlg = ExportDialog(plugin=self, default_dir=default_dir, tr=self.tr)
 
         # Fill dialog with current info
         database_qkan, _ = get_database_QKan()
+        logger.debug(f"he8porter.applications_dialog.__init__: database_qkan= {database_qkan}")
         if database_qkan:
             self.export_dlg.tf_database.setText(database_qkan)
 
+        # Formular anzeigen
+        self.export_dlg.show()
+
+        # Im Formular wurde [OK] geklickt
         if self.export_dlg.exec_():
 
             # Read from form and save to config
-            QKan.config.database.qkan = database_qkan = self.export_dlg.tf_database.text()
-            QKan.config.he8.export_file = export_file = self.export_dlg.tf_export.text()
+            QKan.config.he8.database = database_qkan = self.export_dlg.tf_database.text()
+            QKan.config.he8.export_file = database_he = self.export_dlg.tf_exportdb.text()
+            QKan.config.he8.template = templatedb = self.export_dlg.tf_template.text()
 
-            QKan.config.check_export.export_schaechte = self.export_dlg.cb_export_schaechte.isChecked()
-            QKan.config.check_export.export_auslaesse = self.export_dlg.cb_export_auslaesse.isChecked()
-            QKan.config.check_export.export_speicher = self.export_dlg.cb_export_speicher.isChecked()
-            QKan.config.check_export.export_haltungen = self.export_dlg.cb_export_haltungen.isChecked()
-            QKan.config.check_export.export_pumpen = self.export_dlg.cb_export_pumpen.isChecked()
-            QKan.config.check_export.export_wehre = self.export_dlg.cb_export_wehre.isChecked()
+            QKan.config.check_export.haltungen = self.export_dlg.cb_haltungen.isChecked()
+            QKan.config.check_export.schaechte = self.export_dlg.cb_schaechte.isChecked()
+            QKan.config.check_export.auslaesse = self.export_dlg.cb_auslaesse.isChecked()
+            QKan.config.check_export.speicher = self.export_dlg.cb_speicher.isChecked()
+            QKan.config.check_export.pumpen = self.export_dlg.cb_pumpen.isChecked()
+            QKan.config.check_export.wehre = self.export_dlg.cb_wehre.isChecked()
+            QKan.config.check_export.flaechen = self.export_dlg.cb_flaechen.isChecked()
+            QKan.config.check_export.rohrprofile = self.export_dlg.cb_rohrprofile.isChecked()
+            QKan.config.check_export.abflussparameter = self.export_dlg.cb_abflussparameter.isChecked()
+            QKan.config.check_export.bodenklassen = self.export_dlg.cb_bodenklassen.isChecked()
+            QKan.config.check_export.einleitdirekt = self.export_dlg.cb_einleitdirekt.isChecked()
+            QKan.config.check_export.aussengebiete = self.export_dlg.cb_aussengebiete.isChecked()
+            QKan.config.check_export.einzugsgebiete = self.export_dlg.cb_einzugsgebiete.isChecked()
+            QKan.config.check_export.tezg = self.export_dlg.cb_tezg.isChecked()
+
+            QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
+            QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
 
             QKan.config.save()
+
+            # Zieldatenbank aus Vorlage kopieren
+            if os.path.exists(templatedb):
+                try:
+                    shutil.copyfile(templatedb, database_he)
+                except BaseException as err:
+                    fehlermeldung("Fehler in Export nach HE8",
+                                  "Fehler beim Kopieren der Vorlage: \n   {self.templatedb}\n" + \
+                                  "nach Ziel: {self.database_he}\n")
 
             db_qkan = DBConnection(dbname=database_qkan)
             if not db_qkan:
@@ -101,20 +130,28 @@ class He8Porter:
                 return False
 
             # Attach SQLite-Database with HE8 Data
-            sql = f'ATTACH DATABASE "{export_file}" AS he'
+            sql = f'ATTACH DATABASE "{database_he}" AS he'
             if not db_qkan.sql(sql, "He8Porter.run_export_to_he8 Attach HE8"):
                 return False
 
             # Run export
             ExportTask(db_qkan).run()
 
+            # Close connection
+            del db_qkan
+            logger.debug("Closed DB")
+
     def run_import(self):
+
+        default_dir = Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
+        self.import_dlg = ImportDialog(default_dir=default_dir, tr=self.tr)
+
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
 
             # Read from form and save to config
-            QKan.config.database.qkan = database_qkan = self.import_dlg.tf_database.text()
+            QKan.config.he8.database = database_qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = project_file = self.import_dlg.tf_project.text()
             QKan.config.he8.import_file = import_file = self.import_dlg.tf_import.text()
 
@@ -124,12 +161,13 @@ class He8Porter:
             QKan.config.check_import.speicher = self.import_dlg.cb_speicher.isChecked()
             QKan.config.check_import.pumpen = self.import_dlg.cb_pumpen.isChecked()
             QKan.config.check_import.wehre = self.import_dlg.cb_wehre.isChecked()
+            QKan.config.check_import.flaechen = self.import_dlg.cb_flaechen.isChecked()
             QKan.config.check_import.rohrprofile = self.import_dlg.cb_rohrprofile.isChecked()
-            QKan.config.check_import.regenschreiber = self.import_dlg.cb_regenschreiber.isChecked()
             QKan.config.check_import.abflussparameter = self.import_dlg.cb_abflussparameter.isChecked()
             QKan.config.check_import.bodenklassen = self.import_dlg.cb_bodenklassen.isChecked()
             QKan.config.check_import.einleitdirekt = self.import_dlg.cb_einleitdirekt.isChecked()
             QKan.config.check_import.aussengebiete = self.import_dlg.cb_aussengebiete.isChecked()
+            QKan.config.check_import.einzugsgebiete = self.import_dlg.cb_einzugsgebiete.isChecked()
 
             QKan.config.check_import.tezg_ef = self.import_dlg.cb_tezg_ef.isChecked()
             QKan.config.check_import.tezg_hf = self.import_dlg.cb_tezg_hf.isChecked()
@@ -137,7 +175,6 @@ class He8Porter:
 
             QKan.config.check_import.append = self.import_dlg.rb_append.isChecked()
             QKan.config.check_import.update = self.import_dlg.rb_update.isChecked()
-            QKan.config.check_import.synch = self.import_dlg.rb_synch.isChecked()
 
             QKan.config.save()
 

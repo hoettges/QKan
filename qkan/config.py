@@ -134,60 +134,14 @@ class TempStorage(ClassObject):
     allow_any = True
 
 
-class CheckExport(TempStorage):
-    pass
-    # TODO: Requires additional changes in ExportHE8.
-    #  Until then this will simply replicate a TempStorage
-    # class CEObj(ClassObject):
-    #     init: bool = False
-    #     update: bool = True
-    #     append: bool = True
-    #     delete: bool = True
-
-    # export_abflussparameter: CEObj = CEObj()
-    # export_auslaesse: CEObj = CEObj()
-    # export_aussengebiete: CEObj = CEObj()
-    # export_bodenklassen: CEObj = CEObj()
-    # export_einleitdirekt: CEObj = CEObj()
-    # export_einleitew: CEObj = CEObj()
-    # export_flaechenrw: CEObj = CEObj()
-    # export_haltungen: CEObj = CEObj()
-    # export_profildaten: CEObj = CEObj()
-    # export_pumpen: CEObj = CEObj()
-    # export_regenschreiber: CEObj = CEObj()
-    # export_rohrprofile: CEObj = CEObj()
-    # export_schaechte: CEObj = CEObj()
-    # export_speicher: CEObj = CEObj()
-    # export_speicherkennlinien: CEObj = CEObj()
-    # export_wehre: CEObj = CEObj()
-    # import_abflussparameter: CEObj = CEObj()
-    # import_auslaesse: CEObj = CEObj()
-    # import_aussengebiete: CEObj = CEObj()
-    # import_bodenklassen: CEObj = CEObj()
-    # import_einleitdirekt: CEObj = CEObj()
-    # import_einleitew: CEObj = CEObj()
-    # import_haltungen: CEObj = CEObj()
-    # import_profildaten: CEObj = CEObj()
-    # import_pumpen: CEObj = CEObj()
-    # import_regenschreiber: CEObj = CEObj()
-    # import_rohrprofile: CEObj = CEObj()
-    # import_schaechte: CEObj = CEObj()
-    # import_speicher: CEObj = CEObj()
-    # import_speicherkennlinien: CEObj = CEObj()
-    # import_wehre: CEObj = CEObj()
-
-    def __str__(self):
-        return "<CheckExport *hidden in __str__*>"
-
-
-class CheckImport(ClassObject):
-    """Auswahl der zu importierenden Datenbestände
+class CheckExport(ClassObject):
+    """Auswahl der zu exportierenden Datenbestände
     Bei 'Aktionen' kann die Methode der Synchronisation ausgewählt werden.
     Dabei basieren die Aktion auf einem Abgleich zwischen Quell- und Zieldaten
     Achtung: Falls eine Beschränkung auf Teilgebiete aktiviert ist, bezieht
     sich die Synchronisation nur auf die gewählten Teilgebiete!
-    
     """
+
     # Tabellen mit Geo-Objekten
     schaechte: bool = True
     auslaesse: bool = True
@@ -196,8 +150,41 @@ class CheckImport(ClassObject):
     pumpen: bool = True
     wehre: bool = True
     flaechen: bool = True
-    einleitdirekt:bool = True
-    aussengebiete:bool = True
+    einleitdirekt: bool = True
+    aussengebiete: bool = True
+    einzugsgebiete: bool = True
+    tezg: bool = True
+
+    # Referenztabellen
+    abflussparameter: bool = True
+    bodenklassen: bool = True
+    rohrprofile: bool = True
+
+    # Aktionen
+    append: bool = True  # Daten hinzufügen
+    update: bool = False  # Daten ändern
+    synch: bool = False  # Daten löschen
+
+
+class CheckImport(ClassObject):
+    """Auswahl der zu importierenden Datenbestände
+    Bei 'Aktionen' kann die Methode der Synchronisation ausgewählt werden.
+    Dabei basieren die Aktion auf einem Abgleich zwischen Quell- und Zieldaten
+    Achtung: Falls eine Beschränkung auf Teilgebiete aktiviert ist, bezieht
+    sich die Synchronisation nur auf die gewählten Teilgebiete!
+    """
+
+    # Tabellen mit Geo-Objekten
+    schaechte: bool = True
+    auslaesse: bool = True
+    speicher: bool = True
+    haltungen: bool = True
+    pumpen: bool = True
+    wehre: bool = True
+    flaechen: bool = True
+    einleitdirekt: bool = True
+    aussengebiete: bool = True
+    einzugsgebiete: bool = True
 
     # Haltungsflächen aus GIPS, drei Typen in einer Tabelle
     tezg_ef: bool = True
@@ -228,11 +215,12 @@ class DynaConfig(ClassObject):
     profile_ergaenzen: bool = True
     template: str = ""
 
+
 class SWMMConfig(ClassObject):
     autonummerierung: bool = False
-    #bef_choice: enums.BefChoice = enums.BefChoice.FLAECHEN
+    # bef_choice: enums.BefChoice = enums.BefChoice.FLAECHEN
     file: str = ""
-    #prof_choice: enums.ProfChoice = enums.ProfChoice.PROFILNAME
+    # prof_choice: enums.ProfChoice = enums.ProfChoice.PROFILNAME
     profile_ergaenzen: bool = True
     template: str = ""
 

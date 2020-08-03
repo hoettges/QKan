@@ -239,6 +239,7 @@ def get_database_QKan(silent=False) -> typing.Tuple[typing.Optional[str], int]:
     project = QgsProject.instance()
 
     layerobjects = project.mapLayersByName("Schächte")
+    logger.debug(f"qkan.database.qkan_utils.get_database_QKan: \nlayerobjects: {layerobjects}")
     if len(layerobjects) > 0:
         lay = layerobjects[0]
         dbname_s, _, _, _ = get_qkanlayerAttributes(lay.source())
