@@ -6,6 +6,8 @@ __copyright__ = "(C) 2020, Joerg Hoettges"
 
 import os
 from pathlib import Path
+
+from qkan import QKAN_FORMS, QKAN_TABLES
 from qkan.database.dbfunc import DBConnection
 from qgis.utils import pluginDirectory
 import xml.etree.ElementTree as ET
@@ -483,51 +485,6 @@ class SWMM:
             else:
                 datasource = self.database_QKan
 
-            # Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
-            # Liste steht in 3 Modulen: tools.k_tools, importswmm.import_from_swmm, importhe.import_from_he
-            tabliste = [
-                "einleit",
-                "einzugsgebiete",
-                "flaechen",
-                "haltungen",
-                "linkfl",
-                "linksw",
-                "pumpen",
-                "schaechte",
-                "teilgebiete",
-                "tezg",
-                "wehre",
-            ]
-
-            # Liste der QKan-Formulare, um individuell erstellte Formulare von der Bearbeitung auszuschliessen
-            formsliste = [
-                "qkan_abflussparameter.ui",
-                "qkan_anbindungageb.ui",
-                "qkan_anbindungeinleit.ui",
-                "qkan_anbindungflaechen.ui",
-                "qkan_auslaesse.ui",
-                "qkan_auslasstypen.ui",
-                "qkan_aussengebiete.ui",
-                "qkan_bodenklassen.ui",
-                "qkan_einleit.ui",
-                "qkan_einzugsgebiete.ui",
-                "qkan_entwaesserungsarten.ui",
-                "qkan_flaechen.ui",
-                "qkan_haltungen.ui",
-                "qkan_profildaten.ui",
-                "qkan_profile.ui",
-                "qkan_pumpen.ui",
-                "qkan_pumpentypen.ui",
-                "qkan_schaechte.ui",
-                "qkan_simulationsstatus.ui",
-                "qkan_speicher.ui",
-                "qkan_speicherkennlinien.ui",
-                "qkan_swref.ui",
-                "qkan_teilgebiete.ui",
-                "qkan_tezg.ui",
-                "qkan_wehre.ui",
-            ]
-
             # Lesen der Projektdatei ------------------------------------------------------------------
             qgsxml = ET.parse(projecttemplate)
             root = qgsxml.getroot()
@@ -538,7 +495,7 @@ class SWMM:
                 tag_datasource = tag_maplayer.find("./datasource")
                 tex = tag_datasource.text
                 # Nur QKan-Tabellen bearbeiten
-                if tex[tex.index(u'table="') + 7:].split(u'" ')[0] in tabliste:
+                if tex[tex.index(u'table="') + 7:].split(u'" ')[0] in QKAN_TABLES:
 
                     # <extend> löschen
                     for tag_extent in tag_maplayer.findall("./extent"):
@@ -570,7 +527,7 @@ class SWMM:
                 tag_editform = tag_maplayer.find(u"./editform")
                 if tag_editform.text:
                     dateiname = os.path.basename(tag_editform.text)
-                    if dateiname in formsliste:
+                    if dateiname in QKAN_FORMS:
                         # Nur QKan-Tabellen bearbeiten
                         tag_editform.text = os.path.join(formspath, dateiname)
 

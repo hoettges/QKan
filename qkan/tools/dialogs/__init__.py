@@ -28,6 +28,8 @@ class QKanDBDialog(QKanDialog):
     pb_selectQKanDB: QPushButton
     tf_qkanDB: QLineEdit
 
+    open_mode = True
+
     def __init__(self, plugin: "QKanTools", parent=None):
         super().__init__(plugin, parent)
         self.pb_selectQKanDB.clicked.connect(self.select_qkan_db)
@@ -35,10 +37,20 @@ class QKanDBDialog(QKanDialog):
     def select_qkan_db(self):
         """Anzubindende QKan-Datenbank festlegen"""
 
-        # noinspection PyArgumentList,PyCallByClass
-        filename, __ = QFileDialog.getOpenFileName(
-            self, "QKan-Datenbank auswählen", self.plugin.default_dir, "*.sqlite"
-        )
+        if self.open_mode:
+            # noinspection PyArgumentList,PyCallByClass
+            filename, __ = QFileDialog.getOpenFileName(
+                self, "QKan-Datenbank auswählen", self.plugin.default_dir, "*.sqlite"
+            )
+        else:
+            # noinspection PyArgumentList,PyCallByClass
+            filename, __ = QFileDialog.getSaveFileName(
+                self,
+                "Zu erstellende QKan-Datenbank auswählen",
+                self.plugin.default_dir,
+                "*.sqlite",
+            )
+
         if os.path.dirname(filename) != "":
             self.tf_qkanDB.setText(filename)
 
