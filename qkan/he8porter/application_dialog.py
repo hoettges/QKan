@@ -20,11 +20,11 @@ EXPORT_CLASS, _ = uic.loadUiType(
 
 
 class _Dialog(QDialog):
-    def __init__(self, default_dir: os.PathLike, tr: typing.Callable, parent=None):
+    def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
-        self.default_dir = str(default_dir)
+        self.default_dir = default_dir
         logger.debug(f"he8porter.application_dialog._Dialog.__init__:\nself.default_dir: {self.default_dir}")
         self.tr = tr
 
@@ -68,7 +68,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
 
     def __init__(self,
                  plugin: "HE8Porter",
-                 default_dir: os.PathLike,
+                 default_dir: str,
                  tr: typing.Callable,
                  parent=None
                  ):
@@ -294,7 +294,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
 
     pw_epsg: QgsProjectionSelectionWidget
 
-    def __init__(self, default_dir: os.PathLike, tr=typing.Callable, parent=None):
+    def __init__(self, default_dir: str, tr=typing.Callable, parent=None):
         # noinspection PyCallByClass,PyArgumentList
         super().__init__(default_dir, tr, parent)
 

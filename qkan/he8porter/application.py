@@ -12,7 +12,7 @@ from qgis.core import (
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
 
-from qkan import QKan
+from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.tools.k_qgsadapt import qgsadapt
@@ -32,6 +32,9 @@ class He8Porter:
 
         # noinspection PyArgumentList
         self.db_qkan: typing.Optional[DBConnection] = None
+        default_dir = get_default_dir()
+        self.export_dlg = ExportDialog(self, default_dir, tr=self.tr)
+        self.import_dlg = ImportDialog(default_dir, tr=self.tr)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -67,8 +70,6 @@ class He8Porter:
             default_dir = Path(project_path).parent
         else:
             default_dir = Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
-
-        self.export_dlg = ExportDialog(plugin=self, default_dir=default_dir, tr=self.tr)
 
         # Fill dialog with current info
         database_qkan, _ = get_database_QKan()
@@ -142,10 +143,7 @@ class He8Porter:
             logger.debug("Closed DB")
 
     def run_import(self):
-
         default_dir = Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
-        self.import_dlg = ImportDialog(default_dir=default_dir, tr=self.tr)
-
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
