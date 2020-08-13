@@ -5,7 +5,7 @@ from pathlib import Path
 from xml.etree import ElementTree
 
 from qgis.PyQt import uic
-from qgis.core import QgsCoordinateReferenceSystem
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.utils import pluginDirectory
 
@@ -54,7 +54,7 @@ def create_project(
     # Replace db path with relative path if the same output folder is used
     data_source = str(db_path.absolute())
     if db_path.parent.absolute() == project_path.parent.absolute():
-        data_source = f"./{db_path.stem}"
+        data_source = f"./{db_path.name}"
 
     qgs_xml = ElementTree.parse(template_project)
     root = qgs_xml.getroot()
@@ -134,11 +134,12 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):
         # noinspection PyCallByClass,PyArgumentList
         self.epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
         self.tf_qkanDB.setText(QKan.config.database.qkan)
+        self.tf_projectFile.setText(QKan.config.project.file)
         self.show()
 
         if self.exec_():
             QKan.config.database.qkan = self.tf_qkanDB.text()
-            QKan.config.project.file = self.tf_projectFile.text()
+            QKan.config.project.file = project_file = self.tf_projectFile.text()
             QKan.config.epsg = int(self.epsg.crs().postgisSrid())
             QKan.config.save()
 
@@ -186,8 +187,9 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):
 
             # Create project file
             create_project(
-                Path(self.tf_projectFile.text()),
-                Path(self.tf_qkanDB.text()),
-                srid,
-                zoom,
+                Path(project_file), Path(self.tf_qkanDB.text()), srid, zoom,
             )
+
+            # Load project
+            # noinspection PyArgumentList
+            QgsProject.instance().read(project_file)
