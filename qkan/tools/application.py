@@ -106,6 +106,11 @@ class QKanTools:
             callback=self.dlgedb.run,
             parent=self.iface.mainWindow(),
         )
+        QKan.instance.add_action(
+            "",
+            text=self.tr("Tabellen importieren"),
+            callback=self.dlgrd.run,
+        )
         icon_dbAdapt_path = ":/plugins/qkan/tools/res/icon_dbAdapt.png"
         QKan.instance.add_action(
             icon_dbAdapt_path,
