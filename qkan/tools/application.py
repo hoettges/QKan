@@ -99,6 +99,18 @@ class QKanTools:
             parent=self.iface.mainWindow(),
         )
 
+        # TODO: Translations
+        QKan.instance.add_action(
+            "",
+            text=self.tr("Neue Datenbank erstellen"),
+            callback=self.dlgedb.run,
+            parent=self.iface.mainWindow(),
+        )
+        QKan.instance.add_action(
+            "",
+            text=self.tr("Tabellen importieren"),
+            callback=self.dlgrd.run,
+        )
         icon_dbAdapt_path = ":/plugins/qkan/tools/res/icon_dbAdapt.png"
         QKan.instance.add_action(
             icon_dbAdapt_path,
@@ -175,7 +187,7 @@ class QKanTools:
                 qgsadapt(
                     "{project_template}",
                     "{self.db_qkan}",
-                    {dbQK},
+                    N/A,
                     "{project_file}",
                     epsg = {epsg}, 
                 )"""
@@ -184,13 +196,13 @@ class QKanTools:
             # ------------------------------------------------------------------------------
             # Datenbankverbindungen
 
-            dbQK = DBConnection(dbname=self.db_qkan)  # QKan-Datenbankobjekt zum Schreiben
+            db_qkan = DBConnection(dbname=self.db_qkan)  # QKan-Datenbankobjekt zum Schreiben
 
-            if not dbQK.connected:
+            if not db_qkan.connected:
                 fehlermeldung(
                     "Fehler in k_qgsadapt:\n",
                     "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                        qkanDB
+                        self.db_qkan
                     ),
                 )
                 return None
@@ -198,12 +210,12 @@ class QKanTools:
             qgsadapt(
                 project_template,
                 self.db_qkan,
-                dbQK,
+                db_qkan,
                 project_file,
                 epsg=epsg,
             )
 
-            del dbQK                                # Datenbankanbindung schließen
+            del db_qkan                                # Datenbankanbindung schließen
 
     def run_qkanoptions(self):
         """Bearbeitung allgemeiner QKan-Optionen"""

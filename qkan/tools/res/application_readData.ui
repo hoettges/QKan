@@ -159,7 +159,7 @@
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <widget class="QgsMapLayerComboBox" name="cbLayerSchaechte">
+   <widget class="QComboBox" name="cbLayerSchaechte">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -191,7 +191,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pbSchaechteFromClipboard">
+   <widget class="QPushButton" name="pbPasteSchaechte">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -216,7 +216,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QgsMapLayerComboBox" name="cbLayerSchaechte_2">
+   <widget class="QComboBox" name="cbLayerAuslaesse">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -264,7 +264,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QgsMapLayerComboBox" name="cbLayerSchaechte_3">
+   <widget class="QComboBox" name="cbLayerSpeicher">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -280,7 +280,7 @@
      <string>Zu importierende Tabelle auswählen ...</string>
     </property>
    </widget>
-   <widget class="QgsMapLayerComboBox" name="cbLayerSchaechte_4">
+   <widget class="QComboBox" name="cbLayerHaltungen">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -312,7 +312,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QgsMapLayerComboBox" name="cbLayerSchaechte_5">
+   <widget class="QComboBox" name="cbLayerPumpen">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -360,7 +360,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QgsMapLayerComboBox" name="cbLayerSchaechte_6">
+   <widget class="QComboBox" name="cbLayerWehre">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -376,7 +376,7 @@
      <string>Zu importierende Tabelle auswählen ...</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pbSchaechteFromClipboard_2">
+   <widget class="QPushButton" name="pbPasteAuslaesse">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -401,7 +401,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pbSchaechteFromClipboard_3">
+   <widget class="QPushButton" name="pbPasteSpeicher">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -426,7 +426,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pbSchaechteFromClipboard_4">
+   <widget class="QPushButton" name="pbPasteHaltungen">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -451,7 +451,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pbSchaechteFromClipboard_5">
+   <widget class="QPushButton" name="pbPastePumpen">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -476,7 +476,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pbSchaechteFromClipboard_6">
+   <widget class="QPushButton" name="pbPasteWehre">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -503,13 +503,6 @@
    </widget>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QgsMapLayerComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qgsmaplayercombobox.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>

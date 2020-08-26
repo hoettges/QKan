@@ -268,3 +268,47 @@ def list_selected_items(list_widget: QListWidget) -> typing.List[str]:
     """
 
     return [_.text() for _ in list_widget.selectedItems()]
+
+
+# Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
+QKAN_TABLES = [
+    "einleit",
+    "einzugsgebiete",
+    "flaechen",
+    "haltungen",
+    "linkfl",
+    "linksw",
+    "pumpen",
+    "schaechte",
+    "teilgebiete",
+    "tezg",
+    "wehre",
+]
+# Liste der QKan-Formulare, um individuell erstellte Formulare von der Bearbeitung auszuschliessen
+QKAN_FORMS = [
+    "qkan_abflussparameter.ui",
+    "qkan_anbindungageb.ui",
+    "qkan_anbindungeinleit.ui",
+    "qkan_anbindungflaechen.ui",
+    "qkan_auslaesse.ui",
+    "qkan_auslasstypen.ui",
+    "qkan_aussengebiete.ui",
+    "qkan_bodenklassen.ui",
+    "qkan_einleit.ui",
+    "qkan_einzugsgebiete.ui",
+    "qkan_entwaesserungsarten.ui",
+    "qkan_flaechen.ui",
+    "qkan_haltungen.ui",
+    "qkan_profildaten.ui",
+    "qkan_profile.ui",
+    "qkan_pumpen.ui",
+    "qkan_pumpentypen.ui",
+    "qkan_schaechte.ui",
+    "qkan_simulationsstatus.ui",
+    "qkan_speicher.ui",
+    "qkan_speicherkennlinien.ui",
+    "qkan_swref.ui",
+    "qkan_teilgebiete.ui",
+    "qkan_tezg.ui",
+    "qkan_wehre.ui",
+]
