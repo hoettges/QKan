@@ -33,8 +33,10 @@ from qkan import QKan, enums
 # noinspection PyUnresolvedReferences
 from . import resources
 
+# Import the code for the dialog
 from .application_dialog import SurfaceToolDialog
-from .surfaceTool import FlaechenVerarbeitung
+from .surfaceTool import FlaechenVerarbeitung, accessAttr
+from qkan.database.qkan_utils import get_database_QKan
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger("QKan.surfaceTools.application")
@@ -53,6 +55,7 @@ class SurfaceTools:
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
 
+        # Create the dialog (after translation) and keep reference
         self.dlg = SurfaceToolDialog()
 
         # # Declare instance attributes
@@ -70,7 +73,7 @@ class SurfaceTools:
         # Standard für Suchverzeichnis festlegen
         project = QgsProject.instance()
         self.default_dir = os.path.dirname(project.fileName())
-        self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
+        # self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
 
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -95,27 +98,26 @@ class SurfaceTools:
             parent=self.iface.mainWindow(),
         )
 
-    def selectFile_qkanDB(self):
-        """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen, aber noch nicht verbinden.
-           Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt. """
-
-        filename, __ = QFileDialog.getOpenFileName(
-            self.dlg,
-            "ABC DEF GHI",
-            self.default_dir,
-            "*.sqlite",
-        )
-        self.dlg.tf_qkanDB.setText(filename)
-
-        # Aktuelles Verzeichnis wechseln
-        if os.path.dirname(filename) != "":
-            os.chdir(os.path.dirname(filename))
 
     def unload(self):
         pass
 
     def run(self):
-        self.dlg.tf_qkanDB.setText(QKan.config.database.qkan)
+        # database_qkan, _ = get_database_QKan()
+        # self.dlg.tf_qkanDB.setText(QKan.config.database.qkan)
+        # Fetch the currently loaded layers
+        # Fetch the currently loaded layers
+
+        database_qkan, _ = get_database_QKan()
+        self.dlg.cb_haupt.clear()
+        self.dlg.cb_geschnitten.clear()
+        obj = accessAttr(database_qkan)
+        tempList = obj.accessAttribute()
+        abflussparameter = list(set(tempList))
+        for tempAttr in abflussparameter:
+            attr = str(tempAttr).lstrip('(\'').rstrip(',\')')
+            self.dlg.cb_haupt.addItem(attr)
+            self.dlg.cb_geschnitten.addItem(attr)
 
         # show the dialog
         self.dlg.show()
@@ -123,7 +125,8 @@ class SurfaceTools:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            database_qkan: str = self.dlg.tf_qkanDB.text()
+            schneiden = self.dlg.cb_haupt.currentText()
+            geschnitten = self.dlg.cb_geschnitten.currentText()
             QKan.config.database.qkan = database_qkan
 
             QKan.config.save()
@@ -135,20 +138,5 @@ class SurfaceTools:
                             FlaechenVerarbeitung
                             """)
 
-            overlap = SurfaceTool(
-                database_QKan,
-                epsg=25832,
-                dbtyp="SpatiaLite"
-            )
-
-            if not overlap.connected:
-                return False
-
-            overlap.create_table()
-            overlap.processing()
-
-
-            del overlap
-
-            return True
-
+            FlaechenVerarbeitung(database_qkan, schneiden, geschnitten)
+            del obj

@@ -65,7 +65,7 @@ class ExportTask:
             self._auslaesse(),
             self._speicher(),
             self._haltungen(),
-            # self._wehre(),
+            self._wehre(),
             self._pumpen(),
             self._flaechen(),
             # self._einleitdirekt(),
