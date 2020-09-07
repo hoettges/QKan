@@ -9,13 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>649</width>
-    <height>412</height>
+    <width>631</width>
+    <height>393</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>631</width>
+    <height>393</height>
+   </size>
   </property>
   <property name="font">
    <font>
     <family>Tahoma</family>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -510,8 +517,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>649</width>
-     <height>20</height>
+     <width>631</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>

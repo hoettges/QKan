@@ -702,6 +702,10 @@ class QKanTools:
         )  # Datenbankobjekt der QKan-Datenbank
         # qkanDBUpdate: mit Update
         db_status = db_qkan.isCurrentVersion            # Ist die Datenbank aktuell?
+
+        db_qkan.sql("SELECT RecoverSpatialIndex()")     # Geometrie-Indizes bereinigen
+        self.iface.mapCanvas().refresh()         # Grafik aktualisieren
+
         del db_qkan
 
         if db_status:

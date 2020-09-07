@@ -7,11 +7,13 @@ __copyright__ = "(C) 2020, Joerg Hoettges"
 import os
 from pathlib import Path
 
-from qkan import QKAN_FORMS, QKAN_TABLES
+from qkan import QKan, enums
+from qkan import QKan, QKAN_FORMS, QKAN_TABLES
 from qkan.database.dbfunc import DBConnection
 from qgis.utils import pluginDirectory
+from qkan.tools.k_qgsadapt import qgsadapt
 import xml.etree.ElementTree as ET
-from qgis.core import QgsCoordinateReferenceSystem
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 
 import logging
 
@@ -79,8 +81,9 @@ class SWMM:
                 ),
             )
 
-    # def __del__(self):
-    #     del self.dbQK
+    def __del__(self):
+        self.dbQK.sql("SELECT RecoverSpatialIndex()")
+        del self.dbQK
 
     def read(self):
         with self.inpobject.open("r") as inp:
@@ -190,19 +193,20 @@ class SWMM:
             name = line[0:17].strip()                                               # schnam
             xsch = fzahl(line[17:36].strip(),3,self.xoffset) + self.xoffset         # xsch
             ysch = fzahl(line[36:54].strip(),3,self.yoffset) + self.yoffset         # ysch
+            du = 1.
 
             # Geo-Objekte erzeugen
 
-            #if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
-            geop = f"MakePoint({xsch},{ysch},{self.epsg})"
-            geom = f"CastToMultiPolygon(MakePolygon(MakeCircle({xsch}, {ysch}, {du}, {self.epsg})))"
-            #elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
-            #    geop = f"ST_SetSRID(ST_MakePoint({xsch}, {ysch}), {self.epsg})"
-            #else:
-            #    fehlermeldung(
-            #        "Programmfehler!",
-            #        "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(QKan.config.database.type),
-            #    )
+            if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
+                geop = f"MakePoint({xsch},{ysch},{self.epsg})"
+                geom = f"CastToMultiPolygon(MakePolygon(MakeCircle({xsch}, {ysch}, {du}, {self.epsg})))"
+            elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
+                geop = f"ST_SetSRID(ST_MakePoint({xsch}, {ysch}), {self.epsg})"
+            else:
+                fehlermeldung(
+                    "Programmfehler!",
+                    "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(QKan.config.database.type),
+                )
 
             du = 1.0
 
@@ -260,6 +264,10 @@ class SWMM:
 
             if nampoly != name:
                 if nampoly != '':
+                    # Koordinaten des ersten Punkte am Ende nochmal anhängen
+                    xlis.append(xlis[0])
+                    ylis.append(ylis[0])
+
                     # Polygon schreiben
                     coords = ', '.join([f'{x} {y}' for x,y in zip(xlis, ylis)])
                     geom = f"GeomFromText('MULTIPOLYGON((({coords})))', {self.epsg})"
@@ -298,34 +306,34 @@ class SWMM:
 
             # Rauheitsbeiwerte
             mannings_n = fzahl(line[62:73])
-            kst = 1/mannings_n                      # interessant: die Einheit von mannings_n ist s/m**(1/3)!
-            ks = ksFromKst(kst)
+            # kst = 1/mannings_n                      # interessant: die Einheit von mannings_n ist s/m**(1/3)!
+            # ks = ksFromKst(kst)
 
             sql = f"""
                 INSERT into haltungen (
                     haltnam, schoben, schunten, laenge, ks, entwart, simstatus)
                 VALUES (
-                    '{haltnam}', '{schoben}', '{schunten}', {laenge}, {ks}, 'Regenwasser', 'vorhanden')
+                    '{haltnam}', '{schoben}', '{schunten}', {laenge}, {mannings_n}, 'Regenwasser', 'vorhanden')
                 """
             if not self.dbQK.sql(sql):
                 del self.dbQK
                 return False
 
         # Haltungsobjekte mithilfe der Schachtkoordinaten erzeugen
-        sql = f"""
-            UPDATE haltungen 
-            SET geom = (
-                SELECT
-                    MakeLine(schob.geop, schun.geop)
-                FROM
-                    schaechte AS schob,
-                    schaechte AS schun
-                WHERE schob.schnam = haltungen.schoben AND schun.schnam = haltungen.schunten
-            )
-            """
-        if not self.dbQK.sql(sql):
-            del self.dbQK
-            return False
+        # sql = f"""
+            # UPDATE haltungen 
+            # SET geom = (
+                # SELECT
+                    # MakeLine(schob.geop, schun.geop)
+                # FROM
+                    # schaechte AS schob,
+                    # schaechte AS schun
+                # WHERE schob.schnam = haltungen.schoben AND schun.schnam = haltungen.schunten
+            # )
+            # """
+        # if not self.dbQK.sql(sql):
+            # del self.dbQK
+            # return False
 
         self.dbQK.commit()
 
@@ -628,7 +636,7 @@ class SWMM:
     def map(self):
         pass                    # in QKan nicht verwaltet
 
-def importKanaldaten(inpfile: str, database_QKan: str, projectfile: str, epsg: int = 3044):
+def importKanaldaten(inpfile: str, database_QKan: str, projectfile: str, epsg: int = 25832):
     """Ruft die Klasse SWMM zur Verarbeitung der Daten auf"""
 
     if not os.path.exists(inpfile):
@@ -638,8 +646,8 @@ def importKanaldaten(inpfile: str, database_QKan: str, projectfile: str, epsg: i
         inpfile,
         database_QKan,
         projectfile,
-        offset=[380000., 57100000.],
-        epsg=25832,
+        offset=[0., 0.],
+        epsg=epsg,
         dbtyp="SpatiaLite"
     )
 
@@ -670,10 +678,27 @@ def importKanaldaten(inpfile: str, database_QKan: str, projectfile: str, epsg: i
 
     # pprint(swmm.data)
 
+
+
     # --------------------------------------------------------------------------
     # Datenbankverbindungen schliessen
 
-    swmm.writeProjektfile()
+    template_project = (
+            Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
+    )
+    qgsadapt(
+        str(template_project),
+        database_QKan,
+        swmm.dbQK,
+        projectfile,
+        epsg
+    )
+
+    project = QgsProject.instance()
+    project.read(projectfile)
+    project.reloadAllLayers()
+
+    # swmm.writeProjektfile()
 
     del swmm
 

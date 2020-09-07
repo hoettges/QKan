@@ -353,10 +353,10 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     try:
 
         daten = [
-            "'Kreis', 1, NULL, NULL",
-            "'Rechteck (geschlossen)', 2, NULL, NULL",
-            "'Ei (B:H = 2:3)', 3, NULL, NULL",
-            "'Maul (B:H = 2:1,66)', 4, NULL, NULL",
+            "'Kreis', 1, 1, NULL",
+            "'Rechteck (geschlossen)', 2, 3, NULL",
+            "'Ei (B:H = 2:3)', 3, 5, NULL",
+            "'Maul (B:H = 2:1,66)', 4, 4, NULL",
             "'Halbschale (offen) (B:H = 2:1)', 5, NULL, NULL",
             "'Kreis gestreckt (B:H=2:2.5)', 6, NULL, NULL",
             "'Kreis überhöht (B:H=2:3)', 7, NULL, NULL",
