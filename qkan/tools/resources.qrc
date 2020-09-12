@@ -5,5 +5,7 @@
         <file>res/icon_qkanoptions.png</file>
         <file>res/icon_runoffparams.png</file>
         <file>res/icon_dbAdapt.png</file>
+        <file>res/icon_emptyDB.png</file>
+        <file>res/icon_readData.png</file>
     </qresource>
 </RCC>

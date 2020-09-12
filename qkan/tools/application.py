@@ -100,14 +100,17 @@ class QKanTools:
         )
 
         # TODO: Translations
+        icon_emptyDB_path = ":/plugins/qkan/tools/res/icon_emptyDB.png"
         QKan.instance.add_action(
-            "",
+            icon_emptyDB_path,
             text=self.tr("Neue Datenbank erstellen"),
             callback=self.dlgedb.run,
             parent=self.iface.mainWindow(),
         )
+
+        icon_readData_path = ":/plugins/qkan/tools/res/icon_readData.png"
         QKan.instance.add_action(
-            "",
+            icon_readData_path,
             text=self.tr("Tabellen importieren"),
             callback=self.dlgrd.run,
         )
@@ -703,14 +706,17 @@ class QKanTools:
         # qkanDBUpdate: mit Update
         db_status = db_qkan.isCurrentVersion            # Ist die Datenbank aktuell?
 
-        db_qkan.sql("SELECT RecoverSpatialIndex()")     # Geometrie-Indizes bereinigen
-        self.iface.mapCanvas().refresh()         # Grafik aktualisieren
-
-        del db_qkan
-
         if db_status:
+            db_qkan.sql("SELECT RecoverSpatialIndex()")  # Geometrie-Indizes bereinigen
+            self.iface.mapCanvas().refresh()  # Grafik aktualisieren
+            meldung('Information', 'Spatial Index wurde bereinigt...')
+
+            del db_qkan
+
             meldung('Information', 'QKan-Datenbank ist aktuell')
             return True
+
+        del db_qkan
 
         # Falls Projektdatei geändert wurde, Gruppe zum Speichern der Projektdatei anzeigen
         project = QgsProject.instance()
