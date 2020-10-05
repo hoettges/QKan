@@ -46,14 +46,14 @@ class He8Porter:
         icon_export = ":/plugins/qkan/he8porter/res/icon_export.png"
         QKan.instance.add_action(
             icon_export,
-            text=self.tr("Export in HE8"),
+            text=self.tr("Export nach Hystem-Extran 8"),
             callback=self.run_export,
             parent=self.iface.mainWindow(),
         )
         icon_import = ":/plugins/qkan/he8porter/res/icon_import.png"
         QKan.instance.add_action(
             icon_import,
-            text=self.tr("Import aus HE8"),
+            text=self.tr("Import aus Hystem-Extran 8"),
             callback=self.run_import,
             parent=self.iface.mainWindow(),
         )

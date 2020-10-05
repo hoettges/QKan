@@ -78,7 +78,7 @@ class QKanTools:
         icon_layersadapt_path = ":/plugins/qkan/tools/res/icon_layersadapt.png"
         QKan.instance.add_action(
             icon_layersadapt_path,
-            text=self.tr("Projektlayer auf QKan-Standard setzen"),
+            text=self.tr("QKan-Projekt aktualisieren"),
             callback=self.run_layersadapt,
             parent=self.iface.mainWindow(),
         )
@@ -103,7 +103,7 @@ class QKanTools:
         icon_emptyDB_path = ":/plugins/qkan/tools/res/icon_emptyDB.png"
         QKan.instance.add_action(
             icon_emptyDB_path,
-            text=self.tr("Neue Datenbank erstellen"),
+            text=self.tr("Neue QKan-Datenbank erstellen"),
             callback=self.dlgedb.run,
             parent=self.iface.mainWindow(),
         )
@@ -558,6 +558,10 @@ class QKanTools:
 
         # Groupbox "Layer anpassen" ---------------------------------------------------------------------------
 
+        # Checkbox "Projektmakros"
+        adapt_macros = QKan.config.adapt.macros
+        self.dlgla.cb_adaptMacros.setChecked(adapt_macros)
+
         # Checkbox "Datenbankanbindung"
         adapt_db = QKan.config.adapt.database
         self.dlgla.cb_adaptDB.setChecked(adapt_db)
@@ -620,6 +624,7 @@ class QKanTools:
 
             self.db_qkan: str = self.dlgla.tf_qkanDB.text()
             adapt_db: bool = self.dlgla.cb_adaptDB.isChecked()
+            adapt_macros: bool = self.dlgla.cb_adaptMacros.isChecked()
             adapt_table_lookups: bool = self.dlgla.cb_adaptTableLookups.isChecked()
             adapt_forms: bool = self.dlgla.cb_adaptForms.isChecked()
             adapt_kbs: bool = self.dlgla.cb_adaptKBS.isChecked()
@@ -648,6 +653,7 @@ class QKanTools:
             QKan.config.adapt.forms = adapt_forms
             QKan.config.adapt.kbs = adapt_kbs
             QKan.config.adapt.selected_layers = adapt_selected
+            QKan.config.adapt.macros = adapt_macros
             QKan.config.adapt.table_lookups = adapt_table_lookups
             QKan.config.adapt.update_node_type = update_node_type
             QKan.config.adapt.zoom_all = zoom_alles
@@ -661,6 +667,7 @@ class QKanTools:
                 layersadapt(
                     "{self.db_qkan}",
                     "{self.projectTemplate}",
+                    {adapt_macros},
                     {adapt_db},
                     {adapt_table_lookups},
                     {adapt_forms},
@@ -675,6 +682,7 @@ class QKanTools:
             layersadapt(
                 self.db_qkan,
                 self.projectTemplate,
+                adapt_macros,
                 adapt_db,
                 adapt_table_lookups,
                 adapt_forms,

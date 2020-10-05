@@ -745,10 +745,10 @@ def import_kanaldaten(
 
         try:
             sql = f"""
-                INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
-                                        schachttyp, simstatus, kommentar)
-                VALUES ('{schnam}', {xsch}, {ysch}, {sohlhoehe}, {deckelhoehe}, {durchm}, {druckdicht}, '{entwart}', 
-                     'Schacht', '{simstatus}', '{kommentar}')
+                INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
+                        schachttyp, simstatus, kommentar)
+                VALUES ('{schnam}', {xsch}, {ysch}, {sohlhoehe}, {deckelhoehe}, {durchm}/1000, {druckdicht}, '{entwart}', 
+                        'Schacht', '{simstatus}', '{kommentar}')
                 """
             if not db_qkan.sql(sql, "importkanaldaten_dyna (13)"):
                 del db_qkan
@@ -855,11 +855,11 @@ def import_kanaldaten(
 
         try:
             sql = f"""
-            INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
-                              schachttyp, simstatus, kommentar)
-            VALUES ('{schnam}', {xsch}, {ysch}, {sohlhoehe}, {deckelhoehe}, {durchm}, {druckdicht}, '{entwart}', 
-                     'Auslass', '{simstatus}', '{kommentar}')
-            """
+                INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
+                        schachttyp, simstatus, kommentar)
+                VALUES ('{schnam}', {xsch}, {ysch}, {sohlhoehe}, {deckelhoehe}, {durchm}/1000, {druckdicht}, '{entwart}', 
+                        'Auslass', '{simstatus}', '{kommentar}')
+                """
             if not db_qkan.sql(sql, "importkanaldaten_dyna (16)"):
                 del db_qkan
                 return False
@@ -978,7 +978,7 @@ def import_kanaldaten(
 
         try:
             sql = f"""
-                INSERT INTO haltungen 
+                INSERT INTO haltungen_data 
                 (haltnam, schoben, schunten, 
                 hoehe, breite, laenge, sohleoben, sohleunten, 
                 deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus, kommentar) VALUES (
@@ -1030,10 +1030,10 @@ def import_kanaldaten(
 
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten
-    sql = """SELECT min(xsch) AS xmin, 
-                    max(xsch) AS xmax, 
-                    min(ysch) AS ymin, 
-                    max(ysch) AS ymax
+    sql = """SELECT min(x(geop)) AS xmin, 
+                    max(x(geop)) AS xmax, 
+                    min(y(geop)) AS ymin, 
+                    max(y(geop)) AS ymax
              FROM schaechte"""
     try:
         if not db_qkan.sql(sql, "importkanaldaten_dyna (17)"):

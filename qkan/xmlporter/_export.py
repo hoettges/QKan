@@ -176,8 +176,8 @@ class ExportTask:
             schaechte.deckelhoehe,
             schaechte.sohlhoehe,
             schaechte.durchm,
-            schaechte.xsch,
-            schaechte.ysch,
+            x(schaechte.geop) AS xsch,
+            y(schaechte.geop) AS ysch,
             schaechte.kommentar,
             schaechte.simstatus,
             ea.he_nr,
@@ -252,8 +252,8 @@ class ExportTask:
             schaechte.knotentyp,
             schaechte.kommentar,
             schaechte.simstatus,
-            schaechte.xsch,
-            schaechte.ysch
+            x(schaechte.geop) AS xsch,
+            y(schaechte.geop) AS ysch
         FROM schaechte
         LEFT JOIN Entwaesserungsarten AS ea
         ON schaechte.entwart = ea.bezeichnung
@@ -321,8 +321,8 @@ class ExportTask:
             schaechte.sohlhoehe,
             schaechte.durchm,
             ea.he_nr,
-            schaechte.xsch,
-            schaechte.ysch,
+            x(schaechte.geop) AS xsch,
+            y(schaechte.geop) AS ysch,
             schaechte.kommentar,
             schaechte.simstatus,
             schaechte.knotentyp
@@ -405,10 +405,10 @@ class ExportTask:
             haltungen.ks,
             haltungen.simstatus,
             haltungen.kommentar,
-            haltungen.xschob,
-            haltungen.yschob,
-            haltungen.xschun,
-            haltungen.yschun
+            x(PointN(haltungen.geom, 1) AS xschob,
+            y(PointN(haltungen.geom, 1) AS yschob,
+            x(PointN(haltungen.geom, 1) AS xschun,
+            y(PointN(haltungen.geom, 1) AS yschun
         FROM haltungen
         LEFT JOIN Entwaesserungsarten AS ea 
         ON haltungen.entwart = ea.bezeichnung

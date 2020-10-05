@@ -42,7 +42,7 @@ class ImportTask:
         if QKan.config.check_import.schaechte:
             if self.append:
                 sql = f"""
-                INSERT INTO schaechte (
+                INSERT INTO schaechte_data (
                     schnam, xsch, ysch, 
                     sohlhoehe, deckelhoehe, 
                     durchm, 
@@ -56,7 +56,7 @@ class ImportTask:
                     y(sh.Geometry) AS ysch, 
                     sh.Sohlhoehe AS sohlhoehe, 
                     sh.Deckelhoehe AS deckelhoehe, 
-                    sh.Durchmesser AS durchm, 
+                    sh.Durchmesser/1000 AS durchm, 
                     sh.Druckdichterdeckel AS druckdicht, 
                     sh.Kanalart AS entwart, 
                     'Schacht' AS schachttyp,
@@ -82,7 +82,7 @@ class ImportTask:
         if QKan.config.check_import.auslaesse:
             if self.append:
                 sql = f"""
-                INSERT INTO schaechte (
+                INSERT INTO schaechte_data (
                     schnam, xsch, ysch, 
                     sohlhoehe, deckelhoehe, 
                     schachttyp, simstatus, 
@@ -117,7 +117,7 @@ class ImportTask:
         if QKan.config.check_import.speicher:
             if self.append:
                 sql = f"""
-                INSERT INTO schaechte (
+                INSERT INTO schaechte_data (
                     schnam, xsch, ysch, 
                     sohlhoehe, deckelhoehe, 
                     schachttyp, simstatus, 
@@ -182,7 +182,7 @@ class ImportTask:
         if QKan.config.check_import.haltungen:
             if self.append:
                 sql = f"""
-                INSERT INTO haltungen (
+                INSERT INTO haltungen_data (
                     haltnam, schoben, schunten, 
                     hoehe, breite, laenge, 
                     sohleoben, sohleunten, deckeloben, deckelunten, 
@@ -247,7 +247,7 @@ class ImportTask:
         if QKan.config.check_import.wehre:
             if self.append:
                 sql = f"""
-                INSERT INTO wehre (
+                INSERT INTO wehre_data (
                     wnam, schoben, schunten, 
                     wehrtyp, schwellenhoehe, kammerhoehe, 
                     laenge, uebeiwert, simstatus, 
@@ -292,7 +292,7 @@ class ImportTask:
         if QKan.config.check_import.pumpen:
             if self.append:
                 sql = f"""
-                INSERT INTO pumpen (
+                INSERT INTO pumpen_data (
                     pnam, schoben, schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, 
                     simstatus, kommentar, createdat)
                 SELECT 
@@ -541,7 +541,7 @@ class ImportTask:
                     eg_he.LastModified AS createdat
                 FROM Teileinzugsgebiet AS eg_he
                 LEFT JOIN einzugsgebiete AS eg_qk
-                ON eg_he.Name = eg_qk.elnam
+                ON eg_he.Name = eg_qk.tgnam
                 WHERE eg_qk.pk IS NULL
                     """
                 if not self.db_qkan.sql(sql, "he8_import Einzugsgebiete"):
@@ -586,7 +586,7 @@ class ImportTask:
                     SetSRID(eg_he.Geometry, {self.epsg}) AS geom
                 FROM GipsEinzugsflaeche AS eg_he
                 LEFT JOIN tezg AS eg_qk
-                ON eg_he.Name = eg_qk.elnam
+                ON eg_he.Name = eg_qk.flnam
                 WHERE (
                     (IsEinzugsflaeche and {choice_ef}) or
                     (IsHaltungsflaeche and {choice_hf}) or

@@ -32,8 +32,11 @@ from qgis.core import (
     QgsEditorWidgetSetup,
     QgsProject,
     QgsVectorLayer,
+    QgsField,
 )
 from qgis.utils import iface, pluginDirectory
+
+from PyQt5.QtCore import QVariant
 
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
@@ -61,6 +64,7 @@ progress_bar = None
 def layersadapt(
     database_QKan,
     projectTemplate,
+    anpassen_ProjektMakros,
     anpassen_Datenbankanbindung,
     anpassen_Wertebeziehungen_in_Tabellen,
     anpassen_Formulare,
@@ -78,6 +82,9 @@ def layersadapt(
 
     :projectTemplate:                               Vorlage-Projektdatei für die anzupassenden Layereigenschaften
     :type projectTemplate:                          String
+
+    :anpassen_ProjektMakros:                        Projektmakros werden angepasst
+    :type anpassen_ProjektMakros:                   Boolean
 
     :anpassen_Datenbankanbindung:                   Datenbankanbindungen werden angepasst
     :type anpassen_Datenbankanbindung:              Boolean
@@ -297,6 +304,12 @@ def layersadapt(
             )
             continue  # Layer ist in Projekt-Templatenicht vorhanden...
 
+        if anpassen_ProjektMakros:
+            nodes = qgsxml.findall('properties/Macros')
+            for node in nodes:
+                macros = node.findtext("pythonCode")
+            project.writeEntry("Macros", "/pythonCode", macros)
+
         if anpassen_Datenbankanbindung:
             datasource = layer.source()
             dbname, table, geom, sql = get_qkanlayerAttributes(datasource)
@@ -397,6 +410,32 @@ def layersadapt(
             if layer.displayExpression() in ('pk', '"pk"', '', """COALESCE("pk", '<NULL>')"""):
                 logger.debug(f'DisplayExpression zu Layer {layer.name()} gesetzt: {displayExpression}\n')
                 layer.setDisplayExpression(displayExpression)
+
+    # Koordinaten in einer eigenen Spalte, nur für Layer Schächte, Auslässe, Speicher
+    for layername in ['Schächte', 'Auslässe', 'Speicher']:
+        # Expressions aus Projektvorlage (xml) lesen
+        tagLayer = f"projectlayers/maplayer[layername='{layername}']/expressionfields/field"
+        qgsLayers = qgsxml.findall(tagLayer)
+        exprList = {}                           # zur Vermeidung von Doppelungen
+        for lay in qgsLayers:
+            expression = lay.attrib['expression']
+            name = lay.attrib['name']
+            typeName = lay.attrib['typeName']
+            comment = lay.attrib['comment']
+            exprList[name] = [expression, typeName, comment]
+
+        # Expressions in Attributtabelle einfügen
+        project = QgsProject.instance()
+        layer = project.mapLayersByName(layername)[0]
+        for name in exprList.keys():
+            expression, typeName, comment = exprList[name]
+            if typeName == 'double precision':
+                layer.addExpressionField(expression, QgsField(name=name, type=QVariant.Double, comment=comment))
+            elif typeName == 'integer':
+                layer.addExpressionField(expression, QgsField(name=name, type=QVariant.Integer, comment=comment))
+            else:
+                Fehlermeldung('Programmfehler', f'Datentyp noch nicht programmiert: {typeName}')
+                return False
 
     if layerNotInProjektMeldung:
         meldung(

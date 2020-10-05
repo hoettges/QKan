@@ -115,7 +115,7 @@ class ExportTask:
                         strftime('%Y-%m-%d %H:%M:%S', 
                             coalesce(schaechte.createdat, 'now'
                     )               ) AS lastmodified, 
-                        schaechte.durchm AS durchmesser,
+                        schaechte.durchm*1000 AS durchmesser,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
                       LEFT JOIN simulationsstatus AS st
@@ -162,7 +162,7 @@ class ExportTask:
                       st.he_nr AS planungsstatus, 
                       strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
                       schaechte.rowid + {id0} AS id, 
-                      schaechte.durchm AS durchmesser,
+                      schaechte.durchm*1000 AS durchmesser,
                       SetSrid(schaechte.geop, -1) AS geometry
                     FROM schaechte
                     LEFT JOIN simulationsstatus AS st
@@ -785,7 +785,7 @@ class ExportTask:
                 id0 = self.nextid - idmin
 
                 sql = f"""
-                INSERT INTO Pumpe (
+                INSERT INTO he.Pumpe (
                     Id,
                     Name, 
                     SchachtOben, SchachtUnten, 
@@ -893,7 +893,7 @@ class ExportTask:
                 id0 = self.nextid - idmin
 
                 sql = f"""
-                INSERT INTO Wehr (
+                INSERT INTO he.Wehr (
                     Id,
                     Name, 
                     SchachtOben, SchachtUnten, 

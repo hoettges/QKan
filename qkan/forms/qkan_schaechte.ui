@@ -293,26 +293,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="xsch">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>120</y>
-      <width>141</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="ysch">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>150</y>
-      <width>141</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="durchm">
     <property name="geometry">
      <rect>
@@ -511,6 +491,32 @@
      <string>dd.MM.yyyy HH:mm</string>
     </property>
    </widget>
+   <widget class="QLineEdit" name="y">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>150</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="x">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>120</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -536,8 +542,6 @@
   <tabstop>schachttyp</tabstop>
   <tabstop>sohlhoehe</tabstop>
   <tabstop>deckelhoehe</tabstop>
-  <tabstop>xsch</tabstop>
-  <tabstop>ysch</tabstop>
   <tabstop>durchm</tabstop>
   <tabstop>ueberstauflaeche</tabstop>
   <tabstop>entwart</tabstop>

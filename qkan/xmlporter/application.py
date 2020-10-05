@@ -42,14 +42,14 @@ class XmlPorter:
         icon_export = ":/plugins/qkan/xmlporter/res/icon_export.png"
         QKan.instance.add_action(
             icon_export,
-            text=self.tr("Export in XML"),
+            text=self.tr("Export nach ISYBAU-XML"),
             callback=self.run_export,
             parent=self.iface.mainWindow(),
         )
         icon_import = ":/plugins/qkan/xmlporter/res/icon_import.png"
         QKan.instance.add_action(
             icon_import,
-            text=self.tr("Import aus XML"),
+            text=self.tr("Import aus ISYBAU-XML"),
             callback=self.run_import,
             parent=self.iface.mainWindow(),
         )

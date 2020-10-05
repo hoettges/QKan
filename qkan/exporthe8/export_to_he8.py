@@ -146,7 +146,7 @@ def exporthe8(
                     1 AS art, 
                     st.he_nr AS planungsstatus, 
                     strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
-                    schaechte.durchm AS durchmesser,
+                    schaechte.durchm*1000 AS durchmesser,
                     SetSrid(schaechte.geop, -1) AS geometry
                   FROM schaechte
                   LEFT JOIN simulationsstatus AS st
@@ -194,7 +194,7 @@ def exporthe8(
                   st.he_nr AS planungsstatus, 
                   strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
                   schaechte.rowid + {id0} AS id, 
-                  schaechte.durchm AS durchmesser,
+                  schaechte.durchm*1000 AS durchmesser,
                   SetSrid(schaechte.geop, -1) AS geometry
                 FROM schaechte
                 LEFT JOIN simulationsstatus AS st
@@ -439,7 +439,7 @@ def exporthe8(
                 schaechte.schnam AS schnam,
                 schaechte.deckelhoehe AS deckelhoehe,
                 schaechte.sohlhoehe AS sohlhoehe,
-                schaechte.durchm AS durchmesser,
+                schaechte.durchm*1000 AS durchmesser,
                 kommentar AS kommentar,
                 createdat,
                 geom
@@ -523,7 +523,7 @@ def exporthe8(
             # Einfuegen in die Datenbank
             if check_export["export_auslaesse"]:
                 sql = """
-                    INSERT INTO Auslass
+                    INSERT INTO he.Auslass
                     ( Id, Typ, Rueckschlagklappe, Sohlhoehe,
                       Gelaendehoehe, Art, AnzahlKanten,
                       Scheitelhoehe, KonstanterZufluss, Planungsstatus,
@@ -670,7 +670,7 @@ def exporthe8(
             # Einfuegen in die Datenbank
             if check_export["export_pumpen"]:
                 sql = """
-                    INSERT INTO Pumpe
+                    INSERT INTO he.Pumpe
                     ( Id, Name, Typ, SchachtOben, SchachtUnten, 
                       Steuerschacht, Einschalthoehe, 
                       Ausschalthoehe, Planungsstatus,
@@ -830,7 +830,7 @@ def exporthe8(
             # Einfuegen in die Datenbank
             if check_export["export_wehre"]:
                 sql = """
-                    INSERT INTO Wehr
+                    INSERT INTO he.Wehr
                     (Id, Name, Typ, SchachtOben, SchachtUnten, 
                      SohlhoeheOben, SohlhoeheUnten, 
                      Schwellenhoehe, Geometrie1, 
@@ -1128,7 +1128,7 @@ def exporthe8(
             # Einfuegen in die Datenbank
             if check_export["export_bodenklassen"]:
                 sql = """
-                  INSERT INTO Bodenklasse
+                  INSERT INTO he.Bodenklasse
                   ( InfiltrationsrateAnfang, InfiltrationsrateEnde,
                     InfiltrationsrateStart, Rueckgangskonstante, Regenerationskonstante,
                     Saettigungswassergehalt, Name, LastModified, Kommentar,  Id)
@@ -1294,7 +1294,7 @@ def exporthe8(
             # Einfuegen in die Datenbank
             if check_export["export_abflussparameter"]:
                 sql = """
-                  INSERT INTO AbflussParameter
+                  INSERT INTO he.AbflussParameter
                   ( Name, AbflussbeiwertAnfang, AbflussbeiwertEnde, Benetzungsverlust,
                     Muldenverlust, BenetzungSpeicherStart, MuldenauffuellgradStart, SpeicherkonstanteKonstant,
                     SpeicherkonstanteMin, SpeicherkonstanteMax, SpeicherkonstanteKonstant2,
@@ -1410,7 +1410,7 @@ def exporthe8(
         for regenschreiber in reglis:
             if regenschreiber not in attr:
                 sql = """
-                  INSERT INTO Regenschreiber
+                  INSERT INTO he.Regenschreiber
                   ( Nummer, Station,
                     ZKoordinate, Name,
                     FlaecheGesamt, FlaecheDurchlaessig, FlaecheUndurchlaessig,
@@ -2198,7 +2198,7 @@ def exporthe8(
             # Einfuegen in die Datenbank
             if check_export["export_einleitdirekt"]:
                 sql = """
-                  INSERT INTO Einzeleinleiter
+                  INSERT INTO he.Einzeleinleiter
                   ( ZuordnungGesperrt, ZuordnUnabhEZG, Rohr,
                     Abwasserart, Einwohner, Wasserverbrauch, Herkunft,
                     Stundenmittel, Fremdwasserzuschlag, Faktor, Gesamtflaeche,
@@ -2379,7 +2379,7 @@ def exporthe8(
             # Einfuegen in die Datenbank
             if check_export["export_aussengebiete"]:
                 sql = """
-                    INSERT INTO Aussengebiet
+                    INSERT INTO he.Aussengebiet
                     ( Name, Schacht, HoeheOben, HoeheUnten, 
                       Gesamtflaeche, CNMittelwert, BasisZufluss, 
                       FliessLaenge, Verfahren, Regenschreiber, 
@@ -2412,7 +2412,7 @@ def exporthe8(
                     return False
 
                 sql = """
-                    INSERT INTO Tabelleninhalte
+                    INSERT INTO he.Tabelleninhalte
                     ( KeyWert, Wert, Reihenfolge, Id)
                     SELECT
                       {cn}, {gesflaeche}, {reihenfolge}, {id};

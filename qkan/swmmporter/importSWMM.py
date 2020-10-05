@@ -138,7 +138,7 @@ class SWMM:
             areaPonded = line[61:72].strip()    # ueberstauflaeche
 
             sql = f"""
-                INSERT into schaechte (
+                INSERT into schaechte_data (
                     schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
                 VALUES (
                     '{name}', {elevation}, {elevation} + {maxdepth}, {areaPonded}, 'Schacht')
@@ -173,7 +173,7 @@ class SWMM:
                 auslasstyp = 'frei'
 
             sql = f"""
-                INSERT into schaechte (
+                INSERT into schaechte_data (
                     schnam, sohlhoehe, auslasstyp, schachttyp)
                 VALUES (
                     '{name}', {elevation}, '{auslasstyp}', 'Auslass')
@@ -310,7 +310,7 @@ class SWMM:
             # ks = ksFromKst(kst)
 
             sql = f"""
-                INSERT into haltungen (
+                INSERT into haltungen_data (
                     haltnam, schoben, schunten, laenge, ks, entwart, simstatus)
                 VALUES (
                     '{haltnam}', '{schoben}', '{schunten}', {laenge}, {mannings_n}, 'Regenwasser', 'vorhanden')
@@ -418,10 +418,10 @@ class SWMM:
     def writeProjektfile(self):
         # --------------------------------------------------------------------------
         # Zoom-Bereich für die Projektdatei vorbereiten
-        sql = """SELECT min(xsch) AS xmin, 
-                        max(xsch) AS xmax, 
-                        min(ysch) AS ymin, 
-                        max(ysch) AS ymax
+        sql = """SELECT min(x(geop)) AS xmin, 
+                        max(x(geop)) AS xmax, 
+                        min(y(geop)) AS ymin, 
+                        max(y(geop)) AS ymax
                  FROM schaechte"""
         try:
             if not self.dbQK.sql(sql, "importkanaldaten_swmm (17)"

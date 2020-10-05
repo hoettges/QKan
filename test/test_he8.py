@@ -65,6 +65,7 @@ class TestQKanHE8(QgisTest):
             projectTemplate="",
             dbIsUptodate=False,
             qkanDBUpdate=True,
+            anpassen_ProjektMakros= False,
             anpassen_Datenbankanbindung=False,
             anpassen_Wertebeziehungen_in_Tabellen=False,
             anpassen_Formulare=False,

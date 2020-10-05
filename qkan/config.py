@@ -273,6 +273,7 @@ class AdaptConfig(ClassObject):
     add_missing_layers: bool = True
     database: bool = True
     forms: bool = True
+    macros: bool = True
     kbs: bool = True
     qkan_db_update: bool = True
     selected_layers: enums.SelectedLayers = enums.SelectedLayers.ALL

@@ -317,7 +317,7 @@ class ImportTask:
             #     return None
 
             sql = f"""
-            INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
+            INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
                     schachttyp, simstatus, kommentar)
             VALUES ('{schacht.schnam}', {schacht.xsch}, {schacht.ysch}, {schacht.sohlhoehe}, {schacht.deckelhoehe}, 
                     {schacht.durchm}, '{entwart}', 'Schacht', '{simstatus}', '{schacht.kommentar}')
@@ -384,7 +384,7 @@ class ImportTask:
             # geop, geom = geo_smp(auslass)
 
             sql = f"""
-            INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
+            INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
                     schachttyp, simstatus, kommentar)
             VALUES ('{auslass.schnam}', {auslass.xsch}, {auslass.ysch}, {auslass.sohlhoehe}, {auslass.deckelhoehe}, 
                         {auslass.durchm}, '{auslass.entwart}', 'Auslass', '{simstatus}', '{auslass.kommentar}')
@@ -470,7 +470,7 @@ class ImportTask:
             # geop, geom = geo_smp(speicher)
 
             sql = f"""
-            INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
+            INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
                     schachttyp, simstatus, kommentar)
             VALUES ('{speicher.schnam}', {speicher.xsch}, {speicher.ysch}, {speicher.sohlhoehe}, {speicher.deckelhoehe}, 
                 {speicher.durchm}, '{speicher.entwart}', 'Speicher', '{simstatus}', '{speicher.kommentar}')
@@ -663,7 +663,7 @@ class ImportTask:
             #     return None
 
             sql = f"""
-                INSERT INTO haltungen 
+                INSERT INTO haltungen_data 
                     (haltnam, schoben, schunten, 
                     hoehe, breite, laenge, sohleoben, sohleunten, deckeloben, deckelunten, 
                     profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
@@ -754,7 +754,7 @@ class ImportTask:
             # Tabelle "schaechte" gespeichert werden.
 
             sql = f"""
-                INSERT INTO wehre 
+                INSERT INTO wehre_data 
                                 (wnam, schoben, schunten, wehrtyp, schwellenhoehe, kammerhoehe, laenge, uebeiwert)
                 SELECT '{wehr.wnam}', '{wehr.schoben}', '{wehr.schunten}', '{wehr.wehrtyp}', {wehr.schwellenhoehe}, 
                         {wehr.kammerhoehe}, {wehr.laenge}, {wehr.uebeiwert}
@@ -839,7 +839,7 @@ class ImportTask:
             # Dies ist in QKan einfach, da auch Auslaesse und Speicher
             # in der Tabelle "schaechte" gespeichert werden.
             sql = f"""
-                INSERT INTO pumpen 
+                INSERT INTO pumpen_data 
                     (pnam, volanf, volges, sohle, schoben, schunten, pumpentyp, steuersch)
                 SELECT '{pumpe.pnam}', {pumpe.volanf}, {pumpe.volges}, {pumpe.sohle}, '{pumpe.schoben}', 
                         '{pumpe.schunten}', '{pumpentyp}', '{pumpe.steuersch}'

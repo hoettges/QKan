@@ -200,8 +200,8 @@ def write12(
             0 AS haltyp,
             h.schoben AS schoben, 
             h.schunten AS schunten,
-            so.xsch AS xob, 
-            so.ysch AS yob
+            x(so.geop) AS xob, 
+            y(so.geop) AS yob
         FROM haltungen AS h
         INNER JOIN dynahal AS d
         ON h.pk = d.pk
@@ -479,7 +479,7 @@ def write16(
         FROM haltungen AS h
         GROUP BY h.schoben),
     v_halan AS
-    (   SELECT h.schunten, s.xsch AS xschob, s.ysch AS yschob,
+    (   SELECT h.schunten, x(s.geop) AS xschob, y(s.geop) AS yschob,
         d.kanalnummer AS kanalnummer,
         d.haltungsnummer AS haltungsnummer
         FROM haltungen AS h
@@ -488,7 +488,7 @@ def write16(
         INNER JOIN schaechte AS s
         ON s.schnam = h.schoben),
     v_halab AS
-    (   SELECT h.schoben, s.xsch AS xschun, s.ysch AS yschun,
+    (   SELECT h.schoben, x(s.geop) AS xschun, y(s.geop) AS yschun,
         d.kanalnummer AS kanalnummer,
         d.haltungsnummer AS haltungsnummer
         FROM haltungen AS h
@@ -629,8 +629,8 @@ def write41(
             d.kanalnummer AS kanalnummer,
             d.haltungsnummer AS haltungsnummer,
             s.deckelhoehe AS deckelhoehe, 
-            s.xsch AS xsch, 
-            s.ysch AS ysch, 
+            x(s.geop) AS xsch, 
+            y(s.geop) AS ysch, 
             s.schnam AS schnam
         FROM dynahal AS d
         INNER JOIN schaechte AS s

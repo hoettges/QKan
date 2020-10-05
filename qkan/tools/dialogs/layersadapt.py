@@ -39,6 +39,7 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
     button_box: QDialogButtonBox
 
     cb_adaptDB: QCheckBox
+    cb_adaptMacros: QCheckBox
     cb_adaptForms: QCheckBox
     cb_adaptKBS: QCheckBox
     cb_adaptTableLookups: QCheckBox

@@ -2359,86 +2359,261 @@ class DBConnection:
                 self.versionlis = [3, 1, 3]
 
             # ------------------------------------------------------------------------------------
-            if versionolder(self.versionlis, [3, 1, 4]):
 
-                # Trigger zur Erstellung der Geoobjekte
+                # Version 3.1.4: Trigger wurden verworfen, deshalb Zusatz unter Version 3.1.5
 
-                sql = """-- Haltungsgeoobjekt anlegen beim Einfügen neuer Datensätze aus Schachtobjekten
-                    CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_haltungen
-                        AFTER INSERT ON haltungen FOR EACH ROW
-                    WHEN
-                        new.geom IS NULL
-                    BEGIN
-                        UPDATE haltungen SET geom =
-                        (   SELECT MakeLine(schob.geop, schun.geop)
-                            FROM schaechte AS schob, 
-                                 schaechte AS schun
-                            WHERE schob.schnam = new.schoben AND
-                                  schun.schnam = new.schunten)
-                        WHERE haltungen.pk = new.pk;
-                    END;"""
-                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.4-1)"):
+            # ------------------------------------------------------------------------------------
+            logger.debug(f"Version: {self.versionlis}")
+            if versionolder(self.versionlis, [3, 1, 5]):
+                logger.debug(f"Version älter 3.1.5 erkannt: {self.versionlis}")
+                if not versionolder(self.versionlis, [3, 1, 4]):
+                    logger.debug(f"Version 3.1.4 erkannt: {self.versionlis}")
+                    # Trigger aus Version 3.1.4 wieder löschen
+
+                    if not self.sql("DROP TRIGGER create_missing_geoobject_haltungen",
+                                     "dbfunc.DBConnection.version (3.1.5-1"):
+                        return False
+                    self.commit()
+
+                    if not self.sql("DROP TRIGGER create_missing_geoobject_schaechte",
+                                     "dbfunc.DBConnection.version (3.1.5-2"):
+                        return False
+                    self.commit()
+
+                    if not self.sql("DROP TRIGGER create_missing_geoobject_pumpen",
+                                     "dbfunc.DBConnection.version (3.1.5-3"):
+                        return False
+                    self.commit()
+
+                    if not self.sql("DROP TRIGGER create_missing_geoobject_wehre",
+                                     "dbfunc.DBConnection.version (3.1.5-4"):
+                        return False
+                    self.commit()
+
+                # Schächte -----------------------------------------------------------------
+
+                sql = f"""CREATE VIEW IF NOT EXISTS schaechte_data AS 
+                      SELECT
+                        schnam, 
+                        xsch, ysch, 
+                        sohlhoehe, 
+                        deckelhoehe, durchm, 
+                        druckdicht, ueberstauflaeche, 
+                        entwart, strasse, teilgebiet, 
+                        knotentyp, auslasstyp, schachttyp, 
+                        simstatus, 
+                        kommentar, createdat
+                      FROM schaechte;"""
+                if not self.sql(sql,
+                                "dbfunc.DBConnection.version (3.1.5-5)" + \
+                                "VIEW schaechte_data konnten nicht erstellt werden."
+                                ):
                     return False
                 self.commit()
 
-                sql = f"""-- Schachtgeoobjekt anlegen beim Einfügen neuer Datensätze
-                    CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_schaechte 
-                       AFTER INSERT ON schaechte FOR EACH ROW
-                    WHEN
-                        new.geom IS NULL AND
-                        new.geop IS NULL
-                    BEGIN
-                        UPDATE schaechte SET geop = 
-                            MakePoint(new.xsch, new.ysch, {self.epsg})
-                        WHERE schaechte.pk = new.pk;
-                        UPDATE schaechte SET geom = 
-                            CastToMultiPolygon(MakePolygon(MakeCircle(new.xsch, new.ysch, 
-                                coalesce(new.durchm / 1000, 1), {self.epsg})))
-                        WHERE schaechte.pk = new.pk;
-                    END;"""
-                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.4-2)"):
+                sql = f"""CREATE TRIGGER IF NOT EXISTS schaechte_insert_clipboard
+                        INSTEAD OF INSERT ON schaechte_data FOR EACH ROW
+                      BEGIN
+                        INSERT INTO schaechte
+                          (schnam, sohlhoehe, 
+                           deckelhoehe, durchm, 
+                           druckdicht, ueberstauflaeche, 
+                           entwart, strasse, teilgebiet, 
+                           knotentyp, auslasstyp, schachttyp, 
+                           simstatus, 
+                           kommentar, createdat, 
+                           geop, geom)
+                        VALUES (
+                          new.schnam, new.sohlhoehe,
+                          new.deckelhoehe, 
+                          CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
+                          coalesce(new.druckdicht, 0), coalesce(new.ueberstauflaeche, 0), 
+                          coalesce(new.entwart, 'Regenwasser'), new.strasse, new.teilgebiet, 
+                          new.knotentyp, new.auslasstyp, coalesce(new.schachttyp, 'Schacht'), 
+                          coalesce(new.simstatus, 'vorhanden'),
+                          new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
+                          MakePoint(new.xsch, new.ysch, {self.epsg}),
+                          CastToMultiPolygon(
+                            MakePolygon(
+                              MakeCircle(
+                                new.xsch,
+                                new.ysch,
+                                coalesce(new.durchm/2, 0.5), {self.epsg}
+                              )
+                            )
+                          )
+                        );
+                      END"""
+                if not self.sql(sql,
+                                "dbfunc.DBConnection.version (3.1.5-6)" + \
+                                "TRIGGER schaechte_insert_clipboard konnten nicht erstellt werden."
+                                ):
                     return False
                 self.commit()
 
-                sql = """-- Pumpengeoobjekt anlegen beim Einfügen neuer Datensätze aus Schachtobjekten
-                    CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_pumpen
-                        AFTER INSERT ON pumpen FOR EACH ROW
-                    WHEN
-                        new.geom IS NULL
-                    BEGIN
-                        UPDATE pumpen SET geom =
-                        (   SELECT MakeLine(schob.geop, schun.geop)
-                            FROM schaechte AS schob, 
-                                 schaechte AS schun
-                            WHERE schob.schnam = new.schoben AND
-                                  schun.schnam = new.schunten)
-                        WHERE pumpen.pk = new.pk;
-                    END;"""
-                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.4-3)"):
+                # Haltungen -----------------------------------------------------------------
+
+                sql = f"""CREATE VIEW IF NOT EXISTS haltungen_data AS
+                      SELECT 
+                        haltnam, schoben, schunten, 
+                        hoehe, breite, laenge, 
+                        sohleoben, sohleunten, 
+                        deckeloben, deckelunten, 
+                        xschob, yschob, xschun, yschun, 
+                        teilgebiet, qzu, profilnam, 
+                        entwart, rohrtyp, ks,
+                        simstatus, kommentar, createdat
+                      FROM haltungen;"""
+                if not self.sql(sql,
+                                "dbfunc.DBConnection.version (3.1.5-5)" + \
+                                "VIEW haltungen_data konnten nicht erstellt werden."
+                                ):
                     return False
                 self.commit()
 
-                sql = """-- Wehrgeoobjekt anlegen beim Einfügen neuer Datensätze aus Schachtobjekten
-                    CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_wehre
-                        AFTER INSERT ON wehre FOR EACH ROW
-                    WHEN
-                        new.geom IS NULL
-                    BEGIN
-                        UPDATE wehre SET geom =
-                        (   SELECT MakeLine(schob.geop, schun.geop)
-                            FROM schaechte AS schob, 
-                                 schaechte AS schun
-                            WHERE schob.schnam = new.schoben AND
-                                  schun.schnam = new.schunten)
-                        WHERE wehre.pk = new.pk;
-                    END;"""
-                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.4-4)"):
+                sql = f"""CREATE TRIGGER IF NOT EXISTS haltungen_insert_clipboard
+                        INSTEAD OF INSERT ON haltungen_data FOR EACH ROW
+                      BEGIN
+                        INSERT INTO haltungen
+                          (haltnam, schoben, schunten,
+                           hoehe, breite, laenge,
+                           sohleoben, sohleunten,
+                           deckeloben, deckelunten, 
+                           teilgebiet, qzu, profilnam, 
+                           entwart, rohrtyp, ks,
+                           simstatus, kommentar, createdat,  
+                           geom)
+                        SELECT 
+                          new.haltnam, new.schoben, new.schunten, 
+                          CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
+                          CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
+                          new.laenge, 
+                          new.sohleoben, new.sohleunten, 
+                          new.deckeloben, new.deckelunten, 
+                          new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
+                          coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
+                          coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
+                          coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), 
+                          MakeLine(
+                            coalesce(
+                              MakePoint(new.xschob, new.yschob, {self.epsg}),
+                              schob.geop
+                            ), 
+                            coalesce(
+                              MakePoint(new.xschun, new.yschun, {self.epsg}),
+                              schun.geop
+                            )
+                          )
+                        FROM
+                          schaechte AS schob,
+                          schaechte AS schun
+                        WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
+                      END;"""
+                if not self.sql(sql,
+                                "dbfunc.DBConnection.version (3.1.5-6)" + \
+                                "TRIGGER haltungen_insert_clipboard konnten nicht erstellt werden."
+                                ):
+                    return False
+                self.commit()
+
+                # Pumpen -----------------------------------------------------------------
+
+                sql = f"""CREATE VIEW IF NOT EXISTS pumpen_data AS
+                      SELECT 
+                        pnam, schoben, schunten, 
+                        pumpentyp, volanf, volges, 
+                        sohle, steuersch, 
+                        einschalthoehe, ausschalthoehe,
+                        teilgebiet, simstatus, 
+                        kommentar, createdat
+                      FROM pumpen;"""
+                if not self.sql(sql,
+                                "dbfunc.DBConnection.version (3.1.5-5)" + \
+                                "VIEW haltungen_data konnten nicht erstellt werden."
+                                ):
+                    return False
+                self.commit()
+
+                sql = f"""CREATE TRIGGER IF NOT EXISTS pumpen_insert_clipboard
+                        INSTEAD OF INSERT ON pumpen_data FOR EACH ROW
+                      BEGIN
+                        INSERT INTO pumpen
+                          (pnam, schoben, schunten, 
+                           pumpentyp, volanf, volges, 
+                           sohle, steuersch, 
+                           einschalthoehe, ausschalthoehe,
+                           teilgebiet, simstatus, 
+                           kommentar, createdat, 
+                           geom)
+                        SELECT 
+                          new.pnam, new.schoben, new.schunten, 
+                          new.pumpentyp, new.volanf, new.volges, 
+                          new.sohle, new.steuersch, 
+                          new.einschalthoehe, new.ausschalthoehe,
+                          new.teilgebiet, coalesce(new.simstatus, 'vorhanden'), 
+                          new.kommentar, new.createdat,
+                          MakeLine(schob.geop, schun.geop)
+                        FROM
+                          schaechte AS schob,
+                          schaechte AS schun
+                        WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
+                      END;"""
+                if not self.sql(sql,
+                                "dbfunc.DBConnection.version (3.1.5-6)" + \
+                                "TRIGGER haltungen_insert_clipboard konnten nicht erstellt werden."
+                                ):
+                    return False
+                self.commit()
+
+                # Wehre -----------------------------------------------------------------
+
+                sql = f"""CREATE VIEW IF NOT EXISTS wehre_data AS
+                      SELECT 
+                        wnam, schoben, schunten, 
+                        wehrtyp, schwellenhoehe, kammerhoehe, 
+                        laenge, uebeiwert, aussentyp, aussenwsp, 
+                        teilgebiet, simstatus, 
+                        kommentar, createdat
+                      FROM wehre;"""
+                if not self.sql(sql,
+                                "dbfunc.DBConnection.version (3.1.5-5)" + \
+                                "VIEW haltungen_data konnten nicht erstellt werden."
+                                ):
+                    return False
+                self.commit()
+
+                sql = f"""CREATE TRIGGER IF NOT EXISTS wehre_insert_clipboard
+                        INSTEAD OF INSERT ON wehre_data FOR EACH ROW
+                      BEGIN
+                        INSERT INTO wehre
+                          (wnam, schoben, schunten, 
+                           wehrtyp, schwellenhoehe, kammerhoehe, 
+                           laenge, uebeiwert, aussentyp, aussenwsp, 
+                           teilgebiet, simstatus, 
+                           kommentar, createdat, 
+                           geom)
+                        SELECT 
+                          new.wnam, new.schoben, new.schunten, 
+                          new.wehrtyp, new.schwellenhoehe, new.kammerhoehe, 
+                          new.laenge, new.uebeiwert, new.aussentyp, new.aussenwsp, 
+                          new.teilgebiet, coalesce(new.simstatus, 'vorhanden'), 
+                          new.kommentar, new.createdat,
+                          MakeLine(schob.geop, schun.geop)
+                        FROM
+                          schaechte AS schob,
+                          schaechte AS schun
+                        WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
+                      END;"""
+                if not self.sql(sql,
+                                "dbfunc.DBConnection.version (3.1.5-6)" + \
+                                "TRIGGER haltungen_insert_clipboard konnten nicht erstellt werden."
+                                ):
                     return False
                 self.commit()
 
                 # Versionsnummer hochsetzen
 
-                self.versionlis = [3, 1, 4]
+                self.versionlis = [3, 1, 5]
 
             # ------------------------------------------------------------------------------------
             # Aktuelle Version in Tabelle "info" schreiben

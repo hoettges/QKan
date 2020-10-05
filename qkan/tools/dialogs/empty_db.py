@@ -170,10 +170,10 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):
             # Grab zoom states
             if not db_qkan.sql(
                 """
-                SELECT min(xsch) AS xmin,
-                    max(xsch) AS xmax,
-                    min(ysch) AS ymin,
-                    max(ysch) AS ymax
+                SELECT min(x(geop)) AS xmin,
+                    max(x(geop)) AS xmax,
+                    min(y(geop)) AS ymin,
+                    max(y(geop)) AS ymax
                 FROM schaechte
              """,
                 "empty_db (2)",

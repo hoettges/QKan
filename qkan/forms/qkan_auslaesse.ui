@@ -273,7 +273,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="xsch">
+   <widget class="QLineEdit" name="x">
     <property name="geometry">
      <rect>
       <x>110</x>
@@ -282,8 +282,11 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
    </widget>
-   <widget class="QLineEdit" name="ysch">
+   <widget class="QLineEdit" name="y">
     <property name="geometry">
      <rect>
       <x>110</x>
@@ -291,6 +294,9 @@
       <width>141</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="sohlhoehe">
@@ -439,7 +445,7 @@
      <x>0</x>
      <y>0</y>
      <width>625</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -455,8 +461,8 @@
  <tabstops>
   <tabstop>schnam</tabstop>
   <tabstop>auslasstyp</tabstop>
-  <tabstop>xsch</tabstop>
-  <tabstop>ysch</tabstop>
+  <tabstop>x</tabstop>
+  <tabstop>y</tabstop>
   <tabstop>sohlhoehe</tabstop>
   <tabstop>deckelhoehe</tabstop>
   <tabstop>schachttyp</tabstop>

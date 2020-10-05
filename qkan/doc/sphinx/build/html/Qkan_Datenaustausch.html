@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Import von Kanaldaten aus einfachen Tabellen (Excel, TXT, CSV) &#8212; QKan 2.4.5 Dokumentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.4.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="1. Verarbeitung von befestigten und unbefestigten Flächen" href="Qkan_flaechen.html" />
+    <link rel="prev" title="1. Allgemeine Funktionen" href="Qkan_Videoanleitungen.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="import-von-kanaldaten-aus-einfachen-tabellen-excel-txt-csv">
+<h1>1. Import von Kanaldaten aus einfachen Tabellen (Excel, TXT, CSV)<a class="headerlink" href="#import-von-kanaldaten-aus-einfachen-tabellen-excel-txt-csv" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Der Import von Daten aus einfachen Tabellen ist prinzipiell mit allen Methoden möglich, die QGIS zur Verfügung
+stellt. Leider funktioniert das Einfügen aus der Zwischenablage nur dann, wenn alle Attribute einer Tabelle
+einschließlich der Geometrieattribute vorhanden sind. Deshalb wird an dieser Stelle eine Vorgehensweise
+empfohlen, die sich mit Excel oder Open Office Writer leicht realisieren lässt und damit auch für einfache
+Textdateien oder CSV-Dateien verwendet werden kann, da sich diese leicht in diese Programme importieren
+lassen.</p>
+<div class="section" id="importieren-von-tabellendaten-aus-excel-csv-oder-textdateien">
+<span id="importasciidata"></span><h2>1.1. Importieren von Tabellendaten aus Excel, CSV- oder Textdateien<a class="headerlink" href="#importieren-von-tabellendaten-aus-excel-csv-oder-textdateien" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Das Prinzip beruht darauf, aus den tabellarischen Daten eine SQL-Anweisung zu erstellen. Zur Ausführung
+ist es lediglich notwendig, im Kontextmenü eines Layers in der Layerkontrolle mit &#8220;SQL-Layer aktualisieren...&#8221;
+das Datenbankfenster &#8220;DB-Verwaltung&#8221; aufzurufen.</p>
+<img alt="_images/qgis_dbDialog.png" id="datenbankfenster-zur-ausfuhrung-von-sql-befehlen" src="_images/qgis_dbDialog.png" />
+<p>Abbildung: Datenbankfenster zur Ausführung von SQL-Befehlen</p>
+<p>In einer zusätzlichen Spalte des Tabellenkalkulations-Arbeitsblattes werden folgende Zeilen erzeugt, wobei
+zusätzlich am Anfang eine sowie am Schluss zwei Zeilen hinzu kommen:</p>
+<ol class="arabic simple">
+<li>Erste Zeile (zusätzlich): Insert-Anweisung zusammen mit einer Liste von Attributnamen</li>
+<li>Je Datenzeile: Liste der Attributwerte</li>
+<li>Vorletzte Zeile (zusätzlich): Ende der Insert-Anweisung</li>
+<li>Letzte Zeile (zusätzlich): Befehl zur Aktualisierung des Räumlichen Index</li>
+</ol>
+<p>Beispiel:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="13%" />
+<col width="20%" />
+<col width="20%" />
+<col width="17%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&#160;</th>
+<th class="head">A</th>
+<th class="head">B</th>
+<th class="head">C</th>
+<th class="head">D</th>
+<th class="head">E</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>schnam</td>
+<td>xsch</td>
+<td>ysch</td>
+<td>sohlhoehe</td>
+<td>deckelhoehe</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>D110036</td>
+<td>388798.8302</td>
+<td>5709945.165</td>
+<td>79.51</td>
+<td>82.56</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>D110073</td>
+<td>388749.989</td>
+<td>5709812.893</td>
+<td>82.77</td>
+<td>85.47</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>D110074</td>
+<td>388709.6162</td>
+<td>5709930.665</td>
+<td>80.82</td>
+<td>83.49</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>D110075</td>
+<td>388813.9783</td>
+<td>5709854.593</td>
+<td>81.16</td>
+<td>84.09</td>
+</tr>
+<tr class="row-odd"><td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="row-even"><td>62</td>
+<td>D110076</td>
+<td>388809.4738</td>
+<td>5709888.006</td>
+<td>80.49</td>
+<td>83.61</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Die SQL-Anweisungen, um diese Daten in die QKan-Tabelle einzufügen, lauten:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INSERT</span> <span class="n">INTO</span> <span class="n">schaechte</span> <span class="p">(</span><span class="n">schnam</span><span class="p">,</span> <span class="n">xsch</span><span class="p">,</span> <span class="n">ysch</span><span class="p">,</span> <span class="n">sohlhoehe</span><span class="p">,</span> <span class="n">deckelhoehe</span><span class="p">)</span> <span class="n">VALUES</span>
+<span class="p">(</span><span class="s1">&#39;D110036&#39;</span><span class="p">,</span> <span class="mf">388798.830197</span><span class="p">,</span> <span class="mf">5709945.16474</span><span class="p">,</span> <span class="mf">79.51</span><span class="p">,</span> <span class="mf">82.56</span><span class="p">),</span>
+<span class="p">(</span><span class="s1">&#39;D110073&#39;</span><span class="p">,</span> <span class="mf">388749.988968</span><span class="p">,</span> <span class="mf">5709812.89315</span><span class="p">,</span> <span class="mf">82.77</span><span class="p">,</span> <span class="mf">85.47</span><span class="p">),</span>
+<span class="p">(</span><span class="s1">&#39;D110074&#39;</span><span class="p">,</span> <span class="mf">388709.61619</span><span class="p">,</span> <span class="mf">5709930.66496</span><span class="p">,</span> <span class="mf">80.82</span><span class="p">,</span> <span class="mf">83.49</span><span class="p">),</span>
+<span class="o">...</span>
+<span class="p">(</span><span class="s1">&#39;B110001&#39;</span><span class="p">,</span> <span class="mf">388860.048099</span><span class="p">,</span> <span class="mf">5709747.15311</span><span class="p">,</span> <span class="mf">82.37</span><span class="p">,</span> <span class="mf">84.58</span><span class="p">);</span>
+
+<span class="n">SELECT</span> <span class="n">RecoverSpatialIndex</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Diese Zeilen können im Tabellenkalkulationsprogramm mit folgenden Befehlen erzeugt werden:</p>
+<p>Erste Zeile:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">=</span><span class="s2">&quot;INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe) VALUES&quot;</span>
+</pre></div>
+</div>
+<p>Falls die Spaltennamen in der Tabelle mit denen der entsprechenden QKan-Tabelle übereinstimmen,
+können die Spaltennamen auch einfach übernommen werden:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">=</span><span class="s2">&quot;INSERT INTO schaechte (&quot;</span><span class="o">&amp;</span><span class="n">C1</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">D1</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">E1</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">F1</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">G1</span><span class="o">&amp;</span><span class="s2">&quot;) VALUES&quot;</span>
+</pre></div>
+</div>
+<p>Folgende Zeilen mit Attributdaten:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">=</span><span class="s2">&quot;(&#39;&quot;</span><span class="o">&amp;</span><span class="n">C2</span><span class="o">&amp;</span><span class="s2">&quot;&#39;, &quot;</span><span class="o">&amp;</span><span class="n">D2</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">E2</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">F2</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">G2</span><span class="o">&amp;</span><span class="s2">&quot;), &quot;</span>
+<span class="o">=</span><span class="s2">&quot;(&#39;&quot;</span><span class="o">&amp;</span><span class="n">C3</span><span class="o">&amp;</span><span class="s2">&quot;&#39;, &quot;</span><span class="o">&amp;</span><span class="n">D3</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">E3</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">F3</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">G3</span><span class="o">&amp;</span><span class="s2">&quot;), &quot;</span>
+<span class="o">=</span><span class="s2">&quot;(&#39;&quot;</span><span class="o">&amp;</span><span class="n">C4</span><span class="o">&amp;</span><span class="s2">&quot;&#39;, &quot;</span><span class="o">&amp;</span><span class="n">D4</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">E4</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">F4</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">G4</span><span class="o">&amp;</span><span class="s2">&quot;), &quot;</span>
+<span class="o">...</span>
+<span class="o">=</span><span class="s2">&quot;(&#39;&quot;</span><span class="o">&amp;</span><span class="n">C62</span><span class="o">&amp;</span><span class="s2">&quot;&#39;, &quot;</span><span class="o">&amp;</span><span class="n">D62</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">E62</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">F62</span><span class="o">&amp;</span><span class="s2">&quot;, &quot;</span><span class="o">&amp;</span><span class="n">G62</span><span class="o">&amp;</span><span class="s2">&quot;);&quot;</span>
+</pre></div>
+</div>
+<p>Man beachte, dass die letzte Zeile ohne Komma enden muss. Das Semikolon (;) am Schluss kann
+weggelassen werden, wenn die SQL-Befehle einzeln nacheinander ausgeführt werden.</p>
+<p>Abschließende SQL-Anweisung zur Aktualisierung des Räumlichen Index:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">=</span><span class="s2">&quot;SELECT RecoverSpatialIndex()&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Inhalt</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. Import von Kanaldaten aus einfachen Tabellen (Excel, TXT, CSV)</a><ul>
+<li><a class="reference internal" href="#importieren-von-tabellendaten-aus-excel-csv-oder-textdateien">1.1. Importieren von Tabellendaten aus Excel, CSV- oder Textdateien</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Qkan_Videoanleitungen.html" title="vorheriges Kapitel">1. Allgemeine Funktionen</a></li>
+      <li>Next: <a href="Qkan_flaechen.html" title="nächstes Kapitel">1. Verarbeitung von befestigten und unbefestigten Flächen</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>Diese Seite</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Qkan_Datenaustausch.rst.txt"
+            rel="nofollow">Quellcode anzeigen</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Schnellsuche</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Los" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, 2018, 2019, 2020, Hoettges.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Qkan_Datenaustausch.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
