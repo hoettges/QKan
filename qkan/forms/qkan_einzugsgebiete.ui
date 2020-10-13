@@ -16,6 +16,7 @@
   <property name="font">
    <font>
     <family>Tahoma</family>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -27,8 +28,8 @@
      <rect>
       <x>330</x>
       <y>90</y>
-      <width>111</width>
-      <height>21</height>
+      <width>120</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -40,7 +41,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>61</width>
+      <width>91</width>
       <height>16</height>
      </rect>
     </property>
@@ -77,7 +78,7 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>540</x>
       <y>60</y>
       <width>41</width>
       <height>21</height>
@@ -92,7 +93,7 @@
      <rect>
       <x>20</x>
       <y>90</y>
-      <width>91</width>
+      <width>110</width>
       <height>21</height>
      </rect>
     </property>
@@ -103,7 +104,7 @@
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>230</x>
       <y>60</y>
       <width>61</width>
       <height>21</height>
@@ -118,8 +119,8 @@
      <rect>
       <x>330</x>
       <y>120</y>
-      <width>71</width>
-      <height>21</height>
+      <width>80</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -142,10 +143,10 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>330</x>
       <y>60</y>
-      <width>81</width>
-      <height>21</height>
+      <width>90</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -155,7 +156,7 @@
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>230</x>
       <y>90</y>
       <width>41</width>
       <height>21</height>
@@ -170,7 +171,7 @@
      <rect>
       <x>20</x>
       <y>60</y>
-      <width>81</width>
+      <width>110</width>
       <height>21</height>
      </rect>
     </property>
@@ -181,7 +182,7 @@
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>540</x>
       <y>90</y>
       <width>41</width>
       <height>21</height>
@@ -194,9 +195,9 @@
    <widget class="QLineEdit" name="tgnam">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>110</x>
       <y>10</y>
-      <width>511</width>
+      <width>491</width>
       <height>20</height>
      </rect>
     </property>
@@ -204,9 +205,9 @@
    <widget class="QLineEdit" name="ewdichte">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>130</x>
       <y>60</y>
-      <width>141</width>
+      <width>90</width>
       <height>20</height>
      </rect>
     </property>
@@ -214,9 +215,9 @@
    <widget class="QLineEdit" name="wverbrauch">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>130</x>
       <y>90</y>
-      <width>141</width>
+      <width>90</width>
       <height>20</height>
      </rect>
     </property>
@@ -224,9 +225,9 @@
    <widget class="QLineEdit" name="stdmittel">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>450</x>
       <y>60</y>
-      <width>141</width>
+      <width>71</width>
       <height>20</height>
      </rect>
     </property>
@@ -234,9 +235,9 @@
    <widget class="QLineEdit" name="fremdwas">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>450</x>
       <y>90</y>
-      <width>141</width>
+      <width>71</width>
       <height>20</height>
      </rect>
     </property>
@@ -254,7 +255,7 @@
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>450</x>
       <y>120</y>
       <width>141</width>
       <height>23</height>
@@ -274,7 +275,7 @@
      <x>0</x>
      <y>0</y>
      <width>647</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

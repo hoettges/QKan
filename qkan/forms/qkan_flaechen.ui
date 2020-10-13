@@ -16,6 +16,7 @@
   <property name="font">
    <font>
     <family>Tahoma</family>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -77,9 +78,9 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>20</x>
       <y>90</y>
-      <width>81</width>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
@@ -90,7 +91,7 @@
    <widget class="QLabel" name="label_70">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>330</x>
       <y>120</y>
       <width>71</width>
       <height>21</height>
@@ -116,9 +117,9 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>20</x>
       <y>60</y>
-      <width>81</width>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
@@ -129,9 +130,9 @@
    <widget class="QLabel" name="label_21">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>120</y>
-      <width>91</width>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
@@ -227,7 +228,7 @@
      <rect>
       <x>90</x>
       <y>160</y>
-      <width>291</width>
+      <width>391</width>
       <height>17</height>
      </rect>
     </property>
@@ -258,7 +259,7 @@
      <x>0</x>
      <y>0</y>
      <width>647</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

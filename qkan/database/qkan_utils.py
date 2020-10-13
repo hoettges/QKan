@@ -265,7 +265,7 @@ def get_database_QKan(silent=False) -> typing.Tuple[typing.Optional[str], int]:
                 "Fehler in Layerliste:",
                 'Layer "Schächte und Flächen existieren nicht"',
             )
-        return None, 0
+        return None, None
     elif dbname_f is not None:
         if not silent:
             warnung("Fehler in Layerliste:", 'Layer "Schächte existiert nicht"')
@@ -284,7 +284,7 @@ def get_database_QKan(silent=False) -> typing.Tuple[typing.Optional[str], int]:
                     dbname_s, dbname_f
                 ),
             )
-        return None, 0
+        return None, None
 
 
 def get_editable_layers():

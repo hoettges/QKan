@@ -13,6 +13,7 @@
   <property name="font">
    <font>
     <family>Tahoma</family>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -129,9 +130,9 @@
    <widget class="QLabel" name="label_19">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>40</x>
       <y>120</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -142,9 +143,9 @@
    <widget class="QLineEdit" name="endabflussbeiwert">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>380</x>
       <y>80</y>
-      <width>41</width>
+      <width>70</width>
       <height>20</height>
      </rect>
     </property>
@@ -161,9 +162,9 @@
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>40</x>
       <y>80</y>
-      <width>271</width>
+      <width>330</width>
       <height>21</height>
      </rect>
     </property>
@@ -180,9 +181,9 @@
    <widget class="QLabel" name="label_17">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>460</x>
       <y>80</y>
-      <width>40</width>
+      <width>20</width>
       <height>21</height>
      </rect>
     </property>
@@ -210,7 +211,7 @@
      <x>0</x>
      <y>0</y>
      <width>517</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

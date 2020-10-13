@@ -31,9 +31,10 @@ class He8Porter:
         self.iface = iface
 
         # noinspection PyArgumentList
-        self.db_qkan: typing.Optional[DBConnection] = None
+
         default_dir = get_default_dir()
-        self.export_dlg = ExportDialog(self, default_dir, tr=self.tr)
+        logger.debug(f"He8Porter: default_dir: {default_dir}")
+        self.export_dlg = ExportDialog(default_dir, tr=self.tr)
         self.import_dlg = ImportDialog(default_dir, tr=self.tr)
 
     # noinspection PyMethodMayBeStatic
@@ -63,19 +64,14 @@ class He8Porter:
         self.import_dlg.close()
 
     def run_export(self):
+        """Anzeigen des Exportformulars und anschließender Start des Exports in eine HE8-Datenbank"""
 
         project_path = QgsProject.instance().fileName()
-        logger.debug(f"he8porter.application.He8Porter.__init__:\nproject_path: {project_path}")
-        if project_path:
-            default_dir = Path(project_path).parent
-        else:
-            default_dir = Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
 
-        # Fill dialog with current info
-        database_qkan, _ = get_database_QKan()
-        logger.debug(f"he8porter.applications_dialog.__init__: database_qkan= {database_qkan}")
-        if database_qkan:
-            self.export_dlg.tf_database.setText(database_qkan)
+        # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
+        teilgebiete = QKan.config.selections.teilgebiete
+
+        self.export_dlg.connectQKanDB(project_path, teilgebiete)
 
         # Formular anzeigen
         self.export_dlg.show()
@@ -106,6 +102,9 @@ class He8Porter:
             QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
             QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
 
+            teilgebiete = [_.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()]
+            QKan.config.selections.teilgebiete = teilgebiete
+
             QKan.config.save()
 
             # Zieldatenbank aus Vorlage kopieren
@@ -117,39 +116,25 @@ class He8Porter:
                                   "Fehler beim Kopieren der Vorlage: \n   {self.templatedb}\n" + \
                                   "nach Ziel: {self.database_he}\n")
 
-            db_qkan = DBConnection(dbname=database_qkan)
-            if not db_qkan:
-                fehlermeldung(
-                    "Fehler im HE8-Export",
-                    f"QKan-Datenbank {database_qkan} wurde nicht gefunden!\nAbbruch!",
-                )
-                self.iface.messageBar().pushMessage(
-                    "Fehler im HE8-Export",
-                    f"QKan-Datenbank {database_qkan} wurde nicht gefunden!\nAbbruch!",
-                    level=Qgis.Critical,
-                )
-                return False
-
-            # Attach SQLite-Database with HE8 Data
-            sql = f'ATTACH DATABASE "{database_he}" AS he'
-            if not db_qkan.sql(sql, "He8Porter.run_export_to_he8 Attach HE8"):
-                return False
+            self.export_dlg.connectHEDB(database_he)
 
             # Run export
-            ExportTask(db_qkan).run()
+            ExportTask(self.export_dlg.dbQK, teilgebiete).run()
 
             # Close connection
-            del db_qkan
+            del self.export_dlg.dbQK
             logger.debug("Closed DB")
 
     def run_import(self):
+        """Anzeigen des Importformulars HE8 und anschließender Start des Import aus einer HE8-Datenbank"""
+
         default_dir = Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
 
             # Read from form and save to config
-            QKan.config.he8.database = database_qkan = self.import_dlg.tf_database.text()
+            QKan.config.he8.database = database_qkan_import = self.import_dlg.tf_database.text()
             QKan.config.project.file = project_file = self.import_dlg.tf_project.text()
             QKan.config.he8.import_file = import_file = self.import_dlg.tf_import.text()
 
@@ -210,29 +195,29 @@ class He8Porter:
                     QKan.config.save()
 
                     logger.info("Creating DB")
-                    db_qkan = DBConnection(
-                        dbname=database_qkan, epsg=QKan.config.epsg
+                    db_qkan_import = DBConnection(
+                        dbname=database_qkan_import, epsg=QKan.config.epsg
                     )
 
-                    if not db_qkan:
+                    if not db_qkan_import:
                         fehlermeldung(
                             "Fehler im HE8-Import",
-                            f"QKan-Datenbank {database_qkan} wurde nicht gefunden!\nAbbruch!",
+                            f"QKan-Datenbank {database_qkan_import} wurde nicht gefunden!\nAbbruch!",
                         )
                         self.iface.messageBar().pushMessage(
                             "Fehler im HE8-Import",
-                            f"QKan-Datenbank {database_qkan} wurde nicht gefunden!\nAbbruch!",
+                            f"QKan-Datenbank {database_qkan_import} wurde nicht gefunden!\nAbbruch!",
                             level=Qgis.Critical,
                         )
                         return
 
                     # Attach SQLite-Database with HE8 Data
                     sql = f'ATTACH DATABASE "{import_file}" AS he'
-                    if not db_qkan.sql(sql, "He8Porter.run_import_to_he8 Attach HE8"):
+                    if not db_qkan_import.sql(sql, "He8Porter.run_import_to_he8 Attach HE8"):
                         return False
 
                     logger.info("DB creation finished, starting importer")
-                    imp = ImportTask(db_qkan)
+                    imp = ImportTask(db_qkan_import)
                     imp.run()
                     
                     # TODO: Replace with QKan.config.project.template?
@@ -241,13 +226,13 @@ class He8Porter:
                     )
                     qgsadapt(
                         str(template_project),
-                        database_qkan,
-                        db_qkan,
+                        database_qkan_import,
+                        db_qkan_import,
                         QKan.config.project.file,
                         epsg
                     )
 
-                    del db_qkan
+                    del db_qkan_import
                     logger.debug("Closed DB")
 
                     # Load generated project

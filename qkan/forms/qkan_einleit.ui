@@ -16,6 +16,7 @@
   <property name="font">
    <font>
     <family>Tahoma</family>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -41,9 +42,9 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>50</y>
-      <width>91</width>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
@@ -296,7 +297,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

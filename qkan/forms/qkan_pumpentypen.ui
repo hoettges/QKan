@@ -6,13 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>298</width>
+    <width>317</width>
     <height>129</height>
    </rect>
   </property>
   <property name="font">
    <font>
     <family>Tahoma</family>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">

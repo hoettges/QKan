@@ -13,6 +13,7 @@
   <property name="font">
    <font>
     <family>Tahoma</family>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -22,7 +23,7 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>20</y>
       <width>46</width>
       <height>16</height>
@@ -35,7 +36,7 @@
    <widget class="QLabel" name="label_20">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>130</y>
       <width>91</width>
       <height>21</height>
@@ -48,7 +49,7 @@
    <widget class="QLabel" name="label_18">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>170</y>
       <width>91</width>
       <height>21</height>
@@ -61,7 +62,7 @@
    <widget class="QLabel" name="label_70">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>340</x>
       <y>200</y>
       <width>71</width>
       <height>21</height>
@@ -113,9 +114,9 @@
    <widget class="QLabel" name="label_21">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>340</x>
       <y>130</y>
-      <width>121</width>
+      <width>100</width>
       <height>21</height>
      </rect>
     </property>
@@ -126,7 +127,7 @@
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>200</y>
       <width>121</width>
       <height>21</height>
@@ -139,7 +140,7 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>100</y>
       <width>91</width>
       <height>21</height>
@@ -152,7 +153,7 @@
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>70</y>
       <width>111</width>
       <height>21</height>
@@ -165,7 +166,7 @@
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>340</x>
       <y>70</y>
       <width>71</width>
       <height>21</height>
@@ -178,9 +179,9 @@
    <widget class="QLabel" name="label_23">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>340</x>
       <y>100</y>
-      <width>121</width>
+      <width>100</width>
       <height>21</height>
      </rect>
     </property>
@@ -201,9 +202,9 @@
    <widget class="QComboBox" name="schoben">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>70</y>
-      <width>131</width>
+      <width>140</width>
       <height>22</height>
      </rect>
     </property>
@@ -211,9 +212,9 @@
    <widget class="QComboBox" name="schunten">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>100</y>
-      <width>131</width>
+      <width>140</width>
       <height>22</height>
      </rect>
     </property>
@@ -221,7 +222,7 @@
    <widget class="QLineEdit" name="sohle">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>450</x>
       <y>70</y>
       <width>91</width>
       <height>20</height>
@@ -231,9 +232,9 @@
    <widget class="QComboBox" name="pumpentyp">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>170</y>
-      <width>131</width>
+      <width>140</width>
       <height>22</height>
      </rect>
     </property>
@@ -241,9 +242,9 @@
    <widget class="QComboBox" name="simstatus">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>200</y>
-      <width>131</width>
+      <width>140</width>
       <height>22</height>
      </rect>
     </property>
@@ -251,9 +252,9 @@
    <widget class="QComboBox" name="steuersch">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>130</y>
-      <width>131</width>
+      <width>140</width>
       <height>22</height>
      </rect>
     </property>
@@ -261,7 +262,7 @@
    <widget class="QLineEdit" name="einschalthoehe">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>450</x>
       <y>100</y>
       <width>101</width>
       <height>20</height>
@@ -271,7 +272,7 @@
    <widget class="QLineEdit" name="ausschalthoehe">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>450</x>
       <y>130</y>
       <width>101</width>
       <height>20</height>
@@ -307,9 +308,9 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>550</x>
       <y>70</y>
-      <width>31</width>
+      <width>50</width>
       <height>21</height>
      </rect>
     </property>
@@ -320,9 +321,9 @@
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>560</x>
       <y>100</y>
-      <width>31</width>
+      <width>50</width>
       <height>21</height>
      </rect>
     </property>
@@ -333,9 +334,9 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>560</x>
       <y>130</y>
-      <width>31</width>
+      <width>50</width>
       <height>21</height>
      </rect>
     </property>

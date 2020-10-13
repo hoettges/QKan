@@ -16,6 +16,7 @@
   <property name="font">
    <font>
     <family>Tahoma</family>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -27,7 +28,7 @@
      <rect>
       <x>320</x>
       <y>60</y>
-      <width>111</width>
+      <width>140</width>
       <height>21</height>
      </rect>
     </property>
@@ -77,9 +78,9 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>260</x>
       <y>120</y>
-      <width>21</width>
+      <width>30</width>
       <height>21</height>
      </rect>
     </property>
@@ -103,9 +104,9 @@
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>260</x>
       <y>150</y>
-      <width>21</width>
+      <width>30</width>
       <height>21</height>
      </rect>
     </property>
@@ -118,7 +119,7 @@
      <rect>
       <x>320</x>
       <y>150</y>
-      <width>71</width>
+      <width>100</width>
       <height>21</height>
      </rect>
     </property>
@@ -155,9 +156,9 @@
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>260</x>
       <y>90</y>
-      <width>21</width>
+      <width>30</width>
       <height>21</height>
      </rect>
     </property>
@@ -183,7 +184,7 @@
      <rect>
       <x>320</x>
       <y>90</y>
-      <width>121</width>
+      <width>150</width>
       <height>21</height>
      </rect>
     </property>
@@ -194,9 +195,9 @@
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>600</x>
+      <x>580</x>
       <y>90</y>
-      <width>41</width>
+      <width>60</width>
       <height>21</height>
      </rect>
     </property>
@@ -207,9 +208,9 @@
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>600</x>
+      <x>580</x>
       <y>60</y>
-      <width>41</width>
+      <width>60</width>
       <height>21</height>
      </rect>
     </property>
@@ -220,7 +221,7 @@
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
-      <x>600</x>
+      <x>580</x>
       <y>120</y>
       <width>41</width>
       <height>21</height>
@@ -235,7 +236,7 @@
      <rect>
       <x>320</x>
       <y>120</y>
-      <width>121</width>
+      <width>150</width>
       <height>21</height>
      </rect>
     </property>
@@ -256,9 +257,9 @@
    <widget class="QLineEdit" name="infiltrationsrateanfang">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>90</y>
-      <width>141</width>
+      <width>100</width>
       <height>20</height>
      </rect>
     </property>
@@ -266,9 +267,9 @@
    <widget class="QLineEdit" name="infiltrationsrateende">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>120</y>
-      <width>141</width>
+      <width>100</width>
       <height>20</height>
      </rect>
     </property>
@@ -276,9 +277,9 @@
    <widget class="QLineEdit" name="infiltrationsratestart">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>150</y>
-      <width>141</width>
+      <width>100</width>
       <height>20</height>
      </rect>
     </property>
@@ -286,9 +287,9 @@
    <widget class="QLineEdit" name="rueckgangskonstante">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>470</x>
       <y>60</y>
-      <width>141</width>
+      <width>100</width>
       <height>20</height>
      </rect>
     </property>
@@ -296,9 +297,9 @@
    <widget class="QLineEdit" name="regenerationskonstante">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>470</x>
       <y>90</y>
-      <width>141</width>
+      <width>100</width>
       <height>20</height>
      </rect>
     </property>
@@ -306,9 +307,9 @@
    <widget class="QLineEdit" name="saettigungswassergehalt">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>470</x>
       <y>120</y>
-      <width>141</width>
+      <width>100</width>
       <height>20</height>
      </rect>
     </property>
@@ -339,7 +340,7 @@
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>470</x>
       <y>150</y>
       <width>141</width>
       <height>23</height>
@@ -359,7 +360,7 @@
      <x>0</x>
      <y>0</y>
      <width>655</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

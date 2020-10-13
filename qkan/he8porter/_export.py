@@ -9,7 +9,7 @@ from qgis.core import Qgis
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fortschritt, fehlermeldung, checknames
+from qkan.database.qkan_utils import fortschritt, fehlermeldung, checknames, meldung
 
 from qkan.database.reflists import abflusstypen
 from qkan.linkflaechen.updatelinks import updatelinkageb, updatelinkfl, updatelinksw
@@ -18,9 +18,9 @@ logger = logging.getLogger("QKan.he8.export")
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ExportTask:
-    def __init__(self, db_qkan: DBConnection):
+    def __init__(self, db_qkan, liste_teilgebiete):
 
-        self.liste_teilgebiete = []                 # Todo: Code für lw_teilgebiete ergänzen
+        self.liste_teilgebiete = liste_teilgebiete
         self.db_qkan = db_qkan
 
         self.append = QKan.config.check_import.append
@@ -52,6 +52,9 @@ class ExportTask:
 
         self.db_qkan.sql("SELECT NextId, Version FROM he.Itwh$ProgInfo")
         data = self.db_qkan.fetchone()
+        if not data:
+            logger.error("he8porter._export.run: SELECT NextId, Version FROM he.Itwh$ProgInfo"
+                         f"\nAbfrageergebnis ist leer: {data}")
         self.nextid = int(data[0]) + 1
         he_db_version = data[1].split(".")
         logger.debug(f"HE IDBF-Version {he_db_version}")
@@ -530,15 +533,10 @@ class ExportTask:
 
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
-                auswahl_c = " AND ha.teilgebiet in ('{}')".format(
-                    "', '".join(self.liste_teilgebiete)
-                )
-                auswahl_a = " WHERE ha.teilgebiet in ('{}')".format(
-                    "', '".join(self.liste_teilgebiete)
-                )
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" WHERE fl.teilgebiet in ('{lis}')"
             else:
-                auswahl_c = ""
-                auswahl_a = ""
+                auswahl = ""
 
             # Verschneidung nur, wenn (mit_verschneidung)
             if mit_verschneidung:
@@ -571,7 +569,7 @@ class ExportTask:
                       LEFT JOIN abflussparameter AS ap
                       ON fl.abflussparameter = ap.apnam
                       LEFT JOIN flaechentypen AS ft
-                      ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl_a}""",
+                      ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl}""",
                     f"""
                     WITH flintersect AS (
                       SELECT substr(printf('%s-%d', fl.flnam, lf.pk),1,30) AS flnam, 
@@ -600,7 +598,7 @@ class ExportTask:
                       LEFT JOIN abflussparameter AS ap
                       ON fl.abflussparameter = ap.apnam
                       LEFT JOIN flaechentypen AS ft
-                      ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl_a})
+                      ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl})
                     UPDATE he.Flaeche SET (
                       Haltung, Groesse, Regenschreiber, Flaechentyp, 
                       BerechnungSpeicherkonstante, Typ, AnzahlSpeicher,
@@ -683,7 +681,7 @@ class ExportTask:
                           LEFT JOIN abflussparameter AS ap
                           ON fl.abflussparameter = ap.apnam
                           LEFT JOIN flaechentypen AS ft
-                          ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl_a})
+                          ON ap.flaechentyp = ft.bezeichnung{join_verschneidung}{auswahl})
                         INSERT INTO he.Flaeche (
                           id, 
                           Name, Haltung, Groesse, Regenschreiber, Flaechentyp, 
@@ -729,11 +727,13 @@ class ExportTask:
 
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
-                auswahl = " WHERE pumpen.teilgebiet in ('{}')".format(
-                    "', '".join(self.liste_teilgebiete)
-                )
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl_w = f" WHERE pumpen.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND pumpen.teilgebiet in ('{lis}')"
             else:
-                auswahl = ""
+                auswahl_w = ""
+                auswahl_a = ""
+
 
             if self.update:
                 sql = f"""
@@ -758,10 +758,10 @@ class ExportTask:
                         LEFT JOIN pumpentypen
                         ON pumpen.pumpentyp = pumpentypen.bezeichnung
                         LEFT JOIN simulationsstatus
-                        ON pumpen.simstatus = simulationsstatus.bezeichnung{auswahl}
+                        ON pumpen.simstatus = simulationsstatus.bezeichnung{auswahl_w}
                     )
-                    WHERE he.Pumpe.Name IN 
-                    (   SELECT pnam FROM pumpen){auswahl})
+                    WHERE (he.Pumpe.Name IN 
+                    (   SELECT pnam FROM pumpen)){auswahl_a})
                     """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen (1)"):
@@ -811,7 +811,7 @@ class ExportTask:
                 ON pumpen.pumpentyp = pumpentypen.bezeichnung
                 LEFT JOIN simulationsstatus
                 ON pumpen.simstatus = simulationsstatus.bezeichnung
-                WHERE pumpen.pnam NOT IN (SELECT Name FROM he.Pumpe){auswahl};
+                WHERE (pumpen.pnam NOT IN (SELECT Name FROM he.Pumpe)){auswahl_a};
                 """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen (3)"):
@@ -831,11 +831,12 @@ class ExportTask:
 
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
-                auswahl = " WHERE wehre.teilgebiet in ('{}')".format(
-                    "', '".join(self.liste_teilgebiete)
-                )
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl_w = f" WHERE wehre.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND wehre.teilgebiet in ('{lis}')"
             else:
-                auswahl = ""
+                auswahl_w = ""
+                auswahl_a = ""
 
             if self.update:
                 sql = f"""
@@ -866,10 +867,10 @@ class ExportTask:
                         LEFT JOIN pumpentypen
                         ON pumpen.pumpentyp = pumpentypen.bezeichnung
                         LEFT JOIN simulationsstatus
-                        ON wehre.simstatus = simulationsstatus.bezeichnung{auswahl}
+                        ON wehre.simstatus = simulationsstatus.bezeichnung{auswahl_w}
                     )
-                    WHERE he.Wehr.Name IN 
-                    (   SELECT wnam FROM wehre){auswahl})
+                    WHERE (he.Wehr.Name IN 
+                    (   SELECT wnam FROM wehre)){auswahl_a})
                     """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre (1)"):
@@ -935,7 +936,7 @@ class ExportTask:
                 ON wehre.schoben = sob.schnam
                 LEFT JOIN schaechte AS sun 
                 ON wehre.schunten = sun.schnam
-                WHERE wehre.wnam NOT IN (SELECT Name FROM he.Wehr){auswahl};
+                WHERE (wehre.wnam NOT IN (SELECT Name FROM he.Wehr)){auswahl_a};
                 """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre (3)"):
