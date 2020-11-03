@@ -1,4 +1,3 @@
-import logging
 import typing
 
 from qgis.core import Qgis
@@ -18,9 +17,6 @@ from .export_to_he8 import exporthe8
 
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
-
-# Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger("QKan.exporthe8.application")
 
 
 class ExportToHE8(QKanPlugin):
@@ -136,7 +132,7 @@ class ExportToHE8(QKanPlugin):
                 "Fehler in exporthe8",
                 "database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!",
             )
-            logger.error(
+            self.log.error(
                 "exporthe8: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
             return False
@@ -149,7 +145,7 @@ class ExportToHE8(QKanPlugin):
             dbname=database_qkan
         )  # Datenbankobjekt der QKan-Datenbank zum Lesen
         if not self.db_qkan.connected:
-            logger.error(
+            self.log.error(
                 "Fehler in exportdyna.application:\n",
                 "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
                     database_qkan
@@ -307,7 +303,7 @@ class ExportToHE8(QKanPlugin):
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 exporthe8(
                 self.iface,

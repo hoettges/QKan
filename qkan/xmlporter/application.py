@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
@@ -16,8 +15,6 @@ from .application_dialog import ExportDialog, ImportDialog
 
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
-
-logger = logging.getLogger("QKan.xml.application")
 
 
 class XmlPorter(QKanPlugin):
@@ -131,7 +128,7 @@ class XmlPorter(QKanPlugin):
                     epsg = int(crs.postgisSrid())
                 except ValueError:
                     # TODO: Reporting this to the user might be preferable
-                    logger.exception(
+                    self.log.exception(
                         "Failed to parse selected CRS %s\nauthid:%s\n"
                         "description:%s\nproj:%s\npostgisSrid:%s\nsrsid:%s\nacronym:%s",
                         crs,
@@ -149,7 +146,7 @@ class XmlPorter(QKanPlugin):
                     QKan.config.epsg = epsg
                     QKan.config.save()
 
-                    logger.info("Creating DB")
+                    self.log.info("Creating DB")
                     db_qkan = DBConnection(dbname=database_qkan, epsg=QKan.config.epsg)
 
                     if not db_qkan:
@@ -164,7 +161,7 @@ class XmlPorter(QKanPlugin):
                         )
                         return
 
-                    logger.info("DB creation finished, starting importer")
+                    self.log.info("DB creation finished, starting importer")
                     imp = ImportTask(db_qkan, import_file)
                     imp.run()
 
