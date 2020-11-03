@@ -2,6 +2,7 @@
 
 import itertools
 import logging
+from typing import Dict, List, Optional, Tuple, Union, cast
 
 from qgis.PyQt import QtCore
 from qkan.database.dbfunc import DBConnection
@@ -9,14 +10,36 @@ from qkan.database.dbfunc import DBConnection
 main_logger = logging.getLogger("QKan.database.navigation.main")
 main_logger.info("Navigation-Modul gestartet")
 
+# TODO: In preparation for Python 3.8: Use as RVALUE for Navigator.__fetch_data
+# class SchachtInfo(TypedDict):
+#     sohlhoehe: float
+#     deckelhoehe: float
+#
+#
+# class HaltungInfo(TypedDict):
+#     schachtoben: str
+#     schachtunten: str
+#     laenge: float
+#     sohlhoeheoben: float
+#     sohlhoeheunten: float
+#     querschnitt: float
+#
+#
+# class HaltungenStruct(TypedDict):
+#     haltungen: List[str]
+#     schaechte: List[str]
+#     schachtinfo: Dict[str, SchachtInfo]
+#     haltunginfo: Dict[str, HaltungInfo]
+
+# TODO: Verify types via tests
+
 
 class Navigator:
-    def __init__(self, dbname):
+    def __init__(self, dbname: str):
         """
         Constructor
 
         :param dbname: Entspricht dem Datei-Pfad zur SpatiaLite-Datenbank.
-        :type dbname: str
         """
         self.__dbname = dbname
         self.__error_msg = ""
@@ -31,7 +54,9 @@ class Navigator:
             raise Exception()  # TODO: ???
         self.log = logging.getLogger("QKan.navigation.Navigator")
 
-    def calculate_route_schacht(self, nodes):
+    def calculate_route_schacht(
+        self, nodes: List[str]
+    ) -> Optional[Dict[str, Union[List[str], Dict[str, Union[str, float]]]]]:
         """
         * Wird ausgeführt, wenn eine Route zwischen Schächten gefunden werden soll.
         * Berechnet die Route aus Start- und Endpunkt, prüft am Ende, ob alle anderen Schächte innerhalb der
@@ -39,9 +64,7 @@ class Navigator:
         * Benötigt mindestens zwei Schächte
 
         :param nodes: Entspricht einer Liste von den selektierten Schacht-Namen aus QGIS.
-        :type nodes: list
         :return: Gibt ein Routen-Objekt zurück mit allen Haltungen und Schächten
-        :rtype: list
         """
         self.log.debug("Übergebene Schächte:\t{}".format(nodes))
         endpoint = nodes[0]
@@ -50,11 +73,11 @@ class Navigator:
         SELECT sohlhoehe FROM schaechte WHERE schnam="{}"
         """
         self.db.sql(statement.format(nodes[0]))
-        min_value, = self.db.fetchone()
+        (min_value,) = self.db.fetchone()
         max_value = min_value
         for n in nodes:
             self.db.sql(statement.format(n))
-            value, = self.db.fetchone()
+            (value,) = self.db.fetchone()
             if value < min_value:
                 min_value = value
                 endpoint = n
@@ -65,27 +88,23 @@ class Navigator:
         self.log.debug("Startpunkt:\t{}\nEndpunkt:\t{}".format(startpoint, endpoint))
         nodes.remove(startpoint)
         nodes.remove(endpoint)
-        if len(nodes) == 0:
-            nodes = None
         self.log.debug(u"Zusätzliche Punkte:\t{}".format(nodes))
         return self.__calculate_route_schacht(
             startpoint, endpoint, additional_points=nodes
         )
 
-    def __calculate_route_schacht(self, startpoint, endpoint, additional_points):
+    def __calculate_route_schacht(
+        self, startpoint: str, endpoint: str, additional_points: List[str]
+    ) -> Optional[Dict[str, Union[List[str], Dict[str, Union[str, float]]]]]:
         """
         Berechnet die Schächte und Haltungen, die zwischen einem Start- und Endpunkt liegen.
         * Start- und Endhöhe müssen nicht in der richtigen Reihenfolge übergeben werden.
         * Zusätzliche Punkte müssen nur übergeben werden, wenn der Endpunkt über mehrere Wege zu erreichen ist.
 
         :param startpoint: Entspricht dem Schacht-Namen aus QGIS.
-        :type startpoint:str
         :param endpoint: Entspricht dem Schacht-Namen aus QGIS.
-        :type endpoint: str
         :param additional_points: Entspricht einer Liste von Schacht-Namen, die zusätzlich ausgewählt wurden.
-        :type additional_points: list
         :return: Gibt ein Routen-Objekt zurück, bestehend aus allen Haltungen und Schächten
-        :rtype: dict
         """
         statement = u"""
         SELECT name
@@ -126,11 +145,11 @@ class Navigator:
         end_haltungen = [h[0] for h in self.db.fetchall()]
         self.log.debug(u"End-Haltungen:\t{}".format(end_haltungen))
         nodes = []
-        if additional_points is not None:
+        if len(additional_points) > 0:
             for p in additional_points:
                 self.db.sql(statement.format(p))
                 nodes.append([h[0] for h in self.db.fetchall()])
-        permutations = itertools.product(*nodes)
+        permutations = cast(List[List[float]], itertools.product(*nodes))
         permutations = [list(p) for p in permutations]
         possibilities = 0
         route = None
@@ -157,14 +176,14 @@ class Navigator:
                         route = _route
         return route
 
-    def calculate_route_haltung(self, nodes):
+    def calculate_route_haltung(
+        self, nodes: List[str]
+    ) -> Optional[Dict[str, Union[List[str], Dict[str, Union[str, float]]]]]:
         """
         Berechnet eine Route zwischen mehreren Haltungen.
 
         :param nodes: Alle selektierten Haltungs-Namen aus QGIS
-        :type nodes: list
         :return: Gibt eine Routen-Objekt mit allen Haltungen und Schächten zurück
-        :rtype: dict
         """
         if len(nodes) == 1:
             routes = [nodes]
@@ -192,7 +211,9 @@ class Navigator:
             ).format(len(routes))
             return None
 
-    def __fetch_data(self, haltungen):
+    def __fetch_data(
+        self, haltungen: List[str]
+    ) -> Dict[str, Union[List[str], Dict[str, Union[str, float]]]]:
         """
         Fragt die Datenbank nach den benötigten Attributen ab und speichert sie in einem Dictionary.
         Das Dictionary hat folgende Struktur:
@@ -213,9 +234,7 @@ class Navigator:
         }
 
         :param haltungen: Liste aller Haltungs-Namen aus QGIS
-        :type haltungen: list
         :return: Gibt ein Routen-Objekt zurück.
-        :rtype: dict
         """
         statement = u"""
          SELECT schoben
@@ -257,13 +276,21 @@ class Navigator:
             self.db.sql(statement.format(h))
             schaechte.append(self.db.fetchone()[0])
         self.log.debug(u"Schächte:\t{}".format(schaechte))
-        route = dict(haltungen=haltungen, schaechte=schaechte)
 
-        route["schachtinfo"], route["haltunginfo"] = self.get_info(route)
-        self.log.info(u"Route wurde erfolgreich erstellt!")
-        return route
+        route = {"haltungen": haltungen, "schaechte": schaechte}
+        rinfo = self.get_info(route)
 
-    def get_info(self, route):
+        rval: Dict[str, Union[List[str], Dict[str, Union[str, float]]]] = {
+            "haltungen": haltungen,
+            "schaechte": schaechte,
+            "schachtinfo": rinfo[0],
+            "haltunginfo": rinfo[1],
+        }
+
+        self.log.info("Route wurde erfolgreich erstellt!")
+        return rval
+
+    def get_info(self, route: Dict[str, List[str]]) -> Tuple[Dict, Dict]:
         """
         Methode muss überschrieben werden bei Verwendung dieses Moduls
 
@@ -272,31 +299,25 @@ class Navigator:
          :return Gibt zwei Dictionaries mit zusätzlichen Informationen aus der Datenbank zurück
          :rtype: dict, dict
         """
-        pass
 
-    def get_error_msg(self):
+    def get_error_msg(self) -> str:
         """
         Getter der Error-Message.
 
         :return: Gibt die Error-Message zurück
-        :rtype: str
         """
         return self.__error_msg
 
 
 class Worker(QtCore.QRunnable):
-    def __init__(self, dbname, startpoint, nodes, parent):
+    def __init__(self, dbname: str, startpoint: str, nodes: List[str], parent: "Tasks"):
         """
         Constructor
 
         :param dbname:Entspricht dem SpatiaLite-Datenbank-Pfad
-        :type dbname: str
         :param startpoint:Haltungs-Name des Startpunktes
-        :type startpoint: str
         :param nodes: Liste alle Haltungs-Namen, die in der Route vorkommen müssen
-        :type nodes: list
         :param parent: Verweis auf die Task-Klasse, damit die Ergebnisse gespeichert werden können
-        :type parent: Tasks
         """
         super(Worker, self).__init__()
         self.__startpoint = startpoint
@@ -312,7 +333,7 @@ class Worker(QtCore.QRunnable):
             raise Exception()  # TODO: ???
         self.__parent = parent
 
-    def run(self):
+    def run(self) -> None:
         """
         Berechnet alle Routen zwischen einem Startpunkt und allen anderen Punkten
         """
@@ -320,21 +341,21 @@ class Worker(QtCore.QRunnable):
         for route in routes:
             self.__parent.results.append(route)
 
-    def __get_routes(self, startpoint):
+    def __get_routes(self, startpoint: str) -> List[List[str]]:
         """
         Berechnet rekursiv alle Routen von einem Startpunkt bis zum Endpunkt (Keine weitere Haltung verfügbar)
         Außerdem wird abgebrochen, wenn alle Punkte in der Route vorkommen.
 
         :param startpoint: Entspricht dem Haltungs-Namen des Startpunkts aus QGIS
-        :type startpoint: str
         :return: Gibt eine Liste von allen möglichen Routen zurück
-        :rtype: list
         """
-        results = []
+        results: List[List[str]] = []
         self.__get_routes_recursive([startpoint], results)
         return results
 
-    def __get_routes_recursive(self, haltungen, results):
+    def __get_routes_recursive(
+        self, haltungen: List[str], results: List[List[str]]
+    ) -> Optional[List[str]]:
         """
         Berechnet alle möglichen Routen rekursiv
 
@@ -345,7 +366,7 @@ class Worker(QtCore.QRunnable):
         """
         if set(haltungen).issuperset(set(self.__nodes)):
             return haltungen
-        statement = u"""SELECT name
+        statement = """SELECT name
         FROM (SELECT
                 haltnam AS name,
                 schoben
@@ -376,39 +397,37 @@ class Worker(QtCore.QRunnable):
             """
         self.__db.sql(statement.format(haltungen[-1]))
         next_haltungen = self.__db.fetchall()
-        if len(next_haltungen) == 0:
-            return
+
         for (option,) in next_haltungen:
-            hCopy = list(haltungen)
-            hCopy.append(option)
-            res = self.__get_routes_recursive(hCopy, results)
+            h_copy = list(haltungen)
+            h_copy.append(option)
+            res = self.__get_routes_recursive(h_copy, results)
             if res is not None:
                 results.append(res)
 
+        return None
+
 
 class Tasks(QtCore.QObject):
-    def __init__(self, dbname, nodes):
+    def __init__(self, dbname: str, nodes: List[str]):
         """
         Constructor
 
         :param dbname:Entspricht dem SpatialListe-Datenbank-Pfad
-        :type dbname: str
         :param nodes: Entspricht einer Liste von allen Haltungsnamenm, welche in der Route vorkommen sollen.
-        :type nodes: list
         """
         super(Tasks, self).__init__()
         self.__pool = QtCore.QThreadPool.globalInstance()
         self.__pool.setMaxThreadCount(2)
         self.__dbname = dbname
         self.__nodes = nodes
-        self.results = []
+        self.results: List[List[str]] = []
 
-    def start(self):
+    def start(self) -> List[List[str]]:
         """
         Startet alle Threads für jeden möglichen Startpunkt
 
         :return: Gibt alle möglichen Routen zurück nachdem alle Threads beendet wurden
-        :rtype: list
         """
         for n in self.__nodes:
             others = list(self.__nodes)

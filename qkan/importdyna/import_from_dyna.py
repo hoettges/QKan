@@ -23,7 +23,7 @@ from qgis.utils import pluginDirectory
 
 from qkan import QKAN_FORMS, QKAN_TABLES, QKan, enums
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import evalNodeTypes, fehlermeldung, fzahl
+from qkan.database.qkan_utils import eval_node_types, fehlermeldung, fzahl
 
 logger = logging.getLogger("QKan.importdyna.import_from_dyna")
 
@@ -760,8 +760,10 @@ def import_kanaldaten(
                 "\nSchächte: in sql: \n" + sql + "\n\n",
             )
 
-    if not db_qkan.sql("UPDATE schaechte SET (geom, geop) = (geom, geop) ",
-                    "importkanaldaten_dyna (13a)"):
+    if not db_qkan.sql(
+        "UPDATE schaechte SET (geom, geop) = (geom, geop) ",
+        "importkanaldaten_dyna (13a)",
+    ):
         del db_qkan
         return False
 
@@ -870,13 +872,14 @@ def import_kanaldaten(
                 "\nSchächte: in sql: \n" + sql + "\n\n",
             )
 
-    if not db_qkan.sql("UPDATE schaechte SET (geom, geop) = (geom, geop) ",
-                    "importkanaldaten_dyna (16a)"):
+    if not db_qkan.sql(
+        "UPDATE schaechte SET (geom, geop) = (geom, geop) ",
+        "importkanaldaten_dyna (16a)",
+    ):
         del db_qkan
         return False
 
     db_qkan.commit()
-
 
     # ------------------------------------------------------------------------------
     # Haltungsdaten
@@ -1017,16 +1020,17 @@ def import_kanaldaten(
             del db_qkan
             return False
 
-    if not db_qkan.sql("UPDATE haltungen SET geom = geom", "importkanaldaten_dyna (9a)"):
+    if not db_qkan.sql(
+        "UPDATE haltungen SET geom = geom", "importkanaldaten_dyna (9a)"
+    ):
         del db_qkan
         return False
 
     db_qkan.commit()
 
-
     # --------------------------------------------------------------------------
     # Schachttypen auswerten
-    evalNodeTypes(db_qkan)  # in qkan.database.qkan_utils
+    eval_node_types(db_qkan)  # in qkan.database.qkan_utils
 
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten

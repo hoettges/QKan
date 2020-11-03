@@ -2,16 +2,16 @@
 
 import logging
 import math
-import typing
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
+from xml.etree.ElementTree import ElementTree
 
 from qgis.core import Qgis, QgsMessageLog, QgsProject
 from qgis.utils import iface
-
 from qkan import QKan
 
-if typing.TYPE_CHECKING:
-    from .fbfunc import FBConnection
+if TYPE_CHECKING:
     from .dbfunc import DBConnection
+    from .fbfunc import FBConnection
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger("QKan.database.qkan_utils")
@@ -20,13 +20,13 @@ logger = logging.getLogger("QKan.database.qkan_utils")
 # Fortschritts- und Fehlermeldungen
 
 
-def meldung(title, text):
+def meldung(title: str, text: str) -> None:
     logger.info("{:s} {:s}".format(title, text))
     QgsMessageLog.logMessage(message="{:s} {:s}".format(title, text), level=Qgis.Info)
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Info)
 
 
-def warnung(title, text):
+def warnung(title: str, text: str) -> None:
     logger.warning("{:s} {:s}".format(title, text))
     QgsMessageLog.logMessage(
         message="{:s} {:s}".format(title, text), level=Qgis.Warning
@@ -34,7 +34,7 @@ def warnung(title, text):
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Warning)
 
 
-def fortschritt(text, prozent=0):
+def fortschritt(text: str, prozent: int = 0) -> None:
     logger.debug("{:s} ({:.0f}%)".format(text, prozent * 100))
     QgsMessageLog.logMessage(
         message="{:s} ({:.0f}%)".format(text, prozent * 100),
@@ -43,7 +43,7 @@ def fortschritt(text, prozent=0):
     )
 
 
-def fehlermeldung(title, text=""):
+def fehlermeldung(title: str, text: str = "") -> None:
     logger.error("{:s} {:s}".format(title, text))
     QgsMessageLog.logMessage(
         message="{:s} {:s}".format(title, text), level=Qgis.Critical
@@ -60,189 +60,174 @@ def fehlermeldung(title, text=""):
 # Allgemeine Funktionen
 
 
-def getLayerConfigFromQgsTemplate(qgsxml, layername):
+def get_layer_config_from_qgs_template(
+    qgsxml: ElementTree, layername: str
+) -> Tuple[Dict[str, Tuple[str, dict]], str]:
     """Liefert Parameter für QgsEditorWidgetSetup aus Qgs-Datei für alle Attribute in einem Layer
 
     :qgsxml:            XML-Struktur der Projektdatei
-    :type qgsxml:       xml.etree.ElementTree.ElementTree
-
     :layername:         Name des Layers
-    :type:              String
 
-    :returns:           Dictionary of attributnames: editWidgetType, Dictionary of Options
+    :returns:           Dictionary of attributnames: edit_widget_type, Dictionary of Options
     :type:              dict of string: tuple of String, dict of Strings
     """
 
     lntext = "projectlayers/maplayer[layername='{ln}']".format(ln=layername)
     node_maplayer = qgsxml.find(lntext)
-    fieldnodes = node_maplayer.findall("./fieldConfiguration/field")
+    if node_maplayer:
+        fieldnodes = node_maplayer.findall("./fieldConfiguration/field")
+        display_expression = node_maplayer.findtext("previewExpression") or ""
+    else:
+        fieldnodes = []
+        display_expression = ""
 
-    dictOfEditWidgets = {}  # return: dictOfEditWidgets: init
+    dict_of_edit_widgets: Dict[
+        str, Tuple[str, dict]
+    ] = {}  # return: dictOfEditWidgets: init
     for field in fieldnodes:
         attr = field.attrib
         # logger.debug('editWidget: {}'.format(attr))
-        fieldname = attr["name"]  # return: fieldname
-        ewNode = field.find("./editWidget")
-        attr = ewNode.attrib
-        editWidgetType = attr["type"]  # return: editWidgetType
-        if editWidgetType in ("TextEdit", "ValueRelation"):
-            optionNodes = ewNode.findall("./config/Option/Option")
-            editWidgetOptions = {}  # return: editWidgetOptions: init
-            for optionNode in optionNodes:
+        fieldname: str = attr["name"]  # return: fieldname
+        ew_node = field.find("./editWidget")
+        if not ew_node:
+            continue
+
+        attr = ew_node.attrib
+        edit_widget_type = attr["type"]  # return: edit_widget_type
+        if edit_widget_type in ("TextEdit", "ValueRelation"):
+            option_nodes = ew_node.findall("./config/Option/Option")
+            edit_widget_options = {}  # return: editWidgetOptions: init
+            for optionNode in option_nodes:
                 attr = optionNode.attrib
-                optionName = attr["name"]
-                optionValue = attr["value"]
+                option_name = attr["name"]
+                option_value = attr["value"]
                 # logger.debug("option: '{key}': {attr}".format(key=optionName, attr=optionValue))    # print
-                editWidgetOptions[optionName] = optionValue  # return: editWidgetOptions
-            dictOfEditWidgets[fieldname] = (editWidgetType, editWidgetOptions)
+                edit_widget_options[
+                    option_name
+                ] = option_value  # return: editWidgetOptions
+            dict_of_edit_widgets[fieldname] = (edit_widget_type, edit_widget_options)
             # logger.debug('dictOfEditWidgets: {}'.format(dictOfEditWidgets))
-        elif editWidgetType in ("ValueMap"):
-            optionNodes = ewNode.findall("./config/Option/Option/Option")
-            editWidgetOptions = {}  # return: editWidgetOptions: init
-            for optionNode in optionNodes:
+        elif edit_widget_type == "ValueMap":
+            option_nodes = ew_node.findall("./config/Option/Option/Option")
+            edit_widget_options = {}  # return: editWidgetOptions: init
+            for optionNode in option_nodes:
                 attr = optionNode.attrib
-                optionName = attr["name"]
-                optionValue = attr["value"]
+                option_name = attr["name"]
+                option_value = attr["value"]
                 # logger.debug("option: '{key}': {attr}".format(key=optionName, attr=optionValue))    # print
-                editWidgetOptions[optionName] = optionValue  # return: editWidgetOptions
-            dictOfEditWidgets[fieldname] = (editWidgetType, {"map": editWidgetOptions})
+                edit_widget_options[
+                    option_name
+                ] = option_value  # return: editWidgetOptions
+            dict_of_edit_widgets[fieldname] = (
+                edit_widget_type,
+                {"map": edit_widget_options},
+            )
             # logger.debug('dictOfEditWidgets: {}'.format(dictOfEditWidgets))
 
-    displayExpression = node_maplayer.findtext("previewExpression")
-
-    return dictOfEditWidgets, displayExpression
+    return dict_of_edit_widgets, display_expression
 
 
-def listQkanLayers(qgsTemplate=None):
+def list_qkan_layers(qgs_template: str = None) -> Dict[str, List]:
     """Dictionary mit den Namen aller QKan-Layer und einer Liste mit: 
             Tabellenname, Geometriespalte, SQL-Where-Bedingung, Gruppenname
 
         Die Zusammenstellung wird aus der Template-QKanprojektdatei gelesen
     """
-    import xml.etree.ElementTree as et
-
-    if not qgsTemplate:
+    if not qgs_template:
         return {}
         # templateDir = os.path.join(pluginDirectory('qkan'), "templates")
         # qgsTemplate = os.path.join(templateDir, 'Projekt.qgs')
 
-    qgsxml = et.ElementTree()
-    qgsxml.parse(qgsTemplate)
-    tagGroup = "layer-tree-group/layer-tree-group"
-    qgsGroups = qgsxml.findall(tagGroup)
-    qkanLayers = {}
-    for group in qgsGroups:
-        groupName = group.attrib["name"]
-        groupLayers = group.findall("layer-tree-layer")
-        for layer in groupLayers:
-            layerName = layer.attrib["name"]
-            layerSource = layer.attrib["source"]
-            dbname, table, geom, sql = get_qkanlayerAttributes(layerSource)
-            qkanLayers[layerName] = [table, geom, sql, groupName]
-    logger.debug("qkanLayers: \n{}".format(qkanLayers))
-    return qkanLayers
+    qgsxml = ElementTree()
+    qgsxml.parse(qgs_template)
+    tag_group = "layer-tree-group/layer-tree-group"
+    qgs_groups = qgsxml.findall(tag_group)
+    qkan_layers = {}
+    for group in qgs_groups:
+        group_name = group.attrib["name"]
+        group_layers = group.findall("layer-tree-layer")
+        for layer in group_layers:
+            layer_name = layer.attrib["name"]
+            layer_source = layer.attrib["source"]
+            dbname, table, geom, sql = get_qkanlayer_attributes(layer_source)
+            qkan_layers[layer_name] = [table, geom, sql, group_name]
+    logger.debug("qkan_layers: \n{}".format(qkan_layers))
+    return qkan_layers
 
 
-def isQkanLayer(layername, source):
+def is_qkan_layer(layername: str, source: str) -> bool:
     """Ermittelt, ob eine Layerquelle auf eine QKan-Tabelle verweist
 
     :layername:      Name des Layers
-    :type layername: String
-
     :source:        Pfad zur QKan-Datenbank
-    :type source:   String
 
     :returns:       Ergebnis der Prüfung
-    :rtype:         boolean
     """
 
-    dbname, table, geom, sql = get_qkanlayerAttributes(source)
+    dbname, table, geom, sql = get_qkanlayer_attributes(source)
 
-    qkanLayers = listQkanLayers()
-    if layername in qkanLayers:
+    qkan_layers = list_qkan_layers()
+    if layername in qkan_layers:
         if (
-            table == qkanLayers[layername][0]
-            and geom == qkanLayers[layername][1]
-            and sql == qkanLayers[layername][2]
+            table == qkan_layers[layername][0]
+            and geom == qkan_layers[layername][1]
+            and sql == qkan_layers[layername][2]
         ):
             ve = geom != ""  # Vectorlayer?
-            return True, ve
-    return False, False
+            return True
+    return False
 
 
-# todo: nachfolgende Funktion ist depricated und kann durch listQkanLayers ersetzt werden...
+# todo: nachfolgende Funktion ist deprecated und kann durch listQkanLayers ersetzt werden...
 
 
-def get_qkanlayerAttributes(source):
+def get_qkanlayer_attributes(source: str) -> Tuple[str, str, str, str]:
     """Ermittelt die Attribute eines QKan-Layers in einer SpatiaLite-Datenbank
 
     :param source:  Source-String des QGIS-Layers
-    :type source:   string
-
-    :returns:       Attribute des Layers
-    :rtype:         tuple
+    :returns:       database name, table name, geom, sql
     """
 
     parts = source.split(" ")
 
-    elem = [elem.split('dbname=')[1] for elem in parts if elem[:6] == 'dbname']
+    elem = [elem.split("dbname=")[1] for elem in parts if elem[:6] == "dbname"]
     if len(elem) == 1:
         dbname = elem[0][1:-1]
     else:
         dbname = ""
-    elem = [elem.split('table=')[1] for elem in parts if elem[:5] == 'table']
+    elem = [elem.split("table=")[1] for elem in parts if elem[:5] == "table"]
     if len(elem) == 1:
         table = elem[0][1:-1]
     else:
         table = ""
-    elem = [elem for elem in parts if elem[:1] == '(']
+    elem = [elem for elem in parts if elem[:1] == "("]
     if len(elem) == 1:
         geom = elem[0][1:-1]
     else:
         geom = ""
 
-    posSql = source.find("sql=")
-    if posSql >= 0:
-        sql = source[posSql + 4:]
+    pos_sql = source.find("sql=")
+    if pos_sql >= 0:
+        sql = source[pos_sql + 4 :]
     else:
         sql = ""
 
     return dbname, table, geom, sql
 
-    # posDbname = source.find("dbname=")
-    # posTable = source.find("' table=", posDbname + 1)
-    # posGeomStart = source.find(" (", posTable + 7)
-    # posGeomEnd = source.find(")", posGeomStart + 2)
-    # posSql = source.find(" sql=", posGeomEnd + 1)
-    #
-    # dbname = source[posDbname + 8 : posTable].strip()
-    #
-    # if posGeomStart < 0:
-    #     geom = ""
-    #     posGeomStart = posSql
-    # else:
-    #     geom = source[posGeomStart + 2 : posGeomEnd].strip()
-    #
-    # table = source[posTable + 8 : posGeomStart - 1].strip()
-    #
-    # if posSql < 0:
-    #     sql = ""
-    # else:
-    #     sql = source[posSql + 5 :].strip()
 
-    return dbname, table, geom, sql
-
-
-def get_database_QKan(silent=False) -> typing.Tuple[typing.Optional[str], int]:
+def get_database_QKan(silent: bool = False) -> Tuple[Optional[str], Optional[int]]:
     """Ermittlung der aktuellen SpatiaLite-Datenbank aus den geladenen Layern"""
 
+    # noinspection PyArgumentList
     project = QgsProject.instance()
 
     layerobjects = project.mapLayersByName("Schächte")
-    logger.debug(f"qkan.database.qkan_utils.get_database_QKan: \nlayerobjects: {layerobjects}")
+    logger.debug(
+        f"qkan.database.qkan_utils.get_database_QKan: \nlayerobjects: {layerobjects}"
+    )
     if len(layerobjects) > 0:
         lay = layerobjects[0]
-        dbname_s, _, _, _ = get_qkanlayerAttributes(lay.source())
+        dbname_s: Optional[str] = get_qkanlayer_attributes(lay.source())[0]
         epsg_s = int(lay.crs().postgisSrid())
     else:
         dbname_s = None
@@ -251,7 +236,7 @@ def get_database_QKan(silent=False) -> typing.Tuple[typing.Optional[str], int]:
     layerobjects = project.mapLayersByName("Flächen")
     if len(layerobjects) > 0:
         lay = layerobjects[0]
-        dbname_f, _, _, _ = get_qkanlayerAttributes(lay.source())
+        dbname_f: Optional[str] = get_qkanlayer_attributes(lay.source())[0]
         epsg_f = int(lay.crs().postgisSrid())
     else:
         dbname_f = None
@@ -278,16 +263,14 @@ def get_database_QKan(silent=False) -> typing.Tuple[typing.Optional[str], int]:
         if not silent:
             fehlermeldung(
                 "Fehler in Layerliste:",
-                """Layer "Schächte" und "Flächen" sind mit abweichenden Datenbanken verknüpft:
-            Schächte: ()
-            Flächen:  ()""".format(
-                    dbname_s, dbname_f
-                ),
+                f"""Layer "Schächte" und "Flächen" sind mit abweichenden Datenbanken verknüpft:
+            Schächte: {dbname_s}
+            Flächen:  {dbname_f}""",
             )
         return None, None
 
 
-def get_editable_layers():
+def get_editable_layers() -> Set[str]:
     """Liste der Tabellen, für die in der Layerliste der Status editable aktiviert ist.
         Dient dazu, sicherzustellen, dass keine Datenbankoperationen auf editierbare
         Layer zugreifen."""
@@ -427,7 +410,7 @@ def checkgeom(
     tab: str,
     attrgeo: str,
     autokorrektur: bool,
-    liste_teilgebiete: typing.List[str],
+    liste_teilgebiete: List[str],
 ) -> bool:
     """
     Prüft, ob in der Tabelle {tab} im Attribut {attrgeo} ein Geoobjekt vorhanden ist.
@@ -467,9 +450,9 @@ def checkgeom(
             meldung(
                 "Automatische Korrektur von Daten: ",
                 (
-                    'In der Tabelle "{tab}" wurden leere Geo-Objekte gefunden. '
+                    f'In der Tabelle "{tab}" wurden leere Geo-Objekte gefunden. '
                     "Diese Datensätze wurden gelöscht"
-                ).format(tab=tab, attrgeo=attrgeo),
+                ),
             )
 
             sql = f"""
@@ -483,18 +466,14 @@ def checkgeom(
         else:
             fehlermeldung(
                 "Datenfehler",
-                'In der Tabelle "{tab}" gibt es leere Geoobjekte. Abbruch!'.format(
-                    tab=tab, attrgeo=attrgeo
-                ),
+                f'In der Tabelle "{tab}" gibt es leere Geoobjekte. Abbruch!',
             )
             return False
 
     return True
 
 
-def sqlconditions(
-    keyword: str, attrlis: typing.List[str], valuelis2: typing.List[typing.List[str]]
-):
+def sqlconditions(keyword: str, attrlis: List[str], valuelis2: List[List[str]]) -> str:
     """
     Stellt Attribut- und Wertelisten zu einem SQL-String zusammen.
 
@@ -542,7 +521,7 @@ def sqlconditions(
     return auswahl
 
 
-def check_flaechenbilanz(db_qkan: "FBConnection"):
+def check_flaechenbilanz(db_qkan: "FBConnection") -> bool:
     """
     Stellt Attribut- und Wertelisten zu einem SQL-String zusammen.
 
@@ -575,11 +554,11 @@ def check_flaechenbilanz(db_qkan: "FBConnection"):
     return True
 
 
-def evalNodeTypes(dbQK):
+def eval_node_types(db_qkan: DBConnection) -> None:
     """Schachttypen auswerten. Dies geschieht ausschließlich mit SQL-Abfragen"""
 
     # -- Anfangsschächte: Schächte ohne Haltung oben
-    sql_typAnf = """
+    sql_typ_anf = """
         UPDATE schaechte SET knotentyp = 'Anfangsschacht' WHERE schaechte.schnam IN
         (SELECT t_sch.schnam
         FROM schaechte AS t_sch 
@@ -590,7 +569,7 @@ def evalNodeTypes(dbQK):
         WHERE t_hun.pk IS NULL)"""
 
     # -- Endschächte: Schächte ohne Haltung unten
-    sql_typEnd = """
+    sql_typ_end = """
         UPDATE schaechte SET knotentyp = 'Endschacht' WHERE schaechte.schnam IN
         (SELECT t_sch.schnam
         FROM schaechte AS t_sch 
@@ -601,7 +580,7 @@ def evalNodeTypes(dbQK):
         WHERE t_hun.pk IS NULL)"""
 
     # -- Hochpunkt:
-    sql_typHoch = """
+    sql_typ_hoch = """
         UPDATE schaechte SET knotentyp = 'Hochpunkt' WHERE schaechte.schnam IN
         ( SELECT t_sch.schnam
           FROM schaechte AS t_sch 
@@ -617,7 +596,7 @@ def evalNodeTypes(dbQK):
                 ifnull(t_hun.sohleoben,t_sch.sohlhoehe)>ifnull(t_hun.sohleunten,t_sun.sohlhoehe))"""
 
     # -- Tiefpunkt:
-    sql_typTief = """
+    sql_typ_tief = """
         UPDATE schaechte SET knotentyp = 'Tiefpunkt' WHERE schaechte.schnam IN
         ( SELECT t_sch.schnam
           FROM schaechte AS t_sch 
@@ -633,7 +612,7 @@ def evalNodeTypes(dbQK):
                 ifnull(t_hun.sohleoben,t_sch.sohlhoehe)<ifnull(t_hun.sohleunten,t_sun.sohlhoehe))"""
 
     # -- Verzweigung:
-    sql_typZweig = """
+    sql_typ_zweig = """
         UPDATE schaechte SET knotentyp = 'Verzweigung' WHERE schaechte.schnam IN
         ( SELECT t_sch.schnam
           FROM schaechte AS t_sch 
@@ -643,7 +622,7 @@ def evalNodeTypes(dbQK):
           HAVING count(*) > 1)"""
 
     # -- Einzelschacht:
-    sql_typEinzel = """
+    sql_typ_einzel = """
         UPDATE schaechte SET knotentyp = 'Einzelschacht' WHERE schaechte.schnam IN
         ( SELECT t_sch.schnam 
           FROM schaechte AS t_sch 
@@ -653,31 +632,31 @@ def evalNodeTypes(dbQK):
           ON t_sch.schnam = t_hob.schunten
           WHERE t_hun.pk IS NULL AND t_hob.pk IS NULL)"""
 
-    if not dbQK.sql(sql_typAnf, "importkanaldaten_he (39)"):
-        return False
+    if not db_qkan.sql(sql_typ_anf, "importkanaldaten_he (39)"):
+        return
 
-    if not dbQK.sql(sql_typEnd, "importkanaldaten_he (40)"):
-        return False
+    if not db_qkan.sql(sql_typ_end, "importkanaldaten_he (40)"):
+        return
 
-    if not dbQK.sql(sql_typHoch, "importkanaldaten_he (41)"):
-        return False
+    if not db_qkan.sql(sql_typ_hoch, "importkanaldaten_he (41)"):
+        return
 
-    if not dbQK.sql(sql_typTief, "importkanaldaten_he (42)"):
-        return False
+    if not db_qkan.sql(sql_typ_tief, "importkanaldaten_he (42)"):
+        return
 
-    if not dbQK.sql(sql_typZweig, "importkanaldaten_he (43)"):
-        return False
+    if not db_qkan.sql(sql_typ_zweig, "importkanaldaten_he (43)"):
+        return
 
-    if not dbQK.sql(sql_typEinzel, "importkanaldaten_he (44)"):
-        return False
+    if not db_qkan.sql(sql_typ_einzel, "importkanaldaten_he (44)"):
+        return
 
-    dbQK.commit()
+    db_qkan.commit()
 
 
 # Funktionen zur formatierten Ein- und Ausgabe von Fließkommazahlen
 
 
-def formf(zahl, anz):
+def formf(zahl: Optional[float], anz: Optional[int]) -> Optional[str]:
     """Formatiert eine Fließkommazahl so, dass sie in einer vorgegebenen Anzahl von Zeichen
        mit maximaler Genauigkeit dargestellt werden kann.
     """
@@ -749,9 +728,11 @@ def formf(zahl, anz):
     return erg
 
 
-def fzahl(text, n=0.0, default=0.0):
-    """Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
-       enthalten ist, werden n Nachkommastellen angenommen"""
+def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> Optional[float]:
+    """
+    Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
+    enthalten ist, werden n Nachkommastellen angenommen
+    """
     zahl = text.strip()
     if zahl == "":
         return default

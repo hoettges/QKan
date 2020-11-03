@@ -26,9 +26,9 @@ __copyright__ = "(C) 2016, Joerg Hoettges"
 
 import logging
 import os
+from typing import Any, List, Union
 
 import firebirdsql
-from qgis.core import Qgis
 
 from .qkan_utils import fehlermeldung
 
@@ -40,11 +40,10 @@ logger = logging.getLogger(u"QKan")
 class FBConnection:
     """Firebird Datenbankobjekt"""
 
-    def __init__(self, dbname=None):
+    def __init__(self, dbname: str):
         """Constructor.
     
         :param dbname: Pfad zur Firebird-Datenbankdatei.
-        # :type tabObject: String
         """
         # Verbindung zur Datenbank herstellen
         if os.path.exists(dbname):
@@ -57,33 +56,35 @@ class FBConnection:
                 )
                 self.curfb = self.confb.cursor()
             except:
-
                 logger.debug(
                     "Fehler beim Anbinden der ITWH-Datenbank {:s}!\nAbbruch!".format(
-                        dbname)
+                        dbname
+                    )
                 )
                 self.confb = None
         else:
             logger.debug(
-                "Fehler: ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!".format(dbname)
+                "Fehler: ITWH-Datenbank {:s} wurde nicht gefunden!\nAbbruch!".format(
+                    dbname
+                )
             )
             self.confb = None
 
-    def __del__(self):
+    def __del__(self) -> None:
         """Destructor.
             
         Beendet die Datenbankverbindung.
         """
         self.confb.close()
 
-    def __exit__(self):
+    def __exit__(self) -> None:
         """Destructor.
             
         Beendet die Datenbankverbindung.
         """
         self.confb.close()
 
-    def attrlist(self, tablenam):
+    def attrlist(self, tablenam: str) -> Union[List[str]]:
         """Gibt Spaltenliste zurueck."""
 
         sql = u'PRAGMA table_info("{0:s}")'.format(tablenam)
@@ -93,7 +94,7 @@ class FBConnection:
         lattr = [el[1] for el in daten]
         return lattr
 
-    def sql(self, sql, errormessage=u"allgemein"):
+    def sql(self, sql: str, errormessage: str = "allgemein") -> bool:
         """Fuehrt eine SQL-Abfrage aus."""
 
         try:
@@ -111,25 +112,25 @@ class FBConnection:
             )
             return False
 
-    def fetchall(self):
+    def fetchall(self) -> List[Any]:
         """Gibt alle Daten aus der vorher ausgefuehrten SQL-Abfrage zurueck"""
 
-        daten = self.curfb.fetchall()
+        daten: List[Any] = self.curfb.fetchall()
         return daten
 
-    def fetchone(self):
+    def fetchone(self) -> Any:
         """Gibt einen Datensatz aus der vorher ausgefuehrten SQL-Abfrage zurueck"""
 
         daten = self.curfb.fetchone()
         return daten
 
-    def fetchnext(self):
+    def fetchnext(self) -> Any:
         """Gibt den naechsten Datensatz aus der vorher ausgefuehrten SQL-Abfrage zurueck"""
 
         daten = self.curfb.fetchnext()
         return daten
 
-    def commit(self):
+    def commit(self) -> None:
         """Schliesst eine SQL-Abfrage ab"""
 
         self.confb.commit()

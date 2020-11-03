@@ -5,10 +5,12 @@
 """
 
 # flaechen.abflusstyp
+from typing import Dict, Optional
+
 from .qkan_utils import fehlermeldung
 
 
-def abflusstypen(simprog):
+def abflusstypen(simprog: str) -> Optional[Dict[str, int]]:
     typen = {
         "he": {
             "Speicherkaskade": 0,

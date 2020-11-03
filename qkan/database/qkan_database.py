@@ -23,14 +23,14 @@ __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 __dbVersion__ = "3.1.5"  # Version der QKan-Datenbank
-__qgsVersion__ = (
-    "3.1.5"
-)  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__qgsVersion__ = "3.1.5"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
 import os
 import traceback
+from sqlite3.dbapi2 import Connection, Cursor
+from typing import List
 
 from qgis.core import Qgis, QgsProject
 from qgis.PyQt import Qt
@@ -42,28 +42,23 @@ from .qkan_utils import fehlermeldung, fortschritt, meldung
 logger = logging.getLogger("QKan.database.qkan_database")
 
 
-def dbVersion():
+def db_version() -> str:
     """Returns actual version of the QKan database"""
     return __dbVersion__
 
 
-def qgsVersion():
+def qgs_version() -> str:
     """Returns actual project version"""
     return __qgsVersion__
 
 
-def versionolder(versliste, verslisref, depth=3):
+def versionolder(versliste: List[int], verslisref: List[int], depth: int = 3) -> bool:
     """Gibt wahr zurück, wenn eine Versionsliste älter als eine Referenz-Versionsliste ist, 
        falsch, wenn diese gleich oder größer ist. 
 
     :param versliste:   Liste von Versionsnummern, höchstwertige zuerst
-    :type versliste:    list
-
     :param verslisref:  Liste von Versionsnummern zum Vergleich, höchstwertige zuerst
-    :type verslisref:   list
-
     :param depth:       Untersuchungstiefe
-    :type depth:        integer
     """
     for v1, v2 in zip(versliste[:depth], verslisref[:depth]):
         if v1 < v2:
@@ -73,64 +68,60 @@ def versionolder(versliste, verslisref, depth=3):
     return False
 
 
-def qgsActualVersion(update=True, warning=False):
+def qgs_actual_version(update: bool = True, warning: bool = False) -> bool:
     """Prüft die Version des aktiven Projektes und aktualisiert die Layer gegebenenfalls
 
     :param warning: Aktiviert Warnung in QGIS-Meldungsleiste
-    :type warning:  Boolean
 
-    :returns:       Boolean
-    
     Prüft im Vergleich zur Version der QKan-Datenbank, ob das geladene Projekt die gleiche oder höhere
     Versionsnummer aufweist.
     """
 
     layers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
     if len(layers) == 0 and warning:
-        logger.error("qkan_database.qgsActualVersion: Keine Layer vorhanden...")
+        logger.error("qkan_database.qgs_actual_version: Keine Layer vorhanden...")
         meldung("Fehler: ", "Kein QKan-Projekt geladen!")
         return False
 
-    actQgsVersion = QgsProject.instance().title().replace("QKan Version ", "")
-    if actQgsVersion == "":
+    # noinspection PyArgumentList
+    act_qgs_version = QgsProject.instance().title().replace("QKan Version ", "")
+    if act_qgs_version == "":
         if len(layers) == 0:
             meldung("Benutzerfehler: ", "Es ist kein Projekt geladen")
         else:
-            actQgsVersion = (
-                "2.5.3"
-            )  # davor wurde die Version der Projektdatei noch nicht verwaltet.
-    curQgsVersion = qgsVersion()
+            act_qgs_version = "2.5.3"  # davor wurde die Version der Projektdatei noch nicht verwaltet.
+    cur_qgs_version = qgs_version()
     try:
-        actQgsVersionLis = [
+        act_qgs_version_lis = [
             int(el.replace("a", "").replace("b", "").replace("c", ""))
-            for el in actQgsVersion.split(".")
+            for el in act_qgs_version.split(".")
         ]
     except BaseException as err:
         logger.error(
-            "\nqkan_database.qgsActualVersion: {}\nVersionsstring fehlerhaft: {}".format(
-                err, actQgsVersion
+            "\nqkan_database.qgs_actual_version: {}\nVersionsstring fehlerhaft: {}".format(
+                err, act_qgs_version
             )
         )
-        actQgsVersion = (
-            "2.5.3"
-        )  # davor wurde die Version der Projektdatei noch nicht verwaltet.
-        actQgsVersionLis = [
+        act_qgs_version = (
+            "2.5.3"  # davor wurde die Version der Projektdatei noch nicht verwaltet.
+        )
+        act_qgs_version_lis = [
             int(el.replace("a", "").replace("b", "").replace("c", ""))
-            for el in actQgsVersion.split(".")
+            for el in act_qgs_version.split(".")
         ]
 
-    curQgsVersionLis = [
+    cur_qgs_version_lis = [
         int(el.replace("a", "").replace("b", "").replace("c", ""))
-        for el in curQgsVersion.split(".")
+        for el in cur_qgs_version.split(".")
     ]
 
-    logger.debug("actQgsVersion: {}".format(actQgsVersion))
-    logger.debug("curQgsVersion: {}".format(curQgsVersion))
+    logger.debug("act_qgs_version: {}".format(act_qgs_version))
+    logger.debug("cur_qgs_version: {}".format(cur_qgs_version))
 
     # Änderungen an den Layern werden nur in layersadapt vorgenommen.
 
     #
-    # isActual = not versionolder(actQgsVersionLis, curQgsVersionLis)
+    # isActual = not versionolder(act_qgs_version_lis, cur_qgs_version_lis)
     # if not isActual:
     #     if warning:
     #         meldung(
@@ -140,7 +131,7 @@ def qgsActualVersion(update=True, warning=False):
     #     if update:
     #
     #         # Bis Version 2.5.11
-    #         if versionolder(actQgsVersionLis, [2, 5, 12]):
+    #         if versionolder(act_qgs_version_lis, [2, 5, 12]):
     #             wlayers = [la for la in layers if la.name() == "Abflussparameter"]
     #             if len(wlayers) != 1:
     #                 logger.debug(
@@ -155,26 +146,28 @@ def qgsActualVersion(update=True, warning=False):
     #             logger.debug("nachher: wlayer.name(): {}".format(wlayer.name()))
     #
     #             project = QgsProject.instance()
-    #             project.setTitle("QKan Version {}".format(qgsVersion()))
+    #             project.setTitle("QKan Version {}".format(qgs_version()))
     #
     #         isActual = True
     # return isActual
+
+    return True
 
 
 # Erzeuge QKan-Tabellen
 
 
-def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
+def createdbtables(
+    consl: Connection, cursl: Cursor, version: str = __dbVersion__, epsg: int = 25832
+) -> bool:
     """ Erstellt fuer eine neue QKan-Datenbank die benötigten Tabellen.
 
         :param consl: Datenbankobjekt der SpatiaLite-QKan-Datenbank
-        :type consl: spatialite.dbapi2.Connection
-
         :param cursl: Zugriffsobjekt der SpatiaLite-QKan-Datenbank
-        :type cursl: spatialite.dbapi2.Cursor
+        :param version: Database version
+        :param epsg: EPSG ID
 
         :returns: Testergebnis: True = alles o.k.
-        :rtype: logical
     """
 
     # Haltungen ----------------------------------------------------------------
@@ -1231,7 +1224,6 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(traceback.format_exc()),
             "QKan_Database (2) SQL-Fehler in SpatiaLite: \n",
-            sql,
         )
         consl.close()
         return False
@@ -1405,10 +1397,13 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
         return False
 
     try:
-        daten = [["Gebäude", 0], ["Straße", 1], ["Grünfläche", 2], ["Gewässer", 3]]
-
-        for bez, num in daten:
-            sql = u"""INSERT INTO flaechentypen
+        for bez, num in [
+            ["Gebäude", 0],
+            ["Straße", 1],
+            ["Grünfläche", 2],
+            ["Gewässer", 3],
+        ]:
+            sql = """INSERT INTO flaechentypen
                      (bezeichnung, he_nr) Values ('{bez}', {num})""".format(
                 bez=bez, num=num
             )
@@ -1474,7 +1469,6 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
                 'Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
                     err
                 ),
-                sql,
             )
             consl.close()
             return False
@@ -1520,7 +1514,6 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
                 'Tabellendaten "abflusstypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
                     err
                 ),
-                sql,
             )
             consl.close()
             return False
@@ -1567,7 +1560,6 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
                 'Tabellendaten "knotentypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
                     err
                 ),
-                sql,
             )
             consl.close()
             return False
@@ -1605,7 +1597,6 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
                 'Tabellendaten "schachttypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
                     err
                 ),
-                sql,
             )
             consl.close()
             return False
@@ -1887,7 +1878,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     consl.commit()
 
     # Doppelte Verbindungslinien an Flächen prüfen
-    
+
     sql = """CREATE VIEW IF NOT EXISTS "v_linkfl_redundant" AS 
             WITH lfm AS (
                 SELECT flnam, tezgnam, count(*) AS anz
@@ -1913,7 +1904,7 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
     consl.commit()
 
     # Doppelte Verbindungslinien an Direkteinleitungen prüfen
-    
+
     sql = """CREATE VIEW IF NOT EXISTS "v_linksw_redundant" AS 
             WITH lsm AS (
                 SELECT elnam, count(*) AS anz
@@ -1938,7 +1929,6 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
     consl.commit()
 
-
     # Abschluss --------------------------------------------------------------------
 
     # Aktuelle Version eintragen
@@ -1962,25 +1952,23 @@ def createdbtables(consl, cursl, version=__dbVersion__, epsg=25832):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-
-if __name__ in ("__main__", "__console__", "__builtin__"):
-
+def test() -> None:
     # Verzeichnis der Testdaten
     pfad = "C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh"
-    database_QKan = os.path.join(pfad, "test1.sqlite")
+    database_qkan = os.path.join(pfad, "test1.sqlite")
 
-    if os.path.exists(database_QKan):
-        os.remove(database_QKan)
+    if os.path.exists(database_qkan):
+        os.remove(database_qkan)
 
-    consl = spatialite_connect(database=database_QKan)
+    consl = spatialite_connect(database=database_qkan)
     cursl = consl.cursor()
 
-    progressMessageBar = iface.messageBar().createMessage("Doing something boring...")
+    progress_message_bar = iface.messageBar().createMessage("Doing something boring...")
     progress = QProgressBar()
     progress.setMaximum(10)
     progress.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-    progressMessageBar.layout().addWidget(progress)
-    iface.messageBar().pushWidget(progressMessageBar, iface.messageBar().INFO)
+    progress_message_bar.layout().addWidget(progress)
+    iface.messageBar().pushWidget(progress_message_bar, iface.messageBar().INFO)
     progress.setValue(2)
     iface.messageBar().clearWidgets()
 
@@ -2000,3 +1988,7 @@ if __name__ in ("__main__", "__console__", "__builtin__"):
 
     createdbtables(consl, cursl, version="1.0.0")
     consl.close()
+
+
+if __name__ in ("__main__", "__console__", "__builtin__"):
+    test()

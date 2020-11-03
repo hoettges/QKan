@@ -40,13 +40,13 @@ from PyQt5.QtCore import QVariant
 
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_database import qgsActualVersion, qgsVersion
+from qkan.database.qkan_database import qgs_actual_version, qgs_version
 from qkan.database.qkan_utils import (
-    evalNodeTypes,
+    eval_node_types,
     fehlermeldung,
-    get_qkanlayerAttributes,
-    getLayerConfigFromQgsTemplate,
-    listQkanLayers,
+    get_qkanlayer_attributes,
+    get_layer_config_from_qgs_template,
+    list_qkan_layers,
     meldung,
     warnung,
 )
@@ -116,24 +116,24 @@ def layersadapt(
     # -----------------------------------------------------------------------------------------------------
     # Datenbankverbindungen
 
-    dbQK = DBConnection(
-        dbname=database_QKan
-    )  # Datenbankobjekt der QKan-Datenbank
+    dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank
 
     if not dbQK.connected:
-        fehlermeldung('Programmfehler in QKan.tools.k_layersadapt.layersadapt()',
-                      'Datenbank konnte nicht verbunden werden'
+        fehlermeldung(
+            "Programmfehler in QKan.tools.k_layersadapt.layersadapt()",
+            "Datenbank konnte nicht verbunden werden",
         )
         return False
 
     actversion = dbQK.actversion
     logger.debug("actversion: {}".format(actversion))
 
-    if not(anpassen_Formulare or
-           anpassen_Projektionssystem or
-           anpassen_Wertebeziehungen_in_Tabellen or
-           aktualisieren_Schachttypen or
-           fehlende_layer_ergaenzen
+    if not (
+        anpassen_Formulare
+        or anpassen_Projektionssystem
+        or anpassen_Wertebeziehungen_in_Tabellen
+        or aktualisieren_Schachttypen
+        or fehlende_layer_ergaenzen
     ):
         del dbQK
         return True
@@ -148,7 +148,7 @@ def layersadapt(
         return
 
     # Projekt auf aktuelle Version setzen. Es werden keine Layer geändert.
-    qgsActualVersion()
+    qgs_actual_version()
 
     # Vorlage-Projektdatei. Falls Standard oder keine Vorgabe, wird die Standard-Projektdatei verwendet
 
@@ -162,7 +162,7 @@ def layersadapt(
     # Dabei wird trotzdem geprüft, ob es sich um einen QKan-Layer handelt; es könnte sich ja um eine
     # vom Benutzer angepasste Vorlage handeln.
 
-    qkanLayers = listQkanLayers(
+    qkanLayers = list_qkan_layers(
         projectTemplate
     )  # Liste aller Layernamen aus gewählter QGS-Vorlage
     # logger.debug(u'qkanLayers: {}'.format(qkanLayers))
@@ -184,7 +184,9 @@ def layersadapt(
                 uri.setDatabase(database_QKan)
                 uri.setDataSource(sql, table, geom_column)
                 try:
-                    layer = QgsVectorLayer(uri.uri(), layername, enums.QKanDBChoice.SPATIALITE.value)
+                    layer = QgsVectorLayer(
+                        uri.uri(), layername, enums.QKanDBChoice.SPATIALITE.value
+                    )
                 except BaseException as err:
                     fehlermeldung(
                         "Fehler in k_layersadapt (1): {}".format(err),
@@ -256,13 +258,13 @@ def layersadapt(
     elif anpassen_auswahl == enums.SelectedLayers.NONE:
         selectedLayerNames = []
     else:
-        logger.error(f'Fehler in anpassen_auswahl: {anpassen_auswahl}\nWert ist nicht definiert (enums.py)')
+        logger.error(
+            f"Fehler in anpassen_auswahl: {anpassen_auswahl}\nWert ist nicht definiert (enums.py)"
+        )
 
     logger.debug("k_layersadapt (2), selectedLayerNames: {}".format(selectedLayerNames))
 
-    layerNotQkanMeldung = (
-        False
-    )  # Am Schluss erscheint ggfs. eine Meldung, dass Nicht-QKan-Layer gefunden wurden.
+    layerNotQkanMeldung = False  # Am Schluss erscheint ggfs. eine Meldung, dass Nicht-QKan-Layer gefunden wurden.
 
     # Alle (ausgewählten) Layer werden jetzt anhand der entsprechenden Layer des Template-Projektes angepasst
 
@@ -305,14 +307,14 @@ def layersadapt(
             continue  # Layer ist in Projekt-Templatenicht vorhanden...
 
         if anpassen_ProjektMakros:
-            nodes = qgsxml.findall('properties/Macros')
+            nodes = qgsxml.findall("properties/Macros")
             for node in nodes:
                 macros = node.findtext("pythonCode")
             project.writeEntry("Macros", "/pythonCode", macros)
 
         if anpassen_Datenbankanbindung:
             datasource = layer.source()
-            dbname, table, geom, sql = get_qkanlayerAttributes(datasource)
+            dbname, table, geom, sql = get_qkanlayer_attributes(datasource)
             # logger.debug(f"datasource: {datasource}")
             # logger.debug(f"\nDatenbankanbindung\n  dbname: {dbname}\n  table: {table}\n  geom: {geom}\n  sql: {sql}")
             if geom != "":
@@ -325,14 +327,16 @@ def layersadapt(
                 newdatasource = "dbname='{dbname}' table=\"{table}\" sql={sql}".format(
                     dbname=database_QKan, table=table, geom=geom, sql=sql
                 )
-            layer.setDataSource(newdatasource, layername, enums.QKanDBChoice.SPATIALITE.value)
+            layer.setDataSource(
+                newdatasource, layername, enums.QKanDBChoice.SPATIALITE.value
+            )
             logger.debug("\nAnbindung neue QKanDB: {}\n".format(newdatasource))
 
         if anpassen_Projektionssystem:
             # epsg-Code des Layers an angebundene Tabelle anpassen
             logger.debug("anpassen_Projektionssystem...")
             datasource = layer.source()
-            dbname, table, geom, sql = get_qkanlayerAttributes(datasource)
+            dbname, table, geom, sql = get_qkanlayer_attributes(datasource)
             # logger.debug(f"datasource: {datasource}")
             # logger.debug(f"\nDatenbankanbindung\n  dbname: {dbname}\n  table: {table}\n  geom: {geom}\n  sql: {sql}")
             logger.debug("Prüfe KBS von Tabelle {}".format(table))
@@ -378,7 +382,7 @@ def layersadapt(
             layer.setEditFormConfig(editFormConfig)
 
         if anpassen_Wertebeziehungen_in_Tabellen:
-            dictOfEditWidgets, displayExpression = getLayerConfigFromQgsTemplate(
+            dictOfEditWidgets, displayExpression = get_layer_config_from_qgs_template(
                 qgsxml, layername
             )
 
@@ -405,23 +409,34 @@ def layersadapt(
                     ews = QgsEditorWidgetSetup(type, options)
                     layer.setEditorWidgetSetup(idx, ews)
 
-            # Anpassen des Anzeige-Ausdrucks, nur wenn nicht schon anderweitig sinnvoll gesetzt. 
-            logger.debug(f'DisplayExpression zu Layer {layer.name()}: {layer.displayExpression()}\n')
-            if layer.displayExpression() in ('pk', '"pk"', '', """COALESCE("pk", '<NULL>')"""):
-                logger.debug(f'DisplayExpression zu Layer {layer.name()} gesetzt: {displayExpression}\n')
+            # Anpassen des Anzeige-Ausdrucks, nur wenn nicht schon anderweitig sinnvoll gesetzt.
+            logger.debug(
+                f"DisplayExpression zu Layer {layer.name()}: {layer.displayExpression()}\n"
+            )
+            if layer.displayExpression() in (
+                "pk",
+                '"pk"',
+                "",
+                """COALESCE("pk", '<NULL>')""",
+            ):
+                logger.debug(
+                    f"DisplayExpression zu Layer {layer.name()} gesetzt: {displayExpression}\n"
+                )
                 layer.setDisplayExpression(displayExpression)
 
     # Koordinaten in einer eigenen Spalte, nur für Layer Schächte, Auslässe, Speicher
-    for layername in ['Schächte', 'Auslässe', 'Speicher']:
+    for layername in ["Schächte", "Auslässe", "Speicher"]:
         # Expressions aus Projektvorlage (xml) lesen
-        tagLayer = f"projectlayers/maplayer[layername='{layername}']/expressionfields/field"
+        tagLayer = (
+            f"projectlayers/maplayer[layername='{layername}']/expressionfields/field"
+        )
         qgsLayers = qgsxml.findall(tagLayer)
-        exprList = {}                           # zur Vermeidung von Doppelungen
+        exprList = {}  # zur Vermeidung von Doppelungen
         for lay in qgsLayers:
-            expression = lay.attrib['expression']
-            name = lay.attrib['name']
-            typeName = lay.attrib['typeName']
-            comment = lay.attrib['comment']
+            expression = lay.attrib["expression"]
+            name = lay.attrib["name"]
+            typeName = lay.attrib["typeName"]
+            comment = lay.attrib["comment"]
             exprList[name] = [expression, typeName, comment]
 
         # Expressions in Attributtabelle einfügen
@@ -429,12 +444,20 @@ def layersadapt(
         layer = project.mapLayersByName(layername)[0]
         for name in exprList.keys():
             expression, typeName, comment = exprList[name]
-            if typeName == 'double precision':
-                layer.addExpressionField(expression, QgsField(name=name, type=QVariant.Double, comment=comment))
-            elif typeName == 'integer':
-                layer.addExpressionField(expression, QgsField(name=name, type=QVariant.Integer, comment=comment))
+            if typeName == "double precision":
+                layer.addExpressionField(
+                    expression,
+                    QgsField(name=name, type=QVariant.Double, comment=comment),
+                )
+            elif typeName == "integer":
+                layer.addExpressionField(
+                    expression,
+                    QgsField(name=name, type=QVariant.Integer, comment=comment),
+                )
             else:
-                Fehlermeldung('Programmfehler', f'Datentyp noch nicht programmiert: {typeName}')
+                Fehlermeldung(
+                    "Programmfehler", f"Datentyp noch nicht programmiert: {typeName}"
+                )
                 return False
 
     if layerNotInProjektMeldung:
@@ -446,15 +469,15 @@ def layersadapt(
     # meldung(u'Information zu den Layern', u'Es wurden Layer gefunden, die nicht zum QKan-Standard gehörten. Eine Liste steht in der LOG-Datei...')
 
     # Projektmakros
-    rltext = 'properties/Macros/pythonCode'
+    rltext = "properties/Macros/pythonCode"
     macrotext = qgsxml.findtext(rltext)
     project.writeEntry("Macros", "/pythonCode", macrotext)
 
     if aktualisieren_Schachttypen:
         # Schachttypen auswerten
-        evalNodeTypes(dbQK)  # in qkan.database.qkan_utils
+        eval_node_types(dbQK)  # in qkan.database.qkan_utils
 
-    project.setTitle("QKan Version {}".format(qgsVersion()))
+    project.setTitle("QKan Version {}".format(qgs_version()))
 
     # if status_neustart:
     # meldung("Achtung! Benutzerhinweis!", "Die Datenbank wurde geändert. Bitte QGIS-Projekt neu laden...")
@@ -463,7 +486,7 @@ def layersadapt(
     # Zoom auf alles
     if zoom_alles:
         # Tabellenstatistik aktualisieren, damit Zoom alles richtig funktioniert ...
-        sql = 'SELECT UpdateLayerStatistics()'
+        sql = "SELECT UpdateLayerStatistics()"
         if not dbQK.sql(sql, "dbQK: k_layersadapt (5)"):
             del dbQK
             return False
@@ -489,4 +512,5 @@ def layersadapt(
 
     return True
 
-#def dbAdapt(database_QKan):
+
+# def dbAdapt(database_QKan):

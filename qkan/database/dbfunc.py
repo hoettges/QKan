@@ -10,13 +10,15 @@ import datetime
 import logging
 import os
 import shutil
+from sqlite3 import Connection
+from typing import Any, List, Optional, Union, cast
 
+from qgis.core import Qgis, QgsVectorLayer
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.core import Qgis
 from qgis.utils import spatialite_connect
-
 from qkan import QKan
-from .qkan_database import createdbtables, dbVersion, versionolder
+
+from .qkan_database import createdbtables, db_version, versionolder
 from .qkan_utils import fehlermeldung, meldung
 
 __author__ = "Joerg Hoettges"
@@ -30,14 +32,13 @@ progress_bar = None
 
 
 # Pruefung, ob in Tabellen oder Spalten unerlaubte Zeichen enthalten sind
-def checkchars(text):
-    """ Pruefung auf nicht erlaubte Zeichen in Tabellen- und Spaltennamen.
+def checkchars(text: str) -> bool:
+    """
+    Pruefung auf nicht erlaubte Zeichen in Tabellen- und Spaltennamen.
 
-        :param text: zu pruefende Bezeichnung einer Tabelle oder Tabellenspalte
-        :type text: Boolean
+    :param text: zu pruefende Bezeichnung einer Tabelle oder Tabellenspalte
 
-        :returns: Testergebnis: True = alles o.k.
-        :rtype: logical
+    :returns: Testergebnis: True = alles o.k.
     """
 
     return not (max([ord(t) > 127 for t in text]) or ("." in text) or ("-" in text))
@@ -46,22 +47,28 @@ def checkchars(text):
 class DBConnection:
     """SpatiaLite Datenbankobjekt"""
 
-    def __init__(self, dbname=None, tabObject=None, epsg: int=25832, qkanDBUpdate=False):
+    def __init__(
+        self,
+        dbname: Optional[str] = None,
+        tab_object: Optional[QgsVectorLayer] = None,
+        epsg: int = 25832,
+        qkan_db_update: bool = False,
+    ):
         """Constructor. Überprüfung, ob die QKan-Datenbank die aktuelle Version hat, mit dem Attribut isCurrentVersion. 
 
         :param dbname:      Pfad zur SpatiaLite-Datenbankdatei. Falls nicht vorhanden, 
                             wird es angelegt.
         :type dbname:        String
 
-        :param tabObject:   Vectorlayerobjekt, aus dem die Parameter zum 
+        :param tab_object:   Vectorlayerobjekt, aus dem die Parameter zum 
                             Zugriff auf die SpatiaLite-Tabelle ermittelt werden.
-        :type tabObject:    QgsVectorLayer
+        :type tab_object:    QgsVectorLayer
 
         :param epsg:        EPSG-Code aller Tabellen in einer neuen Datenbank
 
         :qkanDBUpdate:      Bei veralteter Datenbankversion automatisch Update durchführen. Achtung:
                             Nach Durchführung muss k_layersadapt mindestens mit den Optionen 
-        :type qkanDBUpdate: Boolean
+        :type qkan_db_update: Boolean
 
         
         public attributes:
@@ -76,7 +83,7 @@ class DBConnection:
 
         # Übernahme einiger Attribute in die Klasse
         self.dbname = dbname
-        self.epsg = epsg
+        self.epsg: Optional[int] = epsg
 
         # Die nachfolgenden Klassenobjekte dienen dazu, gleichartige (sqlidtext) SQL-Debug-Meldungen
         # nur einmal pro Sekunde zu erzeugen.
@@ -85,7 +92,7 @@ class DBConnection:
         self.sqltext = ""
         self.sqlcount = 0
 
-        self.actversion = dbVersion()
+        self.actversion = db_version()
 
         # QKan-Datenbank ist auf dem aktuellen Stand.
         self.isCurrentVersion = True
@@ -120,9 +127,9 @@ class DBConnection:
                 )
                 # Versionsprüfung
 
-                if not self.checkVersion():
+                if not self.check_version():
                     logger.debug("dbfunc: Datenbank ist nicht aktuell")
-                    if qkanDBUpdate:
+                    if qkan_db_update:
                         logger.debug(
                             "dbfunc: Update aktiviert. Deshalb wird Datenbank aktualisiert"
                         )
@@ -147,9 +154,9 @@ class DBConnection:
                     level=Qgis.Info,
                 )
 
-                datenbank_QKan_Template = os.path.join(QKan.template_dir, "qkan.sqlite")
+                datenbank_qkan_template = os.path.join(QKan.template_dir, "qkan.sqlite")
                 try:
-                    shutil.copyfile(datenbank_QKan_Template, dbname)
+                    shutil.copyfile(datenbank_qkan_template, dbname)
 
                     self.consl = spatialite_connect(database=dbname)
                     self.cursl = self.consl.cursor()
@@ -158,7 +165,9 @@ class DBConnection:
                     # self.cursl.execute(sql)
 
                     QKan.instance.iface.messageBar().pushMessage(
-                        "Information", "SpatiaLite-Datenbank ist erstellt!", level=Qgis.Info
+                        "Information",
+                        "SpatiaLite-Datenbank ist erstellt!",
+                        level=Qgis.Info,
                     )
                     if not createdbtables(
                         self.consl, self.cursl, self.actversion, self.epsg
@@ -166,9 +175,9 @@ class DBConnection:
                         fehlermeldung(
                             "Fehler",
                             "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
-                    )
+                        )
                 except BaseException as err:
-                    logger.debug(f'Datenbank ist nicht vorhanden: {dbname}')
+                    logger.debug(f"Datenbank ist nicht vorhanden: {dbname}")
                     fehlermeldung(
                         "Fehler in dbfunc.DBConnection:\n{}\n".format(err),
                         "Kopieren von: {}\nnach: {}\n nicht möglich".format(
@@ -177,8 +186,8 @@ class DBConnection:
                     )
                     self.connected = False  # Verbindungsstatus zur Kontrolle
                     self.consl = None
-        elif tabObject is not None:
-            tabconnect = tabObject.publicSource()
+        elif tab_object is not None:
+            tabconnect = tab_object.publicSource()
             t_db, t_tab, t_geo, t_sql = tuple(tabconnect.split())
             dbname = t_db.split("=")[1].strip("'")
             self.tabname = t_tab.split("=")[1].strip('"')
@@ -216,33 +225,33 @@ class DBConnection:
             self.connected = False  # Verbindungsstatus zur Kontrolle
             self.consl = None
 
-    def __del__(self):
+    def __del__(self) -> None:
         """Destructor.
         
         Beendet die Datenbankverbindung.
         """
         try:
-            self.consl.close()
+            cast(Connection, self.consl).close()
             logger.debug(f"Verbindung zur Datenbank {self.dbname} wieder geloest.")
-        except BaseException as err:
+        except BaseException:
             fehlermeldung(
                 "Fehler in dbfunc.DBConnection:",
                 f"Verbindung zur Datenbank {self.dbname} konnte nicht geloest werden.\n",
             )
 
-    def attrlist(self, tablenam):
+    def attrlist(self, tablenam: str) -> Union[List[str]]:
         """Gibt Spaltenliste zurück."""
 
         sql = 'PRAGMA table_info("{0:s}")'.format(tablenam)
         if not self.sql(sql, "dbfunc.DBConnection.attrlist fuer {}".format(tablenam)):
-            return False
+            return []
 
         daten = self.cursl.fetchall()
         # lattr = [el[1] for el in daten if el[2]  == 'TEXT']
         lattr = [el[1] for el in daten]
         return lattr
 
-    def getepsg(self):
+    def getepsg(self) -> Optional[int]:
         """ Feststellen des EPSG-Codes der Datenbank"""
 
         sql = """SELECT srid
@@ -258,10 +267,16 @@ class DBConnection:
                 "Fehler in dbfunc.DBConnection.getepsg (2)",
                 "Konnte EPSG nicht ermitteln",
             )
-        epsg = data[0]
+        epsg: int = data[0]
         return epsg
 
-    def sql(self, sql, sqlinfo="allgemein", repeatmessage=False, transaction=False):
+    def sql(
+        self,
+        sql: str,
+        sqlinfo: str = "allgemein",
+        repeatmessage: bool = False,
+        transaction: bool = False,
+    ) -> bool:
         # TODO: Safe SQL queries with parameter binding
         """Fuehrt eine SQL-Abfrage aus."""
 
@@ -294,37 +309,37 @@ class DBConnection:
             # self.cursl.commit("ROLLBACK;")
             return False
 
-    def fetchall(self):
+    def fetchall(self) -> List[Any]:
         """Gibt alle Daten aus der vorher ausgeführten SQL-Abfrage zurueck"""
 
-        daten = self.cursl.fetchall()
+        daten: List[Any] = self.cursl.fetchall()
         return daten
 
-    def fetchone(self):
+    def fetchone(self) -> Any:
         """Gibt einen Datensatz aus der vorher ausgeführten SQL-Abfrage zurueck"""
 
         daten = self.cursl.fetchone()
         return daten
 
-    def fetchnext(self):
+    def fetchnext(self) -> Any:
         """Gibt den naechsten Datensatz aus der vorher ausgeführten SQL-Abfrage zurueck"""
 
         daten = self.cursl.fetchnext()
         return daten
 
-    def commit(self):
+    def commit(self) -> None:
         """Schliesst eine SQL-Abfrage ab"""
 
         self.consl.commit()
 
     # Versionskontrolle der QKan-Datenbank
 
-    def rowcount(self):
+    def rowcount(self) -> int:
         """Gibt die Anzahl zuletzt geänderte Datensätze zurück"""
 
-        return self.cursl.rowcount
+        return cast(int, self.cursl.rowcount)
 
-    def checkVersion(self):
+    def check_version(self) -> bool:
         """Prüft die Version der Datenbank. 
 
             :returns: Anpassung erfolgreich: True = alles o.k.
@@ -370,28 +385,25 @@ class DBConnection:
 
         logger.debug("0 - versiondbQK = {}".format(self.versiondbQK))
 
-        return self.actversion == self.versiondbQK
+        return cast(bool, self.actversion == self.versiondbQK)
 
     # Ändern der Attribute einer Tabelle
 
-    def alterTable(self, tabnam, attributesNew, attributesDel=None):
+    def alter_table(
+        self, tabnam: str, attributes_new: List[str], attributes_del: List[str] = None,
+    ) -> bool:
         """Changes attribute columns in QKan tables except geom columns.
 
         :tabnam:                Name der Tabelle
-        :type:                  string
-
-        :attributesNew:         zukünftige Attribute, Syntax wie in Create-Befehl, ohne Primärschlüssel
-        :type:                  string
-
-        :attributesDel:         zu entfernende Attribute
-        :type:                  string
+        :attributes_new:         zukünftige Attribute, Syntax wie in Create-Befehl, ohne Primärschlüssel
+        :attributes_del:         zu entfernende Attribute
 
         Ändert die Tabelle so, dass sie die Attribute aus attributesNew in der gegebenen
         Reihenfolge sowie die in der bestehenden Tabelle vom Benutzer hinzugefügten Attribute
         enthält. Nur falls attributesDel Attribute enthält, werden diese nicht übernommen.
 
         example:
-        alterTable('flaechen', 
+        alter_table('flaechen',
             [   'flnam TEXT',
                 'haltnam TEXT',
                 'ueberfluessig1 REAL',
@@ -406,13 +418,14 @@ class DBConnection:
         # Schema:
         # - attrSet.. ist ein Set, das nur die Attributnamen enthält
         # - attrDict.. ist ein Dict, das als Key den Attributnamen und als Wert die SQL-Definitionszeile enthält
-        # - ..Old enthält die Attribute der bestehenden Tabelle inkl. der Benutzerattribute, ohne Primärschlüssel sowie Geoobjekte
+        # - ..Old enthält die Attribute der bestehenden Tabelle inkl. der Benutzerattribute,
+        #     ohne Primärschlüssel sowie Geoobjekte
         # - ..New enthält die Attribute nach dem Update ohne Benutzerattribute, Primärschlüssel sowie Geoattribute
         # - ..Diff enthält die zu übertragenden Attribute inkl. Geoattribute
 
         # - attrPk:string enthält den Namen des Primärschlüssels
 
-        geoType = [
+        geo_type = [
             None,
             "POINT",
             "LINESTRING",
@@ -425,11 +438,11 @@ class DBConnection:
         # 1. bestehende Tabelle
         # Benutzerdefinierte Felder müssen übernommen werden
         sql = f"PRAGMA table_info('{tabnam}')"
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (1)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (1)", transaction=False):
             return False
         data = self.fetchall()
-        attrPk = [el[1] for el in data if el[5] == 1][0]
-        attrDictOld = dict(
+        attr_pk = [el[1] for el in data if el[5] == 1][0]
+        attr_dict_old = dict(
             [
                 (
                     el[1],
@@ -442,161 +455,164 @@ class DBConnection:
                 if el[5] == 0
             ]
         )
-        attrSetOld = set(attrDictOld.keys())
+        attr_set_old = set(attr_dict_old.keys())
 
-        attrSetDel = set(attributesDel) if attributesDel is not None else set([])
+        attr_set_del = set(attributes_del) if attributes_del is not None else set([])
 
         # Geometrieattribute
         sql = f"""SELECT f_geometry_column, geometry_type, srid, coord_dimension, spatial_index_enabled 
                     FROM geometry_columns WHERE f_table_name = '{tabnam}'"""
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (2)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (2)", transaction=False):
             return False
         data = self.fetchall()
-        attrDictGeo = dict(
-            [(el[0], f"'{el[0]}', {el[2]}, '{geoType[el[1]]}', {el[3]}") for el in data]
+        attr_dict_geo = dict(
+            [
+                (el[0], f"'{el[0]}', {el[2]}, '{geo_type[el[1]]}', {el[3]}")
+                for el in data
+            ]
         )
-        attrSetGeo = set(attrDictGeo.keys())
+        attr_set_geo = set(attr_dict_geo.keys())
 
-        attrSetNew = {el.strip().split(" ", maxsplit=1)[0] for el in attributesNew}
+        attr_set_new = {el.strip().split(" ", maxsplit=1)[0] for el in attributes_new}
 
         # Hinzufügen der Benutzerattribute
-        attrSetNew |= attrSetOld
+        attr_set_new |= attr_set_old
         # Entfernen von Primärschlüssel, Geoattributen und zu Löschenden Attributen
-        attrSetNew -= {attrPk}
-        attrSetNew -= attrSetGeo
-        attrSetNew -= attrSetDel
+        attr_set_new -= {attr_pk}
+        attr_set_new -= attr_set_geo
+        attr_set_new -= attr_set_del
 
         # Attribute zur Datenübertragung zwischen alter und neuer Tabelle.
-        attrSetBoth = set(attrSetOld) & set(attrSetNew)
-        attrSetBoth |= {attrPk}
-        attrSetBoth |= attrSetGeo
+        attr_set_both = set(attr_set_old) & set(attr_set_new)
+        attr_set_both |= {attr_pk}
+        attr_set_both |= attr_set_geo
 
         # Zusammenstellen aller Attribute. Begonnen wird mit dem Primärschlüssel
-        attrDictNew = {attrPk: f"{attrPk} INTEGER PRIMARY KEY"}
+        attr_dict_new = {attr_pk: f"{attr_pk} INTEGER PRIMARY KEY"}
         # Zusammenstellen aller Attribute in der neuen Tabelle inkl. Benutzerattributen
-        for el in attributesNew:
+        for el in attributes_new:
             attr = el.strip().split(" ")[0].strip()
             typ = el.strip()
-            attrDictNew[attr] = typ
+            attr_dict_new[attr] = typ
         # Hinzufügen aller Attribute der bisherigen Tabelle (dies umfasst auch die Benutzerattribute)
-        for attr in attrSetOld:
-            if attr not in attrDictNew:
-                attrDictNew[attr] = attrDictOld[attr]
+        for attr in attr_set_old:
+            if attr not in attr_dict_new:
+                attr_dict_new[attr] = attr_dict_old[attr]
         # Entfernen der zu entfernenden Attribute:
-        for attr in attrSetDel:
-            if attr in attrDictNew:
-                del attrDictNew[attr]
+        for attr in attr_set_del:
+            if attr in attr_dict_new:
+                del attr_dict_new[attr]
         # Zur Sicherheit: Entfernen aller Geoattribute
-        for attr in attrSetGeo:
-            if attr in attrDictNew:
-                del attrDictNew[attr]
+        for attr in attr_set_geo:
+            if attr in attr_dict_new:
+                del attr_dict_new[attr]
 
         # Attribute der neuen Tabelle als String für SQL-Anweisung
-        attrTextNew = ",\n".join(attrDictNew.values())
-        logger.debug(f"dbfunc.DBConnection.alterTable - attrTextNew:{attrTextNew}")
+        attr_text_new = ",\n".join(attr_dict_new.values())
+        logger.debug(f"dbfunc.DBConnection.alter_table - attr_text_new:{attr_text_new}")
 
         # 0. Foreign key constrain deaktivieren
         sql = "PRAGMA foreign_keys=OFF;"
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (3)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (3)", transaction=False):
             return False
 
         # 1. Transaktion starten
         sql = "BEGIN TRANSACTION;"
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (4)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (4)", transaction=False):
             return False
 
         # 2. Indizes und Trigger speichern
         sql = f"""SELECT type, sql 
                 FROM sqlite_master 
                 WHERE tbl_name='{tabnam}' AND (type = 'trigger' OR type = 'index')"""
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (5)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (5)", transaction=False):
             return False
-        triggers = [el[1] for el in self.fetchall()]
+        # triggers = [el[1] for el in self.fetchall()]
 
         # 2.1. Temporäre Hilfstabelle erstellen
-        sql = f"CREATE TABLE IF NOT EXISTS {tabnam}_t ({attrTextNew});"
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (6)", transaction=False):
+        sql = f"CREATE TABLE IF NOT EXISTS {tabnam}_t ({attr_text_new});"
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (6)", transaction=False):
             return False
 
         # 2.2. Geo-Attribute in Tabelle ergänzen
-        for attr in attrSetGeo:
-            sql = f"""SELECT AddGeometryColumn('{tabnam}_t', {attrDictGeo[attr]})"""
+        for attr in attr_set_geo:
+            sql = f"""SELECT AddGeometryColumn('{tabnam}_t', {attr_dict_geo[attr]})"""
             if not self.sql(
-                sql, "dbfunc.DBConnection.alterTable (7)", transaction=False
+                sql, "dbfunc.DBConnection.alter_table (7)", transaction=False
             ):
                 return False
 
         # 3. Hilfstabelle entleeren
         sql = f"DELETE FROM {tabnam}_t"
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (8)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (8)", transaction=False):
             return False
 
         # 4. Daten aus Originaltabelle übertragen, dabei nur gemeinsame Attribute berücksichtigen
-        sql = f"""INSERT INTO {tabnam}_t ({', '.join(attrSetBoth)})
-                SELECT {', '.join(attrSetBoth)}
+        sql = f"""INSERT INTO {tabnam}_t ({', '.join(attr_set_both)})
+                SELECT {', '.join(attr_set_both)}
                 FROM {tabnam};"""
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (9)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (9)", transaction=False):
             return False
 
         # 5.1. Löschen der Geoobjektattribute
-        for attr in attrSetGeo:
+        for attr in attr_set_geo:
             sql = f"SELECT DiscardGeometryColumn('{tabnam}','{attr}')"
             if not self.sql(
-                sql, "dbfunc.DBConnection.alterTable (10)", transaction=False
+                sql, "dbfunc.DBConnection.alter_table (10)", transaction=False
             ):
                 return False
 
         # 5.2. Löschen der Tabelle
         sql = f"DROP TABLE {tabnam};"
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (11)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (11)", transaction=False):
             return False
 
         # 6.1 Geänderte Tabelle erstellen
-        sql = f"""CREATE TABLE {tabnam} ({attrTextNew});"""
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (12)", transaction=False):
+        sql = f"""CREATE TABLE {tabnam} ({attr_text_new});"""
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (12)", transaction=False):
             return False
 
         # 6.2. Geo-Attribute in Tabelle ergänzen und Indizes erstellen
-        for attr in attrSetGeo:
-            sql = f"""SELECT AddGeometryColumn('{tabnam}', {attrDictGeo[attr]})"""
+        for attr in attr_set_geo:
+            sql = f"""SELECT AddGeometryColumn('{tabnam}', {attr_dict_geo[attr]})"""
             if not self.sql(
-                sql, "dbfunc.DBConnection.alterTable (13)", transaction=False
+                sql, "dbfunc.DBConnection.alter_table (13)", transaction=False
             ):
                 return False
             sql = f"""SELECT CreateSpatialIndex('{tabnam}', '{attr}')"""
             if not self.sql(
-                sql, "dbfunc.DBConnection.alterTable (14)", transaction=False
+                sql, "dbfunc.DBConnection.alter_table (14)", transaction=False
             ):
                 return False
 
         # 7. Daten aus Hilfstabelle übertragen, dabei nur gemeinsame Attribute berücksichtigen
-        sql = f"""INSERT INTO {tabnam} ({', '.join(attrSetBoth)})
-                SELECT {', '.join(attrSetBoth)}
+        sql = f"""INSERT INTO {tabnam} ({', '.join(attr_set_both)})
+                SELECT {', '.join(attr_set_both)}
                 FROM {tabnam}_t;"""
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (15)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (15)", transaction=False):
             return False
 
         # 8.1. Löschen der Geoobjektattribute der Hilfstabelle
-        for attr in attrSetGeo:
+        for attr in attr_set_geo:
             sql = f"SELECT DiscardGeometryColumn('{tabnam}_t','{attr}')"
             if not self.sql(
-                sql, "dbfunc.DBConnection.alterTable (16)", transaction=False
+                sql, "dbfunc.DBConnection.alter_table (16)", transaction=False
             ):
                 return False
 
         # 9. Löschen der Hilfstabelle
         sql = """DROP TABLE {t}_t;""".format(t=tabnam)
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (17)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (17)", transaction=False):
             return False
 
         # 9. Indizes und Trigger wiederherstellen
         # for sql in triggers:
-        #     if not self.sql(sql, 'dbfunc.DBConnection.alterTable (18)', transaction=False):
+        #     if not self.sql(sql, 'dbfunc.DBConnection.alter_table (18)', transaction=False):
         #         return False
 
         # 10. Verify key constraints
         sql = "PRAGMA foreign_key_check"
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (19)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (19)", transaction=False):
             return False
 
         # 11. Transaktion abschließen
@@ -604,12 +620,14 @@ class DBConnection:
 
         # 12. Foreign key constrain wieder aktivieren
         sql = "PRAGMA foreign_keys=ON;"
-        if not self.sql(sql, "dbfunc.DBConnection.alterTable (20)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (20)", transaction=False):
             return False
+
+        return True
 
     # Aktualisierung der QKan-Datenbank auf aktuellen Stand
 
-    def updateversion(self):
+    def updateversion(self) -> bool:
         """Aktualisiert die QKan-Datenbank auf den aktuellen Stand. 
 
            Es werden die nötigen Anpassungen vorgenommen und die Versionsnummer jeweils aktualisiert.
@@ -619,8 +637,7 @@ class DBConnection:
         """
 
         # Nur wenn Stand der Datenbank nicht aktuell
-        if not self.checkVersion():
-
+        if not self.check_version():
             self.versionlis = [
                 int(el.replace("a", "").replace("b", "").replace("c", ""))
                 for el in self.versiondbQK.split(".")
@@ -829,10 +846,14 @@ class DBConnection:
                     ),
                     """DELETE FROM flaechen_t""",
                     """INSERT INTO flaechen_t 
-                            (      "flnam", "haltnam", "neigkl", "he_typ", "speicherzahl", "speicherkonst", "fliesszeit", "fliesszeitkanal",
-                                   "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom")
-                            SELECT "flnam", "haltnam", "neigkl", "he_typ", "speicherzahl", "speicherkonst", "fliesszeit", "fliesszeitkanal",
-                                   "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom"
+                            (
+                            "flnam", "haltnam", "neigkl", "he_typ", "speicherzahl", "speicherkonst", "fliesszeit",
+                            "fliesszeitkanal", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", 
+                            "kommentar", "createdat", "geom"
+                            )
+                            SELECT "flnam", "haltnam", "neigkl", "he_typ", "speicherzahl", "speicherkonst", 
+                            "fliesszeit", "fliesszeitkanal", "teilgebiet", "regenschreiber", "abflussparameter", 
+                            "aufteilen", "kommentar", "createdat", "geom"
                             FROM "flaechen";""",
                     """SELECT DiscardGeometryColumn('flaechen','geom')""",
                     """DROP TABLE flaechen;""",
@@ -858,10 +879,13 @@ class DBConnection:
                     ),
                     """SELECT CreateSpatialIndex('flaechen','geom')""",
                     """INSERT INTO flaechen 
-                            (      "flnam", "haltnam", "neigkl", "he_typ", "speicherzahl", "speicherkonst", "fliesszeit", "fliesszeitkanal",
-                                   "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom")
-                            SELECT "flnam", "haltnam", "neigkl", "he_typ", "speicherzahl", "speicherkonst", "fliesszeit", "fliesszeitkanal",
-                                   "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom"
+                            (
+                            "flnam", "haltnam", "neigkl", "he_typ", "speicherzahl", "speicherkonst", "fliesszeit",
+                            "fliesszeitkanal", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", 
+                            "kommentar", "createdat", "geom")
+                            SELECT "flnam", "haltnam", "neigkl", "he_typ", "speicherzahl", "speicherkonst", 
+                            "fliesszeit", "fliesszeitkanal", "teilgebiet", "regenschreiber", "abflussparameter", 
+                            "aufteilen", "kommentar", "createdat", "geom"
                             FROM "flaechen_t";""",
                     """SELECT DiscardGeometryColumn('flaechen_t','geom')""",
                     """DROP TABLE flaechen_t;""",
@@ -1089,10 +1113,14 @@ class DBConnection:
                         self.epsg
                     ),
                     """DELETE FROM einleit_t""",
-                    """INSERT INTO einleit_t 
-                            (      "elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", "createdat", "geom")
-                            SELECT "elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", "createdat", "geom"
-                            FROM "einleit";""",
+                    """
+                    INSERT INTO einleit_t 
+                    ("elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", "createdat", 
+                    "geom")
+                    SELECT "elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", 
+                            "createdat", "geom"
+                    FROM "einleit";
+                    """,
                     """SELECT DiscardGeometryColumn('einleit','geom')""",
                     """DROP TABLE einleit;""",
                     """CREATE TABLE einleit (
@@ -1109,10 +1137,14 @@ class DBConnection:
                         self.epsg
                     ),
                     """SELECT CreateSpatialIndex('einleit','geom')""",
-                    """INSERT INTO einleit 
-                            (      "elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", "createdat", "geom")
-                            SELECT "elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", "createdat", "geom"
-                            FROM "einleit_t";""",
+                    """
+                    INSERT INTO einleit 
+                        ("elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", 
+                        "createdat", "geom")
+                    SELECT "elnam", "haltnam", "teilgebiet", "zufluss", "ew", "einzugsgebiet", "kommentar", 
+                            "createdat", "geom"
+                    FROM "einleit_t";
+                    """,
                     """SELECT DiscardGeometryColumn('einleit_t','geom')""",
                     """DROP TABLE einleit_t;""",
                 ]
@@ -1233,7 +1265,11 @@ class DBConnection:
                             ON lf.flnam = fl.flnam
                             WHERE fl.aufteilen <> "ja" OR fl.aufteilen IS NULL
                             GROUP BY fl.flnam)
-                        SELECT pk, anzahl, CASE WHEN anzahl > 1 THEN 'mehrfach vorhanden' WHEN flaech_nam IS NULL THEN 'Keine Fläche' WHEN linkfl_haltnam IS NULL THEN  'Keine Haltung' ELSE 'o.k.' END AS fehler
+                        SELECT pk, anzahl, CASE 
+                                                WHEN anzahl > 1 THEN 'mehrfach vorhanden'
+                                                WHEN flaech_nam IS NULL THEN 'Keine Fläche'
+                                                WHEN linkfl_haltnam IS NULL THEN  'Keine Haltung' ELSE 'o.k.'
+                                            END AS fehler
                         FROM lfok"""
 
                 if not self.sql(sql, "dbfunc.DBConnection.version (2.4.9-2)"):
@@ -1366,7 +1402,8 @@ class DBConnection:
 
             # ------------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [2, 5, 7]):
-                # Tabelle linkfl um die Felder [abflusstyp, speicherzahl, speicherkonst, fliesszeitkanal, fliesszeitflaeche]
+                # Tabelle linkfl um die Felder [abflusstyp, speicherzahl, speicherkonst,
+                #                               fliesszeitkanal, fliesszeitflaeche]
                 # erweitern. Wegen der Probleme mit der Anzeige in QGIS wird die Tabelle dazu umgespeichert.
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
@@ -1465,7 +1502,8 @@ class DBConnection:
                     return False
                 self.commit()
 
-                # Tabelle flaechen um die Felder [abflusstyp, speicherzahl, speicherkonst, fliesszeitkanal, fliesszeitflaeche]
+                # Tabelle flaechen um die Felder [abflusstyp, speicherzahl, speicherkonst,
+                #                                 fliesszeitkanal, fliesszeitflaeche]
                 # bereinigen. Wegen der Probleme mit der Anzeige in QGIS wird die Tabelle dazu umgespeichert.
 
                 # 1. Schritt: Trigger für zu ändernde Tabelle abfragen und in triggers speichern
@@ -1494,10 +1532,14 @@ class DBConnection:
                         self.epsg
                     ),
                     """DELETE FROM flaechen_t""",
-                    """INSERT INTO flaechen_t 
-                            (      "flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom")
-                            SELECT "flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom"
-                            FROM "flaechen";""",
+                    """
+                    INSERT INTO flaechen_t 
+                        ("flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen",
+                        "kommentar", "createdat", "geom")
+                    SELECT "flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter",
+                            "aufteilen", "kommentar", "createdat", "geom"
+                    FROM "flaechen";
+                    """,
                     """SELECT DiscardGeometryColumn('flaechen','geom')""",
                     """DROP TABLE flaechen;""",
                     """CREATE TABLE flaechen (
@@ -1515,10 +1557,14 @@ class DBConnection:
                         self.epsg
                     ),
                     """SELECT CreateSpatialIndex('flaechen','geom')""",
-                    """INSERT INTO flaechen 
-                            (      "flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom")
-                            SELECT "flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", "aufteilen", "kommentar", "createdat", "geom"
-                            FROM "flaechen_t";""",
+                    """
+                    INSERT INTO flaechen 
+                        ("flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", 
+                        "aufteilen", "kommentar", "createdat", "geom")
+                    SELECT "flnam", "haltnam", "neigkl", "teilgebiet", "regenschreiber", "abflussparameter", 
+                            "aufteilen", "kommentar", "createdat", "geom"
+                    FROM "flaechen_t";
+                    """,
                     """SELECT DiscardGeometryColumn('flaechen_t','geom')""",
                     """DROP TABLE flaechen_t;""",
                 ]
@@ -1969,7 +2015,7 @@ class DBConnection:
                         "pumpen.teilgebiet ist nicht in: {}".format(str(attrlis))
                     )
 
-                self.alterTable(
+                self.alter_table(
                     "pumpen",
                     [
                         "pnam TEXT",
@@ -2003,7 +2049,7 @@ class DBConnection:
                         "wehre.teilgebiet ist nicht in: {}".format(str(attrlis))
                     )
 
-                self.alterTable(
+                self.alter_table(
                     "wehre",
                     [
                         "wnam TEXT",
@@ -2116,15 +2162,13 @@ class DBConnection:
 
                 # Initialisierung
 
-                daten = [
+                for nam, typ in [
                     ["$Default_Unbef", "Grünfläche"],
                     ["Gebäude", "Gebäude"],
                     ["Straße", "Straße"],
                     ["Grünfläche", "Grünfläche"],
                     ["Gewässer", "Gewässer"],
-                ]
-
-                for nam, typ in daten:
+                ]:
                     sql = """UPDATE abflussparameter
                              SET flaechentyp = '{typ}'
                              WHERE apnam = '{nam}'
@@ -2146,14 +2190,12 @@ class DBConnection:
 
                 # Initialisierung
 
-                daten = [
+                for bez, num in [
                     ["Gebäude", 0],
                     ["Straße", 1],
                     ["Grünfläche", 2],
                     ["Gewässer", 3],
-                ]
-
-                for bez, num in daten:
+                ]:
                     sql = """INSERT INTO flaechentypen
                              (bezeichnung, he_nr) Values ('{bez}', {num})""".format(
                         bez=bez, num=num
@@ -2219,12 +2261,13 @@ class DBConnection:
                         ZuordnungGesperrt SMALLINT, 
                         LastModified TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')), 
                         Kommentar TEXT)""",
-                    """SELECT AddGeometryColumn('flaechen_he8','Geometry', -1,'MULTIPOLYGON',2)"""]
+                    """SELECT AddGeometryColumn('flaechen_he8','Geometry', -1,'MULTIPOLYGON',2)""",
+                ]
 
                 for sql in sqllis:
-                    if not self.sql(sql, 'dbfunc.DBConnection.version (3.0.8-1)'):
+                    if not self.sql(sql, "dbfunc.DBConnection.version (3.0.8-1)"):
                         return False
-                    
+
                 self.commit()
 
                 # Versionsnummer hochsetzen
@@ -2300,7 +2343,7 @@ class DBConnection:
             # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [3, 1, 3]):
 
-                # Flächen können auch an Schächte angeschlossen sein. Dies gilt bei 
+                # Flächen können auch an Schächte angeschlossen sein. Dies gilt bei
                 # folgenden Programmen:
                 # SWMM, Mike Urban
 
@@ -2360,7 +2403,7 @@ class DBConnection:
 
             # ------------------------------------------------------------------------------------
 
-                # Version 3.1.4: Trigger wurden verworfen, deshalb Zusatz unter Version 3.1.5
+            # Version 3.1.4: Trigger wurden verworfen, deshalb Zusatz unter Version 3.1.5
 
             # ------------------------------------------------------------------------------------
             logger.debug(f"Version: {self.versionlis}")
@@ -2370,23 +2413,31 @@ class DBConnection:
                     logger.debug(f"Version 3.1.4 erkannt: {self.versionlis}")
                     # Trigger aus Version 3.1.4 wieder löschen
 
-                    if not self.sql("DROP TRIGGER create_missing_geoobject_haltungen",
-                                     "dbfunc.DBConnection.version (3.1.5-1"):
+                    if not self.sql(
+                        "DROP TRIGGER create_missing_geoobject_haltungen",
+                        "dbfunc.DBConnection.version (3.1.5-1",
+                    ):
                         return False
                     self.commit()
 
-                    if not self.sql("DROP TRIGGER create_missing_geoobject_schaechte",
-                                     "dbfunc.DBConnection.version (3.1.5-2"):
+                    if not self.sql(
+                        "DROP TRIGGER create_missing_geoobject_schaechte",
+                        "dbfunc.DBConnection.version (3.1.5-2",
+                    ):
                         return False
                     self.commit()
 
-                    if not self.sql("DROP TRIGGER create_missing_geoobject_pumpen",
-                                     "dbfunc.DBConnection.version (3.1.5-3"):
+                    if not self.sql(
+                        "DROP TRIGGER create_missing_geoobject_pumpen",
+                        "dbfunc.DBConnection.version (3.1.5-3",
+                    ):
                         return False
                     self.commit()
 
-                    if not self.sql("DROP TRIGGER create_missing_geoobject_wehre",
-                                     "dbfunc.DBConnection.version (3.1.5-4"):
+                    if not self.sql(
+                        "DROP TRIGGER create_missing_geoobject_wehre",
+                        "dbfunc.DBConnection.version (3.1.5-4",
+                    ):
                         return False
                     self.commit()
 
@@ -2404,10 +2455,11 @@ class DBConnection:
                         simstatus, 
                         kommentar, createdat
                       FROM schaechte;"""
-                if not self.sql(sql,
-                                "dbfunc.DBConnection.version (3.1.5-5)" + \
-                                "VIEW schaechte_data konnten nicht erstellt werden."
-                                ):
+                if not self.sql(
+                    sql,
+                    "dbfunc.DBConnection.version (3.1.5-5)"
+                    + "VIEW schaechte_data konnten nicht erstellt werden.",
+                ):
                     return False
                 self.commit()
 
@@ -2444,10 +2496,11 @@ class DBConnection:
                           )
                         );
                       END"""
-                if not self.sql(sql,
-                                "dbfunc.DBConnection.version (3.1.5-6)" + \
-                                "TRIGGER schaechte_insert_clipboard konnten nicht erstellt werden."
-                                ):
+                if not self.sql(
+                    sql,
+                    "dbfunc.DBConnection.version (3.1.5-6)"
+                    + "TRIGGER schaechte_insert_clipboard konnten nicht erstellt werden.",
+                ):
                     return False
                 self.commit()
 
@@ -2464,10 +2517,11 @@ class DBConnection:
                         entwart, rohrtyp, ks,
                         simstatus, kommentar, createdat
                       FROM haltungen;"""
-                if not self.sql(sql,
-                                "dbfunc.DBConnection.version (3.1.5-5)" + \
-                                "VIEW haltungen_data konnten nicht erstellt werden."
-                                ):
+                if not self.sql(
+                    sql,
+                    "dbfunc.DBConnection.version (3.1.5-5)"
+                    + "VIEW haltungen_data konnten nicht erstellt werden.",
+                ):
                     return False
                 self.commit()
 
@@ -2509,10 +2563,11 @@ class DBConnection:
                           schaechte AS schun
                         WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
                       END;"""
-                if not self.sql(sql,
-                                "dbfunc.DBConnection.version (3.1.5-6)" + \
-                                "TRIGGER haltungen_insert_clipboard konnten nicht erstellt werden."
-                                ):
+                if not self.sql(
+                    sql,
+                    "dbfunc.DBConnection.version (3.1.5-6)"
+                    + "TRIGGER haltungen_insert_clipboard konnten nicht erstellt werden.",
+                ):
                     return False
                 self.commit()
 
@@ -2527,10 +2582,11 @@ class DBConnection:
                         teilgebiet, simstatus, 
                         kommentar, createdat
                       FROM pumpen;"""
-                if not self.sql(sql,
-                                "dbfunc.DBConnection.version (3.1.5-5)" + \
-                                "VIEW haltungen_data konnten nicht erstellt werden."
-                                ):
+                if not self.sql(
+                    sql,
+                    "dbfunc.DBConnection.version (3.1.5-5)"
+                    + "VIEW haltungen_data konnten nicht erstellt werden.",
+                ):
                     return False
                 self.commit()
 
@@ -2558,10 +2614,11 @@ class DBConnection:
                           schaechte AS schun
                         WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
                       END;"""
-                if not self.sql(sql,
-                                "dbfunc.DBConnection.version (3.1.5-6)" + \
-                                "TRIGGER haltungen_insert_clipboard konnten nicht erstellt werden."
-                                ):
+                if not self.sql(
+                    sql,
+                    "dbfunc.DBConnection.version (3.1.5-6)"
+                    + "TRIGGER haltungen_insert_clipboard konnten nicht erstellt werden.",
+                ):
                     return False
                 self.commit()
 
@@ -2575,10 +2632,11 @@ class DBConnection:
                         teilgebiet, simstatus, 
                         kommentar, createdat
                       FROM wehre;"""
-                if not self.sql(sql,
-                                "dbfunc.DBConnection.version (3.1.5-5)" + \
-                                "VIEW haltungen_data konnten nicht erstellt werden."
-                                ):
+                if not self.sql(
+                    sql,
+                    "dbfunc.DBConnection.version (3.1.5-5)"
+                    + "VIEW haltungen_data konnten nicht erstellt werden.",
+                ):
                     return False
                 self.commit()
 
@@ -2604,10 +2662,11 @@ class DBConnection:
                           schaechte AS schun
                         WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
                       END;"""
-                if not self.sql(sql,
-                                "dbfunc.DBConnection.version (3.1.5-6)" + \
-                                "TRIGGER haltungen_insert_clipboard konnten nicht erstellt werden."
-                                ):
+                if not self.sql(
+                    sql,
+                    "dbfunc.DBConnection.version (3.1.5-6)"
+                    + "TRIGGER haltungen_insert_clipboard konnten nicht erstellt werden.",
+                ):
                     return False
                 self.commit()
 
@@ -2633,6 +2692,5 @@ class DBConnection:
                 )
                 return False
 
-            # Alles gut gelaufen...
-
-            return True
+        # Alles gut gelaufen...
+        return True

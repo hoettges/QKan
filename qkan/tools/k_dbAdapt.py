@@ -36,9 +36,7 @@ progress_bar = None
 
 
 def dbAdapt(
-    qkanDB: str,
-    projectFile: str,
-    qkan_project: QgsProject,
+    qkanDB: str, projectFile: str, qkan_project: QgsProject,
 ):
     """Aktualisiert die QKan-Datenbank, indem die Tabellenstruktur auf den aktuellen Stand
     gebracht wird.
@@ -62,7 +60,7 @@ def dbAdapt(
         qkan_project.write()
 
     dbQK = DBConnection(
-        dbname=qkanDB, qkanDBUpdate=True
+        dbname=qkanDB, qkan_db_update=True
     )  # Datenbankobjekt zur Aktualisierung öffnen
 
     if not dbQK.connected:
