@@ -554,7 +554,7 @@ def check_flaechenbilanz(db_qkan: "FBConnection") -> bool:
     return True
 
 
-def eval_node_types(db_qkan: DBConnection) -> None:
+def eval_node_types(db_qkan: "DBConnection") -> None:
     """Schachttypen auswerten. Dies geschieht ausschließlich mit SQL-Abfragen"""
 
     # -- Anfangsschächte: Schächte ohne Haltung oben
