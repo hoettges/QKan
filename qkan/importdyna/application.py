@@ -1,34 +1,21 @@
 # -*- coding: utf-8 -*-
-import logging
 
-from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgisInterface
-
 from qkan import QKan
+from qkan.plugin import QKanPlugin
 
-# noinspection PyUnresolvedReferences
-from . import resources
 from .application_dialog import ImportFromDynaDialog
 from .import_from_dyna import import_kanaldaten
 
-# Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger("QKan.importdyna.application")
+# noinspection PyUnresolvedReferences
+from . import resources  # isort:skip
 
 
-class ImportFromDyna:
+class ImportFromDyna(QKanPlugin):
     def __init__(self, iface: QgisInterface):
-        # Save reference to the QGIS interface
-        self.iface = iface
-
+        super().__init__(iface)
         self.dlg = ImportFromDynaDialog()
-
-        logger.info("QKan_ImportDyna initialisiert...")
-
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message):
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate("ImportFromDyna", message)
 
     # noinspection PyPep8Naming
     def initGui(self):
@@ -81,7 +68,7 @@ class ImportFromDyna:
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 importKanaldaten(
                     "{dynafile}", 

@@ -4,47 +4,42 @@ Flaechenzuordnungen
 Diverse Tools zur QKan-Datenbank
 """
 
-import logging
 import os
 import typing
 
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtWidgets import QListWidgetItem
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
-
+from qgis.PyQt.QtWidgets import QListWidgetItem
 from qkan import QKan, enums, get_default_dir, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
     fehlermeldung,
-    meldung,
     get_database_QKan,
     get_editable_layers,
+    meldung,
     warnung,
 )
+from qkan.plugin import QKanPlugin
 
-# noinspection PyUnresolvedReferences
-from . import resources
+from .dialogs.dbAdapt import DbAdaptDialog
 from .dialogs.empty_db import EmptyDBDialog
 from .dialogs.layersadapt import LayersAdaptDialog
 from .dialogs.qgsadapt import QgsAdaptDialog
 from .dialogs.qkanoptions import QKanOptionsDialog
 from .dialogs.read_data import ReadDataDialog
 from .dialogs.runoffparams import RunoffParamsDialog
-from .dialogs.dbAdapt import DbAdaptDialog
+from .k_dbAdapt import dbAdapt
 from .k_layersadapt import layersadapt
 from .k_qgsadapt import qgsadapt
 from .k_runoffparams import setRunoffparams
-from .k_dbAdapt import dbAdapt
 
-# Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger("QKan.tools.application")
+# noinspection PyUnresolvedReferences
+from . import resources  # isort:skip
 
 
-class QKanTools:
+class QKanTools(QKanPlugin):
     def __init__(self, iface: QgisInterface):
-        # Save reference to the QGIS interface
-        self.iface = iface
+        super().__init__(iface)
         self.default_dir = get_default_dir()
         self.db_qkan: typing.Optional[DBConnection] = None
 
@@ -55,13 +50,6 @@ class QKanTools:
         self.dlgedb = EmptyDBDialog(self)
         self.dlgrd = ReadDataDialog(self)
         self.dlgdb = DbAdaptDialog(self)
-
-        logger.info("QKan_Tools initialisiert...")
-
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message):
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate("QKanTools", message)
 
     # noinspection PyPep8Naming
     def initGui(self):
@@ -185,7 +173,7 @@ class QKanTools:
             QKan.config.save()
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 qgsadapt(
                     "{project_template}",
@@ -199,7 +187,9 @@ class QKanTools:
             # ------------------------------------------------------------------------------
             # Datenbankverbindungen
 
-            db_qkan = DBConnection(dbname=self.db_qkan)  # QKan-Datenbankobjekt zum Schreiben
+            db_qkan = DBConnection(
+                dbname=self.db_qkan
+            )  # QKan-Datenbankobjekt zum Schreiben
 
             if not db_qkan.connected:
                 fehlermeldung(
@@ -211,14 +201,10 @@ class QKanTools:
                 return None
 
             qgsadapt(
-                project_template,
-                self.db_qkan,
-                db_qkan,
-                project_file,
-                epsg=epsg,
+                project_template, self.db_qkan, db_qkan, project_file, epsg=epsg,
             )
 
-            del db_qkan                                # Datenbankanbindung schließen
+            del db_qkan  # Datenbankanbindung schließen
 
     def run_qkanoptions(self):
         """Bearbeitung allgemeiner QKan-Optionen"""
@@ -303,7 +289,7 @@ class QKanTools:
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
-            logger.error(
+            self.log.error(
                 "tools.application: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
             return False
@@ -426,11 +412,8 @@ class QKanTools:
 
         # Status Radiobuttons initialisieren
         self.dlgro.toggle_itwh()
-        # Datenbanktyp
-        datenbanktyp = QKan.config.database.type
 
         # Formular anzeigen
-
         self.dlgro.show()
         # Run the dialog event loop
         result = self.dlgro.exec_()
@@ -480,7 +463,7 @@ class QKanTools:
             QKan.config.save()
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 setRunoffparams(
                     self.dbQK,
@@ -544,7 +527,7 @@ class QKanTools:
         del db_qkan
 
         if not self.db_is_uptodate:
-            fehlermeldung('Versionskontrolle', 'Die QKan-Datenbank ist nicht aktuell')
+            fehlermeldung("Versionskontrolle", "Die QKan-Datenbank ist nicht aktuell")
             return False
 
         # Option: Suchpfad für Vorlagedatei auf template-Verzeichnis setzen
@@ -662,7 +645,7 @@ class QKanTools:
             QKan.config.save()
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 layersadapt(
                     "{self.db_qkan}",
@@ -712,16 +695,16 @@ class QKanTools:
             dbname=self.db_qkan
         )  # Datenbankobjekt der QKan-Datenbank
         # qkanDBUpdate: mit Update
-        db_status = db_qkan.isCurrentVersion            # Ist die Datenbank aktuell?
+        db_status = db_qkan.isCurrentVersion  # Ist die Datenbank aktuell?
 
         if db_status:
             db_qkan.sql("SELECT RecoverSpatialIndex()")  # Geometrie-Indizes bereinigen
             self.iface.mapCanvas().refresh()  # Grafik aktualisieren
-            meldung('Information', 'Spatial Index wurde bereinigt...')
+            meldung("Information", "Spatial Index wurde bereinigt...")
 
             del db_qkan
 
-            meldung('Information', 'QKan-Datenbank ist aktuell')
+            meldung("Information", "QKan-Datenbank ist aktuell")
             return True
 
         del db_qkan
@@ -731,17 +714,17 @@ class QKanTools:
         projectIsDirty = project.isDirty()
         self.dlgdb.gb_updateQkanDB.setEnabled(projectIsDirty)
 
-        logger.debug('QKan.tools.application.run_dbAdapt: before dlgdb.show()')
+        self.log.debug("QKan.tools.application.run_dbAdapt: before dlgdb.show()")
 
         # show the dialog
         self.dlgdb.show()
 
-        logger.debug('QKan.tools.application.run_dbAdapt: before dlgdb.exec_()')
+        self.log.debug("QKan.tools.application.run_dbAdapt: before dlgdb.exec_()")
 
         # Run the dialog event loop
         result = self.dlgdb.exec_()
 
-        logger.debug('QKan.tools.application.run_dbAdapt: after dlgdb.exec_()')
+        self.log.debug("QKan.tools.application.run_dbAdapt: after dlgdb.exec_()")
 
         # See if OK was pressed
         if result:
@@ -760,7 +743,7 @@ class QKanTools:
             QKan.config.save()
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 dbAdapt(
                     "{self.db_qkan}",
@@ -770,7 +753,5 @@ class QKanTools:
             )
 
             dbAdapt(
-                self.db_qkan,
-                project_file,
-                project,
+                self.db_qkan, project_file, project,
             )

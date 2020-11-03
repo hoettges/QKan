@@ -3,14 +3,11 @@
 Flaechenzuordnungen
 Verknüpft Flächen mit nächster Haltung
 """
-import logging
 import typing
 
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtWidgets import QListWidgetItem
 from qgis.core import Qgis, QgsDataSourceUri, QgsProject, QgsVectorLayer
 from qgis.gui import QgisInterface
-
+from qgis.PyQt.QtWidgets import QListWidgetItem
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
@@ -20,9 +17,8 @@ from qkan.database.qkan_utils import (
     meldung,
 )
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
+from qkan.plugin import QKanPlugin
 
-# noinspection PyUnresolvedReferences
-from . import resources
 from .application_dialog import (
     AssigntgebDialog,
     CreatelineflDialog,
@@ -32,15 +28,13 @@ from .application_dialog import (
 )
 from .k_link import assigntgeb, createlinkfl, createlinksw
 
-# Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger("QKan.linkflaechen.application")
+# noinspection PyUnresolvedReferences
+from . import resources  # isort:skip
 
 
-class LinkFl:
+class LinkFl(QKanPlugin):
     def __init__(self, iface: QgisInterface):
-        # Save reference to the QGIS interface
-        self.iface = iface
-
+        super().__init__(iface)
         self.db_qkan: typing.Optional[DBConnection] = None
 
         self.dlg_at = AssigntgebDialog()
@@ -48,13 +42,6 @@ class LinkFl:
         self.dlg_mg = ManagegroupsDialog(self)
         self.dlg_sw = CreatelineswDialog(self)
         self.dlg_ul = UpdateLinksDialog()
-
-        logger.info("QKan_LinkFlaechen initialisiert...")
-
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message):
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate("LinkFl", message)
 
     # noinspection PyPep8Naming
     def initGui(self):
@@ -125,7 +112,7 @@ class LinkFl:
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
-            logger.error(
+            self.log.error(
                 "k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
             return False
@@ -170,7 +157,7 @@ class LinkFl:
             del self.db_qkan
             return False
         daten = self.db_qkan.fetchall()
-        # logger.debug(u'\ndaten: {}'.format(str(daten)))  # debug
+        # self.log.debug(u'\ndaten: {}'.format(str(daten)))  # debug
         self.dlg_cl.lw_flaechen_abflussparam.clear()
         for ielem, elem in enumerate(daten):
             if elem[0] is not None:
@@ -183,7 +170,7 @@ class LinkFl:
                         )  # Auswahlcheckbox aktivieren
                 except BaseException:
                     del self.db_qkan
-                    # logger.debug(u'\nelem: {}'.format(str(elem)))  # debug
+                    # self.log.debug(u'\nelem: {}'.format(str(elem)))  # debug
                     # if len(daten) == 1:
                     # self.dlg_cl.lw_flaechen_abflussparam.setCurrentRow(0)
 
@@ -327,7 +314,7 @@ class LinkFl:
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 createlinkfl(
                     iface, 
@@ -401,7 +388,7 @@ class LinkFl:
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
-            logger.error(
+            self.log.error(
                 "LinkFl.run_createlinesw: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
             return False
@@ -519,7 +506,7 @@ class LinkFl:
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 createlinksw(
                     self.dbQK, 
@@ -583,7 +570,7 @@ class LinkFl:
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
-            logger.error(
+            self.log.error(
                 "k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
             return False
@@ -677,7 +664,7 @@ class LinkFl:
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 assigntgeb(
                     self.dbQK,
@@ -756,7 +743,7 @@ class LinkFl:
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
-            logger.error(
+            self.log.error(
                 "CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
             return False
@@ -807,7 +794,7 @@ class LinkFl:
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
-            logger.error(
+            self.log.error(
                 "k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
             return False
@@ -829,7 +816,7 @@ class LinkFl:
         # Festlegung des Fangradius
         fangradius = QKan.config.fangradius
         self.dlg_ul.tf_fangradius.setText(str(fangradius))
-        logger.debug("fangradius: {}".format(fangradius))
+        self.log.debug("fangradius: {}".format(fangradius))
 
         # Löschen von Flächenverknüpfungen ohne Linienobjekt
         delete_geom_none = QKan.config.linkflaechen.delete_geom_none

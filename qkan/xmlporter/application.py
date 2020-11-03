@@ -1,41 +1,32 @@
 import logging
 from pathlib import Path
 
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import (
-    Qgis,
-    QgsCoordinateReferenceSystem,
-    QgsProject,
-)
+from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
-
 from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
-# noinspection PyUnresolvedReferences
-from . import resources
+
 from ._export import ExportTask
 from ._import import ImportTask
 from .application_dialog import ExportDialog, ImportDialog
 
+# noinspection PyUnresolvedReferences
+from . import resources  # isort:skip
+
 logger = logging.getLogger("QKan.xml.application")
 
 
-class XmlPorter:
+class XmlPorter(QKanPlugin):
     def __init__(self, iface: QgisInterface):
-        self.iface = iface
-
+        super().__init__(iface)
         self.default_dir = get_default_dir()
 
         self.export_dlg = ExportDialog(default_dir=self.default_dir, tr=self.tr)
         self.import_dlg = ImportDialog(default_dir=self.default_dir, tr=self.tr)
-
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message):
-        # noinspection PyCallByClass, PyArgumentList
-        return QCoreApplication.translate("xml", message)
 
     # noinspection PyPep8Naming
     def initGui(self):
@@ -159,9 +150,7 @@ class XmlPorter:
                     QKan.config.save()
 
                     logger.info("Creating DB")
-                    db_qkan = DBConnection(
-                        dbname=database_qkan, epsg=QKan.config.epsg
-                    )
+                    db_qkan = DBConnection(dbname=database_qkan, epsg=QKan.config.epsg)
 
                     if not db_qkan:
                         fehlermeldung(

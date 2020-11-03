@@ -1,11 +1,8 @@
-import logging
 import typing
 
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtWidgets import QListWidgetItem
 from qgis.core import Qgis
 from qgis.gui import QgisInterface
-
+from qgis.PyQt.QtWidgets import QListWidgetItem
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
@@ -13,31 +10,21 @@ from qkan.database.qkan_utils import (
     get_database_QKan,
     get_editable_layers,
 )
+from qkan.plugin import QKanPlugin
 
-# noinspection PyUnresolvedReferences
-from . import resources
 from .application_dialog import ExportToKPDialog
 from .export_to_dyna import export_kanaldaten
 
-# Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger("QKan.exportdyna.application")
+# noinspection PyUnresolvedReferences
+from . import resources  # isort:skip
 
 
-class ExportToKP:
+class ExportToKP(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         # Save reference to the QGIS interface
-        self.iface = iface
-
+        super().__init__(iface)
         self.db_qkan: typing.Optional[DBConnection] = None
-
         self.dlg = ExportToKPDialog(self)
-
-        logger.info("QKan_ExportKP initialisiert...")
-
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message):
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate("ExportToKP", message)
 
     # noinspection PyPep8Naming
     def initGui(self):
@@ -83,7 +70,7 @@ class ExportToKP:
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
-            logger.error(
+            self.log.error(
                 "exportdyna.application: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
             return False
@@ -257,7 +244,7 @@ class ExportToKP:
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 exportKanaldaten(
                     iface,

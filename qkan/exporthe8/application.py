@@ -1,11 +1,9 @@
 import logging
 import typing
 
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtWidgets import QListWidgetItem
 from qgis.core import Qgis
 from qgis.gui import QgisInterface
-
+from qgis.PyQt.QtWidgets import QListWidgetItem
 from qkan import QKan, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
@@ -13,31 +11,23 @@ from qkan.database.qkan_utils import (
     get_database_QKan,
     get_editable_layers,
 )
+from qkan.plugin import QKanPlugin
 
-# noinspection PyUnresolvedReferences
-from . import resources
 from .application_dialog import ExportToHE8Dialog
 from .export_to_he8 import exporthe8
+
+# noinspection PyUnresolvedReferences
+from . import resources  # isort:skip
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger("QKan.exporthe8.application")
 
 
-class ExportToHE8:
+class ExportToHE8(QKanPlugin):
     def __init__(self, iface: QgisInterface):
-        # Save reference to the QGIS interface
-        self.iface = iface
-
+        super().__init__(iface)
         self.db_qkan: typing.Optional[DBConnection] = None
-
         self.dlg = ExportToHE8Dialog(self)
-
-        logger.info("QKan_ExportHE8 initialisiert...")
-
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message):
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate("ExportToHE8", message)
 
     # noinspection PyPep8Naming
     def initGui(self):

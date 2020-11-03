@@ -1,41 +1,27 @@
-import logging
-import typing
+from typing import Optional
 
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtWidgets import QTableWidgetItem
 from qgis.gui import QgisInterface
-
+from qgis.PyQt.QtWidgets import QTableWidgetItem
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.plugin import QKanPlugin
 
-# noinspection PyUnresolvedReferences
-from . import resources
 from .application_dialog import CreateUnbefFlDialog, list_selected_tab_items
 from .k_unbef import create_unpaved_areas
 
-# Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger("QKan.createunbeffl.application")
+# noinspection PyUnresolvedReferences
+from . import resources  # isort:skip
 
 
-class CreateUnbefFl:
+class CreateUnbefFl(QKanPlugin):
     def __init__(self, iface: QgisInterface):
-        # Save reference to the QGIS interface
-        self.iface = iface
-
-        self.db_qkan: typing.Optional[DBConnection] = None
-
+        super().__init__(iface)
+        self.db_qkan: Optional[DBConnection] = None
         self.dlg = CreateUnbefFlDialog(self)
 
-        logger.info("QKan_CreateUnbefFlaechen initialisiert...")
-
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message: str):
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate("CreateUnbefFl", message)
-
     # noinspection PyPep8Naming
-    def initGui(self):
+    def initGui(self) -> None:
         icon_path = ":/plugins/qkan/createunbeffl/icon.png"
         QKan.instance.add_action(
             icon_path,
@@ -44,18 +30,18 @@ class CreateUnbefFl:
             parent=self.iface.mainWindow(),
         )
 
-    def unload(self):
+    def unload(self) -> None:
         self.dlg.close()
 
-    def run(self):
+    def run(self) -> None:
         """Run method that performs all the real work"""
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
-            logger.error(
+            self.log.error(
                 "CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
-            return False
+            return
 
         # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
         self.db_qkan = DBConnection(dbname=database_qkan)
@@ -64,7 +50,7 @@ class CreateUnbefFl:
                 "Fehler in createunbeffl.application:\n",
                 f"QKan-Datenbank {database_qkan} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!",
             )
-            return None
+            return
 
         # Kontrolle, ob in Tabelle "abflussparameter" ein Datensatz für unbefestigte Flächen vorhanden ist
         # (Standard: apnam = '$Default_Unbef')
@@ -75,7 +61,7 @@ class CreateUnbefFl:
 
         if not self.db_qkan.sql(sql, "createunbeffl.run (1)"):
             del self.db_qkan
-            return False
+            return
 
         data = self.db_qkan.fetchone()
 
@@ -92,7 +78,7 @@ class CreateUnbefFl:
                 """
                 if not self.db_qkan.sql(sql, "createunbeffl.run (2)"):
                     del self.db_qkan
-                    return False
+                    return
             else:
                 fehlermeldung(
                     "Datenfehler: ",
@@ -139,7 +125,7 @@ class CreateUnbefFl:
                             GROUP BY abflussparameter, teilgebiet"""
         if not self.db_qkan.sql(sql, "createunbeffl.run (4)"):
             del self.db_qkan
-            return None
+            return
 
         listetezg = self.db_qkan.fetchall()
         nzeilen = len(listetezg)
@@ -176,7 +162,7 @@ class CreateUnbefFl:
         self.dlg.show()
         # Run the dialog event loop
         result = self.dlg.exec_()
-        logger.debug("result = {}".format(repr(result)))
+        self.log.debug("result = {}".format(repr(result)))
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
@@ -186,7 +172,7 @@ class CreateUnbefFl:
             selected_abflparam = list_selected_tab_items(
                 self.dlg.tw_selAbflparamTeilgeb
             )
-            logger.debug(
+            self.log.debug(
                 "\nliste_selAbflparamTeilgeb (1): {}".format(selected_abflparam)
             )
             autokorrektur: bool = self.dlg.cb_autokorrektur.isChecked()
@@ -197,7 +183,7 @@ class CreateUnbefFl:
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(
+            self.log.debug(
                 f"""QKan-Modul Aufruf
                 createUnbefFlaechen(
                     self.iface, 
@@ -211,4 +197,4 @@ class CreateUnbefFl:
                 self.iface, self.db_qkan, selected_abflparam, autokorrektur
             ):
                 del self.db_qkan
-                return False
+                return

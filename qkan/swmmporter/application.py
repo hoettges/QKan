@@ -19,28 +19,21 @@
   (at your option) any later version.                                  
 
 """
-import logging
 import os
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
-from qgis.PyQt.QtCore import QCoreApplication
+from qgis.core import QgsCoordinateReferenceSystem
 from qgis.PyQt.QtWidgets import QFileDialog
-
-# from qgis.utils import iface
-from qkan import QKan, enums
-
-# Initialize Qt resources from file resources.py
-# noinspection PyUnresolvedReferences
-from . import resources
+from qkan import QKan, get_default_dir
+from qkan.plugin import QKanPlugin
 
 from .application_dialog import ImportSWMMDialog
 from .importSWMM import importKanaldaten
 
-# Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger("QKan.swmmporter.application")
+# noinspection PyUnresolvedReferences
+from . import resources  # isort:skip
 
 
-class ImportFromSWMM:
+class ImportFromSWMM(QKanPlugin):
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -52,66 +45,29 @@ class ImportFromSWMM:
         :type iface: QgsInterface
         """
         # Save reference to the QGIS interface
-        self.iface = iface
-        # initialize plugin directory
-        self.plugin_dir = os.path.dirname(__file__)
-
-        # Create the dialog (after translation) and keep reference
+        super().__init__(iface)
         self.dlg = ImportSWMMDialog()
 
-        # # Declare instance attributes
-        # self.actions = []
-        # self.menu = self.tr(u'&QKan Import aus DYNA-Datei')
-        # # TODO: We are going to let the user set this up in a future iteration
-        # self.toolbar = self.iface.addToolBar(u'ImportFromDyna')
-        # self.toolbar.setObjectName(u'ImportFromDyna')
-
-        # Anfang Eigene Funktionen -------------------------------------------------
-        # (jh, 09.10.2016)
-
-        logger.info("QKan_ImportSWMM initialisiert...")
-
-        # Standard für Suchverzeichnis festlegen
-        project = QgsProject.instance()
-        self.default_dir = os.path.dirname(project.fileName())
+        self.default_dir = get_default_dir()
 
         self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
         self.dlg.pb_selectSWMMFile.clicked.connect(self.select_SWMMFile)
         self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
 
-        # Ende Eigene Funktionen ---------------------------------------------------
-
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message):
-        """Get the translation for a string using Qt translation API.
-
-        We implement this ourselves since we do not inherit QObject.
-
-        :param message: String for translation.
-        :type message: str, QString
-
-        :returns: Translated version of message.
-        :rtype: QString
-        """
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate("ImportFromSWMM", message)
-
+    # noinspection PyPep8Naming
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ":/plugins/qkan/swmmporter/res/icon_importSWMM.png"
         QKan.instance.add_action(
             icon_path,
-            text=self.tr("Import aus SWMM-Datei (*.INP)"), # QGIS中ICON旁的文字
+            text=self.tr("Import aus SWMM-Datei (*.INP)"),  # QGIS中ICON旁的文字
             callback=self.run,
             parent=self.iface.mainWindow(),
         )
 
     def unload(self):
-        pass
-
-    # Anfang Eigene Funktionen -------------------------------------------------
-    # (jh, 09.10.2016)
+        self.dlg.close()
 
     def select_SWMMFile(self):
         """DYNA (*.ein) -datei auswählen"""
@@ -181,14 +137,14 @@ class ImportFromSWMM:
         # See if OK was pressed
         if result:
             # Namen der Datenbanken uebernehmen
-            SWMMfile: str = self.dlg.tf_SWMMFile.text()
+            swm_mfile: str = self.dlg.tf_SWMMFile.text()
             database_qkan: str = self.dlg.tf_qkanDB.text()
             projectfile: str = self.dlg.tf_projectFile.text()
             epsg: int = int(self.dlg.qsw_epsg.crs().postgisSrid())
 
             # Konfigurationsdaten schreiben
             QKan.config.database.qkan = database_qkan
-            QKan.config.dyna.file = SWMMfile
+            QKan.config.dyna.file = swm_mfile
             QKan.config.epsg = epsg
             QKan.config.project.file = projectfile
 
@@ -197,17 +153,16 @@ class ImportFromSWMM:
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(f"""QKan-Modul Aufruf
+            self.log.debug(
+                f"""QKan-Modul Aufruf
                 importKanaldaten(
-                    "{SWMMfile}", 
+                    "{swm_mfile}", 
                     "{database_qkan}", 
                     "{projectfile}", 
                     {epsg}, 
-                )""")
+                )"""
+            )
 
             importKanaldaten(
-                SWMMfile,
-                database_qkan, 
-                projectfile, 
-                epsg,
+                swm_mfile, database_qkan, projectfile, epsg,
             )

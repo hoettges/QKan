@@ -1,33 +1,55 @@
 # -*- coding: utf-8 -*-
+import abc
 import datetime
 import json
 import logging
 import os
 import tempfile
-import typing
 from pathlib import Path
+from typing import Any, Callable, ClassVar, List, Optional, cast
 
 import qgis
 from PyQt5.QtCore import QCoreApplication, QSettings, QStandardPaths, QTranslator
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QListWidget, QMenu, QWidget
 from qgis.core import QgsProject
+from qgis.gui import QgisInterface
+from qgis.PyQt.QtWidgets import QAction, QListWidget, QMenu, QMenuBar, QWidget
 from qgis.utils import pluginDirectory
 
 from .config import Config
 
+# Toggle in DEV to log to console
+LOG_TO_CONSOLE = False
+
 
 # noinspection PyPep8Naming
-def classFactory(iface):  # pylint: disable=invalid-name
+def classFactory(iface: QgisInterface) -> "QKan":  # pylint: disable=invalid-name
     qkan = QKan(iface)
     return qkan
 
 
+class _ExternalQKanPlugin:
+    """
+    Used as an internal type for external extensions to QKan
+    """
+
+    name = __name__
+    instance: "_ExternalQKanPlugin"
+    plugins: List
+
+    # noinspection PyPep8Naming
+    def initGui(self) -> None:
+        pass
+
+    def unload(self) -> None:
+        pass
+
+
 # TODO: getOpenFilename/getSaveFilename(dialog, title, dir=self.default_dir, extensions)
 class QKan:
-    instance = None  # type: QKan
-    config: typing.Optional[Config] = None
-    template_dir: str = None
+    instance: "QKan"
+    config: Config
+    template_dir: str
 
     def __init__(self, iface: qgis.gui.QgisInterface):
         QKan.instance = self
@@ -42,17 +64,16 @@ class QKan:
             datetime.datetime.today().strftime("%Y-%m-%d")
         )
         file_handler = logging.FileHandler(self.log_path)
-        # stream_handler = logging.StreamHandler()
-
         file_handler.setFormatter(formatter)
-        # stream_handler.setFormatter(formatter)
-
         file_handler.setLevel(logging.DEBUG)
-        # stream_handler.setLevel(logging.DEBUG)
-
         self.logger.setLevel(logging.DEBUG)
         self.logger.addHandler(file_handler)
-        # self.logger.addHandler(stream_handler)
+
+        if LOG_TO_CONSOLE:
+            stream_handler = logging.StreamHandler()
+            stream_handler.setFormatter(formatter)
+            stream_handler.setLevel(logging.DEBUG)
+            self.logger.addHandler(stream_handler)
 
         # Init config
         try:
@@ -64,13 +85,13 @@ class QKan:
 
         # QGIS
         self.iface = iface
-        self.actions = []
+        self.actions: List[QAction] = []
 
         # Set default template directory
         QKan.template_dir = os.path.join(pluginDirectory("qkan"), "templates")
 
         # Plugins
-        self.instances = []
+        self.instances: List[_ExternalQKanPlugin] = []
 
         # Translations
         self.translator = QTranslator()
@@ -81,18 +102,18 @@ class QKan:
         QCoreApplication.installTranslator(self.translator)
 
         from .createunbeffl import CreateUnbefFl
-        from .importdyna import ImportFromDyna
-        from .swmmporter import ImportFromSWMM
         from .exportdyna import ExportToKP
-        from .linkflaechen import LinkFl
-        from .tools import QKanTools
         from .he8porter import He8Porter
-        from .xmlporter import XmlPorter
+        from .importdyna import ImportFromDyna
+        from .linkflaechen import LinkFl
         from .surfaceTools import SurfaceTools
+        from .swmmporter import ImportFromSWMM
+        from .tools import QKanTools
+        from .xmlporter import XmlPorter
 
         # from .surfaceTools import SurfaceTools
 
-        self.plugins = [
+        self.plugins: List = [
             CreateUnbefFl(iface),
             ImportFromDyna(iface),
             ImportFromSWMM(iface),
@@ -104,8 +125,8 @@ class QKan:
             SurfaceTools(iface),
         ]
 
-        actions = self.iface.mainWindow().menuBar().actions()
-        self.menu = None
+        actions = cast(QMenuBar, self.iface.mainWindow().menuBar()).actions()
+        self.menu: Optional[QMenu] = None
         for menu in actions:
             if menu.text() == "QKan":
                 self.menu = menu.menu()
@@ -116,7 +137,7 @@ class QKan:
         self.toolbar.setObjectName("QKan")
 
     # noinspection PyPep8Naming
-    def initGui(self):
+    def initGui(self) -> None:
         # Create and insert QKan menu after the 3rd menu
         if self.menu is None:
             self.menu = QMenu("QKan", self.iface.mainWindow().menuBar())
@@ -134,13 +155,14 @@ class QKan:
 
         self.sort_actions()
 
-    def sort_actions(self):
+    def sort_actions(self) -> None:
         # Finally sort all actions
-        self.actions.sort(key=lambda x: x.text().lower())
-        self.menu.clear()
-        self.menu.addActions(self.actions)
+        self.actions.sort(key=lambda x: cast(str, cast(QAction, x).text().lower()))
+        if self.menu:
+            self.menu.clear()
+            self.menu.addActions(self.actions)
 
-    def unload(self):
+    def unload(self) -> None:
         from qgis.utils import unloadPlugin
 
         # Shutdown logger
@@ -154,9 +176,10 @@ class QKan:
             if not unloadPlugin(instance.name):
                 print("Failed to unload plugin!")
 
-        # Remove entries from own menu
-        for action in self.menu.actions():
-            self.menu.removeAction(action)
+        if self.menu:
+            # Remove entries from own menu
+            for action in self.menu.actions():
+                self.menu.removeAction(action)
 
         # Remove entries from Plugin menu and toolbar
         for action in self.actions:
@@ -175,12 +198,12 @@ class QKan:
         for plugin in self.plugins:
             plugin.unload()
 
-    def register(self, instance: typing.ClassVar):
+    def register(self, instance: "_ExternalQKanPlugin") -> None:
         self.instances.append(instance)
 
         self.plugins += instance.plugins
 
-    def unregister(self, instance: typing.ClassVar):
+    def unregister(self, instance: "_ExternalQKanPlugin") -> None:
         self.instances.remove(instance)
 
         for plugin in instance.plugins:
@@ -190,7 +213,7 @@ class QKan:
         self,
         icon_path: str,
         text: str,
-        callback: typing.Callable,
+        callback: Callable,
         enabled_flag: bool = True,
         add_to_menu: bool = True,
         add_to_toolbar: bool = True,
@@ -234,7 +257,7 @@ class QKan:
         if add_to_toolbar:
             self.toolbar.addAction(action)
 
-        if add_to_menu:
+        if add_to_menu and self.menu:
             self.menu.addAction(action)
 
         self.actions.append(action)
@@ -260,7 +283,7 @@ def get_default_dir() -> str:
         )
 
 
-def list_selected_items(list_widget: QListWidget) -> typing.List[str]:
+def list_selected_items(list_widget: QListWidget) -> List[str]:
     """
     Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
 

@@ -19,88 +19,37 @@
   (at your option) any later version.
 
 """
-import logging
-import os
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.gui import QgisInterface
+from qkan import QKan, get_default_dir
+from qkan.database.qkan_utils import get_database_QKan
+from qkan.plugin import QKanPlugin
 
-# from qgis.utils import iface
-from qkan import QKan, enums
-
-# Initialize Qt resources from file resources.py
-# noinspection PyUnresolvedReferences
-from . import resources
-
-# Import the code for the dialog
 from .application_dialog import SurfaceToolDialog
 from .surfaceTool import FlaechenVerarbeitung, accessAttr
-from qkan.database.qkan_utils import get_database_QKan
 
-# Anbindung an Logging-System (Initialisierung in __init__)
-logger = logging.getLogger("QKan.surfaceTools.application")
+# noinspection PyUnresolvedReferences
+from . import resources  # isort:skip
 
-class SurfaceTools:
-    def __init__(self, iface):
-        """Constructor.
 
-        :param iface: An interface instance that will be passed to this class
-            which provides the hook by which you can manipulate the QGIS
-            application at run time.
-        :type iface: QgsInterface
-        """
-        # Save reference to the QGIS interface
-        self.iface = iface
-        # initialize plugin directory
-        self.plugin_dir = os.path.dirname(__file__)
-
-        # Create the dialog (after translation) and keep reference
+class SurfaceTools(QKanPlugin):
+    def __init__(self, iface: QgisInterface):
+        super().__init__(iface)
         self.dlg = SurfaceToolDialog()
+        self.default_dir = get_default_dir()
 
-        # # Declare instance attributes
-        # self.actions = []
-        # self.menu = self.tr(u'&QKan Import aus DYNA-Datei')
-        # # TODO: We are going to let the user set this up in a future iteration
-        # self.toolbar = self.iface.addToolBar(u'ImportFromDyna')
-        # self.toolbar.setObjectName(u'ImportFromDyna')
-
-        # Anfang Eigene Funktionen -------------------------------------------------
-        # (jh, 09.10.2016)
-
-        logger.info("Qkan_SurfaceTools initialisiert...")
-
-        # Standard für Suchverzeichnis festlegen
-        project = QgsProject.instance()
-        self.default_dir = os.path.dirname(project.fileName())
-        # self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
-
-    def tr(self, message):
-        """Get the translation for a string using Qt translation API.
-
-                We implement this ourselves since we do not inherit QObject.
-
-                :param message: String for translation.
-                :type message: str, QString
-
-                :returns: Translated version of message.
-                :rtype: QString
-                """
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate("SurfaceTools", message)
-
+    # noinspection PyPep8Naming
     def initGui(self):
         icon_path = ":/plugins/qkan/surfaceTools/icon_surfaceTool.png"
         QKan.instance.add_action(
             icon_path,
-            text=self.tr(u"Solve Overlap of Layers"),
+            text=self.tr("Solve Overlap of Layers"),
             callback=self.run,
             parent=self.iface.mainWindow(),
         )
 
-
     def unload(self):
-        pass
+        self.dlg.close()
 
     def run(self):
         # database_qkan, _ = get_database_QKan()
@@ -112,10 +61,10 @@ class SurfaceTools:
         self.dlg.cb_haupt.clear()
         self.dlg.cb_geschnitten.clear()
         obj = accessAttr(database_qkan)
-        tempList = obj.accessAttribute()
-        abflussparameter = list(set(tempList))
+        temp_list = obj.accessAttribute()
+        abflussparameter = list(set(temp_list))
         for tempAttr in abflussparameter:
-            attr = str(tempAttr).lstrip('(\'').rstrip(',\')')
+            attr = str(tempAttr).lstrip("('").rstrip(",')")
             self.dlg.cb_haupt.addItem(attr)
             self.dlg.cb_geschnitten.addItem(attr)
 
@@ -134,9 +83,11 @@ class SurfaceTools:
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(f"""QKan-Modul Aufruf
+            self.log.debug(
+                f"""QKan-Modul Aufruf
                             FlaechenVerarbeitung
-                            """)
+                            """
+            )
 
             FlaechenVerarbeitung(database_qkan, schneiden, geschnitten)
             del obj
