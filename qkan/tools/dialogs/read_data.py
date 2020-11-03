@@ -6,16 +6,12 @@ import typing
 from pathlib import Path
 from sqlite3 import Connection
 
-from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import (
-    QComboBox,
-    QDialogButtonBox,
-    QPushButton,
-)
 from qgis.core import QgsApplication
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QComboBox, QDialogButtonBox, QPushButton
 from qgis.utils import spatialite_connect
-
 from qkan import QKan
+
 from . import QKanDBDialog
 
 if typing.TYPE_CHECKING:

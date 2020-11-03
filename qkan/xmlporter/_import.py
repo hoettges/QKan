@@ -2,7 +2,6 @@ import logging
 import typing
 import xml.etree.ElementTree as ElementTree
 
-from qkan import QKan, enums
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
@@ -325,8 +324,10 @@ class ImportTask:
             if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
                 return None
 
-        if not self.db_qkan.sql("UPDATE schaechte SET (geom, geop) = (geom, geop)",
-                                "xml_import Schächte [3a]"):
+        if not self.db_qkan.sql(
+            "UPDATE schaechte SET (geom, geop) = (geom, geop)",
+            "xml_import Schächte [3a]",
+        ):
             return None
 
         self.db_qkan.commit()
@@ -392,8 +393,10 @@ class ImportTask:
             if not self.db_qkan.sql(sql, "xml_import Auslässe [2]"):
                 return None
 
-        if not self.db_qkan.sql("UPDATE schaechte SET (geom, geop) = (geom, geop)",
-                                "xml_import Auslässe [2a]"):
+        if not self.db_qkan.sql(
+            "UPDATE schaechte SET (geom, geop) = (geom, geop)",
+            "xml_import Auslässe [2a]",
+        ):
             return None
 
         self.db_qkan.commit()
@@ -478,8 +481,10 @@ class ImportTask:
             if not self.db_qkan.sql(sql, "xml_import Speicher [2]"):
                 return None
 
-        if not self.db_qkan.sql("UPDATE schaechte SET (geom, geop) = (geom, geop)",
-                                "xml_import Speicher [2a]"):
+        if not self.db_qkan.sql(
+            "UPDATE schaechte SET (geom, geop) = (geom, geop)",
+            "xml_import Speicher [2a]",
+        ):
             return None
 
         self.db_qkan.commit()
@@ -679,8 +684,9 @@ class ImportTask:
             if not self.db_qkan.sql(sql, "xml_import Haltungen [3]"):
                 return None
 
-        if not self.db_qkan.sql("UPDATE haltungen SET geom = geom",
-                                "xml_import Haltungen [3a]"):
+        if not self.db_qkan.sql(
+            "UPDATE haltungen SET geom = geom", "xml_import Haltungen [3a]"
+        ):
             return None
 
         self.db_qkan.commit()
@@ -765,8 +771,9 @@ class ImportTask:
             if not self.db_qkan.sql(sql, "xml_import Wehre [1]"):
                 return None
 
-        if not self.db_qkan.sql("UPDATE wehre SET geom = geom",
-                                "xml_import Wehre [1a]"):
+        if not self.db_qkan.sql(
+            "UPDATE wehre SET geom = geom", "xml_import Wehre [1a]"
+        ):
             return None
 
         self.db_qkan.commit()
@@ -849,8 +856,9 @@ class ImportTask:
             if not self.db_qkan.sql(sql, "xml_import Pumpen [2]"):
                 return None
 
-        if not self.db_qkan.sql("UPDATE pumpen SET geom = geom",
-                                "xml_import Pumpen [2a]"):
+        if not self.db_qkan.sql(
+            "UPDATE pumpen SET geom = geom", "xml_import Pumpen [2a]"
+        ):
             return None
 
         self.db_qkan.commit()

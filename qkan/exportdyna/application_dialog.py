@@ -15,7 +15,6 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QRadioButton,
 )
-
 from qkan import get_default_dir, list_selected_items
 
 if typing.TYPE_CHECKING:

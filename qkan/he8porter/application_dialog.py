@@ -2,18 +2,24 @@ import logging
 import os
 import typing
 from pathlib import Path
-from qgis.utils import pluginDirectory
 
-from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import (
-    QCheckBox, QDialog, QFileDialog, QLineEdit, QPushButton, QRadioButton,
-    QListWidget, QListWidgetItem
-)
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
-from qkan.database.dbfunc import DBConnection
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import (
+    QCheckBox,
+    QDialog,
+    QFileDialog,
+    QLineEdit,
+    QListWidget,
+    QListWidgetItem,
+    QPushButton,
+    QRadioButton,
+)
+from qgis.utils import pluginDirectory
 from qkan import QKan
+from qkan.database.dbfunc import DBConnection
+from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 
 logger = logging.getLogger("QKan.he8.application_dialog")
 
@@ -28,8 +34,10 @@ class _Dialog(QDialog):
         super().__init__(parent)
         self.setupUi(self)
         self.default_dir = default_dir
-        logger.debug(f"he8porter.application_dialog._Dialog.__init__:"
-                     f"\nself.default_dir: {self.default_dir}")
+        logger.debug(
+            f"he8porter.application_dialog._Dialog.__init__:"
+            f"\nself.default_dir: {self.default_dir}"
+        )
         self.tr = tr
 
 
@@ -72,11 +80,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
     # cb_export_pumpen: QCheckBox
     # cb_export_wehre: QCheckBox
 
-    def __init__(self,
-                 default_dir: str,
-                 tr: typing.Callable,
-                 parent=None
-                 ):
+    def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
         # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
 
@@ -92,8 +96,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
         self.cb_selActive.stateChanged.connect(self.click_selection)
         self.lw_teilgebiete.itemClicked.connect(self.count_selection)
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
-
-
 
         # Init fields
 
@@ -140,9 +142,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
         if self.cb_use_templatedir.isChecked():
 
             # TODO: Replace with QKan.config.project.template?
-            searchdir = str(
-                    Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-            )
+            searchdir = str(Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs")
         else:
             searchdir = self.default_dir
 
@@ -207,9 +207,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
 
         sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
 
-        if not self.dbQK.sql(
-            sql, "QKan_ExportHE.application.countselection (1)"
-        ):
+        if not self.dbQK.sql(sql, "QKan_ExportHE.application.countselection (1)"):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
@@ -225,9 +223,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
             )
 
         sql = f"SELECT count(*) AS anzahl FROM schaechte {auswahl}"
-        if not self.dbQK.sql(
-            sql, "QKan_ExportHE.application.countselection (2) "
-        ):
+        if not self.dbQK.sql(sql, "QKan_ExportHE.application.countselection (2) "):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
@@ -243,9 +239,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
             )
 
         sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
-        if not self.dbQK.sql(
-            sql, "QKan_ExportHE.application.countselection (3) "
-        ):
+        if not self.dbQK.sql(sql, "QKan_ExportHE.application.countselection (3) "):
             return False
         daten = self.dbQK.fetchone()
         if not (daten is None):
@@ -329,21 +323,24 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
                     self.lw_teilgebiete.setCurrentRow(ielem)
             except BaseException as err:
                 fehlermeldung(
-                    ("he8porter.application_dialog.connectQKanDB, "
-                    f"Fehler in elem = {elem}\n"),
+                    (
+                        "he8porter.application_dialog.connectQKanDB, "
+                        f"Fehler in elem = {elem}\n"
+                    ),
                     repr(err),
                 )
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
 
         # Arbeitsverzeichnis wird mit Pfad zur Projektdatei initialisiert
-        logger.debug(f"he8porter.application.He8Porter.__init__:\nproject_path: {project_path}")
+        logger.debug(
+            f"he8porter.application.He8Porter.__init__:\nproject_path: {project_path}"
+        )
         if project_path:
             self.default_dir = Path(project_path).parent
         else:
-            self.default_dir = \
-                Path(
-                    QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1]
-                )
+            self.default_dir = Path(
+                QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1]
+            )
         logger.debug(f"He8Porter.run_export: default_dir: {self.default_dir}")
 
     def connectHEDB(self, database_he):
@@ -392,11 +389,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
 
     pw_epsg: QgsProjectionSelectionWidget
 
-    def __init__(self,
-                 default_dir: str,
-                 tr: typing.Callable,
-                 parent=None
-                 ):
+    def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
         # noinspection PyCallByClass,PyArgumentList
         super().__init__(default_dir, tr, parent)
 

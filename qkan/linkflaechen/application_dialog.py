@@ -5,6 +5,7 @@ import typing
 import webbrowser
 from pathlib import Path
 
+from qgis.core import Qgis
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
@@ -21,9 +22,8 @@ from qgis.PyQt.QtWidgets import (
     QTableWidgetItem,
     QTextEdit,
 )
-from qgis.core import Qgis
-
 from qkan import list_selected_items
+
 from .k_link import reload_group, store_group
 
 if typing.TYPE_CHECKING:
@@ -217,7 +217,7 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
     def changed_tf_fangradius(self):
         """Gibt eine Warnung, falls Fangradius zu groß"""
         try:
-            fangradius = float(self.tf_fangradius.text().replace(',', '.'))
+            fangradius = float(self.tf_fangradius.text().replace(",", "."))
         except:
             return
         if fangradius > 0.5:
@@ -462,7 +462,7 @@ class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):
     def changed_tf_fangradius(self):
         """Gibt eine Warnung, falls Fangradius zu groß"""
         try:
-            fangradius = float(self.tf_fangradius.text().replace(',', '.'))
+            fangradius = float(self.tf_fangradius.text().replace(",", "."))
         except:
             return
         if fangradius > 0.5:

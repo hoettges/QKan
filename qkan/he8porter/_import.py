@@ -17,22 +17,24 @@ class ImportTask:
 
     def run(self):
 
-        result = all([
-            self._profile(),
-            self._bodenklassen(),
-            self._abflussparameter(),
-            self._schaechte(),
-            self._auslaesse(),
-            self._speicher(), 
-            self._haltungen(), 
-            self._wehre(), 
-            self._pumpen(),
-            self._flaechen(),
-            self._einleitdirekt(),
-            self._aussengebiete(),
-            self._einzugsgebiet(),
-            self._tezg()
-        ])
+        result = all(
+            [
+                self._profile(),
+                self._bodenklassen(),
+                self._abflussparameter(),
+                self._schaechte(),
+                self._auslaesse(),
+                self._speicher(),
+                self._haltungen(),
+                self._wehre(),
+                self._pumpen(),
+                self._flaechen(),
+                self._einleitdirekt(),
+                self._aussengebiete(),
+                self._einzugsgebiet(),
+                self._tezg(),
+            ]
+        )
 
         return result
 
@@ -149,7 +151,7 @@ class ImportTask:
     def _profile(self):
         """Import der Haltungen"""
 
-        # Profilnummern aller Sonderprofile ergänzen. 
+        # Profilnummern aller Sonderprofile ergänzen.
         if QKan.config.check_import.rohrprofile:
             if self.append:
                 sql = f"""
@@ -234,7 +236,9 @@ class ImportTask:
                     return None
 
                 # idk why this is necessary...
-                if not self.db_qkan.sql("UPDATE haltungen SET geom = geom", "he8_import Haltungen (2)"):
+                if not self.db_qkan.sql(
+                    "UPDATE haltungen SET geom = geom", "he8_import Haltungen (2)"
+                ):
                     return None
 
                 self.db_qkan.commit()
@@ -279,7 +283,9 @@ class ImportTask:
                     return None
 
                 # idk why this is necessary...
-                if not self.db_qkan.sql("UPDATE wehre SET geom = geom", "he8_import Wehre (2)"):
+                if not self.db_qkan.sql(
+                    "UPDATE wehre SET geom = geom", "he8_import Wehre (2)"
+                ):
                     return None
 
                 self.db_qkan.commit()
@@ -323,7 +329,9 @@ class ImportTask:
                     return None
 
                 # idk why this is necessary...
-                if not self.db_qkan.sql("UPDATE pumpen SET geom = geom", "he8_import Pumpen (2)"):
+                if not self.db_qkan.sql(
+                    "UPDATE pumpen SET geom = geom", "he8_import Pumpen (2)"
+                ):
                     return None
 
                 self.db_qkan.commit()
@@ -563,9 +571,11 @@ class ImportTask:
         der Flächentyp selektiert werden.
         """
 
-        if (QKan.config.check_import.tezg_ef or
-            QKan.config.check_import.tezg_hf or
-            QKan.config.check_import.tezg_tf):
+        if (
+            QKan.config.check_import.tezg_ef
+            or QKan.config.check_import.tezg_hf
+            or QKan.config.check_import.tezg_tf
+        ):
 
             if self.append:
                 choice_ef = str(QKan.config.check_import.tezg_ef)

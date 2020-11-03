@@ -1,8 +1,8 @@
 import logging
 from typing import cast
 
-from qgis.PyQt.QtCore import QCoreApplication
 from qgis.gui import QgisInterface
+from qgis.PyQt.QtCore import QCoreApplication
 
 
 class QKanPlugin:

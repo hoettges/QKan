@@ -16,12 +16,11 @@ __copyright__ = "(C) 2016, Joerg Hoettges"
 import logging
 import typing
 
-from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface
-
-from qkan.database.dbfunc import DBConnection
+from qgis.PyQt.QtWidgets import QProgressBar
 from qkan import enums
+from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import check_flaechenbilanz, checknames, fehlermeldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
@@ -663,7 +662,6 @@ def assigntgeb(
         auswahl_2 = " WHERE teilgebiete.tgnam in ('{tgnames}')".format(tgnames=tgnames)
     else:
         auswahl_1 = ""
-        auswahl_2 = ""
 
     for table, geom in tablist:
 

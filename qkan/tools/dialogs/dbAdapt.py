@@ -4,9 +4,7 @@ import webbrowser
 from pathlib import Path
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import (
-    QDialogButtonBox, QLineEdit, QPushButton, QGroupBox
-)
+from qgis.PyQt.QtWidgets import QDialogButtonBox, QGroupBox, QLineEdit, QPushButton
 
 from . import QKanDBDialog, QKanProjectDialog
 
@@ -28,18 +26,16 @@ def click_help():
 
 class DbAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_dbAdapt):
 
-    button_box:             QDialogButtonBox
+    button_box: QDialogButtonBox
 
-    tf_qkanDB:              QLineEdit
-    pb_selectQKanDB:        QPushButton
+    gb_projectFile: QGroupBox
+    gb_qkanDB: QGroupBox
 
-    gb_qkanDB:              QGroupBox
-    gb_projectFile:         QGroupBox
+    pb_selectProjectFile: QPushButton
+    pb_selectQKanDB: QPushButton
 
-    pb_selectProjectFile:   QPushButton
-
-    tf_projectFile:         QLineEdit
-
+    tf_projectFile: QLineEdit
+    tf_qkanDB: QLineEdit
 
     def __init__(self, plugin: "QKanTools", parent=None):
         super().__init__(plugin, parent)
@@ -48,11 +44,9 @@ class DbAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_dbAdapt):
         self.pb_selectProjectFile.clicked.connect(self.select_qkan_db)
         self.button_box.helpRequested.connect(click_help)
 
-
     def select_qkan_db(self):
         # noinspection PyArgumentList,PyCallByClass
         super().select_qkan_db()
-
 
     def select_project_file(selfself):
         # noinspection PyArgumentList,PyCallByClass

@@ -4,14 +4,14 @@ import typing
 from pathlib import Path
 from xml.etree import ElementTree
 
-from qgis.PyQt import uic
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgsProjectionSelectionWidget
+from qgis.PyQt import uic
 from qgis.utils import pluginDirectory
-
+from qkan import QKAN_FORMS, QKAN_TABLES, QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
-from qkan import QKAN_FORMS, QKAN_TABLES, QKan
+
 from . import QKanDBDialog, QKanProjectDialog
 
 if typing.TYPE_CHECKING:

@@ -1,23 +1,24 @@
+import os
+import sys
 from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences
-from qgis.core import QgsProject
 from qgis.testing import unittest
 
-import sys, os
+sys.path.append(os.path.join(os.path.split(__file__)[0], ".."))
 
-sys.path.append(os.path.join(os.path.split(__file__)[0],'..'))
+from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 
 from qkan import enums
-from qkan.database.dbfunc import DBConnection
-from qkan.dataswmm.importSWMM import importKanaldaten
 from qkan.dataswmm.exportSWMM import exportKanaldaten
-from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
+from qkan.dataswmm.importSWMM import importKanaldaten
 from qkan.tools.k_layersadapt import layersadapt
+
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
 class TestSwmm2QKan(QgisTest):
     """Aktuell nur als Vorlage. Muss noch programmiert werden"""
+
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -32,19 +33,19 @@ class TestSwmm2QKan(QgisTest):
         project_file = str(BASE_WORK / "plan.qgs")
 
         layersadapt(
-            database_QKan= database_qkan,
-            projectTemplate= "",
-            dbIsUptodate= False,
-            qkanDBUpdate= True,
-            anpassen_ProjektMakros= False,
-            anpassen_Datenbankanbindung= False,
-            anpassen_Wertebeziehungen_in_Tabellen= False,
-            anpassen_Formulare= False,
-            anpassen_Projektionssystem= False,
-            aktualisieren_Schachttypen= False,
-            zoom_alles= False,
-            fehlende_layer_ergaenzen= False,
-            anpassen_auswahl= enums.SelectedLayers.NONE,
+            database_QKan=database_qkan,
+            projectTemplate="",
+            dbIsUptodate=False,
+            qkanDBUpdate=True,
+            anpassen_ProjektMakros=False,
+            anpassen_Datenbankanbindung=False,
+            anpassen_Wertebeziehungen_in_Tabellen=False,
+            anpassen_Formulare=False,
+            anpassen_Projektionssystem=False,
+            aktualisieren_Schachttypen=False,
+            zoom_alles=False,
+            fehlende_layer_ergaenzen=False,
+            anpassen_auswahl=enums.SelectedLayers.NONE,
         )
 
         erg = importKanaldaten(
@@ -59,6 +60,7 @@ class TestSwmm2QKan(QgisTest):
             LOGGER.info("Nicht ausgeführt, weil zuerst QKan-DB aktualisiert wurde.!")
 
         # self.assertTrue(False, "Fehlernachricht")
+
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
 class TestQKan2Swmm(QgisTest):
@@ -76,19 +78,19 @@ class TestQKan2Swmm(QgisTest):
         template_swmm = str(BASE_WORK / "swmm_vorlage.inp")
 
         layersadapt(
-            database_QKan= database_qkan,
-            projectTemplate= "",
-            dbIsUptodate= False,
-            qkanDBUpdate= True,
-            anpassen_ProjektMakros= False,
-            anpassen_Datenbankanbindung= False,
-            anpassen_Wertebeziehungen_in_Tabellen= False,
-            anpassen_Formulare= False,
-            anpassen_Projektionssystem= False,
-            aktualisieren_Schachttypen= False,
-            zoom_alles= False,
-            fehlende_layer_ergaenzen= False,
-            anpassen_auswahl= enums.SelectedLayers.NONE,
+            database_QKan=database_qkan,
+            projectTemplate="",
+            dbIsUptodate=False,
+            qkanDBUpdate=True,
+            anpassen_ProjektMakros=False,
+            anpassen_Datenbankanbindung=False,
+            anpassen_Wertebeziehungen_in_Tabellen=False,
+            anpassen_Formulare=False,
+            anpassen_Projektionssystem=False,
+            aktualisieren_Schachttypen=False,
+            zoom_alles=False,
+            fehlende_layer_ergaenzen=False,
+            anpassen_auswahl=enums.SelectedLayers.NONE,
         )
 
         erg = exportKanaldaten(
@@ -97,12 +99,13 @@ class TestQKan2Swmm(QgisTest):
             templateSwmm=template_swmm,
             ergfileSwmm=swmmfile,
             mit_verschneidung=True,
-            liste_teilgebiete=['Fa20', 'Fa22', 'Fa23', 'Fa25'],
+            liste_teilgebiete=["Fa20", "Fa22", "Fa23", "Fa25"],
         )
 
         LOGGER.debug("erg (Validate_Swmm_export): %s", erg)
         if not erg:
             LOGGER.info("Nicht ausgeführt, weil zuerst QKan-DB aktualisiert wurde.!")
+
 
 if __name__ == "__main__":
     unittest.main()

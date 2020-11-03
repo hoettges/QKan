@@ -1,8 +1,8 @@
 import logging
 import os
+import typing
 from pathlib import Path
 
-import typing
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
@@ -14,8 +14,6 @@ from qgis.PyQt.QtWidgets import (
     QListWidget,
     QPushButton,
 )
-from qgis.utils import pluginDirectory
-
 from qkan import QKan, get_default_dir, list_selected_items
 
 if typing.TYPE_CHECKING:

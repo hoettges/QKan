@@ -6,10 +6,10 @@ from unittest import mock
 
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow
+
 # noinspection PyUnresolvedReferences
 from qgis.gui import QgisInterface, QgsMessageBar
 from qgis.testing import start_app, unittest
-
 from qkan import QKan
 
 LOGGER = logging.getLogger("QKan.tests")

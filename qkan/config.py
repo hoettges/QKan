@@ -197,9 +197,9 @@ class CheckImport(ClassObject):
     rohrprofile: bool = True
 
     # Aktionen
-    append: bool = True             # Daten hinzufügen
-    update: bool = False             # Daten ändern
-    synch: bool = False             # Daten löschen
+    append: bool = True  # Daten hinzufügen
+    update: bool = False  # Daten ändern
+    synch: bool = False  # Daten löschen
 
 
 class DatabaseConfig(ClassObject):

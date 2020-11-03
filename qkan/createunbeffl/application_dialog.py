@@ -13,7 +13,6 @@ from qgis.PyQt.QtWidgets import (
     QTableWidget,
     QTableWidgetSelectionRange,
 )
-
 from qkan.database.qkan_utils import fehlermeldung
 
 if typing.TYPE_CHECKING:

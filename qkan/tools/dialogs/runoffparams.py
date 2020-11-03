@@ -11,9 +11,9 @@ from qgis.PyQt.QtWidgets import (
     QListWidget,
     QRadioButton,
 )
-
 from qkan import list_selected_items
 from qkan.database.qkan_utils import sqlconditions
+
 from . import QKanDBDialog, logger
 
 if typing.TYPE_CHECKING:

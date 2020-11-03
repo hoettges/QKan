@@ -4,16 +4,10 @@ __author__ = "Joerg Hoettges"
 __date__ = "Mai 2020"
 __copyright__ = "(C) 2020, Joerg Hoettges"
 
-import os
-from pathlib import Path
-from qkan.database.dbfunc import DBConnection
-from qgis.utils import pluginDirectory
-import xml.etree.ElementTree as ET
-from qgis.core import QgsCoordinateReferenceSystem
-from qkan.database.qkan_utils import fehlermeldung
-
-
 import logging
+
+from qkan.database.dbfunc import DBConnection
+from qkan.database.qkan_utils import fehlermeldung
 
 logger = logging.getLogger("QKan.surfaceTools.surface_tools")
 
@@ -23,7 +17,7 @@ class SurfaceTool:
         self.epsg = epsg
         self.dbtyp = dbtyp
         # self.sqlobject = Path(sqlfile)
-        '''not sure if this is correct or needed'''
+        """not sure if this is correct or needed"""
         self.database_QKan = database_QKan
 
         self.dbQK = DBConnection(
@@ -41,11 +35,11 @@ class SurfaceTool:
             )
 
     def create_table(self):
-        sql = f'''
+        sql = f"""
             CREATE TEMPORARY TABLE IF NOT EXISTS temp_flaechencut (
                 pk INTEGER PRIMARY KEY,
                 geom MULTIPOLYGON)
-            '''
+            """
 
         if not self.dbQK.sql(sql, repeatmessage=True):
             del self.dbQK
@@ -55,7 +49,7 @@ class SurfaceTool:
         return True
 
     def processing(self, schneiden, geschnitten):
-        sql = f'''
+        sql = f"""
             WITH fl_cut AS (
                 SELECT pk, geom AS geom FROM flaechen
                 WHERE abflussparameter = '{geschnitten}'), 
@@ -79,7 +73,7 @@ class SurfaceTool:
             pk, CastToMultiPolygon(Difference(geom_cut, GUnion(geom_over))) AS geom
             FROM fl_isect
             GROUP BY pk
-            '''
+            """
         if not self.dbQK.sql(sql, repeatmessage=True):
             del self.dbQK
             return False
@@ -88,13 +82,13 @@ class SurfaceTool:
         return True
 
     def update(self):
-        sql = f'''
+        sql = f"""
             UPDATE flaechen SET geom = (
                 SELECT geom
                 FROM temp_flaechencut
                 WHERE flaechen.pk = temp_flaechencut.pk)
                 WHERE flaechen.pk IN (SELECT pk FROM temp_flaechencut)
-            '''
+            """
         if not self.dbQK.sql(sql, repeatmessage=True):
             del self.dbQK
             return False
@@ -118,15 +112,15 @@ class accessAttr:
         if not self.dbQK.connected:
             fehlermeldung(
                 "Fehler in surface_tools:\n",
-                "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
+                "QKan-Datenbank {} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
                     database_QKan
                 ),
             )
 
     def accessAttribute(self):
-        sql = f'''
+        sql = f"""
                     SELECT abflussparameter FROM flaechen 
-                    '''
+                    """
         if not self.dbQK.sql(sql, repeatmessage=True):
             del self.dbQK
             return False
@@ -136,11 +130,7 @@ class accessAttr:
 
 
 def FlaechenVerarbeitung(database_QKan: str, schneiden, geschnitten):
-    overlap = SurfaceTool(
-        database_QKan,
-        epsg=25832,
-        dbtyp="SpatiaLite"
-    )
+    overlap = SurfaceTool(database_QKan, epsg=25832, dbtyp="SpatiaLite")
 
     if not overlap.connected:
         return False

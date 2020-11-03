@@ -25,27 +25,25 @@ import logging
 import os
 from xml.etree import ElementTree
 
+from PyQt5.QtCore import QVariant
 from qgis.core import (
     Qgis,
     QgsCoordinateReferenceSystem,
     QgsDataSourceUri,
     QgsEditorWidgetSetup,
+    QgsField,
     QgsProject,
     QgsVectorLayer,
-    QgsField,
 )
 from qgis.utils import iface, pluginDirectory
-
-from PyQt5.QtCore import QVariant
-
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_database import qgs_actual_version, qgs_version
 from qkan.database.qkan_utils import (
     eval_node_types,
     fehlermeldung,
-    get_qkanlayer_attributes,
     get_layer_config_from_qgs_template,
+    get_qkanlayer_attributes,
     list_qkan_layers,
     meldung,
     warnung,
@@ -298,7 +296,6 @@ def layersadapt(
             del dbQK
             return False
         elif len(qgsLayers) == 0:
-            layerNotQkanMeldung = True
             logger.info(
                 "In der Vorlage-Projektdatei wurden kein Layer {} gefunden".format(
                     layername

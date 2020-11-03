@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QDialog,
@@ -9,8 +10,6 @@ from qgis.PyQt.QtWidgets import (
     QLineEdit,
     QPushButton,
 )
-from qgis.gui import QgsProjectionSelectionWidget
-
 from qkan import get_default_dir
 
 FORM_CLASS, _ = uic.loadUiType(

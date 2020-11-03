@@ -31,9 +31,8 @@ import logging
 import os
 from xml.etree import ElementTree as ET
 
-from qgis.core import Qgis, QgsCoordinateReferenceSystem
-from qgis.utils import iface, pluginDirectory
-
+from qgis.core import QgsCoordinateReferenceSystem
+from qgis.utils import pluginDirectory
 from qkan import QKAN_FORMS, QKAN_TABLES
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
@@ -89,9 +88,7 @@ def qgsadapt(
         zoomxmin, zoomxmax, zoomymin, zoomymax = daten
     except BaseException as err:
         fehlermeldung("SQL-Fehler", repr(err))
-        fehlermeldung(
-            "\nFehler in sql_zoom; daten= " + str(daten) + "\n",
-        )
+        fehlermeldung("\nFehler in sql_zoom; daten= " + str(daten) + "\n",)
 
     # --------------------------------------------------------------------------
     # Projektionssystem für die Projektdatei vorbereiten,
@@ -156,7 +153,7 @@ def qgsadapt(
             tag_datasource = tag_maplayer.find("./datasource")
             tex = tag_datasource.text
             # Nur QKan-Tabellen bearbeiten
-            if tex[tex.index(u'table="') + 7 :].split(u'" ')[0] in QKAN_TABLES:
+            if tex[tex.index('table="') + 7 :].split('" ')[0] in QKAN_TABLES:
 
                 # <extend> löschen
                 for tag_extent in tag_maplayer.findall("./extent"):
@@ -212,7 +209,9 @@ def qgsadapt(
 
         # Projektionssystem des Plans anpassen --------------------------------------------------------------
 
-        for tag_spatialrefsys in root.findall(".//mapcanvas/destinationsrs/spatialrefsys"):
+        for tag_spatialrefsys in root.findall(
+            ".//mapcanvas/destinationsrs/spatialrefsys"
+        ):
             tag_spatialrefsys.clear()
 
             elem = ET.SubElement(tag_spatialrefsys, "proj4")
@@ -269,9 +268,9 @@ def qgsadapt(
 
     # iface.mainWindow().statusBar().clearMessage()
     # iface.messageBar().pushMessage(
-        # "Information",
-        # "Projektdatei ist angepasst und muss neu geladen werden!",
-        # level=Qgis.Info,
+    # "Information",
+    # "Projektdatei ist angepasst und muss neu geladen werden!",
+    # level=Qgis.Info,
     # )
 
     # Importiertes Projekt laden

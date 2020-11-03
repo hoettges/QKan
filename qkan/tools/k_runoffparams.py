@@ -29,7 +29,6 @@ import logging
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.utils import iface
-
 from qkan import enums
 from qkan.database.qkan_utils import sqlconditions
 

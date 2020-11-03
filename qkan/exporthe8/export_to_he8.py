@@ -9,16 +9,14 @@ import logging
 import os
 import shutil
 import time
-
 import typing
-from qgis.gui import QgisInterface
 
+from qgis.gui import QgisInterface
+from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_database import versionolder
 from qkan.database.qkan_utils import checknames, fehlermeldung, fortschritt, meldung
-from qkan.database.dbfunc import DBConnection
 
 # Referenzlisten
-from qkan.database.reflists import abflusstypen
 from qkan.linkflaechen.updatelinks import updatelinkageb, updatelinkfl, updatelinksw
 
 logger = logging.getLogger("QKan.exporthe.export_to_he8")
@@ -68,9 +66,6 @@ def exporthe8(
     # )
     # status_message.layout().addWidget(progress_bar)
     # iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
-
-    # Referenzliste der Abflusstypen für HYSTEM-EXTRAN
-    he_fltyp_ref = abflusstypen("he")
 
     # ITWH-Datenbank aus gewählter Vorlage kopieren
     if os.path.exists(database_he):
@@ -268,7 +263,6 @@ def exporthe8(
         if check_export["export_speicher"]:
 
             nr0 = nextid
-            refid_speicher = {}
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
@@ -377,7 +371,6 @@ def exporthe8(
         if check_export["export_auslaesse"]:
 
             nr0 = nextid
-            refid_speicher = {}
 
             # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
             sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
@@ -1504,7 +1497,6 @@ def exporthe8(
                 "', '".join(liste_teilgebiete)
             )
         else:
-            auswahl_c = ""
             auswahl_a = ""
 
         # Verschneidung nur, wenn (mit_verschneidung)
@@ -2442,12 +2434,12 @@ dummy = __name__
 
 if __name__ == "__console__" or __name__ == "__main__":
 
-    from qkan.database.dbfunc import DBConnection
-    from pathlib import Path
-    import tempfile
     import datetime
+    import tempfile
+    from pathlib import Path
 
     from qgis.core import *
+    from qkan.database.dbfunc import DBConnection
 
     # Supply path to qgis install location
     QgsApplication.setPrefixPath("C:/Program Files/QGIS 3.4/apps/qgis-ltr", True)

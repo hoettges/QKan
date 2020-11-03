@@ -1,19 +1,20 @@
+import os
+import sys
 from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences
-from qgis.core import QgsProject
 from qgis.testing import unittest
-
-import sys, os
 
 sys.path.append(os.path.join(os.path.split(__file__)[0], ".."))
 
-from qkan import enums
-from qkan.database.dbfunc import DBConnection
-from qkan.createunbeffl.k_unbef import create_unpaved_areas
-from qkan.linkflaechen.k_link import createlinkfl, createlinksw
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
+
+from qkan import enums
+from qkan.createunbeffl.k_unbef import create_unpaved_areas
+from qkan.database.dbfunc import DBConnection
+from qkan.linkflaechen.k_link import createlinkfl, createlinksw
 from qkan.tools.k_layersadapt import layersadapt
+
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
 class TestLinkfl(QgisTest):
@@ -36,7 +37,7 @@ class TestLinkfl(QgisTest):
             projectTemplate="",
             dbIsUptodate=False,
             qkanDBUpdate=True,
-            anpassen_ProjektMakros= False,
+            anpassen_ProjektMakros=False,
             anpassen_Datenbankanbindung=False,
             anpassen_Wertebeziehungen_in_Tabellen=False,
             anpassen_Formulare=False,

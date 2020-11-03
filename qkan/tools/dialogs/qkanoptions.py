@@ -4,6 +4,7 @@ import subprocess
 import typing
 from pathlib import Path
 
+from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QDialogButtonBox,
@@ -12,9 +13,8 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QRadioButton,
 )
-from qgis.gui import QgsProjectionSelectionWidget
-
 from qkan import QKan
+
 from . import QKanDialog, logger
 
 if typing.TYPE_CHECKING:

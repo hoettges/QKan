@@ -31,7 +31,7 @@ class QmlChoice(enum.Enum):
 class SelectedLayers(enum.Enum):
     ALL = "alle_anpassen"
     SELECTED = "auswahl_anpassen"
-    NONE = "None"                       # für Tests
+    NONE = "None"  # für Tests
 
 
 class RunOffModelType(enum.Enum):
@@ -48,6 +48,4 @@ class RunOffParamsType(enum.Enum):
 
 class QKanDBChoice(enum.Enum):
     SPATIALITE = "spatialite"
-    POSTGIS    = "postgis"
-
-
+    POSTGIS = "postgis"

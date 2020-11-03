@@ -2,12 +2,7 @@ import logging
 import os
 import typing
 
-from qgis.PyQt.QtWidgets import (
-    QDialog,
-    QFileDialog,
-    QLineEdit,
-    QPushButton,
-)
+from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QLineEdit, QPushButton
 
 logger = logging.getLogger("QKan.tools.dialogs")
 

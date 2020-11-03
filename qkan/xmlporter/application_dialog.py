@@ -1,11 +1,10 @@
 import os
 import typing
 
-from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QCheckBox, QDialog, QFileDialog, QLineEdit, QPushButton
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
-
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QCheckBox, QDialog, QFileDialog, QLineEdit, QPushButton
 from qkan import QKan
 
 EXPORT_CLASS, _ = uic.loadUiType(

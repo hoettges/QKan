@@ -1,16 +1,15 @@
+from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences
-from qgis.core import QgsProject
 from qgis.testing import unittest
-
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 
 # from qkan.importhe8.import_from_he8 import importhe8
 from qkan.exporthe8.export_to_he8 import exporthe8
-from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from qkan.tools.k_layersadapt import layersadapt
+
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
 class TestHE8QKan(QgisTest):
@@ -65,7 +64,7 @@ class TestQKanHE8(QgisTest):
             projectTemplate="",
             dbIsUptodate=False,
             qkanDBUpdate=True,
-            anpassen_ProjektMakros= False,
+            anpassen_ProjektMakros=False,
             anpassen_Datenbankanbindung=False,
             anpassen_Wertebeziehungen_in_Tabellen=False,
             anpassen_Formulare=False,

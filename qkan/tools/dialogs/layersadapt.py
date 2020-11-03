@@ -14,9 +14,9 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QRadioButton,
 )
-
-from qkan.database.qkan_utils import meldung
 from qkan import QKan
+from qkan.database.qkan_utils import meldung
+
 from . import QKanDBDialog, logger
 
 if typing.TYPE_CHECKING:

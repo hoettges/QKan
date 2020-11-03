@@ -18,10 +18,9 @@ __copyright__ = "(C) 2016, Joerg Hoettges"
 import logging
 import typing
 
-from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface
-
+from qgis.PyQt.QtWidgets import QProgressBar
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import checknames, fehlermeldung
 

@@ -1,18 +1,10 @@
 import logging
-import typing
-from pathlib import Path
-from xml.dom import minidom
-from xml.etree.ElementTree import Element, SubElement, tostring
 
-from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis
-
+from qgis.PyQt.QtWidgets import QProgressBar
 from qkan import QKan
-from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fortschritt, fehlermeldung, checknames, meldung
-
-from qkan.database.reflists import abflusstypen
-from qkan.linkflaechen.updatelinks import updatelinkageb, updatelinkfl, updatelinksw
+from qkan.database.qkan_utils import checknames, fehlermeldung, fortschritt, meldung
+from qkan.linkflaechen.updatelinks import updatelinkfl
 
 logger = logging.getLogger("QKan.he8.export")
 
@@ -53,29 +45,33 @@ class ExportTask:
         self.db_qkan.sql("SELECT NextId, Version FROM he.Itwh$ProgInfo")
         data = self.db_qkan.fetchone()
         if not data:
-            logger.error("he8porter._export.run: SELECT NextId, Version FROM he.Itwh$ProgInfo"
-                         f"\nAbfrageergebnis ist leer: {data}")
+            logger.error(
+                "he8porter._export.run: SELECT NextId, Version FROM he.Itwh$ProgInfo"
+                f"\nAbfrageergebnis ist leer: {data}"
+            )
         self.nextid = int(data[0]) + 1
         he_db_version = data[1].split(".")
         logger.debug(f"HE IDBF-Version {he_db_version}")
 
         # Export
-        result = all([
-            # self._profile(),
-            # self._bodenklassen(),
-            # self._abflussparameter(),
-            self._schaechte(),
-            self._auslaesse(),
-            self._speicher(),
-            self._haltungen(),
-            self._wehre(),
-            self._pumpen(),
-            self._flaechen(),
-            # self._einleitdirekt(),
-            # self._aussengebiete(),
-            # self._einzugsgebiet(),
-            # self._tezg()
-        ])
+        result = all(
+            [
+                # self._profile(),
+                # self._bodenklassen(),
+                # self._abflussparameter(),
+                self._schaechte(),
+                self._auslaesse(),
+                self._speicher(),
+                self._haltungen(),
+                self._wehre(),
+                self._pumpen(),
+                self._flaechen(),
+                # self._einleitdirekt(),
+                # self._aussengebiete(),
+                # self._einzugsgebiet(),
+                # self._tezg()
+            ]
+        )
 
         self.progress_bar.setValue(100)
         status_message.setText("Datenexport abgeschlossen.")
@@ -131,13 +127,17 @@ class ExportTask:
                         WHERE schaechte.schachttyp = 'Schacht'{auswahl})
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_schaechte (1)"):
+                if not self.db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_schaechte (1)"
+                ):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
+                if not self.db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_schaechte (2)"
+                ):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -229,7 +229,9 @@ class ExportTask:
 
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
+                if not self.db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_schaechte (2)"
+                ):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -318,7 +320,9 @@ class ExportTask:
                           (SELECT schnam FROM schaechte WHERE schaechte.schachttyp = 'Auslass'{auswahl})
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_auslaesse (1)"):
+                if not self.db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_auslaesse (1)"
+                ):
                     return False
 
             if self.append:
@@ -326,7 +330,9 @@ class ExportTask:
 
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_schaechte (2)"):
+                if not self.db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_schaechte (2)"
+                ):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -432,13 +438,17 @@ class ExportTask:
                   ( SELECT haltnam FROM haltungen){auswahl})
                   """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_haltungen (1)"):
+                if not self.db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_haltungen (1)"
+                ):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_haltungen (2)"):
+                if not self.db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_haltungen (2)"
+                ):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -496,7 +506,9 @@ class ExportTask:
                     WHERE haltungen.haltnam NOT IN (SELECT Name FROM he.Rohr){auswahl};
                   """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_haltungen (3)"):
+                if not self.db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_haltungen (3)"
+                ):
                     return False
 
                 self.nextid += idmax - idmin + 1
@@ -627,7 +639,9 @@ class ExportTask:
                 )
 
                 for sql in sqllis:
-                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_flaechen (1)"):
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_flaechen (1)"
+                    ):
                         return False
 
             if self.append:
@@ -710,11 +724,15 @@ class ExportTask:
                         FROM flintersect AS fi
                         WHERE flaeche*10000 > {mindestflaeche} and (flnam NOT IN (SELECT Name FROM he.Flaeche))"""
 
-                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_flaechen (3)"):
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_flaechen (3)"
+                    ):
                         return False
 
                     self.nextid += idmax - idmin + 1
-                    self.db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}")
+                    self.db_qkan.sql(
+                        f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}"
+                    )
             self.db_qkan.commit()
 
             if nr0:
@@ -733,7 +751,6 @@ class ExportTask:
             else:
                 auswahl_w = ""
                 auswahl_a = ""
-
 
             if self.update:
                 sql = f"""
