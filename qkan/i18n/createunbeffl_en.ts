@@ -3,7 +3,7 @@
 <context>
     <name>CreateUnbefFl</name>
     <message>
-        <location filename="../createunbeffl/application.py" line="117"/>
+        <location filename="../createunbeffl/application.py" line="26"/>
         <source>Erzeuge unbefestigte Fl&#xc3;&#xa4;chen...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -57,17 +57,32 @@ in den TEZG-Flächen</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../createunbeffl/application_dialog_base.ui" line="163"/>
+        <location filename="../createunbeffl/application_dialog_base.ui" line="159"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vor Beginn der Bearbeitung werden zunächst in den Tabellen &amp;quot;Flächen&amp;quot; und &amp;quot;Haltungsflächen&amp;quot; geometrische Fehler korrigiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../createunbeffl/application_dialog_base.ui" line="162"/>
+        <source>Vor Beginn der Bearbeitung werden zunächst in den Tabellen &quot;Flächen&quot; und &quot;Haltungsflächen&quot; geometrische Fehler korrigiert.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../createunbeffl/application_dialog_base.ui" line="168"/>
+        <source>Flächenobjekte bereinigen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../createunbeffl/application_dialog_base.ui" line="192"/>
         <source>Auswahl der zu bearbeitenden Arten von Haltungsflächen (tezg):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../createunbeffl/application_dialog_base.ui" line="192"/>
+        <location filename="../createunbeffl/application_dialog_base.ui" line="221"/>
         <source>0</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../createunbeffl/application_dialog_base.ui" line="221"/>
+        <location filename="../createunbeffl/application_dialog_base.ui" line="250"/>
         <source>Ausgewählte Haltungsflächen:</source>
         <translation type="unfinished"></translation>
     </message>

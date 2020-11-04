@@ -38,7 +38,7 @@ if (-not (Test-Path $PYTHON))
 
 $LOCALES=@("en")
 
-foreach ($folder in Get-ChildItem -Path ..\qkan -Exclude __pycache__,doc,templates,test,i18n,.git -Directory)
+foreach ($folder in Get-ChildItem -Path "$PSScriptRoot/../qkan" -Exclude __pycache__,doc,templates,test,i18n,.git -Directory)
 {
     $plugin = $folder.BaseName
     Write-Host "Collecting translations for $plugin"
@@ -46,7 +46,7 @@ foreach ($folder in Get-ChildItem -Path ..\qkan -Exclude __pycache__,doc,templat
     $files=Get-ChildItem -Path $folder -Include *.py,*.ui -Recurse -File
     foreach ($locale in $LOCALES)
     {
-        & $PYTHON -m PyQt5.pylupdate_main -noobsolete $files -ts "..\qkan\i18n\$($plugin)_$($locale).ts"
+        & $PYTHON -m PyQt5.pylupdate_main -noobsolete $files -ts "$PSScriptRoot/../qkan/i18n/$($plugin)_$($locale).ts"
     }
 }
 Pause-Exit(0)

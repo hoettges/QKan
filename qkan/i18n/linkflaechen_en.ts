@@ -67,6 +67,21 @@
         <source>Autokorrektur der TEZG-Namen</source>
         <translation type="unfinished"></translation>
     </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_assigntgeb.ui" line="272"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vor Beginn der Bearbeitung werden zunächst in den Tabellen &amp;quot;Flächen&amp;quot; und &amp;quot;Haltungsflächen&amp;quot; geometrische Fehler korrigiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_assigntgeb.ui" line="275"/>
+        <source>Vor Beginn der Bearbeitung werden zunächst in den Tabellen &quot;Flächen&quot; und &quot;Haltungsflächen&quot; geometrische Fehler korrigiert.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_assigntgeb.ui" line="281"/>
+        <source>Flächenobjekte bereinigen</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="../linkflaechen/res/application_managegroups.ui" line="67"/>
         <source>Teilgebietszuordnungen verwalten</source>
@@ -196,7 +211,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="384"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="387"/>
         <source>ganze Flächen</source>
         <translation type="unfinished"></translation>
     </message>
@@ -206,17 +221,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="437"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="440"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aktiviert Auswahl. Wenn deaktiviert, werden alle Abflussparameter berücksichtigt&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="440"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="443"/>
         <source>Aktiviert Auswahl. Wenn deaktiviert, werden alle Abflussparameter berücksichtigt</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="443"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="446"/>
         <source>Nur ausgewählte Abfluss-
 parameter berücksichtigen</source>
         <translation type="unfinished"></translation>
@@ -254,7 +269,7 @@ berücksichtigen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="522"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="525"/>
         <source>Optionen zur Erzeugung von Zuordnungen</source>
         <translation type="unfinished"></translation>
     </message>
@@ -269,88 +284,123 @@ berücksichtigen</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="595"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="598"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Radius, innerhalb dessen zu einer Fläche die nächste Haltung gesucht wird&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="598"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="601"/>
         <source>Maximaler Suchabstand zwischen Fläche und Haltung</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="618"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="621"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Abstand zwischen Mitte der Fläche und Haltung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="621"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="624"/>
         <source>Abstand zwischen Mitte der Fläche und Haltung</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="624"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="627"/>
         <source>Abstand zum Mittelpunkt</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="644"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="647"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Der Abstand wird von der Kante der Fläche aus ermittelt, die der Haltung am nächsten ist&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="647"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="650"/>
         <source>Der Abstand wird von der Kante der Fläche aus ermittelt, die der Haltung am nächsten ist</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="650"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="653"/>
         <source>Abstand zur nächsten Kante</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="670"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="673"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Falls in den Tabellen &amp;quot;flaechen&amp;quot; und &amp;quot;einleitsw&amp;quot; leere oder doppelte Namen (flnam bzw. elnam) vorkommen, werden diese mit &amp;quot;f_nnnn&amp;quot; bzw. &amp;quot;e_nnnn&amp;quot; überschrieben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="673"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="676"/>
         <source>Automatische Korrektur von Namensfehlern...</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="679"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="682"/>
         <source>Autokorrektur von Namen in Flächen und Einleitpunkten</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="699"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="702"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Verbindungslinien berücksichtigen nur Haltungen innerhalb derselben Haltungsfläche&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="702"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="705"/>
         <source>Verbindungslinien berücksichtigen nur Haltungen innerhalb derselben Haltungsfläche</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="708"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="711"/>
         <source>Verbindungen nur innerhalb Haltungsfläche (tezg) erstellen</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="728"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="731"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Berücksichtigung von Haltungsflächen: Die Verbindungslinien werden zu jeder Teilfläche angelegt, die sich aus der Verschneidung der Flächen und der Haltungsflächen ergeben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="731"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="734"/>
         <source>Verbindungslinien werden nach Verschneidung der Flächen mit den Haltungsflächen erstellt</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="../linkflaechen/res/application_createlinefl.ui" line="737"/>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="740"/>
         <source>Mit Haltungsflächen verschneiden</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="760"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vor Beginn der Bearbeitung werden zunächst in den Tabellen &amp;quot;Flächen&amp;quot; und &amp;quot;Haltungsflächen&amp;quot; geometrische Fehler korrigiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="763"/>
+        <source>Vor Beginn der Bearbeitung werden zunächst in den Tabellen &quot;Flächen&quot; und &quot;Haltungsflächen&quot; geometrische Fehler korrigiert.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="769"/>
+        <source>Flächenobjekte bereinigen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="795"/>
+        <source>Fangradius:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="817"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximaler Abstand vom Ende der Verbidnungslinie zur zugeordneten Haltung (für manuell erstellte Verbindungslinien). Empfohlener Wert: 0.1&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="820"/>
+        <source>Maximaler Abstand vom Ende der Verbidnungslinie zur zugeordneten Haltung (für manuell erstellte Verbindungslinien). Empfohlener Wert: 0.1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../linkflaechen/res/application_createlinefl.ui" line="868"/>
+        <source>Warnung</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -372,27 +422,27 @@ berücksichtigen</source>
 <context>
     <name>LinkFl</name>
     <message>
-        <location filename="../linkflaechen/application.py" line="141"/>
+        <location filename="../linkflaechen/application.py" line="51"/>
         <source>Alle Elemente des Entw&#xc3;&#xa4;sserungsnetzes zu Teilgebiet zuordnen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../linkflaechen/application.py" line="148"/>
+        <location filename="../linkflaechen/application.py" line="61"/>
         <source>Erzeuge Verkn&#xc3;&#xbc;pfungslinien von Fl&#xc3;&#xa4;chen zu Haltungen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../linkflaechen/application.py" line="155"/>
+        <location filename="../linkflaechen/application.py" line="69"/>
         <source>Erzeuge Verkn&#xc3;&#xbc;pfungslinien von Direkteinleitungen zu Haltungen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../linkflaechen/application.py" line="162"/>
+        <location filename="../linkflaechen/application.py" line="79"/>
         <source>Verkn&#xc3;&#xbc;pfungen bereinigen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../linkflaechen/application.py" line="169"/>
+        <location filename="../linkflaechen/application.py" line="87"/>
         <source>Teilgebietszuordnungen als Gruppen verwalten</source>
         <translation type="unfinished"></translation>
     </message>
@@ -462,6 +512,26 @@ berücksichtigen</source>
     <message encoding="UTF-8">
         <location filename="../linkflaechen/res/application_updatelinks.ui" line="256"/>
         <source>Datensätze ohne Linienobjekt löschen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_updatelinks.ui" line="276"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vor Beginn der Bearbeitung werden zunächst in den Tabellen &amp;quot;Flächen&amp;quot; und &amp;quot;Haltungsflächen&amp;quot; geometrische Fehler korrigiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_updatelinks.ui" line="279"/>
+        <source>Vor Beginn der Bearbeitung werden zunächst in den Tabellen &quot;Flächen&quot; und &quot;Haltungsflächen&quot; geometrische Fehler korrigiert.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="../linkflaechen/res/application_updatelinks.ui" line="285"/>
+        <source>Flächenobjekte bereinigen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../linkflaechen/res/application_updatelinks.ui" line="304"/>
+        <source>Warnung</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

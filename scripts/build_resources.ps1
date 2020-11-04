@@ -37,13 +37,12 @@ if (-not (Test-Path $PYTHON))
 }
 
 $RESOURCE_FILES=@(
-	"../qkan/createunbeffl/resources.qrc"
-	"../qkan/exportdyna/resources.qrc"
-	"../qkan/exporthe8/resources.qrc"
-	"../qkan/importdyna/resources.qrc"
-	"../qkan/linkflaechen/resources.qrc"
-	"../qkan/xmlporter/resources.qrc"
-	"../qkan/tools/resources.qrc"
+	"$PSScriptRoot/../qkan/createunbeffl/resources.qrc"
+	"$PSScriptRoot/../qkan/dynaporter/resources.qrc"
+	"$PSScriptRoot/../qkan/exporthe8/resources.qrc"
+	"$PSScriptRoot/../qkan/linkflaechen/resources.qrc"
+	"$PSScriptRoot/../qkan/xmlporter/resources.qrc"
+	"$PSScriptRoot/../qkan/tools/resources.qrc"
 )
 
 foreach ($element in $RESOURCE_FILES)
