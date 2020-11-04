@@ -24,7 +24,7 @@ from qkan import QKAN_FORMS, QKAN_TABLES, QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import eval_node_types, fehlermeldung, fzahl
 
-logger = logging.getLogger("QKan.importdyna.import_from_dyna")
+logger = logging.getLogger("QKan.dynaporter.import_from_dyna")
 
 
 # Hilfsfunktionen --------------------------------------------------------------------------

@@ -17,7 +17,7 @@ from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, formf, fortschritt, meldung
 from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
-logger = logging.getLogger("QKan.exportdyna.export_to_dyna")
+logger = logging.getLogger("QKan.dynaporter.export_to_dyna")
 
 progress_bar: typing.Optional[QProgressBar] = None
 

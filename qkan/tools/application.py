@@ -10,7 +10,7 @@ import typing
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QListWidgetItem
-from qkan import QKan, enums, get_default_dir, list_selected_items
+from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
     fehlermeldung,
@@ -40,7 +40,6 @@ from . import resources  # isort:skip
 class QKanTools(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
-        self.default_dir = get_default_dir()
         self.db_qkan: typing.Optional[DBConnection] = None
 
         self.dlgla = LayersAdaptDialog(self)

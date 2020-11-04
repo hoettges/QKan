@@ -3,7 +3,7 @@ from pathlib import Path
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
-from qkan import QKan, get_default_dir
+from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.plugin import QKanPlugin
@@ -20,7 +20,6 @@ from . import resources  # isort:skip
 class XmlPorter(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
-        self.default_dir = get_default_dir()
 
         self.export_dlg = ExportDialog(default_dir=self.default_dir, tr=self.tr)
         self.import_dlg = ImportDialog(default_dir=self.default_dir, tr=self.tr)

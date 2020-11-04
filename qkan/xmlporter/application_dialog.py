@@ -36,9 +36,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
     cb_export_wehre: QCheckBox
 
     def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
-        # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
-        self.setupUi(self)
 
         # Attach events
         self.pb_database.clicked.connect(self.select_database)
@@ -106,9 +104,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
     epsg: QgsProjectionSelectionWidget
 
     def __init__(self, default_dir: str, tr=typing.Callable, parent=None):
-        # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
-        self.setupUi(self)
 
         # Attach events
         self.pb_import.clicked.connect(self.select_import)

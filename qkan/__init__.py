@@ -102,27 +102,23 @@ class QKan:
         QCoreApplication.installTranslator(self.translator)
 
         from .createunbeffl import CreateUnbefFl
-        from .exportdyna import ExportToKP
+        from .dynaporter import DynaPorter
         from .he8porter import He8Porter
-        from .importdyna import ImportFromDyna
         from .linkflaechen import LinkFl
         from .surfaceTools import SurfaceTools
         from .swmmporter import ImportFromSWMM
         from .tools import QKanTools
         from .xmlporter import XmlPorter
 
-        # from .surfaceTools import SurfaceTools
-
         self.plugins: List = [
             CreateUnbefFl(iface),
-            ImportFromDyna(iface),
-            ImportFromSWMM(iface),
-            ExportToKP(iface),
-            LinkFl(iface),
-            QKanTools(iface),
+            DynaPorter(iface),
             He8Porter(iface),
-            XmlPorter(iface),
+            LinkFl(iface),
             SurfaceTools(iface),
+            ImportFromSWMM(iface),
+            QKanTools(iface),
+            XmlPorter(iface),
         ]
 
         actions = cast(QMenuBar, self.iface.mainWindow().menuBar()).actions()

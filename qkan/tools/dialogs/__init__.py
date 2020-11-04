@@ -2,16 +2,16 @@ import logging
 import os
 import typing
 
-from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QLineEdit, QPushButton
+from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QLineEdit, QPushButton, QWidget
 
 logger = logging.getLogger("QKan.tools.dialogs")
 
 if typing.TYPE_CHECKING:
-    from qkan.tools.application import QKanTools
+    from qkan.plugin import QKanPlugin
 
 
 class QKanDialog(QDialog):
-    def __init__(self, plugin: "QKanTools", parent=None):
+    def __init__(self, plugin: "QKanPlugin", parent: typing.Optional[QWidget] = None):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
@@ -25,11 +25,11 @@ class QKanDBDialog(QKanDialog):
 
     open_mode = True
 
-    def __init__(self, plugin: "QKanTools", parent=None):
+    def __init__(self, plugin: "QKanPlugin", parent: typing.Optional[QWidget] = None):
         super().__init__(plugin, parent)
         self.pb_selectQKanDB.clicked.connect(self.select_qkan_db)
 
-    def select_qkan_db(self):
+    def select_qkan_db(self) -> None:
         """Anzubindende QKan-Datenbank festlegen"""
 
         if self.open_mode:
@@ -54,12 +54,12 @@ class QKanProjectDialog(QKanDialog):
     pb_selectProjectFile: QPushButton
     tf_projectFile: QLineEdit
 
-    def __init__(self, plugin: "QKanTools", parent=None):
+    def __init__(self, plugin: "QKanPlugin", parent: typing.Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
         self.pb_selectProjectFile.clicked.connect(self.select_project_file)
 
-    def select_project_file(self):
+    def select_project_file(self) -> None:
         """Zu erstellende Projektdatei festlegen"""
 
         # noinspection PyArgumentList,PyCallByClass

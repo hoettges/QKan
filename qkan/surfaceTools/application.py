@@ -21,7 +21,7 @@
 """
 
 from qgis.gui import QgisInterface
-from qkan import QKan, get_default_dir
+from qkan import QKan
 from qkan.database.qkan_utils import get_database_QKan
 from qkan.plugin import QKanPlugin
 
@@ -36,7 +36,6 @@ class SurfaceTools(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
         self.dlg = SurfaceToolDialog()
-        self.default_dir = get_default_dir()
 
     # noinspection PyPep8Naming
     def initGui(self):
