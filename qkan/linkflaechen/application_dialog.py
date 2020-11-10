@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
-import typing
+from typing import List, Optional, TYPE_CHECKING
 import webbrowser
 from pathlib import Path
 
@@ -21,12 +21,15 @@ from qgis.PyQt.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QTextEdit,
+    QWidget,
 )
 from qkan import list_selected_items
 
 from .k_link import reload_group, store_group
+from qkan.database.dbfunc import DBConnection
+from qkan.tools.dialogs import QKanDialog
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from .application import LinkFl
 
 logger = logging.getLogger("QKan.linkflaechen.application_dialog")
@@ -48,14 +51,14 @@ FORM_CLASS_managegroups, _ = uic.loadUiType(
 )
 
 
-def click_help_fl():
+def click_help_fl() -> None:
     helpfile = str(
         Path(__file__).parent / ".." / "doc/sphinx/build/html/Qkan_Formulare.html"
     )
     webbrowser.open_new_tab(helpfile + "#automatisches-erzeugen-von-flachenanbindungen")
 
 
-def click_help_sw():
+def click_help_sw() -> None:
     helpfile = str(
         Path(__file__).parent / ".." / "doc/sphinx/build/html/Qkan_Formulare.html"
     )
@@ -64,7 +67,7 @@ def click_help_sw():
     )
 
 
-class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):
+class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):  # type: ignore
     button_box: QDialogButtonBox
 
     cb_autokorrektur: QCheckBox
@@ -83,7 +86,7 @@ class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):
 
     unit_bufferradius: QLabel
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: Optional[QWidget] = None):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
@@ -91,7 +94,7 @@ class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):
         self.rb_within.clicked.connect(lambda _: self.enable_bufferradius(True))
         self.rb_overlaps.clicked.connect(lambda _: self.enable_bufferradius(False))
 
-    def enable_bufferradius(self, status=True):
+    def enable_bufferradius(self, status: bool = True) -> None:
         """
         Aktiviert/Deaktiviert die Eingabe der Pufferbreite abhängig von der
         Auswahloption
@@ -102,7 +105,7 @@ class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):
         self.unit_bufferradius.setEnabled(status)
 
 
-class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
+class CreatelineflDialog(QKanDialog, FORM_CLASS_createlinefl):  # type: ignore
     button_box: QDialogButtonBox
 
     cb_autokorrektur: QCheckBox
@@ -127,12 +130,10 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
     tf_fangradius: QLineEdit
     tf_suchradius: QLineEdit
 
-    def __init__(self, plugin: "LinkFl", parent=None):
-        # noinspection PyArgumentList
-        super().__init__(parent)
-        self.setupUi(self)
+    def __init__(self, plugin: "LinkFl", parent: Optional[QWidget] = None):
+        super().__init__(plugin, parent)
 
-        self.plugin = plugin
+        self.db_qkan: Optional[DBConnection] = None
 
         self.lw_flaechen_abflussparam.itemClicked.connect(
             self.click_lw_flaechen_abflussparam
@@ -145,25 +146,25 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
         self.button_box.helpRequested.connect(click_help_fl)
         self.tf_fangradius.textChanged.connect(self.changed_tf_fangradius)
 
-    def click_lw_flaechen_abflussparam(self):
+    def click_lw_flaechen_abflussparam(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
         self.cb_selFlActive.setChecked(True)
         self.count_selection()
 
-    def click_lw_hal_entw(self):
+    def click_lw_hal_entw(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
         self.cb_selHalActive.setChecked(True)
         self.count_selection()
 
-    def click_lw_teilgebiete(self):
+    def click_lw_teilgebiete(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
         self.cb_selTgbActive.setChecked(True)
         self.count_selection()
 
-    def click_selection(self):
+    def click_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
@@ -180,7 +181,7 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
 
-    def click_hal_selection(self):
+    def click_hal_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
@@ -197,7 +198,7 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
 
-    def click_tgb_selection(self):
+    def click_tgb_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
@@ -214,7 +215,7 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
 
-    def changed_tf_fangradius(self):
+    def changed_tf_fangradius(self) -> None:
         """Gibt eine Warnung, falls Fangradius zu groß"""
         try:
             fangradius = float(self.tf_fangradius.text().replace(",", "."))
@@ -231,14 +232,19 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
             self.lf_warning.setStyleSheet("color: black; font: bold;")
             self.lf_unit_fangradius.setStyleSheet("color: black")
 
-    def count_selection(self):
+    def count_selection(self) -> None:
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
-        liste_flaechen_abflussparam: typing.List[str] = list_selected_items(
+
+        if not self.db_qkan:
+            logger.error("db_qkan is not initialized.")
+            return
+
+        liste_flaechen_abflussparam: List[str] = list_selected_items(
             self.lw_flaechen_abflussparam
         )
-        liste_hal_entw: typing.List[str] = list_selected_items(self.lw_hal_entw)
-        liste_teilgebiete: typing.List[str] = list_selected_items(self.lw_teilgebiete)
+        liste_hal_entw: List[str] = list_selected_items(self.lw_hal_entw)
+        liste_teilgebiete: List[str] = list_selected_items(self.lw_teilgebiete)
         # Aufbereiten für SQL-Abfrage
 
         # Zu berücksichtigende ganze Flächen zählen
@@ -261,9 +267,9 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
         sql = f"""SELECT count(*) AS anzahl FROM flaechen
                 WHERE (aufteilen <> 'ja' OR aufteilen IS NULL){auswahl}"""
 
-        if not self.plugin.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionfl (1)"):
-            return False
-        daten = self.plugin.db_qkan.fetchone()
+        if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionfl (1)"):
+            return
+        daten = self.db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_flaechen.setText(str(daten[0]))
         else:
@@ -275,9 +281,9 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
             f"SELECT count(*) AS anzahl FROM flaechen WHERE aufteilen = 'ja' {auswahl}"
         )
         logger.debug("sql Flaechen zu verschneiden:\n{}".format(sql))
-        if not self.plugin.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionfl (2)"):
-            return False
-        daten = self.plugin.db_qkan.fetchone()
+        if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionfl (2)"):
+            return
+        daten = self.db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_flaechsec.setText(str(daten[0]))
         else:
@@ -302,16 +308,16 @@ class CreatelineflDialog(QDialog, FORM_CLASS_createlinefl):
                 )
 
         sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
-        if not self.plugin.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionfl (3)"):
-            return False
-        daten = self.plugin.db_qkan.fetchone()
+        if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionfl (3)"):
+            return
+        daten = self.db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_haltungen.setText(str(daten[0]))
         else:
             self.lf_anzahl_haltungen.setText("0")
 
 
-class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
+class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):  # type: ignore
 
     button_box: QDialogButtonBox
     cb_selHalActive: QCheckBox
@@ -327,7 +333,7 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
 
     tf_suchradius: QLineEdit
 
-    def __init__(self, plugin: "LinkFl", parent=None):
+    def __init__(self, plugin: "LinkFl", parent: Optional[QWidget] = None):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
@@ -340,19 +346,19 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
         self.cb_selTgbActive.stateChanged.connect(self.click_tgb_selection)
         self.button_box.helpRequested.connect(click_help_sw)
 
-    def click_lw_hal_entw(self):
+    def click_lw_hal_entw(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
         self.cb_selHalActive.setChecked(True)
         self.count_selection()
 
-    def click_lw_teilgebiete(self):
+    def click_lw_teilgebiete(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
         self.cb_selTgbActive.setChecked(True)
         self.count_selection()
 
-    def click_hal_selection(self):
+    def click_hal_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
@@ -369,7 +375,7 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
 
-    def click_tgb_selection(self):
+    def click_tgb_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
@@ -386,11 +392,11 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
 
-    def count_selection(self):
+    def count_selection(self) -> None:
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Haltungen"""
-        liste_hal_entw: typing.List[str] = list_selected_items(self.lw_hal_entw)
-        liste_teilgebiete: typing.List[str] = list_selected_items(self.lw_teilgebiete)
+        liste_hal_entw: List[str] = list_selected_items(self.lw_hal_entw)
+        liste_teilgebiete: List[str] = list_selected_items(self.lw_teilgebiete)
         # Aufbereiten für SQL-Abfrage
 
         # Zu berücksichtigende Haltungen zählen
@@ -412,9 +418,9 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
                 )
 
         sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
-        if not self.plugin.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionsw (1)"):
-            return False
-        daten = self.plugin.db_qkan.fetchone()
+        if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionsw (1)"):
+            return
+        daten = self.db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_haltungen.setText(str(daten[0]))
         else:
@@ -430,16 +436,16 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):
             auswahl = ""
 
         sql = f"SELECT count(*) AS anzahl FROM einleit {auswahl}"
-        if not self.plugin.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionsw (2)"):
-            return False
-        daten = self.plugin.db_qkan.fetchone()
+        if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionsw (2)"):
+            return
+        daten = self.db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_einleit.setText(str(daten[0]))
         else:
             self.lf_anzahl_einleit.setText("0")
 
 
-class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):
+class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):  # type: ignore
     button_box: QDialogButtonBox
 
     cb_deleteGeomNone: QCheckBox
@@ -452,14 +458,14 @@ class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):
     tf_fangradius: QLineEdit
     tf_qkDB: QLineEdit
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: Optional[QWidget] = None):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
 
         self.tf_fangradius.textChanged.connect(self.changed_tf_fangradius)
 
-    def changed_tf_fangradius(self):
+    def changed_tf_fangradius(self) -> None:
         """Gibt eine Warnung, falls Fangradius zu groß"""
         try:
             fangradius = float(self.tf_fangradius.text().replace(",", "."))
@@ -477,7 +483,7 @@ class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):
             self.lf_unit_fangradius.setStyleSheet("color: black")
 
 
-class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):
+class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):  # type: ignore
     button_box: QDialogButtonBox
 
     groupBox_2: QGroupBox
@@ -494,9 +500,9 @@ class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):
     tw_gruppenattr: QTableWidget
 
     # Extra
-    gruppe: str = None
+    gruppe: Optional[str] = None
 
-    def __init__(self, plugin: "LinkFl", parent=None):
+    def __init__(self, plugin: "LinkFl", parent: Optional[QWidget] = None):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
@@ -507,36 +513,39 @@ class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):
         self.pb_storegroup.clicked.connect(self.click_store_group)
         self.pb_reloadgroup.clicked.connect(self.click_reload_group)
 
-    def click_reload_group(self):
-        if not reload_group(self.plugin.iface, self.plugin.db_qkan, self.gruppe):
-            del self.plugin.db_qkan
+    def click_reload_group(self) -> None:
+        if not self.gruppe:
+            return
+
+        if not reload_group(self.plugin.iface, self.db_qkan, self.gruppe):
+            del self.db_qkan
 
         self.plugin.iface.messageBar().pushMessage(
             "Fertig!", "Teilgebiete wurden geladen!", level=Qgis.Info
         )
 
-    def click_store_group(self):
+    def click_store_group(self) -> None:
         neuegruppe = self.tf_newgroup.text()
         if neuegruppe != "" and neuegruppe is not None:
             kommentar = self.tf_kommentar.toPlainText()
             if kommentar is None:
                 kommentar = ""
-            if not store_group(self.plugin.db_qkan, neuegruppe, kommentar):
-                del self.plugin.db_qkan
+            if not store_group(self.plugin.iface, self.db_qkan, neuegruppe, kommentar):
+                del self.db_qkan
 
             self.show_groups()
             self.plugin.iface.messageBar().pushMessage(
                 "Fertig!", "Teilgebiete wurden gespeichert", level=Qgis.Info
             )
 
-    def click_lw_groups(self):
+    def click_lw_groups(self) -> None:
         """
         Funktion zum Abfragen der zugeordneten Teilgebiete, betroffenen Tabellen und
         Anzahl für eine ausgewählte Gruppe
         """
 
         # Angeklickte Gruppe aus QListWidget
-        gr: typing.List[str] = list_selected_items(self.lw_gruppen)
+        gr: List[str] = list_selected_items(self.lw_gruppen)
         if len(gr) > 0:
             self.gruppe = gr[0]  # Im Formular gesetzt: selectionMode = SingleSelection
 
@@ -547,10 +556,10 @@ class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):
                 GROUP BY tabelle, teilgebiet
                 ORDER BY tabelle, teilgebiet
                 """
-            if not self.plugin.db_qkan.sql(sql, "QKan_LinkFlaechen.listGroupAttr (1)"):
-                del self.plugin.db_qkan
-                return False
-            daten = self.plugin.db_qkan.fetchall()
+            if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.listGroupAttr (1)"):
+                del self.db_qkan
+                return
+            daten = self.db_qkan.fetchall()
             logger.debug("\ndaten: {}".format(str(daten)))  # debug
             nzeilen = len(daten)
             self.tw_gruppenattr.setRowCount(nzeilen)
@@ -565,14 +574,14 @@ class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):
                     self.tw_gruppenattr.setItem(i, j, QTableWidgetItem(elem[j]))
                     self.tw_gruppenattr.setRowHeight(i, 20)
 
-    def show_groups(self):
+    def show_groups(self) -> None:
         """Abfragen der Tabelle gruppen nach verwendeten vorhandenen Gruppen"""
 
         sql = """SELECT grnam FROM gruppen GROUP BY grnam"""
-        if not self.plugin.db_qkan.sql(sql, "QKan_LinkFlaechen.showgroups (1)"):
-            del self.plugin.db_qkan
-            return False
-        daten = self.plugin.db_qkan.fetchall()
+        if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.showgroups (1)"):
+            del self.db_qkan
+            return
+        daten = self.db_qkan.fetchall()
 
         self.lw_gruppen.clear()
         for ielem, elem in enumerate(daten):

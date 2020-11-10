@@ -1,10 +1,17 @@
 import os
-import typing
+from typing import Callable, Optional
 
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QCheckBox, QDialog, QFileDialog, QLineEdit, QPushButton
+from qgis.PyQt.QtWidgets import (
+    QCheckBox,
+    QDialog,
+    QFileDialog,
+    QLineEdit,
+    QPushButton,
+    QWidget,
+)
 from qkan import QKan
 
 EXPORT_CLASS, _ = uic.loadUiType(
@@ -13,7 +20,9 @@ EXPORT_CLASS, _ = uic.loadUiType(
 
 
 class _Dialog(QDialog):
-    def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
+    def __init__(
+        self, default_dir: str, tr: Callable, parent: Optional[QWidget] = None,
+    ):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
@@ -21,7 +30,7 @@ class _Dialog(QDialog):
         self.tr = tr
 
 
-class ExportDialog(_Dialog, EXPORT_CLASS):
+class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     tf_database: QLineEdit
     tf_export: QLineEdit
 
@@ -35,7 +44,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
     cb_export_pumpen: QCheckBox
     cb_export_wehre: QCheckBox
 
-    def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
+    def __init__(
+        self, default_dir: str, tr: Callable, parent: Optional[QWidget] = None,
+    ):
         super().__init__(default_dir, tr, parent)
 
         # Attach events
@@ -64,7 +75,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
             getattr(QKan.config.check_export, "export_wehre", True)
         )
 
-    def select_export(self):
+    def select_export(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
             self, self.tr("Zu erstellende XML-Datei"), self.default_dir, "*.xml",
@@ -72,7 +83,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
         if filename:
             self.tf_export.setText(filename)
 
-    def select_database(self):
+    def select_database(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getOpenFileName(
             self,
@@ -90,7 +101,7 @@ IMPORT_CLASS, _ = uic.loadUiType(
 )
 
 
-class ImportDialog(_Dialog, IMPORT_CLASS):
+class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     tf_database: QLineEdit
     tf_import: QLineEdit
     tf_project: QLineEdit
@@ -103,7 +114,9 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
 
     epsg: QgsProjectionSelectionWidget
 
-    def __init__(self, default_dir: str, tr=typing.Callable, parent=None):
+    def __init__(
+        self, default_dir: str, tr: Callable, parent: Optional[QWidget] = None,
+    ):
         super().__init__(default_dir, tr, parent)
 
         # Attach events
@@ -119,7 +132,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
         self.cb_import_tabinit.setChecked(QKan.config.xml.init_database)
         self.tf_project.setText(QKan.config.project.file)
 
-    def select_import(self):
+    def select_import(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getOpenFileName(
             self, self.tr("Zu importierende XML-Datei"), self.default_dir, "*.xml",
@@ -128,7 +141,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
             self.tf_import.setText(filename)
             self.default_dir = os.path.dirname(filename)
 
-    def select_project(self):
+    def select_project(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
             self, self.tr("Zu erstellende Projektdatei"), self.default_dir, "*.qgs",
@@ -137,7 +150,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
             self.tf_project.setText(filename)
             self.default_dir = os.path.dirname(filename)
 
-    def select_database(self):
+    def select_database(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
             self, self.tr("Zu erstellende SQLite-Datei"), self.default_dir, "*.sqlite",

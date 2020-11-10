@@ -417,6 +417,7 @@ class Tasks(QtCore.QObject):
         :param nodes: Entspricht einer Liste von allen Haltungsnamenm, welche in der Route vorkommen sollen.
         """
         super(Tasks, self).__init__()
+        # noinspection PyArgumentList
         self.__pool = QtCore.QThreadPool.globalInstance()
         self.__pool.setMaxThreadCount(2)
         self.__dbname = dbname

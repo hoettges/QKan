@@ -1,3 +1,4 @@
+from qkan.swmmporter.importSWMM import importKanaldaten
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from zipfile import ZipFile
 
@@ -21,14 +22,14 @@ class TestHE8QKan(QgisTest):
         with ZipFile(BASE_DATA / "test_he8Import.zip") as z:
             z.extractall(BASE_WORK)
 
-    def test_import(self):
+    def test_import(self) -> None:
         database_qkan = str(BASE_WORK / "itwh.sqlite")
         he8file = str(BASE_WORK / "muster-modelldatenbank.idbf")
         project_file = str(BASE_WORK / "plan.qgs")
 
         erg = importKanaldaten(
-            database_HE=he8file,
-            database_QKan=database_qkan,
+            inpfile=he8file,
+            database_qkan=database_qkan,
             projectfile=project_file,
             epsg=31467,
         )
@@ -49,7 +50,7 @@ class TestQKanHE8(QgisTest):
         with ZipFile(BASE_DATA / "test_he8Export.zip") as z:
             z.extractall(BASE_WORK)
 
-    def test_export(self):
+    def test_export(self) -> None:
         database_qkan = str(BASE_WORK / "itwh.sqlite")
         database_he8 = str(BASE_WORK / "itwh.idbm")
         # project_file = str(BASE_WORK / "plan_export.qgs")
@@ -62,8 +63,6 @@ class TestQKanHE8(QgisTest):
         layersadapt(
             database_QKan=database_qkan,
             projectTemplate="",
-            dbIsUptodate=False,
-            qkanDBUpdate=True,
             anpassen_ProjektMakros=False,
             anpassen_Datenbankanbindung=False,
             anpassen_Wertebeziehungen_in_Tabellen=False,

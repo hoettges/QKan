@@ -19,7 +19,7 @@ BASE_DATA = BASE_DIR / "data"
 BASE_WORK = BASE_DIR / "work"
 
 
-def iface():
+def iface() -> QgisInterface:
     _iface = mock.Mock(spec=QgisInterface)
 
     _iface.mainWindow.return_value = QMainWindow()

@@ -27,6 +27,7 @@ __copyright__ = "(C) 2018, Joerg Hoettges"
 
 import logging
 
+from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import check_flaechenbilanz, checknames, fortschritt
 
 logger = logging.getLogger("QKan.linkflaechen.updatelinks")
@@ -35,8 +36,11 @@ logger = logging.getLogger("QKan.linkflaechen.updatelinks")
 
 
 def updatelinkfl(
-    dbQK, radiusHal="0.1", flaechen_bereinigen=False, deletelinkGeomNone=True
-):
+    dbQK: DBConnection,
+    radiusHal: float = 0.1,
+    flaechen_bereinigen: bool = False,
+    deletelinkGeomNone: bool = True,
+) -> bool:
     """Aktualisierung des logischen Cache für die Tabelle "linkfl"
 
     :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
@@ -169,7 +173,9 @@ def updatelinkfl(
     return True
 
 
-def updatelinksw(dbQK, radiusHal="0.1", deletelinkGeomNone=True):
+def updatelinksw(
+    dbQK: DBConnection, radiusHal: float = 0.1, deletelinkGeomNone: bool = True
+) -> bool:
     # Datenvorbereitung: Verknüpfung von Einleitpunkt zu Haltung wird durch Tabelle "linksw"
     # repräsentiert. Diese Zuordnung wird zunächst in "einleit.haltnam" übertragen.
 
@@ -266,7 +272,9 @@ def updatelinksw(dbQK, radiusHal="0.1", deletelinkGeomNone=True):
     return True
 
 
-def updatelinkageb(dbQK, radiusHal="0.1", deletelinkGeomNone=True):
+def updatelinkageb(
+    dbQK: DBConnection, radiusHal: float = 0.1, deletelinkGeomNone: bool = True
+) -> bool:
     # Datenvorbereitung: Verknüpfung von Aussengebiet zu Schacht wird durch Tabelle "linkageb"
     # repräsentiert. Diese Zuordnung wird zunächst in "aussengebiete.schnam" übertragen.
 
@@ -289,9 +297,7 @@ def updatelinkageb(dbQK, radiusHal="0.1", deletelinkGeomNone=True):
         (   SELECT gebnam
             FROM aussengebiete AS ag
             WHERE within(StartPoint(linkageb.glink),ag.geom))
-        WHERE linkageb.pk NOT IN linksvalid""".format(
-        eps=radiusHal
-    )
+        WHERE linkageb.pk NOT IN linksvalid"""
 
     if not dbQK.sql(sql, "dbQK: linkflaechen.updatelinks.updatelinkageb (3)"):
         return False
@@ -314,7 +320,7 @@ def updatelinkageb(dbQK, radiusHal="0.1", deletelinkGeomNone=True):
         eps=radiusHal
     )
 
-    logger.debug("\nSQL-4b:\n{}\n".format(sql))
+    logger.debug("\nSQL-4b:\n%s\n", sql)
 
     if not dbQK.sql(sql, "dbQK: linkflaechen.updatelinks.updatelinkageb (4)"):
         return False
@@ -337,7 +343,7 @@ def updatelinkageb(dbQK, radiusHal="0.1", deletelinkGeomNone=True):
             WHERE aussengebiete.gebnam = lg.gebnam)
         WHERE aussengebiete.pk NOT IN linksvalid"""
 
-    logger.debug("\nSQL-4d:\n{}\n".format(sql))
+    logger.debug("\nSQL-4d:\n%s\n", sql)
 
     if not dbQK.sql(sql, "dbQK: linkflaechen.updatelinks.updatelinkageb (6)"):
         return False

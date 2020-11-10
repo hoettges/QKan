@@ -1,6 +1,6 @@
 import logging
-import typing
 import xml.etree.ElementTree as ElementTree
+from typing import Dict, Iterator, Tuple, Union
 
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
@@ -81,7 +81,7 @@ class Pumpe(ClassObject):
 # endregion
 
 
-def _strip_float(value: typing.Union[str, float], default: float = 0.0) -> float:
+def _strip_float(value: Union[str, float], default: float = 0.0) -> float:
     if isinstance(value, float):
         return value
 
@@ -91,7 +91,7 @@ def _strip_float(value: typing.Union[str, float], default: float = 0.0) -> float
     return default
 
 
-def _strip_int(value: typing.Union[str, int], default: int = 0) -> int:
+def _strip_int(value: Union[str, int], default: int = 0) -> int:
     if isinstance(value, int):
         return value
 
@@ -103,7 +103,7 @@ def _strip_int(value: typing.Union[str, int], default: int = 0) -> int:
 
 def _consume_smp_block(
     _block: ElementTree.Element,
-) -> typing.Tuple[str, int, float, float, float]:
+) -> Tuple[str, int, float, float, float]:
     name = _block.findtext("d:Objektbezeichnung", "not found", NS)
     knoten_typ = 0
 
@@ -128,7 +128,7 @@ def _consume_smp_block(
     return name, knoten_typ, xsch, ysch, sohlhoehe
 
 
-# def geo_smp(_schacht: Schacht) -> typing.Tuple[str, str]:
+# def geo_smp(_schacht: Schacht) -> Tuple[str, str]:
 #     """
 #     Returns geom, geom SQL expressions
 #     """
@@ -172,17 +172,17 @@ class ImportTask:
         self.db_qkan = db_qkan
 
         # nr (str) => description
-        self.mapper_entwart: typing.Dict[str, str] = {}
-        self.mapper_pump: typing.Dict[int, str] = {}
-        self.mapper_profile: typing.Dict[str, str] = {}
-        self.mapper_outlet: typing.Dict[str, str] = {}
-        self.mapper_simstatus: typing.Dict[int, str] = {}
+        self.mapper_entwart: Dict[str, str] = {}
+        self.mapper_pump: Dict[str, str] = {}
+        self.mapper_profile: Dict[str, str] = {}
+        self.mapper_outlet: Dict[str, str] = {}
+        self.mapper_simstatus: Dict[str, str] = {}
 
         # Load XML
         self.xml = ElementTree.ElementTree()
         self.xml.parse(xml_file)
 
-    def run(self):
+    def run(self) -> bool:
         self._init_mappers()
         self._schaechte()
         self._auslaesse()
@@ -193,13 +193,10 @@ class ImportTask:
 
         return True
 
-    def _init_mappers(self):
-        def consume(target: typing.Dict[typing.Union[int, str], str]):
+    def _init_mappers(self) -> None:
+        def consume(target: Dict[str, str]) -> None:
             for row in self.db_qkan.fetchall():
-                if str(row[0]).isnumeric():
-                    target[int(row[0])] = row[1]
-                else:
-                    target[row[0]] = row[1]
+                target[row[0]] = row[1]
 
         if not self.db_qkan.sql(
             "SELECT kuerzel, bezeichnung FROM entwaesserungsarten",
@@ -233,8 +230,8 @@ class ImportTask:
             raise Exception("Failed to init SIMSTATUS mapper")
         consume(self.mapper_simstatus)
 
-    def _schaechte(self):
-        def _iter() -> typing.Iterator[Schacht]:
+    def _schaechte(self) -> None:
+        def _iter() -> Iterator[Schacht]:
             # .//Schacht/../.. nimmt AbwassertechnischeAnlage
             blocks = self.xml.findall(
                 "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/d:Knoten/d:Schacht/../..",
@@ -283,8 +280,8 @@ class ImportTask:
                     return None
 
             # Simulationsstatus
-            if schacht.simstatus in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[schacht.simstatus]
+            if str(schacht.simstatus) in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[str(schacht.simstatus)]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (he_nr, bezeichnung)
@@ -293,7 +290,7 @@ class ImportTask:
                     s=schacht.simstatus
                 )
                 simstatus = f"{schacht.simstatus}_he"
-                self.mapper_simstatus[schacht.simstatus] = simstatus
+                self.mapper_simstatus[str(schacht.simstatus)] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Schächte [2]"):
                     return None
 
@@ -332,8 +329,8 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-    def _auslaesse(self):
-        def _iter() -> typing.Iterator[Schacht]:
+    def _auslaesse(self) -> None:
+        def _iter() -> Iterator[Schacht]:
             # .//Auslaufbauwerk/../../.. nimmt AbwassertechnischeAnlage
             blocks = self.xml.findall(
                 "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/"
@@ -367,8 +364,8 @@ class ImportTask:
 
         for auslass in _iter():
             # Simstatus-Nr aus HE ersetzten
-            if auslass.simstatus in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[auslass.simstatus]
+            if str(auslass.simstatus) in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[str(auslass.simstatus)]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (he_nr, bezeichnung)
@@ -377,7 +374,7 @@ class ImportTask:
                     s=auslass.simstatus
                 )
                 simstatus = f"{auslass.simstatus}_he"
-                self.mapper_simstatus[auslass.simstatus] = simstatus
+                self.mapper_simstatus[str(auslass.simstatus)] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Auslässe [1]"):
                     return None
 
@@ -401,8 +398,8 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-    def _speicher(self):
-        def _iter() -> typing.Iterator[Schacht]:
+    def _speicher(self) -> None:
+        def _iter() -> Iterator[Schacht]:
             # .//Becken/../../.. nimmt AbwassertechnischeAnlage
             blocks = self.xml.findall(
                 "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage"
@@ -455,8 +452,8 @@ class ImportTask:
                 )
 
         for speicher in _iter():
-            if speicher.simstatus in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[speicher.simstatus]
+            if str(speicher.simstatus) in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[str(speicher.simstatus)]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (he_nr, bezeichnung)
@@ -465,7 +462,7 @@ class ImportTask:
                     s=speicher.simstatus
                 )
                 simstatus = f"{speicher.simstatus}_he"
-                self.mapper_simstatus[speicher.simstatus] = simstatus
+                self.mapper_simstatus[str(speicher.simstatus)] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Speicher [1]"):
                     return None
 
@@ -489,8 +486,8 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-    def _haltungen(self):
-        def _iter() -> typing.Iterator[Haltung]:
+    def _haltungen(self) -> None:
+        def _iter() -> Iterator[Haltung]:
             blocks = self.xml.findall(
                 "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/d:Kante/d:Haltung/../..",
                 NS,
@@ -578,7 +575,7 @@ class ImportTask:
                     yschun=yschun,
                 )
 
-        def _iter2() -> typing.Iterator[Haltung]:
+        def _iter2() -> Iterator[Haltung]:
             blocks = self.xml.findall(
                 "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
                 "d:HydraulikObjekte/d:HydraulikObjekt/d:Haltung/..",
@@ -620,8 +617,8 @@ class ImportTask:
 
         # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
         for haltung in _iter():
-            if haltung.simstatus in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[haltung.simstatus]
+            if str(haltung.simstatus) in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[str(haltung.simstatus)]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (he_nr, bezeichnung)
@@ -630,7 +627,7 @@ class ImportTask:
                     s=haltung.simstatus
                 )
                 simstatus = f"{haltung.simstatus}_he"
-                self.mapper_simstatus[haltung.simstatus] = simstatus
+                self.mapper_simstatus[str(haltung.simstatus)] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Haltungen [1]"):
                     return None
 
@@ -705,12 +702,12 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-    def _wehre(self):
+    def _wehre(self) -> None:
         # Hier werden die Hydraulikdaten zu den Wehren in die Datenbank geschrieben.
         # Bei Wehren stehen alle wesentlichen Daten im Hydraulikdatenkollektiv, weshalb im Gegensatz zu den
         # Haltungsdaten keine Stammdaten verarbeitet werden.
 
-        def _iter() -> typing.Iterator[Wehr]:
+        def _iter() -> Iterator[Wehr]:
             blocks = self.xml.findall(
                 "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
                 "d:HydraulikObjekte/d:HydraulikObjekt/d:Wehr/..",
@@ -778,8 +775,8 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-    def _pumpen(self):
-        def _iter() -> typing.Iterator[Pumpe]:
+    def _pumpen(self) -> None:
+        def _iter() -> Iterator[Pumpe]:
             blocks = self.xml.findall(
                 "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/"
                 "d:Knoten/d:Bauwerk/d:Pumpe/../../..",
@@ -794,7 +791,7 @@ class ImportTask:
                     kommentar=block.findtext("d:Kommentar", "-", NS),
                 )
 
-        def _iter2() -> typing.Iterator[Pumpe]:
+        def _iter2() -> Iterator[Pumpe]:
             # Hydraulik
             blocks = self.xml.findall(
                 "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
@@ -832,12 +829,12 @@ class ImportTask:
         for pumpe in _iter2():
             # geom = geo_hydro()
 
-            if pumpe.pumpentyp in self.mapper_pump:
-                pumpentyp = self.mapper_pump[pumpe.pumpentyp]
+            if str(pumpe.pumpentyp) in self.mapper_pump:
+                pumpentyp = self.mapper_pump[str(pumpe.pumpentyp)]
             else:
                 pumpentyp = "{}_he".format(pumpe.pumpentyp)
                 sql = f"INSERT INTO pumpentypen (bezeichnung) Values ('{pumpe.pumpentyp}')"
-                self.mapper_pump[pumpe.pumpentyp] = pumpentyp
+                self.mapper_pump[str(pumpe.pumpentyp)] = pumpentyp
                 if not self.db_qkan.sql(sql, "xml_import Pumpe [1]"):
                     break
 
@@ -864,8 +861,8 @@ class ImportTask:
         self.db_qkan.commit()
 
         for pumpe in _iter():
-            if pumpe.simstatus in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[pumpe.simstatus]
+            if str(pumpe.simstatus) in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[str(pumpe.simstatus)]
             else:
                 sql = """
                 INSERT INTO simulationsstatus (he_nr, bezeichnung)
@@ -874,7 +871,7 @@ class ImportTask:
                     s=pumpe.simstatus
                 )
                 simstatus = f"{pumpe.simstatus}_he"
-                self.mapper_simstatus[pumpe.simstatus] = simstatus
+                self.mapper_simstatus[str(pumpe.simstatus)] = simstatus
                 if not self.db_qkan.sql(sql, "xml_import Pumpe [3]"):
                     return None
 

@@ -182,7 +182,8 @@ class QKan:
             self.iface.removeToolBarIcon(action)
 
         # Remove the toolbar
-        del self.toolbar
+        if self.toolbar:
+            del self.toolbar
 
         # Remove menu
         self.iface.mainWindow().menuBar().removeAction(self.menu_action)

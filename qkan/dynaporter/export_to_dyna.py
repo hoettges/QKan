@@ -7,7 +7,7 @@
 
 import logging
 import os
-import typing
+from typing import List, Optional, TextIO, Union, cast
 
 from qgis.core import Qgis
 from qgis.gui import QgisInterface
@@ -19,13 +19,13 @@ from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 logger = logging.getLogger("QKan.dynaporter.export_to_dyna")
 
-progress_bar: typing.Optional[QProgressBar] = None
+progress_bar: Optional[QProgressBar] = None
 
 
 # Hilfsfunktionen --------------------------------------------------------------------------
 
 # Funktion zur Umwandlung der Neigungsklassen
-def fneigkl(neigung):
+def fneigkl(neigung: Optional[float]) -> float:
     """Berechnung der Neigungsklasse aus Neigungswert (absolut)"""
 
     if neigung is None:
@@ -46,18 +46,18 @@ def fneigkl(neigung):
 # Funktionen zum Schreiben der DYNA-Daten. Werden aus exportKanaldaten aufgerufen
 def write12(
     db_qkan: DBConnection,
-    db_handle: typing.TextIO,
-    dynakeys_id: typing.List[str],
-    dynakeys_ks: typing.List[typing.Union[str, float]],
+    db_handle: TextIO,
+    dynakeys_id: List[str],
+    dynakeys_ks: List[Union[str, float]],
     mindestflaeche: float,
     mit_verschneidung: bool,
     dynaprof_choice: enums.ProfChoice,
     dynabef_choice: enums.BefChoice,
-    dynaprof_nam: typing.List[str],
-    dynaprof_key: typing.List[str],
+    dynaprof_nam: List[str],
+    dynaprof_key: List[str],
     ausw_and: str,
     auswahl: str,
-):
+) -> bool:
     """Schreiben der DYNA-Typ12-Datenzeilen
 
     :param db_qkan              Datenbankobjekt, das die Verknüpfung zur
@@ -229,7 +229,8 @@ def write12(
         return False
 
     fortschritt("Export Datensätze Typ12", 0.3)
-    progress_bar.setValue(30)
+    if progress_bar:
+        progress_bar.setValue(30)
     # createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
 
     # Lesen der Daten aus der SQL-Abfrage und Schreiben in die DYNA-Datei --------------------
@@ -277,11 +278,8 @@ def write12(
 
         # Schlüssel für DYNA einsetzen
         try:
-            kskey = dynakeys_id[
-                ["{0:10.6f}".format(kb) for kb in dynakeys_ks].index(
-                    "{0:10.6f}".format(ks)
-                )
-            ]
+            float_list = ["{0:10.6f}".format(float(kb)) for kb in dynakeys_ks]
+            kskey: str = dynakeys_id[float_list.index("{0:10.6f}".format(ks))]
             # logger.debug('ks= {0:10.6f}\ndynakeys_ks= {1:s}\ndynakeys_id= {2:s}\nkskey= {3:s}'.format(
             # ks,
             # ', '.join(['{0:10.6f}'.format(kb) for kb in dynakeys_ks]),
@@ -306,7 +304,7 @@ def write12(
             distdur_t = "       0"
 
             # XXX: TODO: befgrad/neigkl undefined
-            befgrad, neigkl = 0, 0
+            befgrad, neigkl = 0.0, 0.0
         else:
             if dynabef_choice == enums.BefChoice.FLAECHEN:
                 if flges != 0:
@@ -350,7 +348,7 @@ def write12(
             else:
                 flges_t = formf(flges, 5)
                 befgrad_t = "{0:2d}".format(befgrad)
-                neigkl_t = "{0:1d}".format(neigkl)
+                neigkl_t = "{0:1d}".format(int(neigkl))
                 neigung_t = formf(neigung, 8)
                 distbef_t = formf(distbef, 8)
                 distdur_t = formf(distdur, 8)
@@ -450,14 +448,14 @@ def write12(
 
 
 def write16(
-    db_qkan: DBConnection, db_handle: typing.TextIO, ausw_and: str, auswahl: str
-):
+    db_qkan: DBConnection, db_handle: TextIO, ausw_and: str, auswahl: str
+) -> bool:
     """
     Schreiben der DYNA-Typ16-Datenzeilen
 
     :param db_qkan:     Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :param db_handle:   Zu schreibende DYNA-Datei
-    :paran ausw_and:    SQL-Textbaustein, um eine Bedingung mit "AND" anzuhängen
+    :param ausw_and:    SQL-Textbaustein, um eine Bedingung mit "AND" anzuhängen
     :param auswahl:     SQL-Textbaustein mit der Bedingung zur Filterung auf eine Liste von Teilgebieten
     """
 
@@ -547,8 +545,6 @@ def write16(
                 # Dies darf erst ab 2. gelesener Zeile geschehen...
 
                 db_handle.write("{0:15s}{1:}{2:}\n".format(zeilkn, zeilan, zeilab))
-                zeilan = ""
-                zeilab = ""
 
             # Nächsten Knoten initialisieren
 
@@ -605,8 +601,8 @@ def write16(
 
 
 def write41(
-    db_qkan: DBConnection, db_handle: typing.TextIO, ausw_and: str, auswahl: str
-):
+    db_qkan: DBConnection, db_handle: TextIO, ausw_and: str, auswahl: str
+) -> bool:
     """
     Schreiben der DYNA-Typ41-Datenzeilen (Endschächte = Auslässe)
 
@@ -670,13 +666,13 @@ def export_kanaldaten(
     db_qkan: DBConnection,
     dynabef_choice: enums.BefChoice,
     dynaprof_choice: enums.ProfChoice,
-    liste_teilgebiete: typing.List[str],
+    liste_teilgebiete: List[str],
     profile_ergaenzen: bool,
     autonum_dyna: bool,
     mit_verschneidung: bool,
-    fangradius=0.1,
-    mindestflaeche=0.5,
-    max_loops=1000,
+    fangradius: float = 0.1,
+    mindestflaeche: float = 0.5,
+    max_loops: int = 1000,
 ) -> bool:
     """Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE-Firebird-Datenbank.
 
@@ -1032,7 +1028,7 @@ def export_kanaldaten(
     #  3: Erste Koordinaten des Querprofils
 
     x1 = None  # markiert, dass noch kein Profil eingelesen wurde (s. u.)
-
+    profilnam, profil_key = "", ""
     for zeile in dynatemplate:
         if zeile[0:2] == "##":
             continue  # Kommentarzeile wird übersprungen
@@ -1251,7 +1247,7 @@ def export_kanaldaten(
                         db_qkan,
                         df,
                         dynakeys_id,
-                        dynakeys_ks,
+                        cast(List[Union[str, float]], dynakeys_ks),
                         mindestflaeche,
                         mit_verschneidung,
                         dynaprof_choice,

@@ -1,9 +1,10 @@
 import logging
 import os
-import typing
 from pathlib import Path
+from typing import List, Optional, TYPE_CHECKING
 from xml.etree import ElementTree
 
+from PyQt5.QtWidgets import QWidget
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
@@ -14,7 +15,7 @@ from qkan.database.qkan_utils import fehlermeldung
 
 from . import QKanDBDialog, QKanProjectDialog
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
 
 FORM_CLASS_empty_db, _ = uic.loadUiType(
@@ -25,8 +26,8 @@ LOGGER = logging.getLogger("QKan.tools.dialogs.empty_db")
 
 
 def create_project(
-    project_path: Path, db_path: Path, srid: int, zoom: typing.List[int]
-):
+    project_path: Path, db_path: Path, srid: int, zoom: List[float]
+) -> None:
     # Get reference system
     try:
         crs = QgsCoordinateReferenceSystem(srid, QgsCoordinateReferenceSystem.EpsgCrsId)
@@ -39,9 +40,10 @@ def create_project(
         else:
             ellipsoid_acronym = None
     except BaseException as e:
-        srid, srs_id, proj4, description, projection_acronym, ellipsoid_acronym = (
+        srid = -1
+        srs_id, proj4, description, projection_acronym, ellipsoid_acronym = (
             "dummy",
-        ) * 6
+        ) * 5
 
         fehlermeldung('\nFehler in "create_project"', str(e))
         fehlermeldung(
@@ -61,7 +63,11 @@ def create_project(
 
     for tag_layer in root.findall(".//projectlayers/maplayer"):
         # Ignore unrelated tables
-        text = tag_layer.find("./datasource").text
+        element = tag_layer.find("./datasource")
+        if not element:
+            continue
+
+        text = element.text or ""
         if text[text.index('table="') + 7 :].split('" ')[0] not in QKAN_TABLES:
             continue
 
@@ -92,7 +98,8 @@ def create_project(
         form_path = Path(pluginDirectory("qkan")) / "forms"
         for maplayer in root.findall(".//projectlayers/maplayer"):
             editform = maplayer.find("./editform")
-            if editform.text:
+
+            if editform is not None and editform.text:
                 file_name = Path(editform.text).stem
 
                 # Ignore non-QKAN forms
@@ -105,14 +112,14 @@ def create_project(
         if len(zoom) == 0 or any([x is None for x in zoom]):
             zoom = [0.0, 100.0, 0.0, 100.0]
         for extent in root.findall(".//mapcanvas/extent"):
-            extent.find("./xmin").text = "{:.3f}".format(zoom[0])
-            extent.find("./ymin").text = "{:.3f}".format(zoom[1])
-            extent.find("./xmax").text = "{:.3f}".format(zoom[2])
-            extent.find("./ymax").text = "{:.3f}".format(zoom[3])
+            for idx, name in enumerate(["xmin", "ymin", "xmax", "ymax"]):
+                element = extent.find(f"./{name}")
+                if element is not None:
+                    element.text = "{:.3f}".format(zoom[idx])
 
         # Set path to database
         for datasource in root.findall(".//projectlayers/maplayer/datasource"):
-            text = datasource.text
+            text = datasource.text or ""
             datasource.text = (
                 "dbname='" + data_source + "' " + text[text.find("table=") :]
             )
@@ -122,15 +129,15 @@ def create_project(
         LOGGER.debug("Created project file %s", project_path)
 
 
-class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):
+class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):  # type: ignore
     epsg: QgsProjectionSelectionWidget
 
-    def __init__(self, plugin: "QKanTools", parent=None):
+    def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
         self.open_mode = False
 
-    def run(self):
+    def run(self) -> None:
         # noinspection PyCallByClass,PyArgumentList
         self.epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
         self.tf_qkanDB.setText(QKan.config.database.qkan)
@@ -147,11 +154,11 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):
 
             if not db_qkan.connected:
                 fehlermeldung("Fehler beim Erstellen der Datenbank:\n")
-                return False
+                return
 
             if self.tf_projectFile.text() == "":
                 del db_qkan
-                return True
+                return
 
             # Grab srid
             if not db_qkan.sql(
@@ -178,9 +185,9 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):
              """,
                 "empty_db (2)",
             ):
-                zoom = []
+                zoom: List[float] = []
             else:
-                zoom: typing.List[int] = db_qkan.fetchone()
+                zoom = db_qkan.fetchone()
 
             # Close database
             del db_qkan

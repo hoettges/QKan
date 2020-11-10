@@ -30,7 +30,7 @@ class He8Porter(QKanPlugin):
         self.import_dlg = ImportDialog(default_dir, tr=self.tr)
 
     # noinspection PyPep8Naming
-    def initGui(self):
+    def initGui(self) -> None:
         icon_export = ":/plugins/qkan/he8porter/res/icon_export.png"
         QKan.instance.add_action(
             icon_export,
@@ -46,11 +46,11 @@ class He8Porter(QKanPlugin):
             parent=self.iface.mainWindow(),
         )
 
-    def unload(self):
+    def unload(self) -> None:
         self.export_dlg.close()
         self.import_dlg.close()
 
-    def run_export(self):
+    def run_export(self) -> None:
         """Anzeigen des Exportformulars und anschließender Start des Exports in eine HE8-Datenbank"""
 
         # noinspection PyArgumentList
@@ -139,12 +139,10 @@ class He8Porter(QKanPlugin):
             del self.export_dlg.dbQK
             self.log.debug("Closed DB")
 
-    def run_import(self):
+    def run_import(self) -> None:
         """Anzeigen des Importformulars HE8 und anschließender Start des Import aus einer HE8-Datenbank"""
 
-        default_dir = Path(
-            QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1]
-        )
+        default_dir = get_default_dir()
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
@@ -252,7 +250,7 @@ class He8Porter(QKanPlugin):
                     if not db_qkan_import.sql(
                         sql, "He8Porter.run_import_to_he8 Attach HE8"
                     ):
-                        return False
+                        return
 
                     self.log.info("DB creation finished, starting importer")
                     imp = ImportTask(db_qkan_import)

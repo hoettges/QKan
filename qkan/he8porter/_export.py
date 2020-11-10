@@ -1,16 +1,19 @@
 import logging
+from typing import List
 
 from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
 from qkan import QKan
+from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import checknames, fehlermeldung, fortschritt, meldung
 from qkan.linkflaechen.updatelinks import updatelinkfl
 
 logger = logging.getLogger("QKan.he8.export")
 
+
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ExportTask:
-    def __init__(self, db_qkan, liste_teilgebiete):
+    def __init__(self, db_qkan: DBConnection, liste_teilgebiete: List[str]):
 
         self.liste_teilgebiete = liste_teilgebiete
         self.db_qkan = db_qkan
@@ -20,7 +23,7 @@ class ExportTask:
 
         self.nextid = 0
 
-    def run(self):
+    def run(self) -> bool:
         """
         Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in
         eine HE_SpatiaLite-Datenbank
@@ -83,7 +86,7 @@ class ExportTask:
         # status_message.setText("Datenexport abgeschlossen.")
         # status_message.setLevel(Qgis.Success)
 
-    def _schaechte(self):
+    def _schaechte(self) -> bool:
         """Export Schächte"""
 
         if QKan.config.check_export.schaechte:
@@ -183,8 +186,9 @@ class ExportTask:
 
                 fortschritt(f"{self.nextid - nr0} Schaechte eingefügt", 0.30)
                 self.progress_bar.setValue(30)
+        return True
 
-    def _speicher(self):
+    def _speicher(self) -> bool:
         """Export Speicherbauwerke"""
 
         if QKan.config.check_export.speicher:
@@ -282,8 +286,9 @@ class ExportTask:
 
                 fortschritt(f"{self.nextid - nr0} Speicher eingefügt", 0.40)
                 self.progress_bar.setValue(40)
+        return True
 
-    def _auslaesse(self):
+    def _auslaesse(self) -> bool:
         """Export Auslässe"""
 
         if QKan.config.check_export.auslaesse:
@@ -382,8 +387,9 @@ class ExportTask:
 
                 fortschritt(f"{self.nextid - nr0} Auslässe eingefügt", 0.50)
                 self.progress_bar.setValue(50)
+        return True
 
-    def _haltungen(self):
+    def _haltungen(self) -> bool:
         """Export Haltungen"""
 
         if QKan.config.check_export.haltungen:
@@ -517,8 +523,9 @@ class ExportTask:
 
                 fortschritt(f"{self.nextid - nr0} Haltungen eingefügt", 0.60)
                 self.progress_bar.setValue(60)
+        return True
 
-    def _flaechen(self):
+    def _flaechen(self) -> bool:
         """Export Flächenobjekte"""
 
         if QKan.config.check_export.flaechen:
@@ -737,8 +744,9 @@ class ExportTask:
 
             if nr0:
                 fortschritt("{} Flaechen eingefuegt".format(self.nextid - nr0), 0.80)
+        return True
 
-    def _pumpen(self):
+    def _pumpen(self) -> bool:
         """Export Pumpen"""
 
         if QKan.config.check_export.pumpen:
@@ -840,8 +848,9 @@ class ExportTask:
 
                 fortschritt(f"{self.nextid - nr0} Pumpen eingefügt", 0.85)
                 self.progress_bar.setValue(85)
+        return True
 
-    def _wehre(self):
+    def _wehre(self) -> bool:
         """Export Pumpen"""
 
         if QKan.config.check_export.wehre:
@@ -965,3 +974,4 @@ class ExportTask:
 
                 fortschritt(f"{self.nextid - nr0} Wehre eingefügt", 0.85)
                 self.progress_bar.setValue(90)
+        return True

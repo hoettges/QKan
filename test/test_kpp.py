@@ -20,7 +20,7 @@ class TestKpp2QKan(QgisTest):
         with ZipFile(BASE_DATA / "test_dynaImport.zip") as z:
             z.extractall(BASE_WORK)
 
-    def test_import(self):
+    def test_import(self) -> None:
         database_qkan = str(BASE_WORK / "Oleanderweg.sqlite")
         dynafile = str(BASE_WORK / "Oleanderweg.ein")
         project_file = str(BASE_WORK / "plan.qgs")
@@ -48,7 +48,7 @@ class TestQKan2Kpp(QgisTest):
         with ZipFile(BASE_DATA / "test_dynaExport.zip") as z:
             z.extractall(BASE_WORK)
 
-    def test_export(self):
+    def test_export(self) -> None:
         database_qkan = str(BASE_WORK / "nette.sqlite")
         dynafile = str(BASE_WORK / "nette.ein")
         # project_file = str(BASE_WORK / "plan_export.qgs")
@@ -61,8 +61,6 @@ class TestQKan2Kpp(QgisTest):
         layersadapt(
             database_QKan=database_qkan,
             projectTemplate="",
-            dbIsUptodate=False,
-            qkanDBUpdate=True,
             anpassen_ProjektMakros=False,
             anpassen_Datenbankanbindung=False,
             anpassen_Wertebeziehungen_in_Tabellen=False,
@@ -85,7 +83,7 @@ class TestQKan2Kpp(QgisTest):
             db_qkan=db,
             dynabef_choice=enums.BefChoice.FLAECHEN,
             dynaprof_choice=enums.ProfChoice.PROFILNAME,
-            liste_teilgebiete="[]",
+            liste_teilgebiete=[],
             profile_ergaenzen=True,
             autonum_dyna=True,
             mit_verschneidung=True,

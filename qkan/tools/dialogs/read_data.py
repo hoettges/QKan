@@ -2,19 +2,19 @@ import logging
 import os
 import sqlite3
 import time
-import typing
 from pathlib import Path
 from sqlite3 import Connection
+from typing import Dict, List, Optional, TYPE_CHECKING, Union, cast
 
 from qgis.core import QgsApplication
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QComboBox, QDialogButtonBox, QPushButton
+from qgis.PyQt.QtWidgets import QComboBox, QDialogButtonBox, QPushButton, QWidget
 from qgis.utils import spatialite_connect
 from qkan import QKan
 
 from . import QKanDBDialog
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
 
 logger = logging.getLogger("QKan.tools.dialogs.read_data")
@@ -46,7 +46,7 @@ IMPORT_TYPES = {
 CF_TEXT = 1
 
 
-class ReadDataDialog(QKanDBDialog, FORM_CLASS_read_data):
+class ReadDataDialog(QKanDBDialog, FORM_CLASS_read_data):  # type: ignore
     button_box: QDialogButtonBox
     cbLayerAuslaesse: QComboBox
     cbLayerHaltungen: QComboBox
@@ -62,15 +62,15 @@ class ReadDataDialog(QKanDBDialog, FORM_CLASS_read_data):
     pbPasteSpeicher: QPushButton
     pbPasteWehre: QPushButton
 
-    def __init__(self, plugin: "QKanTools", parent=None):
+    def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
         # Set up the database loader
         self.tf_qkanDB.textChanged.connect(self.reload_database)
 
-        self.other_db: typing.Optional[Connection] = None
-        self.temporary_db: typing.Optional[Connection] = None
-        self.db_name: typing.Optional[str] = None
+        self.other_db: Optional[Connection] = None
+        self.temporary_db: Optional[Connection] = None
+        self.db_name: Optional[str] = None
 
         self.pbPasteAuslaesse.clicked.connect(lambda: self.read_clipboard("auslaesse"))
         self.pbPasteHaltungen.clicked.connect(lambda: self.read_clipboard("haltungen"))
@@ -79,7 +79,7 @@ class ReadDataDialog(QKanDBDialog, FORM_CLASS_read_data):
         self.pbPasteSpeicher.clicked.connect(lambda: self.read_clipboard("speicher"))
         self.pbPasteWehre.clicked.connect(lambda: self.read_clipboard("wehre"))
 
-    def find_compatible_tables(self):
+    def find_compatible_tables(self) -> None:
         cursors = []
 
         if self.other_db:
@@ -87,9 +87,7 @@ class ReadDataDialog(QKanDBDialog, FORM_CLASS_read_data):
         if self.temporary_db:
             cursors.append(self.temporary_db.cursor())
 
-        compatible: typing.Dict[str, typing.List[str]] = {
-            _: [] for _ in REQUIRED_FIELDS.keys()
-        }
+        compatible: Dict[str, List[str]] = {_: [] for _ in REQUIRED_FIELDS.keys()}
 
         for cursor in cursors:
             # Get all tables
@@ -146,7 +144,7 @@ class ReadDataDialog(QKanDBDialog, FORM_CLASS_read_data):
             except sqlite3.DatabaseError:
                 pass
 
-    def reload_database(self):
+    def reload_database(self) -> None:
         db_name = self.tf_qkanDB.text()
         if not Path(db_name).exists() or db_name == self.db_name:
             return
@@ -178,7 +176,7 @@ class ReadDataDialog(QKanDBDialog, FORM_CLASS_read_data):
             "wehre": self.cbLayerWehre,
         }[name]
 
-    def run(self):
+    def run(self) -> None:
         """
         TODO: Checkbox to list all tables in dropdowns
         """
@@ -189,9 +187,9 @@ class ReadDataDialog(QKanDBDialog, FORM_CLASS_read_data):
             # TODO: Write the actual import queries
             print("Import here")
 
-    def read_clipboard(self, table_suffix: str):
+    def read_clipboard(self, table_suffix: str) -> None:
         data = QgsApplication.clipboard().text()
-        parsed_data = []
+        parsed_data: List[List[Union[str, float]]] = []
         if data:
             lines = data.splitlines()
             if len(lines) == 1:
@@ -229,14 +227,14 @@ class ReadDataDialog(QKanDBDialog, FORM_CLASS_read_data):
                 )
 
             # Insert table
-            cursor = self.temporary_db.cursor()
+            cursor = cast(Connection, self.temporary_db).cursor()
             cursor.execute(sql)
 
             # Insert table data
-            for row in parsed_data:
+            for values in parsed_data:
                 cursor.execute(
                     f"INSERT INTO {table_name} VALUES ({', '.join(['?'] * len(create_types))})",
-                    row,
+                    values,
                 )
 
             cursor.close()

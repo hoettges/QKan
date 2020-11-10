@@ -15,7 +15,7 @@ class ImportTask:
 
         self.epsg = QKan.config.epsg
 
-    def run(self):
+    def run(self) -> bool:
 
         result = all(
             [
@@ -38,7 +38,7 @@ class ImportTask:
 
         return result
 
-    def _schaechte(self):
+    def _schaechte(self) -> bool:
         """Import der Schächte"""
 
         if QKan.config.check_import.schaechte:
@@ -78,7 +78,7 @@ class ImportTask:
 
         return True
 
-    def _auslaesse(self):
+    def _auslaesse(self) -> bool:
         """Import der Auslässe"""
 
         if QKan.config.check_import.auslaesse:
@@ -113,7 +113,7 @@ class ImportTask:
 
         return True
 
-    def _speicher(self):
+    def _speicher(self) -> bool:
         """Import der Speicher"""
 
         if QKan.config.check_import.speicher:
@@ -148,7 +148,7 @@ class ImportTask:
 
         return True
 
-    def _profile(self):
+    def _profile(self) -> bool:
         """Import der Haltungen"""
 
         # Profilnummern aller Sonderprofile ergänzen.
@@ -171,13 +171,13 @@ class ImportTask:
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Sonderprofile"):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 
         return True
 
-    def _haltungen(self):
+    def _haltungen(self) -> bool:
         """Import der Haltungen"""
 
         # Haltungen
@@ -233,19 +233,19 @@ class ImportTask:
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Haltungen"):
-                    return None
+                    return False
 
                 # idk why this is necessary...
                 if not self.db_qkan.sql(
                     "UPDATE haltungen SET geom = geom", "he8_import Haltungen (2)"
                 ):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 
         return True
 
-    def _wehre(self):
+    def _wehre(self) -> bool:
         """Import der Wehre"""
 
         if QKan.config.check_import.wehre:
@@ -280,19 +280,19 @@ class ImportTask:
                 ON si.he_nr = we.Planungsstatus"""
 
                 if not self.db_qkan.sql(sql, "he8_import Wehre"):
-                    return None
+                    return False
 
                 # idk why this is necessary...
                 if not self.db_qkan.sql(
                     "UPDATE wehre SET geom = geom", "he8_import Wehre (2)"
                 ):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 
         return True
 
-    def _pumpen(self):
+    def _pumpen(self) -> bool:
         """Import der Pumpen"""
 
         if QKan.config.check_import.pumpen:
@@ -326,19 +326,19 @@ class ImportTask:
                 ON pt.he_nr = pu.Typ"""
 
                 if not self.db_qkan.sql(sql, "he8_import Pumpen"):
-                    return None
+                    return False
 
                 # idk why this is necessary...
                 if not self.db_qkan.sql(
                     "UPDATE pumpen SET geom = geom", "he8_import Pumpen (2)"
                 ):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 
         return True
 
-    def _flaechen(self):
+    def _flaechen(self) -> bool:
         """Import der Flächen"""
 
         if QKan.config.check_import.flaechen:
@@ -362,13 +362,13 @@ class ImportTask:
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Flaechen"):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 
         return True
 
-    def _abflussparameter(self):
+    def _abflussparameter(self) -> bool:
         """Import der Abflussbeiwerte
 
         Es werden nur die in QKan fehlenden Abflussbeiwerte, die in der
@@ -404,13 +404,13 @@ class ImportTask:
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Abflussparameter"):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 
         return True
 
-    def _bodenklassen(self):
+    def _bodenklassen(self) -> bool:
         """Import der Bodenklassen
 
         Es werden nur die in QKan fehlenden Bodenklassen, die in der
@@ -444,13 +444,13 @@ class ImportTask:
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Bodenklassen"):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 
         return True
 
-    def _aussengebiete(self):
+    def _aussengebiete(self) -> bool:
         """Import der Aussengebiete"""
 
         if QKan.config.check_import.aussengebiete:
@@ -490,13 +490,13 @@ class ImportTask:
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Außengebiete"):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 
         return True
 
-    def _einleitdirekt(self):
+    def _einleitdirekt(self) -> bool:
         """Import der Direkteinleiter"""
 
         if QKan.config.check_import.einleitdirekt:
@@ -523,13 +523,13 @@ class ImportTask:
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Direkteinleiter"):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 
         return True
 
-    def _einzugsgebiet(self):
+    def _einzugsgebiet(self) -> bool:
         """Import der Einzugsgebiete"""
 
         if QKan.config.check_import.einzugsgebiete:
@@ -553,13 +553,13 @@ class ImportTask:
                 WHERE eg_qk.pk IS NULL
                     """
                 if not self.db_qkan.sql(sql, "he8_import Einzugsgebiete"):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 
         return True
 
-    def _tezg(self):
+    def _tezg(self) -> bool:
         """Import der Haltungsflaechen (tezg)
 
         Diese sind in HYSTEM-EXTRAN zusätzlich markiert als
@@ -604,7 +604,7 @@ class ImportTask:
                 ) and eg_qk.pk IS NULL 
                 """
                 if not self.db_qkan.sql(sql, "he8_import Haltungsflächen"):
-                    return None
+                    return False
 
                 self.db_qkan.commit()
 

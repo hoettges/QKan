@@ -5,6 +5,7 @@ __date__ = "Mai 2020"
 __copyright__ = "(C) 2020, Joerg Hoettges"
 
 import logging
+from typing import Any, List
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
@@ -13,15 +14,17 @@ logger = logging.getLogger("QKan.surfaceTools.surface_tools")
 
 
 class SurfaceTool:
-    def __init__(self, database_QKan, epsg=25832, dbtyp="SpatiaLite"):
+    def __init__(
+        self, database_qkan: str, epsg: int = 25832, dbtyp: str = "SpatiaLite"
+    ):
         self.epsg = epsg
         self.dbtyp = dbtyp
         # self.sqlobject = Path(sqlfile)
         """not sure if this is correct or needed"""
-        self.database_QKan = database_QKan
+        self.database_QKan = database_qkan
 
         self.dbQK = DBConnection(
-            dbname=database_QKan, epsg=epsg
+            dbname=database_qkan, epsg=epsg
         )  # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
         self.connected = self.dbQK.connected
@@ -30,11 +33,11 @@ class SurfaceTool:
             fehlermeldung(
                 "Fehler in surface_tools:\n",
                 "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_QKan
+                    database_qkan
                 ),
             )
 
-    def create_table(self):
+    def create_table(self) -> bool:
         sql = f"""
             CREATE TEMPORARY TABLE IF NOT EXISTS temp_flaechencut (
                 pk INTEGER PRIMARY KEY,
@@ -48,7 +51,7 @@ class SurfaceTool:
         self.dbQK.commit()
         return True
 
-    def processing(self, schneiden, geschnitten):
+    def processing(self, schneiden: str, geschnitten: str) -> bool:
         sql = f"""
             WITH fl_cut AS (
                 SELECT pk, geom AS geom FROM flaechen
@@ -81,7 +84,7 @@ class SurfaceTool:
         self.dbQK.commit()
         return True
 
-    def update(self):
+    def update(self) -> bool:
         sql = f"""
             UPDATE flaechen SET geom = (
                 SELECT geom
@@ -97,14 +100,16 @@ class SurfaceTool:
         return True
 
 
-class accessAttr:
-    def __init__(self, database_QKan, epsg=25832, dbtyp="SpatiaLite"):
+class AccessAttr:
+    def __init__(
+        self, database_qkan: str, epsg: int = 25832, dbtyp: str = "SpatiaLite"
+    ):
         self.epsg = epsg
         self.dbtyp = dbtyp
-        self.database_QKan = database_QKan
+        self.database_QKan = database_qkan
 
         self.dbQK = DBConnection(
-            dbname=database_QKan, epsg=epsg
+            dbname=database_qkan, epsg=epsg
         )  # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
         self.connected = self.dbQK.connected
@@ -113,24 +118,23 @@ class accessAttr:
             fehlermeldung(
                 "Fehler in surface_tools:\n",
                 "QKan-Datenbank {} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_QKan
+                    database_qkan
                 ),
             )
 
-    def accessAttribute(self):
+    def accessAttribute(self) -> List[Any]:
         sql = f"""
                     SELECT abflussparameter FROM flaechen 
                     """
         if not self.dbQK.sql(sql, repeatmessage=True):
             del self.dbQK
-            return False
+            return []
 
-        newList = self.dbQK.fetchall()
-        return newList
+        return self.dbQK.fetchall()
 
 
-def FlaechenVerarbeitung(database_QKan: str, schneiden, geschnitten):
-    overlap = SurfaceTool(database_QKan, epsg=25832, dbtyp="SpatiaLite")
+def FlaechenVerarbeitung(database_qkan: str, schneiden: str, geschnitten: str) -> bool:
+    overlap = SurfaceTool(database_qkan, epsg=25832, dbtyp="SpatiaLite")
 
     if not overlap.connected:
         return False

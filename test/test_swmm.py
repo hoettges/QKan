@@ -27,7 +27,7 @@ class TestSwmm2QKan(QgisTest):
         with ZipFile(BASE_DATA / "test_swmmImport2.zip") as z:
             z.extractall(BASE_WORK)
 
-    def test_import(self):
+    def test_import(self) -> None:
         database_qkan = str(BASE_WORK / "tutorial.sqlite")
         swmmfile = str(BASE_WORK / "tutorial.inp")
         project_file = str(BASE_WORK / "plan.qgs")
@@ -35,8 +35,6 @@ class TestSwmm2QKan(QgisTest):
         layersadapt(
             database_QKan=database_qkan,
             projectTemplate="",
-            dbIsUptodate=False,
-            qkanDBUpdate=True,
             anpassen_ProjektMakros=False,
             anpassen_Datenbankanbindung=False,
             anpassen_Wertebeziehungen_in_Tabellen=False,
@@ -72,7 +70,7 @@ class TestQKan2Swmm(QgisTest):
         with ZipFile(BASE_DATA / "test_swmmExport.zip") as z:
             z.extractall(BASE_WORK)
 
-    def test_export(self):
+    def test_export(self) -> None:
         database_qkan = str(BASE_WORK / "nette.sqlite")
         swmmfile = str(BASE_WORK / "nette.inp")
         template_swmm = str(BASE_WORK / "swmm_vorlage.inp")
@@ -80,8 +78,6 @@ class TestQKan2Swmm(QgisTest):
         layersadapt(
             database_QKan=database_qkan,
             projectTemplate="",
-            dbIsUptodate=False,
-            qkanDBUpdate=True,
             anpassen_ProjektMakros=False,
             anpassen_Datenbankanbindung=False,
             anpassen_Wertebeziehungen_in_Tabellen=False,

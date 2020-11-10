@@ -20,7 +20,7 @@ class TestHE7QKan(QgisTest):
         with ZipFile(BASE_DATA / "test_he7Import.zip") as z:
             z.extractall(BASE_WORK)
 
-    def test_import(self):
+    def test_import(self) -> None:
         database_qkan = str(BASE_WORK / "itwh.sqlite")
         he7file = str(BASE_WORK / "muster-modelldatenbank.idbf")
         project_file = str(BASE_WORK / "plan.qgs")
@@ -48,7 +48,7 @@ class TestQKanHE7(QgisTest):
         with ZipFile(BASE_DATA / "test_he7Export.zip") as z:
             z.extractall(BASE_WORK)
 
-    def test_export(self):
+    def test_export(self) -> None:
         database_qkan = str(BASE_WORK / "modell.sqlite")
         database_he7 = str(BASE_WORK / "modell.idbf")
         # project_file = str(BASE_WORK / "plan_export.qgs")
@@ -61,8 +61,6 @@ class TestQKanHE7(QgisTest):
         layersadapt(
             database_QKan=database_qkan,
             projectTemplate="",
-            dbIsUptodate=False,
-            qkanDBUpdate=True,
             anpassen_ProjektMakros=False,
             anpassen_Datenbankanbindung=False,
             anpassen_Wertebeziehungen_in_Tabellen=False,

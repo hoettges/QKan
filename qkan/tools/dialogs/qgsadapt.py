@@ -1,5 +1,5 @@
 import os
-import typing
+from typing import Optional, TYPE_CHECKING
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
@@ -9,11 +9,12 @@ from qgis.PyQt.QtWidgets import (
     QGroupBox,
     QLineEdit,
     QPushButton,
+    QWidget,
 )
 
 from . import QKanDBDialog, QKanProjectDialog
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
 
 FORM_CLASS_qgsadapt, _ = uic.loadUiType(
@@ -21,7 +22,7 @@ FORM_CLASS_qgsadapt, _ = uic.loadUiType(
 )
 
 
-class QgsAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_qgsadapt):
+class QgsAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_qgsadapt):  # type: ignore
     button_box: QDialogButtonBox
 
     cb_applyQKanTemplate: QCheckBox
@@ -34,19 +35,19 @@ class QgsAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_qgsadapt):
 
     tf_projectTemplate: QLineEdit
 
-    def __init__(self, plugin: "QKanTools", parent=None):
+    def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
         self.pb_selectProjectTemplate.clicked.connect(self.select_project_template)
         self.cb_applyQKanTemplate.clicked.connect(self.click_apply_template)
 
-    def click_apply_template(self):
+    def click_apply_template(self) -> None:
         """Aktiviert oder deaktiviert das Textfeld für die Template-Projektdatei"""
 
         checked = self.cb_applyQKanTemplate.isChecked()
         self.tf_projectTemplate.setEnabled(not checked)
 
-    def select_project_template(self):
+    def select_project_template(self) -> None:
         """Vorlage-Projektdatei auswählen"""
 
         self.cb_applyQKanTemplate.setChecked(False)  # automatisch deaktivieren

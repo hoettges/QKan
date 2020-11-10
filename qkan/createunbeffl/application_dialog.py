@@ -1,21 +1,27 @@
 import logging
 import os
-import typing
 import webbrowser
 from pathlib import Path
+from typing import List, Optional, TYPE_CHECKING
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
-    QDialog,
     QDialogButtonBox,
     QLabel,
     QTableWidget,
+    QTableWidgetItem,
     QTableWidgetSelectionRange,
+    QWidget,
 )
-from qkan.database.qkan_utils import fehlermeldung
 
-if typing.TYPE_CHECKING:
+from qkan import QKan
+from qkan.database.dbfunc import DBConnection
+from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.tools.dialogs import QKanDialog
+from .k_unbef import create_unpaved_areas
+
+if TYPE_CHECKING:
     from .application import CreateUnbefFl
 
 logger = logging.getLogger("QKan.createunbeffl.application_dialog")
@@ -24,7 +30,7 @@ FORM_CLASS, _ = uic.loadUiType(
 )
 
 
-def click_help():
+def click_help() -> None:
     """Reaktion auf Klick auf Help-Schaltfläche"""
     helpfile = (
         Path(__file__).parent / ".." / "doc/sphinx/build/html/Qkan_Formulare.html"
@@ -32,7 +38,7 @@ def click_help():
     webbrowser.open_new_tab(str(helpfile) + "#erzeugen-der-unbefestigten-flachen")
 
 
-class CreateUnbefFlDialog(QDialog, FORM_CLASS):
+class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
     button_box: QDialogButtonBox
 
     cb_selActive: QCheckBox
@@ -44,24 +50,22 @@ class CreateUnbefFlDialog(QDialog, FORM_CLASS):
     lf_anzahl_tezg: QLabel
     tw_selAbflparamTeilgeb: QTableWidget
 
-    def __init__(self, plugin: "CreateUnbefFl", parent=None):
-        # noinspection PyArgumentList
-        super().__init__(parent)
-        self.setupUi(self)
+    def __init__(self, plugin: "CreateUnbefFl", parent: Optional[QWidget] = None):
+        super().__init__(plugin, parent)
 
-        self.plugin = plugin
+        self.db_qkan: Optional[DBConnection] = None
 
         self.button_box.helpRequested.connect(click_help)
         self.cb_selActive.stateChanged.connect(self.click_sel_active)
         self.tw_selAbflparamTeilgeb.itemClicked.connect(self.click_param_teilgebiete)
 
-    def click_param_teilgebiete(self):
+    def click_param_teilgebiete(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
         self.cb_selActive.setChecked(True)
         self.count_selection()
 
-    def click_sel_active(self):
+    def click_sel_active(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
@@ -78,11 +82,15 @@ class CreateUnbefFlDialog(QDialog, FORM_CLASS):
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
 
-    def count_selection(self):
+    def count_selection(self) -> None:
         """
         Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen TEZG-Flächen
         """
+
+        if not self.db_qkan:
+            logger.error("db_qkan is not initialized.")
+            return
 
         selected_abflparam = list_selected_tab_items(self.tw_selAbflparamTeilgeb)
 
@@ -107,7 +115,7 @@ class CreateUnbefFlDialog(QDialog, FORM_CLASS):
             auswahl = " AND ("
         else:
             fehlermeldung("Interner Fehler", "Fehler in Fallunterscheidung!")
-            return False
+            return
 
         # Anfang SQL-Krierien zur Auswahl der tezg-Flächen
         first = True
@@ -117,7 +125,7 @@ class CreateUnbefFlDialog(QDialog, FORM_CLASS):
                     "Datenfehler: ",
                     'In den ausgewählten Daten sind noch Datenfelder nicht definiert ("NULL").',
                 )
-                return False
+                return
             if first:
                 first = False
                 auswahl += f""" (tezg.abflussparameter = '{attr[0]}' AND
@@ -133,22 +141,186 @@ class CreateUnbefFlDialog(QDialog, FORM_CLASS):
         # Trick: Der Zusatz "WHERE 1" dient nur dazu, dass der Block zur Zusammenstellung
         # von 'auswahl' identisch mit dem Block in 'k_unbef.py' bleiben kann...
 
-        if not self.plugin.db_qkan.sql(
+        if not self.db_qkan.sql(
             f"SELECT count(*) AS anz FROM tezg WHERE 1{auswahl}",
             "QKan.CreateUnbefFlaechen (5)",
         ):
-            del self.plugin.db_qkan
-            return False
+            del self.db_qkan
+            return
 
-        data = self.plugin.db_qkan.fetchone()
+        data = self.db_qkan.fetchone()
 
         if not (data is None):
             self.lf_anzahl_tezg.setText("{}".format(data[0]))
         else:
             self.lf_anzahl_tezg.setText("0")
 
+    def run(self) -> None:
+        """Run method that performs all the real work"""
 
-def list_selected_tab_items(table_widget: QTableWidget, n_cols: int = 5) -> typing.List:
+        database_qkan, epsg = get_database_QKan()
+        if not database_qkan:
+            logger.error(
+                "CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
+            )
+            return
+
+        # Abfragen der Tabelle tezg nach verwendeten Abflussparametern
+        self.db_qkan = DBConnection(dbname=database_qkan)
+        if not self.db_qkan.connected:
+            fehlermeldung(
+                "Fehler in createunbeffl.application:\n",
+                f"QKan-Datenbank {database_qkan} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!",
+            )
+            return
+
+        # Kontrolle, ob in Tabelle "abflussparameter" ein Datensatz für unbefestigte Flächen vorhanden ist
+        # (Standard: apnam = '$Default_Unbef')
+
+        sql = """SELECT apnam
+            FROM abflussparameter
+            WHERE bodenklasse IS NOT NULL AND trim(bodenklasse) <> ''"""
+
+        if not self.db_qkan.sql(sql, "createunbeffl.run (1)"):
+            del self.db_qkan
+            return
+
+        data = self.db_qkan.fetchone()
+
+        if data is None:
+            if QKan.config.autokorrektur:
+                sql = """
+                INSERT INTO abflussparameter
+                    ('apnam', 'kommentar', 'anfangsabflussbeiwert', 'endabflussbeiwert', 'benetzungsverlust', 
+                    'muldenverlust', 'benetzung_startwert', 'mulden_startwert', 'bodenklasse', 
+                    'createdat') 
+                VALUES (
+                    '$Default_Unbef', 'von QKan ergänzt', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', '13.01.2011 08:44:50'
+                    )
+                """
+                if not self.db_qkan.sql(sql, "createunbeffl.run (2)"):
+                    del self.db_qkan
+                    return
+            else:
+                fehlermeldung(
+                    "Datenfehler: ",
+                    'Bitte ergänzen Sie in der Tabelle "abflussparameter" einen Datensatz '
+                    'für unbefestigte Flächen ("bodenklasse" darf nicht leer oder NULL sein)',
+                )
+
+        # # Kontrolle, ob noch Flächen in Tabelle "tezg" ohne Zuordnung zu einem Abflussparameter oder zu einem
+        # # Abflussparameter, bei dem keine Bodenklasse definiert ist (Kennzeichen für undurchlässige Flächen).
+
+        # sql = """SELECT te.abflussparameter, te.teilgebiet, count(*) AS anz
+        # FROM tezg AS te
+        # LEFT JOIN abflussparameter AS ap
+        # ON te.abflussparameter = ap.apnam
+        # WHERE ap.bodenklasse IS NULL
+        # GROUP BY abflussparameter, teilgebiet"""
+
+        # if not self.dbQK.sql(sql, u'createunbeffl.run (3)'):
+        # return False
+
+        # data = self.dbQK.fetchall()
+
+        # if len(data) > 0:
+        # liste = [u'{}\t{}\t{}'.format(el1, el2, el3) for el1, el2, el3 in data]
+        # liste.insert(0, u'\nAbflussparameter\tTeilgebiet\tAnzahl')
+
+        # fehlermeldung(u'In Tabelle "tezg" fehlen Abflussparameter oder gehören zu'
+        # 'befestigten Flächen (Bodenklasse = NULL):\n',
+        # u'\n'.join(liste))
+        # return False
+
+        sql = """SELECT te.abflussparameter, te.teilgebiet, bk.bknam, count(*) AS anz, 
+                CASE WHEN te.abflussparameter ISNULL THEN 'Fehler: Kein Abflussparameter angegeben' ELSE
+                    CASE WHEN bk.infiltrationsrateanfang ISNULL THEN 'Fehler: Keine Bodenklasse angegeben' 
+                         WHEN bk.infiltrationsrateanfang < 0.00001 THEN 'Fehler: undurchlässige Bodenart'
+                         ELSE ''
+                    END
+                END AS status
+                            FROM tezg AS te
+                            LEFT JOIN abflussparameter AS ap
+                            ON te.abflussparameter = ap.apnam
+                            LEFT JOIN bodenklassen AS bk
+                            ON bk.bknam = ap.bodenklasse
+                            GROUP BY abflussparameter, teilgebiet"""
+        if not self.db_qkan.sql(sql, "createunbeffl.run (4)"):
+            del self.db_qkan
+            return
+
+        listetezg = self.db_qkan.fetchall()
+        nzeilen = len(listetezg)
+        self.tw_selAbflparamTeilgeb.setRowCount(nzeilen)
+        self.tw_selAbflparamTeilgeb.setHorizontalHeaderLabels(
+            [
+                "Abflussparameter",
+                "Teilgebiet",
+                "Bodenklasse",
+                "Anzahl",
+                "Anmerkungen",
+                "",
+            ]
+        )
+        self.tw_selAbflparamTeilgeb.setColumnWidth(
+            0, 144
+        )  # 17 Pixel für Rand und Nummernspalte (und je Spalte?)
+        self.tw_selAbflparamTeilgeb.setColumnWidth(1, 140)
+        self.tw_selAbflparamTeilgeb.setColumnWidth(2, 90)
+        self.tw_selAbflparamTeilgeb.setColumnWidth(3, 50)
+        self.tw_selAbflparamTeilgeb.setColumnWidth(4, 200)
+        for i, elem in enumerate(listetezg):
+            for j, item in enumerate(elem):
+                cell = "{}".format(elem[j])
+                self.tw_selAbflparamTeilgeb.setItem(i, j, QTableWidgetItem(cell))
+                self.tw_selAbflparamTeilgeb.setRowHeight(i, 20)
+
+        # Autokorrektur
+        self.cb_autokorrektur.setChecked(QKan.config.autokorrektur)
+
+        self.count_selection()
+
+        # show the dialog
+        self.show()
+        # Run the dialog event loop
+        result = self.exec_()
+        logger.debug("result = {}".format(repr(result)))
+        # See if OK was pressed
+        if result:
+            # Do something useful here - delete the line containing pass and
+            # substitute with your code.
+            # pass
+
+            selected_abflparam = list_selected_tab_items(self.tw_selAbflparamTeilgeb)
+            logger.debug(
+                "\nliste_selAbflparamTeilgeb (1): {}".format(selected_abflparam)
+            )
+            autokorrektur: bool = self.cb_autokorrektur.isChecked()
+
+            QKan.config.autokorrektur = autokorrektur
+            QKan.config.save()
+
+            # Start der Verarbeitung
+
+            # Modulaufruf in Logdatei schreiben
+            logger.debug(
+                f"""QKan-Modul Aufruf
+                createUnbefFlaechen(
+                    self.iface, 
+                    self.dbQK, 
+                    {selected_abflparam}, 
+                    {autokorrektur}
+                )"""
+            )
+
+            if not create_unpaved_areas(
+                self.iface, self.db_qkan, selected_abflparam, autokorrektur
+            ):
+                del self.db_qkan
+                return
+
+
+def list_selected_tab_items(table_widget: QTableWidget, n_cols: int = 5) -> List:
     """
     Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
     

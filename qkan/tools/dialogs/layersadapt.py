@@ -1,7 +1,7 @@
 import os
-import typing
 import webbrowser
 from pathlib import Path
+from typing import Optional, TYPE_CHECKING
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
@@ -13,13 +13,14 @@ from qgis.PyQt.QtWidgets import (
     QLineEdit,
     QPushButton,
     QRadioButton,
+    QWidget,
 )
 from qkan import QKan
 from qkan.database.qkan_utils import meldung
 
 from . import QKanDBDialog, logger
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
 
 FORM_CLASS_layersadapt, _ = uic.loadUiType(
@@ -27,7 +28,7 @@ FORM_CLASS_layersadapt, _ = uic.loadUiType(
 )
 
 
-def click_help():
+def click_help() -> None:
     helpfile = (
         Path(__file__).parent.parent.parent
         / "doc/sphinx/build/html/Qkan_Formulare.html"
@@ -35,7 +36,7 @@ def click_help():
     webbrowser.open_new_tab(str(helpfile) + "#projektlayer-aktualisieren")
 
 
-class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
+class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
     button_box: QDialogButtonBox
 
     cb_adaptDB: QCheckBox
@@ -63,7 +64,7 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
 
     tf_projectTemplate: QLineEdit
 
-    def __init__(self, plugin: "QKanTools", parent=None):
+    def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
         self.pb_selectProjectTemplate.clicked.connect(self.select_project_template)
@@ -73,14 +74,14 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
         self.cb_adaptKBS.clicked.connect(self.click_adapt_kbs)
         self.cb_applyQKanTemplate.clicked.connect(self.click_apply_template)
 
-    def select_qkan_db(self):
+    def select_qkan_db(self) -> None:
         self.cb_adaptDB.setChecked(True)  # automatisch aktivieren
         super().select_qkan_db()
 
-    def click_adapt_table_lookups(self):
+    def click_adapt_table_lookups(self) -> None:
         self.enable_project_template_group()
 
-    def click_adapt_kbs(self):
+    def click_adapt_kbs(self) -> None:
         """
         Hält Checkbutton cb_adaptKBS aktiv, solange cb_adaptDB aktiv ist, weil bei
         Änderung der Datenbankanbindung immer das Projektionssystem überprüft
@@ -94,13 +95,13 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
                 )
             self.cb_adaptKBS.setChecked(True)
 
-    def click_apply_template(self):
+    def click_apply_template(self) -> None:
         """Aktiviert oder deaktiviert das Textfeld für die Template-Projektdatei"""
 
         checked = self.cb_applyQKanTemplate.isChecked()
         self.tf_projectTemplate.setEnabled(not checked)
 
-    def enable_project_template_group(self):
+    def enable_project_template_group(self) -> None:
         """
         Aktiviert oder deaktiviert die Groupbox für das Projektdatei-Template
         abhängig von den angeklickten Checkbuttons
@@ -109,7 +110,7 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
         checked = self.cb_adaptTableLookups.isChecked()
         self.gb_projectTemplate.setEnabled(checked)
 
-    def select_project_template(self):
+    def select_project_template(self) -> None:
         """Vorlage-Projektdatei auswählen"""
 
         self.cb_applyQKanTemplate.setChecked(False)  # automatisch deaktivieren
@@ -118,9 +119,9 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):
         if self.cb_adaptTableLookups.isChecked():
             template_dir = QKan.template_dir
         else:
-            try:
-                template_dir = os.path.dirname(self.plugin.db_qkan.dbname)
-            except:
+            if self.db_qkan:
+                template_dir = os.path.dirname(self.db_qkan.dbname or QKan.template_dir)
+            else:
                 logger.error(
                     "Programmfehler in tools.run_layersadapt:\nPfad konnte nicht auf "
                     + "database_QKan gesetzt werden.\n database_QKan = {}".format(

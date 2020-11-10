@@ -209,7 +209,7 @@ class DBConnection:
                 except:
                     fehlermeldung(
                         "Fehler",
-                        "Fehler beim Öffnen der SpatialLite-Datenbank {:s}!\nAbbruch!".format(
+                        "Fehler beim Öffnen der SpatialLite-Datenbank {}!\nAbbruch!".format(
                             dbname
                         ),
                     )
@@ -218,7 +218,7 @@ class DBConnection:
         else:
             fehlermeldung(
                 "Fehler",
-                "Fehler beim Anbinden der SpatialLite-Datenbank {:s}!\nAbbruch!".format(
+                "Fehler beim Anbinden der SpatialLite-Datenbank {}!\nAbbruch!".format(
                     dbname
                 ),
             )

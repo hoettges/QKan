@@ -1,8 +1,8 @@
 import os
 import site
 import subprocess
-import typing
 from pathlib import Path
+from typing import Optional, TYPE_CHECKING
 
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
@@ -12,12 +12,13 @@ from qgis.PyQt.QtWidgets import (
     QLineEdit,
     QPushButton,
     QRadioButton,
+    QWidget,
 )
 from qkan import QKan
 
 from . import QKanDialog, logger
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
 
 FORM_CLASS_qkanoptions, _ = uic.loadUiType(
@@ -25,7 +26,7 @@ FORM_CLASS_qkanoptions, _ = uic.loadUiType(
 )
 
 
-class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):
+class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):  # type: ignore
     button_box: QDialogButtonBox
 
     pb_fangradiusDefault: QPushButton
@@ -45,7 +46,7 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):
     tf_max_loops: QLineEdit
     tf_mindestflaeche: QLineEdit
 
-    def __init__(self, plugin: "QKanTools", parent=None):
+    def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
         self.pb_fangradiusDefault.clicked.connect(self.click_reset_fangradius)
@@ -57,16 +58,16 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):
         # self.rb_itwh.toggled.connect(self.dlgro_activatedyna)
         self.tf_fangradius.textChanged.connect(self.changed_tf_fangradius)
 
-    def click_reset_fangradius(self):
+    def click_reset_fangradius(self) -> None:
         self.tf_fangradius.setText("0.1")
 
-    def click_reset_mindestflaeche(self):
+    def click_reset_mindestflaeche(self) -> None:
         self.tf_mindestflaeche.setText("0.5")
 
-    def click_reset_max_loops(self):
+    def click_reset_max_loops(self) -> None:
         self.tf_max_loops.setText("1000")
 
-    def click_open_log(self):
+    def click_open_log(self) -> None:
         """
         Öffnet die Log-Datei mit dem Standard-Editor für Log-Dateien
         oder einem gewählten Editor
@@ -80,10 +81,10 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):
                 os.path.normcase(QKan.instance.log_path),
             )
             res = subprocess.call(command)
-            logger.debug("command: {}\nres: ".format(command, res))
+            logger.debug("command: %s\nres: %s", command, res)
 
     @staticmethod
-    def click_open_settings():
+    def click_open_settings() -> None:
         """
         Öffnet die Optionen-Datei (*.json) mit dem Standard-Editor für
         Log-Dateien oder einem gewählten Editor
@@ -99,9 +100,9 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):
                 os.path.normcase(config_file),
             )
             res = subprocess.call(command)
-            logger.debug("command: {}\nres: ".format(command, res))
+            logger.debug("command: %s\nres: %s", command, res)
 
-    def select_log_editor(self):
+    def select_log_editor(self) -> None:
         """Alternativen Text-Editor auswählen"""
 
         # Textfeld wieder deaktivieren
@@ -117,7 +118,7 @@ class QKanOptionsDialog(QKanDialog, FORM_CLASS_qkanoptions):
             # Textfeld wieder deaktivieren
             self.tf_logeditor.setEnabled(False)
 
-    def changed_tf_fangradius(self):
+    def changed_tf_fangradius(self) -> None:
         """Gibt eine Warnung, falls Fangradius zu groß"""
         try:
             fangradius = float(self.tf_fangradius.text().replace(",", "."))

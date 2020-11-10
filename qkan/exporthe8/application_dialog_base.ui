@@ -99,7 +99,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_QKanDB">
+   <widget class="QLineEdit" name="tf_qkanDB">
     <property name="geometry">
      <rect>
       <x>20</x>

@@ -1,6 +1,7 @@
 import os
-import typing
 import webbrowser
+from typing import List, Optional, TYPE_CHECKING
+
 from pathlib import Path
 
 from qgis.PyQt import uic
@@ -10,13 +11,14 @@ from qgis.PyQt.QtWidgets import (
     QLabel,
     QListWidget,
     QRadioButton,
+    QWidget,
 )
 from qkan import list_selected_items
 from qkan.database.qkan_utils import sqlconditions
 
 from . import QKanDBDialog, logger
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
 
 FORM_CLASS_runoffparams, _ = uic.loadUiType(
@@ -24,7 +26,7 @@ FORM_CLASS_runoffparams, _ = uic.loadUiType(
 )
 
 
-def click_help():
+def click_help() -> None:
     helpfile = (
         Path(__file__).parent.parent.parent
         / "doc/sphinx/build/html/Qkan_Formulare.html"
@@ -34,7 +36,7 @@ def click_help():
     )
 
 
-class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):
+class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
     button_box: QDialogButtonBox
 
     cb_selParActive: QCheckBox
@@ -52,7 +54,7 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):
     rb_maniak: QRadioButton
     rb_schwerpunktlaufzeit: QRadioButton
 
-    def __init__(self, plugin: "QKanTools", parent=None):
+    def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
@@ -62,19 +64,19 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):
         self.button_box.helpRequested.connect(click_help)
         self.rb_itwh.toggled.connect(self.toggle_itwh)
 
-    def click_lw_teilgebiete(self):
+    def click_lw_teilgebiete(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
         self.cb_selTgbActive.setChecked(True)
         self.count_selection()
 
-    def click_lw_abflussparam(self):
+    def click_lw_abflussparam(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
         self.cb_selParActive.setChecked(True)
         self.count_selection()
 
-    def click_tgb_selection(self):
+    def click_tgb_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
@@ -92,7 +94,7 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
 
-    def click_par_selection(self):
+    def click_par_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
@@ -110,7 +112,7 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
 
-    def toggle_itwh(self):
+    def toggle_itwh(self) -> None:
         """Reagiert auf Auswahl itwh und deaktiviert entsprechend die Option Fließzeiten"""
 
         if self.rb_itwh.isChecked():
@@ -120,11 +122,14 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):
         else:
             self.rb_fliesszeiten.setEnabled(True)
 
-    def count_selection(self):
+    def count_selection(self) -> None:
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
-        liste_teilgebiete: typing.List[str] = list_selected_items(self.lw_teilgebiete)
-        liste_abflussparameter: typing.List[str] = list_selected_items(
+        if not self.db_qkan:
+            return
+
+        liste_teilgebiete: List[str] = list_selected_items(self.lw_teilgebiete)
+        liste_abflussparameter: List[str] = list_selected_items(
             self.lw_abflussparameter
         )
 
@@ -137,12 +142,10 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):
 
         sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
 
-        if not self.plugin.db_qkan.sql(
-            sql, "QKan_Tools.application.dlgro_countselection (1)"
-        ):
-            return False
-        daten = self.plugin.db_qkan.fetchone()
-        if not (daten is None):
+        if not self.db_qkan.sql(sql, "QKan_Tools.application.dlgro_countselection (1)"):
+            return
+        daten = self.db_qkan.fetchone()
+        if daten is not None:
             self.lf_anzahl_flaechen.setText(str(daten[0]))
         else:
             self.lf_anzahl_flaechen.setText("0")

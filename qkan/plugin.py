@@ -19,7 +19,7 @@ class QKanPlugin:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return cast(str, QCoreApplication.translate(type(self).__name__, message))
 
-    def unload(self):
+    def unload(self) -> None:
         """
         Override this if you initialized a QDialog anywhere
         """

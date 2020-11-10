@@ -1,8 +1,9 @@
 import logging
 import os
-import typing
 from pathlib import Path
+from typing import Callable, List, Optional
 
+from PyQt5.QtCore import QStandardPaths
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
@@ -15,9 +16,10 @@ from qgis.PyQt.QtWidgets import (
     QListWidgetItem,
     QPushButton,
     QRadioButton,
+    QWidget,
 )
 from qgis.utils import pluginDirectory
-from qkan import QKan
+from qkan import QKan, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 
@@ -29,7 +31,9 @@ EXPORT_CLASS, _ = uic.loadUiType(
 
 
 class _Dialog(QDialog):
-    def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
+    def __init__(
+        self, default_dir: str, tr: Callable, parent: Optional[QWidget] = None,
+    ):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
@@ -41,7 +45,7 @@ class _Dialog(QDialog):
         self.tr = tr
 
 
-class ExportDialog(_Dialog, EXPORT_CLASS):
+class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     tf_database: QLineEdit
     tf_template: QLineEdit
     tf_exportdb: QLineEdit
@@ -80,7 +84,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
     # cb_export_pumpen: QCheckBox
     # cb_export_wehre: QCheckBox
 
-    def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
+    def __init__(
+        self, default_dir: str, tr: Callable, parent: Optional[QWidget] = None,
+    ):
         # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
 
@@ -137,7 +143,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
     #         self.tf_database.setText(filename)
     #         self.default_dir = os.path.dirname(filename)
 
-    def select_template(self):
+    def select_template(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         if self.cb_use_templatedir.isChecked():
 
@@ -146,6 +152,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
         else:
             searchdir = self.default_dir
 
+        # noinspection PyCallByClass,PyArgumentList
         filename, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Vorlage für die zu erstellende HE8-Datei"),
@@ -156,7 +163,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
             self.tf_template.setText(filename)
             # self.default_dir = os.path.dirname(filename)
 
-    def select_exportdb(self):
+    def select_exportdb(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
             self, self.tr("Zu erstellende HE8-Datei"), self.default_dir, "*.idbm",
@@ -165,7 +172,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
             self.tf_exportdb.setText(filename)
             # self.default_dir = os.path.dirname(filename)
 
-    def click_selection(self):
+    def click_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
@@ -183,20 +190,24 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
 
-    def click_lw_teilgebiete(self):
+    def click_lw_teilgebiete(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
         self.cb_selActive.setChecked(True)
         self.count_selection()
 
-    def count_selection(self):
+    def count_selection(self) -> bool:
         """
         Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen
         """
 
-        teilgebiete: typing.List[str] = list_selected_items(self.lw_teilgebiete)
-        # teilgebiete: typing.List[str] = []        # Todo: wieder aktivieren
+        if not self.db_qkan:
+            logger.error("db_qkan is not initialized.")
+            return False
+
+        teilgebiete: List[str] = list_selected_items(self.lw_teilgebiete)
+        # teilgebiete: List[str] = []        # Todo: wieder aktivieren
 
         # Zu berücksichtigende Flächen zählen
         auswahl = ""
@@ -207,9 +218,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
 
         sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
 
-        if not self.dbQK.sql(sql, "QKan_ExportHE.application.countselection (1)"):
+        if not self.db_qkan.sql(sql, "QKan_ExportHE.application.countselection (1)"):
             return False
-        daten = self.dbQK.fetchone()
+        daten = self.db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_flaechen.setText(str(daten[0]))
         else:
@@ -223,9 +234,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
             )
 
         sql = f"SELECT count(*) AS anzahl FROM schaechte {auswahl}"
-        if not self.dbQK.sql(sql, "QKan_ExportHE.application.countselection (2) "):
+        if not self.db_qkan.sql(sql, "QKan_ExportHE.application.countselection (2) "):
             return False
-        daten = self.dbQK.fetchone()
+        daten = self.db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_schaechte.setText(str(daten[0]))
         else:
@@ -239,31 +250,22 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
             )
 
         sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
-        if not self.dbQK.sql(sql, "QKan_ExportHE.application.countselection (3) "):
+        if not self.db_qkan.sql(sql, "QKan_ExportHE.application.countselection (3) "):
             return False
-        daten = self.dbQK.fetchone()
+        daten = self.db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_haltungen.setText(str(daten[0]))
         else:
             self.lf_anzahl_haltungen.setText("0")
         return True
 
-    # def click_help():
-    #     helpfile = (
-    #         Path(__file__).parent.parent.parent
-    #         / "doc/sphinx/build/html/Qkan_Formulare.html"
-    #     )
-    #     webbrowser.open_new_tab(str(helpfile) + "#Import-aus-HYSTEM-EXTRAN 8.x")
-
-    def connectQKanDB(self, project_path, teilgebiete):
+    def connectQKanDB(self, project_path: str, teilgebiete: List[str]) -> bool:
         """Liest die verknüpfte QKan-DB aus dem geladenen Projekt"""
         # Verbindung zur Datenbank des geladenen Projekts herstellen
         database_qkan, _ = get_database_QKan()
         if database_qkan:
-            self.dbQK: typing.Optional[DBConnection] = DBConnection(
-                dbname=database_qkan
-            )
-            if not self.dbQK.connected:
+            self.db_qkan: Optional[DBConnection] = DBConnection(dbname=database_qkan)
+            if not self.db_qkan.connected:
                 logger.error(
                     "Fehler in he8porter.application_dialog.connectQKanDB:\n"
                     f"QKan-Datenbank {database_qkan:s} wurde nicht"
@@ -283,7 +285,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
                 WHERE teilgebiet IS NOT NULL AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
-        if not self.dbQK.sql(sql, "he8porter.application_dialog.connectQKanDB (1) "):
+        if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (1) "):
             return False
 
         sql = """INSERT INTO teilgebiete (tgnam)
@@ -291,7 +293,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
                 WHERE teilgebiet IS NOT NULL AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
-        if not self.dbQK.sql(sql, "he8porter.application_dialog.connectQKanDB (2) "):
+        if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (2) "):
             return False
 
         sql = """INSERT INTO teilgebiete (tgnam)
@@ -299,10 +301,10 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
                 WHERE teilgebiet IS NOT NULL AND
                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
-        if not self.dbQK.sql(sql, "he8porter.application_dialog.connectQKanDB (3) "):
+        if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (3) "):
             return False
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
         # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
@@ -311,9 +313,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-        if not self.dbQK.sql(sql, "he8porter.application_dialog.connectQKanDB (4) "):
+        if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (4) "):
             return False
-        daten = self.dbQK.fetchall()
+        daten = self.db_qkan.fetchall()
         self.lw_teilgebiete.clear()
 
         for ielem, elem in enumerate(daten):
@@ -336,18 +338,22 @@ class ExportDialog(_Dialog, EXPORT_CLASS):
             f"he8porter.application.He8Porter.__init__:\nproject_path: {project_path}"
         )
         if project_path:
-            self.default_dir = Path(project_path).parent
+            self.default_dir = str(Path(project_path).parent)
         else:
-            self.default_dir = Path(
-                QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1]
+            self.default_dir = str(
+                Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
             )
         logger.debug(f"He8Porter.run_export: default_dir: {self.default_dir}")
+        return True
 
-    def connectHEDB(self, database_he):
+    def connectHEDB(self, database_he: str) -> None:
         """Attach SQLite-Database with HE8 Data"""
         sql = f'ATTACH DATABASE "{database_he}" AS he'
-        if not self.dbQK.sql(sql, "He8Porter.run_export_to_he8 Attach HE8"):
-            return False
+
+        if self.db_qkan is None or not self.db_qkan.sql(
+            sql, "He8Porter.run_export_to_he8 Attach HE8"
+        ):
+            return
 
 
 IMPORT_CLASS, _ = uic.loadUiType(
@@ -355,7 +361,7 @@ IMPORT_CLASS, _ = uic.loadUiType(
 )
 
 
-class ImportDialog(_Dialog, IMPORT_CLASS):
+class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     tf_database: QLineEdit
     tf_import: QLineEdit
     tf_project: QLineEdit
@@ -387,9 +393,9 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
     rb_update: QRadioButton
     rb_append: QRadioButton
 
-    pw_epsg: QgsProjectionSelectionWidget
-
-    def __init__(self, default_dir: str, tr: typing.Callable, parent=None):
+    def __init__(
+        self, default_dir: str, tr: Callable, parent: Optional[QWidget] = None,
+    ):
         # noinspection PyCallByClass,PyArgumentList
         super().__init__(default_dir, tr, parent)
 
@@ -404,6 +410,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
         # Init fields
         self.tf_database.setText(QKan.config.he8.database)
         self.tf_import.setText(QKan.config.he8.import_file)
+        # noinspection PyCallByClass,PyArgumentList
         self.pw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
         self.tf_project.setText(QKan.config.project.file)
 
@@ -428,7 +435,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
         self.rb_append.setChecked(QKan.config.check_import.append)
         self.rb_update.setChecked(QKan.config.check_import.update)
 
-    def select_import(self):
+    def select_import(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getOpenFileName(
             self, self.tr("Zu importierende HE8-Datei"), self.default_dir, "*.idbm",
@@ -437,7 +444,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
             self.tf_import.setText(filename)
             self.default_dir = os.path.dirname(filename)
 
-    def select_project(self):
+    def select_project(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
             self, self.tr("Zu erstellende Projektdatei"), self.default_dir, "*.qgs",
@@ -446,7 +453,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
             self.tf_project.setText(filename)
             self.default_dir = os.path.dirname(filename)
 
-    def select_database(self):
+    def select_database(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
             self, self.tr("Zu erstellende SQLite-Datei"), self.default_dir, "*.sqlite",
@@ -454,10 +461,3 @@ class ImportDialog(_Dialog, IMPORT_CLASS):
         if filename:
             self.tf_database.setText(filename)
             self.default_dir = os.path.dirname(filename)
-
-    # def click_help():
-    #     helpfile = (
-    #         Path(__file__).parent.parent.parent
-    #         / "doc/sphinx/build/html/Qkan_Formulare.html"
-    #     )
-    #     webbrowser.open_new_tab(str(helpfile) + "#Export-nach-HYSTEM-EXTRAN 8.x")

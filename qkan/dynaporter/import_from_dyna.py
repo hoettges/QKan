@@ -17,6 +17,7 @@ __copyright__ = "(C) 2016, Joerg Hoettges"
 import logging
 import os
 import xml.etree.ElementTree as ElementTree
+from typing import List, Tuple, cast
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
 from qgis.utils import pluginDirectory
@@ -31,29 +32,29 @@ logger = logging.getLogger("QKan.dynaporter.import_from_dyna")
 class Rahmen:
     """Koordinatengrenzen in 2D"""
 
-    def __init__(self):
-        self.xmin = self.ymin = self.xmax = self.ymax = 0
+    def __init__(self) -> None:
+        self.xmin = self.ymin = self.xmax = self.ymax = 0.0
 
-    def reset(self, x, y):
+    def reset(self, x: float, y: float) -> None:
         self.xmin = self.xmax = x
         self.ymin = self.ymax = y
 
-    def p(self, x, y):
+    def p(self, x: float, y: float) -> None:
         self.xmin = min(self.xmin, x)
         self.ymin = min(self.ymin, y)
         self.xmax = max(self.xmax, x)
         self.ymax = max(self.ymax, y)
 
-    def line(self, x1, y1, x2, y2):
+    def line(self, x1: float, y1: float, x2: float, y2: float) -> None:
         self.xmin = min(self.xmin, x1, x2)
         self.ymin = min(self.ymin, y1, y2)
         self.xmax = max(self.xmax, x1, x2)
         self.ymax = max(self.ymax, y1, y2)
 
-    def ppr(self, x1, y1, x2, y2, r):
+    def ppr(self, x1: float, y1: float, x2: float, y2: float, r: float) -> None:
         d = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
         if abs(r - d / 2) < (r + d / 2) / 10000000.0:
-            h = 0
+            h = 0.0
         elif r > d / 2:
             h = (r ** 2 - d ** 2 / 4.0) ** 0.5
         else:
@@ -107,7 +108,9 @@ class Rahmen:
         #     else:
         #         self.ymin = min(self.ymin, ym - r)                    # Bogen geht über Südpol
 
-    def ppp(self, x1, y1, x0, y0, x2, y2):
+    def ppp(
+        self, x1: float, y1: float, x0: float, y0: float, x2: float, y2: float
+    ) -> None:
         """Kreisbogen wird durch 3 Punkte definiert"""
         det = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)
         dist = (
@@ -183,7 +186,7 @@ class Rahmen:
 
 def import_kanaldaten(
     dynafile: str, database_qkan: str, projectfile: str, epsg: int = 25832
-):
+) -> bool:
 
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -326,6 +329,7 @@ def import_kanaldaten(
     x1 = y1 = None  # markiert, dass noch kein Profil eingelesen wurde (s. u.)
 
     try:
+        profilnam = ""
         for zeile in open(dynafile, encoding="windows-1252"):
             if zeile[0:2] == "##":
                 continue  # Kommentarzeile wird übersprungen
@@ -381,8 +385,12 @@ def import_kanaldaten(
 
                         if nargs == 2:
                             # Geradensegment
-                            xp, yp = [float(w) for w in werte]
-                            grenzen.line(x1, y1, xp, yp)  # Grenzen aktualisieren
+                            xp, yp = cast(
+                                Tuple[float, float], [float(w) for w in werte]
+                            )
+                            grenzen.line(
+                                cast(float, x1), cast(float, y1), xp, yp,
+                            )  # Grenzen aktualisieren
                             x1, y1 = (
                                 xp,
                                 yp,
@@ -390,12 +398,14 @@ def import_kanaldaten(
 
                         elif nargs == 3:
                             # Polyliniensegment mit Radius und Endpunkt
-                            xp, yp, radius = [float(w) for w in werte]
+                            xp, yp, radius = cast(
+                                Tuple[float, float, float], [float(w) for w in werte]
+                            )
                             grenzen.line(
-                                x1, y1, xp, yp
+                                cast(float, x1), cast(float, y1), xp, yp
                             )  # Grenzen mit Stützstellen aktualisieren
                             grenzen.ppr(
-                                x1, y1, xp, yp, radius
+                                cast(float, x1), cast(float, y1), xp, yp, radius,
                             )  # Grenzen für äußeren Punkt des Bogens aktualisieren
                             x1, y1 = (
                                 xp,
@@ -404,13 +414,16 @@ def import_kanaldaten(
 
                         elif nargs == 4:
                             # Polyliniensegment mit Punkt auf Bogen und Endpunkt
-                            xm, ym, xp, yp = [float(w) for w in werte]
+                            xm, ym, xp, yp = cast(
+                                Tuple[float, float, float, float],
+                                [float(w) for w in werte],
+                            )
                             grenzen.line(
-                                x1, y1, xm, ym
+                                cast(float, x1), cast(float, y1), xm, ym
                             )  # Grenzen mit Stützstellen aktualisieren
                             grenzen.p(xp, yp)  # Grenzen mit Stützstellen aktualisieren
                             grenzen.ppp(
-                                x1, y1, xm, ym, xp, yp
+                                cast(float, x1), cast(float, y1), xm, ym, xp, yp
                             )  # Grenzen für äußere Punkte des Bogens aktualisieren
                             x1, y1 = (
                                 xp,
@@ -1048,15 +1061,15 @@ def import_kanaldaten(
             "Fehler in QKan_Import_from_KP", "\nFehler in sql_zoom: \n" + sql + "\n\n"
         )
 
-    daten = db_qkan.fetchone()
     try:
-        zoomxmin, zoomxmax, zoomymin, zoomymax = daten
+        zoom = db_qkan.fetchone()
     except BaseException as e:
         fehlermeldung("SQL-Fehler", str(e))
         fehlermeldung(
             "Fehler in QKan_Import_from_KP",
             "\nFehler in sql_zoom; daten= " + str(daten) + "\n",
         )
+        zoom = [0.0, 100.0, 0.0, 100.0]
 
     # --------------------------------------------------------------------------
     # Projektionssystem für die Projektdatei vorbereiten
@@ -1120,7 +1133,13 @@ def import_kanaldaten(
 
         for tag_maplayer in root.findall(".//projectlayers/maplayer"):
             tag_datasource = tag_maplayer.find("./datasource")
+            if not tag_datasource:
+                continue
+
             tex = tag_datasource.text
+            if not tex:
+                continue
+
             # Nur QKan-Tabellen bearbeiten
             if tex[tex.index('table="') + 7 :].split('" ')[0] in QKAN_TABLES:
 
@@ -1155,29 +1174,21 @@ def import_kanaldaten(
         formspath = os.path.join(pluginDirectory("qkan"), "forms")
         for tag_maplayer in root.findall(".//projectlayers/maplayer"):
             tag_editform = tag_maplayer.find("./editform")
-            if tag_editform.text:
+            if tag_editform and tag_editform.text:
                 dateiname = os.path.basename(tag_editform.text)
                 if dateiname in QKAN_FORMS:
                     # Nur QKan-Tabellen bearbeiten
                     tag_editform.text = os.path.join(formspath, dateiname)
 
         # Zoom für Kartenfenster einstellen -------------------------------------------------------
-
-        if not isinstance(zoomxmin, (int, float)):
-            zoomxmin = 0.0
-            zoomxmax = 100.0
-            zoomymin = 0.0
-            zoomymax = 100.0
-
+        if len(zoom) == 0 or any([x is None for x in zoom]):
+            zoom = [0.0, 100.0, 0.0, 100.0]
         for tag_extent in root.findall(".//mapcanvas/extent"):
-            elem = tag_extent.find("./xmin")
-            elem.text = "{:.3f}".format(zoomxmin)
-            elem = tag_extent.find("./ymin")
-            elem.text = "{:.3f}".format(zoomymin)
-            elem = tag_extent.find("./xmax")
-            elem.text = "{:.3f}".format(zoomxmax)
-            elem = tag_extent.find("./ymax")
-            elem.text = "{:.3f}".format(zoomymax)
+            for extent in root.findall(".//mapcanvas/extent"):
+                for idx, name in enumerate(["xmin", "ymin", "xmax", "ymax"]):
+                    element = extent.find(f"./{name}")
+                    if element is not None:
+                        element.text = "{:.3f}".format(zoom[idx])
 
         # Projektionssystem anpassen --------------------------------------------------------------
 
@@ -1202,6 +1213,9 @@ def import_kanaldaten(
 
         for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
             text = tag_datasource.text
+            if not text:
+                continue
+
             tag_datasource.text = (
                 "dbname='" + datasource + "' " + text[text.find("table=") :]
             )

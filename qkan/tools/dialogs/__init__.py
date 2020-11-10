@@ -1,22 +1,64 @@
 import logging
 import os
-import typing
+from typing import Optional, TYPE_CHECKING
 
 from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QLineEdit, QPushButton, QWidget
 
+from qkan.database.dbfunc import DBConnection
+
 logger = logging.getLogger("QKan.tools.dialogs")
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from qkan.plugin import QKanPlugin
 
 
 class QKanDialog(QDialog):
-    def __init__(self, plugin: "QKanPlugin", parent: typing.Optional[QWidget] = None):
+    def __init__(self, plugin: "QKanPlugin", parent: Optional[QWidget] = None):
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
 
         self.plugin = plugin
+
+    def bind_select_path(
+        self,
+        title: str,
+        file_filter: str,
+        line_edit: QLineEdit,
+        push_button: QPushButton,
+        is_open: bool,
+        default_dir: Optional[str] = None,
+    ) -> None:
+        if not default_dir:
+            default_dir = self.plugin.default_dir
+
+        push_button.clicked.connect(
+            lambda: self.select_path(
+                title, file_filter, line_edit, is_open, default_dir
+            )
+        )
+
+    def select_path(
+        self,
+        title: str,
+        file_filter: str,
+        line_edit: QLineEdit,
+        is_open: bool,
+        default_dir: str,
+    ) -> None:
+        if is_open:
+            # noinspection PyArgumentList,PyCallByClass
+            filename, __ = QFileDialog.getOpenFileName(
+                self, title, default_dir, file_filter
+            )
+        else:
+            # noinspection PyArgumentList,PyCallByClass
+            filename, __ = QFileDialog.getSaveFileName(
+                self, title, default_dir, file_filter,
+            )
+
+        if os.path.dirname(filename) != "":
+            line_edit.setText(filename)
 
 
 class QKanDBDialog(QKanDialog):
@@ -25,9 +67,10 @@ class QKanDBDialog(QKanDialog):
 
     open_mode = True
 
-    def __init__(self, plugin: "QKanPlugin", parent: typing.Optional[QWidget] = None):
+    def __init__(self, plugin: "QKanPlugin", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
         self.pb_selectQKanDB.clicked.connect(self.select_qkan_db)
+        self.db_qkan: Optional[DBConnection] = None
 
     def select_qkan_db(self) -> None:
         """Anzubindende QKan-Datenbank festlegen"""
@@ -54,7 +97,7 @@ class QKanProjectDialog(QKanDialog):
     pb_selectProjectFile: QPushButton
     tf_projectFile: QLineEdit
 
-    def __init__(self, plugin: "QKanPlugin", parent: typing.Optional[QWidget] = None):
+    def __init__(self, plugin: "QKanPlugin", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
         self.pb_selectProjectFile.clicked.connect(self.select_project_file)

@@ -26,7 +26,7 @@ from qkan.database.qkan_utils import get_database_QKan
 from qkan.plugin import QKanPlugin
 
 from .application_dialog import SurfaceToolDialog
-from .surfaceTool import FlaechenVerarbeitung, accessAttr
+from .surfaceTool import FlaechenVerarbeitung, AccessAttr
 
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
@@ -38,7 +38,7 @@ class SurfaceTools(QKanPlugin):
         self.dlg = SurfaceToolDialog()
 
     # noinspection PyPep8Naming
-    def initGui(self):
+    def initGui(self) -> None:
         icon_path = ":/plugins/qkan/surfaceTools/icon_surfaceTool.png"
         QKan.instance.add_action(
             icon_path,
@@ -47,19 +47,23 @@ class SurfaceTools(QKanPlugin):
             parent=self.iface.mainWindow(),
         )
 
-    def unload(self):
+    def unload(self) -> None:
         self.dlg.close()
 
-    def run(self):
+    def run(self) -> None:
         # database_qkan, _ = get_database_QKan()
         # self.dlg.tf_qkanDB.setText(QKan.config.database.qkan)
         # Fetch the currently loaded layers
         # Fetch the currently loaded layers
 
         database_qkan, _ = get_database_QKan()
+        if not database_qkan:
+            self.log.error("database_qkan is undefined")
+            return
+
         self.dlg.cb_haupt.clear()
         self.dlg.cb_geschnitten.clear()
-        obj = accessAttr(database_qkan)
+        obj = AccessAttr(database_qkan)
         temp_list = obj.accessAttribute()
         abflussparameter = list(set(temp_list))
         for tempAttr in abflussparameter:
@@ -75,7 +79,7 @@ class SurfaceTools(QKanPlugin):
         if result:
             schneiden = self.dlg.cb_haupt.currentText()
             geschnitten = self.dlg.cb_geschnitten.currentText()
-            QKan.config.database.qkan = database_qkan
+            QKan.config.database.qkan = str(database_qkan)
 
             QKan.config.save()
 
@@ -88,5 +92,5 @@ class SurfaceTools(QKanPlugin):
                             """
             )
 
-            FlaechenVerarbeitung(database_qkan, schneiden, geschnitten)
+            FlaechenVerarbeitung(str(database_qkan), schneiden, geschnitten)
             del obj

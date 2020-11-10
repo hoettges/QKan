@@ -84,29 +84,21 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
         self.button_box.helpRequested.connect(click_help)
         self.cb_selActive.stateChanged.connect(self.click_selection)
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
-        self.pb_select_KP_dest.clicked.connect(self.select_kp_db_dest)
-        self.pb_select_KP_template.clicked.connect(self.select_kp_db_template)
 
-    def select_kp_db_dest(self) -> None:
-        """Zu erstellende DYNA-Datei eingeben"""
-
-        # noinspection PyArgumentList,PyCallByClass
-        filename, __ = QFileDialog.getSaveFileName(
-            self,
-            "Dateinamen der zu schreibenden DYNA-Datei eingeben",
-            self.plugin.default_dir,
-            "*.ein",
+        self.bind_select_path(
+            title="Dateinamen der zu schreibenden DYNA-Datei eingeben",
+            file_filter="*.ein",
+            line_edit=self.tf_KP_dest,
+            push_button=self.pb_select_KP_dest,
+            is_open=False,
         )
-        self.tf_KP_dest.setText(filename)
-
-    def select_kp_db_template(self) -> None:
-        """Vorlage-DYNA-Datei auswaehlen."""
-
-        # noinspection PyArgumentList,PyCallByClass
-        filename, __ = QFileDialog.getOpenFileName(
-            self, "Vorlage-DYNA-Datei auswählen", self.plugin.default_dir, "*.ein"
+        self.bind_select_path(
+            title="Vorlage-DYNA-Datei auswählen",
+            file_filter="*.ein",
+            line_edit=self.tf_KP_template,
+            push_button=self.pb_select_KP_template,
+            is_open=True,
         )
-        self.tf_KP_template.setText(filename)
 
     def click_lw_teilgebiete(self) -> None:
         """Reaktion auf Klick in Tabelle"""
@@ -453,32 +445,20 @@ class ImportDialog(QKanDBDialog, IMPORT_CLASS):  # type: ignore
     def __init__(self, plugin: "DynaPorter", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
-        self.pb_selectDynaFile.clicked.connect(self.select_dyna_file)
-        self.pb_selectProjectFile.clicked.connect(self.select_project_file)
-
-    def select_dyna_file(self) -> None:
-        """DYNA (*.ein) -datei auswählen"""
-
-        # noinspection PyArgumentList,PyCallByClass
-        filename, __ = QFileDialog.getOpenFileName(
-            self,
-            "Dateinamen der zu lesenden Kanal++-Datei eingeben",
-            self.plugin.default_dir,
-            "*.ein",
+        self.bind_select_path(
+            title="Dateinamen der zu lesenden Kanal++-Datei eingeben",
+            file_filter="*.ein",
+            line_edit=self.tf_dynaFile,
+            push_button=self.pb_selectDynaFile,
+            is_open=True,
         )
-        self.tf_dynaFile.setText(filename)
-
-    def select_project_file(self) -> None:
-        """Zu erzeugende Projektdatei festlegen, falls ausgewählt."""
-
-        # noinspection PyArgumentList,PyCallByClass
-        filename, __ = QFileDialog.getSaveFileName(
-            self,
-            "Dateinamen der zu erstellenden Projektdatei eingeben",
-            self.plugin.default_dir,
-            "*.qgs",
+        self.bind_select_path(
+            title="Dateinamen der zu erstellenden Projektdatei eingeben",
+            file_filter="*.qgs",
+            line_edit=self.tf_projectFile,
+            push_button=self.pb_selectProjectFile,
+            is_open=False,
         )
-        self.tf_projectFile.setText(filename)
 
     def run(self) -> None:
         """Run method that performs all the real work"""

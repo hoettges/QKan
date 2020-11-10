@@ -23,6 +23,7 @@
 """
 import logging
 import os
+from typing import AnyStr, cast
 from xml.etree import ElementTree
 
 from PyQt5.QtCore import QVariant
@@ -60,53 +61,32 @@ progress_bar = None
 
 
 def layersadapt(
-    database_QKan,
-    projectTemplate,
-    anpassen_ProjektMakros,
-    anpassen_Datenbankanbindung,
-    anpassen_Wertebeziehungen_in_Tabellen,
-    anpassen_Formulare,
-    anpassen_Projektionssystem,
-    aktualisieren_Schachttypen,
-    zoom_alles,
-    fehlende_layer_ergaenzen,
+    database_QKan: str,
+    projectTemplate: str,
+    anpassen_ProjektMakros: bool,
+    anpassen_Datenbankanbindung: bool,
+    anpassen_Wertebeziehungen_in_Tabellen: bool,
+    anpassen_Formulare: bool,
+    anpassen_Projektionssystem: bool,
+    aktualisieren_Schachttypen: bool,
+    zoom_alles: bool,
+    fehlende_layer_ergaenzen: bool,
     anpassen_auswahl: enums.SelectedLayers,
-):
+) -> None:
     """Anpassen von Projektlayern an den QKan-Standard
     Voraussetzungen: keine
 
     :database_QKan:                                 Ziel-Datenbank, auf die die Projektdatei angepasst werden soll
-    :type database_QKan:                            String
-
     :projectTemplate:                               Vorlage-Projektdatei für die anzupassenden Layereigenschaften
-    :type projectTemplate:                          String
-
     :anpassen_ProjektMakros:                        Projektmakros werden angepasst
-    :type anpassen_ProjektMakros:                   Boolean
-
     :anpassen_Datenbankanbindung:                   Datenbankanbindungen werden angepasst
-    :type anpassen_Datenbankanbindung:              Boolean
-
     :anpassen_Wertebeziehungen_in_Tabellen:         Wertebeziehungen werden angepasst
-    :type anpassen_Wertebeziehungen_in_Tabellen:    Boolean
-
     :anpassen_Formulare:                            Formulare werden anpasst
-    :type anpassen_Formulare:                       Boolean
-
     :anpassen_Projektionssystem:                    Projektionssystem wird angepasst
-    :type anpassen_Projektionssystem:               Boolean
-
     :aktualisieren_Schachttypen:                    Knotentypen in schaechte.knotentyp setzen
-    :type aktualisieren_Schachttypen                Boolean
-
     :zoom_alles:                                    Nach der Bearbeitung die Karte auf gesamte Gebiet zoomen
-    :type zoom_alles:                               Boolean
-
     :fehlende_layer_ergaenzen:                      Fehlende QKan-Layer werden ergänzt
-    :type fehlende_layer_ergaenzen:                 Boolean
-
     :anpassen_auswahl:                              Wahl der anzupassenden Layer
-    :type anpassen_auswahl:                         enums.SelectedLayers
 
     :returns: void
     """
@@ -121,7 +101,7 @@ def layersadapt(
             "Programmfehler in QKan.tools.k_layersadapt.layersadapt()",
             "Datenbank konnte nicht verbunden werden",
         )
-        return False
+        return
 
     actversion = dbQK.actversion
     logger.debug("actversion: {}".format(actversion))
@@ -134,10 +114,12 @@ def layersadapt(
         or fehlende_layer_ergaenzen
     ):
         del dbQK
-        return True
+        return
 
     # -----------------------------------------------------------------------------------------------------
     # QKan-Projekt
+
+    # noinspection PyArgumentList
     project = QgsProject.instance()
 
     if project.count() == 0:
@@ -191,7 +173,7 @@ def layersadapt(
                         "layername: {}".format(layername),
                     )
                     del dbQK
-                    return False
+                    return
                 project.addMapLayer(layer, False)
                 atcGroup = layersRoot.findGroup(group)
                 if atcGroup is None:
@@ -201,7 +183,7 @@ def layersadapt(
                 # Stildatei laden, falls vorhanden
                 qlsnam = os.path.join(templateDir, "Layer_{}.qml".format(layername))
                 if os.path.exists(qlsnam):
-                    layer.loadNamedStyle(qlsnam)
+                    layer.loadNamedStyle(qlsnam, categories=None)
                     logger.debug("Layerstil geladen: {}".format(qlsnam))
                 # layerList[layer.name()] = layer           --> in QGIS3 nicht nötig
                 logger.debug("k_layersadapt: Layer ergänzt: {}".format(layername))
@@ -232,8 +214,8 @@ def layersadapt(
             layerIdList[refLayerId] = layerId
             if len(layerobjects) > 1:
                 warnung(
-                    "Layername doppelt: {}",
-                    "Es wird nur ein Layer bearbeitet.".format(refLayerName),
+                    "Layername doppelt: {}".format(refLayerName),
+                    "Es wird nur ein Layer bearbeitet.",
                 )
         else:
             layerNotInProjektMeldung = (
@@ -244,6 +226,7 @@ def layersadapt(
             )
     logger.debug("Refliste Layer-Ids: \n{}".format(layerIdList))
 
+    selectedLayerNames = []
     # Liste der zu bearbeitenden Layer
     if anpassen_auswahl == enums.SelectedLayers.SELECTED:
         # Im Formular wurde "nur ausgewählte Layer" angeklickt
@@ -257,10 +240,11 @@ def layersadapt(
         selectedLayerNames = []
     else:
         logger.error(
-            f"Fehler in anpassen_auswahl: {anpassen_auswahl}\nWert ist nicht definiert (enums.py)"
+            "Fehler in anpassen_auswahl: %s\nWert ist nicht definiert (enums.py)",
+            anpassen_auswahl,
         )
 
-    logger.debug("k_layersadapt (2), selectedLayerNames: {}".format(selectedLayerNames))
+    logger.debug("k_layersadapt (2), selectedLayerNames: %s", selectedLayerNames)
 
     layerNotQkanMeldung = False  # Am Schluss erscheint ggfs. eine Meldung, dass Nicht-QKan-Layer gefunden wurden.
 
@@ -278,7 +262,7 @@ def layersadapt(
             logger.error(
                 f"QKan-Fehler: Projektlayer {layername} konnte im Projekt nicht gefunden werden"
             )
-            return False
+            return
         else:
             layer = layerobjects[0]
 
@@ -294,7 +278,7 @@ def layersadapt(
                 ),
             )
             del dbQK
-            return False
+            return
         elif len(qgsLayers) == 0:
             logger.info(
                 "In der Vorlage-Projektdatei wurden kein Layer {} gefunden".format(
@@ -322,7 +306,7 @@ def layersadapt(
             else:
                 # Tabellenlayer
                 newdatasource = "dbname='{dbname}' table=\"{table}\" sql={sql}".format(
-                    dbname=database_QKan, table=table, geom=geom, sql=sql
+                    dbname=database_QKan, table=table, sql=sql
                 )
             layer.setDataSource(
                 newdatasource, layername, enums.QKanDBChoice.SPATIALITE.value
@@ -347,7 +331,7 @@ def layersadapt(
                 )
                 if not dbQK.sql(sql, "dbQK: k_layersadapt (3)"):
                     del dbQK
-                    return False
+                    return
 
                 data = dbQK.fetchone()
                 if data is not None:
@@ -372,8 +356,8 @@ def layersadapt(
                     )
 
         if anpassen_Formulare:
-            formpath = qgsLayers[0].findtext("./editform")
-            form = os.path.basename(formpath)
+            formpath = qgsLayers[0].findtext("./editform") or ""
+            form = cast(str, os.path.basename(formpath))
             editFormConfig = layer.editFormConfig()
             editFormConfig.setUiForm(os.path.join(formsDir, form))
             layer.setEditFormConfig(editFormConfig)
@@ -401,7 +385,7 @@ def layersadapt(
                                 "Möglicherweise ist der Template-Projektdatei fehlerhaft",
                             )
                             del dbQK
-                            return False
+                            return
                         options["Layer"] = projectLayerName
                     ews = QgsEditorWidgetSetup(type, options)
                     layer.setEditorWidgetSetup(idx, ews)
@@ -437,25 +421,28 @@ def layersadapt(
             exprList[name] = [expression, typeName, comment]
 
         # Expressions in Attributtabelle einfügen
+        # noinspection PyArgumentList
         project = QgsProject.instance()
         layer = project.mapLayersByName(layername)[0]
         for name in exprList.keys():
             expression, typeName, comment = exprList[name]
             if typeName == "double precision":
+                # noinspection PyArgumentList
                 layer.addExpressionField(
                     expression,
                     QgsField(name=name, type=QVariant.Double, comment=comment),
                 )
             elif typeName == "integer":
+                # noinspection PyArgumentList
                 layer.addExpressionField(
                     expression,
-                    QgsField(name=name, type=QVariant.Integer, comment=comment),
+                    QgsField(name=name, type=QVariant.Int, comment=comment),
                 )
             else:
-                Fehlermeldung(
+                fehlermeldung(
                     "Programmfehler", f"Datentyp noch nicht programmiert: {typeName}"
                 )
-                return False
+                return
 
     if layerNotInProjektMeldung:
         meldung(
@@ -486,7 +473,7 @@ def layersadapt(
         sql = "SELECT UpdateLayerStatistics()"
         if not dbQK.sql(sql, "dbQK: k_layersadapt (5)"):
             del dbQK
-            return False
+            return
 
         canvas = iface.mapCanvas()
         canvas.zoomToFullExtent()
@@ -507,7 +494,7 @@ def layersadapt(
         level=Qgis.Info,
     )
 
-    return True
+    return
 
 
 # def dbAdapt(database_QKan):

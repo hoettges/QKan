@@ -25,7 +25,7 @@ class XmlPorter(QKanPlugin):
         self.import_dlg = ImportDialog(default_dir=self.default_dir, tr=self.tr)
 
     # noinspection PyPep8Naming
-    def initGui(self):
+    def initGui(self) -> None:
         icon_export = ":/plugins/qkan/xmlporter/res/icon_export.png"
         QKan.instance.add_action(
             icon_export,
@@ -41,11 +41,11 @@ class XmlPorter(QKanPlugin):
             parent=self.iface.mainWindow(),
         )
 
-    def unload(self):
+    def unload(self) -> None:
         self.export_dlg.close()
         self.import_dlg.close()
 
-    def run_export(self):
+    def run_export(self) -> None:
         self.export_dlg.show()
 
         # Fill dialog with current info
@@ -58,7 +58,7 @@ class XmlPorter(QKanPlugin):
             database_qkan = self.export_dlg.tf_database.text()
 
             # Save to config
-            QKan.config.database.qkan = database_qkan
+            QKan.config.database.qkan = str(database_qkan)
             QKan.config.xml.export_file = export_file
 
             QKan.config.check_export.export_schaechte = (
@@ -97,7 +97,7 @@ class XmlPorter(QKanPlugin):
             # Run export
             ExportTask(db_qkan, export_file).run()
 
-    def run_import(self):
+    def run_import(self) -> None:
         self.import_dlg.show()
 
         if self.import_dlg.exec_():

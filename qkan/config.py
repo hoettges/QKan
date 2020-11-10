@@ -5,6 +5,7 @@ import os
 import site
 import warnings
 from pathlib import Path
+from typing import Any, Dict
 
 from qkan import enums
 
@@ -12,14 +13,14 @@ log = logging.getLogger("QKan.config")
 
 
 class ConfigEncoder(json.JSONEncoder):
-    def default(self, o):
+    def default(self, o: Any) -> Any:
         if isinstance(o, enum.Enum):
             return o.value
         return o.__dict__
 
 
 class ClassObject:
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         annotation_keys = self.__annotations__.keys()
 
         # Assign values
@@ -78,7 +79,7 @@ class ClassObject:
             elif key not in kwargs_keys:
                 setattr(self, key, getattr(self, key))
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: str) -> Any:
         warnings.warn(
             f"{self.__class__.__name__}: The dict-like config has been replaced "
             f"with a class, use hasattr() instead.",
@@ -87,7 +88,7 @@ class ClassObject:
         )
         return getattr(self, key)
 
-    def __contains__(self, item):
+    def __contains__(self, item: str) -> Any:
         warnings.warn(
             f"{self.__class__.__name__}: The dict-like config has been replaced "
             f"with a class, use hasattr() instead.",
@@ -96,7 +97,7 @@ class ClassObject:
         )
         return hasattr(self, item)
 
-    def __setattr__(self, key: str, value):
+    def __setattr__(self, key: str, value: Any) -> None:
         # Allow setting anything in temporary storage
         if hasattr(self, "allow_any"):
             super().__setattr__(key, value)
@@ -117,12 +118,9 @@ class ClassObject:
             return
         super().__setattr__(key, value)
 
-    def __str__(self):
+    def __str__(self) -> str:
         sorted_kv = sorted([f"{k}={v}" for k, v in self.__dict__.items()])
         return f"<{self.__class__.__name__} {' '.join(sorted_kv)}>"
-
-    def __repr__(self):
-        return self.__dict__
 
 
 class TempStorage(ClassObject):
@@ -130,7 +128,7 @@ class TempStorage(ClassObject):
     May be used to save anything, will be written to config file
     """
 
-    __annotations__ = {}
+    __annotations__: Dict[str, Any] = {}
     allow_any = True
 
 
@@ -304,7 +302,7 @@ class ToolsConfig(ClassObject):
             "pow(2*0.10 * fliesslaenge / SQRT(neigung), 0.467)",
         ]
 
-        def __str__(self):
+        def __str__(self) -> str:
             return "<RunoffParams *hidden in __str__*>"
 
     apply_qkan_template: bool = True
@@ -344,10 +342,10 @@ class Config(ClassObject):
     tools: ToolsConfig = ToolsConfig()
     xml: XmlConfig = XmlConfig()
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         super().__init__(**kwargs)
 
-    def save(self):
+    def save(self) -> None:
         cfile = Path(site.getuserbase()) / "qkan" / "qkan.json"
         if not cfile.parent.exists():
             os.makedirs(cfile.parent)
@@ -360,7 +358,7 @@ class Config(ClassObject):
             raise e
 
     @staticmethod
-    def load():
+    def load() -> "Config":
         """
         Load config from file or generate a new on based on defaults
 

@@ -9,7 +9,7 @@ import logging
 import os
 import shutil
 import time
-import typing
+from typing import List
 
 from qgis.gui import QgisInterface
 from qkan.database.dbfunc import DBConnection
@@ -28,14 +28,14 @@ def exporthe8(
     database_he: str,
     dbtemplate_he: str,
     db_qkan: DBConnection,
-    liste_teilgebiete: typing.List[str],
+    liste_teilgebiete: List[str],
     autokorrektur: bool,
     fangradius: float = 0.1,
     mindestflaeche: float = 0.5,
     mit_verschneidung: bool = True,
     export_flaechen_he8: bool = True,
     check_export: dict = None,
-):
+) -> bool:
     """
     Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine HE8-SQLite-Datenbank.
 
@@ -106,7 +106,7 @@ def exporthe8(
     db_qkan.sql("SELECT NextId, Version FROM he.Itwh$ProgInfo")
     data = db_qkan.fetchone()
     nextid = int(data[0]) + 1
-    he_db_version = data[1].split(".")
+    he_db_version = [int(_) for _ in data[1].split(".")]
     logger.debug("HE IDBF-Version {}".format(he_db_version))
 
     # --------------------------------------------------------------------------------------------
@@ -443,7 +443,7 @@ def exporthe8(
         )
 
         if not db_qkan.sql(sql, "dbQK: export_to_he8.export_auslaesse"):
-            del dbHE
+            del db_qkan
             return False
 
         nr0 = nextid
@@ -484,74 +484,43 @@ def exporthe8(
 
             # Ändern vorhandener Datensätze (geschickterweise vor dem Einfügen!)
             if check_export["modify_auslaesse"]:
-                sql = """
+                sql = f"""
                     UPDATE Auslass SET
-                    Typ={typ}, Rueckschlagklappe={rueckschlagklappe},
+                    Typ=1, Rueckschlagklappe=0,
                     Sohlhoehe={sohlhoehe},
-                    Gelaendehoehe={gelaendehoehe}, Art={art}, AnzahlKanten={anzahlkanten},
-                    Scheitelhoehe={scheitelhoehe}, KonstanterZufluss={konstanterzufluss},
-                    Planungsstatus='{planungsstatus}',
-                    LastModified='{lastmodified}', Kommentar='{kommentar}', Geometry='{geom}'
-                    WHERE Name = '{name}';
-                """.format(
-                    typ="1",
-                    rueckschlagklappe=0,
-                    sohlhoehe=sohlhoehe,
-                    gelaendehoehe=deckelhoehe,
-                    art="3",
-                    anzahlkanten="0",
-                    scheitelhoehe=deckelhoehe,
-                    konstanterzufluss=0,
-                    planungsstatus="0",
-                    name=schnam,
-                    lastmodified=createdat,
-                    kommentar=kommentar,
-                    durchmesser=durchmesser,
-                    geom=geom,
-                )
+                    Gelaendehoehe={deckelhoehe}, Art=3, AnzahlKanten=0,
+                    Scheitelhoehe={deckelhoehe}, KonstanterZufluss=0,
+                    Planungsstatus='0',
+                    LastModified='{createdat}', Kommentar='{kommentar}', Geometry='{geom}'
+                    WHERE Name = '{schnam}';
+                """
 
-                if not dbHE.sql(sql, "dbHE: export_auslaesse (1)"):
+                if not db_qkan.sql(sql, "db_qkan: export_auslaesse (1)"):
                     return False
 
             # Einfuegen in die Datenbank
             if check_export["export_auslaesse"]:
-                sql = """
+                sql = f"""
                     INSERT INTO he.Auslass
                     ( Id, Typ, Rueckschlagklappe, Sohlhoehe,
                       Gelaendehoehe, Art, AnzahlKanten,
                       Scheitelhoehe, KonstanterZufluss, Planungsstatus,
                       Name, LastModified, Kommentar, Geometry)
                     SELECT
-                      {id}, {typ}, {rueckschlagklappe}, {sohlhoehe},
-                      {gelaendehoehe}, {art}, {anzahlkanten},
-                      {scheitelhoehe}, {konstanterzufluss}, '{planungsstatus}',
-                      '{name}', '{lastmodified}', '{kommentar}', '{geom}'
-                    WHERE '{name}' NOT IN (SELECT Name FROM Auslass);
-                """.format(
-                    id=nextid,
-                    typ="1",
-                    rueckschlagklappe=0,
-                    sohlhoehe=sohlhoehe,
-                    gelaendehoehe=deckelhoehe,
-                    art="3",
-                    anzahlkanten="0",
-                    scheitelhoehe=deckelhoehe,
-                    konstanterzufluss=0,
-                    planungsstatus="0",
-                    name=schnam,
-                    lastmodified=createdat,
-                    kommentar=kommentar,
-                    durchmesser=durchmesser,
-                    geom=geom,
-                )
+                      {nextid}, 1, 0, {sohlhoehe},
+                      {deckelhoehe}, 3, 0,
+                      {deckelhoehe}, 0, '0',
+                      '{schnam}', '{createdat}', '{kommentar}', '{geom}'
+                    WHERE '{schnam}' NOT IN (SELECT Name FROM Auslass);
+                """
 
-                if not dbHE.sql(sql, "dbHE: export_auslaesse (2)"):
+                if not db_qkan.sql(sql, "db_qkan: export_auslaesse (2)"):
                     return False
 
                 nextid += 1
 
-        dbHE.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
-        dbHE.commit()
+        db_qkan.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
+        db_qkan.commit()
 
         fortschritt("{} Auslässe eingefuegt".format(nextid - nr0), 0.40)
     # progress_bar.setValue(50)
@@ -592,7 +561,7 @@ def exporthe8(
         )
 
         if not db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen"):
-            del dbHE
+            del db_qkan
             return False
 
         nr0 = nextid
@@ -657,7 +626,7 @@ def exporthe8(
                     kommentar=kommentar,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_pumpen (1)"):
+                if not db_qkan.sql(sql, "db_qkan: export_pumpen (1)"):
                     return False
 
             # Einfuegen in die Datenbank
@@ -688,13 +657,13 @@ def exporthe8(
                     kommentar=kommentar,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_pumpen (2)"):
+                if not db_qkan.sql(sql, "db_qkan: export_pumpen (2)"):
                     return False
 
                 nextid += 1
 
-        dbHE.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
-        dbHE.commit()
+        db_qkan.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
+        db_qkan.commit()
 
         fortschritt("{} Pumpen eingefuegt".format(nextid - nr0), 0.40)
     # progress_bar.setValue(60)
@@ -739,7 +708,7 @@ def exporthe8(
         )
 
         if not db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre"):
-            del dbHE
+            del db_qkan
             return False
 
         nr0 = nextid
@@ -803,7 +772,6 @@ def exporthe8(
                     WHERE Name = '{name}';
                 """.format(
                     name=wnam,
-                    typ=1,
                     schoben=schoben,
                     schunten=schunten,
                     sohleoben=sohleoben,
@@ -817,12 +785,12 @@ def exporthe8(
                     kommentar=kommentar,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_wehre (1)"):
+                if not db_qkan.sql(sql, "db_qkan: export_wehre (1)"):
                     return False
 
             # Einfuegen in die Datenbank
             if check_export["export_wehre"]:
-                sql = """
+                sql = f"""
                     INSERT INTO he.Wehr
                     (Id, Name, Typ, SchachtOben, SchachtUnten, 
                      SohlhoeheOben, SohlhoeheUnten, 
@@ -834,48 +802,22 @@ def exporthe8(
                      EreignisIndividuell, Planungsstatus, 
                      LastModified, Kommentar)
                     SELECT
-                      {id}, '{name}', {typ}, '{schoben}', '{schunten}', 
+                      {nextid}, '{wnam}', 1, '{schoben}', '{schunten}', 
                       {sohleoben}, {sohleunten}, 
                       {schwellenhoehe}, {kammerhoehe}, 
                       {laenge}, {uebeiwert}, 
-                      {rueckschlagklappe}, {verfahrbar}, {profiltyp}, 
-                      {ereignisbilanzierung}, {ereignisgrenzwertende},
-                      {ereignisgrenzwertanfang}, {ereignistrenndauer}, 
-                      {ereignisindividuell}, {simstatusnr},
-                      '{lastmodified}', '{kommentar}'
-                    WHERE '{name}' NOT IN (SELECT Name FROM Wehr);
-                """.format(
-                    id=nextid,
-                    name=wnam,
-                    typ=1,
-                    schoben=schoben,
-                    schunten=schunten,
-                    sohleoben=sohleoben,
-                    sohleunten=sohleunten,
-                    schwellenhoehe=schwellenhoehe,
-                    kammerhoehe=kammerhoehe,
-                    laenge=laenge,
-                    uebeiwert=uebeiwert,
-                    rueckschlagklappe=0,
-                    verfahrbar=0,
-                    profiltyp=52,
-                    ereignisbilanzierung=0,
-                    ereignisgrenzwertende=0,
-                    ereignisgrenzwertanfang=0,
-                    ereignistrenndauer=0,
-                    ereignisindividuell=0,
-                    simstatusnr=simstatusnr,
-                    lastmodified=createdat,
-                    kommentar=kommentar,
-                )
+                      0, 0, 52, 0, 0, 0, 0, 0, {simstatusnr},
+                      '{createdat}', '{kommentar}'
+                    WHERE '{wnam}' NOT IN (SELECT Name FROM Wehr);
+                """
 
-                if not dbHE.sql(sql, "dbHE: export_wehre (2)"):
+                if not db_qkan.sql(sql, "db_qkan: export_wehre (2)"):
                     return False
 
                 nextid += 1
 
-        dbHE.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
-        dbHE.commit()
+        db_qkan.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
+        db_qkan.commit()
 
         fortschritt("{} Wehre eingefuegt".format(nextid - nr0), 0.40)
     # progress_bar.setValue(60)
@@ -900,11 +842,11 @@ def exporthe8(
             auswahl = ""
 
         # Varianten abhängig von HE-Version
-        if versionolder(he_db_version[0:2], ["7", "8"], 2):
+        if versionolder(he_db_version[0:2], [7, 8], 2):
             logger.debug("Version vor 7.8 erkannt")
             fieldsnew = ""
             attrsnew = ""
-        elif versionolder(he_db_version[0:2], ["7", "9"], 2):
+        elif versionolder(he_db_version[0:2], [7, 9], 2):
             logger.debug("Version vor 7.9 erkannt")
             fieldsnew = ", 0 AS einzugsgebiet, 0 as konstanterzuflusstezg"
             attrsnew = ", Einzugsgebiet, KonstanterZuflussTezg"
@@ -1048,12 +990,10 @@ def exporthe8(
                 createdat AS createdat,
                 kommentar AS kommentar
             FROM bodenklassen
-            """.format(
-            auswahl
-        )
+            """
 
         if not db_qkan.sql(sql, "dbQK: export_to_he8.export_bodenklassen"):
-            del dbHE
+            del db_qkan
             return False
 
         nr0 = nextid
@@ -1115,7 +1055,7 @@ def exporthe8(
                     kommentar=kommentar,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_bodenklassen (1)"):
+                if not db_qkan.sql(sql, "db_qkan: export_bodenklassen (1)"):
                     return False
 
             # Einfuegen in die Datenbank
@@ -1143,13 +1083,13 @@ def exporthe8(
                     id=nextid,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_bodenklassen (2)"):
+                if not db_qkan.sql(sql, "db_qkan: export_bodenklassen (2)"):
                     return False
 
                 nextid += 1
 
-        dbHE.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
-        dbHE.commit()
+        db_qkan.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
+        db_qkan.commit()
 
         fortschritt("{} Bodenklassen eingefuegt".format(nextid - nr0), 0.62)
     # progress_bar.setValue(80)
@@ -1173,12 +1113,10 @@ def exporthe8(
                 mulden_startwert AS mulden_startwert_t,
                 bodenklasse, kommentar, createdat
             FROM abflussparameter
-            """.format(
-            auswahl
-        )
+            """
 
         if not db_qkan.sql(sql, "dbQK: export_to_he8.export_abflussparameter"):
-            del dbHE
+            del db_qkan
             return False
 
         nr0 = nextid
@@ -1281,7 +1219,7 @@ def exporthe8(
                     kommentar=kommentar,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_abflussparameter (1)"):
+                if not db_qkan.sql(sql, "db_qkan: export_abflussparameter (1)"):
                     return False
 
             # Einfuegen in die Datenbank
@@ -1326,13 +1264,13 @@ def exporthe8(
                     id=nextid,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_abflussparameter (2)"):
+                if not db_qkan.sql(sql, "db_qkan: export_abflussparameter (2)"):
                     return False
 
                 nextid += 1
 
-        dbHE.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
-        dbHE.commit()
+        db_qkan.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
+        db_qkan.commit()
 
         fortschritt("{} Abflussparameter eingefuegt".format(nextid - nr0), 0.65)
     # progress_bar.setValue(85)
@@ -1356,7 +1294,7 @@ def exporthe8(
         sql = """SELECT regenschreiber FROM flaechen GROUP BY regenschreiber"""
 
         if not db_qkan.sql(sql, "dbQK: export_to_he8.export_regenschreiber"):
-            del dbHE
+            del db_qkan
             return False
 
         attr = db_qkan.fetchall()
@@ -1388,11 +1326,11 @@ def exporthe8(
                 str(reglis)
             )
 
-        if not dbHE.sql(sql, "dbHE: export_regenschreiber (1)"):
+        if not db_qkan.sql(sql, "db_qkan: export_regenschreiber (1)"):
             del db_qkan
             return False
 
-        attr = dbHE.fetchall()
+        attr = db_qkan.fetchall()
         logger.debug("Regenschreiber - attr: {}".format(str(attr)))
 
         nr0 = nextid
@@ -1430,14 +1368,14 @@ def exporthe8(
                     id=nextid,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_regenschreiber (2)"):
+                if not db_qkan.sql(sql, "db_qkan: export_regenschreiber (2)"):
                     return False
 
                 logger.debug("In HE folgenden Regenschreiber ergänzt: {}".format(sql))
 
                 nextid += 1
-        dbHE.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
-        dbHE.commit()
+        db_qkan.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
+        db_qkan.commit()
 
         fortschritt("{} Regenschreiber eingefuegt".format(nextid - nr0), 0.68)
     # progress_bar.setValue(90)
@@ -1473,7 +1411,7 @@ def exporthe8(
 
         Befestigte Flächen"""
 
-        nr0 = None  # Für Fortschrittsmeldung
+        nr0 = 0  # Für Fortschrittsmeldung
 
         # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
         if not checknames(db_qkan, "flaechen", "flnam", "f_", autokorrektur):
@@ -1490,9 +1428,9 @@ def exporthe8(
 
         # Nur Daten fuer ausgewaehlte Teilgebiete
         if len(liste_teilgebiete) != 0:
-            auswahl_c = " AND ha.teilgebiet in ('{}')".format(
-                "', '".join(liste_teilgebiete)
-            )
+            # auswahl_c = " AND ha.teilgebiet in ('{}')".format(
+            #     "', '".join(liste_teilgebiete)
+            # )
             auswahl_a = " WHERE ha.teilgebiet in ('{}')".format(
                 "', '".join(liste_teilgebiete)
             )
@@ -1521,7 +1459,7 @@ def exporthe8(
 
             sql = "DELETE FROM flaechen_he8"
             if not db_qkan.sql(sql, "dbQK: k_qkhe.exportFlaechenHE8.delete"):
-                del dbHE
+                del db_qkan
                 return False
 
             # Einfügen aller verschnittenen Flächen in Tabelle "flaechen_he8", zusammengefasst
@@ -1824,7 +1762,7 @@ def exporthe8(
         sql = "SELECT count(*) AS anz FROM einzugsgebiete"
 
         if not db_qkan.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (1)"):
-            del dbHE
+            del db_qkan
             return False
 
         anztgb = int(db_qkan.fetchone()[0])
@@ -1840,7 +1778,7 @@ def exporthe8(
             """
 
             if not db_qkan.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (2)"):
-                del dbHE
+                del db_qkan
                 return False
 
             anz = int(db_qkan.fetchone()[0])
@@ -1859,7 +1797,7 @@ def exporthe8(
                 if not db_qkan.sql(
                     sql, "dbQK: export_to_he8.export_einzugsgebiete (3)"
                 ):
-                    del dbHE
+                    del db_qkan
                     return False
 
                 db_qkan.commit()
@@ -1871,7 +1809,7 @@ def exporthe8(
                 if not db_qkan.sql(
                     sql, "dbQK: export_to_he8.export_einzugsgebiete (4)"
                 ):
-                    del dbHE
+                    del db_qkan
                     return False
 
                 listeilgeb = db_qkan.fetchall()
@@ -1889,7 +1827,7 @@ def exporthe8(
                     if not db_qkan.sql(
                         sql, "dbQK: export_to_he8.export_einzugsgebiete (5)"
                     ):
-                        del dbHE
+                        del db_qkan
                         return False
 
                     db_qkan.commit()
@@ -1909,7 +1847,7 @@ def exporthe8(
                 if not db_qkan.sql(
                     sql, "dbQK: export_to_he8.export_einzugsgebiete (6)"
                 ):
-                    del dbHE
+                    del db_qkan
                     return False
 
                 anz = int(db_qkan.fetchone()[0])
@@ -1929,7 +1867,7 @@ def exporthe8(
             """
 
             if not db_qkan.sql(sql, "dbQK: export_to_he8.export_einzugsgebiete (7)"):
-                del dbHE
+                del db_qkan
                 return False
 
             anz = int(db_qkan.fetchone()[0])
@@ -1942,7 +1880,7 @@ def exporthe8(
                     if not db_qkan.sql(
                         sql, "dbQK: export_to_he8.export_einzugsgebiete (8)"
                     ):
-                        del dbHE
+                        del db_qkan
                         return False
 
                     db_qkan.commit()
@@ -1959,7 +1897,7 @@ def exporthe8(
                     if not db_qkan.sql(
                         sql, "dbQK: export_to_he8.export_einzugsgebiete (9)"
                     ):
-                        del dbHE
+                        del db_qkan
                         return False
 
                     db_qkan.commit()
@@ -1978,7 +1916,7 @@ def exporthe8(
                     if not db_qkan.sql(
                         sql, "dbQK: export_to_he8.export_einzugsgebiete (10)"
                     ):
-                        del dbHE
+                        del db_qkan
                         return False
 
                     anz = int(db_qkan.fetchone()[0])
@@ -2002,7 +1940,7 @@ def exporthe8(
                 if not db_qkan.sql(
                     sql, "dbQK: export_to_he8.export_einzugsgebiete (11)"
                 ):
-                    del dbHE
+                    del db_qkan
                     return False
 
                 anz = int(db_qkan.fetchone()[0])
@@ -2045,11 +1983,11 @@ def exporthe8(
 
         if not checknames(db_qkan, "einleit", "elnam", "e_", autokorrektur):
             del db_qkan
-            del dbHE
+            del db_qkan
             return False
 
         if not updatelinksw(db_qkan, fangradius):
-            del dbHE  # Im Fehlerfall wird dbQK in updatelinksw geschlossen.
+            del db_qkan  # Im Fehlerfall wird dbQK in updatelinksw geschlossen.
             fehlermeldung(
                 "Fehler beim Update der Einzeleinleiter-Verknüpfungen",
                 "Der logische Cache konnte nicht aktualisiert werden.",
@@ -2098,7 +2036,7 @@ def exporthe8(
         logger.debug("\nSQL-4e:\n{}\n".format(sql))
 
         if not db_qkan.sql(sql, "dbQK: export_to_he8.export_einleitdirekt (6)"):
-            del dbHE
+            del db_qkan
             return False
 
         nr0 = nextid
@@ -2106,7 +2044,7 @@ def exporthe8(
         fortschritt("Export Einzeleinleiter (direkt)...", 0.92)
 
         # Varianten abhängig von HE-Version
-        if versionolder(he_db_version[0:2], ["7", "9"], 2):
+        if versionolder(he_db_version[0:2], [7, 9], 2):
             logger.debug("Version vor 7.9 erkannt")
             fieldsnew = ""
             attrsnew = ""
@@ -2158,7 +2096,7 @@ def exporthe8(
                     ZuflussModell={zuflussmodell}, ZuflussDirekt={zuflussdirekt}, 
                     Zufluss={zufluss}, Planungsstatus={planungsstatus},
                     Abrechnungszeitraum={abrechnungszeitraum}, Abzug={abzug},
-                    LastModified='{createdat},Geometry='{geom}'{fieldsnew}
+                    LastModified='{createdat}',Geometry='{geom}'{fieldsnew}
                     WHERE Name='{elnam}';
                     """.format(
                     zuordnunggesperrt=0,
@@ -2184,7 +2122,7 @@ def exporthe8(
                     fieldsnew=fieldsnew,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_einleitdirekt (1)"):
+                if not db_qkan.sql(sql, "db_qkan: export_einleitdirekt (1)"):
                     return False
 
             # Einfuegen in die Datenbank
@@ -2198,7 +2136,7 @@ def exporthe8(
                     Abrechnungszeitraum, Abzug,
                     LastModified, Id, Geometry{attrsnew}) 
                   SELECT
-                    {xel}, {yel}, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
+                    xel, yel, {zuordnunggesperrt}, {zuordnunabhezg}, '{haltnam}',
                     {abwasserart}, {einwohner}, {wverbrauch}, {herkunft},
                     {stdmittel}, {fremdwas}, {faktor}, {flaeche},
                     {zuflussmodell}, {zuflussdirekt}, {zufluss}, {planungsstatus}, '{elnam}',
@@ -2206,8 +2144,6 @@ def exporthe8(
                     '{createdat}', {nextid}, Geometry='{geom}'{valuesnew}
                   WHERE '{elnam}' NOT IN (SELECT Name FROM Einzeleinleiter);
               """.format(
-                    xel=xel,
-                    yel=yel,
                     zuordnunggesperrt=0,
                     zuordnunabhezg=1,
                     haltnam=haltnam,
@@ -2233,13 +2169,13 @@ def exporthe8(
                     valuesnew=valuesnew,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_einleitdirekt (2)"):
+                if not db_qkan.sql(sql, "db_qkan: export_einleitdirekt (2)"):
                     return False
 
                 nextid += 1
 
-        dbHE.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
-        dbHE.commit()
+        db_qkan.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
+        db_qkan.commit()
 
         fortschritt("{} Einzeleinleiter (direkt) eingefuegt".format(nextid - nr0), 0.95)
 
@@ -2252,7 +2188,7 @@ def exporthe8(
         # Tabelle "aussengebiete" eingetragen.
 
         if not updatelinkageb(db_qkan, fangradius):
-            del dbHE  # Im Fehlerfall wird dbQK in updatelinkageb geschlossen.
+            del db_qkan  # Im Fehlerfall wird dbQK in updatelinkageb geschlossen.
             fehlermeldung(
                 "Fehler beim Update der Außengebiete-Verknüpfungen",
                 "Der logische Cache konnte nicht aktualisiert werden.",
@@ -2289,7 +2225,7 @@ def exporthe8(
         logger.debug("\nSQL-4e:\n{}\n".format(sql))
 
         if not db_qkan.sql(sql, "dbQK: export_to_he8.export_aussengebiete (6)"):
-            del dbHE
+            del db_qkan
             return False
 
         nr0 = nextid
@@ -2354,7 +2290,7 @@ def exporthe8(
                     kommentar=kommentar,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_aussengebiete (1)"):
+                if not db_qkan.sql(sql, "db_qkan: export_aussengebiete (1)"):
                     return False
 
                 sql = """
@@ -2365,7 +2301,7 @@ def exporthe8(
                     cn=cn, gesflaeche=gesflaeche, gebnam=gebnam
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_aussengebiete (2)"):
+                if not db_qkan.sql(sql, "db_qkan: export_aussengebiete (2)"):
                     return False
 
             # Einfuegen in die Datenbank
@@ -2400,7 +2336,7 @@ def exporthe8(
                     nextid=nextid,
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_aussengebiete (2)"):
+                if not db_qkan.sql(sql, "db_qkan: export_aussengebiete (2)"):
                     return False
 
                 sql = """
@@ -2412,13 +2348,13 @@ def exporthe8(
                     cn=cn, gesflaeche=gesflaeche, reihenfolge=1, id=nextid
                 )
 
-                if not dbHE.sql(sql, "dbHE: export_aussengebiete (2)"):
+                if not db_qkan.sql(sql, "db_qkan: export_aussengebiete (2)"):
                     return False
 
                 nextid += 1
 
-        dbHE.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
-        dbHE.commit()
+        db_qkan.sql("UPDATE Itwh$ProgInfo SET NextId = {:d}".format(nextid))
+        db_qkan.commit()
 
         fortschritt("{} Aussengebiete eingefuegt".format(nextid - nr0), 0.98)
 
@@ -2438,7 +2374,7 @@ if __name__ == "__console__" or __name__ == "__main__":
     import tempfile
     from pathlib import Path
 
-    from qgis.core import *
+    from qgis.core import QgsApplication
     from qkan.database.dbfunc import DBConnection
 
     # Supply path to qgis install location

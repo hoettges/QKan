@@ -16,7 +16,7 @@ __date__ = "September 2016"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 
 import logging
-import typing
+from typing import List
 
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface
@@ -31,7 +31,7 @@ progress_bar = None
 def create_unpaved_areas(
     iface: QgisInterface,
     db_qkan: DBConnection,
-    selected_abflparam: typing.List,
+    selected_abflparam: List,
     autokorrektur: bool,
 ) -> bool:
     """Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
@@ -225,3 +225,4 @@ def create_unpaved_areas(
     progress_bar.setValue(100)
     status_message.setText("Erzeugung von unbefestigten Flächen abgeschlossen.")
     status_message.setLevel(Qgis.Success)
+    return True

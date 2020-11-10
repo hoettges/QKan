@@ -28,15 +28,13 @@ class TestLinkfl(QgisTest):
         with ZipFile(BASE_DATA / "test_linkfl.zip") as z:
             z.extractall(BASE_WORK)
 
-    def test_linkfl(self):
+    def test_linkfl(self) -> None:
         database_qkan = str(BASE_WORK / "nette.sqlite")
 
         # Aktualisierung der Datenbank auf aktuelle Version
         layersadapt(
             database_QKan=database_qkan,
             projectTemplate="",
-            dbIsUptodate=False,
-            qkanDBUpdate=True,
             anpassen_ProjektMakros=False,
             anpassen_Datenbankanbindung=False,
             anpassen_Wertebeziehungen_in_Tabellen=False,

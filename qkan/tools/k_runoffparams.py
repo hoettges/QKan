@@ -25,11 +25,14 @@ __date__ = "July 2018"
 __copyright__ = "(C) 2018, Joerg Hoettges"
 
 import logging
+from typing import Dict, List
 
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.utils import iface
 from qkan import enums
+from qkan.config import ToolsConfig
+from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import sqlconditions
 
 logger = logging.getLogger("QKan.tools.k_runoffparams")
@@ -44,31 +47,20 @@ progress_bar = None
 
 
 def setRunoffparams(
-    dbQK,
+    dbQK: DBConnection,
     runoffparamstype_choice: enums.RunOffParamsType,
     runoffmodeltype_choice: enums.RunOffModelType,
-    runoffparamsfunctions,
-    liste_teilgebiete,
-    liste_abflussparameter,
-):
+    runoffparamsfunctions: ToolsConfig.RunoffParams,
+    liste_teilgebiete: List[str],
+    liste_abflussparameter: List[str],
+) -> None:
     """Berechnet Oberlächenabflussparameter für HYSTEM/EXTRAN 7 und DYNA/Kanal++.
 
     :dbQK:                          Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
-    :type dbQK:                     DBConnection (geerbt von dbapi...)
-
     :runoffparamstype_choice:       Simulationsprogramm, für das die Paremter berechnet werden sollen.
-    :type runoffparamstype_choice:  enums.RunOffParamsType
-
     :runoffmodeltype_choice:        Funktionen, die von den Simulationsprogrammen genutzt werden sollen
-    :type runoffmodeltype_choice:   enums.RunOffModelType
-
     :liste_teilgebiete:             Liste der bei der Bearbeitung zu berücksichtigenden Teilgebiete (Tabelle tezg)
-    :type:                          list
-
     :dbtyp:                         Typ der Datenbank (SpatiaLite, PostGIS)
-    :type dbtyp:                    String
-
-    :returns:                       void
 
     Für alle TEZG-Flächen wird, falls nicht schon vorhanden, ein unbefestigtes Flächenobjekt erzeugt.
     Dazu können in der Auswahlmaske zunächst die Kombinationen aus Abflussparameter und Teilgebiet
@@ -98,8 +90,8 @@ def setRunoffparams(
     # Auswahl der zu bearbeitenden Flächen
     auswahl = sqlconditions(
         "AND",
-        ("fl.teilgebiet", "fl.abflussparameter"),
-        (liste_teilgebiete, liste_abflussparameter),
+        ["fl.teilgebiet", "fl.abflussparameter"],
+        [liste_teilgebiete, liste_abflussparameter],
     )
 
     if runoffmodeltype_choice == enums.RunOffModelType.SPEICHERKASKADE:
@@ -159,7 +151,7 @@ def setRunoffparams(
                 auswahl=auswahl, fun=fun, kriterium=kriterium
             )
             if not dbQK.sql(sql, "QKan.tools.setRunoffparams (1)"):
-                return False
+                return
 
     elif runoffmodeltype_choice == enums.RunOffModelType.SPEICHERKASKADE:
         # Fließzeit Kanal
@@ -214,7 +206,7 @@ def setRunoffparams(
                 auswahl=auswahl, fun=fun, kriterium=kriterium
             )
             if not dbQK.sql(sql, "QKan.tools.setRunoffparams (2)"):
-                return False
+                return
 
         # Fließzeit Oberfläche
         for fun, kriterium in zip(funlis[4:6], kriterienlis):
@@ -268,7 +260,7 @@ def setRunoffparams(
                 auswahl=auswahl, fun=fun, kriterium=kriterium
             )
             if not dbQK.sql(sql, "QKan.tools.setRunoffparams (3)"):
-                return False
+                return
 
     elif runoffmodeltype_choice == enums.RunOffModelType.SCHWERPUNKTLAUFZEIT:
         for fun, kriterium in zip(funlis[:2], kriterienlis):
@@ -322,13 +314,14 @@ def setRunoffparams(
                 auswahl=auswahl, fun=fun, kriterium=kriterium
             )
             if not dbQK.sql(sql, "QKan.tools.setRunoffparams (4)"):
-                return False
+                return
 
     # status_message.setText("Erzeugung von unbefestigten Flächen")
     progress_bar.setValue(90)
 
     dbQK.commit()
 
+    # noinspection PyArgumentList
     QgsMessageLog.logMessage(
         message="\nOberflächenabflussparameter sind berechnet und eingetragen!",
         level=Qgis.Info,

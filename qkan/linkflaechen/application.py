@@ -3,7 +3,7 @@
 Flaechenzuordnungen
 Verknüpft Flächen mit nächster Haltung
 """
-import typing
+from typing import List, Optional, cast
 
 from qgis.core import Qgis, QgsDataSourceUri, QgsProject, QgsVectorLayer
 from qgis.gui import QgisInterface
@@ -35,7 +35,7 @@ from . import resources  # isort:skip
 class LinkFl(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
-        self.db_qkan: typing.Optional[DBConnection] = None
+        self.db_qkan: Optional[DBConnection] = None
 
         self.dlg_at = AssigntgebDialog()
         self.dlg_cl = CreatelineflDialog(self)
@@ -44,7 +44,7 @@ class LinkFl(QKanPlugin):
         self.dlg_ul = UpdateLinksDialog()
 
     # noinspection PyPep8Naming
-    def initGui(self):
+    def initGui(self) -> None:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_assigntgeb_path = ":/plugins/qkan/linkflaechen/res/icon_assigntgeb.png"
@@ -91,14 +91,14 @@ class LinkFl(QKanPlugin):
             parent=self.iface.mainWindow(),
         )
 
-    def unload(self):
+    def unload(self) -> None:
         self.dlg_at.close()
         self.dlg_cl.close()
         self.dlg_mg.close()
         self.dlg_sw.close()
         self.dlg_ul.close()
 
-    def run_createlinefl(self):
+    def run_createlinefl(self) -> None:
         """Run method that performs all the real work"""
 
         # Check, ob die relevanten Layer nicht editable sind.
@@ -108,14 +108,14 @@ class LinkFl(QKanPlugin):
                 'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                 level=Qgis.Critical,
             )
-            return False
+            return
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
             self.log.error(
                 "k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
-            return False
+            return
 
         # Datenbankverbindung für Abfragen
         self.db_qkan = DBConnection(dbname=database_qkan)
@@ -127,7 +127,7 @@ class LinkFl(QKanPlugin):
                     database_qkan
                 ),
             )
-            return None
+            return
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -138,7 +138,7 @@ class LinkFl(QKanPlugin):
                 GROUP BY teilgebiet"""
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen (1)"):
             del self.db_qkan
-            return False
+            return
 
         sql = """INSERT INTO teilgebiete (tgnam)
                 SELECT teilgebiet FROM haltungen 
@@ -147,7 +147,7 @@ class LinkFl(QKanPlugin):
                 GROUP BY teilgebiet"""
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen (1)"):
             del self.db_qkan
-            return False
+            return
 
         self.db_qkan.commit()
 
@@ -155,7 +155,7 @@ class LinkFl(QKanPlugin):
         sql = "SELECT abflussparameter FROM flaechen GROUP BY abflussparameter"
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.run_createlinefl (1)"):
             del self.db_qkan
-            return False
+            return
         daten = self.db_qkan.fetchall()
         # self.log.debug(u'\ndaten: {}'.format(str(daten)))  # debug
         self.dlg_cl.lw_flaechen_abflussparam.clear()
@@ -178,7 +178,7 @@ class LinkFl(QKanPlugin):
         sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.run_createlinefl (2)"):
             del self.db_qkan
-            return False
+            return
         daten = self.db_qkan.fetchall()
         self.dlg_cl.lw_hal_entw.clear()
         for ielem, elem in enumerate(daten):
@@ -196,7 +196,7 @@ class LinkFl(QKanPlugin):
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.run_createlinefl (3)"):
             del self.db_qkan
-            return False
+            return
         daten = self.db_qkan.fetchall()
         self.dlg_cl.lw_teilgebiete.clear()
         for ielem, elem in enumerate(daten):
@@ -247,7 +247,7 @@ class LinkFl(QKanPlugin):
         else:
             fehlermeldung("Fehler im Programmcode", "Nicht definierte Option")
             del self.db_qkan
-            return False
+            return
 
         self.dlg_cl.count_selection()
 
@@ -264,14 +264,12 @@ class LinkFl(QKanPlugin):
             # Start der Verarbeitung
 
             # Abrufen der ausgewählten Elemente in beiden Listen
-            liste_flaechen_abflussparam: typing.List[str] = list_selected_items(
+            liste_flaechen_abflussparam: List[str] = list_selected_items(
                 self.dlg_cl.lw_flaechen_abflussparam
             )
 
-            liste_hal_entw: typing.List[str] = list_selected_items(
-                self.dlg_cl.lw_hal_entw
-            )
-            liste_teilgebiete: typing.List[str] = list_selected_items(
+            liste_hal_entw: List[str] = list_selected_items(self.dlg_cl.lw_hal_entw)
+            liste_teilgebiete: List[str] = list_selected_items(
                 self.dlg_cl.lw_teilgebiete
             )
             suchradius: float = float(self.dlg_cl.tf_suchradius.text())
@@ -282,13 +280,13 @@ class LinkFl(QKanPlugin):
             else:
                 fehlermeldung("Fehler im Programmcode", "Nicht definierte Option")
                 del self.db_qkan
-                return False
+                return
 
             autokorrektur: bool = self.dlg_cl.cb_autokorrektur.isChecked()
-            flaechen_bereinigen: bool = self.dlg_cl.cb_geomMakeValid.isChecked()
-            links_in_tezg: bool = self.dlg_cl.cb_linksInTezg.isChecked()
-            mit_verschneidung: bool = self.dlg_cl.cb_regardTezg.isChecked()
-            fangradius: float = float(self.dlg_cl.tf_fangradius.text())
+            flaechen_bereinigen = cast(bool, self.dlg_cl.cb_geomMakeValid.isChecked())
+            links_in_tezg = self.dlg_cl.cb_linksInTezg.isChecked()
+            mit_verschneidung = self.dlg_cl.cb_regardTezg.isChecked()
+            fangradius = float(self.dlg_cl.tf_fangradius.text())
 
             # if len(liste_flaechen_abflussparam) == 0 or len(liste_hal_entw) == 0:
             # self.iface.messageBar().pushMessage("Bedienerfehler: ",
@@ -301,7 +299,8 @@ class LinkFl(QKanPlugin):
             QKan.config.selections.flaechen_abflussparam = liste_flaechen_abflussparam
             QKan.config.selections.hal_entw = liste_hal_entw
             QKan.config.selections.teilgebiete = liste_teilgebiete
-            QKan.config.epsg = epsg
+            if epsg:
+                QKan.config.epsg = epsg
             QKan.config.fangradius = fangradius
             QKan.config.linkflaechen.bezug_abstand = bezug_abstand
             QKan.config.linkflaechen.links_in_tezg = links_in_tezg
@@ -374,7 +373,7 @@ class LinkFl(QKanPlugin):
     # -------------------------------------------------------------------------
     # Öffnen des Formulars zur Erstellung der Verknüpfungen
 
-    def run_createlinesw(self):
+    def run_createlinesw(self) -> None:
         """Run method that performs all the real work"""
 
         # Check, ob die relevanten Layer nicht editable sind.
@@ -384,14 +383,14 @@ class LinkFl(QKanPlugin):
                 'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                 level=Qgis.Critical,
             )
-            return False
+            return
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
             self.log.error(
                 "LinkFl.run_createlinesw: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
-            return False
+            return
 
         # Datenbankverbindung für Abfragen
         self.db_qkan = DBConnection(dbname=database_qkan)
@@ -403,7 +402,7 @@ class LinkFl(QKanPlugin):
                     database_qkan
                 ),
             )
-            return None
+            return
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -414,7 +413,7 @@ class LinkFl(QKanPlugin):
                 GROUP BY teilgebiet"""
         if not self.db_qkan.sql(sql, "LinkFl.run_createlinesw (1)"):
             del self.db_qkan
-            return False
+            return
 
         sql = """INSERT INTO teilgebiete (tgnam)
                 SELECT teilgebiet FROM haltungen 
@@ -423,7 +422,7 @@ class LinkFl(QKanPlugin):
                 GROUP BY teilgebiet"""
         if not self.db_qkan.sql(sql, "LinkFl.run_createlinesw (2)"):
             del self.db_qkan
-            return False
+            return
 
         self.db_qkan.commit()
 
@@ -431,7 +430,7 @@ class LinkFl(QKanPlugin):
         sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.run_createlinesw (1)"):
             del self.db_qkan
-            return False
+            return
         daten = self.db_qkan.fetchall()
         self.dlg_sw.lw_hal_entw.clear()
         for ielem, elem in enumerate(daten):
@@ -449,7 +448,7 @@ class LinkFl(QKanPlugin):
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.run_createlinesw (2)"):
             del self.db_qkan
-            return False
+            return
         daten = self.db_qkan.fetchall()
         self.dlg_sw.lw_teilgebiete.clear()
         for ielem, elem in enumerate(daten):
@@ -488,10 +487,8 @@ class LinkFl(QKanPlugin):
 
             # Abrufen der ausgewählten Elemente in beiden Listen
 
-            liste_hal_entw: typing.List[str] = list_selected_items(
-                self.dlg_sw.lw_hal_entw
-            )
-            liste_teilgebiete: typing.List[str] = list_selected_items(
+            liste_hal_entw: List[str] = list_selected_items(self.dlg_sw.lw_hal_entw)
+            liste_teilgebiete: List[str] = list_selected_items(
                 self.dlg_sw.lw_teilgebiete
             )
 
@@ -499,7 +496,8 @@ class LinkFl(QKanPlugin):
 
             QKan.config.selections.hal_entw = liste_hal_entw
             QKan.config.selections.teilgebiete = liste_teilgebiete
-            QKan.config.epsg = epsg
+            if epsg:
+                QKan.config.epsg = epsg
             QKan.config.linkflaechen.suchradius = suchradius
             QKan.config.save()
 
@@ -517,10 +515,14 @@ class LinkFl(QKanPlugin):
             )
 
             if not createlinksw(
-                self.iface, self.db_qkan, liste_teilgebiete, suchradius, epsg
+                self.iface,
+                self.db_qkan,
+                liste_teilgebiete,
+                suchradius,
+                epsg or QKan.config.epsg,
             ):
                 del self.db_qkan
-                return False
+                return
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             layers = self.iface.layerTreeCanvasBridge().rootGroup().findLayers()
@@ -550,7 +552,7 @@ class LinkFl(QKanPlugin):
     # -------------------------------------------------------------------------
     # Öffnen des Formulars
 
-    def run_assigntgeb(self):
+    def run_assigntgeb(self) -> None:
         """Öffnen des Formulars zur Zuordnung von Teilgebieten auf Haltungen und Flächen"""
 
         # Check, ob die relevanten Layer nicht editable sind.
@@ -566,14 +568,14 @@ class LinkFl(QKanPlugin):
                 'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                 level=Qgis.Critical,
             )
-            return False
+            return
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
             self.log.error(
                 "k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
-            return False
+            return
 
         # Datenbankverbindung für Abfragen
         self.db_qkan = DBConnection(dbname=database_qkan)
@@ -585,7 +587,7 @@ class LinkFl(QKanPlugin):
                     database_qkan
                 ),
             )
-            return None
+            return
 
         # config in Dialog übernehmen
 
@@ -600,7 +602,7 @@ class LinkFl(QKanPlugin):
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.run_assigntgeb (1)"):
             del self.db_qkan
-            return False
+            return
         daten = self.db_qkan.fetchall()
         self.dlg_at.lw_teilgebiete.clear()
         for ielem, elem in enumerate(daten):
@@ -620,7 +622,7 @@ class LinkFl(QKanPlugin):
         else:
             fehlermeldung("Fehler im Programmcode (3)", "Nicht definierte Option")
             del self.db_qkan
-            return False
+            return
 
         # Festlegung des Pufferradius
         bufferradius = QKan.config.linkflaechen.bufferradius
@@ -635,7 +637,7 @@ class LinkFl(QKanPlugin):
 
             # Inhalte aus Formular lesen
 
-            liste_teilgebiete: typing.List[str] = list_selected_items(
+            liste_teilgebiete: List[str] = list_selected_items(
                 self.dlg_at.lw_teilgebiete
             )
             if self.dlg_at.rb_within.isChecked():
@@ -645,17 +647,18 @@ class LinkFl(QKanPlugin):
             else:
                 fehlermeldung("Fehler im Programmcode (4)", "Nicht definierte Option")
                 del self.db_qkan
-                return False
+                return
 
             autokorrektur: bool = self.dlg_at.cb_autokorrektur.isChecked()
-            flaechen_bereinigen: bool = self.dlg_at.cb_geomMakeValid.isChecked()
-            bufferradius: float = float(self.dlg_at.tf_bufferradius.text())
+            flaechen_bereinigen = self.dlg_at.cb_geomMakeValid.isChecked()
+            bufferradius = float(self.dlg_at.tf_bufferradius.text())
 
             # config schreiben
             #
             QKan.config.autokorrektur = autokorrektur
             QKan.config.selections.teilgebiete = liste_teilgebiete
-            QKan.config.epsg = epsg
+            if epsg:
+                QKan.config.epsg = epsg
             QKan.config.linkflaechen.auswahltyp = auswahltyp
             QKan.config.linkflaechen.bufferradius = bufferradius
 
@@ -704,7 +707,7 @@ class LinkFl(QKanPlugin):
                 bufferradius,
             ):
                 del self.db_qkan
-                return False
+                return
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
@@ -714,7 +717,7 @@ class LinkFl(QKanPlugin):
     # ----------------------------------------------------------------------------------------------
     # Laden und Speichern von Teilgebietszuordnungen als Gruppe
 
-    def run_managegroups(self):
+    def run_managegroups(self) -> None:
         """Speichern und Wiederherstellen von Teilgebietszuordnungen als Gruppe"""
 
         # Check, ob die relevanten Layer nicht editable sind.
@@ -739,14 +742,14 @@ class LinkFl(QKanPlugin):
                 'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                 level=Qgis.Critical,
             )
-            return False
+            return
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
             self.log.error(
                 "CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
-            return False
+            return
 
         self.db_qkan = DBConnection(dbname=database_qkan)
 
@@ -757,7 +760,7 @@ class LinkFl(QKanPlugin):
                     database_qkan
                 ),
             )
-            return None
+            return
 
         # Anzeige initialisieren
         self.dlg_mg.show_groups()
@@ -774,7 +777,7 @@ class LinkFl(QKanPlugin):
     # ----------------------------------------------------------------------------------------------
     # Logischen Cache der Verknüpfungen aktualisieren
 
-    def run_updatelinks(self):
+    def run_updatelinks(self) -> None:
         """Aktualisieren des logischen Verknüpfungscaches in linkfl und linksw"""
 
         # Check, ob die relevanten Layer nicht editable sind.
@@ -790,14 +793,14 @@ class LinkFl(QKanPlugin):
                 'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
                 level=Qgis.Critical,
             )
-            return False
+            return
 
         database_qkan, epsg = get_database_QKan()
         if not database_qkan:
             self.log.error(
                 "k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
-            return False
+            return
 
         # Datenbankverbindung für Abfragen
         self.db_qkan = DBConnection(dbname=database_qkan)
@@ -809,7 +812,7 @@ class LinkFl(QKanPlugin):
                     database_qkan
                 ),
             )
-            return None
+            return
 
         self.dlg_ul.tf_qkDB.setText(database_qkan)
 
@@ -834,9 +837,9 @@ class LinkFl(QKanPlugin):
         if result:
 
             # Inhalte aus Formular lesen
-            delete_geom_none: bool = self.dlg_ul.cb_deleteGeomNone.isChecked()
-            flaechen_bereinigen: bool = self.dlg_ul.cb_geomMakeValid.isChecked()
-            fangradius: float = float(self.dlg_ul.tf_fangradius.text())
+            delete_geom_none = self.dlg_ul.cb_deleteGeomNone.isChecked()
+            flaechen_bereinigen = self.dlg_ul.cb_geomMakeValid.isChecked()
+            fangradius = float(self.dlg_ul.tf_fangradius.text())
 
             # config schreiben
             QKan.config.linkflaechen.delete_geom_none = delete_geom_none
@@ -849,12 +852,12 @@ class LinkFl(QKanPlugin):
                     self.db_qkan, fangradius, flaechen_bereinigen, delete_geom_none
                 ):
                     del self.db_qkan
-                    return False
+                    return
 
             if self.dlg_ul.cb_linksw.isChecked():
                 if not updatelinksw(self.db_qkan, fangradius, delete_geom_none):
                     del self.db_qkan
-                    return False
+                    return
 
             meldung("Fertig!", "Bereinigung Flächenverknüpfungen abgeschlossen.")
 

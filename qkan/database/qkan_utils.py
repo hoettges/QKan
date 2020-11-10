@@ -22,20 +22,23 @@ logger = logging.getLogger("QKan.database.qkan_utils")
 
 def meldung(title: str, text: str) -> None:
     logger.info("{:s} {:s}".format(title, text))
+    # noinspection PyArgumentList
     QgsMessageLog.logMessage(message="{:s} {:s}".format(title, text), level=Qgis.Info)
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Info)
 
 
 def warnung(title: str, text: str) -> None:
     logger.warning("{:s} {:s}".format(title, text))
+    # noinspection PyArgumentList
     QgsMessageLog.logMessage(
         message="{:s} {:s}".format(title, text), level=Qgis.Warning
     )
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Warning)
 
 
-def fortschritt(text: str, prozent: int = 0) -> None:
+def fortschritt(text: str, prozent: float = 0) -> None:
     logger.debug("{:s} ({:.0f}%)".format(text, prozent * 100))
+    # noinspection PyArgumentList
     QgsMessageLog.logMessage(
         message="{:s} ({:.0f}%)".format(text, prozent * 100),
         tag="Link Flächen: ",
@@ -45,6 +48,7 @@ def fortschritt(text: str, prozent: int = 0) -> None:
 
 def fehlermeldung(title: str, text: str = "") -> None:
     logger.error("{:s} {:s}".format(title, text))
+    # noinspection PyArgumentList
     QgsMessageLog.logMessage(
         message="{:s} {:s}".format(title, text), level=Qgis.Critical
     )
@@ -521,7 +525,7 @@ def sqlconditions(keyword: str, attrlis: List[str], valuelis2: List[List[str]]) 
     return auswahl
 
 
-def check_flaechenbilanz(db_qkan: "FBConnection") -> bool:
+def check_flaechenbilanz(db_qkan: "DBConnection") -> bool:
     """
     Stellt Attribut- und Wertelisten zu einem SQL-String zusammen.
 
@@ -656,7 +660,7 @@ def eval_node_types(db_qkan: "DBConnection") -> None:
 # Funktionen zur formatierten Ein- und Ausgabe von Fließkommazahlen
 
 
-def formf(zahl: Optional[float], anz: Optional[int]) -> Optional[str]:
+def formf(zahl: Optional[float], anz: Optional[int]) -> str:
     """Formatiert eine Fließkommazahl so, dass sie in einer vorgegebenen Anzahl von Zeichen
        mit maximaler Genauigkeit dargestellt werden kann.
     """
@@ -676,7 +680,7 @@ def formf(zahl: Optional[float], anz: Optional[int]) -> Optional[str]:
                 zahl, anz
             )
         )
-        return None
+        return ""
 
     # try:
     nv = int(math.log10(zahl))  # Anzahl Stellen vor dem Komma.
@@ -700,7 +704,7 @@ def formf(zahl: Optional[float], anz: Optional[int]) -> Optional[str]:
                     zahl, anz
                 )
             )
-            return None
+            return ""
         # Korrektur von nv, für den Fall, dass zahl nahe an nächster 10-Potenz
         nv = int(math.log10(round(zahl, max(0, anz - 2 - nv))))
         if nv + 1 == anz:
@@ -718,7 +722,7 @@ def formf(zahl: Optional[float], anz: Optional[int]) -> Optional[str]:
             logger.error(
                 "Fehler in k_qkkp.formf (2):\nzahl = {}\nanz = {}\n".format(zahl, anz)
             )
-            return None
+            return ""
         erg = fmt.format(zahl)
 
         # Nullen am Ende löschen
@@ -728,7 +732,7 @@ def formf(zahl: Optional[float], anz: Optional[int]) -> Optional[str]:
     return erg
 
 
-def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> Optional[float]:
+def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> float:
     """
     Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
     enthalten ist, werden n Nachkommastellen angenommen
@@ -741,6 +745,6 @@ def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> Optional[float]:
             return float(zahl)
         except BaseException as err:
             logger.error("10: {}".format(err))
-            return None
+            return default
     else:
         return float(zahl) / 10.0 ** n

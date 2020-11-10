@@ -14,7 +14,7 @@ __date__ = "September 2016"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 
 import logging
-import typing
+from typing import List
 
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface
@@ -30,12 +30,13 @@ logger = logging.getLogger("QKan.linkflaechen.k_link")
 # Erzeugung der graphischen Verknüpfungen für Flächen
 
 
+# noinspection PyArgumentList
 def createlinkfl(
     iface: QgisInterface,
     db_qkan: DBConnection,
-    liste_flaechen_abflussparam: typing.List[str],
-    liste_hal_entw: typing.List[str],
-    liste_teilgebiete: typing.List[str],
+    liste_flaechen_abflussparam: List[str],
+    liste_hal_entw: List[str],
+    liste_teilgebiete: List[str],
     links_in_tezg: bool = False,
     mit_verschneidung: bool = False,
     autokorrektur: bool = True,
@@ -44,7 +45,7 @@ def createlinkfl(
     mindestflaeche: float = 0.5,
     fangradius: float = 0.1,
     bezug_abstand: enums.BezugAbstand = enums.BezugAbstand.KANTE,
-):
+) -> bool:
     """
     Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
 
@@ -435,10 +436,10 @@ def createlinkfl(
 def createlinksw(
     iface: QgisInterface,
     db_qkan: DBConnection,
-    liste_teilgebiete: typing.List[str],
+    liste_teilgebiete: List[str],
     suchradius: float = 50.0,
-    epsg=25832,
-):
+    epsg: int = 25832,
+) -> bool:
     """
     Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
     :param iface:
@@ -599,12 +600,12 @@ def assigntgeb(
     iface: QgisInterface,
     db_qkan: DBConnection,
     auswahltyp: enums.AuswahlTyp,
-    liste_teilgebiete: typing.List[str],
-    tablist: typing.List[typing.List[str]],
+    liste_teilgebiete: List[str],
+    tablist: List[List[str]],
     autokorrektur: bool,
     flaechen_bereinigen: bool = False,
     bufferradius: float = 0.0,
-):
+) -> bool:
     """Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
        Teilgebiete zu. Falls sich mehrere dieser Teilgebiete überlappen, ist das Resultat zufällig eines von diesen. 
     :param iface:
@@ -750,7 +751,7 @@ def assigntgeb(
 # -------------------------------------------------------------------------------------------------------------
 
 
-def reload_group(iface: QgisInterface, db_qkan: DBConnection, gruppenname: str):
+def reload_group(iface: QgisInterface, db_qkan: DBConnection, gruppenname: str) -> bool:
     """
     Lädt die unter einem Gruppennamen gespeicherten Teilgebietszuordnungen zurück in die Tabellen
     "haltungen", "schaechte", "flaechen", "tezg", "linkfl", "linksw", "einleit"
@@ -813,7 +814,7 @@ def reload_group(iface: QgisInterface, db_qkan: DBConnection, gruppenname: str):
 
 def store_group(
     iface: QgisInterface, db_qkan: DBConnection, gruppenname: str, kommentar: str
-):
+) -> bool:
     """Speichert die aktuellen Teilgebietszuordnungen der Tabellen 
        "haltungen", "schaechte", "flaechen", "tezg", "linkfl", "linksw", "einleit"
        unter einem neuen Gruppennamen

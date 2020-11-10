@@ -48,7 +48,7 @@ def qgsadapt(
     dbQK: DBConnection,
     projectfile: str,
     epsg: int = None,
-):
+) -> bool:
     """Lädt eine (Vorlage-) Projektdatei (*.qgs) und adaptiert diese auf eine QKan-Datenbank an.
     Anschließend wird dieses Projekt geladen.
     Voraussetzungen: keine
@@ -83,12 +83,12 @@ def qgsadapt(
         fehlermeldung("Fehler in qgsadapt", "\nFehler in sql_zoom: \n" + sql + "\n\n")
         return False
 
-    daten = dbQK.fetchone()
     try:
-        zoomxmin, zoomxmax, zoomymin, zoomymax = daten
+        zoom = dbQK.fetchone()
     except BaseException as err:
         fehlermeldung("SQL-Fehler", repr(err))
-        fehlermeldung("\nFehler in sql_zoom; daten= " + str(daten) + "\n",)
+        fehlermeldung("\nFehler in sql_zoom; daten= \n",)
+        zoom = [0.0, 100.0, 0.0, 100.0]
 
     # --------------------------------------------------------------------------
     # Projektionssystem für die Projektdatei vorbereiten,
@@ -116,8 +116,8 @@ def qgsadapt(
         # else:
         #     ellipsoidacronym = None
     except BaseException as err:
-        srid, srsid, proj4text, description, projectionacronym, ellipsoidacronym = (
-            "dummy",
+        srid = 0
+        srsid, proj4text, description, projectionacronym, ellipsoidacronym = (
             "dummy",
             "dummy",
             "dummy",
@@ -127,8 +127,7 @@ def qgsadapt(
 
         fehlermeldung('\nFehler in "daten"', repr(err))
         fehlermeldung(
-            "Fehler in qgsadapt",
-            "\nFehler bei der Ermittlung der srid: \n" + str(daten),
+            "Fehler in qgsadapt", "\nFehler bei der Ermittlung der srid: \n",
         )
 
     # --------------------------------------------------------------------------
@@ -151,7 +150,13 @@ def qgsadapt(
 
         for tag_maplayer in root.findall(".//projectlayers/maplayer"):
             tag_datasource = tag_maplayer.find("./datasource")
+            if not tag_datasource:
+                continue
+
             tex = tag_datasource.text
+            if not tex:
+                continue
+
             # Nur QKan-Tabellen bearbeiten
             if tex[tex.index('table="') + 7 :].split('" ')[0] in QKAN_TABLES:
 
@@ -183,29 +188,20 @@ def qgsadapt(
         formspath = os.path.join(pluginDirectory("qkan"), "forms")
         for tag_maplayer in root.findall(".//projectlayers/maplayer"):
             tag_editform = tag_maplayer.find("./editform")
-            if tag_editform.text:
+            if tag_editform and tag_editform.text:
                 dateiname = os.path.basename(tag_editform.text)
                 if dateiname in QKAN_FORMS:
                     # Nur QKan-Tabellen bearbeiten
                     tag_editform.text = os.path.join(formspath, dateiname)
 
         # Zoom für Kartenfenster einstellen -------------------------------------------------------
-
-        if not isinstance(zoomxmin, (int, float)):
-            zoomxmin = 0.0
-            zoomxmax = 100.0
-            zoomymin = 0.0
-            zoomymax = 100.0
-
+        if len(zoom) == 0 or any([x is None for x in zoom]):
+            zoom = [0.0, 100.0, 0.0, 100.0]
         for tag_extent in root.findall(".//mapcanvas/extent"):
-            elem = tag_extent.find("./xmin")
-            elem.text = "{:.3f}".format(zoomxmin)
-            elem = tag_extent.find("./ymin")
-            elem.text = "{:.3f}".format(zoomymin)
-            elem = tag_extent.find("./xmax")
-            elem.text = "{:.3f}".format(zoomxmax)
-            elem = tag_extent.find("./ymax")
-            elem.text = "{:.3f}".format(zoomymax)
+            for idx, name in enumerate(["xmin", "ymin", "xmax", "ymax"]):
+                element = tag_extent.find(f"./{name}")
+                if element is not None:
+                    element.text = "{:.3f}".format(zoom[idx])
 
         # Projektionssystem des Plans anpassen --------------------------------------------------------------
 
@@ -255,6 +251,9 @@ def qgsadapt(
 
         for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
             text = tag_datasource.text
+            if not text:
+                continue
+
             tag_datasource.text = (
                 "dbname='" + datasource + "' " + text[text.find("table=") :]
             )

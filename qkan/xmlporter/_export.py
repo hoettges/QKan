@@ -1,8 +1,9 @@
 import logging
-import typing
 from pathlib import Path
 
 # noinspection PyUnresolvedReferences
+from typing import Dict, List, Optional, Union
+
 from xml.dom import minidom
 from xml.etree.ElementTree import Element, SubElement, tostring
 
@@ -15,14 +16,14 @@ from qkan.database.qkan_utils import fortschritt
 logger = logging.getLogger("QKan.xml.export")
 
 
-def _create_children(parent: Element, names: typing.List[str]):
+def _create_children(parent: Element, names: List[str]) -> None:
     for child in names:
         SubElement(parent, child)
 
 
 def _create_children_text(
-    parent: Element, children: typing.Dict[str, typing.Union[str, int]]
-):
+    parent: Element, children: Dict[str, Union[str, int, None]]
+) -> None:
     for name, text in children.items():
         if text is None:
             SubElement(parent, name)
@@ -31,7 +32,7 @@ def _create_children_text(
 
 
 # noinspection PyPep8Naming
-def SubElementText(parent: Element, name: str, text: typing.Union[str, int]):
+def SubElementText(parent: Element, name: str, text: Union[str, int]) -> Element:
     s = SubElement(parent, name)
     if text is not None:
         s.text = str(text)
@@ -45,14 +46,18 @@ class ExportTask:
         self.export_file = export_file
 
         # XML base
-        self.stamm = None
-        self.hydraulik_objekte = None
+        self.stamm: Optional[Element] = None
+        self.hydraulik_objekte: Optional[Element] = None
 
         # Mappings
-        self.mapper_simstatus: typing.Dict[int, str] = {}
+        self.mapper_simstatus: Dict[int, str] = {}
 
-    def _export_wehre(self):
-        if not getattr(QKan.config.check_export, "export_wehre", True):
+    def _export_wehre(self) -> None:
+        if (
+            not getattr(QKan.config.check_export, "export_wehre", True)
+            or not self.hydraulik_objekte
+            or not self.stamm
+        ):
             return
         sql = """
         SELECT
@@ -108,8 +113,12 @@ class ExportTask:
 
         fortschritt("Wehre eingefügt")
 
-    def _export_pumpen(self):
-        if not getattr(QKan.config.check_export, "export_pumpen", True):
+    def _export_pumpen(self) -> None:
+        if (
+            not getattr(QKan.config.check_export, "export_pumpen", True)
+            or not self.hydraulik_objekte
+            or not self.stamm
+        ):
             return
 
         sql = """
@@ -166,8 +175,11 @@ class ExportTask:
 
         fortschritt("Pumpen eingefügt")
 
-    def _export_auslaesse(self):
-        if not getattr(QKan.config.check_export, "export_auslaesse", True):
+    def _export_auslaesse(self) -> None:
+        if (
+            not getattr(QKan.config.check_export, "export_auslaesse", True)
+            or not self.stamm
+        ):
             return
 
         sql = """
@@ -189,7 +201,7 @@ class ExportTask:
         """
 
         if not self.db_qkan.sql(sql, u"db_qkan: export_auslaesse"):
-            return False
+            return
 
         fortschritt("Export Auslässe...", 0.20)
         for attr in self.db_qkan.fetchall():
@@ -238,8 +250,11 @@ class ExportTask:
             )
         fortschritt("Auslässe eingefügt")
 
-    def _export_schaechte(self):
-        if not getattr(QKan.config.check_export, "export_schaechte", True):
+    def _export_schaechte(self) -> None:
+        if (
+            not getattr(QKan.config.check_export, "export_schaechte", True)
+            or not self.stamm
+        ):
             return
 
         sql = """
@@ -310,8 +325,11 @@ class ExportTask:
 
         fortschritt("Schächte eingefügt")
 
-    def _export_speicher(self):
-        if not getattr(QKan.config.check_export, "export_pumpen", True):
+    def _export_speicher(self) -> None:
+        if (
+            not getattr(QKan.config.check_export, "export_pumpen", True)
+            or not self.stamm
+        ):
             return
 
         sql = """
@@ -384,8 +402,12 @@ class ExportTask:
             )
         fortschritt("Speicher eingefügt")
 
-    def _export_haltungen(self):
-        if not getattr(QKan.config.check_export, "export_haltungen", True):
+    def _export_haltungen(self) -> None:
+        if (
+            not getattr(QKan.config.check_export, "export_haltungen", True)
+            or not self.hydraulik_objekte
+            or not self.stamm
+        ):
             return
 
         sql = """
@@ -494,7 +516,7 @@ class ExportTask:
 
         fortschritt("Haltungen eingefügt")
 
-    def run(self):
+    def run(self) -> None:
         """
         Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine XML-Datei
         """

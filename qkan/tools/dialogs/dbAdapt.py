@@ -1,14 +1,20 @@
 import os
-import typing
 import webbrowser
 from pathlib import Path
+from typing import Optional, TYPE_CHECKING
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QDialogButtonBox, QGroupBox, QLineEdit, QPushButton
+from qgis.PyQt.QtWidgets import (
+    QDialogButtonBox,
+    QGroupBox,
+    QLineEdit,
+    QPushButton,
+    QWidget,
+)
 
 from . import QKanDBDialog, QKanProjectDialog
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
 
 FORM_CLASS_dbAdapt, _ = uic.loadUiType(
@@ -16,7 +22,7 @@ FORM_CLASS_dbAdapt, _ = uic.loadUiType(
 )
 
 
-def click_help():
+def click_help() -> None:
     helpfile = (
         Path(__file__).parent.parent.parent
         / "doc/sphinx/build/html/Qkan_Formulare.html"
@@ -24,7 +30,7 @@ def click_help():
     webbrowser.open_new_tab(str(helpfile) + "#datenbank-aktualisieren")
 
 
-class DbAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_dbAdapt):
+class DbAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_dbAdapt):  # type: ignore
 
     button_box: QDialogButtonBox
 
@@ -37,17 +43,9 @@ class DbAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_dbAdapt):
     tf_projectFile: QLineEdit
     tf_qkanDB: QLineEdit
 
-    def __init__(self, plugin: "QKanTools", parent=None):
+    def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
         self.pb_selectQKanDB.clicked.connect(self.select_qkan_db)
         self.pb_selectProjectFile.clicked.connect(self.select_qkan_db)
         self.button_box.helpRequested.connect(click_help)
-
-    def select_qkan_db(self):
-        # noinspection PyArgumentList,PyCallByClass
-        super().select_qkan_db()
-
-    def select_project_file(selfself):
-        # noinspection PyArgumentList,PyCallByClass
-        super().select_project_file()
