@@ -296,7 +296,7 @@ class QKanTools(QKanPlugin):
                 "tools.application: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
             )
             return
-        self.dlgro.tf_QKanDB.setText(database_qkan)
+        self.dlgro.tf_qkanDB.setText(database_qkan)
 
         # Datenbankverbindung für Abfragen
         db_qkan = DBConnection(
@@ -428,7 +428,7 @@ class QKanTools(QKanPlugin):
             liste_abflussparameter = list_selected_items(self.dlgro.lw_abflussparameter)
 
             # Eingaben aus Formular übernehmen
-            database_qkan = self.dlgro.tf_QKanDB.text()
+            database_qkan = self.dlgro.tf_qkanDB.text()
             if self.dlgro.rb_itwh.isChecked():
                 runoffparamstype_choice = enums.RunOffParamsType.ITWH
             elif self.dlgro.rb_dyna.isChecked():

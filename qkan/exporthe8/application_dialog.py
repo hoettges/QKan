@@ -342,7 +342,7 @@ class ExportToHE8Dialog(QKanDBDialog, FORM_CLASS):  # type: ignore
             return
 
         if database_qkan != "":
-            self.tf_QKanDB.setText(database_qkan)
+            self.tf_qkanDB.setText(database_qkan)
 
         # Datenbankverbindung für Abfragen
         self.db_qkan = DBConnection(
@@ -447,7 +447,7 @@ class ExportToHE8Dialog(QKanDBDialog, FORM_CLASS):  # type: ignore
             liste_teilgebiete = list_selected_items(self.lw_teilgebiete)
 
             # Eingaben aus Formular übernehmen
-            database_qkan = cast(str, self.tf_QKanDB.text())
+            database_qkan = cast(str, self.tf_qkanDB.text())
             database_he: str = self.tf_heDB_dest.text()
             dbtemplate_he: str = self.tf_heDB_template.text()
             autokorrektur: bool = self.cb_autokorrektur.isChecked()
