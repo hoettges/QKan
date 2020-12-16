@@ -1,5 +1,5 @@
 import os
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (

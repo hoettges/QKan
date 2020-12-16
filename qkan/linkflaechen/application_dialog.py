@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
-from typing import List, Optional, TYPE_CHECKING
 import webbrowser
 from pathlib import Path
+from typing import TYPE_CHECKING, List, Optional
 
 from qgis.core import Qgis
 from qgis.PyQt import uic
@@ -24,10 +24,10 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 from qkan import list_selected_items
-
-from .k_link import reload_group, store_group
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.dialogs import QKanDialog
+
+from .k_link import reload_group, store_group
 
 if TYPE_CHECKING:
     from .application import LinkFl

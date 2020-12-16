@@ -111,15 +111,15 @@ class TestQKanHE7(QgisTest):
 
         erg = exportKanaldaten(
             self.iface,
-            database_HE=database_he7,
-            dbtemplate_HE=template_he7,
-            dbQK=db,
+            database_he=database_he7,
+            dbtemplate_he=template_he7,
+            db_qkan=db,
             liste_teilgebiete=[],
             autokorrektur=False,
             fangradius=0.1,
             mindestflaeche=0.5,
             mit_verschneidung=True,
-            exportFlaechenHE8=False,
+            export_flaechen_he8=False,
             check_export=exportChoice,
         )
 

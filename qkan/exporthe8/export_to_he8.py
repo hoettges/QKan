@@ -2378,6 +2378,7 @@ if __name__ == "__console__" or __name__ == "__main__":
     from qkan.database.dbfunc import DBConnection
 
     # Supply path to qgis install location
+    # noinspection PyTypeChecker
     QgsApplication.setPrefixPath("C:/Program Files/QGIS 3.4/apps/qgis-ltr", True)
 
     # Create a reference to the QgsApplication.  Setting the

@@ -1,8 +1,7 @@
 import os
 import webbrowser
-from typing import List, Optional, TYPE_CHECKING
-
 from pathlib import Path
+from typing import TYPE_CHECKING, List, Optional
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (

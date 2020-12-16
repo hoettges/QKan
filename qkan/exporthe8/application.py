@@ -1,11 +1,11 @@
 from qgis.gui import QgisInterface
-
 from qkan import QKan
 from qkan.plugin import QKanPlugin
 
+from .application_dialog import ExportToHE8Dialog
+
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
-from .application_dialog import ExportToHE8Dialog
 
 
 class ExportToHE8(QKanPlugin):

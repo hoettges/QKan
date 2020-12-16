@@ -1,14 +1,8 @@
-from typing import Optional
-
 from qgis.gui import QgisInterface
-from qgis.PyQt.QtWidgets import QTableWidgetItem
 from qkan import QKan
-from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.plugin import QKanPlugin
 
-from .application_dialog import CreateUnbefFlDialog, list_selected_tab_items
-from .k_unbef import create_unpaved_areas
+from .application_dialog import CreateUnbefFlDialog
 
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip

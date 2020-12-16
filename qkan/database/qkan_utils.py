@@ -11,7 +11,6 @@ from qkan import QKan
 
 if TYPE_CHECKING:
     from .dbfunc import DBConnection
-    from .fbfunc import FBConnection
 
 # Anbindung an Logging-System (Initialisierung in __init__)
 logger = logging.getLogger("QKan.database.qkan_utils")

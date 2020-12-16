@@ -17,7 +17,7 @@ __copyright__ = "(C) 2016, Joerg Hoettges"
 import logging
 import os
 import xml.etree.ElementTree as ElementTree
-from typing import List, Tuple, cast
+from typing import Tuple, cast
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
 from qgis.utils import pluginDirectory

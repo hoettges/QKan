@@ -2,7 +2,7 @@ import logging
 import os
 import webbrowser
 from pathlib import Path
-from typing import List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
@@ -14,11 +14,11 @@ from qgis.PyQt.QtWidgets import (
     QTableWidgetSelectionRange,
     QWidget,
 )
-
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.tools.dialogs import QKanDialog
+
 from .k_unbef import create_unpaved_areas
 
 if TYPE_CHECKING:

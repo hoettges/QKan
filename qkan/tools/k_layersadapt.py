@@ -23,10 +23,9 @@
 """
 import logging
 import os
-from typing import AnyStr, cast
+from typing import cast
 from xml.etree import ElementTree
 
-from PyQt5.QtCore import QVariant
 from qgis.core import (
     Qgis,
     QgsCoordinateReferenceSystem,
@@ -36,6 +35,7 @@ from qgis.core import (
     QgsProject,
     QgsVectorLayer,
 )
+from qgis.PyQt.QtCore import QVariant
 from qgis.utils import iface, pluginDirectory
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
@@ -435,8 +435,7 @@ def layersadapt(
             elif typeName == "integer":
                 # noinspection PyArgumentList
                 layer.addExpressionField(
-                    expression,
-                    QgsField(name=name, type=QVariant.Int, comment=comment),
+                    expression, QgsField(name=name, type=QVariant.Int, comment=comment),
                 )
             else:
                 fehlermeldung(

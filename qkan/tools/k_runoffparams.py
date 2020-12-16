@@ -25,7 +25,7 @@ __date__ = "July 2018"
 __copyright__ = "(C) 2018, Joerg Hoettges"
 
 import logging
-from typing import Dict, List
+from typing import List
 
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar

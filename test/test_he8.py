@@ -1,4 +1,3 @@
-from qkan.swmmporter.importSWMM import importKanaldaten
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from zipfile import ZipFile
 
@@ -9,6 +8,7 @@ from qkan.database.dbfunc import DBConnection
 
 # from qkan.importhe8.import_from_he8 import importhe8
 from qkan.exporthe8.export_to_he8 import exporthe8
+from qkan.swmmporter.importSWMM import importKanaldaten
 from qkan.tools.k_layersadapt import layersadapt
 
 

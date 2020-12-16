@@ -26,7 +26,7 @@ from qkan.database.qkan_utils import get_database_QKan
 from qkan.plugin import QKanPlugin
 
 from .application_dialog import SurfaceToolDialog
-from .surfaceTool import FlaechenVerarbeitung, AccessAttr
+from .surfaceTool import AccessAttr, FlaechenVerarbeitung
 
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip

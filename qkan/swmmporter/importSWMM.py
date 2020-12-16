@@ -4,18 +4,17 @@ __author__ = "Joerg Hoettges"
 __date__ = "März 2020"
 __copyright__ = "(C) 2020, Joerg Hoettges"
 
-import os
-from pathlib import Path
-
-from qkan import QKan, enums
-from qkan import QKan, QKAN_FORMS, QKAN_TABLES
-from qkan.database.dbfunc import DBConnection
-from qgis.utils import pluginDirectory
-from qkan.tools.k_qgsadapt import qgsadapt
-import xml.etree.ElementTree as ET
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
-
 import logging
+import os
+import xml.etree.ElementTree as ET
+from pathlib import Path
+from typing import Dict, List, cast
+
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject
+from qgis.utils import pluginDirectory
+from qkan import QKAN_FORMS, QKAN_TABLES, QKan, enums
+from qkan.database.dbfunc import DBConnection
+from qkan.tools.k_qgsadapt import qgsadapt
 
 logger = logging.getLogger("QKan.importswmm.import_from_swmm")
 
@@ -23,14 +22,14 @@ logger = logging.getLogger("QKan.importswmm.import_from_swmm")
 # from qkan.database.qkan_utils import eval_node_types, fehlermeldung, fzahl
 
 
-def fehlermeldung(self, title, text=""):
+def fehlermeldung(title: str, text: str = "") -> None:
     """Ersetzt während der Entwicklungszeit die QKan-Funktion"""
     with open("fehler.log", "a") as prot:
         prot.write(title + "\n")
         prot.write(text + "\n")
 
 
-def fzahl(text, n=0.0, default=0.0):
+def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> float:
     """Ersetzt während der Entwicklungszeit die QKan-Funktion"""
     """Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
        enthalten ist, werden n Nachkommastellen angenommen"""
@@ -42,45 +41,45 @@ def fzahl(text, n=0.0, default=0.0):
             return float(zahl)
         except BaseException as err:
             logger.error("10: {}".format(err))
-            return None
+            return default
     else:
         return float(zahl) / 10.0 ** n
 
 
-def kstFromKs(ks):
+def kstFromKs(ks: float) -> float:
     """Umrechnung des Wertes für die äquivalente Sandrauheit k in die Rauheit nach Manning-Strickler"""
-    C_Chezy = 25.68
-    erg = C_Chezy / ks ** (1 / 6)
+    c_chezy = 25.68
+    erg = c_chezy / ks ** (1 / 6)
     return erg
 
 
-def ksFromKst(kst):
+def ksFromKst(kst: float) -> float:
     """Umrechnung des Wertes für die äquivalente Sandrauheit k in die Rauheit nach Manning-Strickler"""
-    C_Chezy = 25.68
-    erg = (C_Chezy / kst) ** 6
+    c_chezy = 25.68
+    erg = (c_chezy / kst) ** 6
     return erg
 
 
 class SWMM:
     def __init__(
         self,
-        inpfile,
-        database_QKan,
-        projectfile,
-        offset=[0.0, 0.0],
-        epsg=25832,
-        dbtyp="SpatiaLite",
+        inpfile: str,
+        database_qkan: str,
+        projectfile: str,
+        offset: List[float],
+        epsg: int = 25832,
+        dbtyp: str = "SpatiaLite",
     ):
         self.epsg = epsg
         self.dbtyp = dbtyp
         self.inpobject = Path(inpfile)
-        self.data = {}
-        self.database_QKan = database_QKan
+        self.data: Dict[str, List[str]] = {}
+        self.database_QKan = database_qkan
         self.projectfile = projectfile
         self.xoffset, self.yoffset = offset
 
         self.dbQK = DBConnection(
-            dbname=database_QKan, epsg=epsg
+            dbname=database_qkan, epsg=epsg
         )  # Datenbankobjekt der QKan-Datenbank zum Schreiben
 
         self.connected = self.dbQK.connected
@@ -89,15 +88,15 @@ class SWMM:
             fehlermeldung(
                 "Fehler in import_from_swmm:\n",
                 "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_QKan
+                    database_qkan
                 ),
             )
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.dbQK.sql("SELECT RecoverSpatialIndex()")
         del self.dbQK
 
-    def read(self):
+    def read(self) -> None:
         with self.inpobject.open("r") as inp:
             position = inp.tell()
             block = ""
@@ -126,7 +125,8 @@ class SWMM:
 
     @property
     def title(self) -> str:
-        return self.data.get("title", ["Unknown"])[0]
+        title = cast(List[str], self.data.get("title", ["Unknown"]))
+        return title[0]
 
     @property
     def options(self) -> dict:
@@ -138,7 +138,7 @@ class SWMM:
             ret[opt[0]] = opt[1]
         return ret
 
-    def junctions(self):
+    def junctions(self) -> bool:
         """Liest einen Teil der Schachtdaten ein. Rest siehe coordinates"""
         data = self.data.get("junctions", [])
         for line in data:
@@ -163,7 +163,7 @@ class SWMM:
 
         return True
 
-    def outfalls(self):
+    def outfalls(self) -> bool:
         """Liest die Ausläufe ein. Rest siehe coordinates"""
 
         outtypes = {
@@ -198,7 +198,7 @@ class SWMM:
 
         return True
 
-    def coordinates(self):
+    def coordinates(self) -> bool:
         """Liest die Koordinaten zu den bereits angelegten Schaechten ein"""
         data = self.data.get("coordinates", [])
         for line in data:
@@ -238,7 +238,7 @@ class SWMM:
 
         return True
 
-    def subcatchments(self):
+    def subcatchments(self) -> bool:
         """Liest einen Teil der Daten zu tezg-Flächen ein"""
         data = self.data.get("subcatchments", [])
         for line in data:
@@ -263,7 +263,7 @@ class SWMM:
 
         return True
 
-    def polygons(self):
+    def polygons(self) -> bool:
         """Liest die Polygone zu den bereits angelegten tezg-Flächen ein"""
 
         data = self.data.get("polygons", [])
@@ -271,6 +271,9 @@ class SWMM:
 
         nampoly = ""  # Solange der Name gleich bleibt, gehören
         # die Eckpunkte zum selben Polygon (tezg-Fläche)
+
+        xlis: List[float] = []  # x-Koordinaten zum Polygon
+        ylis: List[float] = []  # y-Koordinaten zum Polygon
         for line in data:
             name = line[0:17].strip()  # schnam
             xsch = fzahl(line[17:36].strip(), 3, self.xoffset) + self.xoffset  # xsch
@@ -293,9 +296,10 @@ class SWMM:
                         del self.dbQK
                         return False
                 nampoly = name
+
                 # Listen zurücksetzen
-                xlis = []  # x-Koordinaten zum Polygon
-                ylis = []  # y-Koordinaten zum Polygon
+                xlis = []
+                ylis = []
             if name == "ende":
                 continue  # Letzte Zeile ist nur ein dummy
 
@@ -307,7 +311,7 @@ class SWMM:
 
         return True
 
-    def conduits(self):
+    def conduits(self) -> bool:
         """Liest einen Teil der Haltungsdaten ein"""
 
         data = self.data.get("conduits", [])
@@ -353,7 +357,7 @@ class SWMM:
 
         return True
 
-    def vertices(self):
+    def vertices(self) -> bool:
         data = self.data.get("vertices", [])
         data.append("ende")  # Trick, damit am Ende das letzte Polygon geschrieben wird
 
@@ -386,7 +390,7 @@ class SWMM:
 
         return True
 
-    def xsections(self):
+    def xsections(self) -> bool:
         """Liest die Profildaten zu den Haltungen ein. Dabei werden sowohl Haltungsdaten ergänzt
         als auch Profildaten erfasst"""
 
@@ -428,7 +432,7 @@ class SWMM:
 
         # todo: SQL-Anweisung wie oben ergänzen
 
-    def writeProjektfile(self):
+    def writeProjektfile(self) -> bool:
         # --------------------------------------------------------------------------
         # Zoom-Bereich für die Projektdatei vorbereiten
         sql = """SELECT min(x(geop)) AS xmin, 
@@ -447,15 +451,14 @@ class SWMM:
                 "\nFehler in sql_zoom: \n" + sql + "\n\n",
             )
 
-        daten = self.dbQK.fetchone()
         try:
-            zoomxmin, zoomxmax, zoomymin, zoomymax = daten
+            zoom = self.dbQK.fetchone()
         except BaseException as e:
             fehlermeldung("SQL-Fehler", str(e))
             fehlermeldung(
-                "Fehler in QKan_Import_from_KP",
-                "\nFehler in sql_zoom; daten= " + str(daten) + "\n",
+                "Fehler in QKan_Import_from_KP", "\nFehler in sql_zoom;\n",
             )
+            zoom = [0.0, 100.0, 0.0, 100.0]
 
         # --------------------------------------------------------------------------
         # Projektionssystem für die Projektdatei vorbereiten
@@ -493,7 +496,7 @@ class SWMM:
             fehlermeldung('\nFehler in "daten"', str(e))
             fehlermeldung(
                 "Fehler in QKan_Import_from_KP",
-                "\nFehler bei der Ermittlung der srid: \n" + str(daten),
+                "\nFehler bei der Ermittlung der srid: \n",
             )
 
         # --------------------------------------------------------------------------
@@ -518,7 +521,13 @@ class SWMM:
 
             for tag_maplayer in root.findall(".//projectlayers/maplayer"):
                 tag_datasource = tag_maplayer.find("./datasource")
+                if not tag_datasource:
+                    continue
+
                 tex = tag_datasource.text
+                if not tex:
+                    continue
+
                 # Nur QKan-Tabellen bearbeiten
                 if tex[tex.index('table="') + 7 :].split('" ')[0] in QKAN_TABLES:
 
@@ -552,29 +561,21 @@ class SWMM:
             formspath = os.path.join(pluginDirectory("qkan"), "forms")
             for tag_maplayer in root.findall(".//projectlayers/maplayer"):
                 tag_editform = tag_maplayer.find("./editform")
-                if tag_editform.text:
+                if tag_editform and tag_editform.text:
                     dateiname = os.path.basename(tag_editform.text)
                     if dateiname in QKAN_FORMS:
                         # Nur QKan-Tabellen bearbeiten
                         tag_editform.text = os.path.join(formspath, dateiname)
 
             # Zoom für Kartenfenster einstellen -------------------------------------------------------
+            if len(zoom) == 0 or any([x is None for x in zoom]):
+                zoom = [0.0, 100.0, 0.0, 100.0]
 
-            if not isinstance(zoomxmin, (int, float)):
-                zoomxmin = 0.0
-                zoomxmax = 100.0
-                zoomymin = 0.0
-                zoomymax = 100.0
-
-            for tag_extent in root.findall(".//mapcanvas/extent"):
-                elem = tag_extent.find("./xmin")
-                elem.text = "{:.3f}".format(zoomxmin)
-                elem = tag_extent.find("./ymin")
-                elem.text = "{:.3f}".format(zoomymin)
-                elem = tag_extent.find("./xmax")
-                elem.text = "{:.3f}".format(zoomxmax)
-                elem = tag_extent.find("./ymax")
-                elem.text = "{:.3f}".format(zoomymax)
+            for extent in root.findall(".//mapcanvas/extent"):
+                for idx, name in enumerate(["xmin", "ymin", "xmax", "ymax"]):
+                    element = extent.find(f"./{name}")
+                    if element is not None:
+                        element.text = "{:.3f}".format(zoom[idx])
 
             # Projektionssystem anpassen --------------------------------------------------------------
 
@@ -599,6 +600,10 @@ class SWMM:
 
             for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
                 text = tag_datasource.text
+
+                if not text:
+                    continue
+
                 tag_datasource.text = (
                     "dbname='" + datasource + "' " + text[text.find("table=") :]
                 )
@@ -606,56 +611,57 @@ class SWMM:
             qgsxml.write(self.projectfile)  # writing modified project file
             logger.debug("Projektdatei: {}".format(self.projectfile))
             # logger.debug(u'encoded string: {}'.format(tex))
+        return True
 
-    def subareas(self):
+    def subareas(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def symbols(self):
+    def symbols(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def coverages(self):
+    def coverages(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def evaporation(self):
+    def evaporation(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def raingages(self):
+    def raingages(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def infiltration(self):
+    def infiltration(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def pollutants(self):
+    def pollutants(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def landuses(self):
+    def landuses(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def loadings(self):
+    def loadings(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def buildup(self):
+    def buildup(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def washoff(self):
+    def washoff(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def timeseries(self):
+    def timeseries(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def report(self):
+    def report(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def tags(self):
+    def tags(self) -> None:
         pass  # in QKan nicht verwaltet
 
-    def map(self):
+    def map(self) -> None:
         pass  # in QKan nicht verwaltet
 
 
 def importKanaldaten(
-    inpfile: str, database_QKan: str, projectfile: str, epsg: int = 25832
-):
+    inpfile: str, database_qkan: str, projectfile: str, epsg: int = 25832
+) -> bool:
     """Ruft die Klasse SWMM zur Verarbeitung der Daten auf"""
 
     if not os.path.exists(inpfile):
@@ -663,7 +669,7 @@ def importKanaldaten(
 
     swmm = SWMM(
         inpfile,
-        database_QKan,
+        database_qkan,
         projectfile,
         offset=[0.0, 0.0],
         epsg=epsg,
@@ -701,8 +707,9 @@ def importKanaldaten(
     # Datenbankverbindungen schliessen
 
     template_project = Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-    qgsadapt(str(template_project), database_QKan, swmm.dbQK, projectfile, epsg)
+    qgsadapt(str(template_project), database_qkan, swmm.dbQK, projectfile, epsg)
 
+    # noinspection PyArgumentList
     project = QgsProject.instance()
     project.read(projectfile)
     project.reloadAllLayers()
@@ -715,4 +722,5 @@ def importKanaldaten(
 
 
 if __name__ == "__main__" or __name__ == "console":
-    importKanaldaten("tutorial.inp", "sqlcommands.sql")
+    # importKanaldaten("tutorial.inp", "sqlcommands.sql")
+    pass

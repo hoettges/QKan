@@ -9,7 +9,6 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialogButtonBox,
-    QFileDialog,
     QLabel,
     QLineEdit,
     QListWidget,
@@ -40,8 +39,6 @@ EXPORT_CLASS, _ = uic.loadUiType(
 IMPORT_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "res", "import.ui")
 )
-
-# TODO: Replace select_xyz functions with generic on QKanDialog
 
 
 def click_help() -> None:

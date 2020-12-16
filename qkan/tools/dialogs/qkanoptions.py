@@ -2,7 +2,7 @@ import os
 import site
 import subprocess
 from pathlib import Path
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic

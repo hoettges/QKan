@@ -1,13 +1,13 @@
 import logging
 import os
 from pathlib import Path
-from typing import List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional
 from xml.etree import ElementTree
 
-from PyQt5.QtWidgets import QWidget
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QWidget
 from qgis.utils import pluginDirectory
 from qkan import QKAN_FORMS, QKAN_TABLES, QKan
 from qkan.database.dbfunc import DBConnection

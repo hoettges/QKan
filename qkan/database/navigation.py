@@ -149,7 +149,7 @@ class Navigator:
             for p in additional_points:
                 self.db.sql(statement.format(p))
                 nodes.append([h[0] for h in self.db.fetchall()])
-        permutations = cast(List[List[float]], itertools.product(*nodes))
+        permutations = cast(List[List[str]], itertools.product(*nodes))
         permutations = [list(p) for p in permutations]
         possibilities = 0
         route = None

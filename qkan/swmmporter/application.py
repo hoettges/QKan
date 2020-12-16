@@ -22,8 +22,9 @@
 import os
 
 from qgis.core import QgsCoordinateReferenceSystem
+from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QFileDialog
-from qkan import QKan, get_default_dir
+from qkan import QKan
 from qkan.plugin import QKanPlugin
 
 from .application_dialog import ImportSWMMDialog
@@ -36,7 +37,7 @@ from . import resources  # isort:skip
 class ImportFromSWMM(QKanPlugin):
     """QGIS Plugin Implementation."""
 
-    def __init__(self, iface):
+    def __init__(self, iface: QgisInterface):
         """Constructor.
 
         :param iface: An interface instance that will be passed to this class
@@ -48,14 +49,12 @@ class ImportFromSWMM(QKanPlugin):
         super().__init__(iface)
         self.dlg = ImportSWMMDialog()
 
-        self.default_dir = get_default_dir()
-
         self.dlg.pb_selectqkanDB.clicked.connect(self.selectFile_qkanDB)
         self.dlg.pb_selectSWMMFile.clicked.connect(self.select_SWMMFile)
         self.dlg.pb_selectProjectFile.clicked.connect(self.selectProjectFile)
 
     # noinspection PyPep8Naming
-    def initGui(self):
+    def initGui(self) -> None:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ":/plugins/qkan/swmmporter/res/icon_importSWMM.png"
@@ -66,12 +65,13 @@ class ImportFromSWMM(QKanPlugin):
             parent=self.iface.mainWindow(),
         )
 
-    def unload(self):
+    def unload(self) -> None:
         self.dlg.close()
 
-    def select_SWMMFile(self):
+    def select_SWMMFile(self) -> None:
         """DYNA (*.ein) -datei auswählen"""
 
+        # noinspection PyArgumentList
         filename, __ = QFileDialog.getOpenFileName(
             self.dlg,
             "Dateinamen der zu lesenden SWMM-Datei eingeben",
@@ -84,10 +84,11 @@ class ImportFromSWMM(QKanPlugin):
         if os.path.dirname(filename) != "":
             os.chdir(os.path.dirname(filename))
 
-    def selectFile_qkanDB(self):
+    def selectFile_qkanDB(self) -> None:
         """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen, aber noch nicht verbinden.
            Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt. """
 
+        # noinspection PyArgumentList
         filename, __ = QFileDialog.getSaveFileName(
             self.dlg,
             "Dateinamen der zu erstellenden SpatiaLite-Datenbank eingeben",
@@ -100,9 +101,10 @@ class ImportFromSWMM(QKanPlugin):
         if os.path.dirname(filename) != "":
             os.chdir(os.path.dirname(filename))
 
-    def selectProjectFile(self):
+    def selectProjectFile(self) -> None:
         """Zu erzeugende Projektdatei festlegen, falls ausgewählt."""
 
+        # noinspection PyArgumentList
         filename, __ = QFileDialog.getSaveFileName(
             self.dlg,
             "Dateinamen der zu erstellenden Projektdatei eingeben",
@@ -117,13 +119,13 @@ class ImportFromSWMM(QKanPlugin):
 
     # Ende Eigene Funktionen ---------------------------------------------------
 
-    def run(self):
+    def run(self) -> None:
         """Run method that performs all the real work"""
 
         self.dlg.tf_qkanDB.setText(QKan.config.database.qkan)
         self.dlg.tf_SWMMFile.setText(QKan.config.dyna.file)
 
-        # noinspection PyCallByClass
+        # noinspection PyCallByClass,PyArgumentList
         self.dlg.qsw_epsg.setCrs(
             QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg)
         )

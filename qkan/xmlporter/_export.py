@@ -3,7 +3,6 @@ from pathlib import Path
 
 # noinspection PyUnresolvedReferences
 from typing import Dict, List, Optional, Union
-
 from xml.dom import minidom
 from xml.etree.ElementTree import Element, SubElement, tostring
 

@@ -1,8 +1,9 @@
 import logging
 import os
-from typing import List, Optional, TYPE_CHECKING, cast
 from pathlib import Path
+from typing import TYPE_CHECKING, List, Optional, cast
 
+from qgis.core import Qgis
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
@@ -14,8 +15,6 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QWidget,
 )
-from qgis.core import Qgis
-
 from qkan import QKan, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
@@ -24,6 +23,7 @@ from qkan.database.qkan_utils import (
     get_editable_layers,
 )
 from qkan.tools.dialogs import QKanDBDialog
+
 from .export_to_he8 import exporthe8
 
 if TYPE_CHECKING:

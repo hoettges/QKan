@@ -3,10 +3,10 @@ import os
 from pathlib import Path
 from typing import Callable, List, Optional
 
-from PyQt5.QtCore import QStandardPaths
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QStandardPaths
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
@@ -340,6 +340,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         if project_path:
             self.default_dir = str(Path(project_path).parent)
         else:
+            # noinspection PyArgumentList
             self.default_dir = str(
                 Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
             )

@@ -4,7 +4,6 @@ from pathlib import Path
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
-from qgis.PyQt.QtCore import QStandardPaths
 from qgis.utils import pluginDirectory
 from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
@@ -142,11 +141,9 @@ class He8Porter(QKanPlugin):
     def run_import(self) -> None:
         """Anzeigen des Importformulars HE8 und anschließender Start des Import aus einer HE8-Datenbank"""
 
-        default_dir = get_default_dir()
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
-
             # Read from form and save to config
             QKan.config.he8.database = (
                 database_qkan_import

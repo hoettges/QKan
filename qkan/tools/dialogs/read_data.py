@@ -4,7 +4,7 @@ import sqlite3
 import time
 from pathlib import Path
 from sqlite3 import Connection
-from typing import Dict, List, Optional, TYPE_CHECKING, Union, cast
+from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 from qgis.core import QgsApplication
 from qgis.PyQt import uic

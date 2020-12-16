@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-import abc
 import datetime
 import json
 import logging
 import os
 import tempfile
 from pathlib import Path
-from typing import Any, Callable, ClassVar, List, Optional, cast
+from typing import Callable, List, Optional, cast
 
 import qgis
-from PyQt5.QtCore import QCoreApplication, QSettings, QStandardPaths, QTranslator
-from PyQt5.QtGui import QIcon
 from qgis.core import QgsProject
 from qgis.gui import QgisInterface
+from qgis.PyQt.QtCore import QCoreApplication, QSettings, QStandardPaths, QTranslator
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QListWidget, QMenu, QMenuBar, QWidget
 from qgis.utils import pluginDirectory
 
@@ -45,7 +44,6 @@ class _ExternalQKanPlugin:
         pass
 
 
-# TODO: getOpenFilename/getSaveFilename(dialog, title, dir=self.default_dir, extensions)
 class QKan:
     instance: "QKan"
     config: Config
@@ -99,6 +97,7 @@ class QKan:
         for _file in (Path(__file__).parent / "i18n").iterdir():
             if _file.name.endswith("_{}.qm".format(locale)):
                 self.translator.load(str(_file))
+        # noinspection PyArgumentList
         QCoreApplication.installTranslator(self.translator)
 
         from .createunbeffl import CreateUnbefFl
@@ -189,6 +188,7 @@ class QKan:
         self.iface.mainWindow().menuBar().removeAction(self.menu_action)
 
         # Unload translator
+        # noinspection PyArgumentList
         QCoreApplication.removeTranslator(self.translator)
 
         # Call unload on all loaded plugins
@@ -273,6 +273,7 @@ def get_default_dir() -> str:
     if project_path:
         return str(Path(project_path).parent.absolute())
     else:
+        # noinspection PyArgumentList
         return str(
             Path(
                 QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1]
