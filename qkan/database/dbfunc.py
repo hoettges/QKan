@@ -10,8 +10,9 @@ import datetime
 import logging
 import os
 import shutil
+import sqlite3
 from sqlite3 import Connection
-from typing import Any, List, Optional, Union, cast
+from typing import Any, Iterable, List, Optional, Union, cast
 
 from qgis.core import Qgis, QgsVectorLayer
 from qgis.PyQt.QtWidgets import QProgressBar
@@ -273,40 +274,40 @@ class DBConnection:
     def sql(
         self,
         sql: str,
-        sqlinfo: str = "allgemein",
-        repeatmessage: bool = False,
-        transaction: bool = False,
+        stmt_category: str = "allgemein",
+        parameters: Optional[Iterable] = None,
+        mute_logger: bool = False,
+        transaction: bool = False,  # Unused, for compatibility only
     ) -> bool:
-        # TODO: Safe SQL queries with parameter binding
-        """Fuehrt eine SQL-Abfrage aus."""
-
         try:
-            self.cursl.execute(sql)
+            self.cursl.execute(sql, parameters)
 
-            # Identische Protokollmeldungen werden für 2 Sekunden unterdrückt...
-            if self.sqltext == sqlinfo and not repeatmessage:
+            # Suppress log message for 2 seconds if category is identical to last query
+            if self.sqltext == stmt_category and not mute_logger:
                 if (self.sqltime.now() - self.sqltime).seconds < 2:
                     self.sqlcount += 1
                     return True
-            self.sqltext = sqlinfo
+
+            self.sqltext = stmt_category
             self.sqltime = self.sqltime.now()
             if self.sqlcount == 0:
-                logger.debug("dbfunc.DBConnection.sql: {}\n{}\n".format(sqlinfo, sql))
+                logger.debug(
+                    "dbfunc.DBConnection.sql: {}\n{}\n".format(stmt_category, sql)
+                )
             else:
                 logger.debug(
                     "dbfunc.DBConnection.sql (Nr. {}): {}\n{}\n".format(
-                        self.sqlcount, sqlinfo, sql
+                        self.sqlcount, stmt_category, sql
                     )
                 )
             self.sqlcount = 0
             return True
-        except BaseException as err:
+
+        except sqlite3.Error as e:
             fehlermeldung(
-                "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=sqlinfo),
-                "{e}\n{s}".format(e=repr(err), s=sql),
+                "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=stmt_category),
+                "{e}\n{s}".format(e=repr(e), s=sql),
             )
-            # if transaction:
-            # self.cursl.commit("ROLLBACK;")
             return False
 
     def fetchall(self) -> List[Any]:

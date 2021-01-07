@@ -44,7 +44,7 @@ class SurfaceTool:
                 geom MULTIPOLYGON)
             """
 
-        if not self.dbQK.sql(sql, repeatmessage=True):
+        if not self.dbQK.sql(sql, mute_logger=True):
             del self.dbQK
             return False
 
@@ -77,7 +77,7 @@ class SurfaceTool:
             FROM fl_isect
             GROUP BY pk
             """
-        if not self.dbQK.sql(sql, repeatmessage=True):
+        if not self.dbQK.sql(sql, mute_logger=True):
             del self.dbQK
             return False
 
@@ -92,7 +92,7 @@ class SurfaceTool:
                 WHERE flaechen.pk = temp_flaechencut.pk)
                 WHERE flaechen.pk IN (SELECT pk FROM temp_flaechencut)
             """
-        if not self.dbQK.sql(sql, repeatmessage=True):
+        if not self.dbQK.sql(sql, mute_logger=True):
             del self.dbQK
             return False
 
@@ -126,7 +126,7 @@ class AccessAttr:
         sql = f"""
                     SELECT abflussparameter FROM flaechen 
                     """
-        if not self.dbQK.sql(sql, repeatmessage=True):
+        if not self.dbQK.sql(sql, mute_logger=True):
             del self.dbQK
             return []
 

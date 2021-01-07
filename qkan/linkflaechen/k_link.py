@@ -726,7 +726,7 @@ def assigntgeb(
             return False
 
         # logger.debug(u'\nSQL:\n{}\n'.format(sql))
-        if not db_qkan.sql(sql, "QKan.k_link.assigntgeb (8)", repeatmessage=True):
+        if not db_qkan.sql(sql, "QKan.k_link.assigntgeb (8)", mute_logger=True):
             return False
 
     db_qkan.commit()

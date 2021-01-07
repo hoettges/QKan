@@ -155,7 +155,7 @@ class SWMM:
                 VALUES (
                     '{name}', {elevation}, {elevation} + {maxdepth}, {areaPonded}, 'Schacht')
                 """
-            if not self.dbQK.sql(sql, repeatmessage=True):
+            if not self.dbQK.sql(sql, mute_logger=True):
                 del self.dbQK
                 return False
 
@@ -292,7 +292,7 @@ class SWMM:
                         UPDATE tezg SET geom = {geom}
                         WHERE flnam = '{nampoly}'
                         """
-                    if not self.dbQK.sql(sql, repeatmessage=True):
+                    if not self.dbQK.sql(sql, mute_logger=True):
                         del self.dbQK
                         return False
                 nampoly = name
@@ -380,7 +380,7 @@ class SWMM:
                 WHERE halnam = '{name}'
                 """
 
-            if not self.dbQK.sql(sql, repeatmessage=True):
+            if not self.dbQK.sql(sql, mute_logger=True):
                 del self.dbQK
                 return False
 
