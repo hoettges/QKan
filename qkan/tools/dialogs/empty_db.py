@@ -194,7 +194,10 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):  # ty
 
             # Create project file
             create_project(
-                Path(project_file), Path(self.tf_qkanDB.text()), srid, zoom,
+                Path(project_file),
+                Path(self.tf_qkanDB.text()),
+                srid,
+                zoom,
             )
 
             # Load project

@@ -99,13 +99,15 @@ def createlinkfl(
 
     # MakeValid auf Tabellen "flaechen" und "tezg".
     if flaechen_bereinigen:
-        sql = """UPDATE flaechen SET geom=MakeValid(geom)"""
-        if not db_qkan.sql(sql, "k_link.createlinkfl (1)"):
+        if not db_qkan.sql(
+            "UPDATE flaechen SET geom=MakeValid(geom)", "k_link.createlinkfl (1)"
+        ):
             del db_qkan
             progress_bar.reset()
             return False
-        sql = """UPDATE tezg SET geom=MakeValid(geom)"""
-        if not db_qkan.sql(sql, "k_link.createlinkfl (2)"):
+        if not db_qkan.sql(
+            "UPDATE tezg SET geom=MakeValid(geom)", "k_link.createlinkfl (2)"
+        ):
             del db_qkan
             progress_bar.reset()
             return False
@@ -301,8 +303,8 @@ def createlinkfl(
     # Jetzt werden die Flächenobjekte mit einem Buffer erweitert und jeweils neu
     # hinzugekommmene mögliche Zuordnungen eingetragen.
 
-    sql = f"UPDATE linkfl SET gbuf = CastToMultiPolygon(buffer(geom,{suchradius})) WHERE linkfl.glink IS NULL"
-    if not db_qkan.sql(sql, "createlinkfl (2)"):
+    sql = f"UPDATE linkfl SET gbuf = CastToMultiPolygon(buffer(geom,?)) WHERE linkfl.glink IS NULL"
+    if not db_qkan.sql(sql, "createlinkfl (2)", parameters=(suchradius,)):
         del db_qkan
         progress_bar.reset()
         return False
@@ -393,9 +395,9 @@ def createlinkfl(
     # Löschen der Datensätze in linkfl, bei denen keine Verbindung erstellt wurde, weil die
     # nächste Haltung zu weit entfernt ist.
 
-    sql = """DELETE FROM linkfl WHERE glink IS NULL"""
-
-    if not db_qkan.sql(sql, "QKan_LinkFlaechen (7)"):
+    if not db_qkan.sql(
+        "DELETE FROM linkfl WHERE glink IS NULL", "QKan_LinkFlaechen (7)"
+    ):
         del db_qkan
         progress_bar.reset()
         return False
@@ -505,9 +507,9 @@ def createlinksw(
     # hinzugekommmene mögliche Zuordnungen eingetragen.
     # Wenn das Attribut "haltnam" vergeben ist, gilt die Fläche als zugeordnet.
 
-    sql = f"""UPDATE linksw SET gbuf = CastToMultiPolygon(buffer(geom,{suchradius})) WHERE linksw.glink IS NULL"""
+    sql = f"""UPDATE linksw SET gbuf = CastToMultiPolygon(buffer(geom,?)) WHERE linksw.glink IS NULL"""
 
-    if not db_qkan.sql(sql, "QKan_LinkSW (2)"):
+    if not db_qkan.sql(sql, "QKan_LinkSW (2)", parameters=(suchradius,)):
         return False
 
     # Erzeugung der Verbindungslinie zwischen dem Zentroiden der Haltung und dem PointonSurface der Fläche.
@@ -564,9 +566,7 @@ def createlinksw(
     # Löschen der Datensätze in linksw, bei denen keine Verbindung erstellt wurde, weil die
     # nächste Haltung zu weit entfernt ist.
 
-    sql = """DELETE FROM linksw WHERE glink IS NULL"""
-
-    if not db_qkan.sql(sql, "QKan_LinkSW (7)"):
+    if not db_qkan.sql("DELETE FROM linksw WHERE glink IS NULL", "QKan_LinkSW (7)"):
         return False
 
     # Aktualisierung des logischen Cache
@@ -607,7 +607,7 @@ def assigntgeb(
     bufferradius: float = 0.0,
 ) -> bool:
     """Ordnet alle Objete aus den in "tablist" enthaltenen Tabellen einer der in "liste_teilgebiete" enthaltenen
-       Teilgebiete zu. Falls sich mehrere dieser Teilgebiete überlappen, ist das Resultat zufällig eines von diesen. 
+       Teilgebiete zu. Falls sich mehrere dieser Teilgebiete überlappen, ist das Resultat zufällig eines von diesen.
     :param iface:
     :param db_qkan:             Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :param auswahltyp:
@@ -639,13 +639,15 @@ def assigntgeb(
 
     # MakeValid auf Tabellen "flaechen" und "tezg".
     if flaechen_bereinigen:
-        sql = """UPDATE flaechen SET geom=MakeValid(geom)"""
-        if not db_qkan.sql(sql, "k_link.assigntgeb (1)"):
+        if not db_qkan.sql(
+            "UPDATE flaechen SET geom=MakeValid(geom)", "k_link.assigntgeb (1)"
+        ):
             del db_qkan
             progress_bar.reset()
             return False
-        sql = """UPDATE tezg SET geom=MakeValid(geom)"""
-        if not db_qkan.sql(sql, "k_link.assigntgeb (2)"):
+        if not db_qkan.sql(
+            "UPDATE tezg SET geom=MakeValid(geom)", "k_link.assigntgeb (2)"
+        ):
             del db_qkan
             progress_bar.reset()
             return False
@@ -815,7 +817,7 @@ def reload_group(iface: QgisInterface, db_qkan: DBConnection, gruppenname: str) 
 def store_group(
     iface: QgisInterface, db_qkan: DBConnection, gruppenname: str, kommentar: str
 ) -> bool:
-    """Speichert die aktuellen Teilgebietszuordnungen der Tabellen 
+    """Speichert die aktuellen Teilgebietszuordnungen der Tabellen
        "haltungen", "schaechte", "flaechen", "tezg", "linkfl", "linksw", "einleit"
        unter einem neuen Gruppennamen
     :param iface:
@@ -828,7 +830,8 @@ def store_group(
     progress_bar = QProgressBar(iface.messageBar())
     progress_bar.setRange(0, 100)
     status_message = iface.messageBar().createMessage(
-        "", "Teilgebiete werden in der angegebenen Gruppe gespeichert. Bitte warten...",
+        "",
+        "Teilgebiete werden in der angegebenen Gruppe gespeichert. Bitte warten...",
     )
     status_message.layout().addWidget(progress_bar)
     iface.messageBar().pushWidget(status_message, Qgis.Info, 10)

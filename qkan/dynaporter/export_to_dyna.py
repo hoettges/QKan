@@ -125,7 +125,7 @@ def write12(
     # einer Haltung,
     # wdistdur entsprechend für die durchlässigen Flächen.
 
-    sql = """
+    sql = f"""
         WITH flintersect AS (
             SELECT lf.flnam AS flnam, lf.haltnam AS haltnam, 
                 CASE fl.neigkl
@@ -214,16 +214,7 @@ def write12(
         ON e.haltnam = h.haltnam
         LEFT JOIN entwaesserungsarten AS a
         ON h.entwart = a.bezeichnung
-    """.format(
-        mindestflaeche=mindestflaeche,
-        ausw_and=ausw_and,
-        auswahl=auswahl,
-        sql_prof1=sql_prof1,
-        sql_prof2=sql_prof2,
-        case_verschneidung=case_verschneidung,
-        join_verschneidung=join_verschneidung,
-        tezg_verschneidung=tezg_verschneidung,
-    )
+    """
 
     if not db_qkan.sql(sql, "dbQK: export_to_dyna.write12 (1)"):
         return False
@@ -466,7 +457,7 @@ def write16(
         ausw_tab = "s."
 
     # Zusammenstellen der Daten.
-    sql = """
+    sql = f"""
         WITH v_anzan AS
     (   SELECT h.schunten, count(*) AS anzahl
         FROM haltungen AS h
@@ -511,9 +502,7 @@ def write16(
            (anzan.anzahl <> 1 OR anzan.anzahl IS NULL) OR
            (anzab.anzahl = 1 AND anzan.anzahl = 1 AND han.kanalnummer <> hab.kanalnummer)){ausw_and}{ausw_tab}{auswahl}
     ORDER BY s.schnam, han.kanalnummer, han.haltungsnummer
-    """.format(
-        ausw_and=ausw_and, ausw_tab=ausw_tab, auswahl=auswahl
-    )
+    """
 
     if not db_qkan.sql(sql, "dbQK: export_to_dyna.write16 (1)"):
         return False
@@ -619,7 +608,7 @@ def write41(
         ausw_tab = "s."
 
     # Zusammenstellen der Daten.
-    sql = """
+    sql = f"""
         SELECT
             d.kanalnummer AS kanalnummer,
             d.haltungsnummer AS haltungsnummer,
@@ -631,9 +620,7 @@ def write41(
         INNER JOIN schaechte AS s
         ON s.schnam = d.schunten
         WHERE s.schachttyp = 'Auslass'{ausw_and}{ausw_tab}{auswahl}
-    """.format(
-        ausw_and=ausw_and, ausw_tab=ausw_tab, auswahl=auswahl
-    )
+    """
 
     if not db_qkan.sql(sql, "dbQK: export_to_dyna.write41 (1)"):
         return False
@@ -780,12 +767,10 @@ def export_kanaldaten(
     if autonum_dyna:
 
         # Zurücksetzen von "kanalnummer" und "haltungsnummer"
-        sql = """
+        sql = f"""
             UPDATE dynahal
             SET kanalnummer = NULL,
-                haltungsnummer = NULL {ausw_where}{auswahl}""".format(
-            ausw_where=ausw_where, auswahl=auswahl
-        )
+                haltungsnummer = NULL {ausw_where}{auswahl}"""
 
         if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (1)"):
             return False
@@ -794,7 +779,7 @@ def export_kanaldaten(
 
         # Einfügen der Haltungsdaten in die Zusatztabelle "dynahal"
 
-        sql = """
+        sql = f"""
             WITH halnumob AS (
                 SELECT schunten, count(*) AS anzahl
                 FROM haltungen
@@ -821,22 +806,18 @@ def export_kanaldaten(
             ON haltungen.schunten = haltunob.schunten
             WHERE haltnam NOT IN (
                 SELECT haltnam FROM dynahal)
-                {ausw_and}{auswahl}""".format(
-            ausw_and=ausw_and, auswahl=auswahl
-        )
+                {ausw_and}{auswahl}"""
 
         if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (2)"):
             return False
 
         # Zurücksetzen von "kanalnummer" und "haltungsnummer"
 
-        sql = """
+        sql = f"""
             UPDATE dynahal
             SET kanalnummer = NULL,
                 haltungsnummer = NULL
-                {ausw_where}{auswahl}""".format(
-            ausw_where=ausw_where, auswahl=auswahl
-        )
+                {ausw_where}{auswahl}"""
 
         if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (3)"):
             return False
@@ -844,13 +825,11 @@ def export_kanaldaten(
         # Nummerierung der Anfangshaltungen
 
         if len(liste_teilgebiete) == 0:
-            sql = """
+            sql = f"""
                 UPDATE dynahal
                 SET kanalnummer = ROWID, haltungsnummer = 1
                 WHERE anzobob <> 1 OR anzobun <> 1
-                    {ausw_and}{auswahl}""".format(
-                ausw_and=ausw_and, auswahl=auswahl
-            )
+                    {ausw_and}{auswahl}"""
 
         if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (4)"):
             return False
@@ -866,7 +845,7 @@ def export_kanaldaten(
 
         while (nchange > 0) and (max_loops > nlimit):
             nlimit += 1
-            sql = """
+            sql = f"""
                 UPDATE dynahal
                 SET 
                     kanalnummer = 
@@ -882,18 +861,14 @@ def export_kanaldaten(
                     dynahal.anzobun = 1 AND
                     dynahal.kanalnummer IS NULL
                     {ausw_and}{auswahl};
-                """.format(
-                ausw_and=ausw_and, auswahl=auswahl
-            )
+                """
 
             if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (5)"):
                 return False
 
-            sql = """
-                SELECT changes();
-                """
-
-            if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (6)"):
+            if not db_qkan.sql(
+                "SELECT changes();", "dbQK: export_to_dyna.init_dynahal (6)"
+            ):
                 return False
 
             nchange = int(
@@ -921,14 +896,13 @@ def export_kanaldaten(
         # nummer daraus wieder herstellen lassen (8 Zeichen für Kanal + "-" + 3 Zeichen für Haltungsnummer).
 
         # noinspection SqlWithoutWhere
-        sql = "DELETE FROM dynahal;"
         if not db_qkan.sql(
-            sql,
+            "DELETE FROM dynahal;",
             "dbQK: export_to_dyna.init_dynahal (7): Daten in Tabelle dynahal konnten nicht gelöscht werden",
         ):
             return False
 
-        sql = """
+        sql = f"""
             INSERT INTO dynahal
             (pk, haltnam, kanalnummer, haltungsnummer, schoben, schunten, teilgebiet)
             SELECT
@@ -939,9 +913,7 @@ def export_kanaldaten(
             FROM haltungen AS h
             WHERE haltnam NOT IN (
                 SELECT haltnam FROM dynahal)
-                {ausw_and}{auswahl}""".format(
-            ausw_and=ausw_and, auswahl=auswahl
-        )
+                {ausw_and}{auswahl}"""
 
         if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (8)"):
             return False
@@ -1099,11 +1071,9 @@ def export_kanaldaten(
     if dynaprof_choice == enums.ProfChoice.PROFILNAME:
         # Die DYNA-Schlüssel werden entsprechend der DYNA-Vorlagedatei vergeben. Daher braucht
         # nur das Vorhandensein der Profilnamen geprüft zu werden.
-        sql = """SELECT profilnam
+        sql = f"""SELECT profilnam
                 FROM haltungen {ausw_where}{auswahl}
-                GROUP BY profilnam""".format(
-            ausw_where=ausw_where, auswahl=auswahl
-        )
+                GROUP BY profilnam"""
 
         if not db_qkan.sql(sql, "dbQK: QKan_ExportDYNA.export_to_dyna.profile (1)"):
             return False
@@ -1124,12 +1094,10 @@ def export_kanaldaten(
                     )
                 )
                 if profile_ergaenzen:
-                    sql = """INSERT INTO profile (profilnam)
-                            VALUES ('{pn}')""".format(
-                        pn=profil_new
-                    )
                     if not db_qkan.sql(
-                        sql, "dbQK: export_to_dyna.exportKanaldaten (1)"
+                        "INSERT INTO profile (profilnam) VALUES (?)",
+                        "dbQK: export_to_dyna.exportKanaldaten (1)",
+                        parameters=(profil_new,),
                     ):
                         return False
                     db_qkan.commit()
@@ -1142,13 +1110,11 @@ def export_kanaldaten(
             return False
 
     elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
-        sql = """SELECT p.kp_key, h.profilnam
+        sql = f"""SELECT p.kp_key, h.profilnam
                 FROM haltungen AS h
                 LEFT JOIN profile AS p
                 ON h.profilnam = p.profilnam {ausw_where}{auswahl}
-                GROUP BY p.kp_key""".format(
-            ausw_where=ausw_where, auswahl=auswahl
-        )
+                GROUP BY p.kp_key"""
 
         if not db_qkan.sql(sql, "dbQK: QKan_ExportDYNA.export_to_dyna.profile (2)"):
             return False
@@ -1167,12 +1133,10 @@ def export_kanaldaten(
                 )
                 logger.debug("dynaprof_key = {}".format(", ".join(dynaprof_key)))
                 if profile_ergaenzen:
-                    sql = """INSERT INTO profile (profilnam, kp_key)
-                            VALUES ('{pn}', '{id}')""".format(
-                        pn=profilnam, id=profil_key
-                    )
                     if not db_qkan.sql(
-                        sql, "dbQK: export_to_dyna.exportKanaldaten (1)"
+                        "INSERT INTO profile (profilnam, kp_key) VALUES (?, ?)",
+                        "dbQK: export_to_dyna.exportKanaldaten (1)",
+                        parameters=(profilnam, profil_key),
                     ):
                         return False
                     db_qkan.commit()

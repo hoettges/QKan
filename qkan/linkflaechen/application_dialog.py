@@ -549,14 +549,16 @@ class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):  # type: ignore
         if len(gr) > 0:
             self.gruppe = gr[0]  # Im Formular gesetzt: selectionMode = SingleSelection
 
-            sql = f"""
+            sql = """
                 SELECT teilgebiet, tabelle, printf('%i',count(*)) AS Anzahl
                 FROM gruppen
-                WHERE grnam = '{self.gruppe}'
+                WHERE grnam = ?
                 GROUP BY tabelle, teilgebiet
                 ORDER BY tabelle, teilgebiet
                 """
-            if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.listGroupAttr (1)"):
+            if not self.db_qkan.sql(
+                sql, "QKan_LinkFlaechen.listGroupAttr (1)", parameters=(self.gruppe,)
+            ):
                 del self.db_qkan
                 return
             daten = self.db_qkan.fetchall()

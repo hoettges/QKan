@@ -281,7 +281,9 @@ class ExportTask:
                     return False
 
                 self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}")
+                self.db_qkan.sql(
+                    "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                )
                 self.db_qkan.commit()
 
                 fortschritt(f"{self.nextid - nr0} Speicher eingefügt", 0.40)
@@ -334,9 +336,9 @@ class ExportTask:
                 nr0 = self.nextid
 
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
-                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
                 if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_he8.export_schaechte (2)"
+                    "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen",
+                    "dbQK: export_to_he8.export_schaechte (2)",
                 ):
                     return False
 
@@ -382,7 +384,9 @@ class ExportTask:
                     return False
 
                 self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}")
+                self.db_qkan.sql(
+                    "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                )
                 self.db_qkan.commit()
 
                 fortschritt(f"{self.nextid - nr0} Auslässe eingefügt", 0.50)
@@ -451,9 +455,9 @@ class ExportTask:
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
-                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
                 if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_he8.export_haltungen (2)"
+                    "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen",
+                    "dbQK: export_to_he8.export_haltungen (2)",
                 ):
                     return False
 
@@ -518,7 +522,9 @@ class ExportTask:
                     return False
 
                 self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}")
+                self.db_qkan.sql(
+                    "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                )
                 self.db_qkan.commit()
 
                 fortschritt(f"{self.nextid - nr0} Haltungen eingefügt", 0.60)
@@ -738,7 +744,8 @@ class ExportTask:
 
                     self.nextid += idmax - idmin + 1
                     self.db_qkan.sql(
-                        f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}"
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
                     )
             self.db_qkan.commit()
 
@@ -843,7 +850,9 @@ class ExportTask:
                     return False
 
                 self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}")
+                self.db_qkan.sql(
+                    "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                )
                 self.db_qkan.commit()
 
                 fortschritt(f"{self.nextid - nr0} Pumpen eingefügt", 0.85)
@@ -969,7 +978,9 @@ class ExportTask:
                     return False
 
                 self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}")
+                self.db_qkan.sql(
+                    "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                )
                 self.db_qkan.commit()
 
                 fortschritt(f"{self.nextid - nr0} Wehre eingefügt", 0.85)

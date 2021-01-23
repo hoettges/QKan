@@ -152,10 +152,13 @@ class SWMM:
             sql = f"""
                 INSERT into schaechte_data (
                     schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
-                VALUES (
-                    '{name}', {elevation}, {elevation} + {maxdepth}, {areaPonded}, 'Schacht')
+                VALUES (?, ?, ?, ? 'Schacht')
                 """
-            if not self.dbQK.sql(sql, mute_logger=True):
+            if not self.dbQK.sql(
+                sql,
+                mute_logger=True,
+                parameters=(name, elevation, elevation + maxdepth, areaPonded),
+            ):
                 del self.dbQK
                 return False
 
@@ -187,10 +190,9 @@ class SWMM:
             sql = f"""
                 INSERT into schaechte_data (
                     schnam, sohlhoehe, auslasstyp, schachttyp)
-                VALUES (
-                    '{name}', {elevation}, '{auslasstyp}', 'Auslass')
+                VALUES (?, ?, ?, 'Auslass')
                 """
-            if not self.dbQK.sql(sql):
+            if not self.dbQK.sql(sql, parameters=(name, elevation, auslasstyp)):
                 del self.dbQK
                 return False
 
@@ -225,12 +227,11 @@ class SWMM:
             du = 1.0
 
             sql = f"""
-                UPDATE schaechte SET (
-                    xsch, ysch, geom, geop) =
-                (   {xsch}, {ysch}, {geom}, {geop})
-                WHERE schnam = '{name}'
+                UPDATE schaechte SET (xsch, ysch, geom, geop) =
+                (?, ?, ?, ?)
+                WHERE schnam = ?
                 """
-            if not self.dbQK.sql(sql):
+            if not self.dbQK.sql(sql, parameters=(xsch, ysch, geom, geop, name)):
                 del self.dbQK
                 return False
 
@@ -252,10 +253,11 @@ class SWMM:
             sql = f"""
                 INSERT into tezg (
                     flnam, regenschreiber, schnam,befgrad, neigung)
-                VALUES (
-                    '{name}', '{regenschreiber}', '{schnam}', {befgrad}, {neigung})
+                VALUES (?, ?, ?, ?, ?)
                 """
-            if not self.dbQK.sql(sql):
+            if not self.dbQK.sql(
+                sql, parameters=(name, regenschreiber, schnam, befgrad, neigung)
+            ):
                 del self.dbQK
                 return False
 
@@ -288,11 +290,11 @@ class SWMM:
                     # Polygon schreiben
                     coords = ", ".join([f"{x} {y}" for x, y in zip(xlis, ylis)])
                     geom = f"GeomFromText('MULTIPOLYGON((({coords})))', {self.epsg})"
-                    sql = f"""
-                        UPDATE tezg SET geom = {geom}
-                        WHERE flnam = '{nampoly}'
-                        """
-                    if not self.dbQK.sql(sql, mute_logger=True):
+                    if not self.dbQK.sql(
+                        "UPDATE tezg SET geom = ? WHERE flnam = ?",
+                        mute_logger=True,
+                        parameters=(geom, nampoly),
+                    ):
                         del self.dbQK
                         return False
                 nampoly = name
@@ -330,10 +332,11 @@ class SWMM:
             sql = f"""
                 INSERT into haltungen_data (
                     haltnam, schoben, schunten, laenge, ks, entwart, simstatus)
-                VALUES (
-                    '{haltnam}', '{schoben}', '{schunten}', {laenge}, {mannings_n}, 'Regenwasser', 'vorhanden')
+                VALUES (?, ?, ?, ?, ?, 'Regenwasser', 'vorhanden')
                 """
-            if not self.dbQK.sql(sql):
+            if not self.dbQK.sql(
+                sql, parameters=(haltnam, schoben, schunten, laenge, mannings_n)
+            ):
                 del self.dbQK
                 return False
 
@@ -376,11 +379,13 @@ class SWMM:
                 npt = 2
 
             sql = f"""
-                UPDATE haltungen SET geom = AddPoint(geom, MakePoint({xsch}, {ysch}, {self.epsg}), {npt})
-                WHERE halnam = '{name}'
+                UPDATE haltungen SET geom = AddPoint(geom, MakePoint(?, ?, ?), ?)
+                WHERE halnam = ?
                 """
 
-            if not self.dbQK.sql(sql, mute_logger=True):
+            if not self.dbQK.sql(
+                sql, mute_logger=True, parameters=(xsch, ysch, self.epsg, npt, name)
+            ):
                 del self.dbQK
                 return False
 
@@ -417,12 +422,10 @@ class SWMM:
                 profilnam = "Kreisquerschnitt"
 
             sql = f"""
-                UPDATE haltungen SET (
-                    profilnam, hoehe, breite) = 
-                (   '{profilnam}', {hoehe}, {breite})
-                WHERE haltnam = '{haltnam}'
+                UPDATE haltungen SET (profilnam, hoehe, breite) = (?, ?, ?)
+                WHERE haltnam = ?
                 """
-            if not self.dbQK.sql(sql):
+            if not self.dbQK.sql(sql, parameters=(profilnam, hoehe, breite, haltnam)):
                 del self.dbQK
                 return False
 
@@ -456,7 +459,8 @@ class SWMM:
         except BaseException as e:
             fehlermeldung("SQL-Fehler", str(e))
             fehlermeldung(
-                "Fehler in QKan_Import_from_KP", "\nFehler in sql_zoom;\n",
+                "Fehler in QKan_Import_from_KP",
+                "\nFehler in sql_zoom;\n",
             )
             zoom = [0.0, 100.0, 0.0, 100.0]
 

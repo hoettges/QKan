@@ -315,10 +315,23 @@ class ImportTask:
             sql = f"""
             INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
                     schachttyp, simstatus, kommentar)
-            VALUES ('{schacht.schnam}', {schacht.xsch}, {schacht.ysch}, {schacht.sohlhoehe}, {schacht.deckelhoehe}, 
-                    {schacht.durchm}, '{entwart}', 'Schacht', '{simstatus}', '{schacht.kommentar}')
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?)
             """
-            if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
+            if not self.db_qkan.sql(
+                sql,
+                "xml_import Schächte [3]",
+                parameters=(
+                    schacht.schnam,
+                    schacht.xsch,
+                    schacht.ysch,
+                    schacht.sohlhoehe,
+                    schacht.deckelhoehe,
+                    schacht.durchm,
+                    entwart,
+                    simstatus,
+                    schacht.kommentar,
+                ),
+            ):
                 return None
 
         if not self.db_qkan.sql(
@@ -384,10 +397,23 @@ class ImportTask:
             sql = f"""
             INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
                     schachttyp, simstatus, kommentar)
-            VALUES ('{auslass.schnam}', {auslass.xsch}, {auslass.ysch}, {auslass.sohlhoehe}, {auslass.deckelhoehe}, 
-                        {auslass.durchm}, '{auslass.entwart}', 'Auslass', '{simstatus}', '{auslass.kommentar}')
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Auslass', ?, ?)
             """
-            if not self.db_qkan.sql(sql, "xml_import Auslässe [2]"):
+            if not self.db_qkan.sql(
+                sql,
+                "xml_import Auslässe [2]",
+                parameters=(
+                    auslass.schnam,
+                    auslass.xsch,
+                    auslass.ysch,
+                    auslass.sohlhoehe,
+                    auslass.deckelhoehe,
+                    auslass.durchm,
+                    auslass.entwart,
+                    simstatus,
+                    auslass.kommentar,
+                ),
+            ):
                 return None
 
         if not self.db_qkan.sql(
@@ -429,7 +455,9 @@ class ImportTask:
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:
                     xsch = _strip_float(smp.findtext("d:Rechtswert", 0.0, NS))
-                    ysch = _strip_float(smp.findtext("d:Hochwert", 0.0, NS),)
+                    ysch = _strip_float(
+                        smp.findtext("d:Hochwert", 0.0, NS),
+                    )
                     sohlhoehe = _strip_float(smp.findtext("d:Punkthoehe", 0.0, NS))
 
                 yield Schacht(
@@ -455,15 +483,13 @@ class ImportTask:
             if str(speicher.simstatus) in self.mapper_simstatus:
                 simstatus = self.mapper_simstatus[str(speicher.simstatus)]
             else:
-                sql = """
-                INSERT INTO simulationsstatus (he_nr, bezeichnung)
-                VALUES ({s}, '{s}')
-                """.format(
-                    s=speicher.simstatus
-                )
                 simstatus = f"{speicher.simstatus}_he"
                 self.mapper_simstatus[str(speicher.simstatus)] = simstatus
-                if not self.db_qkan.sql(sql, "xml_import Speicher [1]"):
+                if not self.db_qkan.sql(
+                    "INSERT INTO simulationsstatus (he_nr, bezeichnung) VALUES (?, ?)",
+                    "xml_import Speicher [1]",
+                    parameters=(speicher.simstatus, speicher.simstatus),
+                ):
                     return None
 
             # Geo-Objekte
@@ -472,10 +498,23 @@ class ImportTask:
             sql = f"""
             INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
                     schachttyp, simstatus, kommentar)
-            VALUES ('{speicher.schnam}', {speicher.xsch}, {speicher.ysch}, {speicher.sohlhoehe}, {speicher.deckelhoehe}, 
-                {speicher.durchm}, '{speicher.entwart}', 'Speicher', '{simstatus}', '{speicher.kommentar}')
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Speicher', ?, ?)
             """
-            if not self.db_qkan.sql(sql, "xml_import Speicher [2]"):
+            if not self.db_qkan.sql(
+                sql,
+                "xml_import Speicher [2]",
+                parameters=(
+                    speicher.schnam,
+                    speicher.xsch,
+                    speicher.ysch,
+                    speicher.sohlhoehe,
+                    speicher.deckelhoehe,
+                    speicher.durchm,
+                    speicher.entwart,
+                    simstatus,
+                    speicher.kommentar,
+                ),
+            ):
                 return None
 
         if not self.db_qkan.sql(
@@ -612,7 +651,9 @@ class ImportTask:
                     )
 
                 yield Haltung(
-                    haltnam=name, laenge=laenge, ks=ks,
+                    haltnam=name,
+                    laenge=laenge,
+                    ks=ks,
                 )
 
         # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
@@ -620,30 +661,26 @@ class ImportTask:
             if str(haltung.simstatus) in self.mapper_simstatus:
                 simstatus = self.mapper_simstatus[str(haltung.simstatus)]
             else:
-                sql = """
-                INSERT INTO simulationsstatus (he_nr, bezeichnung)
-                VALUES ({s}, '{s}')
-                """.format(
-                    s=haltung.simstatus
-                )
                 simstatus = f"{haltung.simstatus}_he"
                 self.mapper_simstatus[str(haltung.simstatus)] = simstatus
-                if not self.db_qkan.sql(sql, "xml_import Haltungen [1]"):
+                if not self.db_qkan.sql(
+                    "INSERT INTO simulationsstatus (he_nr, bezeichnung) VALUES (?, ?)",
+                    "xml_import Haltungen [1]",
+                    parameters=(haltung.simstatus, haltung.simstatus),
+                ):
                     return None
 
             if haltung.entwart in self.mapper_entwart:
                 entwart = self.mapper_entwart[haltung.entwart]
             else:
-                sql = """
-                INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
-                VALUES ('{e}', '{e}')
-                """.format(
-                    e=haltung.entwart
-                )
                 self.mapper_entwart[haltung.entwart] = haltung.entwart
                 entwart = haltung.entwart
 
-                if not self.db_qkan.sql(sql, "xml_import Haltungen [2]"):
+                if not self.db_qkan.sql(
+                    "INSERT INTO entwaesserungsarten (kuerzel, bezeichnung) VALUES (?, ?)",
+                    "xml_import Haltungen [2]",
+                    parameters=(haltung.entwart, haltung.entwart),
+                ):
                     return None
 
             # Geo
@@ -669,16 +706,33 @@ class ImportTask:
                     (haltnam, schoben, schunten, 
                     hoehe, breite, laenge, sohleoben, sohleunten, deckeloben, deckelunten, 
                     profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
-                VALUES (
-                    '{haltung.haltnam}', '{haltung.schoben}', '{haltung.schunten}', {haltung.hoehe},
-                    {haltung.breite}, {haltung.laenge}, {haltung.sohleoben}, {haltung.sohleunten}, 
-                    {haltung.deckeloben}, {haltung.deckelunten}, '{haltung.profilnam}', '{entwart}', 
-                    0, '{simstatus}', '{haltung.kommentar}', '{haltung.xschob}', '{haltung.xschun}', 
-                    '{haltung.yschob}', '{haltung.yschun}'
-                    )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?)
                 """
 
-            if not self.db_qkan.sql(sql, "xml_import Haltungen [3]"):
+            if not self.db_qkan.sql(
+                sql,
+                "xml_import Haltungen [3]",
+                parameters=(
+                    haltung.haltnam,
+                    haltung.schoben,
+                    haltung.schunten,
+                    haltung.hoehe,
+                    haltung.breite,
+                    haltung.laenge,
+                    haltung.sohleoben,
+                    haltung.sohleunten,
+                    haltung.deckeloben,
+                    haltung.deckelunten,
+                    haltung.profilnam,
+                    entwart,
+                    simstatus,
+                    haltung.kommentar,
+                    haltung.xschob,
+                    haltung.xschun,
+                    haltung.yschob,
+                    haltung.yschun,
+                ),
+            ):
                 return None
 
         if not self.db_qkan.sql(
@@ -690,14 +744,11 @@ class ImportTask:
 
         # 2. Teil: Hier werden die hydraulischen Haltungsdaten in die Datenbank geschrieben
         for haltung in _iter2():
-            sql = f"""
-                        UPDATE haltungen
-                            SET ks = {haltung.ks},
-                            laenge = {haltung.laenge}
-                            WHERE haltnam = '{haltung.haltnam}'
-                            """
-
-            if not self.db_qkan.sql(sql, "xml_import Haltung [4]"):
+            if not self.db_qkan.sql(
+                "UPDATE haltungen SET ks = ?, laenge = ? WHERE haltnam = ?",
+                "xml_import Haltung [4]",
+                parameters=(haltung.ks, haltung.laenge, haltung.haltnam),
+            ):
                 return None
 
         self.db_qkan.commit()
@@ -833,9 +884,12 @@ class ImportTask:
                 pumpentyp = self.mapper_pump[str(pumpe.pumpentyp)]
             else:
                 pumpentyp = "{}_he".format(pumpe.pumpentyp)
-                sql = f"INSERT INTO pumpentypen (bezeichnung) Values ('{pumpe.pumpentyp}')"
                 self.mapper_pump[str(pumpe.pumpentyp)] = pumpentyp
-                if not self.db_qkan.sql(sql, "xml_import Pumpe [1]"):
+                if not self.db_qkan.sql(
+                    "INSERT INTO pumpentypen (bezeichnung) Values (?)",
+                    "xml_import Pumpe [1]",
+                    parameters=(pumpe.pumpentyp,),
+                ):
                     break
 
             # Bei den Pumpen muessen im Gegensatz zu den Haltungen die
@@ -864,26 +918,20 @@ class ImportTask:
             if str(pumpe.simstatus) in self.mapper_simstatus:
                 simstatus = self.mapper_simstatus[str(pumpe.simstatus)]
             else:
-                sql = """
-                INSERT INTO simulationsstatus (he_nr, bezeichnung)
-                VALUES ({s}, '{s}')
-                """.format(
-                    s=pumpe.simstatus
-                )
                 simstatus = f"{pumpe.simstatus}_he"
                 self.mapper_simstatus[str(pumpe.simstatus)] = simstatus
-                if not self.db_qkan.sql(sql, "xml_import Pumpe [3]"):
+                if not self.db_qkan.sql(
+                    "INSERT INTO simulationsstatus (he_nr, bezeichnung) VALUES (?, ?)",
+                    "xml_import Pumpe [3]",
+                    parameters=(pumpe.simstatus, pumpe.simstatus),
+                ):
                     return None
 
-            sql = f"""
-                    UPDATE pumpen
-                    SET 
-                    simstatus = '{simstatus}',
-                    kommentar = '{pumpe.kommentar}'
-                    WHERE pnam = '{pumpe.pnam}'
-                    """
-
-            if not self.db_qkan.sql(sql, "xml_import (22)"):
+            if not self.db_qkan.sql(
+                "UPDATE pumpen SET simstatus = ?, kommentar = ? WHERE pnam = ?",
+                "xml_import (22)",
+                parameters=(simstatus, pumpe.kommentar, pumpe.pnam),
+            ):
                 return None
 
         self.db_qkan.commit()

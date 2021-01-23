@@ -318,7 +318,9 @@ class ToolsConfig(ClassObject):
     logeditor: str = ""
     manningrauheit_bef: float = 0.02
     manningrauheit_dur: float = 0.10
-    runoffmodeltype_choice: enums.RunOffModelType = enums.RunOffModelType.SPEICHERKASKADE
+    runoffmodeltype_choice: enums.RunOffModelType = (
+        enums.RunOffModelType.SPEICHERKASKADE
+    )
     runoffparamsfunctions: RunoffParams = RunoffParams()
     runoffparamstype_choice: enums.RunOffParamsType = enums.RunOffParamsType.MANIAK
 

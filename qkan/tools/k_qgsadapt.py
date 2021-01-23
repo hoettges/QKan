@@ -87,7 +87,9 @@ def qgsadapt(
         zoom = dbQK.fetchone()
     except BaseException as err:
         fehlermeldung("SQL-Fehler", repr(err))
-        fehlermeldung("\nFehler in sql_zoom; daten= \n",)
+        fehlermeldung(
+            "\nFehler in sql_zoom; daten= \n",
+        )
         zoom = [0.0, 100.0, 0.0, 100.0]
 
     # --------------------------------------------------------------------------
@@ -95,7 +97,7 @@ def qgsadapt(
     # außer: Wenn epsg aus Parameterliste vorgegeben, dann übernehmen
     if epsg:
         srid = epsg
-        logger.debug(f"Vorgabe epsg: {epsg}")
+        logger.debug(f"Vorgabe epsg: %s", epsg)
     else:
         sql = """SELECT srid
                 FROM geom_cols_ref_sys
@@ -127,7 +129,8 @@ def qgsadapt(
 
         fehlermeldung('\nFehler in "daten"', repr(err))
         fehlermeldung(
-            "Fehler in qgsadapt", "\nFehler bei der Ermittlung der srid: \n",
+            "Fehler in qgsadapt",
+            "\nFehler bei der Ermittlung der srid: \n",
         )
 
     # --------------------------------------------------------------------------

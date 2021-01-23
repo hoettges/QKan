@@ -123,10 +123,7 @@ class AccessAttr:
             )
 
     def accessAttribute(self) -> List[Any]:
-        sql = f"""
-                    SELECT abflussparameter FROM flaechen 
-                    """
-        if not self.dbQK.sql(sql, mute_logger=True):
+        if not self.dbQK.sql("SELECT abflussparameter FROM flaechen", mute_logger=True):
             del self.dbQK
             return []
 

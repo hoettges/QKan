@@ -483,8 +483,10 @@ def exportKanaldaten(
         c[1] = c[1].replace(" ", "_")
         c[2] = c[2].replace(" ", "_")
 
-        datapu += "{:<16s} {:<16s} {:<16s} pu_{:<13s} ON       0        0       \n".format(
-            c[0], c[1], c[2], c[0][:13]
+        datapu += (
+            "{:<16s} {:<16s} {:<16s} pu_{:<13s} ON       0        0       \n".format(
+                c[0], c[1], c[2], c[0][:13]
+            )
         )
 
         if len(datacu) > 0:
@@ -535,8 +537,10 @@ def exportKanaldaten(
         datawe += "{:<16s} {:<16s} {:<16s} TRANSVERSE   0          3.33       NO       0        0          YES       \n".format(
             c[0], c[1], c[2]
         )
-        dataxs += "{:<16s} RECT_OPEN    {:<16.3f} {:<10.3f} 0          0         \n".format(
-            c[0], c[5], c[6]
+        dataxs += (
+            "{:<16s} RECT_OPEN    {:<16.3f} {:<10.3f} 0          0         \n".format(
+                c[0], c[5], c[6]
+            )
         )
 
     swdaten = swdaten.replace("{WEIRS}\n", datawe)
@@ -593,8 +597,10 @@ def exportKanaldaten(
 
     for c in cursl.fetchall():
 
-        datarm += "{:<16d} INTENSITY 1:00     1.0      TIMESERIES TS1             \n".format(
-            c[0]
+        datarm += (
+            "{:<16d} INTENSITY 1:00     1.0      TIMESERIES TS1             \n".format(
+                c[0]
+            )
         )
         datasy += "{:<16d} 9999.999           9999.999          \n".format(c[0])
 

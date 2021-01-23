@@ -103,8 +103,8 @@ class QKan:
         from .createunbeffl import CreateUnbefFl
         from .dynaporter import DynaPorter
         from .he8porter import He8Porter
-        from .muporter import MuPorter
         from .linkflaechen import LinkFl
+        from .muporter import MuPorter
         from .surfaceTools import SurfaceTools
         from .swmmporter import ImportFromSWMM
         from .tools import QKanTools

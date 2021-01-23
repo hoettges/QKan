@@ -21,7 +21,10 @@ EXPORT_CLASS, _ = uic.loadUiType(
 
 class _Dialog(QDialog):
     def __init__(
-        self, default_dir: str, tr: Callable, parent: Optional[QWidget] = None,
+        self,
+        default_dir: str,
+        tr: Callable,
+        parent: Optional[QWidget] = None,
     ):
         # noinspection PyArgumentList
         super().__init__(parent)
@@ -45,7 +48,10 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     cb_export_wehre: QCheckBox
 
     def __init__(
-        self, default_dir: str, tr: Callable, parent: Optional[QWidget] = None,
+        self,
+        default_dir: str,
+        tr: Callable,
+        parent: Optional[QWidget] = None,
     ):
         super().__init__(default_dir, tr, parent)
 
@@ -78,7 +84,10 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     def select_export(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
-            self, self.tr("Zu erstellende XML-Datei"), self.default_dir, "*.xml",
+            self,
+            self.tr("Zu erstellende XML-Datei"),
+            self.default_dir,
+            "*.xml",
         )
         if filename:
             self.tf_export.setText(filename)
@@ -115,7 +124,10 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     epsg: QgsProjectionSelectionWidget
 
     def __init__(
-        self, default_dir: str, tr: Callable, parent: Optional[QWidget] = None,
+        self,
+        default_dir: str,
+        tr: Callable,
+        parent: Optional[QWidget] = None,
     ):
         super().__init__(default_dir, tr, parent)
 
@@ -135,7 +147,10 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     def select_import(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getOpenFileName(
-            self, self.tr("Zu importierende XML-Datei"), self.default_dir, "*.xml",
+            self,
+            self.tr("Zu importierende XML-Datei"),
+            self.default_dir,
+            "*.xml",
         )
         if filename:
             self.tf_import.setText(filename)
@@ -144,7 +159,10 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     def select_project(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
-            self, self.tr("Zu erstellende Projektdatei"), self.default_dir, "*.qgs",
+            self,
+            self.tr("Zu erstellende Projektdatei"),
+            self.default_dir,
+            "*.qgs",
         )
         if filename:
             self.tf_project.setText(filename)
@@ -153,7 +171,10 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     def select_database(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
-            self, self.tr("Zu erstellende SQLite-Datei"), self.default_dir, "*.sqlite",
+            self,
+            self.tr("Zu erstellende SQLite-Datei"),
+            self.default_dir,
+            "*.sqlite",
         )
         if filename:
             self.tf_database.setText(filename)

@@ -53,8 +53,8 @@ def qgs_version() -> str:
 
 
 def versionolder(versliste: List[int], verslisref: List[int], depth: int = 3) -> bool:
-    """Gibt wahr zurück, wenn eine Versionsliste älter als eine Referenz-Versionsliste ist, 
-       falsch, wenn diese gleich oder größer ist. 
+    """Gibt wahr zurück, wenn eine Versionsliste älter als eine Referenz-Versionsliste ist,
+       falsch, wenn diese gleich oder größer ist.
 
     :param versliste:   Liste von Versionsnummern, höchstwertige zuerst
     :param verslisref:  Liste von Versionsnummern zum Vergleich, höchstwertige zuerst
@@ -160,14 +160,14 @@ def qgs_actual_version(update: bool = True, warning: bool = False) -> bool:
 def createdbtables(
     consl: Connection, cursl: Cursor, version: str = __dbVersion__, epsg: int = 25832
 ) -> bool:
-    """ Erstellt fuer eine neue QKan-Datenbank die benötigten Tabellen.
+    """Erstellt fuer eine neue QKan-Datenbank die benötigten Tabellen.
 
-        :param consl: Datenbankobjekt der SpatiaLite-QKan-Datenbank
-        :param cursl: Zugriffsobjekt der SpatiaLite-QKan-Datenbank
-        :param version: Database version
-        :param epsg: EPSG ID
+    :param consl: Datenbankobjekt der SpatiaLite-QKan-Datenbank
+    :param cursl: Zugriffsobjekt der SpatiaLite-QKan-Datenbank
+    :param version: Database version
+    :param epsg: EPSG ID
 
-        :returns: Testergebnis: True = alles o.k.
+    :returns: Testergebnis: True = alles o.k.
     """
 
     # Haltungen ----------------------------------------------------------------
@@ -350,8 +350,10 @@ def createdbtables(
         return False
 
     sql1 = """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg)
-    sql2 = """SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(
-        epsg
+    sql2 = (
+        """SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(
+            epsg
+        )
     )
     sqlindex1 = """SELECT CreateSpatialIndex('schaechte','geom')"""
     sqlindex2 = """SELECT CreateSpatialIndex('schaechte','geop')"""
@@ -836,8 +838,10 @@ def createdbtables(
         consl.close()
         return False
 
-    sql = "SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(
-        epsg
+    sql = (
+        "SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(
+            epsg
+        )
     )
     sqlindex = "SELECT CreateSpatialIndex('einzugsgebiete','geom')"
     try:
@@ -997,14 +1001,20 @@ def createdbtables(
         consl.close()
         return False
 
-    sql1 = """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(
-        epsg=epsg
+    sql1 = (
+        """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(
+            epsg=epsg
+        )
     )
-    sql2 = """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(
-        epsg=epsg
+    sql2 = (
+        """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(
+            epsg=epsg
+        )
     )
-    sql3 = """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(
-        epsg=epsg
+    sql3 = (
+        """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(
+            epsg=epsg
+        )
     )
     sqlindex = "SELECT CreateSpatialIndex('linkfl','glink')"
     try:
@@ -1046,11 +1056,15 @@ def createdbtables(
     sql1 = """SELECT AddGeometryColumn('linksw','geom',{epsg},'POLYGON',2)""".format(
         epsg=epsg
     )
-    sql2 = """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(
-        epsg=epsg
+    sql2 = (
+        """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(
+            epsg=epsg
+        )
     )
-    sql3 = """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(
-        epsg=epsg
+    sql3 = (
+        """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(
+            epsg=epsg
+        )
     )
     sqlindex = "SELECT CreateSpatialIndex('linksw','geom')"
     try:
@@ -1214,8 +1228,10 @@ def createdbtables(
         consl.close()
         return False
 
-    sql = """SELECT AddGeometryColumn('linkageb','glink',{epsg},'LINESTRING',2)""".format(
-        epsg=epsg
+    sql = (
+        """SELECT AddGeometryColumn('linkageb','glink',{epsg},'LINESTRING',2)""".format(
+            epsg=epsg
+        )
     )
     sqlindex = "SELECT CreateSpatialIndex('linkageb','glink')"
     try:

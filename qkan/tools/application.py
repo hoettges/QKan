@@ -203,7 +203,11 @@ class QKanTools(QKanPlugin):
                 return None
 
             qgsadapt(
-                project_template, self.db_qkan, db_qkan, project_file, epsg=epsg,
+                project_template,
+                self.db_qkan,
+                db_qkan,
+                project_file,
+                epsg=epsg,
             )
 
             del db_qkan  # Datenbankanbindung schließen
@@ -342,8 +346,10 @@ class QKanTools(QKanPlugin):
         liste_teilgebiete = QKan.config.selections.teilgebiete
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
-        sql = '''SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'''
-        if not db_qkan.sql(sql, "QKan_Tools.application.run (4) "):
+        if not db_qkan.sql(
+            'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"',
+            "QKan_Tools.application.run (4) ",
+        ):
             del db_qkan
             return
         daten = db_qkan.fetchall()
@@ -368,8 +374,10 @@ class QKanTools(QKanPlugin):
         liste_abflussparameter = QKan.config.selections.abflussparameter
 
         # Abfragen der Tabelle abflussparameter nach Abflussparametern
-        sql = '''SELECT "apnam" FROM "abflussparameter" GROUP BY "apnam"'''
-        if not db_qkan.sql(sql, "QKan_Tools.application.run (4) "):
+        if not db_qkan.sql(
+            'SELECT "apnam" FROM "abflussparameter" GROUP BY "apnam"',
+            "QKan_Tools.application.run (4) ",
+        ):
             del db_qkan
             return
         daten = db_qkan.fetchall()
@@ -754,5 +762,7 @@ class QKanTools(QKanPlugin):
             )
 
             dbAdapt(
-                cast(str, self.db_qkan), project_file, project,
+                cast(str, self.db_qkan),
+                project_file,
+                project,
             )

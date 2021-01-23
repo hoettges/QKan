@@ -43,7 +43,7 @@ class ImportTask:
 
         if QKan.config.check_import.schaechte:
             if self.append:
-                sql = f"""
+                sql = """
                 INSERT INTO schaechte_data (
                     schnam, xsch, ysch, 
                     sohlhoehe, deckelhoehe, 
@@ -83,7 +83,7 @@ class ImportTask:
 
         if QKan.config.check_import.auslaesse:
             if self.append:
-                sql = f"""
+                sql = """
                 INSERT INTO schaechte_data (
                     schnam, xsch, ysch, 
                     sohlhoehe, deckelhoehe, 
@@ -118,7 +118,7 @@ class ImportTask:
 
         if QKan.config.check_import.speicher:
             if self.append:
-                sql = f"""
+                sql = """
                 INSERT INTO schaechte_data (
                     schnam, xsch, ysch, 
                     sohlhoehe, deckelhoehe, 
@@ -154,7 +154,7 @@ class ImportTask:
         # Profilnummern aller Sonderprofile ergänzen.
         if QKan.config.check_import.rohrprofile:
             if self.append:
-                sql = f"""
+                sql = """
                 INSERT INTO profile (
                     profilnam, he_nr
                 )
@@ -183,7 +183,7 @@ class ImportTask:
         # Haltungen
         if QKan.config.check_import.haltungen:
             if self.append:
-                sql = f"""
+                sql = """
                 INSERT INTO haltungen_data (
                     haltnam, schoben, schunten, 
                     hoehe, breite, laenge, 
@@ -253,7 +253,7 @@ class ImportTask:
 
         if QKan.config.check_import.wehre:
             if self.append:
-                sql = f"""
+                sql = """
                 INSERT INTO wehre_data (
                     wnam, schoben, schunten, 
                     wehrtyp, schwellenhoehe, kammerhoehe, 
@@ -300,7 +300,7 @@ class ImportTask:
 
         if QKan.config.check_import.pumpen:
             if self.append:
-                sql = f"""
+                sql = """
                 INSERT INTO pumpen_data (
                     pnam, schoben, schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, 
                     simstatus, kommentar, createdat)

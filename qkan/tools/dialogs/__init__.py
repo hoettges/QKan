@@ -53,7 +53,10 @@ class QKanDialog(QDialog):
         else:
             # noinspection PyArgumentList,PyCallByClass
             filename, __ = QFileDialog.getSaveFileName(
-                self, title, default_dir, file_filter,
+                self,
+                title,
+                default_dir,
+                file_filter,
             )
 
         if os.path.dirname(filename) != "":

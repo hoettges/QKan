@@ -86,7 +86,7 @@ class ImportFromSWMM(QKanPlugin):
 
     def selectFile_qkanDB(self) -> None:
         """Datenbankverbindung zur QKan-Datenbank (SpatiaLite) auswaehlen, aber noch nicht verbinden.
-           Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt. """
+        Falls die Datenbank noch nicht existiert, wird sie nach Betaetigung von [OK] erstellt."""
 
         # noinspection PyArgumentList
         filename, __ = QFileDialog.getSaveFileName(
@@ -166,5 +166,8 @@ class ImportFromSWMM(QKanPlugin):
             )
 
             importKanaldaten(
-                swm_mfile, database_qkan, projectfile, epsg,
+                swm_mfile,
+                database_qkan,
+                projectfile,
+                epsg,
             )

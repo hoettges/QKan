@@ -139,9 +139,10 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
             [liste_teilgebiete, liste_abflussparameter],
         )
 
-        sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
-
-        if not self.db_qkan.sql(sql, "QKan_Tools.application.dlgro_countselection (1)"):
+        if not self.db_qkan.sql(
+            f"SELECT count(*) AS anzahl FROM flaechen {auswahl}",
+            "QKan_Tools.application.dlgro_countselection (1)",
+        ):
             return
         daten = self.db_qkan.fetchone()
         if daten is not None:

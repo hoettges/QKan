@@ -131,10 +131,10 @@ def get_layer_config_from_qgs_template(
 
 
 def list_qkan_layers(qgs_template: str = None) -> Dict[str, List]:
-    """Dictionary mit den Namen aller QKan-Layer und einer Liste mit: 
-            Tabellenname, Geometriespalte, SQL-Where-Bedingung, Gruppenname
+    """Dictionary mit den Namen aller QKan-Layer und einer Liste mit:
+        Tabellenname, Geometriespalte, SQL-Where-Bedingung, Gruppenname
 
-        Die Zusammenstellung wird aus der Template-QKanprojektdatei gelesen
+    Die Zusammenstellung wird aus der Template-QKanprojektdatei gelesen
     """
     if not qgs_template:
         return {}
@@ -275,8 +275,8 @@ def get_database_QKan(silent: bool = False) -> Tuple[Optional[str], Optional[int
 
 def get_editable_layers() -> Set[str]:
     """Liste der Tabellen, für die in der Layerliste der Status editable aktiviert ist.
-        Dient dazu, sicherzustellen, dass keine Datenbankoperationen auf editierbare
-        Layer zugreifen."""
+    Dient dazu, sicherzustellen, dass keine Datenbankoperationen auf editierbare
+    Layer zugreifen."""
 
     elayers = set([])  # Zuerst leere Liste anlegen
 
@@ -661,7 +661,7 @@ def eval_node_types(db_qkan: "DBConnection") -> None:
 
 def formf(zahl: Optional[float], anz: Optional[int]) -> str:
     """Formatiert eine Fließkommazahl so, dass sie in einer vorgegebenen Anzahl von Zeichen
-       mit maximaler Genauigkeit dargestellt werden kann.
+    mit maximaler Genauigkeit dargestellt werden kann.
     """
     if anz == 0 or anz is None:
         return ""

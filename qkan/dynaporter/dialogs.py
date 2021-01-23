@@ -141,9 +141,10 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
                 "', '".join(liste_teilgebiete)
             )
 
-        sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
-
-        if not self.db_qkan.sql(sql, "QKan_ExportDYNA.application.countselection (1)"):
+        if not self.db_qkan.sql(
+            f"SELECT count(*) AS anzahl FROM flaechen {auswahl}",
+            "QKan_ExportDYNA.application.countselection (1)",
+        ):
             return False
         daten = self.db_qkan.fetchone()
         if not (daten is None):
@@ -158,8 +159,10 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
                 "', '".join(liste_teilgebiete)
             )
 
-        sql = f"SELECT count(*) AS anzahl FROM schaechte {auswahl}"
-        if not self.db_qkan.sql(sql, "QKan_ExportDYNA.application.countselection (2) "):
+        if not self.db_qkan.sql(
+            f"SELECT count(*) AS anzahl FROM schaechte {auswahl}",
+            "QKan_ExportDYNA.application.countselection (2) ",
+        ):
             return False
         daten = self.db_qkan.fetchone()
         if not (daten is None):
@@ -174,8 +177,10 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
                 "', '".join(liste_teilgebiete)
             )
 
-        sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
-        if not self.db_qkan.sql(sql, "QKan_ExportDYNA.application.countselection (3) "):
+        if not self.db_qkan.sql(
+            f"SELECT count(*) AS anzahl FROM haltungen {auswahl}",
+            "QKan_ExportDYNA.application.countselection (3) ",
+        ):
             return False
         daten = self.db_qkan.fetchone()
         if not (daten is None):
@@ -269,8 +274,10 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
             liste_teilgebiete = QKan.config.selections.teilgebiete
 
             # Abfragen der Tabelle teilgebiete nach Teilgebieten
-            sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-            if not self.db_qkan.sql(sql, "QKan_ExportDYNA.application.run (4) "):
+            if not self.db_qkan.sql(
+                'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"',
+                "QKan_ExportDYNA.application.run (4) ",
+            ):
                 return
             daten = self.db_qkan.fetchall()
             self.lw_teilgebiete.clear()
@@ -502,5 +509,8 @@ class ImportDialog(QKanDBDialog, IMPORT_CLASS):  # type: ignore
             )
 
             import_kanaldaten(
-                dynafile, database_qkan, projectfile, epsg,
+                dynafile,
+                database_qkan,
+                projectfile,
+                epsg,
             )

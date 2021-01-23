@@ -87,7 +87,11 @@ class TestLinkfl(QgisTest):
 
         # Erzeugen der Anbindungen der SW-Einleiter
         erg = createlinksw(
-            self.iface, db_qkan=db, liste_teilgebiete=[], suchradius=50.0, epsg=25832,
+            self.iface,
+            db_qkan=db,
+            liste_teilgebiete=[],
+            suchradius=50.0,
+            epsg=25832,
         )
 
         LOGGER.debug("erg (Validate_createlinksw): %s", erg)

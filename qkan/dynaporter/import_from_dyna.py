@@ -213,8 +213,7 @@ def import_kanaldaten(
     # # Referenztabellen laden.
 
     # # Profile. Attribut [profilnam] enthält die Bezeichnung des Benutzers. Dies kann auch ein Kürzel sein.
-    # sql = u'SELECT kp_key, profilnam FROM profile'
-    # if not dbQK.sql(sql, u'importkanaldaten_dyna (3)'):
+    # if not dbQK.sql('SELECT kp_key, profilnam FROM profile', 'importkanaldaten_dyna (3)'):
     # return None
     # daten = dbQK.fetchall()
     # ref_profil = {}
@@ -222,8 +221,7 @@ def import_kanaldaten(
     # ref_profil[el[0]] = el[1]
 
     # # Entwässerungssystem. Attribut [bezeichnung] enthält die Bezeichnung des Benutzers.
-    # sql = u'SELECT kp_nr, bezeichnung FROM entwaesserungsarten'
-    # if not dbQK.sql(sql, u'importkanaldaten_dyna (4)'):
+    # if not dbQK.sql('SELECT kp_nr, bezeichnung FROM entwaesserungsarten', 'importkanaldaten_dyna (4)'):
     # return None
     # daten = dbQK.fetchall()
     # ref_entwart = {}
@@ -231,8 +229,7 @@ def import_kanaldaten(
     # ref_entwart[el[0]] = el[1]
 
     # # Simulationsstatus der Haltungen in Kanal++. Attribut [bezeichnung] enthält die Bezeichnung des Benutzers.
-    # sql = u'SELECT kp_nr, bezeichnung FROM simulationsstatus'
-    # if not dbQK.sql(sql, u'importkanaldaten_dyna (5)'):
+    # if not dbQK.sql('SELECT kp_nr, bezeichnung FROM simulationsstatus', 'importkanaldaten_dyna (5)'):
     # return None
     # daten = dbQK.fetchall()
     # ref_simstat = {}
@@ -280,7 +277,7 @@ def import_kanaldaten(
            xob REAL,
            yob REAL,
            strschluessel TEXT)""",
-        """DELETE FROM dyna12""",
+        "DELETE FROM dyna12",
         """CREATE TABLE IF NOT EXISTS dyna41 (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            schnam TEXT,
@@ -289,19 +286,19 @@ def import_kanaldaten(
            ykoor REAL,
            kanalnummer TEXT,
            haltungsnummer TEXT)""",
-        """DELETE FROM dyna41""",
+        "DELETE FROM dyna41",
         """CREATE TABLE IF NOT EXISTS dynarauheit (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            ks_key TEXT,
            ks REAL)""",
-        """DELETE FROM dynarauheit""",
+        "DELETE FROM dynarauheit",
         """CREATE TABLE IF NOT EXISTS dynaprofil (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            profil_key TEXT,
            profilnam TEXT,
            breite REAL,
            hoehe REAL)""",
-        """DELETE FROM dynaprofil""",
+        "DELETE FROM dynaprofil",
     ]
 
     for sql in sqllist:
@@ -389,7 +386,10 @@ def import_kanaldaten(
                                 Tuple[float, float], [float(w) for w in werte]
                             )
                             grenzen.line(
-                                cast(float, x1), cast(float, y1), xp, yp,
+                                cast(float, x1),
+                                cast(float, y1),
+                                xp,
+                                yp,
                             )  # Grenzen aktualisieren
                             x1, y1 = (
                                 xp,
@@ -405,7 +405,11 @@ def import_kanaldaten(
                                 cast(float, x1), cast(float, y1), xp, yp
                             )  # Grenzen mit Stützstellen aktualisieren
                             grenzen.ppr(
-                                cast(float, x1), cast(float, y1), xp, yp, radius,
+                                cast(float, x1),
+                                cast(float, y1),
+                                xp,
+                                yp,
+                                radius,
                             )  # Grenzen für äußeren Punkt des Bogens aktualisieren
                             x1, y1 = (
                                 xp,
@@ -442,12 +446,14 @@ def import_kanaldaten(
                             # Höhe zu Breite-Verhältnis berechnen
                             breite = (grenzen.xmax - grenzen.xmin) / 1000.0
                             hoehe = (grenzen.ymax - grenzen.ymin) / 1000.0
-                            sql = """INSERT INTO dynaprofil (profil_key, profilnam, breite, hoehe) 
-                                          VALUES ('{key}', '{nam}', {br}, {ho})""".format(
-                                key=profil_key, nam=profilnam, br=breite, ho=hoehe
-                            )
+                            sql = """INSERT INTO dynaprofil (profil_key, profilnam, breite, hoehe)
+                                        VALUES (?, ?, ?, ?)"""
                             logger.debug("sql = {}".format(sql))
-                            if not db_qkan.sql(sql, "importkanaldaten_kp (1)"):
+                            if not db_qkan.sql(
+                                sql,
+                                "importkanaldaten_kp (1)",
+                                parameters=(profil_key, profilnam, breite, hoehe),
+                            ):
                                 del db_qkan
                                 return False
 
@@ -473,11 +479,11 @@ def import_kanaldaten(
                 abflspende = float("0" + zeile[10:20].strip())
                 ks = float("0" + zeile[20:30].strip())
 
-                sql = """INSERT INTO dynarauheit (ks_key, ks) 
-                          Values ('{ks_key}', {ks})""".format(
-                    ks_key=ks_key, ks=ks
-                )
-                if not db_qkan.sql(sql, "importkanaldaten_kp (2)"):
+                if not db_qkan.sql(
+                    "INSERT INTO dynarauheit (ks_key, ks) Values (?, ?)",
+                    "importkanaldaten_kp (2)",
+                    parameters=(ks_key, ks),
+                ):
                     del db_qkan
                     return False
 
@@ -563,29 +569,52 @@ def import_kanaldaten(
                         return False
 
                     try:
-                        sql = f"""
+                        sql = """
                         INSERT INTO dyna12
-                        ( kanalnummer, haltungsnummer, schoben, schunten,
-                          xob, yob, laenge, deckeloben, sohleoben, sohleunten,
-                          material, profil_key, hoehe, ks_key, flaeche, flaecheund, neigkl,
-                          entwart_nr, simstatus_nr, 
-                          flaechenid, strschluessel, haeufigkeit, schdmoben)
-                        VALUES ('{kanalnummer}', '{haltungsnummer}', '{schoben}', '{schunten}',
-                          {xob}, {yob}, {laenge}, {deckeloben}, {sohleoben}, {sohleunten},
-                          '{material}', '{profil_key}', {hoehe}, '{ks_key}', {flaeche}, {flaecheund}, {neigkl},
-                          {entwart_nr}, {simstatus_nr},
-                          '{flaechenid}', '{strschluessel}', {haeufigkeit}, {schdmoben})
+                        (kanalnummer, haltungsnummer, schoben, schunten,
+                        xob, yob, laenge, deckeloben, sohleoben, sohleunten,
+                        material, profil_key, hoehe, ks_key, flaeche, flaecheund, neigkl,
+                        entwart_nr, simstatus_nr, 
+                        flaechenid, strschluessel, haeufigkeit, schdmoben)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """
 
                     except BaseException as err:
                         logger.error("12er: {}\n{}".format(err, zeile))
                     else:
-                        if not db_qkan.sql(sql, "importkanaldaten_dyna import typ12"):
+                        if not db_qkan.sql(
+                            sql,
+                            "importkanaldaten_dyna import typ12",
+                            parameters=(
+                                kanalnummer,
+                                haltungsnummer,
+                                schoben,
+                                schunten,
+                                xob,
+                                yob,
+                                laenge,
+                                deckeloben,
+                                sohleoben,
+                                sohleunten,
+                                material,
+                                profil_key,
+                                hoehe,
+                                ks_key,
+                                flaeche,
+                                flaecheund,
+                                neigkl,
+                                entwart_nr,
+                                simstatus_nr,
+                                flaechenid,
+                                strschluessel,
+                                haeufigkeit,
+                                schdmoben,
+                            ),
+                        ):
                             del db_qkan
                             return False
 
             elif zeile[0:2] == "41":
-
                 try:
                     n = 1
                     kanalnummer = zeile[6:14].lstrip("0 ").replace(" ", "0")
@@ -606,25 +635,25 @@ def import_kanaldaten(
                     )
                     return False
 
-                try:
-                    sql = """INSERT INTO dyna41
-                    ( schnam, deckelhoehe, xkoor, ykoor, kanalnummer, haltungsnummer)
-                    VALUES ('{schnam}', {deckelhoehe}, {xkoor}, {ykoor}, 
-                      '{kanalnummer}', '{haltungsnummer}')""".format(
-                        schnam=schnam,
-                        deckelhoehe=deckelhoehe,
-                        xkoor=xkoor,
-                        ykoor=ykoor,
-                        kanalnummer=kanalnummer,
-                        haltungsnummer=haltungsnummer,
-                    )
-
-                except BaseException as err:
-                    logger.error("16er: {}\n{}".format(err, zeile))
-                else:
-                    if not db_qkan.sql(sql, "importkanaldaten_dyna typ16"):
-                        del db_qkan
-                        return False
+                sql = """
+                INSERT INTO dyna41
+                (schnam, deckelhoehe, xkoor, ykoor, kanalnummer, haltungsnummer)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """
+                if not db_qkan.sql(
+                    sql,
+                    "importkanaldaten_dyna typ16",
+                    parameters=(
+                        schnam,
+                        deckelhoehe,
+                        xkoor,
+                        ykoor,
+                        kanalnummer,
+                        haltungsnummer,
+                    ),
+                ):
+                    del db_qkan
+                    return False
     except BaseException as err:
         fehlermeldung(
             "Dateifehler",
@@ -668,8 +697,7 @@ def import_kanaldaten(
 
     # Tabelle in QKan-Datenbank leeren
     # if check_tabinit:
-    # sql = u'DELETE FROM schaechte'
-    # if not dbQK.sql(sql, 'importkanaldaten_dyna (10)'):
+    # if not dbQK.sql('DELETE FROM schaechte', 'importkanaldaten_dyna (10)'):
     # return None
 
     # Daten aus temporären DYNA-Tabellen abfragen
@@ -759,10 +787,23 @@ def import_kanaldaten(
             sql = f"""
                 INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
                         schachttyp, simstatus, kommentar)
-                VALUES ('{schnam}', {xsch}, {ysch}, {sohlhoehe}, {deckelhoehe}, {durchm}/1000, {druckdicht}, '{entwart}', 
-                        'Schacht', '{simstatus}', '{kommentar}')
-                """
-            if not db_qkan.sql(sql, "importkanaldaten_dyna (13)"):
+                VALUES (?, ?, ?, ?, ?, ?/1000, ?, ?, 'Schacht', ?, ?)"""
+            if not db_qkan.sql(
+                sql,
+                "importkanaldaten_dyna (13)",
+                parameters=(
+                    schnam,
+                    xsch,
+                    ysch,
+                    sohlhoehe,
+                    deckelhoehe,
+                    durchm,
+                    druckdicht,
+                    entwart,
+                    simstatus,
+                    kommentar,
+                ),
+            ):
                 del db_qkan
                 return False
         except BaseException as e:
@@ -871,10 +912,24 @@ def import_kanaldaten(
             sql = f"""
                 INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
                         schachttyp, simstatus, kommentar)
-                VALUES ('{schnam}', {xsch}, {ysch}, {sohlhoehe}, {deckelhoehe}, {durchm}/1000, {druckdicht}, '{entwart}', 
-                        'Auslass', '{simstatus}', '{kommentar}')
+                VALUES (?, ?, ?, ?, ?, ?/1000, ?, ?, 'Auslass', ?, ?)
                 """
-            if not db_qkan.sql(sql, "importkanaldaten_dyna (16)"):
+            if not db_qkan.sql(
+                sql,
+                "importkanaldaten_dyna (16)",
+                parameters=(
+                    schnam,
+                    xsch,
+                    ysch,
+                    sohlhoehe,
+                    deckelhoehe,
+                    durchm,
+                    druckdicht,
+                    entwart,
+                    simstat,
+                    kommentar,
+                ),
+            ):
                 del db_qkan
                 return False
         except BaseException as e:
@@ -991,44 +1046,34 @@ def import_kanaldaten(
 
         # Datensatz aufbereiten in die QKan-DB schreiben
 
-        try:
-            sql = f"""
-                INSERT INTO haltungen_data 
-                (haltnam, schoben, schunten, 
-                hoehe, breite, laenge, sohleoben, sohleunten, 
-                deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus, kommentar) VALUES (
-                '{haltnam}', '{schoben}', '{schunten}', {hoehe}, {breite}, {laenge}, 
-                {sohleoben}, {sohleunten}, {deckeloben}, {deckelunten}, '{teilgebiet}', '{profilnam}', 
-                '{entwart}', {ks}, '{simstatus}', '{kommentar}')
-                """
-        except BaseException as e:
-            fehlermeldung("SQL-Fehler", str(e))
-            fehlermeldung(
-                "Fehler in QKan_Import_from_KP",
-                "\nFehler in sql INSERT INTO haltungen: \n"
-                + str(
-                    (
-                        haltnam,
-                        schoben,
-                        schunten,
-                        hoehe,
-                        breite,
-                        laenge,
-                        sohleoben,
-                        sohleunten,
-                        deckeloben,
-                        deckelunten,
-                        teilgebiet,
-                        profilnam,
-                        entwart,
-                        ks,
-                        simstatus,
-                    )
-                )
-                + "\n\n",
-            )
-
-        if not db_qkan.sql(sql, "importkanaldaten_dyna (9a)"):
+        if not db_qkan.sql(
+            """
+            INSERT INTO haltungen_data 
+            (haltnam, schoben, schunten, 
+            hoehe, breite, laenge, sohleoben, sohleunten, 
+            deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus, kommentar)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            "importkanaldaten_dyna (9a)",
+            parameters=(
+                haltnam,
+                schoben,
+                schunten,
+                hoehe,
+                breite,
+                laenge,
+                sohleoben,
+                sohleunten,
+                deckeloben,
+                deckelunten,
+                teilgebiet,
+                profilnam,
+                entwart,
+                ks,
+                simstatus,
+                kommentar,
+            ),
+        ):
             del db_qkan
             return False
 

@@ -266,8 +266,10 @@ def layersadapt(
         else:
             layer = layerobjects[0]
 
-        tagLayer = "projectlayers/maplayer[layername='{}'][provider='spatialite']".format(
-            layername
+        tagLayer = (
+            "projectlayers/maplayer[layername='{}'][provider='spatialite']".format(
+                layername
+            )
         )
         qgsLayers = qgsxml.findall(tagLayer)
         if len(qgsLayers) > 1:
@@ -300,8 +302,10 @@ def layersadapt(
             # logger.debug(f"\nDatenbankanbindung\n  dbname: {dbname}\n  table: {table}\n  geom: {geom}\n  sql: {sql}")
             if geom != "":
                 # Vektorlayer
-                newdatasource = "dbname='{dbname}' table=\"{table}\" ({geom}) sql={sql}".format(
-                    dbname=database_QKan, table=table, geom=geom, sql=sql
+                newdatasource = (
+                    "dbname='{dbname}' table=\"{table}\" ({geom}) sql={sql}".format(
+                        dbname=database_QKan, table=table, geom=geom, sql=sql
+                    )
                 )
             else:
                 # Tabellenlayer
@@ -325,11 +329,11 @@ def layersadapt(
                 # Nur für Vektorlayer
                 sql = """SELECT srid
                         FROM geom_cols_ref_sys
-                        WHERE Lower(f_table_name) = Lower('{table}')
-                        AND Lower(f_geometry_column) = Lower('{geom}')""".format(
-                    table=table, geom=geom
-                )
-                if not dbQK.sql(sql, "dbQK: k_layersadapt (3)"):
+                        WHERE Lower(f_table_name) = Lower(?)
+                        AND Lower(f_geometry_column) = Lower(?)"""
+                if not dbQK.sql(
+                    sql, "dbQK: k_layersadapt (3)", parameters=(table, geom)
+                ):
                     del dbQK
                     return
 
@@ -435,7 +439,8 @@ def layersadapt(
             elif typeName == "integer":
                 # noinspection PyArgumentList
                 layer.addExpressionField(
-                    expression, QgsField(name=name, type=QVariant.Int, comment=comment),
+                    expression,
+                    QgsField(name=name, type=QVariant.Int, comment=comment),
                 )
             else:
                 fehlermeldung(
@@ -469,8 +474,7 @@ def layersadapt(
     # Zoom auf alles
     if zoom_alles:
         # Tabellenstatistik aktualisieren, damit Zoom alles richtig funktioniert ...
-        sql = "SELECT UpdateLayerStatistics()"
-        if not dbQK.sql(sql, "dbQK: k_layersadapt (5)"):
+        if not dbQK.sql("SELECT UpdateLayerStatistics()", "dbQK: k_layersadapt (5)"):
             del dbQK
             return
 

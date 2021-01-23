@@ -42,7 +42,7 @@ class FBConnection:
 
     def __init__(self, dbname: str):
         """Constructor.
-    
+
         :param dbname: Pfad zur Firebird-Datenbankdatei.
         """
         # Verbindung zur Datenbank herstellen
@@ -72,14 +72,14 @@ class FBConnection:
 
     def __del__(self) -> None:
         """Destructor.
-            
+
         Beendet die Datenbankverbindung.
         """
         self.confb.close()
 
     def __exit__(self) -> None:
         """Destructor.
-            
+
         Beendet die Datenbankverbindung.
         """
         self.confb.close()

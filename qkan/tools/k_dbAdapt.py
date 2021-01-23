@@ -35,7 +35,11 @@ logger = logging.getLogger(u"QKan.tools.k_dbAdapt")
 progress_bar = None
 
 
-def dbAdapt(qkanDB: str, projectFile: str, qkan_project: QgsProject,) -> None:
+def dbAdapt(
+    qkanDB: str,
+    projectFile: str,
+    qkan_project: QgsProject,
+) -> None:
     """Aktualisiert die QKan-Datenbank, indem die Tabellenstruktur auf den aktuellen Stand
     gebracht wird.
 

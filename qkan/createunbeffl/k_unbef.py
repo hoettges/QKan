@@ -45,12 +45,12 @@ def create_unpaved_areas(
     @param autokorrektur        Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
                                 werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
                                 abgebrochen.
-    
-    Für alle TEZG-Flächen wird, falls nicht schon vorhanden, ein unbefestigtes Flächenobjekt erzeugt. 
-    Dazu können in der Auswahlmaske zunächst die Kombinationen aus Abflussparameter und Teilgebiet 
+
+    Für alle TEZG-Flächen wird, falls nicht schon vorhanden, ein unbefestigtes Flächenobjekt erzeugt.
+    Dazu können in der Auswahlmaske zunächst die Kombinationen aus Abflussparameter und Teilgebiet
     gewählt werden, die in der Tabelle "tezg" vorkommen und die nachfolgenden Voraussetzungen erfüllen:
 
-    - Im Feld "abflussparameter" muss auf einen Abflussparameter verwiesen werden, der für unbefestigte 
+    - Im Feld "abflussparameter" muss auf einen Abflussparameter verwiesen werden, der für unbefestigte
       Flächen erzeugt wurde (infiltrationsparameter > 0)
     """
 

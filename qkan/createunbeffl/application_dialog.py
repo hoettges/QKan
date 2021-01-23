@@ -323,7 +323,7 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
 def list_selected_tab_items(table_widget: QTableWidget, n_cols: int = 5) -> List:
     """
     Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
-    
+
     :param table_widget:    Tabelle zur Auswahl der Arten von Haltungsflächen.
     :param n_cols:          Anzahl Spalten des tableWidget-Elements
     """
