@@ -149,7 +149,7 @@ class ImportTask:
         return True
 
     def _profile(self) -> bool:
-        """Import der Haltungen"""
+        """Import der Profile"""
 
         # Profilnummern aller Sonderprofile ergänzen.
         if QKan.config.check_import.rohrprofile:
@@ -230,6 +230,9 @@ class ImportTask:
                 ON ea.he_nr = ro.Kanalart
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = ro.Planungsstatus
+                LEFT JOIN haltungen AS ha
+                ON ha.haltnam = ro.Name
+                WHERE ha.pk IS NULL
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Haltungen"):

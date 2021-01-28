@@ -103,6 +103,7 @@ class QKan:
         from .createunbeffl import CreateUnbefFl
         from .dynaporter import DynaPorter
         from .he8porter import He8Porter
+        from .muporter import MuPorter
         from .linkflaechen import LinkFl
         from .surfaceTools import SurfaceTools
         from .swmmporter import ImportFromSWMM
@@ -113,6 +114,7 @@ class QKan:
             CreateUnbefFl(iface),
             DynaPorter(iface),
             He8Porter(iface),
+            MuPorter(iface),
             LinkFl(iface),
             SurfaceTools(iface),
             ImportFromSWMM(iface),

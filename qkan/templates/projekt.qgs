@@ -2745,8 +2745,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -3468,8 +3468,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -4273,8 +4273,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -4664,8 +4664,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -5656,8 +5656,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -6003,8 +6003,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -7322,8 +7322,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -7891,8 +7891,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -9136,8 +9136,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -10226,8 +10226,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -10755,8 +10755,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="bool" name="allow_null" value="true"/>
                 <Option type="bool" name="calendar_popup" value="true"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
                 <Option type="bool" name="field_iso_format" value="false"/>
               </Option>
             </config>
@@ -11516,8 +11516,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -11998,8 +11998,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -13019,8 +13019,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option type="QString" name="allow_null" value="1"/>
                 <Option type="QString" name="calendar_popup" value="1"/>
-                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm"/>
-                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm"/>
+                <Option type="QString" name="display_format" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option type="QString" name="field_format" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>

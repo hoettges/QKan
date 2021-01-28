@@ -261,6 +261,15 @@ class HE8Config(ClassObject):
     export_file: str = ""
 
 
+class MUConfig(ClassObject):
+    database: str = ""
+    database_erg: str = ""
+    qml_file_results: str = ""
+    template: str = ""
+    import_file: str = ""
+    export_file: str = ""
+
+
 class ProjectConfig(ClassObject):
     file: str = ""
     save_file: bool = True
@@ -337,6 +346,7 @@ class Config(ClassObject):
     swmm: SWMMConfig = SWMMConfig()
     he: HEConfig = HEConfig()
     he8: HE8Config = HE8Config()
+    mu: MUConfig = MUConfig()
     linkflaechen: LinkFlConfig = LinkFlConfig()
     project: ProjectConfig = ProjectConfig()
     tools: ToolsConfig = ToolsConfig()

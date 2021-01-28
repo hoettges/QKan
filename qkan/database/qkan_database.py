@@ -485,7 +485,7 @@ def createdbtables(
             "'Rechteck mit geneigter und horizontaler Sohle (B:H=1:1,b=0.4B)', 26, NULL, NULL",
             "'Rechteck mit geneigter und horizontaler Sohle (B:H=1:2,b=0.4B)', 27, NULL, NULL",
             "'Druckrohrleitung', 50, NULL, NULL",
-            "'Sonderprofil', 68, NULL, NULL",
+            "'Sonderprofil', 68, 2, NULL",
             "'Gerinne', 69, NULL, NULL",
             "'Trapez (offen)', 900, NULL, NULL",
             "'Doppeltrapez (offen)', 901, NULL, NULL",
@@ -932,7 +932,8 @@ def createdbtables(
     flnam TEXT,
     haltnam TEXT,
     schnam TEXT,
-    neigkl INTEGER DEFAULT 0,
+    neigkl INTEGER DEFAULT 1,
+    neigung REAL,               -- absolute Neigung (%)
     teilgebiet TEXT,
     regenschreiber TEXT,
     abflussparameter TEXT,
@@ -1252,7 +1253,7 @@ def createdbtables(
 
         daten = [
             "'keine Angabe', 0, NULL, 5",
-            "'vorhanden', 1, NULL, 0",
+            "'vorhanden', 1, 1, 0",
             "'geplant', 2, NULL, 1",
             "'fiktiv', 3, NULL, 2",
             "'außer Betrieb (keine Sim.)', 4, NULL, 3",

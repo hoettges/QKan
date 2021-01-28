@@ -2676,6 +2676,21 @@ class DBConnection:
                 self.versionlis = [3, 1, 5]
 
             # ------------------------------------------------------------------------------------
+            if versionolder(self.versionlis, [3, 1, 6]):
+
+                # Zusätzliche Parameter für Mike+ (vormals Mike Urban)
+
+                sql = """
+                    ALTER TABLE flaechen ADD COLUMN neigung REAL"""
+                if not self.sql(sql, "dbfunc.DBConnection.version (3.1.6)"):
+                    return False
+                self.commit()
+
+                # Versionsnummer hochsetzen
+
+                self.versionlis = [3, 1, 6]
+
+            # ------------------------------------------------------------------------------------
             # Aktuelle Version in Tabelle "info" schreiben
 
             sql = """UPDATE info SET value = '{}' WHERE subject = 'version'""".format(
