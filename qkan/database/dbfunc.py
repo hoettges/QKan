@@ -278,7 +278,7 @@ class DBConnection:
         self,
         sql: str,
         stmt_category: str = "allgemein",
-        parameters: Optional[Iterable] = None,
+        parameters: Optional[Iterable] = [],
         mute_logger: bool = False,
         transaction: bool = False,  # Unused, for compatibility only
     ) -> bool:
