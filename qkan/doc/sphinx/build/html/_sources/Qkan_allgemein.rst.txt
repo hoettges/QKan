@@ -11,6 +11,8 @@ Langfristig soll QKan eine Anbindung an die in Deutschland weit verbreiteten hyd
 
     - Kanal++/DYNA
     - HYSTEM-EXTRAN 7.8 und 7.9 (setzt zusätzliche Installationen voraus)
+    - HYSTEM-EXTRAN 8.x
+    - MIKE+
 
 Außerdem bestehen verschiedene Möglichkeiten des Datenim- und Exports:
 

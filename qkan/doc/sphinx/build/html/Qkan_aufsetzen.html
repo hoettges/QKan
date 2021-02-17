@@ -46,58 +46,37 @@
             
   <div class="section" id="qkan-plugin-installation">
 <h1>1. QKan - Plugin Installation<a class="headerlink" href="#qkan-plugin-installation" title="Link zu dieser Überschrift">¶</a></h1>
-<p>Willkommen beim Step by Step Tutorial zur Installation von QKan mit dem Betriebssystem Windows. QKan kann auch unter Linux verwendet werden, wo es zum größten Teil weiterhin entwickelt wird. Die nachfolgenden Schritte sind dort in ähnlicher Weise durchzuführen.</p>
-<p>Um QKan auf einem Computer neu einzurichten sind einige Arbeitsschritte notwendig, welche Ihnen im Folgenden vorgestellt werden.
-Zunächst aber noch eine grundlegende Anmerkung: QKan besteht aus zwei Installationspaketen, wobei das erste fast alle Funktionen enthält und durch ein einfaches
-Kopieren des Plugins installiert werden kann.
-In dem zweiten sind die Funktionen zusammengefasst, die zusätzliche Installationen erforderlich machen.
-Dies sind aktuell alle Funktionen, bei denen direkt auf Dateien des Simulationsprogramms HYSTEM-EXTRAN 7.x zugegriffen wird. Dies hängt damit zusammenhängt,
-dass HYSTEM-EXTRAN 7.x eine Firebird-Datenbank verwendet.</p>
+<p>Willkommen beim Step by Step Tutorial zur Installation von QKan mit dem Betriebssystem Windows. QKan kann auch unter
+Linux verwendet werden, wo QGIS zum größten Teil weiterhin entwickelt wird. Die nachfolgenden Schritte sind dort in
+ähnlicher Weise durchzuführen.</p>
+<p>Um QKan auf einem Computer neu einzurichten sind einige Arbeitsschritte notwendig, welche im Folgenden vorgestellt werden.
+Zunächst aber noch eine grundlegende Anmerkung: QKan besteht aus einem Plugin, mit dem das Open-Source GIS-Progamm QGIS um
+vielfältige Funktionen zur Kanaldatenverwaltung erweitert wird. Ausschließlich für die Verwendung im Zusammenhang mit dem
+Simulationsprogramms HYSTEM-EXTRAN 7.x wird ein zweites Plugin benötigt, das aber noch zusätzlich weitere Installationen
+notwendig macht. Dies hängt damit zusammen, dass HYSTEM-EXTRAN 7.x eine Firebird-Datenbank verwendet.</p>
 <div class="section" id="qgis-installieren">
 <h2>1.1. QGIS Installieren<a class="headerlink" href="#qgis-installieren" title="Link zu dieser Überschrift">¶</a></h2>
 <p>QKan basiert auf dem Open-Source-Programm QGIS 3. Deshalb wird dieses als erstes benötigt.
-Die aktuelle Version von QGIS finden Sie hier: <a class="reference external" href="http://www.QGIS.org/de/site/forusers/download.html">QGIS</a> oder falls dieser Link nicht funktioniert können Sie manuell www.QGIS.org aufrufen. Für größere Organisationen ist die sogenannte LTR (long time release) Version empfehlenswert, weil bei dieser Variante mehr Wert auf Stabilität als auf die neuesten Funktionen gelegt wird.</p>
-<p>Aktuell gibt es zwei Versionen von QGIS. In der neuen Version 3.0 wurden grundlegende Softwarepakete, auf denen QGIS aufbaut (QT 5.0 und Python 3.0) aktualisiert
-und einige grundlegende Umstrukturierungen vorgenommen. QKan wird seit August 2019 nur noch für Version 3 weiter entwickelt.
-Durch Klicken auf den &#8220;Jetzt herunterladen&#8221;-Button auf der Startseite werden Sie sofort zur Downloadseite weitergeleitet. Gehen Sie vorher sicher,
+Die aktuelle Version von QGIS finden Sie hier: <a class="reference external" href="http://www.QGIS.org/de/site/forusers/download.html">QGIS</a> oder falls dieser Link nicht funktioniert können Sie manuell
+www.QGIS.org aufrufen. Für größere Organisationen ist die sogenannte LTR (long time release) Version empfehlenswert,
+weil bei dieser Variante mehr Wert auf Stabilität als auf die neuesten Funktionen gelegt wird.</p>
+<p>Laden Sie die für Sie zutreffende &#8220;Eigenständige QGIS-Installation&#8221; herunter. Stellen Sie sicher,
 dass Ihnen genügend freier Speicherplatz zur Verfügung steht, da die QGIS-Installation etwa 1,5 GB
 Speicherplatz einnehmen wird. Wählen Sie in Abhänigkeit von Ihrem Betriebssystem und Ihrer Betriebssystem-Version einen Downloadlink aus.
-In diesem Beispiel verwenden wir die unter dem Punkt &#8220;Für Windows herunterladen&#8221; zu findende Version &#8220;Eigenständige QGIS-Installation Version 3.xx (64bit)&#8221;:</p>
+Die nachstehende Abbildung zeigt die &#8220;Eigenständige QGIS-Installation Version 3.xx (64bit)&#8221;:</p>
 <img alt="_images/QGIS_herunterladen.png" src="_images/QGIS_herunterladen.png" />
-<p>Wählen Sie ein entsprechendes Verzeichnis zum Speichern der Installationsdatei und führen Sie diese anschließend aus. Bestätigen Sie die Installation,
-aktzeptieren das Lizenzabkommen und wählen anschießend das Verzeichnis, in dem QGIS installiert werden soll. Sie können auch einfach auf den Weiter-Button
-klicken, um es im Standartverzeichnis &#8220;C:\Programme\QGIS 3.xx&#8221; zu installieren. Als letzes wird QGIS Sie nach den zusätzlichen Komponenten, wie zum Beispiel
-dem North Carolina Data Set fragen:</p>
+<p>Starten Sie die Installation, akzeptieren das Lizenzabkommen und bestätigen die Installation im Standardverzeichnis &#8220;C:\Programme\QGIS 3.xx&#8221;. Als letztes werden Sie nach zusätzlichen Komponenten, wie zum Beispiel dem North Carolina Data Set gefragt:</p>
 <img alt="_images/QGIS_komponenten.png" src="_images/QGIS_komponenten.png" />
-<p>Für die Nutzung von QKan wird keine dieser zusätzlichen Komponenten benötigt. Sollte QGIS jedoch noch für andere Zwecke genutzt werden, können diese Komponenten
-noch Verwendung finden. Beachten Sie, dass sich der benötgte Speicherplatz entsprechend erhöht, wenn Sie sich dazu entscheiden, die zusätzlichen Komponenten zu
-installieren. Klicken Sie anschließend auf &#8220;Installieren&#8221;, um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.</p>
-<div class="line-block">
-<div class="line">Wenn Sie alles richtig gemacht haben, sollten Sie folgende Nachricht erhalten:</div>
-</div>
-<img alt="_images/QGIS_fertigstellen.png" src="_images/QGIS_fertigstellen.png" />
+<p>Es handelt sich um Beispieldaten, die für die Nutzung von QKan nicht benötigt werden. Klicken Sie anschließend auf &#8220;Installieren&#8221;, um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.</p>
 </div>
 <div class="section" id="qkan-plugins-fur-qgis">
 <h2>1.2. QKan Plugins für QGIS<a class="headerlink" href="#qkan-plugins-fur-qgis" title="Link zu dieser Überschrift">¶</a></h2>
-<p>Nachdem QGIS erfolgreich auf Ihrem System installiert wurde, können nun die QKan-Plugins installiert werden.
-Es handelt sich um zwei Module, die Sie auf dem github-Verzeichnis zu QKan finden.
+<p>Nachdem QGIS erfolgreich auf Ihrem System installiert wurde, kann nun das QKan-Plugin installiert werden.
 Einen Link zu den aktuellen Version finden Sie hier (rot eingerahmt): <a class="reference external" href="https://github.com/hoettges/QKan/releases">QKan3-GITHUB</a> .</p>
 <img alt="_images/github_qkan.png" src="_images/github_qkan.png" />
-<p>Das Plugin &#8220;qkan&#8221; enthält alle QKan-Module mit Ausnahme der Module, die im Zusammenhang mit HYSTEM-EXTRAN Version 7.8 oder 7.9 benötigt werden.
-Diese sind im Plugin &#8220;qkan_he7&#8221; enthalten, erfordern aber noch weitere Installationen. Diese sind weiter unten erläutert.</p>
-<p>Die Installation des Plugins erfolgt durch einfaches Kopieren des Ordners &#8220;qkan&#8221; bzw. &#8220;qkan_he7&#8221;,
-die sich in den beiden Zip-Archiven befinden,
-in das Plugin-Verzeichnis. Dieses finden Sie wie folgt:</p>
-<p>Starten Sie QGIS. Das Plugin-Verzeichnis finden Sie mit Hilfe des
-QGIS-Menüs &#8220;Einstellungen &gt; Benutzerprofile &gt; Aktuelles Profilverzeichnis öffnen&#8221;.
-Dort wechseln Sie in den Unterordner &#8220;python\plugins&#8221;. Nun kopieren Sie das Verzeichnis &#8220;qkan&#8221; aus
-dem Zip-Archiv &#8220;qkan.zip&#8221; in diesen Ordner. Im nachfolgenden Bild befinden sich bereits beide Plugins im Plugin-Ordner.</p>
-<img alt="_images/QKan_plugins.png" src="_images/QKan_plugins.png" />
-<p>Nun muss zunächst das Plugin &#8220;qkan&#8221; aktiviert werden. Öffnen Sie mit dem Menü &#8220;Erweiterungen &gt; Erweiterungen verwalten und installieren...&#8221;
-folgendes Fenster:</p>
-<img alt="_images/Qgis_erweiterungen.png" src="_images/Qgis_erweiterungen.png" />
-<p>Wählen Sie an der linken Seite den Reiter &#8220;Installiert&#8221; und setzen Sie den Haken vor dem Plugin &#8220;QKan&#8221;. Das Plugin &#8220;Qkan_Hystem-Extran 7&#8221; aktivieren Sie bitte nur, wenn Sie bereits, wie weiter unten erläutert,
-Firebird und das entsprechende Zusatzmodul &#8220;pyfirebirdsql&#8221; installiert haben.</p>
+<p>Laden Sie das ZIP-Archiv herunter. Die Installation des Plugins erfolgt mit Hilfe des entsprechenden QGIS-Menüs. Starten Sie dazu QGIS und öffnen Sie das Menü &#8220;Erweiterungen &gt; Erweiterungen verwalten und installieren...&#8221;. Wählen Sie dort die Kategorie &#8220;Aus ZIP installieren&#8221;:</p>
+<img alt="_images/Qgis_erweiterungen_zip.png" src="_images/Qgis_erweiterungen_zip.png" />
+<p>Nun können Sie das ZIP-Archiv mit der Schaltfläche [...] auswählen und die Erweiterung installieren.</p>
 <p>Nach dem Schließen dieses Fensters stehen in QGIS ein Werkzeugkasten &#8220;QKan&#8221; mit mehreren Icons
 sowie ein Hauptmenü &#8220;QKan&#8221; mit mehreren Untermenüs zur Verfügung.</p>
 <img alt="_images/Qgis_menue.png" src="_images/Qgis_menue.png" />
