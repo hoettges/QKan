@@ -56,7 +56,7 @@ sowie ein Hauptmenü "QKan" mit mehreren Untermenüs zur Verfügung.
 
 .. image:: .\QKan_Bilder\Qgis_menue.png
 
-Damit haben Sie QKan erfolgreich auf Ihren Computer installiert!
+Damit haben Sie QKan erfolgreich auf Ihrem Computer installiert!
 
 
 QKan-HE7 Plugin für HYSTEM-EXTRAN 7.x
