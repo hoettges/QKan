@@ -1,18 +1,16 @@
-from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
+from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
 from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
-from qkan import QKan, enums
+from qkan import enums
 from qkan.database.dbfunc import DBConnection
 
-# from qkan.importhe8.import_from_he8 import importhe8
-from qkan.he8porter.application import He8Porter
 from qkan.tools.k_layersadapt import layersadapt
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
-class TestHE8QKan(QgisTest):
+class TestMUQKan(QgisTest):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -22,21 +20,25 @@ class TestHE8QKan(QgisTest):
             z.extractall(BASE_WORK)
 
     def test_import(self) -> None:
-        QKan.config.he8.database = str(BASE_WORK / "itwh.sqlite")
-        QKan.config.he8.import_file = str(BASE_WORK / "muster-modelldatenbank.idbf")
-        QKan.config.project.file = str(BASE_WORK / "plan.qgs")
+        database_qkan = str(BASE_WORK / "itwh.sqlite")
+        he8file = str(BASE_WORK / "muster-modelldatenbank.idbf")
+        project_file = str(BASE_WORK / "plan.qgs")
 
-        imp = He8Porter(iface())
-        erg = imp._doimport()
+        erg = importKanaldaten(
+            inpfile=he8file,
+            database_qkan=database_qkan,
+            projectfile=project_file,
+            epsg=31467,
+        )
 
-        LOGGER.debug("erg (Validate_HE8_Import): %s", erg)
+        LOGGER.debug("erg (Validate_MU_Import): %s", erg)
         if not erg:
-            LOGGER.info("Fehler in TestHE8QKan")
+            LOGGER.info("Fehler in TestMUQKan")
         # self.assertTrue(False, "Fehlernachricht")
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
-class TestQKanHE8(QgisTest):
+class TestQKanMU(QgisTest):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -46,7 +48,7 @@ class TestQKanHE8(QgisTest):
             z.extractall(BASE_WORK)
 
     def test_export(self) -> None:
-        QKan.config.he8.database = str(BASE_WORK / "itwh.sqlite")
+        database_qkan = str(BASE_WORK / "itwh.sqlite")
         database_he8 = str(BASE_WORK / "itwh.idbm")
         # project_file = str(BASE_WORK / "plan_export.qgs")
         template_he8 = str(BASE_WORK / "muster_vorlage.idbm")
@@ -56,7 +58,7 @@ class TestQKanHE8(QgisTest):
         # LOGGER.debug("Geladene Projektdatei: %s", project.fileName())
 
         layersadapt(
-            database_QKan=QKan.config.he8.database,
+            database_QKan=database_qkan,
             projectTemplate="",
             anpassen_ProjektMakros=False,
             anpassen_Datenbankanbindung=False,
@@ -69,7 +71,7 @@ class TestQKanHE8(QgisTest):
             anpassen_auswahl=enums.SelectedLayers.NONE,
         )
 
-        db = DBConnection(dbname=QKan.config.he8.database)
+        db = DBConnection(dbname=database_qkan)
         if not db.connected:
             raise Exception("Datenbank nicht gefunden oder nicht aktuell.")
 
@@ -118,7 +120,7 @@ class TestQKanHE8(QgisTest):
             check_export=exportChoice,
         )
 
-        LOGGER.debug(f"erg (Validate_HE8_export): {erg}")
+        LOGGER.debug(f"erg (Validate_MU_export): {erg}")
         if not erg:
             LOGGER.info("Nicht ausgeführt, weil zuerst QKan-DB aktualisiert wurde.!")
 
