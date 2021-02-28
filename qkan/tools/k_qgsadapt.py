@@ -31,7 +31,7 @@ import logging
 import os
 from xml.etree import ElementTree as ET
 
-from qgis.core import QgsCoordinateReferenceSystem
+from qgis.core import Qgis ,QgsCoordinateReferenceSystem
 from qgis.utils import pluginDirectory
 from qkan import QKAN_FORMS, QKAN_TABLES
 from qkan.database.dbfunc import DBConnection
@@ -72,8 +72,8 @@ def qgsadapt(
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten
     sql = """SELECT min(x(coalesce(geop, centroid(geom)))) AS xmin, 
-                    max(x(coalesce(geop, centroid(geom)))) AS xmax, 
                     min(y(coalesce(geop, centroid(geom)))) AS ymin, 
+                    max(x(coalesce(geop, centroid(geom)))) AS xmax, 
                     max(y(coalesce(geop, centroid(geom)))) AS ymax
              FROM schaechte"""
     try:
@@ -90,48 +90,28 @@ def qgsadapt(
         fehlermeldung(
             "\nFehler in sql_zoom; daten= \n",
         )
-        zoom = [0.0, 100.0, 0.0, 100.0]
+        zoom = [0.0, 0.0, 100.0, 100.0]
 
     # --------------------------------------------------------------------------
     # Projektionssystem für die Projektdatei vorbereiten,
     # außer: Wenn epsg aus Parameterliste vorgegeben, dann übernehmen
     if epsg:
-        srid = epsg
+        srsid = epsg
+        if Qgis.QGIS_VERSION_INT < 31000:
+            proj4text = QgsCoordinateReferenceSystem(srsid).toProj4()
+        else:
+            proj4text = QgsCoordinateReferenceSystem(srsid).toProj()
         logger.debug(f"Vorgabe epsg: %s", epsg)
     else:
-        sql = """SELECT srid
+        sql = """SELECT srsid, proj4text
                 FROM geom_cols_ref_sys
                 WHERE Lower(f_table_name) = Lower('schaechte')
                 AND Lower(f_geometry_column) = Lower('geom')"""
         if not dbQK.sql(sql, "k_qgsadapt (1)"):
             return False
+        srsid, proj4text = dbQK.fetchone()
 
-        srid = dbQK.fetchone()[0]
-    try:
-        crs = QgsCoordinateReferenceSystem(srid, QgsCoordinateReferenceSystem.EpsgCrsId)
-        srsid = crs.srsid()
-        proj4text = crs.toProj4()
-        # description = crs.description()
-        # projectionacronym = crs.projectionAcronym()
-        # if "ellipsoidacronym" in dir(crs):
-        #     ellipsoidacronym = crs.ellipsoidacronym()
-        # else:
-        #     ellipsoidacronym = None
-    except BaseException as err:
-        srid = 0
-        srsid, proj4text, description, projectionacronym, ellipsoidacronym = (
-            "dummy",
-            "dummy",
-            "dummy",
-            "dummy",
-            "dummy",
-        )
-
-        fehlermeldung('\nFehler in "daten"', repr(err))
-        fehlermeldung(
-            "Fehler in qgsadapt",
-            "\nFehler bei der Ermittlung der srid: \n",
-        )
+    srid = srsid
 
     # --------------------------------------------------------------------------
     # Projektdatei schreiben, falls ausgewählt
@@ -163,7 +143,7 @@ def qgsadapt(
             # Nur QKan-Tabellen bearbeiten
             if tex[tex.index('table="') + 7 :].split('" ')[0] in QKAN_TABLES:
 
-                # <extend> löschen
+                # <extent> löschen
                 for tag_extent in tag_maplayer.findall("./extent"):
                     tag_maplayer.remove(tag_extent)
 
@@ -177,7 +157,7 @@ def qgsadapt(
                     # elem = ET.SubElement(tag_spatialrefsys, "srid")
                     # elem.text = "{}".format(srid)
                     elem = ET.SubElement(tag_spatialrefsys, "authid")
-                    elem.text = "EPSG:{}".format(srid)
+                    elem.text = "EPSG:{}".format(srsid)
                     # elem = ET.SubElement(tag_spatialrefsys, "description")
                     # elem.text = description
                     # elem = ET.SubElement(tag_spatialrefsys, "projectionacronym")
@@ -199,7 +179,7 @@ def qgsadapt(
 
         # Zoom für Kartenfenster einstellen -------------------------------------------------------
         if len(zoom) == 0 or any([x is None for x in zoom]):
-            zoom = [0.0, 100.0, 0.0, 100.0]
+            zoom = [0.0, 0.0, 100.0, 100.0]
         for tag_extent in root.findall(".//mapcanvas/extent"):
             for idx, name in enumerate(["xmin", "ymin", "xmax", "ymax"]):
                 element = tag_extent.find(f"./{name}")

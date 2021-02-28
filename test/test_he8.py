@@ -4,11 +4,10 @@ from zipfile import ZipFile
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
 from qkan import QKan, enums
-from qkan.database.dbfunc import DBConnection
 
-# from qkan.importhe8.import_from_he8 import importhe8
 from qkan.he8porter.application import He8Porter
 from qkan.tools.k_layersadapt import layersadapt
+from qkan.tools.k_dbAdapt import dbAdapt
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
@@ -23,7 +22,7 @@ class TestHE8QKan(QgisTest):
 
     def test_import(self) -> None:
         QKan.config.he8.database = str(BASE_WORK / "itwh.sqlite")
-        QKan.config.he8.import_file = str(BASE_WORK / "muster-modelldatenbank.idbf")
+        QKan.config.he8.import_file = str(BASE_WORK / "modell.idbm")
         QKan.config.project.file = str(BASE_WORK / "plan.qgs")
 
         imp = He8Porter(iface())
@@ -47,13 +46,17 @@ class TestQKanHE8(QgisTest):
 
     def test_export(self) -> None:
         QKan.config.he8.database = str(BASE_WORK / "itwh.sqlite")
-        database_he8 = str(BASE_WORK / "itwh.idbm")
+        QKan.config.he8.export_file = str(BASE_WORK / "itwh.idbm")
         # project_file = str(BASE_WORK / "plan_export.qgs")
-        template_he8 = str(BASE_WORK / "muster_vorlage.idbm")
+        QKan.config.he8.template = str(BASE_WORK / "muster_vorlage.idbm")
 
         # project = QgsProject.instance()
         # project.read(project_file)
         # LOGGER.debug("Geladene Projektdatei: %s", project.fileName())
+
+        dbAdapt(
+            qkanDB=QKan.config.he8.database
+        )
 
         layersadapt(
             database_QKan=QKan.config.he8.database,
@@ -68,61 +71,35 @@ class TestQKanHE8(QgisTest):
             fehlende_layer_ergaenzen=False,
             anpassen_auswahl=enums.SelectedLayers.NONE,
         )
+        QKan.config.check_export.schaechte = True
+        QKan.config.check_export.auslaesse = False
+        QKan.config.check_export.speicher = True
+        QKan.config.check_export.haltungen = True
+        QKan.config.check_export.pumpen = False
+        QKan.config.check_export.wehre = False
+        QKan.config.check_export.flaechen = True
+        QKan.config.check_export.einleitdirekt = False
+        QKan.config.check_export.aussengebiete = False
+        QKan.config.check_export.einzugsgebiete = False
+        QKan.config.check_export.tezg = True
 
-        db = DBConnection(dbname=QKan.config.he8.database)
-        if not db.connected:
-            raise Exception("Datenbank nicht gefunden oder nicht aktuell.")
+        QKan.config.check_export.abflussparameter = False
+        QKan.config.check_export.bodenklassen = False
+        QKan.config.check_export.rohrprofile = False
 
-        exportChoice = {
-            "export_schaechte": True,
-            "export_auslaesse": False,
-            "export_speicher": True,
-            "export_haltungen": True,
-            "export_pumpen": False,
-            "export_wehre": False,
-            "export_flaechenrw": True,
-            "export_einleitdirekt": False,
-            "export_aussengebiete": False,
-            "export_abflussparameter": False,
-            "export_regenschreiber": False,
-            "export_rohrprofile": False,
-            "export_speicherkennlinien": False,
-            "export_bodenklassen": False,
-            "modify_schaechte": True,
-            "modify_auslaesse": False,
-            "modify_speicher": True,
-            "modify_haltungen": True,
-            "modify_pumpen": False,
-            "modify_wehre": False,
-            "modify_flaechenrw": True,
-            "modify_einleitdirekt": False,
-            "modify_aussengebiete": False,
-            "modify_abflussparameter": False,
-            "modify_regenschreiber": False,
-            "modify_rohrprofile": False,
-            "modify_speicherkennlinien": False,
-            "modify_bodenklassen": False,
-            "combine_einleitdirekt": False,
-        }
+        QKan.config.check_export.append = True
+        QKan.config.check_export.update = False
+        QKan.config.check_export.synch = False
 
-        erg = exporthe8(
-            database_he=database_he8,
-            dbtemplate_he=template_he8,
-            db_qkan=db,
-            liste_teilgebiete=[],
-            autokorrektur=False,
-            fangradius=0.1,
-            mindestflaeche=0.5,
-            mit_verschneidung=True,
-            export_flaechen_he8=False,
-            check_export=exportChoice,
-        )
+        imp = He8Porter(iface())
+        imp.connectQKanDB(QKan.config.he8.database)
+        erg = imp._doexport()
 
         LOGGER.debug(f"erg (Validate_HE8_export): {erg}")
         if not erg:
-            LOGGER.info("Nicht ausgeführt, weil zuerst QKan-DB aktualisiert wurde.!")
+            LOGGER.info("Fehler in TestQKanHE8")
 
-        del db
+        del imp
         # self.assertTrue(False, "Fehlernachricht")
 
 

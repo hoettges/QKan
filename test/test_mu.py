@@ -1,12 +1,13 @@
-from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest
+from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
 from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
-from qkan import enums
-from qkan.database.dbfunc import DBConnection
+from qkan import QKan, enums
 
+from qkan.muporter.application import MuPorter
 from qkan.tools.k_layersadapt import layersadapt
+from qkan.tools.k_dbAdapt import dbAdapt
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
@@ -16,20 +17,16 @@ class TestMUQKan(QgisTest):
         super().setUpClass()
 
         # Extract files
-        with ZipFile(BASE_DATA / "test_he8Import.zip") as z:
+        with ZipFile(BASE_DATA / "test_mu2021Import.zip") as z:
             z.extractall(BASE_WORK)
 
     def test_import(self) -> None:
-        database_qkan = str(BASE_WORK / "itwh.sqlite")
-        he8file = str(BASE_WORK / "muster-modelldatenbank.idbf")
-        project_file = str(BASE_WORK / "plan.qgs")
+        QKan.config.mu.database = str(BASE_WORK / "urban_qk.sqlite")
+        QKan.config.mu.import_file = str(BASE_WORK / "Urban flooding.sqlite")
+        QKan.config.project.file = str(BASE_WORK / "plan.qgs")
 
-        erg = importKanaldaten(
-            inpfile=he8file,
-            database_qkan=database_qkan,
-            projectfile=project_file,
-            epsg=31467,
-        )
+        imp = MuPorter(iface())
+        erg = imp._doimport()
 
         LOGGER.debug("erg (Validate_MU_Import): %s", erg)
         if not erg:
@@ -44,21 +41,25 @@ class TestQKanMU(QgisTest):
         super().setUpClass()
 
         # Extract files
-        with ZipFile(BASE_DATA / "test_he8Export.zip") as z:
+        with ZipFile(BASE_DATA / "test_MUExport.zip") as z:
             z.extractall(BASE_WORK)
 
     def test_export(self) -> None:
-        database_qkan = str(BASE_WORK / "itwh.sqlite")
-        database_he8 = str(BASE_WORK / "itwh.idbm")
+        QKan.config.mu.database = str(BASE_WORK / "urban_qk.sqlite")
+        QKan.config.mu.export_file = str(BASE_WORK / "Urban flooding.sqlite")
         # project_file = str(BASE_WORK / "plan_export.qgs")
-        template_he8 = str(BASE_WORK / "muster_vorlage.idbm")
+        QKan.config.mu.template = str(BASE_WORK / "mu_vorlage.sqlite")
 
         # project = QgsProject.instance()
         # project.read(project_file)
         # LOGGER.debug("Geladene Projektdatei: %s", project.fileName())
 
+        dbAdapt(
+            qkanDB=QKan.config.mu.database
+        )
+
         layersadapt(
-            database_QKan=database_qkan,
+            database_QKan=QKan.config.mu.database,
             projectTemplate="",
             anpassen_ProjektMakros=False,
             anpassen_Datenbankanbindung=False,
@@ -70,61 +71,35 @@ class TestQKanMU(QgisTest):
             fehlende_layer_ergaenzen=False,
             anpassen_auswahl=enums.SelectedLayers.NONE,
         )
+        QKan.config.check_export.schaechte = True
+        QKan.config.check_export.auslaesse = False
+        QKan.config.check_export.speicher = True
+        QKan.config.check_export.haltungen = True
+        QKan.config.check_export.pumpen = False
+        QKan.config.check_export.wehre = False
+        QKan.config.check_export.flaechen = True
+        QKan.config.check_export.einleitdirekt = False
+        QKan.config.check_export.aussengebiete = False
+        QKan.config.check_export.einzugsgebiete = False
+        QKan.config.check_export.tezg = True
 
-        db = DBConnection(dbname=database_qkan)
-        if not db.connected:
-            raise Exception("Datenbank nicht gefunden oder nicht aktuell.")
+        QKan.config.check_export.abflussparameter = False
+        QKan.config.check_export.bodenklassen = False
+        QKan.config.check_export.rohrprofile = False
 
-        exportChoice = {
-            "export_schaechte": True,
-            "export_auslaesse": False,
-            "export_speicher": True,
-            "export_haltungen": True,
-            "export_pumpen": False,
-            "export_wehre": False,
-            "export_flaechenrw": True,
-            "export_einleitdirekt": False,
-            "export_aussengebiete": False,
-            "export_abflussparameter": False,
-            "export_regenschreiber": False,
-            "export_rohrprofile": False,
-            "export_speicherkennlinien": False,
-            "export_bodenklassen": False,
-            "modify_schaechte": True,
-            "modify_auslaesse": False,
-            "modify_speicher": True,
-            "modify_haltungen": True,
-            "modify_pumpen": False,
-            "modify_wehre": False,
-            "modify_flaechenrw": True,
-            "modify_einleitdirekt": False,
-            "modify_aussengebiete": False,
-            "modify_abflussparameter": False,
-            "modify_regenschreiber": False,
-            "modify_rohrprofile": False,
-            "modify_speicherkennlinien": False,
-            "modify_bodenklassen": False,
-            "combine_einleitdirekt": False,
-        }
+        QKan.config.check_export.append = True
+        QKan.config.check_export.update = False
+        QKan.config.check_export.synch = False
 
-        erg = exporthe8(
-            database_he=database_he8,
-            dbtemplate_he=template_he8,
-            db_qkan=db,
-            liste_teilgebiete=[],
-            autokorrektur=False,
-            fangradius=0.1,
-            mindestflaeche=0.5,
-            mit_verschneidung=True,
-            export_flaechen_he8=False,
-            check_export=exportChoice,
-        )
+        imp = MuPorter(iface())
+        imp.connectQKanDB(QKan.config.mu.database)
+        erg = imp._doexport()
 
         LOGGER.debug(f"erg (Validate_MU_export): {erg}")
         if not erg:
-            LOGGER.info("Nicht ausgeführt, weil zuerst QKan-DB aktualisiert wurde.!")
+            LOGGER.info("Fehler in TestQKanMU")
 
-        del db
+        del imp
         # self.assertTrue(False, "Fehlernachricht")
 
 

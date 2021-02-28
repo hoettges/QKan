@@ -80,6 +80,8 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
     lw_teilgebiete: QListWidget
 
+    db_qkan: DBConnection
+
     # cb_export_schaechte: QCheckBox
     # cb_export_auslaesse: QCheckBox
     # cb_export_speicher: QCheckBox
@@ -268,25 +270,10 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
             self.lf_anzahl_haltungen.setText("0")
         return True
 
-    def connectQKanDB(self, project_path: str, teilgebiete: List[str]) -> bool:
-        """Liest die verknüpfte QKan-DB aus dem geladenen Projekt"""
-        # Verbindung zur Datenbank des geladenen Projekts herstellen
-        database_qkan, _ = get_database_QKan()
-        if database_qkan:
-            self.db_qkan: Optional[DBConnection] = DBConnection(dbname=database_qkan)
-            if not self.db_qkan.connected:
-                logger.error(
-                    "Fehler in he8porter.application_dialog.connectQKanDB:\n"
-                    f"QKan-Datenbank {database_qkan:s} wurde nicht"
-                    " gefunden oder war nicht aktuell!\nAbbruch!"
-                )
-                return False
-        else:
-            fehlermeldung("Fehler: Für den Export muss ein Projekt geladen sein!")
-            return False
-        # Fill dialog with current info
-        self.tf_database.setText(database_qkan)
+    def prepareDialog(self, db_qkan) -> bool:
+        """Füllt Auswahllisten im Dialog"""
 
+        self.db_qkan = db_qkan
         # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
 
         sql = """INSERT INTO teilgebiete (tgnam)
@@ -340,20 +327,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
                     ),
                     repr(err),
                 )
-        # Abfragen der Tabelle teilgebiete nach Teilgebieten
-
-        # Arbeitsverzeichnis wird mit Pfad zur Projektdatei initialisiert
-        logger.debug(
-            f"he8porter.application.He8Porter.__init__:\nproject_path: {project_path}"
-        )
-        if project_path:
-            self.default_dir = str(Path(project_path).parent)
-        else:
-            # noinspection PyArgumentList
-            self.default_dir = str(
-                Path(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[-1])
-            )
-        logger.debug(f"He8Porter.run_export: default_dir: {self.default_dir}")
         return True
 
     def connectHEDB(self, database_he: str) -> None:

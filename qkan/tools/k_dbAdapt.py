@@ -37,8 +37,8 @@ progress_bar = None
 
 def dbAdapt(
     qkanDB: str,
-    projectFile: str,
-    qkan_project: QgsProject,
+    projectFile: str=None,
+    qkan_project: QgsProject=None,
 ) -> None:
     """Aktualisiert die QKan-Datenbank, indem die Tabellenstruktur auf den aktuellen Stand
     gebracht wird.
@@ -74,4 +74,5 @@ def dbAdapt(
 
     del dbQK
 
-    qkan_project.clear()
+    if projectFile:
+        qkan_project.clear()
