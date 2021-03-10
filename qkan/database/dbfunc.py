@@ -267,11 +267,13 @@ class DBConnection:
 
         data = self.fetchone()
         if data is None:
-            fehlermeldung(
+            meldung(
                 "Fehler in dbfunc.DBConnection.getepsg (2)",
                 "Konnte EPSG nicht ermitteln",
             )
-        epsg: int = data[0]
+            epsg = None
+        else:
+            epsg: int = data[0]
         return epsg
 
     def sql(
