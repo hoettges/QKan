@@ -17,7 +17,7 @@ from qkan.database.sbfunc import SBConnection
 
 from .Enums import LayerType, SliderMode
 
-main_logger = logging.getLogger("QKan.ganglinienhe8\plotter")
+main_logger = logging.getLogger("QKan.ganglinienhe8/plotter")
 main_logger.info("Plotter-Modul gestartet")
 plots = dict(surface=None, max=None, waterlevel=None)
 

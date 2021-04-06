@@ -346,7 +346,7 @@ class GanglinienHE8:
         """
         haltungen = route.get("haltungen", [])
         schaechte = route.get("schaechte", [])
-        # Ruben: Verbindung zur Datenbank
+
         db = SBConnection(self.__result_db)
         if db is None:
             main_logger.error(
@@ -354,7 +354,6 @@ class GanglinienHE8:
                     self.__result_db
                 )
             )
-        # Ruben: Einlesen der Kanaldaten nur zum Test, ob überhaupt vorhanden
         statement = u'SELECT kante FROM lau_max_el WHERE "KANTE"={}'
         for haltung in haltungen:
             db.sql(statement.format("'{}'".format(haltung)))

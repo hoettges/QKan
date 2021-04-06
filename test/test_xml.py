@@ -5,27 +5,27 @@ from zipfile import ZipFile
 from qgis.testing import unittest
 from qkan import QKan, enums
 
-from qkan.he8porter.application import He8Porter
+from qkan.xmlporter.application import XmlPorter
 from qkan.tools.k_layersadapt import layersadapt
 from qkan.tools.k_dbAdapt import dbAdapt
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
-class TestHE8QKan(QgisTest):
+class TestXmlQKan(QgisTest):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
 
         # Extract files
-        with ZipFile(BASE_DATA / "test_he8Import.zip") as z:
+        with ZipFile(BASE_DATA / "test_isybau_aj_import.zip") as z:
             z.extractall(BASE_WORK)
 
     def test_import(self) -> None:
-        QKan.config.database.qkan = str(BASE_WORK / "itwh.sqlite")
-        QKan.config.he8.import_file = str(BASE_WORK / "modell.idbm")
+        QKan.config.database.qkan = str(BASE_WORK / "guissem.sqlite")
+        QKan.config.xml.import_file = str(BASE_WORK / "Datenausgabe ISYBAU-2017_29-01-21.xml")
         QKan.config.project.file = str(BASE_WORK / "plan.qgs")
 
-        imp = He8Porter(iface())
+        imp = XmlPorter(iface())
         erg = imp._doimport()
 
         LOGGER.debug("erg (Validate_HE8_Import): %s", erg)

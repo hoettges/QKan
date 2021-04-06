@@ -114,7 +114,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # Init fields
 
         # Datenbanken und Vorlagen aus config übernehmen
-        # self.tf_database.setText(QKan.config.he8.database)
+        # self.tf_database.setText(QKan.config.database.qkan)
         self.tf_exportdb.setText(QKan.config.he8.export_file)
         self.tf_template.setText(QKan.config.he8.template)
 
@@ -394,7 +394,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         # self.button_box.helpRequested.connect(self.click_help)
 
         # Init fields
-        self.tf_database.setText(QKan.config.he8.database)
+        self.tf_database.setText(QKan.config.database.qkan)
         self.tf_import.setText(QKan.config.he8.import_file)
         # noinspection PyCallByClass,PyArgumentList
         self.pw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))

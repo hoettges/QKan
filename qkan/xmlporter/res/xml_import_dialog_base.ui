@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>523</width>
-    <height>475</height>
+    <height>432</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>320</y>
+     <y>269</y>
      <width>481</width>
      <height>81</height>
     </rect>
@@ -231,7 +231,7 @@
      <x>20</x>
      <y>170</y>
      <width>481</width>
-     <height>121</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="font">
@@ -315,38 +315,12 @@
      <string>...</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_import_tabinit">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>80</y>
-      <width>381</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alle Tabellen, die in QKan vorhanden sind, werden vor dem Export in der HYSTEM-EXTRAN-Datenbank geleert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string>Tabellen in QKan-Datenbank vor dem Import initialisieren</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>421</y>
+     <y>370</y>
      <width>251</width>
      <height>41</height>
     </rect>

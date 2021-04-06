@@ -73,7 +73,7 @@ class He8Porter(QKanPlugin):
         if self.export_dlg.exec_():
 
             # Read from form and save to config
-            QKan.config.he8.database = self.export_dlg.tf_database.text()
+            QKan.config.database.qkan = self.export_dlg.tf_database.text()
             QKan.config.he8.export_file = self.export_dlg.tf_exportdb.text()
             QKan.config.he8.template = self.export_dlg.tf_template.text()
 
@@ -183,7 +183,7 @@ class He8Porter(QKanPlugin):
 
         if self.import_dlg.exec_():
             # Read from form and save to config
-            QKan.config.he8.database = self.import_dlg.tf_database.text()
+            QKan.config.database.qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()
             QKan.config.he8.import_file = self.import_dlg.tf_import.text()
 
@@ -226,31 +226,6 @@ class He8Porter(QKanPlugin):
             QKan.config.check_import.append = self.import_dlg.rb_append.isChecked()
             QKan.config.check_import.update = self.import_dlg.rb_update.isChecked()
 
-            crs: QgsCoordinateReferenceSystem = self.import_dlg.pw_epsg.crs()
-
-            try:
-                epsg = int(crs.postgisSrid())
-            except ValueError:
-                # TODO: Reporting this to the user might be preferable
-                self.log.exception(
-                    "Failed to parse selected CRS %s\nauthid:%s\n"
-                    "description:%s\nproj:%s\npostgisSrid:%s\nsrsid:%s\nacronym:%s",
-                    crs,
-                    crs.authid(),
-                    crs.description(),
-                    crs.findMatchingProj(),
-                    crs.postgisSrid(),
-                    crs.srsid(),
-                    crs.ellipsoidAcronym(),
-                )
-            else:
-                # TODO: This should all be run in a QgsTask to prevent the main
-                #  thread/GUI from hanging. However this seems to either not work
-                #  or crash QGIS currently. (QGIS 3.10.3/0e1f846438)
-                QKan.config.epsg = epsg
-
-            QKan.config.save()
-
             if not QKan.config.he8.import_file:
                 fehlermeldung("Fehler beim Import", "Es wurde keine Datei ausgewählt!")
                 self.iface.messageBar().pushMessage(
@@ -260,7 +235,32 @@ class He8Porter(QKanPlugin):
                 )
                 return
             else:
-                self._doimport()
+                crs: QgsCoordinateReferenceSystem = self.import_dlg.pw_epsg.crs()
+
+                try:
+                    epsg = int(crs.postgisSrid())
+                except ValueError:
+                    # TODO: Reporting this to the user might be preferable
+                    self.log.exception(
+                        "Failed to parse selected CRS %s\nauthid:%s\n"
+                        "description:%s\nproj:%s\npostgisSrid:%s\nsrsid:%s\nacronym:%s",
+                        crs,
+                        crs.authid(),
+                        crs.description(),
+                        crs.findMatchingProj(),
+                        crs.postgisSrid(),
+                        crs.srsid(),
+                        crs.ellipsoidAcronym(),
+                    )
+                else:
+                    # TODO: This should all be run in a QgsTask to prevent the main
+                    #  thread/GUI from hanging. However this seems to either not work
+                    #  or crash QGIS currently. (QGIS 3.10.3/0e1f846438)
+                    QKan.config.epsg = epsg
+
+                    QKan.config.save()
+
+                    self._doimport()
 
     def _doimport(self) -> bool:
         """Start des Import aus einer HE8-Datenbank
@@ -270,17 +270,17 @@ class He8Porter(QKanPlugin):
 
         self.log.info("Creating DB")
         db_qkan = DBConnection(
-            dbname=QKan.config.he8.database, epsg=QKan.config.epsg
+            dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
         )
 
         if not db_qkan:
             fehlermeldung(
                 "Fehler im HE8-Import",
-                f"QKan-Datenbank {QKan.config.he8.database} wurde nicht gefunden!\nAbbruch!",
+                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
             )
             self.iface.messageBar().pushMessage(
                 "Fehler im HE8-Import",
-                f"QKan-Datenbank {QKan.config.he8.database} wurde nicht gefunden!\nAbbruch!",
+                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
                 level=Qgis.Critical,
             )
             return False
@@ -302,7 +302,7 @@ class He8Porter(QKanPlugin):
         )
         qgsadapt(
             QKan.config.project.template,
-            QKan.config.he8.database,
+            QKan.config.database.qkan,
             db_qkan,
             QKan.config.project.file,
             QKan.config.epsg,

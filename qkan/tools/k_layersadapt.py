@@ -444,7 +444,7 @@ def layersadapt(
                 )
             else:
                 fehlermeldung(
-                    "Programmfehler", f"Datentyp noch nicht programmiert: {typeName}"
+                    "Programmfehler", f"Datentyp noch nicht programmiert: {exprList[name]}"
                 )
                 return
 

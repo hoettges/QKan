@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>QKan Import from Hystem-Extran</string>
+   <string>Einlesen von Simulationsergebnissen</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
@@ -87,7 +87,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Einzulesende Ergebnis-Datenbank (*.idbf):</string>
+     <string>Einzulesende Ergebnis-Datenbank (*.idbr):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

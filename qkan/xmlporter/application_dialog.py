@@ -141,7 +141,6 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.tf_import.setText(QKan.config.xml.import_file)
         # noinspection PyCallByClass,PyArgumentList
         self.epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
-        self.cb_import_tabinit.setChecked(QKan.config.xml.init_database)
         self.tf_project.setText(QKan.config.project.file)
 
     def select_import(self) -> None:

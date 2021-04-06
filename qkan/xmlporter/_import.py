@@ -250,7 +250,8 @@ class ImportTask:
                     sohlhoehe=sohlhoehe,
                     deckelhoehe=_strip_float(
                         block.findtext(
-                            "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='DMP']/d:Punkthoehe",
+                            "d:Geometrie/d:Geometriedaten/d:Knoten"
+                            "/d:Punkt[d:PunktattributAbwasser='DMP']/d:Punkthoehe",
                             0.0,
                             NS,
                         )
@@ -363,7 +364,8 @@ class ImportTask:
                     sohlhoehe=sohlhoehe,
                     deckelhoehe=_strip_float(
                         block.findtext(
-                            "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='GOK']/d:Punkthoehe",
+                            "d:Geometrie/d:Geometriedaten/d:Knoten"
+                            "/d:Punkt[d:PunktattributAbwasser='GOK']/d:Punkthoehe",
                             0.0,
                             NS,
                         )
@@ -395,8 +397,10 @@ class ImportTask:
             # geop, geom = geo_smp(auslass)
 
             sql = f"""
-            INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
-                    schachttyp, simstatus, kommentar)
+            INSERT INTO schaechte_data (
+                schnam, xsch, ysch, 
+                sohlhoehe, deckelhoehe, durchm, entwart, 
+                schachttyp, simstatus, kommentar)
             VALUES (?, ?, ?, ?, ?, ?, ?, 'Auslass', ?, ?)
             """
             if not self.db_qkan.sql(
@@ -467,7 +471,8 @@ class ImportTask:
                     sohlhoehe=sohlhoehe,
                     deckelhoehe=float(
                         block.findtext(
-                            "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='DMP']/d:Punkthoehe",
+                            "d:Geometrie/d:Geometriedaten/d:Knoten"
+                            "/d:Punkt[d:PunktattributAbwasser='DMP']/d:Punkthoehe",
                             0.0,
                             NS,
                         )
