@@ -2,5 +2,6 @@
     <qresource prefix="/plugins/qkan/he8porter" >
         <file>res/icon_export.png</file>
         <file>res/icon_import.png</file>
+        <file>res/icon_results.png</file>
     </qresource>
 </RCC>

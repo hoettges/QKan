@@ -410,43 +410,43 @@ def layersadapt(
                 layer.setDisplayExpression(displayExpression)
 
     # Koordinaten in einer eigenen Spalte, nur für Layer Schächte, Auslässe, Speicher
-    for layername in ["Schächte", "Auslässe", "Speicher"]:
-        # Expressions aus Projektvorlage (xml) lesen
-        tagLayer = (
-            f"projectlayers/maplayer[layername='{layername}']/expressionfields/field"
-        )
-        qgsLayers = qgsxml.findall(tagLayer)
-        exprList = {}  # zur Vermeidung von Doppelungen
-        for lay in qgsLayers:
-            expression = lay.attrib["expression"]
-            name = lay.attrib["name"]
-            typeName = lay.attrib["typeName"]
-            comment = lay.attrib["comment"]
-            exprList[name] = [expression, typeName, comment]
-
-        # Expressions in Attributtabelle einfügen
-        # noinspection PyArgumentList
-        project = QgsProject.instance()
-        layer = project.mapLayersByName(layername)[0]
-        for name in exprList.keys():
-            expression, typeName, comment = exprList[name]
-            if typeName == "double precision":
-                # noinspection PyArgumentList
-                layer.addExpressionField(
-                    expression,
-                    QgsField(name=name, type=QVariant.Double, comment=comment),
-                )
-            elif typeName == "integer":
-                # noinspection PyArgumentList
-                layer.addExpressionField(
-                    expression,
-                    QgsField(name=name, type=QVariant.Int, comment=comment),
-                )
-            else:
-                fehlermeldung(
-                    "Programmfehler", f"Datentyp noch nicht programmiert: {exprList[name]}"
-                )
-                return
+    # for layername in ["Schächte", "Auslässe", "Speicher"]:
+    #     # Expressions aus Projektvorlage (xml) lesen
+    #     tagLayer = (
+    #         f"projectlayers/maplayer[layername='{layername}']/expressionfields/field"
+    #     )
+    #     qgsLayers = qgsxml.findall(tagLayer)
+    #     exprList = {}  # zur Vermeidung von Doppelungen
+    #     for lay in qgsLayers:
+    #         expression = lay.attrib["expression"]
+    #         name = lay.attrib["name"]
+    #         typeName = lay.attrib["typeName"]
+    #         comment = lay.attrib["comment"]
+    #         exprList[name] = [expression, typeName, comment]
+    #
+    #     # Expressions in Attributtabelle einfügen
+    #     # noinspection PyArgumentList
+    #     project = QgsProject.instance()
+    #     layer = project.mapLayersByName(layername)[0]
+    #     for name in exprList.keys():
+    #         expression, typeName, comment = exprList[name]
+    #         if typeName == "double precision":
+    #             # noinspection PyArgumentList
+    #             layer.addExpressionField(
+    #                 expression,
+    #                 QgsField(name=name, type=QVariant.Double, comment=comment),
+    #             )
+    #         elif typeName == "integer":
+    #             # noinspection PyArgumentList
+    #             layer.addExpressionField(
+    #                 expression,
+    #                 QgsField(name=name, type=QVariant.Int, comment=comment),
+    #             )
+    #         else:
+    #             fehlermeldung(
+    #                 "Programmfehler", f"Datentyp noch nicht programmiert: {exprList[name]}"
+    #             )
+    #             return
 
     if layerNotInProjektMeldung:
         meldung(

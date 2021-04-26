@@ -253,12 +253,13 @@ class HEConfig(ClassObject):
 
 class HE8Config(ClassObject):
     database: str = ""                          # QKan-Projektdatenbank
-    # database_erg: str = ""                    # ist jetzt: export_file
+    # database_erg: str = ""                    # ist jetzt: results_file
     qml_choice: enums.QmlChoice = enums.QmlChoice.UEBH
     qml_file_results: str = ""
     template: str = ""                          # Vorlage für Export-Datenbank
     import_file: str = ""                       # Import-Datenbank *.idbm
     export_file: str = ""                       # Export-Datenbank *.idbm
+    results_file: str = ""                      # Ergebnis-Datenbank *.idbr
 
 
 class MUConfig(ClassObject):

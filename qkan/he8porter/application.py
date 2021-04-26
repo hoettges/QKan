@@ -6,15 +6,17 @@ from pathlib import Path
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
-from qkan import QKan, get_default_dir
+from qkan import QKan, get_default_dir, enums
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import fehlermeldung, get_database_QKan, eval_node_types
+
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
 from ._export import ExportTask
 from ._import import ImportTask
-from .application_dialog import ExportDialog, ImportDialog
+from ._results import ResultsTask
+from .application_dialog import ExportDialog, ImportDialog, ResultsDialog
 
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
@@ -29,6 +31,7 @@ class He8Porter(QKanPlugin):
         self.log.debug(f"He8Porter: default_dir: {default_dir}")
         self.export_dlg = ExportDialog(default_dir, tr=self.tr)
         self.import_dlg = ImportDialog(default_dir, tr=self.tr)
+        self.results_dlg = ResultsDialog(default_dir, tr=self.tr)
 
         self.db_qkan: DBConnection = None
 
@@ -48,10 +51,18 @@ class He8Porter(QKanPlugin):
             callback=self.run_import,
             parent=self.iface.mainWindow(),
         )
+        icon_results = ":/plugins/qkan/he8porter/res/icon_results.png"
+        QKan.instance.add_action(
+            icon_results,
+            text=self.tr("Ergebnisse aus Hystem-Extran 8"),
+            callback=self.run_results,
+            parent=self.iface.mainWindow(),
+        )
 
     def unload(self) -> None:
         self.export_dlg.close()
         self.import_dlg.close()
+        self.results_dlg.close()
 
     def run_export(self) -> None:
         """Anzeigen des Exportformulars und anschließender Start des Exports in eine HE8-Datenbank"""
@@ -139,13 +150,20 @@ class He8Porter(QKanPlugin):
                     + "nach Ziel: {QKan.config.he8.export_file}\n",
                 )
 
-        self.export_dlg.connectHEDB(QKan.config.he8.export_file)
+        """Attach SQLite-Database with HE8 Data"""
+        sql = f'ATTACH DATABASE "{QKan.config.he8.export_file}" AS he'
+
+        if not self.db_qkan.sql(
+            sql, "He8Porter.run_export_to_he8 Attach HE8"
+        ):
+            logger.error(f"Fehler in He8Porter._doexport(): Attach fehlgeschlagen: {QKan.config.he8.export_file}")
+            return False
 
         # Run export
-        ExportTask(self.export_dlg.db_qkan, QKan.config.selections.teilgebiete).run()
+        ExportTask(self.db_qkan, QKan.config.selections.teilgebiete).run()
 
         # Close connection
-        del self.export_dlg.db_qkan
+        del self.db_qkan
         self.log.debug("Closed DB")
 
         return True
@@ -173,7 +191,7 @@ class He8Porter(QKanPlugin):
             fehlermeldung("Fehler: Für den Export muss ein Projekt geladen sein!")
             return False
 
-        self.export_dlg.connectQKanDB(self.db_qkan)
+        # self.export_dlg.connectQKanDB(self.db_qkan)               # deaktiviert jh, 17.04.2021
         return True
 
     def run_import(self) -> None:
@@ -297,6 +315,8 @@ class He8Porter(QKanPlugin):
         imp = ImportTask(db_qkan)
         imp.run()
 
+        eval_node_types(db_qkan)  # in qkan.database.qkan_utils
+
         QKan.config.project.template = str(
             Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
         )
@@ -320,3 +340,43 @@ class He8Porter(QKanPlugin):
         # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
 
         return True
+
+    def run_results(self):
+        """Öffnen des Formulars zum Einlesen der Simulationsergebnisse aus HE"""
+
+        # show the dialog
+        self.results_dlg.show()
+        # Run the dialog event loop
+        result = self.results_dlg.exec_()
+        # See if OK was pressed
+        if result:
+
+            # Daten aus Formular übernehmen
+            database_ErgHE = self.results_dlg.tf_resultsDB.text()
+            qml_file_results = self.results_dlg.tf_qmlfile.text()
+
+            if self.results_dlg.rb_uebh.isChecked():
+                qml_choice = enums.QmlChoice.UEBH
+            elif self.results_dlg.rb_uebvol.isChecked():
+                qml_choice = enums.QmlChoice.UEBVOL
+            elif self.results_dlg.rb_userqml.isChecked():
+                qml_choice = enums.QmlChoice.USERQML
+            elif self.results_dlg.rb_none.isChecked():
+                qml_choice = enums.QmlChoice.NONE
+            else:
+                fehlermeldung("Fehler im Programmcode (2)", "Nicht definierte Option")
+                return False
+            # Konfigurationsdaten schreiben
+
+            QKan.config.he8.results_file = database_ErgHE
+            QKan.config.he8.qml_choice = qml_choice
+            QKan.config.he8.qml_file_results = qml_file_results
+
+            QKan.config.save()
+
+            # Start der Verarbeitung
+
+            # Modulaufruf in Logdatei schreiben
+            logger.debug(f"""QKan-Modul Aufruf importResults()""")
+
+            ResultsTask().run()

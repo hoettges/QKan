@@ -103,7 +103,7 @@ def qgsadapt(
             proj4text = QgsCoordinateReferenceSystem(srsid).toProj()
         logger.debug(f"Vorgabe epsg: %s", epsg)
     else:
-        sql = """SELECT srsid, proj4text
+        sql = """SELECT srid, proj4text
                 FROM geom_cols_ref_sys
                 WHERE Lower(f_table_name) = Lower('schaechte')
                 AND Lower(f_geometry_column) = Lower('geom')"""
@@ -133,11 +133,11 @@ def qgsadapt(
 
         for tag_maplayer in root.findall(".//projectlayers/maplayer"):
             tag_datasource = tag_maplayer.find("./datasource")
-            if not tag_datasource:
+            if tag_datasource is None:
                 continue
 
             tex = tag_datasource.text
-            if not tex:
+            if not tex or tex[:6] != 'dbname':
                 continue
 
             # Nur QKan-Tabellen bearbeiten
@@ -234,7 +234,7 @@ def qgsadapt(
 
         for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
             text = tag_datasource.text
-            if not text:
+            if not text or text[:6] != 'dbname':
                 continue
 
             tag_datasource.text = (

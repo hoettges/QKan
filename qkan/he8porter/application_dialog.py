@@ -19,9 +19,9 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 from qgis.utils import pluginDirectory
-from qkan import QKan, list_selected_items
+from qkan import QKan, list_selected_items, enums
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import fehlermeldung
 
 logger = logging.getLogger("QKan.he8.application_dialog")
 
@@ -271,7 +271,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         return True
 
     def prepareDialog(self, db_qkan) -> bool:
-        """Füllt Auswahllisten im Dialog"""
+        """Füllt Auswahllisten im Export-Dialog"""
 
         self.db_qkan = db_qkan
         # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
@@ -328,15 +328,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
                     repr(err),
                 )
         return True
-
-    def connectHEDB(self, database_he: str) -> None:
-        """Attach SQLite-Database with HE8 Data"""
-        sql = f'ATTACH DATABASE "{database_he}" AS he'
-
-        if self.db_qkan is None or not self.db_qkan.sql(
-            sql, "He8Porter.run_export_to_he8 Attach HE8"
-        ):
-            return
 
 
 IMPORT_CLASS, _ = uic.loadUiType(
@@ -456,3 +447,104 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         if filename:
             self.tf_database.setText(filename)
             self.default_dir = os.path.dirname(filename)
+
+
+RESULTS_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "res", "he8_results_dialog_base.ui")
+)
+
+
+class ResultsDialog(_Dialog, RESULTS_CLASS):  # type: ignore
+    tf_database: QLineEdit
+    tf_resultsDB: QLineEdit
+    tf_project: QLineEdit
+
+    pb_selectqmlfile: QPushButton
+    pb_results: QPushButton
+    pb_project: QPushButton
+
+    rb_userqml: QRadioButton
+    rb_uebh: QRadioButton
+    rb_uebvol: QRadioButton
+    rb_none: QRadioButton
+
+    def __init__(
+        self,
+        default_dir: str,
+        tr: Callable,
+        parent: Optional[QWidget] = None,
+    ):
+        # noinspection PyCallByClass,PyArgumentList
+        super().__init__(default_dir, tr, parent)
+
+        self.default_dir = default_dir
+
+        self.pb_selectqmlfile.clicked.connect(self.selectqmlfileResults)
+
+        # Klick auf eine Option zum Layerstil aktiviert/deaktiviert das Textfeld und die Schaltfläche
+        self.pb_selectResultsDB.clicked.connect(self.selectFile_ResultsDB)
+        self.rb_userqml.clicked.connect(self.enable_tf_qmlfile)
+        self.rb_uebh.clicked.connect(self.disable_tf_qmlfile)
+        self.rb_uebvol.clicked.connect(self.disable_tf_qmlfile)
+        self.rb_none.clicked.connect(self.disable_tf_qmlfile)
+
+        self.tf_resultsDB.setText(QKan.config.he8.results_file)
+
+        # Option für Stildatei
+        qml_choice = QKan.config.he8.qml_choice
+
+        # Standard: User-qml-File ist deaktiviert
+        self.disable_tf_qmlfile()
+
+        if qml_choice == enums.QmlChoice.UEBH:
+            self.rb_uebh.setChecked(True)
+        elif qml_choice == enums.QmlChoice.UEBVOL:
+            self.rb_uebvol.setChecked(True)
+        elif qml_choice == enums.QmlChoice.USERQML:
+            self.rb_userqml.setChecked(True)
+            # User-qml-File ist aktivieren
+            self.enable_tf_qmlfile()
+        elif qml_choice == enums.QmlChoice.NONE:
+            self.rb_none.setChecked(True)
+        else:
+            fehlermeldung("Fehler im Programmcode (1)", "Nicht definierte Option")
+            return
+
+        # Individuelle Stildatei
+        self.tf_qmlfile.setText(QKan.config.he8.qml_file_results)
+
+    def selectqmlfileResults(self):
+        """qml-Stildatei auswählen"""
+
+        filename, __ = QFileDialog.getOpenFileName(
+            self,
+            "Dateinamen der einzulesenen Stildatei auswählen",
+            self.default_dir,
+            "*.qml",
+        )
+        if os.path.dirname(filename) != "":
+            os.chdir(os.path.dirname(filename))
+        self.tf_qmlfile.setText(filename)
+
+    def selectFile_ResultsDB(self):
+        """Datenbankverbindung zur HE-Ergebnisdatenbank auswaehlen"""
+
+        filename, _ = QFileDialog.getOpenFileName(
+            self,
+            "Dateinamen der zu lesenden HE-Ergebnisdatenbank auswählen",
+            self.default_dir,
+            "*.idbr",
+        )
+        if os.path.dirname(filename) != "":
+            os.chdir(os.path.dirname(filename))
+        self.tf_resultsDB.setText(filename)
+
+    def enable_tf_qmlfile(self):
+        """aktiviert das Textfeld für die qml-Stildatei"""
+        self.tf_qmlfile.setEnabled(True)
+        self.pb_selectqmlfile.setEnabled(True)
+
+    def disable_tf_qmlfile(self):
+        """deaktiviert das Textfeld für die qml-Stildatei"""
+        self.tf_qmlfile.setEnabled(False)
+        self.pb_selectqmlfile.setEnabled(False)

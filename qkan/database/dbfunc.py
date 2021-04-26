@@ -2063,15 +2063,23 @@ class DBConnection:
                 if not self.sql(sql, "dbfunc.DBConnection.version (3.0.2-1)"):
                     return False
 
-                sql = f"""SELECT AddGeometryColumn('flaechen_he8','Geometry',{self.epsg},
-                        'MULTIPOLYGON',2)"""
+                # Ab Version 3.0.5 nochmal geändert
+                if versionolder(self.versionlis, [3, 0, 5]):
+                    sql = f"""SELECT AddGeometryColumn('flaechen_he8', 'Geometry', {self.epsg},
+                            'MULTIPOLYGON',2)"""
 
-                if not self.sql(sql, "dbfunc.DBConnection.version (3.0.2-2)"):
-                    return False
+                    if not self.sql(sql, "dbfunc.DBConnection.version (3.0.2-2)"):
+                        return False
+                else:
+                    sql = f"""SELECT AddGeometryColumn('flaechen_he8', 'Geometry', -1,
+                            'MULTIPOLYGON',2)"""
+
+                    if not self.sql(sql, "dbfunc.DBConnection.version (3.0.2-3)"):
+                        return False
 
                 if not self.sql(
-                    "SELECT CreateSpatialIndex('flaechen_he8','Geometry')",
-                    "dbfunc.DBConnection.version (3.0.2-3)",
+                        "SELECT CreateSpatialIndex('flaechen_he8','Geometry')",
+                        "dbfunc.DBConnection.version (3.0.2-4)",
                 ):
                     return False
 
@@ -2083,7 +2091,7 @@ class DBConnection:
                 ]
 
                 for sql in sqllis:
-                    if not self.sql(sql, "dbfunc.DBConnection.version (3.0.2-4)"):
+                    if not self.sql(sql, "dbfunc.DBConnection.version (3.0.2-5)"):
                         return False
 
                 # Initialisierung
@@ -2099,7 +2107,7 @@ class DBConnection:
                 for ds in daten:
                     sql = f"""INSERT INTO abflusstypen
                              (abflusstyp, he_nr, kp_nr) Values ({ds})"""
-                    if not self.sql(sql, "dbfunc.DBConnection.version (3.0.2-5)"):
+                    if not self.sql(sql, "dbfunc.DBConnection.version (3.0.2-6)"):
                         return False
 
                 self.commit()
@@ -2176,21 +2184,25 @@ class DBConnection:
 
                 sqllis = [
                     "SELECT DiscardGeometryColumn('flaechen_he8', 'Geometry')",
-                    "SELECT AddGeometryColumn('flaechen_he8','Geometry', -1, 'MULTIPOLYGON',2)",
+                    "SELECT UpdateLayerStatistics('flaechen_he8')",
+                    "SELECT AddGeometryColumn('flaechen_he8', 'geom', -1, 'MULTIPOLYGON', 2)",
+                    "SELECT CreateSpatialIndex('flaechen_he8', 'geom')"
                 ]
 
+                # "SELECT DisableSpatialIndex('flaechen_he8', 'Geometry')",
                 for sql in sqllis:
                     if not self.sql(sql, "dbfunc.DBConnection.version (3.0.5-6)"):
                         return False
+                    self.commit()
 
-                self.commit()
+                self.commit()                # Wurde schon durchgeführt
                 self.versionlis = [3, 0, 5]
 
             # ------------------------------------------------------------------------------------
             if versionolder(self.versionlis, [3, 0, 8]):
 
                 sqllis = [
-                    "SELECT DiscardGeometryColumn('flaechen_he8', 'Geometry')",
+                    "SELECT DiscardGeometryColumn('flaechen_he8', 'geom')",
                     "DROP TABLE flaechen_he8;",
                     """CREATE TABLE IF NOT EXISTS flaechen_he8 (
                         pk INTEGER PRIMARY KEY,

@@ -32,22 +32,22 @@ class TestLinkfl(QgisTest):
         database_qkan = str(BASE_WORK / "nette.sqlite")
 
         # Aktualisierung der Datenbank auf aktuelle Version
-        layersadapt(
-            database_QKan=database_qkan,
-            projectTemplate="",
-            anpassen_ProjektMakros=False,
-            anpassen_Datenbankanbindung=False,
-            anpassen_Wertebeziehungen_in_Tabellen=False,
-            anpassen_Formulare=False,
-            anpassen_Projektionssystem=False,
-            aktualisieren_Schachttypen=False,
-            zoom_alles=False,
-            fehlende_layer_ergaenzen=False,
-            anpassen_auswahl=enums.SelectedLayers.NONE,
-        )
+        # layersadapt(
+        #     database_QKan=database_qkan,
+        #     projectTemplate="",
+        #     anpassen_ProjektMakros=False,
+        #     anpassen_Datenbankanbindung=False,
+        #     anpassen_Wertebeziehungen_in_Tabellen=False,
+        #     anpassen_Formulare=False,
+        #     anpassen_Projektionssystem=False,
+        #     aktualisieren_Schachttypen=False,
+        #     zoom_alles=False,
+        #     fehlende_layer_ergaenzen=False,
+        #     anpassen_auswahl=enums.SelectedLayers.NONE,
+        # )
 
         # Anbindung an die Datenbank, weil Module mit QKan-Objekt aufgerufen werden.
-        db = DBConnection(dbname=database_qkan)
+        db = DBConnection(dbname=database_qkan, qkan_db_update=True)
         if not db.connected:
             raise Exception("Datenbank nicht gefunden oder nicht aktuell.")
 

@@ -55,22 +55,22 @@ class TestQKanHE8(QgisTest):
         # LOGGER.debug("Geladene Projektdatei: %s", project.fileName())
 
         dbAdapt(
-            qkanDB=QKan.config.database.qkan
+            qkanDB=QKan.config.database.qkan,
         )
 
-        layersadapt(
-            database_QKan=QKan.config.database.qkan,
-            projectTemplate="",
-            anpassen_ProjektMakros=False,
-            anpassen_Datenbankanbindung=False,
-            anpassen_Wertebeziehungen_in_Tabellen=False,
-            anpassen_Formulare=False,
-            anpassen_Projektionssystem=False,
-            aktualisieren_Schachttypen=False,
-            zoom_alles=False,
-            fehlende_layer_ergaenzen=False,
-            anpassen_auswahl=enums.SelectedLayers.NONE,
-        )
+        # layersadapt(
+        #     database_QKan=QKan.config.database.qkan,
+        #     projectTemplate="",
+        #     anpassen_ProjektMakros=False,
+        #     anpassen_Datenbankanbindung=False,
+        #     anpassen_Wertebeziehungen_in_Tabellen=False,
+        #     anpassen_Formulare=False,
+        #     anpassen_Projektionssystem=False,
+        #     aktualisieren_Schachttypen=False,
+        #     zoom_alles=False,
+        #     fehlende_layer_ergaenzen=False,
+        #     anpassen_auswahl=enums.SelectedLayers.NONE,
+        # )
         QKan.config.check_export.schaechte = True
         QKan.config.check_export.auslaesse = False
         QKan.config.check_export.speicher = True

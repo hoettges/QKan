@@ -13,6 +13,7 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from . import QKanDBDialog, QKanProjectDialog
+from qkan import QKan
 
 if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
@@ -57,7 +58,7 @@ class QgsAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_qgsadapt):  # t
         filename, __ = QFileDialog.getOpenFileName(
             self,
             "Vorlage für zu erstellende Projektdatei auswählen",
-            self.templateDir,
+            QKan.template_dir,
             "*.qgs",
         )
         if os.path.dirname(filename) != "":
