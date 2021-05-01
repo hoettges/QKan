@@ -2467,13 +2467,13 @@ class DBConnection:
                 # Haltungen -----------------------------------------------------------------
 
                 sql = f"""CREATE VIEW IF NOT EXISTS haltungen_data AS
-                      SELECT 
-                        haltnam, schoben, schunten, 
-                        hoehe, breite, laenge, 
-                        sohleoben, sohleunten, 
-                        deckeloben, deckelunten, 
-                        xschob, yschob, xschun, yschun, 
-                        teilgebiet, qzu, profilnam, 
+                      SELECT
+                        haltnam, schoben, schunten,
+                        hoehe, breite, laenge,
+                        sohleoben, sohleunten,
+                        deckeloben, deckelunten,
+                        xschob, yschob, xschun, yschun,
+                        teilgebiet, qzu, profilnam,
                         entwart, rohrtyp, ks,
                         simstatus, kommentar, createdat
                       FROM haltungen;"""

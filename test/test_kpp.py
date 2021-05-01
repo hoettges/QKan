@@ -58,21 +58,21 @@ class TestQKan2Kpp(QgisTest):
         # project.read(project_file)
         # LOGGER.debug("Geladene Projektdatei: %s", project.fileName())
 
-        layersadapt(
-            database_QKan=database_qkan,
-            projectTemplate="",
-            anpassen_ProjektMakros=False,
-            anpassen_Datenbankanbindung=False,
-            anpassen_Wertebeziehungen_in_Tabellen=False,
-            anpassen_Formulare=False,
-            anpassen_Projektionssystem=False,
-            aktualisieren_Schachttypen=False,
-            zoom_alles=False,
-            fehlende_layer_ergaenzen=False,
-            anpassen_auswahl=enums.SelectedLayers.NONE,
-        )
+        # layersadapt(
+        #     database_QKan=database_qkan,
+        #     projectTemplate="",
+        #     anpassen_ProjektMakros=False,
+        #     anpassen_Datenbankanbindung=False,
+        #     anpassen_Wertebeziehungen_in_Tabellen=False,
+        #     anpassen_Formulare=False,
+        #     anpassen_Projektionssystem=False,
+        #     aktualisieren_Schachttypen=False,
+        #     zoom_alles=False,
+        #     fehlende_layer_ergaenzen=False,
+        #     anpassen_auswahl=enums.SelectedLayers.NONE,
+        # )
 
-        db = DBConnection(dbname=database_qkan)
+        db = DBConnection(dbname=database_qkan, qkan_db_update=True)
         if not db.connected:
             raise Exception("Datenbank nicht gefunden oder nicht aktuell.")
 

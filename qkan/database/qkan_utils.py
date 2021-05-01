@@ -191,29 +191,35 @@ def get_qkanlayer_attributes(source: str) -> Tuple[str, str, str, str]:
     :returns:       database name, table name, geom, sql
     """
 
-    parts = source.split(" ")
+    pos = source.find("sql=")
+    if pos >= 0:
+        sql = source[pos + 4 :]
+        source = source[:pos - 1]
+    else:
+        sql = ""
 
-    elem = [elem.split("dbname=")[1] for elem in parts if elem[:6] == "dbname"]
-    if len(elem) == 1:
-        dbname = elem[0][1:-1]
-    else:
-        dbname = ""
-    elem = [elem.split("table=")[1] for elem in parts if elem[:5] == "table"]
-    if len(elem) == 1:
-        table = elem[0][1:-1]
-    else:
-        table = ""
-    elem = [elem for elem in parts if elem[:1] == "("]
-    if len(elem) == 1:
-        geom = elem[0][1:-1]
+    pos = -1
+    while source.find('(', pos+1) >= 0:
+        pos = source.find('(', pos+1)
+    if pos >= 0:
+        geom = source[pos + 1 :-1]
+        source = source[:pos - 1]
     else:
         geom = ""
 
-    pos_sql = source.find("sql=")
-    if pos_sql >= 0:
-        sql = source[pos_sql + 4 :]
+    pos = source.find("table=")
+    if pos >= 0:
+        table = source[pos + 7 : -1]
+        source = source[:pos - 1]
     else:
-        sql = ""
+        table = ""
+
+    pos = source.find("dbname=")
+    if pos >= 0:
+        dbname = source[pos + 8 : -1]
+        source = source[:pos - 1]
+    else:
+        dbname = ""
 
     return dbname, table, geom, sql
 

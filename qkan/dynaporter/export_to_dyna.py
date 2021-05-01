@@ -709,7 +709,9 @@ def export_kanaldaten(
 
     # DYNA-Vorlagedatei lesen. Dies geschieht zu Beginn, damit Zieldatei selbst Vorlage sein kann!
     try:
-        dynatemplate = open(template_dyna, encoding="windows-1252").readlines()
+        dynatempfile = open(template_dyna, encoding="windows-1252")
+        dynatemplate = dynatempfile.readlines()
+        dynatempfile.close()
     except IOError as err:
         fehlermeldung(
             "Fehler (32) in QKan_ExportDYNA {}".format(err),
