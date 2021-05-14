@@ -27,6 +27,7 @@ __copyright__ = "(C) 2020, Joerg Hoettges"
 import logging
 
 from qgis.core import QgsProject
+
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 
@@ -37,8 +38,8 @@ progress_bar = None
 
 def dbAdapt(
     qkanDB: str,
-    projectFile: str=None,
-    qkan_project: QgsProject=None,
+    projectFile: str = None,
+    qkan_project: QgsProject = None,
 ) -> None:
     """Aktualisiert die QKan-Datenbank, indem die Tabellenstruktur auf den aktuellen Stand
     gebracht wird.
@@ -69,7 +70,7 @@ def dbAdapt(
         )
         return
 
-    dbQK.updateversion()
+    dbQK.upgrade_database()
     # Datenbankverbindungen schliessen
 
     del dbQK
