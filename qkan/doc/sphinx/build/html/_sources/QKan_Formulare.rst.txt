@@ -106,7 +106,7 @@ Dieses Modul ist vor allem hilfreich, um Projekte, die noch auf einer älteren Q
 5. Legen Sie mit der Schaltfläche [...] Namen und Standort des angepassten Projekts fest. 
 
 .. _image_qkan_layersadapt:
-.. image:: .\QKan_Bilder\qkan_layersadapt.png
+.. image:: ./QKan_Bilder/qkan_layersadapt.png
 
 
 
@@ -132,7 +132,7 @@ Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdars
 3. Wählen Sie den Pfad der neu zu erstellenden Projektdatei aus. 
 
 .. _image_qkan_qgsAdapt:
-.. image:: .\QKan_Bilder\qkan_qgsAdapt.png
+.. image:: ./QKan_Bilder/qkan_qgsAdapt.png
 
 
 

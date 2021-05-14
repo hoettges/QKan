@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="de" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>1. Import von Kanaldaten aus einfachen Tabellen (Excel, TXT, CSV) &mdash; QKan 2.4.5 Dokumentation</title>
@@ -13,6 +14,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +32,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -181,7 +185,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="import-von-kanaldaten-aus-einfachen-tabellen-excel-txt-csv">
+  <section id="import-von-kanaldaten-aus-einfachen-tabellen-excel-txt-csv">
 <h1><span class="section-number">1. </span>Import von Kanaldaten aus einfachen Tabellen (Excel, TXT, CSV)<a class="headerlink" href="#import-von-kanaldaten-aus-einfachen-tabellen-excel-txt-csv" title="Link zu dieser Überschrift">¶</a></h1>
 <p>Der Import von Daten aus einfachen Tabellen ist prinzipiell mit allen Methoden möglich, die QGIS zur Verfügung
 stellt. Leider funktioniert das Einfügen aus der Zwischenablage nur dann, wenn alle Attribute einer Tabelle
@@ -189,7 +193,7 @@ einschließlich der Geometrieattribute vorhanden sind. Deshalb wird an dieser St
 empfohlen, die sich mit Excel oder Open Office Writer leicht realisieren lässt und damit auch für einfache
 Textdateien oder CSV-Dateien verwendet werden kann, da sich diese leicht in diese Programme importieren
 lassen.</p>
-<div class="section" id="importieren-von-tabellendaten-aus-excel-csv-oder-textdateien">
+<section id="importieren-von-tabellendaten-aus-excel-csv-oder-textdateien">
 <span id="importasciidata"></span><h2><span class="section-number">1.1. </span>Importieren von Tabellendaten aus Excel, CSV- oder Textdateien<a class="headerlink" href="#importieren-von-tabellendaten-aus-excel-csv-oder-textdateien" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Das Prinzip beruht darauf, aus den tabellarischen Daten eine SQL-Anweisung zu erstellen. Zur Ausführung
 ist es lediglich notwendig, im Kontextmenü eines Layers in der Layerkontrolle mit „SQL-Layer aktualisieren…“
@@ -312,8 +316,8 @@ weggelassen werden, wenn die SQL-Befehle einzeln nacheinander ausgeführt werden
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">=</span><span class="s2">&quot;SELECT RecoverSpatialIndex()&quot;</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

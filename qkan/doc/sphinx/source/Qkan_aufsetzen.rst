@@ -31,7 +31,7 @@ Die nachstehende Abbildung zeigt die "Eigenständige QGIS-Installation Version 3
 
 Starten Sie die Installation, akzeptieren das Lizenzabkommen und bestätigen die Installation im Standardverzeichnis "C:\\Programme\\QGIS 3.xx". Als letztes werden Sie nach zusätzlichen Komponenten, wie zum Beispiel dem North Carolina Data Set gefragt:
 
-.. image:: .\QKan_Bilder\QGIS_komponenten.png
+.. image:: ./QKan_Bilder/QGIS_komponenten.png
 
 Es handelt sich um Beispieldaten, die für die Nutzung von QKan nicht benötigt werden. Klicken Sie anschließend auf "Installieren", um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.
 
@@ -43,18 +43,18 @@ Einen Link zu den aktuellen Version finden Sie hier (rot eingerahmt): QKan3-GITH
 
 .. _QKan3-GITHUB: https://github.com/hoettges/QKan/releases
 
-.. image:: .\QKan_Bilder\github_qkan.png
+.. image:: ./QKan_Bilder/github_qkan.png
 
 Laden Sie das ZIP-Archiv herunter. Die Installation des Plugins erfolgt mit Hilfe des entsprechenden QGIS-Menüs. Starten Sie dazu QGIS und öffnen Sie das Menü "Erweiterungen > Erweiterungen verwalten und installieren...". Wählen Sie dort die Kategorie "Aus ZIP installieren":
 
-.. image:: .\QKan_Bilder\Qgis_erweiterungen_zip.png
+.. image:: ./QKan_Bilder/Qgis_erweiterungen_zip.png
 
 Nun können Sie das ZIP-Archiv mit der Schaltfläche [...] auswählen und die Erweiterung installieren. 
 
 Nach dem Schließen dieses Fensters stehen in QGIS ein Werkzeugkasten "QKan" mit mehreren Icons 
 sowie ein Hauptmenü "QKan" mit mehreren Untermenüs zur Verfügung.  
 
-.. image:: .\QKan_Bilder\Qgis_menue.png
+.. image:: ./QKan_Bilder/Qgis_menue.png
 
 Damit haben Sie QKan erfolgreich auf Ihrem Computer installiert!
 
@@ -81,7 +81,7 @@ Auf der Seite befinden sich ähnlich wie bei der QGIS Installation wieder mehrer
 Superserver". Wählen Sie auch hier wieder den für Ihr Betriebssystem und Version passenden Link aus. In diesem Beispiel verwenden wir den "Windows executable 
 installer for full Superclassic/Classic or Superserver, recommended for first-time users" für Windows 64-bit: 
 
-.. image:: .\QKan_Bilder\firebird_herunterladen.png
+.. image:: ./QKan_Bilder/firebird_herunterladen.png
 
 Über diesen Link werden Sie zu einem Downloadportal namens sourceforge.net weitergeleitet, wo nach wenigen Sekunden der Download starten sollte. Sollte es 
 Probleme mit dem Download geben, beachten Sie bitte die Hinweise auf der Seite. Anschließend starten Sie die heruntergeladene Datei Setup.exe. Aktzeptieren Sie auch
@@ -89,16 +89,16 @@ hier wieder die Lizenzvereinbarungen. Wählen Sie ein Verzeichnis, um Firebird z
 "C:\\Program Files\\Firebird\\Firebird_2_5". Gehen Sie nun sicher, dass Sie bei der Installation der Komponenten den Punkt "Super Server Binärdateien" ausgewählt
 haben.
 
-.. image:: .\QKan_Bilder\firebird_komponenten.png
+.. image:: ./QKan_Bilder/firebird_komponenten.png
 
 Als nächstes wird Firebird einen Startmenü-Ordner anlegen. Dieser wird nicht unbedingt benötigt und kann durch die Checkbox "Keinen Order im Startmenü erstellen"
 verhindert werden. Anschließend wird eine Abfrage über die zusätzlichen Aufgaben von Firebird erscheinen. Gehen Sie sicher, dass Ihre Auswahl wie folgt aussieht:
 
-.. image:: .\QKan_Bilder\firebird_aufgaben_dienst.png
+.. image:: ./QKan_Bilder/firebird_aufgaben_dienst.png
 
 Bevor die Installation fertiggestellt werden kann, werden noch zwei Checkboxen erscheinen:
 
-.. image:: .\QKan_Bilder\firebird_fertigstellen.png
+.. image:: ./QKan_Bilder/firebird_fertigstellen.png
 
 Der Punkt "After installation - What Next?" bringt Sie zurück auf die Firebirdseite und bietet weitere Informationen zur Nutzung von Firebird. Die zur Nutzung 
 von QKan benötigten Informationen bekommen Sie jedoch hier. Um zu testen ob der Firebirdserver auch richitg auf Ihrem System läuft, öffnen Sie den Taskmanager
@@ -121,13 +121,13 @@ besuchen Sie www.gihub.com/nakagami/pyfirebirdsql.
 
 Sie sollten sich nun auf der folgenden Seite befinden:
  
-.. image:: .\QKan_Bilder\pyfirebird_herunterladen.png
+.. image:: ./QKan_Bilder/pyfirebird_herunterladen.png
 
 Wenn Sie die Seite manuell öffnen, achten Sie unbedingt darauf, dass Sie das richtige Modul auswählen. Wenn Sie auf der weiter oben angegebenen Seite angekommen
 sind, können Sie durch den "clone or download"-Button die Datei herunterladen. Klicken Sie erst auf "clone or download" und anschließend auf "Dowload ZIP". Dann
 führen Sie den Download entsprechend ihrem Browser durch.    
 
-.. image:: .\QKan_Bilder\pyfirebird_dwn.png
+.. image:: ./QKan_Bilder/pyfirebird_dwn.png
 
 Sie erhalten nun eine .zip Datei mit dem Namen "pyfirebirdsql-master". Der darin enthaltene Ordner kann jetzt entpackt und anschließend in ein beliebiges
 Verzeichnis verschoben werden. 
