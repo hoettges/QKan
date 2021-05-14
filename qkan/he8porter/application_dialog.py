@@ -108,7 +108,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
         # Aktionen zu lw_teilgebiete: QListWidget
         self.cb_selActive.stateChanged.connect(self.click_selection)
-        self.lw_teilgebiete.itemClicked.connect(self.count_selection)
+        #self.lw_teilgebiete.itemClicked.connect(self.count_selection)      # ist schon in click_lw_teilgebiete enthalten
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
 
         # Init fields

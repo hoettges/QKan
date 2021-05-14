@@ -171,11 +171,12 @@ def qgsadapt(
         formspath = os.path.join(pluginDirectory("qkan"), "forms")
         for tag_maplayer in root.findall(".//projectlayers/maplayer"):
             tag_editform = tag_maplayer.find("./editform")
-            if tag_editform and tag_editform.text:
-                dateiname = os.path.basename(tag_editform.text)
-                if dateiname in QKAN_FORMS:
-                    # Nur QKan-Tabellen bearbeiten
-                    tag_editform.text = os.path.join(formspath, dateiname)
+            if not (tag_editform is None):
+                if tag_editform.text:
+                    dateiname = os.path.basename(tag_editform.text)
+                    if dateiname in QKAN_FORMS:
+                        # Nur QKan-Tabellen bearbeiten
+                        tag_editform.text = os.path.join(formspath, dateiname)
 
         # Zoom für Kartenfenster einstellen -------------------------------------------------------
         if len(zoom) == 0 or any([x is None for x in zoom]):

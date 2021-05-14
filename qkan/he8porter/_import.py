@@ -224,7 +224,7 @@ class ImportTask:
                      UNION SELECT Name, Gelaendehoehe AS Deckelhoehe FROM he.Auslass
                      UNION SELECT Name, Gelaendehoehe AS Deckelhoehe FROM he.Speicherschacht) AS su
                 ON ro.Schachtunten = su.Name
-                LEFT JOIN profile AS pr
+                LEFT JOIN (SELECT pk, he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON ro.Profiltyp = pr.he_nr
                 LEFT JOIN entwaesserungsarten AS ea 
                 ON ea.he_nr = ro.Kanalart

@@ -245,6 +245,7 @@ def layersadapt(
         )
 
     logger.debug("k_layersadapt (2), selectedLayerNames: %s", selectedLayerNames)
+    logger.debug(f'k_layersadapt (5), qkanLayers: {qkanLayers}')
 
     layerNotQkanMeldung = False  # Am Schluss erscheint ggfs. eine Meldung, dass Nicht-QKan-Layer gefunden wurden.
 
@@ -255,7 +256,10 @@ def layersadapt(
     for layername in selectedLayerNames:
         # Nur Layer behandeln, die in der Vorlage-Projektdatei enthalten sind, d.h. QKan-Layer sind.
         if layername not in qkanLayers:
+            logger.debug(f'k_layersadapt (4): layername nicht in qkanLayers: {layername}')
             continue
+
+        logger.debug(f'k_layersadapt (3), layername: {layername}')
 
         layerobjects = project.mapLayersByName(layername)
         if len(layerobjects) == 0:
@@ -288,6 +292,8 @@ def layersadapt(
                 )
             )
             continue  # Layer ist in Projekt-Templatenicht vorhanden...
+        else:
+            logger.debug(f'In Vorlage-Projektdatei gefundener Layer: {layername}')
 
         if anpassen_ProjektMakros:
             nodes = qgsxml.findall("properties/Macros")
@@ -365,6 +371,8 @@ def layersadapt(
             editFormConfig = layer.editFormConfig()
             editFormConfig.setUiForm(os.path.join(formsDir, form))
             layer.setEditFormConfig(editFormConfig)
+            logger.debug(f'k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n')
+
 
         if anpassen_Wertebeziehungen_in_Tabellen:
             dictOfEditWidgets, displayExpression = get_layer_config_from_qgs_template(

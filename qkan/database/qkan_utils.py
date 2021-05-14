@@ -143,7 +143,7 @@ def list_qkan_layers(qgs_template: str = None) -> Dict[str, List]:
 
     qgsxml = ElementTree()
     qgsxml.parse(qgs_template)
-    tag_group = "layer-tree-group/layer-tree-group"
+    tag_group = "layer-tree-group/layer-tree-group/[@name='QKan']/layer-tree-group"
     qgs_groups = qgsxml.findall(tag_group)
     qkan_layers = {}
     for group in qgs_groups:

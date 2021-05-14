@@ -1,6 +1,6 @@
 @ECHO OFF
 
-path = %path%;C:\Program Files\Python36\Scripts\
+path = %path%;C:\Program Files\Python39\Scripts\
 
 pushd %~dp0
 

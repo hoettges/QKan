@@ -182,7 +182,7 @@ class He8Porter(QKanPlugin):
             self.db_qkan: DBConnection = DBConnection(dbname=self.database_qkan)
             if not self.db_qkan.connected:
                 logger.error(
-                    "Fehler in he8porter.application_dialog.connectQKanDB:\n"
+                    "Fehler in he8porter.application.connectQKanDB:\n"
                     f"QKan-Datenbank {self.database_qkan:s} wurde nicht"
                     " gefunden oder war nicht aktuell!\nAbbruch!"
                 )

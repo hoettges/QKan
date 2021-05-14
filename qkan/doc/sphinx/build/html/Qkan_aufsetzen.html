@@ -1,51 +1,198 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="de">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>1. QKan - Plugin Installation &mdash; QKan 2.4.5 Dokumentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
     
-    <title>1. QKan - Plugin Installation &#8212; QKan 2.4.5 Dokumentation</title>
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
     
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '2.4.5',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/translations.js"></script>
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
     <link rel="search" title="Suche" href="search.html" />
     <link rel="next" title="1. Allgemeine Funktionen" href="Qkan_Videoanleitungen.html" />
-    <link rel="prev" title="1. Allgemeines" href="Qkan_allgemein.html" />
+    <link rel="prev" title="1. Allgemeines" href="Qkan_allgemein.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
 
-  </head>
-  <body role="document">
-  
+          
+            <a href="index.html" class="icon icon-home"> QKan
+          
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">1. Allgemeines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html#grundlagen">2. Grundlagen</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. QKan - Plugin Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#qgis-installieren">1.1. QGIS Installieren</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qkan-plugins-fur-qgis">1.2. QKan Plugins für QGIS</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#qkan-he7-plugin-fur-hystem-extran-7-x">2. QKan-HE7 Plugin für HYSTEM-EXTRAN 7.x</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#firebird-installieren">2.1. Firebird Installieren</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#zusatzliche-python-module">2.2. Zusätzliche Python-Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyfirebirdsql">2.2.1. pyfirebirdsql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#starten-von-qgis-mit-administrator-rechten">2.2.2. Starten von „QGIS“ mit Administrator-Rechten</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#qkan-he7-plugin">2.3. QKan-HE7-Plugin</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html">1. Allgemeine Funktionen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#anlegen-eines-neuen-qkan-projektes">2. Anlegen eines neuen QKan-Projektes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#ubertragen-einer-anderen-projektdatei-auf-eine-qkan-datenbank">3. Übertragen einer anderen Projektdatei auf eine QKan-Datenbank</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#einfugen-eines-zeichnungsrahmens-aus-einer-mit-autocad-erstellten-vorlage">4. Einfügen eines Zeichnungsrahmens aus einer mit Autocad erstellten Vorlage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#ubertragen-eines-kanal-projektes-nach-qkan-und-zuruck">5. Übertragen eines Kanal++ Projektes nach QKan und zurück</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Datenaustausch.html">1. Import von Kanaldaten aus einfachen Tabellen (Excel, TXT, CSV)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">1. Verarbeitung von befestigten und unbefestigten Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html#vorgehen-bei-der-flachenzuordnung">2. Vorgehen bei der Flächenzuordnung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">3. QKan-Formulare</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QKan</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">1. </span>QKan - Plugin Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Qkan_aufsetzen.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="qkan-plugin-installation">
-<h1>1. QKan - Plugin Installation<a class="headerlink" href="#qkan-plugin-installation" title="Link zu dieser Überschrift">¶</a></h1>
+<h1><span class="section-number">1. </span>QKan - Plugin Installation<a class="headerlink" href="#qkan-plugin-installation" title="Link zu dieser Überschrift">¶</a></h1>
 <p>Willkommen beim Step by Step Tutorial zur Installation von QKan mit dem Betriebssystem Windows. QKan kann auch unter
 Linux verwendet werden, wo QGIS zum größten Teil weiterhin entwickelt wird. Die nachfolgenden Schritte sind dort in
 ähnlicher Weise durchzuführen.</p>
@@ -55,104 +202,104 @@ vielfältige Funktionen zur Kanaldatenverwaltung erweitert wird. Ausschließlich
 Simulationsprogramms HYSTEM-EXTRAN 7.x wird ein zweites Plugin benötigt, das aber noch zusätzlich weitere Installationen
 notwendig macht. Dies hängt damit zusammen, dass HYSTEM-EXTRAN 7.x eine Firebird-Datenbank verwendet.</p>
 <div class="section" id="qgis-installieren">
-<h2>1.1. QGIS Installieren<a class="headerlink" href="#qgis-installieren" title="Link zu dieser Überschrift">¶</a></h2>
+<h2><span class="section-number">1.1. </span>QGIS Installieren<a class="headerlink" href="#qgis-installieren" title="Link zu dieser Überschrift">¶</a></h2>
 <p>QKan basiert auf dem Open-Source-Programm QGIS 3. Deshalb wird dieses als erstes benötigt.
 Die aktuelle Version von QGIS finden Sie hier: <a class="reference external" href="http://www.QGIS.org/de/site/forusers/download.html">QGIS</a> oder falls dieser Link nicht funktioniert können Sie manuell
 www.QGIS.org aufrufen. Für größere Organisationen ist die sogenannte LTR (long time release) Version empfehlenswert,
 weil bei dieser Variante mehr Wert auf Stabilität als auf die neuesten Funktionen gelegt wird.</p>
-<p>Laden Sie die für Sie zutreffende &#8220;Eigenständige QGIS-Installation&#8221; herunter. Stellen Sie sicher,
+<p>Laden Sie die für Sie zutreffende „Eigenständige QGIS-Installation“ herunter. Stellen Sie sicher,
 dass Ihnen genügend freier Speicherplatz zur Verfügung steht, da die QGIS-Installation etwa 1,5 GB
 Speicherplatz einnehmen wird. Wählen Sie in Abhänigkeit von Ihrem Betriebssystem und Ihrer Betriebssystem-Version einen Downloadlink aus.
-Die nachstehende Abbildung zeigt die &#8220;Eigenständige QGIS-Installation Version 3.xx (64bit)&#8221;:</p>
-<img alt="_images/QGIS_herunterladen.png" src="_images/QGIS_herunterladen.png" />
-<p>Starten Sie die Installation, akzeptieren das Lizenzabkommen und bestätigen die Installation im Standardverzeichnis &#8220;C:\Programme\QGIS 3.xx&#8221;. Als letztes werden Sie nach zusätzlichen Komponenten, wie zum Beispiel dem North Carolina Data Set gefragt:</p>
-<img alt="_images/QGIS_komponenten.png" src="_images/QGIS_komponenten.png" />
-<p>Es handelt sich um Beispieldaten, die für die Nutzung von QKan nicht benötigt werden. Klicken Sie anschließend auf &#8220;Installieren&#8221;, um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.</p>
+Die nachstehende Abbildung zeigt die „Eigenständige QGIS-Installation Version 3.xx (64bit)“:</p>
+<img alt=".QKan_BilderQGIS_herunterladen.png" src=".QKan_BilderQGIS_herunterladen.png" />
+<p>Starten Sie die Installation, akzeptieren das Lizenzabkommen und bestätigen die Installation im Standardverzeichnis „C:\Programme\QGIS 3.xx“. Als letztes werden Sie nach zusätzlichen Komponenten, wie zum Beispiel dem North Carolina Data Set gefragt:</p>
+<img alt=".QKan_BilderQGIS_komponenten.png" src=".QKan_BilderQGIS_komponenten.png" />
+<p>Es handelt sich um Beispieldaten, die für die Nutzung von QKan nicht benötigt werden. Klicken Sie anschließend auf „Installieren“, um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.</p>
 </div>
 <div class="section" id="qkan-plugins-fur-qgis">
-<h2>1.2. QKan Plugins für QGIS<a class="headerlink" href="#qkan-plugins-fur-qgis" title="Link zu dieser Überschrift">¶</a></h2>
+<h2><span class="section-number">1.2. </span>QKan Plugins für QGIS<a class="headerlink" href="#qkan-plugins-fur-qgis" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Nachdem QGIS erfolgreich auf Ihrem System installiert wurde, kann nun das QKan-Plugin installiert werden.
 Einen Link zu den aktuellen Version finden Sie hier (rot eingerahmt): <a class="reference external" href="https://github.com/hoettges/QKan/releases">QKan3-GITHUB</a> .</p>
-<img alt="_images/github_qkan.png" src="_images/github_qkan.png" />
-<p>Laden Sie das ZIP-Archiv herunter. Die Installation des Plugins erfolgt mit Hilfe des entsprechenden QGIS-Menüs. Starten Sie dazu QGIS und öffnen Sie das Menü &#8220;Erweiterungen &gt; Erweiterungen verwalten und installieren...&#8221;. Wählen Sie dort die Kategorie &#8220;Aus ZIP installieren&#8221;:</p>
-<img alt="_images/Qgis_erweiterungen_zip.png" src="_images/Qgis_erweiterungen_zip.png" />
-<p>Nun können Sie das ZIP-Archiv mit der Schaltfläche [...] auswählen und die Erweiterung installieren.</p>
-<p>Nach dem Schließen dieses Fensters stehen in QGIS ein Werkzeugkasten &#8220;QKan&#8221; mit mehreren Icons
-sowie ein Hauptmenü &#8220;QKan&#8221; mit mehreren Untermenüs zur Verfügung.</p>
-<img alt="_images/Qgis_menue.png" src="_images/Qgis_menue.png" />
+<img alt=".QKan_Bildergithub_qkan.png" src=".QKan_Bildergithub_qkan.png" />
+<p>Laden Sie das ZIP-Archiv herunter. Die Installation des Plugins erfolgt mit Hilfe des entsprechenden QGIS-Menüs. Starten Sie dazu QGIS und öffnen Sie das Menü „Erweiterungen &gt; Erweiterungen verwalten und installieren…“. Wählen Sie dort die Kategorie „Aus ZIP installieren“:</p>
+<img alt=".QKan_BilderQgis_erweiterungen_zip.png" src=".QKan_BilderQgis_erweiterungen_zip.png" />
+<p>Nun können Sie das ZIP-Archiv mit der Schaltfläche […] auswählen und die Erweiterung installieren.</p>
+<p>Nach dem Schließen dieses Fensters stehen in QGIS ein Werkzeugkasten „QKan“ mit mehreren Icons
+sowie ein Hauptmenü „QKan“ mit mehreren Untermenüs zur Verfügung.</p>
+<img alt=".QKan_BilderQgis_menue.png" src=".QKan_BilderQgis_menue.png" />
 <p>Damit haben Sie QKan erfolgreich auf Ihrem Computer installiert!</p>
 </div>
 </div>
 <div class="section" id="qkan-he7-plugin-fur-hystem-extran-7-x">
-<h1>2. QKan-HE7 Plugin für HYSTEM-EXTRAN 7.x<a class="headerlink" href="#qkan-he7-plugin-fur-hystem-extran-7-x" title="Link zu dieser Überschrift">¶</a></h1>
+<h1><span class="section-number">2. </span>QKan-HE7 Plugin für HYSTEM-EXTRAN 7.x<a class="headerlink" href="#qkan-he7-plugin-fur-hystem-extran-7-x" title="Link zu dieser Überschrift">¶</a></h1>
 <p>Falls Sie Daten direkt mit dem Simulationsprogramm HYSTEM-EXTRAN 7.x austauschen wollen, müssen Sie
 auch die nachfolgenden Installationen vornehmen, um anschließend das entsprechende Plugin nutzen zu können.</p>
 <p>Das QKan-Plugin zum direkten Datenaustausch mit HYSTEM-EXTRAN 7.8 und 7.9 erfordert zunächst die Installation eines Firebird-Datenbank-Servers sowie des zugehörigen Python-Moduls.
 Die dazu notwendigen Schritte werden in den nachfolgenden Kapiteln erläutert.</p>
 <div class="section" id="firebird-installieren">
-<h2>2.1. Firebird Installieren<a class="headerlink" href="#firebird-installieren" title="Link zu dieser Überschrift">¶</a></h2>
+<h2><span class="section-number">2.1. </span>Firebird Installieren<a class="headerlink" href="#firebird-installieren" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Die Datenbankanwendung Firebird wird für den Zugriff auf die HYSTEM-EXTRAN-Dateien (*.idbf) benötigt. Einen Link zum Download finden sie hier: <a class="reference external" href="http://www.firebirdsql.org/en/firebird-2-5-6/">Firebird</a> oder Sie besuchen www.firebirdsql.org und
-wählen dort unter dem Reiter &#8220;Downloads&#8221; den Punkt Firebird 2.5 aus.</p>
-<p>Auf der Seite befinden sich ähnlich wie bei der QGIS Installation wieder mehrere Downloadlinks. Benötigt wird der &#8220;Installer for Superclassic/Classic or
-Superserver&#8221;. Wählen Sie auch hier wieder den für Ihr Betriebssystem und Version passenden Link aus. In diesem Beispiel verwenden wir den &#8220;Windows executable
-installer for full Superclassic/Classic or Superserver, recommended for first-time users&#8221; für Windows 64-bit:</p>
-<img alt="_images/firebird_herunterladen.png" src="_images/firebird_herunterladen.png" />
+wählen dort unter dem Reiter „Downloads“ den Punkt Firebird 2.5 aus.</p>
+<p>Auf der Seite befinden sich ähnlich wie bei der QGIS Installation wieder mehrere Downloadlinks. Benötigt wird der „Installer for Superclassic/Classic or
+Superserver“. Wählen Sie auch hier wieder den für Ihr Betriebssystem und Version passenden Link aus. In diesem Beispiel verwenden wir den „Windows executable
+installer for full Superclassic/Classic or Superserver, recommended for first-time users“ für Windows 64-bit:</p>
+<img alt=".QKan_Bilderfirebird_herunterladen.png" src=".QKan_Bilderfirebird_herunterladen.png" />
 <p>Über diesen Link werden Sie zu einem Downloadportal namens sourceforge.net weitergeleitet, wo nach wenigen Sekunden der Download starten sollte. Sollte es
 Probleme mit dem Download geben, beachten Sie bitte die Hinweise auf der Seite. Anschließend starten Sie die heruntergeladene Datei Setup.exe. Aktzeptieren Sie auch
 hier wieder die Lizenzvereinbarungen. Wählen Sie ein Verzeichnis, um Firebird zu speichern oder verwenden Sie das Standartverzeichnis
-&#8220;C:\Program Files\Firebird\Firebird_2_5&#8221;. Gehen Sie nun sicher, dass Sie bei der Installation der Komponenten den Punkt &#8220;Super Server Binärdateien&#8221; ausgewählt
+„C:\Program Files\Firebird\Firebird_2_5“. Gehen Sie nun sicher, dass Sie bei der Installation der Komponenten den Punkt „Super Server Binärdateien“ ausgewählt
 haben.</p>
-<img alt="_images/firebird_komponenten.png" src="_images/firebird_komponenten.png" />
-<p>Als nächstes wird Firebird einen Startmenü-Ordner anlegen. Dieser wird nicht unbedingt benötigt und kann durch die Checkbox &#8220;Keinen Order im Startmenü erstellen&#8221;
+<img alt=".QKan_Bilderfirebird_komponenten.png" src=".QKan_Bilderfirebird_komponenten.png" />
+<p>Als nächstes wird Firebird einen Startmenü-Ordner anlegen. Dieser wird nicht unbedingt benötigt und kann durch die Checkbox „Keinen Order im Startmenü erstellen“
 verhindert werden. Anschließend wird eine Abfrage über die zusätzlichen Aufgaben von Firebird erscheinen. Gehen Sie sicher, dass Ihre Auswahl wie folgt aussieht:</p>
-<img alt="_images/firebird_aufgaben_dienst.png" src="_images/firebird_aufgaben_dienst.png" />
+<img alt=".QKan_Bilderfirebird_aufgaben_dienst.png" src=".QKan_Bilderfirebird_aufgaben_dienst.png" />
 <p>Bevor die Installation fertiggestellt werden kann, werden noch zwei Checkboxen erscheinen:</p>
-<img alt="_images/firebird_fertigstellen.png" src="_images/firebird_fertigstellen.png" />
-<p>Der Punkt &#8220;After installation - What Next?&#8221; bringt Sie zurück auf die Firebirdseite und bietet weitere Informationen zur Nutzung von Firebird. Die zur Nutzung
+<img alt=".QKan_Bilderfirebird_fertigstellen.png" src=".QKan_Bilderfirebird_fertigstellen.png" />
+<p>Der Punkt „After installation - What Next?“ bringt Sie zurück auf die Firebirdseite und bietet weitere Informationen zur Nutzung von Firebird. Die zur Nutzung
 von QKan benötigten Informationen bekommen Sie jedoch hier. Um zu testen ob der Firebirdserver auch richitg auf Ihrem System läuft, öffnen Sie den Taskmanager
-und suchen unter dem Reiter Prozesse nach &#8220;fbserver.exe&#8221;.</p>
+und suchen unter dem Reiter Prozesse nach „fbserver.exe“.</p>
 </div>
 <div class="section" id="zusatzliche-python-module">
-<h2>2.2. Zusätzliche Python-Module<a class="headerlink" href="#zusatzliche-python-module" title="Link zu dieser Überschrift">¶</a></h2>
+<h2><span class="section-number">2.2. </span>Zusätzliche Python-Module<a class="headerlink" href="#zusatzliche-python-module" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Nun muss in QGIS ein Modul ergänzt werden. Da Installationen nur mit Administrator-Rechten ausgeführt werden
-können, müssen Sie dazu &#8220;QGIS&#8221; als Administrator ausführen, um dort die weiteren Schritte vornehmen zu können. Falls Sie keinen
+können, müssen Sie dazu „QGIS“ als Administrator ausführen, um dort die weiteren Schritte vornehmen zu können. Falls Sie keinen
 Administrator-Zugang haben, wenden Sie sich an Ihren IT-Administrator, damit er die nachfolgenden Schritte ausführt.</p>
 <div class="section" id="pyfirebirdsql">
-<h3>2.2.1. pyfirebirdsql<a class="headerlink" href="#pyfirebirdsql" title="Link zu dieser Überschrift">¶</a></h3>
+<h3><span class="section-number">2.2.1. </span>pyfirebirdsql<a class="headerlink" href="#pyfirebirdsql" title="Link zu dieser Überschrift">¶</a></h3>
 <p>Dieses Modul wird von den QKan-HE7-Plugins für die Kommunikation mit der Firebird-Datenbank benötigt. Einen Link dazu finden Sie hier: <a class="reference external" href="https://github.com/nakagami/pyfirebirdsql">pyfirebirdsql</a> oder
 besuchen Sie www.gihub.com/nakagami/pyfirebirdsql.</p>
 <p>Sie sollten sich nun auf der folgenden Seite befinden:</p>
-<img alt="_images/pyfirebird_herunterladen.png" src="_images/pyfirebird_herunterladen.png" />
+<img alt=".QKan_Bilderpyfirebird_herunterladen.png" src=".QKan_Bilderpyfirebird_herunterladen.png" />
 <p>Wenn Sie die Seite manuell öffnen, achten Sie unbedingt darauf, dass Sie das richtige Modul auswählen. Wenn Sie auf der weiter oben angegebenen Seite angekommen
-sind, können Sie durch den &#8220;clone or download&#8221;-Button die Datei herunterladen. Klicken Sie erst auf &#8220;clone or download&#8221; und anschließend auf &#8220;Dowload ZIP&#8221;. Dann
+sind, können Sie durch den „clone or download“-Button die Datei herunterladen. Klicken Sie erst auf „clone or download“ und anschließend auf „Dowload ZIP“. Dann
 führen Sie den Download entsprechend ihrem Browser durch.</p>
-<img alt="_images/pyfirebird_dwn.png" src="_images/pyfirebird_dwn.png" />
-<p>Sie erhalten nun eine .zip Datei mit dem Namen &#8220;pyfirebirdsql-master&#8221;. Der darin enthaltene Ordner kann jetzt entpackt und anschließend in ein beliebiges
+<img alt=".QKan_Bilderpyfirebird_dwn.png" src=".QKan_Bilderpyfirebird_dwn.png" />
+<p>Sie erhalten nun eine .zip Datei mit dem Namen „pyfirebirdsql-master“. Der darin enthaltene Ordner kann jetzt entpackt und anschließend in ein beliebiges
 Verzeichnis verschoben werden.</p>
 <p>Die eigentliche Installation erfolgt in QGIS, das hierfür mit Administrator-Rechten gestartet werden muss.</p>
 </div>
 <div class="section" id="starten-von-qgis-mit-administrator-rechten">
-<h3>2.2.2. Starten von &#8220;QGIS&#8221; mit Administrator-Rechten<a class="headerlink" href="#starten-von-qgis-mit-administrator-rechten" title="Link zu dieser Überschrift">¶</a></h3>
+<h3><span class="section-number">2.2.2. </span>Starten von „QGIS“ mit Administrator-Rechten<a class="headerlink" href="#starten-von-qgis-mit-administrator-rechten" title="Link zu dieser Überschrift">¶</a></h3>
 <p>Das Vorgehen unterscheidet sich etwas, je nachdem, welche Version von Windows Sie haben.</p>
-<p>Sie suchen im Startmenü &#8220;QGIS&#8221; und klicken mit der rechten Maustaste darauf. In der Liste wählen Sie &#8220;Als Administrator ausführen...&#8221;. Unter Windows 10 erscheint zunächst &#8220;Mehr&#8221;, wo Sie dann &#8220;Als Administrator ausführen...&#8221; auswählen.</p>
+<p>Sie suchen im Startmenü „QGIS“ und klicken mit der rechten Maustaste darauf. In der Liste wählen Sie „Als Administrator ausführen…“. Unter Windows 10 erscheint zunächst „Mehr“, wo Sie dann „Als Administrator ausführen…“ auswählen.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warnung</p>
-<p class="last">Achten Sie unbedingt darauf, &#8220;QGIS&#8221; als Administrator auszuführen, da sonst kein Zugriff möglich ist!</p>
+<p class="admonition-title">Warnung</p>
+<p>Achten Sie unbedingt darauf, „QGIS“ als Administrator auszuführen, da sonst kein Zugriff möglich ist!</p>
 </div>
-<p>Für die Installation des Moduls &#8220;pyfirebirdsql&#8221; müssen einige Python-Kommandos ausgeführt werden. Hierzu öffnen Sie bitte in QGIS die Python-Konsole mit Hilfe des Menüs &#8220;Erweiterungen &gt; Python-Konsole&#8221;.</p>
-<p>Geben Sie nun nacheinander die nachfolgend aufgeführten drei Zeilen ein. Dabei ist <code class="docutils literal"><span class="pre">&quot;C:\install\firebird\pyfirebirdsql-master&quot;</span></code> in diesem Beispiel der Pfad, auf dem die Installationsdateien für das Modul &#8220;pyfirebirdsql&#8221; und insbesondere die Datei &#8220;setup.py&#8221; liegen:</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<p>Für die Installation des Moduls „pyfirebirdsql“ müssen einige Python-Kommandos ausgeführt werden. Hierzu öffnen Sie bitte in QGIS die Python-Konsole mit Hilfe des Menüs „Erweiterungen &gt; Python-Konsole“.</p>
+<p>Geben Sie nun nacheinander die nachfolgend aufgeführten drei Zeilen ein. Dabei ist <code class="docutils literal notranslate"><span class="pre">&quot;C:\install\firebird\pyfirebirdsql-master&quot;</span></code> in diesem Beispiel der Pfad, auf dem die Installationsdateien für das Modul „pyfirebirdsql“ und insbesondere die Datei „setup.py“ liegen:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\install\firebird\pyfirebirdsql-master&quot;</span><span class="p">)</span>
 <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;python setup.py install&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Zur Erläuterung: Für die weiteren Befehle wird das Modul “os” benötigt, das zuerst geladen werden muss.
 Nun muss das Arbeitsverzeichnis auf das Verzeichnis gesetzt werden, auf dem die Installationsdateien für
-das Modul &#8220;pyfirebirdsql&#8221; liegen (Anmerkung: der Buchstabe &#8220;r&#8221; vor dem Pfad dient in Python dazu,
-das Zeichen &#8220;\&#8221; als Bestandteil des Verzeichnispfades zu interpretieren und nicht wie in Python
+das Modul „pyfirebirdsql“ liegen (Anmerkung: der Buchstabe „r“ vor dem Pfad dient in Python dazu,
+das Zeichen „\“ als Bestandteil des Verzeichnispfades zu interpretieren und nicht wie in Python
 üblich als Excape-Zeichen). Anschließend wird der Installationsprozess gestartet.</p>
 <p>Wenn in der Python-Konsole eine 0 angefügt wurde, war die Installation erfolgreich.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;import os</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;import os</span>
 <span class="go">&gt;&gt;&gt;os.chdir(r&quot;C:\install\firebird\pyfirebirdsql-master&quot;)</span>
 <span class="go">&gt;&gt;&gt;os.system(&quot;python setup.py install&quot;)</span>
 <span class="go">0</span>
@@ -161,85 +308,63 @@ das Zeichen &#8220;\&#8221; als Bestandteil des Verzeichnispfades zu interpretie
 </div>
 </div>
 <div class="section" id="qkan-he7-plugin">
-<h2>2.3. QKan-HE7-Plugin<a class="headerlink" href="#qkan-he7-plugin" title="Link zu dieser Überschrift">¶</a></h2>
+<h2><span class="section-number">2.3. </span>QKan-HE7-Plugin<a class="headerlink" href="#qkan-he7-plugin" title="Link zu dieser Überschrift">¶</a></h2>
 <p>Nachdem die notwendigen Voraussetzungen geschaffen sind, kann das Plugin zum Datenaustausch mit dem Simulationsprogramm HYSTEM-EXTRAN 7.x installiert werden.
 Die Installation erfolgt wie bei dem QKan-Plugin (siehe oben) durch Download, einfaches Kopieren
-des Ordners &#8220;qkan_he7&#8221; aus dem ZIP-Archiv &#8220;qkan_he7.zip&#8221; und Aktivieren.</p>
+des Ordners „qkan_he7“ aus dem ZIP-Archiv „qkan_he7.zip“ und Aktivieren.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warnung</p>
-<p class="last">Die ersten Anwender von QKan berichten davon, dass die Firebird-Datenbank in der hier verwendeten lizenzkostenfreien Version Probleme verursacht, wenn sich die Hystem-Extran-Datenbankdatei (Kanalnetz- oder Ergebnisdaten) in einem Netzwerk-Verzeichnis befindet. In diesem Fall hilft es, die Datei in ein lokales Verzeichnis (auf C:) zu verschieben, und später nach Beendigung der Arbeit wieder zurück zu verschieben.</p>
+<p class="admonition-title">Warnung</p>
+<p>Die ersten Anwender von QKan berichten davon, dass die Firebird-Datenbank in der hier verwendeten lizenzkostenfreien Version Probleme verursacht, wenn sich die Hystem-Extran-Datenbankdatei (Kanalnetz- oder Ergebnisdaten) in einem Netzwerk-Verzeichnis befindet. In diesem Fall hilft es, die Datei in ein lokales Verzeichnis (auf C:) zu verschieben, und später nach Beendigung der Arbeit wieder zurück zu verschieben.</p>
 </div>
 </div>
 </div>
 
 
+           </div>
+           
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Inhalt</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">1. QKan - Plugin Installation</a><ul>
-<li><a class="reference internal" href="#qgis-installieren">1.1. QGIS Installieren</a></li>
-<li><a class="reference internal" href="#qkan-plugins-fur-qgis">1.2. QKan Plugins für QGIS</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#qkan-he7-plugin-fur-hystem-extran-7-x">2. QKan-HE7 Plugin für HYSTEM-EXTRAN 7.x</a><ul>
-<li><a class="reference internal" href="#firebird-installieren">2.1. Firebird Installieren</a></li>
-<li><a class="reference internal" href="#zusatzliche-python-module">2.2. Zusätzliche Python-Module</a><ul>
-<li><a class="reference internal" href="#pyfirebirdsql">2.2.1. pyfirebirdsql</a></li>
-<li><a class="reference internal" href="#starten-von-qgis-mit-administrator-rechten">2.2.2. Starten von &#8220;QGIS&#8221; mit Administrator-Rechten</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#qkan-he7-plugin">2.3. QKan-HE7-Plugin</a></li>
-</ul>
-</li>
-</ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="Qkan_allgemein.html" title="vorheriges Kapitel">1. Allgemeines</a></li>
-      <li>Next: <a href="Qkan_Videoanleitungen.html" title="nächstes Kapitel">1. Allgemeine Funktionen</a></li>
-  </ul></li>
-</ul>
-</div>
-  <div role="note" aria-label="source link">
-    <h3>Diese Seite</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/Qkan_aufsetzen.rst.txt"
-            rel="nofollow">Quellcode anzeigen</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Schnellsuche</h3>
-    <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Los" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2017, 2018, 2019, 2020, Hoettges.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
-      
-      |
-      <a href="_sources/Qkan_aufsetzen.rst.txt"
-          rel="nofollow">Page source</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="Qkan_Videoanleitungen.html" class="btn btn-neutral float-right" title="1. Allgemeine Funktionen" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Qkan_allgemein.html" class="btn btn-neutral float-left" title="1. Allgemeines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
     </div>
 
-    
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017 - 2021, Hoettges.
+
+    </p>
+  </div>
     
-  </body>
+    
+    
+    Erstellt mit <a href="https://www.sphinx-doc.org/">Sphinx</a> mit einem
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    bereitgestellt von <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
 </html>

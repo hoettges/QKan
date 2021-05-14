@@ -98,6 +98,31 @@ class LinkFl(QKanPlugin):
         self.dlg_sw.close()
         self.dlg_ul.close()
 
+    def connectQKanDB(self, database_qkan=None):
+        """Liest die verknüpfte QKan-DB aus dem geladenen Projekt
+        Für Test muss database_qkan vorgegeben werden
+        """
+
+        # Verbindung zur Datenbank des geladenen Projekts herstellen
+        if database_qkan:
+            self.database_qkan = database_qkan
+        else:
+            self.database_qkan, _ = get_database_QKan()
+        if self.database_qkan:
+            self.db_qkan: DBConnection = DBConnection(dbname=self.database_qkan)
+            if not self.db_qkan.connected:
+                logger.error(
+                    "Fehler in linkflaechen.application.connectQKanDB:\n"
+                    f"QKan-Datenbank {self.database_qkan:s} wurde nicht"
+                    " gefunden oder war nicht aktuell!\nAbbruch!"
+                )
+                return False
+        else:
+            fehlermeldung("Fehler: Für diese Funktion muss ein Projekt geladen sein!")
+            return False
+
+        return True
+
     def run_createlinefl(self) -> None:
         """Run method that performs all the real work"""
 
@@ -110,24 +135,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        database_qkan, epsg = get_database_QKan()
-        if not database_qkan:
-            self.log.error(
-                "k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
-            )
-            return
-
-        # Datenbankverbindung für Abfragen
-        self.db_qkan = DBConnection(dbname=database_qkan)
-
-        if not self.db_qkan.connected:
-            fehlermeldung(
-                "Fehler in linkflaechen.application (1):\n",
-                "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_qkan
-                ),
-            )
-            return
+        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -385,24 +393,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        database_qkan, epsg = get_database_QKan()
-        if not database_qkan:
-            self.log.error(
-                "LinkFl.run_createlinesw: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
-            )
-            return
-
-        # Datenbankverbindung für Abfragen
-        self.db_qkan = DBConnection(dbname=database_qkan)
-
-        if not self.db_qkan.connected:
-            fehlermeldung(
-                "Fehler in linkflaechen.application (2):\n",
-                "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_qkan
-                ),
-            )
-            return
+        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -570,24 +561,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        database_qkan, epsg = get_database_QKan()
-        if not database_qkan:
-            self.log.error(
-                "k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
-            )
-            return
-
-        # Datenbankverbindung für Abfragen
-        self.db_qkan = DBConnection(dbname=database_qkan)
-
-        if not self.db_qkan.connected:
-            fehlermeldung(
-                "Fehler in linkflaechen.application (3):\n",
-                "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_qkan
-                ),
-            )
-            return
+        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
 
         # config in Dialog übernehmen
 
@@ -744,23 +718,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        database_qkan, epsg = get_database_QKan()
-        if not database_qkan:
-            self.log.error(
-                "CreateUnbefFl: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
-            )
-            return
-
-        self.db_qkan = DBConnection(dbname=database_qkan)
-
-        if not self.db_qkan.connected:
-            fehlermeldung(
-                "Fehler in linkflaechen.application (4):\n",
-                "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_qkan
-                ),
-            )
-            return
+        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
 
         # Anzeige initialisieren
         self.dlg_mg.show_groups()
@@ -795,24 +753,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        database_qkan, epsg = get_database_QKan()
-        if not database_qkan:
-            self.log.error(
-                "k_link: database_QKan konnte nicht aus den Layern ermittelt werden. Abbruch!"
-            )
-            return
-
-        # Datenbankverbindung für Abfragen
-        self.db_qkan = DBConnection(dbname=database_qkan)
-
-        if not self.db_qkan.connected:
-            fehlermeldung(
-                "Fehler in linkflaechen.application (5):\n",
-                "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_qkan
-                ),
-            )
-            return
+        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
 
         self.dlg_ul.tf_qkDB.setText(database_qkan)
 

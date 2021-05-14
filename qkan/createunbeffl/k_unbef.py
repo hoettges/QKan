@@ -103,7 +103,7 @@ def create_unpaved_areas(
             if data[0][0] > 0:
                 fehlermeldung(
                     "Unvollständige Daten",
-                    "In der Tabelle TEZG-Flächen sind noch fehlerhafte Daten zu den Abflussparametern "
+                    "In der Tabelle Haltungslächen sind noch fehlerhafte Daten zu den Abflussparametern "
                     "oder den Bodenklassen enthalten. ",
                 )
                 return False

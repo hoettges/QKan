@@ -27,7 +27,7 @@ dass Ihnen genügend freier Speicherplatz zur Verfügung steht, da die QGIS-Inst
 Speicherplatz einnehmen wird. Wählen Sie in Abhänigkeit von Ihrem Betriebssystem und Ihrer Betriebssystem-Version einen Downloadlink aus. 
 Die nachstehende Abbildung zeigt die "Eigenständige QGIS-Installation Version 3.xx (64bit)":
 
-.. image:: .\QKan_Bilder\QGIS_herunterladen.png
+.. image:: ./QKan_Bilder/QGIS_herunterladen.png
 
 Starten Sie die Installation, akzeptieren das Lizenzabkommen und bestätigen die Installation im Standardverzeichnis "C:\\Programme\\QGIS 3.xx". Als letztes werden Sie nach zusätzlichen Komponenten, wie zum Beispiel dem North Carolina Data Set gefragt:
 

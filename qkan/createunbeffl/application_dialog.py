@@ -303,10 +303,13 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
+
+            iface = QKan.instance.iface
+
             logger.debug(
                 f"""QKan-Modul Aufruf
                 createUnbefFlaechen(
-                    self.iface, 
+                    iface, 
                     self.dbQK, 
                     {selected_abflparam}, 
                     {autokorrektur}
@@ -314,7 +317,7 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
             )
 
             if not create_unpaved_areas(
-                self.iface, self.db_qkan, selected_abflparam, autokorrektur
+                iface, self.db_qkan, selected_abflparam, autokorrektur
             ):
                 del self.db_qkan
                 return
