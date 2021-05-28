@@ -30,7 +30,6 @@ import logging
 import os
 import traceback
 from sqlite3.dbapi2 import Connection, Cursor
-from typing import List
 
 from qgis.core import Qgis, QgsProject
 from qgis.PyQt import Qt
@@ -50,22 +49,6 @@ def db_version() -> str:
 def qgs_version() -> str:
     """Returns actual project version"""
     return __qgsVersion__
-
-
-def versionolder(versliste: List[int], verslisref: List[int], depth: int = 3) -> bool:
-    """Gibt wahr zurück, wenn eine Versionsliste älter als eine Referenz-Versionsliste ist,
-       falsch, wenn diese gleich oder größer ist.
-
-    :param versliste:   Liste von Versionsnummern, höchstwertige zuerst
-    :param verslisref:  Liste von Versionsnummern zum Vergleich, höchstwertige zuerst
-    :param depth:       Untersuchungstiefe
-    """
-    for v1, v2 in zip(versliste[:depth], verslisref[:depth]):
-        if v1 < v2:
-            return True
-        elif v1 > v2:
-            return False
-    return False
 
 
 def qgs_actual_version(update: bool = True, warning: bool = False) -> bool:
