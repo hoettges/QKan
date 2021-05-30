@@ -21,7 +21,6 @@ from qgis.utils import spatialite_connect
 
 from qkan import QKan
 
-from .migrations import find_migrations
 from .qkan_database import createdbtables, db_version
 from .qkan_utils import fehlermeldung, meldung
 
@@ -257,7 +256,7 @@ class DBConnection:
         return lattr
 
     def getepsg(self) -> Optional[int]:
-        """ Feststellen des EPSG-Codes der Datenbank"""
+        """Feststellen des EPSG-Codes der Datenbank"""
 
         sql = """
         SELECT srid
@@ -694,6 +693,8 @@ class DBConnection:
         Once we are done, the user is told to reload the project as glitches
         may occur.
         """
+
+        from .migrations import find_migrations
 
         # Database is already on the current version
         if self.check_version():
