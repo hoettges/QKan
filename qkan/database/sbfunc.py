@@ -2,13 +2,13 @@
 
 """
 
-  Datenbankmanagement fuer Firebird-Datenbanken
+  Datenbankmanagement fuer SpatiaLite-Datenbanken
   =============================================
 
   Definition einer Klasse mit Methoden fuer den Zugriff auf 
-  eine Firebird-Datenbank.
+  eine SpatiaLite-Datenbank.
 
-  | Dateiname            : fbfunc.py
+  | Dateiname            : sbfunc.py
   | Date                 : October 2016
   | Copyright            : (C) 2016 by Joerg Hoettges
   | Email                : hoettges@fh-aachen.de
@@ -38,7 +38,7 @@ logger = logging.getLogger(u"QKan")
 
 
 class SBConnection:
-    """Firebird Datenbankobjekt"""
+    """SpatiaLite Datenbankobjekt"""
 
     def __init__(self, dbname: str):
         """Constructor.
