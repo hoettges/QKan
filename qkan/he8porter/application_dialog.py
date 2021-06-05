@@ -367,6 +367,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     rb_update: QRadioButton
     rb_append: QRadioButton
 
+    cb_allrefs: QCheckBox
+
     def __init__(
         self,
         default_dir: str,
@@ -411,6 +413,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
         self.rb_append.setChecked(QKan.config.check_import.append)
         self.rb_update.setChecked(QKan.config.check_import.update)
+
+        self.cb_allrefs.setChecked(QKan.config.check_import.allrefs)
 
     def select_import(self) -> None:
         # noinspection PyArgumentList,PyCallByClass

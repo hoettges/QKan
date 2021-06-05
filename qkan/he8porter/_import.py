@@ -12,6 +12,7 @@ class ImportTask:
 
         self.append = QKan.config.check_import.append
         self.update = QKan.config.check_import.update
+        self.allrefs = QKan.config.check_import.allrefs
 
         self.epsg = QKan.config.epsg
 
@@ -374,12 +375,22 @@ class ImportTask:
     def _abflussparameter(self) -> bool:
         """Import der Abflussbeiwerte
 
-        Es werden nur die in QKan fehlenden Abflussbeiwerte, die in der
+        Wahlweise (allrefs) werden nur die in QKan fehlenden Abflussbeiwerte, die in der
         HE-Datenbank in Flächen verwendet werden, importiert"""
 
         if QKan.config.check_import.abflussparameter:
+
+            # Auch nicht referenzierte Datensätze importieren
+            if self.allrefs:
+                filter = ""
+            else:
+                filter = """
+                INNER JOIN he.Flaeche AS fl_he
+                ON fl_he.Parametersatz = ap_he.Name"""
+
             if self.append:
-                sql = """
+
+                sql = f"""
                 INSERT INTO abflussparameter (
                     apnam, anfangsabflussbeiwert, endabflussbeiwert, 
                     benetzungsverlust, muldenverlust, 
@@ -400,10 +411,9 @@ class ImportTask:
                 FROM he.AbflussParameter AS ap_he
                 LEFT JOIN abflussparameter as ap_qk
                 ON ap_he.Name = ap_qk.apnam
-                INNER JOIN he.Flaeche AS fl_he
-                ON fl_he.Parametersatz = ap_he.Name
+                {filter}
                 WHERE ap_qk.pk IS NULL
-                GROUP BY ap_qk.apnam
+                GROUP BY ap_he.Name
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Abflussparameter"):
@@ -416,12 +426,21 @@ class ImportTask:
     def _bodenklassen(self) -> bool:
         """Import der Bodenklassen
 
-        Es werden nur die in QKan fehlenden Bodenklassen, die in der
+        Wahlweise (allrefs) werden nur die in QKan fehlenden Bodenklassen, die in der
         HE-Datenbank in Abflussparametern verwendet werden, importiert"""
 
         if QKan.config.check_import.bodenklassen:
+
+            # Auch nicht referenzierte Datensätze importieren
+            if self.allrefs:
+                filter = ""
+            else:
+                filter = """
+                INNER JOIN he.abflussparameter AS ap_he
+                ON ap_he.bodenklasse = bk_he.Name"""
+
             if self.append:
-                sql = """
+                sql = f"""
                 INSERT INTO bodenklassen (
                     bknam, infiltrationsrateanfang, infiltrationsrateende, 
                     infiltrationsratestart, rueckgangskonstante, 
@@ -441,9 +460,9 @@ class ImportTask:
                 FROM he.Bodenklasse AS bk_he
                 LEFT JOIN bodenklassen AS bk_qk
                 ON bk_he.Name = bk_qk.bknam
-                INNER JOIN he.abflussparameter AS ap_he
-                ON ap_he.bodenklasse = bk_he.Name
+                {filter}
                 WHERE bk_qk.pk IS NULL
+                GROUP BY bk_he.Name
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Bodenklassen"):
@@ -452,6 +471,42 @@ class ImportTask:
                 self.db_qkan.commit()
 
         return True
+
+    def _profile(self) -> bool:
+        """Import der Rohrprofile
+
+        Wahlweise (allrefs) werden nur die in QKan fehlenden Rorhprifle, die in der
+        HE-Datenbank in Abflussparametern verwendet werden, importiert"""
+
+        if QKan.config.check_import.rohrprofile:
+
+            # Auch nicht referenzierte Datensätze importieren
+            if self.allrefs:
+                filter = ""
+            else:
+                filter = """
+                INNER JOIN (
+                    SELECT Sonderprofilbezeichnung
+                    FROM he.rohr
+                    WHERE Profiltyp = 68
+                    ) AS ha_he
+                ON ha_he.Sonderprofilbezeichnung = pr_he.Name"""
+
+            if self.append:
+                sql = f"""
+                INSERT INTO profile (
+                    profilnam, 
+                    he_nr)
+                SELECT
+                    pr_he.Name,
+                    68
+                FROM he.Sonderprofil AS pr_he
+                LEFT JOIN profile AS pr_qk
+                ON pr_he.Name = pr_qk.profilnam
+                {filter}
+                WHERE pr_he.pk IS NULL
+                GROUP BY pr_he.Name
+                  """
 
     def _aussengebiete(self) -> bool:
         """Import der Aussengebiete"""

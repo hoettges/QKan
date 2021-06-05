@@ -198,6 +198,7 @@ class CheckImport(ClassObject):
     append: bool = True  # Daten hinzufügen
     update: bool = False  # Daten ändern
     synch: bool = False  # Daten löschen
+    allrefs: bool = False # Daten aus Referenztabellen: Nicht verwendete Referenzwerte einschließen
 
 
 class DatabaseConfig(ClassObject):
