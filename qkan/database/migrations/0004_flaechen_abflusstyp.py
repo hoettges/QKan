@@ -8,6 +8,8 @@ logger = logging.getLogger("QKan.database.migrations")
 
 
 def run(dbcon: DBConnection) -> bool:
+    """Zusätzlicher Parameter flaechen.abflusstyp"""
+
     attrlis = dbcon.attrlist("flaechen")
     if not attrlis:
         return False

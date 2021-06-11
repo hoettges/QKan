@@ -8,12 +8,18 @@ logger = logging.getLogger("QKan.database.migrations")
 
 
 def run(dbcon: DBConnection) -> bool:
-    # Zusätzliche Parameter für Mike+ (vormals Mike Urban)
+    """Zusätzlicher Parameter für Mike+ (vormals Mike Urban)"""
 
-    if not dbcon.sql(
-        "ALTER TABLE flaechen ADD COLUMN neigung REAL",
-        "dbfunc.DBConnection.version (3.1.6)",
-    ):
+    attrlis = dbcon.attrlist("flaechen")
+    if not attrlis:
         return False
-    dbcon.commit()
+    elif "neigung" not in attrlis:
+        logger.debug("flaechen.neigung ist nicht in: {}".format(str(attrlis)))
+        if not dbcon.sql(
+            "ALTER TABLE flaechen ADD COLUMN neigung REAL",
+            "dbfunc.DBConnection.version (3.1.6)",
+        ):
+            return False
+        dbcon.commit()
+
     return True

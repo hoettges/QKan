@@ -183,8 +183,8 @@ def layersadapt(
                 # Stildatei laden, falls vorhanden
                 qlsnam = os.path.join(templateDir, "Layer_{}.qml".format(layername))
                 if os.path.exists(qlsnam):
-                    layer.loadNamedStyle(qlsnam, categories=None)
-                    logger.debug("Layerstil geladen: {}".format(qlsnam))
+                    layer.loadNamedStyle(qlsnam)
+                    logger.debug("Layerstil geladen (1): {}".format(qlsnam))
                 # layerList[layer.name()] = layer           --> in QGIS3 nicht nötig
                 logger.debug("k_layersadapt: Layer ergänzt: {}".format(layername))
             else:
@@ -373,49 +373,55 @@ def layersadapt(
             layer.setEditFormConfig(editFormConfig)
             logger.debug(f'k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n')
 
-
         if anpassen_Wertebeziehungen_in_Tabellen:
-            dictOfEditWidgets, displayExpression = get_layer_config_from_qgs_template(
-                qgsxml, layername
-            )
+            qlsnam = os.path.join(templateDir, "Layer_{}.qml".format(layername))
+            if os.path.exists(qlsnam):
+                layer.loadNamedStyle(qlsnam)
+                logger.debug("Layerstil geladen (2): {}".format(qlsnam))
 
-            # Anpassen der Wertebeziehungen
-            # iterating over all fieldnames in template project
-            for idx, field in enumerate(layer.fields()):
-                fieldname = field.name()
-                if fieldname in dictOfEditWidgets:
-                    type, options = dictOfEditWidgets[fieldname]
-                    if "Layer" in options:
-                        # LayerId aus Template-Projektdatei muss durch den
-                        # entsprechenden LayerId der Projektdatei ersetzt werden.
-                        try:
-                            templateLayerName = options["Layer"]
-                            projectLayerName = layerIdList[templateLayerName]
-                        except BaseException as err:
-                            fehlermeldung(
-                                f"Fehler in k_layersadapt (4) in layer {layername}: {err}",
-                                "Möglicherweise ist der Template-Projektdatei fehlerhaft",
-                            )
-                            del dbQK
-                            return
-                        options["Layer"] = projectLayerName
-                    ews = QgsEditorWidgetSetup(type, options)
-                    layer.setEditorWidgetSetup(idx, ews)
-
-            # Anpassen des Anzeige-Ausdrucks, nur wenn nicht schon anderweitig sinnvoll gesetzt.
-            logger.debug(
-                f"DisplayExpression zu Layer {layer.name()}: {layer.displayExpression()}\n"
-            )
-            if layer.displayExpression() in (
-                "pk",
-                '"pk"',
-                "",
-                """COALESCE("pk", '<NULL>')""",
-            ):
-                logger.debug(
-                    f"DisplayExpression zu Layer {layer.name()} gesetzt: {displayExpression}\n"
-                )
-                layer.setDisplayExpression(displayExpression)
+            # Layerstile werden nicht mehr aus der Template-Projektdatei gelesen
+            #
+            # dictOfEditWidgets, displayExpression = get_layer_config_from_qgs_template(
+            #     qgsxml, layername
+            # )
+            #
+            # # Anpassen der Wertebeziehungen
+            # # iterating over all fieldnames in template project
+            # for idx, field in enumerate(layer.fields()):
+            #     fieldname = field.name()
+            #     if fieldname in dictOfEditWidgets:
+            #         type, options = dictOfEditWidgets[fieldname]
+            #         if "Layer" in options:
+            #             # LayerId aus Template-Projektdatei muss durch den
+            #             # entsprechenden LayerId der Projektdatei ersetzt werden.
+            #             try:
+            #                 templateLayerName = options["Layer"]
+            #                 projectLayerName = layerIdList[templateLayerName]
+            #             except BaseException as err:
+            #                 fehlermeldung(
+            #                     f"Fehler in k_layersadapt (4) in layer {layername}: {err}",
+            #                     "Möglicherweise ist der Template-Projektdatei fehlerhaft",
+            #                 )
+            #                 del dbQK
+            #                 return
+            #             options["Layer"] = projectLayerName
+            #         ews = QgsEditorWidgetSetup(type, options)
+            #         layer.setEditorWidgetSetup(idx, ews)
+            #
+            # # Anpassen des Anzeige-Ausdrucks, nur wenn nicht schon anderweitig sinnvoll gesetzt.
+            # logger.debug(
+            #     f"DisplayExpression zu Layer {layer.name()}: {layer.displayExpression()}\n"
+            # )
+            # if layer.displayExpression() in (
+            #     "pk",
+            #     '"pk"',
+            #     "",
+            #     """COALESCE("pk", '<NULL>')""",
+            # ):
+            #     logger.debug(
+            #         f"DisplayExpression zu Layer {layer.name()} gesetzt: {displayExpression}\n"
+            #     )
+            #     layer.setDisplayExpression(displayExpression)
 
     # Koordinaten in einer eigenen Spalte, nur für Layer Schächte, Auslässe, Speicher
     # for layername in ["Schächte", "Auslässe", "Speicher"]:
