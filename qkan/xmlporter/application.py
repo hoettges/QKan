@@ -106,6 +106,8 @@ class XmlPorter(QKanPlugin):
             # Read from form and save to config
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()
+            QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
+            QKan.config.xml.ordner = self.import_dlg.tf_import_2.text()
 
             QKan.config.xml.import_file = self.import_dlg.tf_import.text()
             if not QKan.config.xml.import_file:
@@ -150,6 +152,8 @@ class XmlPorter(QKanPlugin):
 
         Einspringpunkt für Test
         """
+        QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
+        QKan.config.xml.ordner = self.import_dlg.tf_import_2.text()
 
         self.log.info("Creating DB")
         db_qkan = DBConnection(
@@ -169,12 +173,13 @@ class XmlPorter(QKanPlugin):
             return False
 
         self.log.info("DB creation finished, starting importer")
-        imp = ImportTask(db_qkan, QKan.config.xml.import_file)
+        imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice, QKan.config.xml.ordner)
         imp.run()
 
         QKan.config.project.template = str(
             Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
         )
+
         qgsadapt(
             QKan.config.project.template,
             QKan.config.database.qkan,

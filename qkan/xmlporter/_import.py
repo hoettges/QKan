@@ -7,24 +7,58 @@ from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 
-#NS = {"d": "http://www.ofd-hannover.la/Identifikation"}  #vielleicht nicht festlegen da variabel oder?
-#NS = {"d": "http://www.bfr-abwasser.de"}
 
 logger = logging.getLogger("QKan.xml.import")
 
 
 # region objects
 class Schacht(ClassObject):
-    schnam: str
-    xsch: float
-    ysch: float
-    sohlhoehe: float
-    deckelhoehe: float
-    durchm: float
-    entwart: str
-    knotentyp: int
-    simstatus: int
-    kommentar: str
+    schnam: str = ""
+    xsch: float = 0.0
+    ysch: float = 0.0
+    sohlhoehe: float = 0.0
+    deckelhoehe: float = 0.0
+    durchm: float = 0.0
+    druckdicht: int = 0
+    entwart: str = ""
+    strasse: str = ""
+    knotentyp: int = 0
+    simstatus: int = 0
+    kommentar: str = ""
+
+class Schacht_untersucht(ClassObject):
+    schnam: str = ""
+    durchm: float = 0.0
+    druckdicht: int = 0
+    entwart: str = ""
+    strasse: str = ""
+    knotentyp: int = 0
+    simstatus: int = 0
+    kommentar: str = ""
+    untersuchtag: str = ""
+    untersucher: str = ""
+    wetter: int = 0
+    bewertungsart: int = 0
+    bewertungstag: str = ""
+
+
+class Untersuchdat_schacht(ClassObject):
+    untersuchsch: str = ""
+    id: int = 0
+    videozaehler: int = 0
+    timecode: int = 0
+    kuerzel: str = ""
+    charakt1: str = ""
+    charakt2: str = ""
+    quantnr1: float = 0.0
+    quantnr2: float = 0.0
+    streckenschaden: str = ""
+    bereich: str = ""
+    pos_von: int = 0
+    pos_bis: int = 0
+    foto_dateiname: str = ""
+    xsch: float = 0.0
+    ysch: float = 0.0
 
 
 class Haltung(ClassObject):
@@ -40,6 +74,7 @@ class Haltung(ClassObject):
     deckelunten: float = 0.0
     profilnam: str = ""
     entwart: str = ""
+    rohrtyp: str = ""
     ks: float = 1.5
     simstatus: int = 0
     kommentar: str = ""
@@ -48,6 +83,48 @@ class Haltung(ClassObject):
     xschun: float = 0.0
     yschun: float = 0.0
 
+
+class Haltung_untersucht(ClassObject):
+    haltnam: str
+    schoben: str = ""
+    schunten: str = ""
+    hoehe: float = 0.0
+    breite: float = 0.0
+    laenge: float = 0.0
+    kommentar: str = ""
+    untersuchtag: str = ""
+    untersucher: str = ""
+    wetter: int = 0
+    bewertungsart: int = 0
+    bewertungstag: str = ""
+    xschob: float = 0.0
+    yschob: float = 0.0
+    xschun: float = 0.0
+    yschun: float = 0.0
+
+
+
+class Untersuchdat_haltung(ClassObject):
+    untersuchhal: str = ""
+    untersuchrichtung: str = ""
+    schoben: str = ""
+    schunten: str = ""
+    id: int = 0
+    inspektionslaenge: float = 0.0
+    videozaehler: int = 0
+    station: float = 0.0
+    timecode: int = 0
+    kuerzel: str = ""
+    charakt1: str = ""
+    charakt2: str = ""
+    quantnr1: float = 0.0
+    quantnr2: float = 0.0
+    streckenschaden: str = ""
+    pos_von: int = 0
+    pos_bis: int = 0
+    foto_dateiname: str = ""
+    film_dateiname: str = ""
+    richtung: str = ""
 
 class Wehr(ClassObject):
     wnam: str
@@ -85,13 +162,13 @@ class Pumpe(ClassObject):
 
 
 def _strip_float(value: Union[str, float], default: float = 0.0) -> float:
-    if isinstance(value, float):
-        return value
+     if isinstance(value, float):
+         return value
 
-    if isinstance(value, str) and value.strip() != "":
-        return float(value)
+     if isinstance(value, str) and value.strip() != "":
+         return float(value)
 
-    return default
+     return default
 
 
 def _strip_int(value: Union[str, int], default: int = 0) -> int:
@@ -170,8 +247,16 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask:
-    def __init__(self, db_qkan: DBConnection, xml_file: str):
+    def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, ordner: str):
         self.db_qkan = db_qkan
+        self.ordner = ordner
+
+        #Richutung der Untersuchungsdaten
+        self.richt_choice = richt_choice
+        if self.richt_choice == "Anzeigen in Fließrichtung rechts der Haltung":
+            self.richtung = "fließrichtung"
+        if self.richt_choice == "Anzeigen in Untersuchungsrichtung rechts der Haltung":
+            self.richtung = "untersuchungsrichtung"
 
         # nr (str) => description
         self.mapper_entwart: Dict[str, str] = {}
@@ -179,6 +264,11 @@ class ImportTask:
         self.mapper_profile: Dict[str, str] = {}
         self.mapper_outlet: Dict[str, str] = {}
         self.mapper_simstatus: Dict[str, str] = {}
+        self.mapper_untersuchrichtung: Dict[str, str] = {}
+        self.mapper_wetter: Dict[str, str] = {}
+        self.mapper_bewertungsart: Dict[str, str] = {}
+        self.mapper_druckdicht: Dict[str, str] = {}
+
 
         # Load XML
         self.xml = ElementTree.ElementTree()
@@ -218,9 +308,13 @@ class ImportTask:
     def run(self) -> bool:
         self._init_mappers()
         self._schaechte()
+        self._schaechte_untersucht()
+        self._untersuchdat_schaechte()
         self._auslaesse()
         self._speicher()
         self._haltungen()
+        self._haltungen_untersucht()
+        self._untersuchdat_haltung()
         self._wehre()
         self._pumpen()
 
@@ -263,6 +357,34 @@ class ImportTask:
             raise Exception("Failed to init SIMSTATUS mapper")
         consume(self.mapper_simstatus)
 
+        if not self.db_qkan.sql(
+            "SELECT kuerzel, bezeichnung FROM untersuchrichtung",
+            "xml_import untersuchrichtung",
+        ):
+            raise Exception("Failed to init untersuchrichtung mapper")
+        consume(self.mapper_untersuchrichtung)
+
+        if not self.db_qkan.sql(
+            "SELECT kuerzel, bezeichnung FROM wetter",
+            "xml_import wetter",
+        ):
+            raise Exception("Failed to init wetter mapper")
+        consume(self.mapper_wetter)
+
+        if not self.db_qkan.sql(
+            "SELECT kuerzel, bezeichnung FROM bewertungsart",
+            "xml_import bewertungsart",
+        ):
+            raise Exception("Failed to init bewertungsart mapper")
+        consume(self.mapper_bewertungsart)
+
+        if not self.db_qkan.sql(
+            "SELECT kuerzel, bezeichnung FROM druckdicht",
+            "xml_import druckdicht",
+        ):
+            raise Exception("Failed to init druckdicht mapper")
+        consume(self.mapper_druckdicht)
+
     def _schaechte(self) -> None:
         def _iter() -> Iterator[Schacht]:
             # .//Schacht/../.. nimmt AbwassertechnischeAnlage
@@ -291,10 +413,33 @@ class ImportTask:
                     ),
                     durchm=1.0,  # TODO: Not listed in ISYBAU?
                     entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
+                    strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
                     knotentyp=knoten_typ,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
+
+        def _iter2() -> Iterator[Schacht]:
+            blocks = self.xml.findall(
+                "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
+                "d:HydraulikObjekte/d:HydraulikObjekt/d:Schacht/..",
+                self.NS,
+            )
+            logger.debug(f"Anzahl Schaechte: {len(blocks)}")
+
+            druckdicht = 0
+            for block in blocks:
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                for _schacht in block.findall("d:Schacht", self.NS):
+                    druckdicht = _strip_int(_schacht.findtext("d:DruckdichterDeckel", 0, self.NS))
+
+
+                yield Schacht(
+                    schnam=name,
+                    druckdicht=druckdicht,
+                )
+
 
         for schacht in _iter():
             # Entwässerungsarten
@@ -313,6 +458,21 @@ class ImportTask:
                 if not self.db_qkan.sql(sql, "xml_import Schächte [1]"):
                     return None
 
+            if schacht.druckdicht in self.mapper_druckdicht:
+                druckdicht = self.mapper_druckdicht[schacht.druckdicht]
+            else:
+                sql = """
+                INSERT INTO druckdicht (kuerzel, bezeichnung)
+                VALUES ('{e}', '{e}')
+                """.format(
+                    e=schacht.druckdicht
+                )
+                self.mapper_druckdicht[schacht.druckdicht] = schacht.druckdicht
+                druckdicht = schacht.druckdicht
+
+                if not self.db_qkan.sql(sql, "xml_import Schächte [2]"):
+                    return None
+
             # Simulationsstatus
             if str(schacht.simstatus) in self.mapper_simstatus:
                 simstatus = self.mapper_simstatus[str(schacht.simstatus)]
@@ -325,7 +485,7 @@ class ImportTask:
                 )
                 simstatus = f"{schacht.simstatus}_he"
                 self.mapper_simstatus[str(schacht.simstatus)] = simstatus
-                if not self.db_qkan.sql(sql, "xml_import Schächte [2]"):
+                if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
                     return None
 
             # Geo-Objekte
@@ -347,32 +507,270 @@ class ImportTask:
             #     return None
 
             sql = f"""
-            INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
-                    schachttyp, simstatus, kommentar)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?)
+            INSERT INTO schaechte_data (schnam, sohlhoehe, deckelhoehe, durchm,druckdicht, entwart, strasse,
+                    schachttyp, simstatus, kommentar, xsch, ysch)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?, ?, ?)
             """
             if not self.db_qkan.sql(
                 sql,
-                "xml_import Schächte [3]",
+                "xml_import Schächte [4]",
                 parameters=(
                     schacht.schnam,
-                    schacht.xsch,
-                    schacht.ysch,
                     schacht.sohlhoehe,
                     schacht.deckelhoehe,
                     schacht.durchm,
+                    druckdicht,
                     entwart,
+                    schacht.strasse,
                     simstatus,
                     schacht.kommentar,
+                    schacht.xsch,
+                    schacht.ysch,
                 ),
             ):
                 return None
 
         if not self.db_qkan.sql(
             "UPDATE schaechte SET (geom, geop) = (geom, geop)",
-            "xml_import Schächte [3a]",
+            "xml_import Schächte [4a]",
         ):
             return None
+
+        self.db_qkan.commit()
+
+        for schacht in _iter2():
+            if not self.db_qkan.sql(
+                "UPDATE schaechte SET druckdicht = ? WHERE schnam = ?",
+                "xml_import Schacht [4b]",
+                parameters=(schacht.druckdicht, schacht.schnam),
+            ):
+                return None
+
+        self.db_qkan.commit()
+
+
+    def _schaechte_untersucht(self) -> None:
+        def _iter() -> Iterator[Schacht_untersucht]:
+            # .//Schacht/../.. nimmt AbwassertechnischeAnlage
+            blocks = self.xml.findall(
+                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/d:Knoten/d:Schacht/../..",
+                self.NS,
+            )
+
+            logger.debug(f"Anzahl Schächte: {len(blocks)}")
+
+            for block in blocks:
+                name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
+
+                yield Schacht_untersucht(
+                    schnam=name,
+                    durchm=1.0,  # TODO: Not listed in ISYBAU?
+                    kommentar=block.findtext("d:Kommentar", "-", self.NS),
+                )
+
+
+        def _iter3() -> Iterator[Schacht_untersucht]:
+            blocks = self.xml.findall(
+                "d:Datenkollektive/d:Zustandsdatenkollektiv/d:InspizierteAbwassertechnischeAnlage/"
+                "d:OptischeInspektion/d:Knoten/../..",
+                self.NS,
+            )
+            logger.debug(f"Anzahl Schaechte: {len(blocks)}")
+
+            untersuchtag = ""
+            untersucher = ""
+            wetter = 0
+            bewertungsart = 0
+            bewertungstag = ""
+
+            for block in blocks:
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                for _schacht in block.findall("d:OptischeInspektion", self.NS):
+
+                    untersuchtag = _schacht.findtext("d:Inspektionsdatum", "not found", self.NS)
+
+                    untersucher = _schacht.findtext("d:NameUntersucher", "not found", self.NS)
+
+                    wetter = _strip_int(_schacht.findtext("d:Wetter", "0", self.NS))
+
+                    for _schachtz in _schacht.findall("d:Knoten/d:Bewertung", self.NS):
+
+                        bewertungsart = _strip_int(_schachtz.findtext("d:Bewertungsverfahren", "0", self.NS))
+
+                        bewertungstag = _schachtz.findtext("d:Bewertungsdatum", "not found", self.NS)
+
+                yield Schacht_untersucht(
+                    schnam=name,
+                    untersuchtag=untersuchtag,
+                    untersucher=untersucher,
+                    wetter=wetter,
+                    bewertungsart=bewertungsart,
+                    bewertungstag=bewertungstag,
+                )
+
+        for schacht_untersucht in _iter():
+
+
+            sql = f"""
+            INSERT INTO schaechte_untersucht_data (schnam, durchm, kommentar)
+            VALUES (?, ?, ?)
+            """
+            if not self.db_qkan.sql(
+                sql,
+                "xml_import Schächte_untersucht [1]",
+                parameters=(
+                    schacht_untersucht.schnam,
+                    schacht_untersucht.durchm,
+                    schacht_untersucht.kommentar,
+                ),
+            ):
+                return None
+
+        if not self.db_qkan.sql(
+            "UPDATE schaechte_untersucht SET ( geop) = ( geop)",
+            "xml_import Schächte_untersucht [1a]",
+        ):
+            return None
+
+        self.db_qkan.commit()
+
+
+        for schacht_untersucht in _iter3():
+            if schacht_untersucht.wetter in self.mapper_wetter:
+                wetter = self.mapper_wetter[schacht_untersucht.wetter]
+            else:
+                sql = """
+                INSERT INTO wetter (kuerzel, bezeichnung)
+                VALUES ('{e}', '{e}')
+                """.format(
+                    e=schacht_untersucht.wetter
+                )
+                self.mapper_untersuchrichtung[schacht_untersucht.wetter] = schacht_untersucht.wetter
+                wetter = schacht_untersucht.wetter
+
+                if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [2]"):
+                    return None
+
+            if schacht_untersucht.bewertungsart in self.mapper_bewertungsart:
+                bewertungsart = self.mapper_bewertungsart[schacht_untersucht.bewertungsart]
+            else:
+                sql = """
+                           INSERT INTO bewertungsart (kuerzel, bezeichnung)
+                           VALUES ('{e}', '{e}')
+                           """.format(
+                    e=schacht_untersucht.bewertungsart
+                )
+                self.mapper_untersuchrichtung[schacht_untersucht.bewertungsart] = schacht_untersucht.bewertungsart
+                bewertungsart = schacht_untersucht.bewertungsart
+
+                if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [3]"):
+                    return None
+
+            if not self.db_qkan.sql(
+                "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
+                "bewertungstag=? WHERE schnam = ?",
+                "xml_import Schächte_untersucht [4]",
+                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter, bewertungsart, schacht_untersucht.bewertungstag,
+                            schacht_untersucht.schnam),
+            ):
+                return None
+
+        self.db_qkan.commit()
+
+    def _untersuchdat_schaechte(self) -> None:
+        def _iter() -> Iterator[Untersuchdat_schacht]:
+            blocks = self.xml.findall(
+                "d:Datenkollektive/d:Zustandsdatenkollektiv/d:InspizierteAbwassertechnischeAnlage/d:OptischeInspektion/"
+                "d:Knoten/d:Inspektionsdaten/d:KZustand/../../../..",
+                self.NS,
+            )
+
+            logger.debug(f"Anzahl Untersuchungsdaten Schacht: {len(blocks)}")
+
+            name = ""
+            id = 0
+            videozaehler = 0
+            timecode = 0
+            kuerzel = ""
+            charakt1 = ""
+            charakt2 = ""
+            quantnr1 = 0.0
+            quantnr2 = 0.0
+            streckenschaden = ""
+            pos_von = 0
+            pos_bis = 0
+            bereich = ""
+            foto_dateiname = ""
+            xsch= 0.0
+            ysch= 0.0
+
+            for block in blocks:
+
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                for _untersuchdat_schacht in block.findall("d:OptischeInspektion/d:Knoten/d:Inspektionsdaten/d:KZustand", self.NS):
+
+                    id = _strip_int(_untersuchdat_schacht.findtext("d:Index", "0", self.NS))
+                    videozaehler = _strip_int(_untersuchdat_schacht.findtext("d:Videozaehler", "0", self.NS))
+                    timecode = _strip_int(_untersuchdat_schacht.findtext("d:Timecode", "0", self.NS))
+                    kuerzel = _untersuchdat_schacht.findtext("d:InspektionsKode", "not found", self.NS)
+                    charakt1 = _untersuchdat_schacht.findtext("d:Charakterisierung1", "not found", self.NS)
+                    charakt2 = _untersuchdat_schacht.findtext("d:Charakterisierung2", "not found", self.NS)
+                    quantnr1 = _strip_float(_untersuchdat_schacht.findtext("d:Quantifizierung1Numerisch", "0.0", self.NS))
+                    quantnr2 = _strip_float(_untersuchdat_schacht.findtext("d:Quantifizierung2Numerisch", "0.0", self.NS))
+                    streckenschaden = _untersuchdat_schacht.findtext("d:Streckenschaden", "not found", self.NS)
+                    pos_von = _strip_int(_untersuchdat_schacht.findtext("d:PositionVon", "0", self.NS))
+                    pos_bis = _strip_int(_untersuchdat_schacht.findtext("d:PositionBis", "0", self.NS))
+                    bereich = _untersuchdat_schacht.findtext("d:Schachtbereich", "not found", self.NS)
+                    foto_dateiname = _untersuchdat_schacht.findtext("d:Fotodatei", "not found", self.NS)
+
+                    yield Untersuchdat_schacht(
+                    untersuchsch = name,
+                    id = id,
+                    videozaehler = videozaehler,
+                    timecode = timecode,
+                    kuerzel = kuerzel,
+                    charakt1 = charakt1,
+                    charakt2 = charakt2,
+                    quantnr1 = quantnr1,
+                    quantnr2 = quantnr2,
+                    streckenschaden = streckenschaden,
+                    pos_von = pos_von,
+                    pos_bis = pos_bis,
+                    bereich = bereich,
+                    foto_dateiname = foto_dateiname,
+                    )
+
+        for untersuchdat_schacht in _iter():
+
+            sql = f"""
+            INSERT INTO untersuchdat_schacht_data (untersuchsch, id, videozaehler, timecode, kuerzel, 
+                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)
+            """
+            if not self.db_qkan.sql(
+                sql,
+                "xml_import untersuchdat_schacht [1]",
+                parameters=(
+                    untersuchdat_schacht.untersuchsch,
+                    untersuchdat_schacht.id,
+                    untersuchdat_schacht.videozaehler,
+                    untersuchdat_schacht.timecode,
+                    untersuchdat_schacht.kuerzel,
+                    untersuchdat_schacht.charakt1,
+                    untersuchdat_schacht.charakt2,
+                    untersuchdat_schacht.quantnr1,
+                    untersuchdat_schacht.quantnr2,
+                    untersuchdat_schacht.streckenschaden,
+                    untersuchdat_schacht.pos_von,
+                    untersuchdat_schacht.pos_bis,
+                    untersuchdat_schacht.bereich,
+                    untersuchdat_schacht.foto_dateiname,
+
+                ),
+            ):
+                return None
 
         self.db_qkan.commit()
 
@@ -580,11 +978,7 @@ class ImportTask:
                 breite,
                 deckeloben,
                 deckelunten,
-                xschob,
-                yschob,
-                xschun,
-                yschun,
-            ) = (0.0,) * 11
+            ) = (0.0,) * 7
             for block in blocks:
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
 
@@ -594,12 +988,14 @@ class ImportTask:
                     schunten = _haltung.findtext("d:KnotenAblauf", "not found", self.NS)
 
                     sohleoben = _strip_float(
-                        block.findtext("d:SohlhoeheZulauf", 0.0, self.NS)
+                        _haltung.findtext("d:SohlhoeheZulauf", 0.0, self.NS)
                     )
                     sohleunten = _strip_float(
-                        block.findtext("d:SohlhoeheAblauf", 0.0, self.NS)
+                        _haltung.findtext("d:SohlhoeheAblauf", 0.0, self.NS)
                     )
-                    laenge = _strip_float(block.findtext("d:Laenge", 0.0, self.NS))
+                    laenge = _strip_float(_haltung.findtext("d:Laenge", 0.0, self.NS))
+
+                    rohrtyp = _haltung.findtext("d:Material", "not found", self.NS)
 
                     for profil in _haltung.findall("d:Profil", self.NS):
                         profilnam = profil.findtext("d:Profilart", "not found", self.NS)
@@ -637,6 +1033,7 @@ class ImportTask:
                     hoehe=hoehe,
                     breite=breite,
                     laenge=laenge,
+                    rohrtyp=rohrtyp,
                     sohleoben=sohleoben,
                     sohleunten=sohleunten,
                     deckeloben=deckeloben,
@@ -694,6 +1091,8 @@ class ImportTask:
                     ks=ks,
                 )
 
+
+
         # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
         for haltung in _iter():
             if str(haltung.simstatus) in self.mapper_simstatus:
@@ -721,30 +1120,12 @@ class ImportTask:
                 ):
                     return None
 
-            # Geo
-            # db_type = QKan.config.database.type
-            # if db_type == enums.QKanDBChoice.SPATIALITE:
-            #     geom = (
-            #         f"MakeLine(MakePoint({haltung.xschob},{haltung.yschob},{QKan.config.epsg}),"
-            #         f"MakePoint({haltung.xschun},{haltung.yschun},{QKan.config.epsg}))"
-            #     )
-            # elif db_type == enums.QKanDBChoice.POSTGIS:
-            #     geom = (
-            #         f"ST_MakeLine(ST_SetSRID(ST_MakePoint({haltung.xschob},{haltung.yschob},{QKan.config.epsg}),"
-            #         f"ST_SetSRID(ST_MakePoint({haltung.xschun},{haltung.yschun}),{QKan.config.epsg}))"
-            #     )
-            # else:
-            #     fehlermeldung(
-            #         "Programmfehler!", "Datenbanktyp ist fehlerhaft.\nAbbruch!",
-            #     )
-            #     return None
-
             sql = f"""
                 INSERT INTO haltungen_data 
                     (haltnam, schoben, schunten, 
-                    hoehe, breite, laenge, sohleoben, sohleunten, deckeloben, deckelunten, 
+                    hoehe, breite, laenge, rohrtyp, sohleoben, sohleunten, deckeloben, deckelunten, 
                     profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
 
             if not self.db_qkan.sql(
@@ -757,12 +1138,14 @@ class ImportTask:
                     haltung.hoehe,
                     haltung.breite,
                     haltung.laenge,
+                    haltung.rohrtyp,
                     haltung.sohleoben,
                     haltung.sohleunten,
                     haltung.deckeloben,
                     haltung.deckelunten,
                     haltung.profilnam,
                     entwart,
+                    haltung.ks,
                     simstatus,
                     haltung.kommentar,
                     haltung.xschob,
@@ -790,6 +1173,401 @@ class ImportTask:
                 return None
 
         self.db_qkan.commit()
+
+    #Haltung_untersucht
+    def _haltungen_untersucht(self) -> None:
+        def _iter() -> Iterator[Haltung_untersucht]:
+            blocks = self.xml.findall(
+                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/d:Kante/d:Haltung/../..",
+                self.NS,
+            )
+            logger.debug(f"Anzahl Haltungen: {len(blocks)}")
+
+            schoben, schunten, profilnam = ("",) * 3
+            (
+                sohleoben,
+                sohleunten,
+                laenge,
+                hoehe,
+                breite,
+                deckeloben,
+                deckelunten,
+            ) = (0.0,) * 7
+            for block in blocks:
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                # TODO: Does <AbwassertechnischeAnlage> even contain multiple <Kante>?
+                for _haltung in block.findall("d:Kante/d:KantenTyp/..", self.NS):
+                    schoben = _haltung.findtext("d:KnotenZulauf", "not found", self.NS)
+                    schunten = _haltung.findtext("d:KnotenAblauf", "not found", self.NS)
+
+                    laenge = _strip_float(_haltung.findtext("d:Laenge", 0.0, self.NS))
+
+
+                    for profil in _haltung.findall("d:Profil", self.NS):
+                        hoehe = (
+                            _strip_float(profil.findtext("d:Profilhoehe", 0.0, self.NS))
+                            / 1000
+                        )
+                        breite = (
+                            _strip_float(profil.findtext("d:Profilbreite", 0.0, self.NS))
+                            / 1000
+                        )
+
+                for _haltung in block.findall(
+                    "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
+                ):
+                    xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                    yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+
+
+                for _haltung in block.findall(
+                    "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
+                ):
+                    xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                    yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+
+
+                yield Haltung_untersucht(
+                    haltnam=name,
+                    schoben=schoben,
+                    schunten=schunten,
+                    hoehe=hoehe,
+                    breite=breite,
+                    laenge=laenge,
+                    kommentar=block.findtext("d:Kommentar", "-", self.NS),
+                    xschob=xschob,
+                    yschob=yschob,
+                    xschun=xschun,
+                    yschun=yschun,
+                )
+
+        def _iter2() -> Iterator[Haltung_untersucht]:
+            blocks = self.xml.findall(
+                "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
+                "d:HydraulikObjekte/d:HydraulikObjekt/d:Haltung/..",
+                self.NS,
+            )
+            logger.debug(f"Anzahl HydraulikObjekte_Haltungen: {len(blocks)}")
+
+            laenge = 0.0
+            for block in blocks:
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
+                # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
+                for _haltung in block.findall("d:Haltung", self.NS):
+
+                    laenge = _strip_float(
+                        _haltung.findtext("d:Berechnungslaenge", 0.0, self.NS)
+                    )
+
+                yield Haltung_untersucht(
+                    haltnam=name,
+                    laenge=laenge,
+                )
+
+        def _iter3() -> Iterator[Haltung_untersucht]:
+            blocks = self.xml.findall(
+                "d:Datenkollektive/d:Zustandsdatenkollektiv/d:InspizierteAbwassertechnischeAnlage/"
+                "d:OptischeInspektion/d:Rohrleitung/../..",
+                self.NS,
+            )
+            logger.debug(f"Anzahl Haltungen: {len(blocks)}")
+
+            untersuchtag = ""
+            untersucher = ""
+            wetter = 0
+            bewertungsart = 0
+            bewertungstag = ""
+
+            for block in blocks:
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                for _haltung in block.findall("d:OptischeInspektion", self.NS):
+
+                    untersuchtag = _haltung.findtext("d:Inspektionsdatum", "not found", self.NS)
+
+                    untersucher = _haltung.findtext("d:NameUntersucher", "not found", self.NS)
+
+                    wetter = _strip_int(_haltung.findtext("d:Wetter", "0", self.NS))
+
+                    for _haltungz in _haltung.findall("d:Rohrleitung/d:Bewertung", self.NS):
+
+                        bewertungsart = _strip_int(_haltungz.findtext("d:Bewertungsverfahren", "0", self.NS))
+
+                        bewertungstag = _haltungz.findtext("d:Bewertungsdatum", "not found", self.NS)
+
+                yield Haltung_untersucht(
+                    haltnam=name,
+                    untersuchtag=untersuchtag,
+                    untersucher=untersucher,
+                    wetter=wetter,
+                    bewertungsart=bewertungsart,
+                    bewertungstag=bewertungstag,
+                )
+
+        # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
+        for haltung_untersucht in _iter():
+
+            sql = f"""
+                INSERT INTO haltungen_untersucht_data 
+                    (haltnam, schoben, schunten, 
+                    hoehe, breite, laenge, kommentar, xschob, yschob, xschun, yschun)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """
+
+            if not self.db_qkan.sql(
+                sql,
+                "xml_import Haltungen_untersucht [1]",
+                parameters=(
+                    haltung_untersucht.haltnam,
+                    haltung_untersucht.schoben,
+                    haltung_untersucht.schunten,
+                    haltung_untersucht.hoehe,
+                    haltung_untersucht.breite,
+                    haltung_untersucht.laenge,
+                    haltung_untersucht.kommentar,
+                    haltung_untersucht.xschob,
+                    haltung_untersucht.yschob,
+                    haltung_untersucht.xschun,
+                    haltung_untersucht.yschun,
+                ),
+            ):
+                return None
+
+        if not self.db_qkan.sql(
+            "UPDATE haltungen_untersucht SET geom = geom", "xml_import Haltungen_untersucht [1a]"
+        ):
+            return None
+
+        self.db_qkan.commit()
+
+        # 2. Teil: Hier werden die hydraulischen Haltungsdaten in die Datenbank geschrieben
+        for haltung_untersucht in _iter2():
+            if not self.db_qkan.sql(
+                "UPDATE haltungen_untersucht SET laenge = ? WHERE haltnam = ?",
+                "xml_import Haltungen_untersucht [2]",
+                parameters=( haltung_untersucht.laenge, haltung_untersucht.haltnam),
+            ):
+                return None
+
+        self.db_qkan.commit()
+
+        for haltung_untersucht in _iter3():
+            if haltung_untersucht.wetter in self.mapper_wetter:
+                wetter = self.mapper_wetter[haltung_untersucht.wetter]
+            else:
+                sql = """
+                INSERT INTO wetter (kuerzel, bezeichnung)
+                VALUES ('{e}', '{e}')
+                """.format(
+                    e=haltung_untersucht.wetter
+                )
+                self.mapper_untersuchrichtung[haltung_untersucht.wetter] = haltung_untersucht.wetter
+                wetter = haltung_untersucht.wetter
+
+                if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
+                    return None
+
+            if haltung_untersucht.bewertungsart in self.mapper_bewertungsart:
+                bewertungsart = self.mapper_bewertungsart[haltung_untersucht.bewertungsart]
+            else:
+                sql = """
+                           INSERT INTO bewertungsart (kuerzel, bezeichnung)
+                           VALUES ('{e}', '{e}')
+                           """.format(
+                    e=haltung_untersucht.bewertungsart
+                )
+                self.mapper_untersuchrichtung[haltung_untersucht.bewertungsart] = haltung_untersucht.bewertungsart
+                bewertungsart = haltung_untersucht.bewertungsart
+
+                if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [4]"):
+                    return None
+
+            if not self.db_qkan.sql(
+                "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
+                "bewertungstag=? WHERE haltnam = ?",
+                "xml_import Haltungen_untersucht [5]",
+                parameters=(haltung_untersucht.untersuchtag, haltung_untersucht.untersucher, wetter, bewertungsart, haltung_untersucht.bewertungstag,
+                            haltung_untersucht.haltnam),
+            ):
+                return None
+
+        self.db_qkan.commit()
+
+    def _untersuchdat_haltung(self) -> None:
+        def _iter() -> Iterator[Untersuchdat_haltung]:
+            blocks = self.xml.findall(
+                "d:Datenkollektive/d:Zustandsdatenkollektiv/d:InspizierteAbwassertechnischeAnlage/d:OptischeInspektion/"
+                "d:Rohrleitung/d:Inspektionsdaten/d:RZustand/../../../..",
+                self.NS,
+            )
+
+            logger.debug(f"Anzahl Untersuchungsdaten Haltung: {len(blocks)}")
+
+            name = ""
+            untersuchrichtung = ""
+            schoben = ""
+            schunten = ""
+            id = 0
+            inspektionslaenge = 0.0
+            videozaehler = 0
+            station = 0.0
+            timecode = 0
+            kuerzel = ""
+            charakt1 = ""
+            charakt2 = ""
+            quantnr1 = 0.0
+            quantnr2 = 0.0
+            streckenschaden = ""
+            pos_von = 0
+            pos_bis = 0
+            foto_dateiname = ""
+            film_dateiname = ""
+            richtung = self.richtung
+
+
+            for block in blocks:
+
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                for _untersuchdat_haltung in block.findall("d:OptischeInspektion/d:Rohrleitung", self.NS):
+
+                    untersuchrichtung = _untersuchdat_haltung.findtext("d:Inspektionsrichtung", "not found", self.NS)
+                    inspektionslaenge = _strip_float(_untersuchdat_haltung.findtext("d:Inspektionslaenge", "0.0", self.NS))
+                    if inspektionslaenge == 0.0:
+                        inspektionslaenge = _strip_float(_untersuchdat_haltung.findtext("d:Inspektionsdaten/d:RZustand[d:InspektionsKode='BCE'][d:Charakterisierung1='XP']/d:Station", "0.0", self.NS))
+
+
+                    schoben = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenZulauf", "not found", self.NS)
+                    schunten = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenAblauf", "not found", self.NS)
+
+
+                    for _untersuchdat in _untersuchdat_haltung.findall("d:Inspektionsdaten/d:RZustand", self.NS):
+
+                        id = _strip_int(_untersuchdat.findtext("d:Index", "0", self.NS))
+                        videozaehler = _strip_int(_untersuchdat.findtext("d:Videozaehler", "0", self.NS))
+                        station = _strip_float(_untersuchdat.findtext("d:Station", "0.0", self.NS))
+                        timecode = _strip_int(_untersuchdat.findtext("d:Timecode", "0", self.NS))
+                        kuerzel = _untersuchdat.findtext("d:InspektionsKode", "not found", self.NS)
+                        charakt1 = _untersuchdat.findtext("d:Charakterisierung1", "not found", self.NS)
+                        charakt2 = _untersuchdat.findtext("d:Charakterisierung2", "not found", self.NS)
+                        quantnr1 = _strip_float(_untersuchdat.findtext("d:Quantifizierung1Numerisch", "0.0", self.NS))
+                        quantnr2 = _strip_float(_untersuchdat.findtext("d:Quantifizierung2Numerisch", "0.0", self.NS))
+                        streckenschaden = _untersuchdat.findtext("d:Streckenschaden", "not found", self.NS)
+                        pos_von = _strip_int(_untersuchdat.findtext("d:PositionVon", "0", self.NS))
+                        pos_bis = _strip_int(_untersuchdat.findtext("d:PositionBis", "0", self.NS))
+                        foto_dateiname = _untersuchdat.findtext("d:Fotodatei", "not found", self.NS)
+
+                        yield Untersuchdat_haltung(
+                        untersuchhal=name,
+                        untersuchrichtung=untersuchrichtung,
+                        schoben=schoben,
+                        schunten=schunten,
+                        id=id,
+                        inspektionslaenge=inspektionslaenge,
+                        videozaehler=videozaehler,
+                        station=station,
+                        timecode=timecode,
+                        kuerzel=kuerzel,
+                        charakt1=charakt1,
+                        charakt2=charakt2,
+                        quantnr1=quantnr1,
+                        quantnr2=quantnr2,
+                        streckenschaden=streckenschaden,
+                        pos_von=pos_von,
+                        pos_bis=pos_bis,
+                        foto_dateiname=foto_dateiname,
+                        film_dateiname=film_dateiname,
+                        richtung=richtung,
+
+            )
+
+        def _iter2() -> Iterator[Untersuchdat_haltung]:
+                blocks = self.xml.findall(
+                    "d:Filme/d:Film/..",
+                    self.NS,
+                )
+                logger.debug(f"Anzahl Untersuchdat_haltung: {len(blocks)}")
+
+                film_dateiname = ""
+                for block in blocks:
+                    name = block.findtext("d:Film/d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", "not found", self.NS)
+
+                    for _untersuchdat in block.findall("d:Film", self.NS):
+                        # nochmal prüfen!
+                        film_dateiname = _untersuchdat.findtext("d:Filmname", "not found", self.NS)
+
+
+                    yield Untersuchdat_haltung(
+                        untersuchhal=name,
+                        film_dateiname=film_dateiname,
+                    )
+
+        for untersuchdat_haltung in _iter():
+
+            if untersuchdat_haltung.untersuchrichtung in self.mapper_untersuchrichtung:
+                untersuchrichtung = self.mapper_untersuchrichtung[untersuchdat_haltung.untersuchrichtung]
+            else:
+                sql = """
+                INSERT INTO untersuchrichtung (kuerzel, bezeichnung)
+                VALUES ('{e}', '{e}')
+                """.format(
+                    e=untersuchdat_haltung.untersuchrichtung
+                )
+                self.mapper_untersuchrichtung[untersuchdat_haltung.untersuchrichtung] = untersuchdat_haltung.untersuchrichtung
+                untersuchrichtung = untersuchdat_haltung.untersuchrichtung
+
+                if not self.db_qkan.sql(sql, "xml_import untersuchdat_haltung [1]"):
+                    return None
+
+            sql = f"""
+            INSERT INTO untersuchdat_haltung_data (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler,inspektionslaenge, station, timecode, kuerzel, 
+                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname,film_dateiname, richtung)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """
+            if not self.db_qkan.sql(
+                sql,
+                "xml_import untersuchdat_haltung [2]",
+                parameters=(
+                    untersuchdat_haltung.untersuchhal,
+                    untersuchrichtung,
+                    untersuchdat_haltung.schoben,
+                    untersuchdat_haltung.schunten,
+                    untersuchdat_haltung.id,
+                    untersuchdat_haltung.videozaehler,
+                    untersuchdat_haltung.inspektionslaenge,
+                    untersuchdat_haltung.station,
+                    untersuchdat_haltung.timecode,
+                    untersuchdat_haltung.kuerzel,
+                    untersuchdat_haltung.charakt1,
+                    untersuchdat_haltung.charakt2,
+                    untersuchdat_haltung.quantnr1,
+                    untersuchdat_haltung.quantnr2,
+                    untersuchdat_haltung.streckenschaden,
+                    untersuchdat_haltung.pos_von,
+                    untersuchdat_haltung.pos_bis,
+                    untersuchdat_haltung.foto_dateiname,
+                    untersuchdat_haltung.film_dateiname,
+                    untersuchdat_haltung.richtung
+                ),
+            ):
+                return None
+
+        self.db_qkan.commit()
+
+        for untersuchdat_haltung in _iter2():
+            if not self.db_qkan.sql(
+                "UPDATE untersuchdat_haltung_data SET film_dateiname=?" 
+                " WHERE  untersuchhal= ?",
+                "xml_import untersuchhal [2a]",
+                parameters=(untersuchdat_haltung.untersuchhal, untersuchdat_haltung.film_dateiname),
+            ):
+                return None
+
+        self.db_qkan.commit()
+
 
     def _wehre(self) -> None:
         # Hier werden die Hydraulikdaten zu den Wehren in die Datenbank geschrieben.

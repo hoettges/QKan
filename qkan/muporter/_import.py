@@ -248,7 +248,7 @@ class ImportTask:
                                 )
                 SELECT
                     fm.muid                             AS flnam
-                  , fl.catchid                          AS haltnam
+                  , coalesce(fl.linkid, n2l.muid)       AS haltnam
                   , fl.nodeid                           AS schnam
                   , fm.modelbslope                      AS neigung
                   , CASE WHEN fm.modelbslope < 0.01 THEN 1
@@ -267,6 +267,21 @@ class ImportTask:
                 ON fl.catchid = fm.muid
                 LEFT JOIN flaechen AS fq
                 ON fq.flnam = fm.muid
+                LEFT JOIN 
+                (
+                    SELECT ml.fromnodeid AS fromnodeid, ml.muid AS muid
+                    FROM mu.msm_Link AS ml
+                    LEFT JOIN 
+                    (
+                        SELECT ld.fromnodeid, max(ld.diameter) AS diameter
+                        FROM mu.msm_Link AS ld
+                        GROUP BY ld.fromnodeid
+                    ) AS lm
+                    ON lm.fromnodeid = ml.fromnodeid 
+                    WHERE ml.diameter >= lm.diameter*0.999999
+                    GROUP BY ml.fromnodeid
+                ) AS n2l
+                ON fl.nodeid = n2l.fromnodeid
                 """
 
                 if not self.db_qkan.sql(sql, "mu_import Flaechen"):

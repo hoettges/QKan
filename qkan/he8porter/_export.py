@@ -151,41 +151,45 @@ class ExportTask:
                         "Fehler (35) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
-                nr0 = self.nextid
-                id0 = self.nextid - idmin
 
-                sql = f"""
-                    INSERT INTO he.Schacht
-                    ( Name, Deckelhoehe, Sohlhoehe, 
-                      Gelaendehoehe, Art,
-                      Planungsstatus, LastModified, Id, Durchmesser, Geometry)
-                    SELECT
-                      schaechte.schnam AS name, 
-                      schaechte.deckelhoehe AS deckelhoehe, 
-                      schaechte.sohlhoehe AS sohlhoehe,
-                      schaechte.deckelhoehe AS gelaendehoehe, 
-                      1 AS art, 
-                      st.he_nr AS planungsstatus, 
-                      strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
-                      schaechte.rowid + {id0} AS id, 
-                      schaechte.durchm*1000 AS durchmesser,
-                      SetSrid(schaechte.geop, -1) AS geometry
-                    FROM schaechte
-                    LEFT JOIN simulationsstatus AS st
-                    ON schaechte.simstatus = st.bezeichnung
-                    WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Schacht) and 
-                          schaechte.schachttyp = 'Schacht'{auswahl}
-                """
+                if idmin is None:
+                    meldung("Einfügen Schächte", "Keine Schächte vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
 
-                if not self.db_qkan.sql(sql, "dbQK: export_schaechte (3)"):
-                    return False
+                    sql = f"""
+                        INSERT INTO he.Schacht
+                        ( Name, Deckelhoehe, Sohlhoehe, 
+                          Gelaendehoehe, Art,
+                          Planungsstatus, LastModified, Id, Durchmesser, Geometry)
+                        SELECT
+                          schaechte.schnam AS name, 
+                          schaechte.deckelhoehe AS deckelhoehe, 
+                          schaechte.sohlhoehe AS sohlhoehe,
+                          schaechte.deckelhoehe AS gelaendehoehe, 
+                          1 AS art, 
+                          st.he_nr AS planungsstatus, 
+                          strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                          schaechte.rowid + {id0} AS id, 
+                          schaechte.durchm*1000 AS durchmesser,
+                          SetSrid(schaechte.geop, -1) AS geometry
+                        FROM schaechte
+                        LEFT JOIN simulationsstatus AS st
+                        ON schaechte.simstatus = st.bezeichnung
+                        WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Schacht) and 
+                              schaechte.schachttyp = 'Schacht'{auswahl}
+                    """
 
-                self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}")
-                self.db_qkan.commit()
+                    if not self.db_qkan.sql(sql, "dbQK: export_schaechte (3)"):
+                        return False
 
-                fortschritt(f"{self.nextid - nr0} Schaechte eingefügt", 0.30)
-                self.progress_bar.setValue(30)
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}")
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} Schaechte eingefügt", 0.30)
+                    self.progress_bar.setValue(30)
         return True
 
     def _speicher(self) -> bool:
@@ -246,48 +250,52 @@ class ExportTask:
                         "Fehler (35) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
-                nr0 = self.nextid
-                id0 = self.nextid - idmin
 
-                sql = f"""
-                    INSERT INTO he.Speicherschacht
-                    ( Id, Name, Typ, Sohlhoehe,
-                      Gelaendehoehe, Art, AnzahlKanten,
-                      Scheitelhoehe, HoeheVollfuellung,
-                      Planungsstatus,
-                      LastModified, Kommentar, Geometry)
-                    SELECT
-                      schaechte.rowid + {id0} AS id, 
-                      schaechte.schnam AS name, 
-                      1 AS typ, 
-                      schaechte.sohlhoehe AS sohlhoehe, 
-                      schaechte.deckelhoehe AS gelaendehoehe,
-                      1 AS art, 
-                      2 AS anzahlkanten, 
-                      schaechte.deckelhoehe AS scheitelhoehe,
-                      schaechte.deckelhoehe AS hoehevollfuellung,
-                      st.he_nr AS planungsstatus, 
-                      strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
-                      kommentar AS kommentar,
-                      SetSrid(schaechte.geop, -1) AS geometry
-                    FROM schaechte
-                    LEFT JOIN simulationsstatus AS st
-                    ON schaechte.simstatus = st.bezeichnung
-                    WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Speicherschacht) and 
-                          schaechte.schachttyp = 'Speicher'{auswahl}
-                """
+                if idmin is None:
+                    meldung("Einfügen Speicherschächte", "Keine Speicherschächte vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
 
-                if not self.db_qkan.sql(sql, "dbQK: export_speicher (1)"):
-                    return False
+                    sql = f"""
+                        INSERT INTO he.Speicherschacht
+                        ( Id, Name, Typ, Sohlhoehe,
+                          Gelaendehoehe, Art, AnzahlKanten,
+                          Scheitelhoehe, HoeheVollfuellung,
+                          Planungsstatus,
+                          LastModified, Kommentar, Geometry)
+                        SELECT
+                          schaechte.rowid + {id0} AS id, 
+                          schaechte.schnam AS name, 
+                          1 AS typ, 
+                          schaechte.sohlhoehe AS sohlhoehe, 
+                          schaechte.deckelhoehe AS gelaendehoehe,
+                          1 AS art, 
+                          2 AS anzahlkanten, 
+                          schaechte.deckelhoehe AS scheitelhoehe,
+                          schaechte.deckelhoehe AS hoehevollfuellung,
+                          st.he_nr AS planungsstatus, 
+                          strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                          kommentar AS kommentar,
+                          SetSrid(schaechte.geop, -1) AS geometry
+                        FROM schaechte
+                        LEFT JOIN simulationsstatus AS st
+                        ON schaechte.simstatus = st.bezeichnung
+                        WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Speicherschacht) and 
+                              schaechte.schachttyp = 'Speicher'{auswahl}
+                    """
 
-                self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
-                )
-                self.db_qkan.commit()
+                    if not self.db_qkan.sql(sql, "dbQK: export_speicher (1)"):
+                        return False
 
-                fortschritt(f"{self.nextid - nr0} Speicher eingefügt", 0.40)
-                self.progress_bar.setValue(40)
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                    )
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} Speicher eingefügt", 0.40)
+                    self.progress_bar.setValue(40)
         return True
 
     def _auslaesse(self) -> bool:
@@ -350,47 +358,51 @@ class ExportTask:
                         "Fehler (35) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
-                nr0 = self.nextid
-                id0 = self.nextid - idmin
 
-                sql = f"""
-                    INSERT INTO he.Auslass
-                    ( Id, Name, Typ, Sohlhoehe,
-                      Gelaendehoehe, Art, AnzahlKanten,
-                      Scheitelhoehe, 
-                      Planungsstatus,
-                      LastModified, Kommentar, Geometry)
-                    SELECT
-                      schaechte.rowid + {id0} AS id, 
-                      schaechte.schnam AS name, 
-                      1 AS typ, 
-                      schaechte.sohlhoehe AS sohlhoehe, 
-                      schaechte.deckelhoehe AS gelaendehoehe,
-                      1 AS art, 
-                      2 AS anzahlkanten, 
-                      schaechte.deckelhoehe AS scheitelhoehe,
-                      st.he_nr AS planungsstatus, 
-                      strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
-                      kommentar AS kommentar,
-                      SetSrid(schaechte.geop, -1) AS geometry
-                    FROM schaechte
-                    LEFT JOIN simulationsstatus AS st
-                    ON schaechte.simstatus = st.bezeichnung
-                    WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Auslass) and 
-                          schaechte.schachttyp = 'Auslass'{auswahl}
-                """
+                if idmin is None:
+                    meldung("Einfügen Auslässe", "Keine Auslässe vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
 
-                if not self.db_qkan.sql(sql, "dbQK: export_auslaesse (2)"):
-                    return False
+                    sql = f"""
+                        INSERT INTO he.Auslass
+                        ( Id, Name, Typ, Sohlhoehe,
+                          Gelaendehoehe, Art, AnzahlKanten,
+                          Scheitelhoehe, 
+                          Planungsstatus,
+                          LastModified, Kommentar, Geometry)
+                        SELECT
+                          schaechte.rowid + {id0} AS id, 
+                          schaechte.schnam AS name, 
+                          1 AS typ, 
+                          schaechte.sohlhoehe AS sohlhoehe, 
+                          schaechte.deckelhoehe AS gelaendehoehe,
+                          1 AS art, 
+                          2 AS anzahlkanten, 
+                          schaechte.deckelhoehe AS scheitelhoehe,
+                          st.he_nr AS planungsstatus, 
+                          strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                          kommentar AS kommentar,
+                          SetSrid(schaechte.geop, -1) AS geometry
+                        FROM schaechte
+                        LEFT JOIN simulationsstatus AS st
+                        ON schaechte.simstatus = st.bezeichnung
+                        WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Auslass) and 
+                              schaechte.schachttyp = 'Auslass'{auswahl}
+                    """
 
-                self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
-                )
-                self.db_qkan.commit()
+                    if not self.db_qkan.sql(sql, "dbQK: export_auslaesse (2)"):
+                        return False
 
-                fortschritt(f"{self.nextid - nr0} Auslässe eingefügt", 0.50)
-                self.progress_bar.setValue(50)
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                    )
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} Auslässe eingefügt", 0.50)
+                    self.progress_bar.setValue(50)
         return True
 
     def _haltungen(self) -> bool:
@@ -420,23 +432,28 @@ class ExportTask:
                     Einzugsgebiet, 
                     KonstanterZuflussTezg, 
                     BefestigteFlaeche, 
-                    UnbefestigteFlaeche) =
+                    UnbefestigteFlaeche, Geometry) =
                   ( SELECT
                       haltungen.schoben AS schachtoben, haltungen.schunten AS schachtunten,
                       coalesce(haltungen.laenge, glength(haltungen.geom)) AS laenge,
                       coalesce(haltungen.sohleoben,sob.sohlhoehe) AS sohlhoeheoben,
                       coalesce(haltungen.sohleunten,sun.sohlhoehe) AS sohlhoeheunten,
-                      profile.he_nr AS profiltyp, haltungen.profilnam AS sonderprofilbezeichnung, 
+                      profile.he_nr AS profiltyp, 
+                      CASE WHEN profile.he_nr = 68 THEN haltungen.profilnam
+                      ELSE NULL
+                      END
+                      AS sonderprofilbezeichnung, 
                       haltungen.hoehe AS geometrie1, haltungen.breite AS geometrie2,
                       entwaesserungsarten.he_nr AS kanalart,
-                      coalesce(haltungen.ks, 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
-                      coalesce(haltungen.ks, 1.5) AS rauhigkeitanzeige,
+                      coalesce(haltungen.ks * 1000., 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
+                      coalesce(haltungen.ks * 1000., 1.5) AS rauhigkeitanzeige,
                       coalesce(haltungen.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
                       28 AS materialart, 
                       0 AS einzugsgebiet, 
                       0 AS konstanterzuflusstezg, 
                       0 AS befestigteflaeche, 
-                      0 AS unbefestigteflaeche
+                      0 AS unbefestigteflaeche,
+                      SetSrid(haltungen.geom, -1) AS Geometry
                     FROM
                       (haltungen JOIN schaechte AS sob ON haltungen.schoben = sob.schnam)
                       JOIN schaechte AS sun ON haltungen.schunten = sun.schnam
@@ -469,66 +486,77 @@ class ExportTask:
                         "Fehler (35) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
-                nr0 = self.nextid
-                id0 = self.nextid - idmin
 
-                sql = f"""
-                  INSERT INTO he.Rohr
-                  ( Id, 
-                    Name, SchachtOben, SchachtUnten, 
-                    Laenge, 
-                    SohlhoeheOben,
-                    SohlhoeheUnten, 
-                    Profiltyp, Sonderprofilbezeichnung, 
-                    Geometrie1, Geometrie2, 
-                    Kanalart, 
-                    Rauigkeitsbeiwert, Anzahl, 
-                    RauhigkeitAnzeige,
-                    LastModified, 
-                    Materialart, 
-                    Einzugsgebiet, 
-                    KonstanterZuflussTezg, 
-                    BefestigteFlaeche, 
-                    UnbefestigteFlaeche)
-                  SELECT
-                    haltungen.rowid + {id0} AS id, 
-                    haltungen.haltnam AS name, haltungen.schoben AS schachtoben, haltungen.schunten AS schachtunten,
-                    coalesce(haltungen.laenge, glength(haltungen.geom)) AS laenge,
-                    coalesce(haltungen.sohleoben,sob.sohlhoehe) AS sohlhoeheoben,
-                    coalesce(haltungen.sohleunten,sun.sohlhoehe) AS sohlhoeheunten,
-                    profile.he_nr AS profiltyp, haltungen.profilnam AS sonderprofilbezeichnung, 
-                    haltungen.hoehe AS geometrie1, haltungen.breite AS geometrie2,
-                    entwaesserungsarten.he_nr AS kanalart,
-                    coalesce(haltungen.ks, 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
-                    coalesce(haltungen.ks, 1.5) AS rauhigkeitanzeige,
-                    coalesce(haltungen.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
-                    28 AS materialart,
-                    0 AS einzugsgebiet,
-                    0 AS konstanterzuflusstezg,
-                    0 AS befestigteflaeche,
-                    0 AS unbefestigteflaeche
-                  FROM
-                    (haltungen JOIN schaechte AS sob ON haltungen.schoben = sob.schnam)
-                    JOIN schaechte AS sun ON haltungen.schunten = sun.schnam
-                    LEFT JOIN profile ON haltungen.profilnam = profile.profilnam
-                    LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.bezeichnung
-                    LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
-                    WHERE haltungen.haltnam NOT IN (SELECT Name FROM he.Rohr){auswahl};
-                  """
+                if idmin is None:
+                    meldung("Einfügen Haltungen", "Keine Haltungen vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
 
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_he8.export_haltungen (3)"
-                ):
-                    return False
+                    sql = f"""
+                      INSERT INTO he.Rohr
+                      ( Id, 
+                        Name, SchachtOben, SchachtUnten, 
+                        Laenge, 
+                        SohlhoeheOben,
+                        SohlhoeheUnten, 
+                        Profiltyp, Sonderprofilbezeichnung, 
+                        Geometrie1, Geometrie2, 
+                        Kanalart, 
+                        Rauigkeitsbeiwert, Anzahl, 
+                        Rauigkeitsansatz, 
+                        RauhigkeitAnzeige,
+                        LastModified, 
+                        Materialart, 
+                        Einzugsgebiet, 
+                        KonstanterZuflussTezg, 
+                        BefestigteFlaeche, 
+                        UnbefestigteFlaeche, Geometry)
+                      SELECT
+                        haltungen.rowid + {id0} AS id, 
+                        haltungen.haltnam AS name, haltungen.schoben AS schachtoben, haltungen.schunten AS schachtunten,
+                        coalesce(haltungen.laenge, glength(haltungen.geom)) AS laenge,
+                        coalesce(haltungen.sohleoben,sob.sohlhoehe) AS sohlhoeheoben,
+                        coalesce(haltungen.sohleunten,sun.sohlhoehe) AS sohlhoeheunten,
+                        profile.he_nr AS profiltyp,
+                        CASE WHEN profile.he_nr = 68 THEN haltungen.profilnam
+                        ELSE NULL
+                        END
+                        AS sonderprofilbezeichnung, 
+                        haltungen.hoehe AS geometrie1, haltungen.breite AS geometrie2,
+                        entwaesserungsarten.he_nr AS kanalart,
+                        coalesce(haltungen.ks * 1000., 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
+                        1 AS rauigkeitsansatz, 
+                        coalesce(haltungen.ks * 1000, 1.5) AS rauigkeitanzeige,
+                        coalesce(haltungen.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                        28 AS materialart,
+                        0 AS einzugsgebiet,
+                        0 AS konstanterzuflusstezg,
+                        0 AS befestigteflaeche,
+                        0 AS unbefestigteflaeche,
+                      SetSrid(haltungen.geom, -1) AS Geometry
+                      FROM
+                        (haltungen JOIN schaechte AS sob ON haltungen.schoben = sob.schnam)
+                        JOIN schaechte AS sun ON haltungen.schunten = sun.schnam
+                        LEFT JOIN profile ON haltungen.profilnam = profile.profilnam
+                        LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.bezeichnung
+                        LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
+                        WHERE haltungen.haltnam NOT IN (SELECT Name FROM he.Rohr){auswahl};
+                      """
 
-                self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
-                )
-                self.db_qkan.commit()
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_haltungen (3)"
+                    ):
+                        return False
 
-                fortschritt(f"{self.nextid - nr0} Haltungen eingefügt", 0.60)
-                self.progress_bar.setValue(60)
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                    )
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} Haltungen eingefügt", 0.60)
+                    self.progress_bar.setValue(60)
         return True
 
     def _flaechen(self) -> bool:
@@ -674,7 +702,7 @@ class ExportTask:
                     )
 
                 if idmin is None:
-                    meldung("Einfügen Flächen", "Keine Flächen zum Einfügen gefunden")
+                    meldung("Einfügen Flächen", "Keine Flächen vorhanden")
                 else:
                     nr0 = self.nextid
                     id0 = self.nextid - idmin
@@ -813,50 +841,54 @@ class ExportTask:
                         "Fehler (36) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
-                nr0 = self.nextid
-                id0 = self.nextid - idmin
 
-                sql = f"""
-                INSERT INTO he.Pumpe (
-                    Id,
-                    Name, 
-                    SchachtOben, SchachtUnten, 
-                    Typ, Steuerschacht, 
-                    Einschalthoehe, Ausschalthoehe, 
-                    Planungsstatus, 
-                    Kommentar, LastModified 
-                ) 
-                SELECT
-                    pumpen.rowid + {id0} AS id, 
-                    pumpen.pnam AS Name,
-                    pumpen.schoben AS schoben,
-                    pumpen.schunten AS schunten,
-                    pumpentypen.he_nr AS pumpentypnr,
-                    pumpen.steuersch AS steuersch,
-                    pumpen.einschalthoehe AS einschalthoehe_t,
-                    pumpen.ausschalthoehe AS ausschalthoehe_t,
-                    simulationsstatus.he_nr AS simstatusnr,
-                    pumpen.kommentar AS kommentar,
-                    pumpen.createdat AS createdat
-                FROM pumpen
-                LEFT JOIN pumpentypen
-                ON pumpen.pumpentyp = pumpentypen.bezeichnung
-                LEFT JOIN simulationsstatus
-                ON pumpen.simstatus = simulationsstatus.bezeichnung
-                WHERE (pumpen.pnam NOT IN (SELECT Name FROM he.Pumpe)){auswahl_a};
-                """
+                if idmin is None:
+                    meldung("Einfügen Pumpen", "Keine Pumpen vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen (3)"):
-                    return False
+                    sql = f"""
+                    INSERT INTO he.Pumpe (
+                        Id,
+                        Name, 
+                        SchachtOben, SchachtUnten, 
+                        Typ, Steuerschacht, 
+                        Einschalthoehe, Ausschalthoehe, 
+                        Planungsstatus, 
+                        Kommentar, LastModified 
+                    ) 
+                    SELECT
+                        pumpen.rowid + {id0} AS id, 
+                        pumpen.pnam AS Name,
+                        pumpen.schoben AS schoben,
+                        pumpen.schunten AS schunten,
+                        pumpentypen.he_nr AS pumpentypnr,
+                        pumpen.steuersch AS steuersch,
+                        pumpen.einschalthoehe AS einschalthoehe_t,
+                        pumpen.ausschalthoehe AS ausschalthoehe_t,
+                        simulationsstatus.he_nr AS simstatusnr,
+                        pumpen.kommentar AS kommentar,
+                        pumpen.createdat AS createdat
+                    FROM pumpen
+                    LEFT JOIN pumpentypen
+                    ON pumpen.pumpentyp = pumpentypen.bezeichnung
+                    LEFT JOIN simulationsstatus
+                    ON pumpen.simstatus = simulationsstatus.bezeichnung
+                    WHERE (pumpen.pnam NOT IN (SELECT Name FROM he.Pumpe)){auswahl_a};
+                    """
 
-                self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
-                )
-                self.db_qkan.commit()
+                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen (3)"):
+                        return False
 
-                fortschritt(f"{self.nextid - nr0} Pumpen eingefügt", 0.85)
-                self.progress_bar.setValue(85)
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                    )
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} Pumpen eingefügt", 0.85)
+                    self.progress_bar.setValue(85)
         return True
 
     def _wehre(self) -> bool:
@@ -925,64 +957,68 @@ class ExportTask:
                         "Fehler (36) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
-                nr0 = self.nextid
-                id0 = self.nextid - idmin
 
-                sql = f"""
-                INSERT INTO he.Wehr (
-                    Id,
-                    Name, 
-                    SchachtOben, SchachtUnten, 
-                    SohlhoeheOben, SohlhoeheUnten, 
-                    Schwellenhoehe, Geometrie1, 
-                    Geometrie2, Ueberfallbeiwert, 
-                    Rueckschlagklappe, Verfahrbar, Profiltyp, 
-                    Ereignisbilanzierung, EreignisGrenzwertEnde,
-                    EreignisGrenzwertAnfang, EreignisTrenndauer, 
-                    EreignisIndividuell, Planungsstatus, 
-                    Kommentar, LastModified 
-                ) 
-                SELECT
-                    wehre.rowid + {id0} AS id, 
-                    wehre.wnam AS Name,
-                    wehre.schoben AS schoben,
-                    wehre.schunten AS schunten,
-                    coalesce(sob.sohlhoehe, 0) AS sohleoben_t,
-                    coalesce(sun.sohlhoehe, 0) AS sohleunten_t,
-                    wehre.schwellenhoehe AS schwellenhoehe_t,
-                    wehre.kammerhoehe AS kammerhoehe_t,
-                    wehre.laenge AS laenge_t,
-                    wehre.uebeiwert AS uebeiwert_t,
-                    0 AS rueckschlagklappe,
-                    0 AS verfahrbar,
-                    52 AS profiltyp,
-                    0 AS ereignisbilanzierung,
-                    0 AS ereignisgrenzwertende,
-                    0 AS ereignisgrenzwertanfang,
-                    0 AS ereignistrenndauer,
-                    0 AS ereignisindividuell,
-                    simulationsstatus.he_nr AS simstatusnr,
-                    wehre.kommentar AS kommentar,
-                    wehre.createdat AS createdat
-                FROM wehre
-                LEFT JOIN simulationsstatus
-                ON wehre.simstatus = simulationsstatus.bezeichnung
-                LEFT JOIN schaechte AS sob 
-                ON wehre.schoben = sob.schnam
-                LEFT JOIN schaechte AS sun 
-                ON wehre.schunten = sun.schnam
-                WHERE (wehre.wnam NOT IN (SELECT Name FROM he.Wehr)){auswahl_a};
-                """
+                if idmin is None:
+                    meldung("Einfügen Wehre", "Keine Wehre vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre (3)"):
-                    return False
+                    sql = f"""
+                    INSERT INTO he.Wehr (
+                        Id,
+                        Name, 
+                        SchachtOben, SchachtUnten, 
+                        SohlhoeheOben, SohlhoeheUnten, 
+                        Schwellenhoehe, Geometrie1, 
+                        Geometrie2, Ueberfallbeiwert, 
+                        Rueckschlagklappe, Verfahrbar, Profiltyp, 
+                        Ereignisbilanzierung, EreignisGrenzwertEnde,
+                        EreignisGrenzwertAnfang, EreignisTrenndauer, 
+                        EreignisIndividuell, Planungsstatus, 
+                        Kommentar, LastModified 
+                    ) 
+                    SELECT
+                        wehre.rowid + {id0} AS id, 
+                        wehre.wnam AS Name,
+                        wehre.schoben AS schoben,
+                        wehre.schunten AS schunten,
+                        coalesce(sob.sohlhoehe, 0) AS sohleoben_t,
+                        coalesce(sun.sohlhoehe, 0) AS sohleunten_t,
+                        wehre.schwellenhoehe AS schwellenhoehe_t,
+                        wehre.kammerhoehe AS kammerhoehe_t,
+                        wehre.laenge AS laenge_t,
+                        wehre.uebeiwert AS uebeiwert_t,
+                        0 AS rueckschlagklappe,
+                        0 AS verfahrbar,
+                        52 AS profiltyp,
+                        0 AS ereignisbilanzierung,
+                        0 AS ereignisgrenzwertende,
+                        0 AS ereignisgrenzwertanfang,
+                        0 AS ereignistrenndauer,
+                        0 AS ereignisindividuell,
+                        simulationsstatus.he_nr AS simstatusnr,
+                        wehre.kommentar AS kommentar,
+                        wehre.createdat AS createdat
+                    FROM wehre
+                    LEFT JOIN simulationsstatus
+                    ON wehre.simstatus = simulationsstatus.bezeichnung
+                    LEFT JOIN schaechte AS sob 
+                    ON wehre.schoben = sob.schnam
+                    LEFT JOIN schaechte AS sun 
+                    ON wehre.schunten = sun.schnam
+                    WHERE (wehre.wnam NOT IN (SELECT Name FROM he.Wehr)){auswahl_a};
+                    """
 
-                self.nextid += idmax - idmin + 1
-                self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
-                )
-                self.db_qkan.commit()
+                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre (3)"):
+                        return False
 
-                fortschritt(f"{self.nextid - nr0} Wehre eingefügt", 0.85)
-                self.progress_bar.setValue(90)
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                    )
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} Wehre eingefügt", 0.85)
+                    self.progress_bar.setValue(90)
         return True

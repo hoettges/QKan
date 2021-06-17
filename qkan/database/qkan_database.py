@@ -210,10 +210,10 @@ def createdbtables(
             hoehe, breite, laenge, 
             sohleoben, sohleunten, 
             deckeloben, deckelunten, 
-            xschob, yschob, xschun, yschun, 
             teilgebiet, qzu, profilnam, 
             entwart, rohrtyp, ks,
-            simstatus, kommentar, createdat
+            simstatus, kommentar, createdat, 
+            xschob, yschob, xschun, yschun
           FROM haltungen;"""
     try:
         cursl.execute(sql)
@@ -299,14 +299,515 @@ def createdbtables(
 
     consl.commit()
 
+    # Haltungen_untersucht ----------------------------------------------------------------
+
+    sql = """CREATE TABLE haltungen_untersucht (
+        pk INTEGER PRIMARY KEY,
+        haltnam TEXT,
+        schoben TEXT,
+        schunten TEXT,
+        hoehe REAL,
+        breite REAL,
+        laenge REAL,
+        kommentar TEXT,
+        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+        untersuchtag TEXT, 
+        untersucher TEXT, 
+        wetter INTEGER DEFAULT 0, 
+        bewertungsart INTEGER DEFAULT 0, 
+        bewertungstag TEXT,
+        xschob REAL,
+        yschob REAL,
+        xschun REAL,
+        yschun REAL)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabelle "Haltungen" konnte nicht erstellt werden',
+        )
+        consl.close()
+        return False
+
+    sql = "SELECT AddGeometryColumn('haltungen_untersucht','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('haltungen_untersucht','geom')"
+    try:
+        cursl.execute(sql)
+        cursl.execute(sqlindex)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+
+    sql = f"""CREATE VIEW IF NOT EXISTS haltungen_untersucht_data AS
+              SELECT 
+                haltnam, schoben, schunten, 
+                hoehe, breite, laenge,
+                kommentar, createdat, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag,
+                xschob, yschob, xschun, yschun
+              FROM haltungen_untersucht;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'View "haltung_data" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    sql = f"""CREATE TRIGGER IF NOT EXISTS haltungen_untersucht_insert_clipboard
+                INSTEAD OF INSERT ON haltungen_untersucht_data FOR EACH ROW
+              BEGIN
+                INSERT INTO haltungen_untersucht
+                  (haltnam, schoben, schunten,
+                   hoehe, breite, laenge,
+                   kommentar, createdat,  
+                   geom, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag)
+                SELECT 
+                  new.haltnam, new.schoben, new.schunten, 
+                  CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
+                  CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
+                  new.laenge, new.kommentar, 
+                  coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), 
+                  MakeLine(
+                    coalesce(
+                      MakePoint(new.xschob, new.yschob, {epsg}),
+                      schob.geop
+                    ), 
+                    coalesce(
+                      MakePoint(new.xschun, new.yschun, {epsg}),
+                      schun.geop
+                    )
+                  ), new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
+                FROM
+                  schaechte AS schob,
+                  schaechte AS schun
+                WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
+              END;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "Schaechte" konnte ein Trigger nicht angelegt werden.',
+        )
+        consl.close()
+        return False
+
+        sql = """CREATE TABLE Untersuchdat_haltung (
+            pk INTEGER PRIMARY KEY,
+            untersuchhal TEXT,
+            untersuchrichtung TEXT,
+            schoben TEXT, 
+            schunten TEXT,
+            id INTEGER,
+            videozaehler INTEGER,
+            inspektionslaenge REAL,
+            station REAL,
+            timecode INTEGER,
+            kuerzel TEXT,
+            charakt1 TEXT,
+            charakt2 TEXT,
+            quantnr1 REAL, 
+            quantnr2 REAL, 
+            streckenschaden TEXT,
+            pos_von INTEGER, 
+            pos_bis INTEGER,
+            foto_dateiname TEXT,
+            film_dateiname TEXT,
+            richtung TEXT
+    )"""
+
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Untersuchdat_Haltungen" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
+
+        sql = "SELECT AddGeometryColumn('Untersuchdat_haltung','geom',{},'LINESTRING',2)".format(epsg)
+        sqlindex = "SELECT CreateSpatialIndex('Untersuchdat_haltung','geom')"
+        try:
+            cursl.execute(sql)
+            cursl.execute(sqlindex)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden.',
+            )
+            consl.close()
+            return False
+
+        sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
+                  SELECT
+                    untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, kuerzel, 
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, richtung
+                  FROM Untersuchdat_haltung;"""
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'View "haltung_data" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
+
+        sql = f"""CREATE TRIGGER IF NOT EXISTS Untersuchdat_haltung_insert_clipboard
+                    INSTEAD OF INSERT ON untersuchdat_haltung_data FOR EACH ROW
+                  BEGIN
+                    INSERT INTO untersuchdat_haltung
+                      (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, kuerzel, 
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, richtung, geom)
+                    SELECT
+                      new.untersuchhal, new.untersuchrichtung, new.schoben,new.schunten, 
+                        new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.kuerzel, 
+                        new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.richtung,
+                        CASE
+                        WHEN new.inspektionslaenge > haltung.laenge
+                        THEN
+                        CASE
+                        WHEN new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten
+                        THEN
+
+                        CASE
+                        WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))+2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))+2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*(ST_Y(schun.geop)-ST_Y(schob.geop))*new.inspektionslaenge/haltung.laenge/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))-2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))-2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))-2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))-2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung") OR 
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))+2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))+2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        ELSE NULL
+                        END
+                        WHEN new.schoben = haltung.schoben AND new.schunten = haltung.schunten
+                        THEN
+
+                        CASE
+
+                        WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))-2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))-2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))+2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))+2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))+2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))+2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung") OR 
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))-2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*haltung.laenge/new.inspektionslaenge*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))-2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        ELSE NULL
+                        END
+                        END
+
+                        WHEN new.inspektionslaenge < haltung.laenge
+                        THEN
+                        CASE
+                        WHEN new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten
+                        THEN
+
+                        CASE
+
+                        WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))+2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))+2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))-2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))-2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))-2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))-2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung") OR 
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))+2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))+2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        ELSE NULL
+                        END
+                        WHEN new.schoben = haltung.schoben AND new.schunten = haltung.schunten
+                        THEN
+
+                        CASE
+
+                        WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))-2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))-2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schob.geop)+(new.station*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))+2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))+2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(((-1)*(-1))+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))+2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))+2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung") OR 
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung") OR
+                                (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung")
+                        THEN 
+                        MakeLine(
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {epsg}),
+                                schob.geop
+                            ), 
+                            coalesce(
+                            MakePoint((ST_X(schun.geop)+(new.station*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))-2*((-1)/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))-2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(((-1)*(-1))+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                schun.geop
+                            )
+                        )
+                        ELSE NULL
+                        END
+                        END
+                        END 
+                    FROM
+                    schaechte AS schob,
+                    schaechte AS schun,
+                    haltungen AS haltung
+                    WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten AND haltung.haltnam = new.untersuchhal;
+                  END"""
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'In der Tabelle "untersuchhal" konnte ein Trigger nicht angelegt werden.',
+            )
+            consl.close()
+            return False
+
+        sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
+                      SELECT
+                        untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, station, timecode, kuerzel, 
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname
+                      FROM untersuchdat_haltung;"""
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'View "untersuchdat_haltung_data" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
+
+        sql = f"""CREATE TRIGGER IF NOT EXISTS untersuchdat_haltung_insert_clipboard
+                        INSTEAD OF INSERT ON untersuchdat_haltung_data FOR EACH ROW
+                      BEGIN
+                        INSERT INTO untersuchdat_haltung
+                          (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, kuerzel, 
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, richtung)
+                        VALUES (
+                          new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, new.id, new.videozaehler, new.inspektionslaenge, new.station, new.timecode, new.kuerzel, 
+                        new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.richtung
+                        );
+                      END"""
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'In der Tabelle "Haltung" konnte ein Trigger nicht angelegt werden.',
+            )
+            consl.close()
+            return False
+
     # Schaechte ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
 
     sql = """CREATE TABLE schaechte (
     pk INTEGER PRIMARY KEY,
     schnam TEXT,
-    xsch REAL, 
-    ysch REAL, 
     sohlhoehe REAL,
     deckelhoehe REAL,
     durchm REAL,
@@ -320,7 +821,9 @@ def createdbtables(
     schachttyp TEXT DEFAULT 'Schacht', 
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+    xsch REAL, 
+    ysch REAL)"""
 
     try:
         cursl.execute(sql)
@@ -408,6 +911,257 @@ def createdbtables(
               )
             );
           END"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "Schaechte" konnte ein Trigger nicht angelegt werden.',
+        )
+        consl.close()
+        return False
+
+    consl.commit()
+
+    # Schaechte_untersucht ----------------------------------------------------------------
+    # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
+
+    sql = """CREATE TABLE schaechte_untersucht (
+            pk INTEGER PRIMARY KEY,
+            schnam TEXT, 
+            durchm REAL,
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+            untersuchtag TEXT, 
+            untersucher TEXT, 
+            wetter INTEGER DEFAULT 0, 
+            bewertungsart INTEGER DEFAULT 0, 
+            bewertungstag TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabelle "schaechte_untersucht" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    sql1 = """SELECT AddGeometryColumn('schaechte_untersucht','geop',{},'POINT',2);""".format(epsg)
+
+    sqlindex2 = """SELECT CreateSpatialIndex('schaechte_untersucht','geop')"""
+    try:
+        cursl.execute(sql1)
+        cursl.execute(sqlindex2)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "schaechte_untersucht" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+
+    sql = f"""CREATE VIEW IF NOT EXISTS schaechte_untersucht_data AS 
+                  SELECT
+                    schnam, durchm, 
+                    kommentar, createdat, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag
+                  FROM schaechte_untersucht;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'View "schaechte_untersucht_data" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    sql = f"""CREATE TRIGGER IF NOT EXISTS schaechte_untersucht_insert_clipboard
+                    INSTEAD OF INSERT ON schaechte_untersucht_data FOR EACH ROW
+                  BEGIN
+                    INSERT INTO schaechte_untersucht
+                      (schnam, durchm,  
+                       kommentar, createdat, 
+                       geop, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag)
+                    SELECT
+                      new.schnam, 
+                      CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
+                      new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
+                      sch.geop,
+                      new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
+                    FROM
+                        schaechte AS sch
+                        WHERE sch.schnam = new.schnam;
+                  END"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "schaechte_untersucht" konnte ein Trigger nicht angelegt werden.',
+        )
+        consl.close()
+        return False
+
+    consl.commit()
+
+    sql = f"""CREATE VIEW IF NOT EXISTS schaechte_untersucht_data AS 
+                      SELECT
+                        schnam, durchm, 
+                        kommentar, createdat, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag
+                      FROM schaechte_untersucht;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'View "schaechte_untersucht_data" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    sql = f"""CREATE TRIGGER IF NOT EXISTS schaechte_untersucht_insert_clipboard
+                        INSTEAD OF INSERT ON schaechte_untersucht_data FOR EACH ROW
+                      BEGIN
+                        INSERT INTO schaechte_untersucht
+                          (schnam, durchm,  
+                           kommentar, createdat, 
+                           geop, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag)
+                        SELECT
+                          new.schnam,
+                          CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
+                          new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
+                          sch.geop,
+                          new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
+                        FROM
+                        schaechte AS sch
+                        WHERE sch.schnam = new.schnam;
+                      END"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "schaechte_untersucht" konnte ein Trigger nicht angelegt werden.',
+        )
+        consl.close()
+        return False
+
+    consl.commit()
+
+    # untersuchungsdaten Schaechte
+
+    sql = """CREATE TABLE Untersuchdat_schacht (
+        pk INTEGER PRIMARY KEY,
+        untersuchsch TEXT,
+        id INTEGER,
+        videozaehler INTEGER,
+        timecode INTEGER,
+        kuerzel TEXT,
+        charakt1 TEXT,
+        charakt2 TEXT,
+        quantnr1 REAL,
+        quantnr2 REAL,
+        streckenschaden TEXT,
+        pos_von INTEGER,
+        pos_bis INTEGER,
+        bereich TEXT,
+        foto_dateiname TEXT
+        )"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabelle "Untersuchdat_Schächte" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    sql1 = """SELECT AddGeometryColumn('Untersuchdat_schacht','geop',{},'POINT',2);""".format(epsg)
+
+    sqlindex2 = """SELECT CreateSpatialIndex('Untersuchdat_schacht','geop')"""
+    try:
+        cursl.execute(sql1)
+
+        cursl.execute(sqlindex2)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "Untersuchdat_Schächte" konnten die Attribute "geop" nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+    sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_schacht_data AS 
+              SELECT
+                untersuchsch, id, videozaehler, timecode, kuerzel, 
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname 
+              FROM Untersuchdat_schacht;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'View "schaechte_data" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    sql = f"""CREATE TRIGGER IF NOT EXISTS Untersuchdat_schacht_insert_clipboard
+                INSTEAD OF INSERT ON untersuchdat_schacht_data FOR EACH ROW
+              BEGIN
+                INSERT INTO Untersuchdat_schacht
+                  (untersuchsch, id, videozaehler, timecode, kuerzel, 
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, geop)
+                SELECT 
+                  new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
+                    new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, 
+                    new.bereich, new.foto_dateiname, sch.geop
+                FROM
+                    schaechte AS sch
+                    WHERE sch.schnam = new.untersuchsch;
+              END"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "untersuchsch" konnte ein Trigger nicht angelegt werden.',
+        )
+        consl.close()
+        return False
+
+    # consl.commit()
+
+    sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_schacht_data AS 
+                  SELECT
+                    untersuchsch, id, videozaehler, timecode, kuerzel, 
+                    charakt1, charakt2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname
+                  FROM untersuchdat_schacht;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'View "untersuchdat_schacht_data" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    sql = f"""CREATE TRIGGER IF NOT EXISTS untersuchdat_schacht_insert_clipboard
+                    INSTEAD OF INSERT ON untersuchdat_schacht_data FOR EACH ROW
+                  BEGIN
+                    INSERT INTO untersuchdat_schacht
+                      (untersuchsch, id, videozaehler, timecode, kuerzel, 
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname)
+                    VALUES (
+                      new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
+                    new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, 
+                    new.bereich, new.foto_dateiname
+                    );
+                  END"""
     try:
         cursl.execute(sql)
     except BaseException as err:
@@ -551,6 +1305,176 @@ def createdbtables(
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+    consl.commit()
+
+    # Untersuchungsrichtung ----------------------------------------------------
+
+    sql = """CREATE TABLE untersuchrichtung (
+        pk INTEGER PRIMARY KEY, 
+        kuerzel TEXT, 
+        bezeichnung TEXT, 
+        bemerkung TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabelle "untersuchrichtung" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    try:
+
+        daten = [
+            "'O', 'in Fließrichtung', NULL",
+            "'U', 'gegen Fließrichtung', NULL",
+        ]
+
+        for ds in daten:
+            cursl.execute(
+                "INSERT INTO untersuchrichtung (kuerzel, bezeichnung, bemerkung) VALUES ({})".format(
+                    ds
+                )
+            )
+
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabellendaten "untersuchrichtung" konnten nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+    consl.commit()
+
+    # wetter ----------------------------------------------------
+
+    sql = """CREATE TABLE wetter (
+            pk INTEGER PRIMARY KEY, 
+            kuerzel INTEGER, 
+            bezeichnung TEXT, 
+            bemerkung TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabelle "wetter" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    try:
+
+        daten = [
+            "0, 'keine Angabe', NULL",
+            "1, 'kein Niederschlag', NULL",
+            "2, 'Regen', NULL",
+            "3, 'Schnee- oder Eisschmelzwasser', NULL",
+        ]
+
+        for ds in daten:
+            cursl.execute(
+                "INSERT INTO wetter (kuerzel, bezeichnung, bemerkung) VALUES ({})".format(
+                    ds
+                )
+            )
+
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabellendaten "wetter" konnten nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+    consl.commit()
+
+    # bewertungsart ----------------------------------------------------
+
+    sql = """CREATE TABLE bewertungsart (
+            pk INTEGER PRIMARY KEY, 
+            kuerzel INTEGER, 
+            bezeichnung TEXT, 
+            bemerkung TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabelle "bewertungsart" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    try:
+
+        daten = [
+            "0, 'keine Angabe', NULL",
+            "1, 'ISYBAU 2006/DIN-EN 13508-2:2011', NULL",
+            "2, 'ISYBAU 2001', NULL",
+            "3, 'ISYBAU 1996', NULL",
+            "4, 'Anderes Verfahren', NULL",
+        ]
+
+        for ds in daten:
+            cursl.execute(
+                "INSERT INTO bewertungsart (kuerzel, bezeichnung, bemerkung) VALUES ({})".format(
+                    ds
+                )
+            )
+
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabellendaten "bewertungsart" konnten nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+    consl.commit()
+
+    # druckdicht ----------------------------------------------------
+
+    sql = """CREATE TABLE druckdicht (
+                pk INTEGER PRIMARY KEY, 
+                kuerzel INTEGER, 
+                bezeichnung TEXT, 
+                bemerkung TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabelle "druckdicht" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    try:
+
+        daten = [
+            "0, 'keine Angabe', NULL",
+            "1, 'vorhanden', NULL",
+            "2, 'nicht vorhanden', NULL",
+        ]
+
+        for ds in daten:
+            cursl.execute(
+                "INSERT INTO druckdicht (kuerzel, bezeichnung, bemerkung) VALUES ({})".format(
+                    ds
+                )
+            )
+
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabellendaten "druckdicht" konnten nicht hinzugefuegt werden.',
         )
         consl.close()
         return False

@@ -119,6 +119,9 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     pb_import: QPushButton
     pb_project: QPushButton
 
+    pb_import_2: QPushButton
+    tf_import_2: QLineEdit
+
     cb_import_tabinit: QCheckBox
 
     epsg: QgsProjectionSelectionWidget
@@ -133,12 +136,14 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
         # Attach events
         self.pb_import.clicked.connect(self.select_import)
+        self.pb_import_2.clicked.connect(self.select_import)
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
         self.tf_import.setText(QKan.config.xml.import_file)
+        self.tf_import_2.setText(QKan.config.xml.ordner)
         # noinspection PyCallByClass,PyArgumentList
         self.epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
         self.tf_project.setText(QKan.config.project.file)
@@ -154,6 +159,17 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         if filename:
             self.tf_import.setText(filename)
             self.default_dir = os.path.dirname(filename)
+
+    def select_import_2(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        ordner, _ = QFileDialog.getExistingDirectory(
+            self,
+            self.tr("Ordner Pfad"),
+            self.default_dir,
+        )
+        if ordner:
+            self.tf_import_2.setText(ordner)
+            self.default_dir = os.path.dirname(ordner)
 
     def select_project(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
