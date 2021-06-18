@@ -289,7 +289,7 @@ class ImportTask:
 
                 sql = """
                 INSERT INTO linkfl (flnam, haltnam, fliesszeitflaeche, abflusstyp, glink)
-                SELECT fl.flnam, fl.haltnam, fm.modelaconctime/60., 'Schwerpunktfließzeit'
+                SELECT fl.flnam, fl.haltnam, fm.modelaconctime/60., 'Schwerpunktfließzeit',
                     MakeLine(PointOnSurface(fl.geom),Centroid(ha.geom))
                     FROM flaechen AS fl
                     INNER JOIN haltungen AS ha
