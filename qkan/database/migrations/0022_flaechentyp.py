@@ -11,7 +11,6 @@ def run(dbcon: DBConnection) -> bool:
     """Typfehler in 'abflussparemeter.flaechentyp' korrigieren"""
 
     sqllis = [
-        "BEGIN TRANSACTION;",
         """
         CREATE TABLE IF NOT EXISTS abflussparameter_t (
         apnam TEXT, 

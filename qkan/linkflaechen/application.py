@@ -307,8 +307,6 @@ class LinkFl(QKanPlugin):
             QKan.config.selections.flaechen_abflussparam = liste_flaechen_abflussparam
             QKan.config.selections.hal_entw = liste_hal_entw
             QKan.config.selections.teilgebiete = liste_teilgebiete
-            if epsg:
-                QKan.config.epsg = epsg
             QKan.config.fangradius = fangradius
             QKan.config.linkflaechen.bezug_abstand = bezug_abstand
             QKan.config.linkflaechen.links_in_tezg = links_in_tezg
@@ -487,8 +485,6 @@ class LinkFl(QKanPlugin):
 
             QKan.config.selections.hal_entw = liste_hal_entw
             QKan.config.selections.teilgebiete = liste_teilgebiete
-            if epsg:
-                QKan.config.epsg = epsg
             QKan.config.linkflaechen.suchradius = suchradius
             QKan.config.save()
 
@@ -501,7 +497,7 @@ class LinkFl(QKanPlugin):
                     self.dbQK, 
                     {liste_teilgebiete}, 
                     {suchradius}, 
-                    {epsg},
+                    {QKan.config.epsg},
             )"""
             )
 
@@ -510,7 +506,7 @@ class LinkFl(QKanPlugin):
                 self.db_qkan,
                 liste_teilgebiete,
                 suchradius,
-                epsg or QKan.config.epsg,
+                QKan.config.epsg,
             ):
                 del self.db_qkan
                 return
@@ -631,8 +627,6 @@ class LinkFl(QKanPlugin):
             #
             QKan.config.autokorrektur = autokorrektur
             QKan.config.selections.teilgebiete = liste_teilgebiete
-            if epsg:
-                QKan.config.epsg = epsg
             QKan.config.linkflaechen.auswahltyp = auswahltyp
             QKan.config.linkflaechen.bufferradius = bufferradius
 

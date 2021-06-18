@@ -245,7 +245,7 @@ class ImportTask:
                     abflussparameter, 
                     aufteilen, 
                     kommentar, createdat, geom
-                                )
+                    )
                 SELECT
                     fm.muid                             AS flnam
                   , coalesce(fl.linkid, n2l.muid)       AS haltnam
@@ -284,7 +284,21 @@ class ImportTask:
                 ON fl.nodeid = n2l.fromnodeid
                 """
 
-                if not self.db_qkan.sql(sql, "mu_import Flaechen"):
+                if not self.db_qkan.sql(sql, "mu_import Flaechen (1)"):
+                    return False
+
+                sql = """
+                INSERT INTO linkfl (flnam, haltnam, fliesszeitflaeche, abflusstyp, glink)
+                SELECT fl.flnam, fl.haltnam, fm.modelaconctime/60., 'Schwerpunktfließzeit'
+                    MakeLine(PointOnSurface(fl.geom),Centroid(ha.geom))
+                    FROM flaechen AS fl
+                    INNER JOIN haltungen AS ha
+                    ON fl.haltnam = ha.haltnam
+                    INNER JOIN mu.msm_Catchment AS fm
+                    ON fl.flnam = fm.muid
+                """
+
+                if not self.db_qkan.sql(sql, "mu_import Flaechen (2)"):
                     return False
 
                 self.db_qkan.commit()

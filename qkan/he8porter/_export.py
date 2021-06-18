@@ -629,7 +629,7 @@ class ExportTask:
                         ha.haltnam AS haltnam, fl.neigkl AS neigkl,
                         at.he_nr AS abflusstyp, 
                         CASE WHEN ap.bodenklasse IS NULL THEN 0 ELSE 1 END AS typbef, 
-                        lf.speicherzahl AS speicherzahl, lf.speicherkonst AS speicherkonst,
+                        coalesce(lf.speicherzahl, 2) AS speicherzahl, coalesce(lf.speicherkonst, 0) AS speicherkonst,
                         lf.fliesszeitflaeche AS fliesszeitflaeche, lf.fliesszeitkanal AS fliesszeitkanal,
                         CASE WHEN {case_verschneidung} THEN area(fl.geom)/10000 
                         ELSE area({expr_verschneidung})/10000 
@@ -715,7 +715,7 @@ class ExportTask:
                             ha.haltnam AS haltnam, fl.neigkl AS neigkl,
                             at.he_nr AS abflusstyp, 
                             CASE WHEN ap.bodenklasse IS NULL THEN 0 ELSE 1 END AS typbef, 
-                            lf.speicherzahl AS speicherzahl, lf.speicherkonst AS speicherkonst,
+                            coalesce(lf.speicherzahl, 2) AS speicherzahl, coalesce(lf.speicherkonst, 0) AS speicherkonst,
                             lf.fliesszeitflaeche AS fliesszeitflaeche, lf.fliesszeitkanal AS fliesszeitkanal,
                             CASE WHEN {case_verschneidung} THEN area(fl.geom)/10000 
                             ELSE area({expr_verschneidung})/10000 

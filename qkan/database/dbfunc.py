@@ -244,9 +244,8 @@ class DBConnection:
         """Gibt Spaltenliste zurück."""
 
         if not self.sql(
-            "PRAGMA table_info(?)",
+            f"PRAGMA table_info({tablenam})",
             f"dbfunc.DBConnection.attrlist fuer {tablenam}",
-            parameters=(tablenam,),
         ):
             return []
 
@@ -453,9 +452,8 @@ class DBConnection:
         # 1. bestehende Tabelle
         # Benutzerdefinierte Felder müssen übernommen werden
         if not self.sql(
-            "PRAGMA table_info(?)",
+            f"PRAGMA table_info({tabnam})",
             "dbfunc.DBConnection.alter_table (1)",
-            parameters=(tabnam,),
             transaction=False,
         ):
             return False
