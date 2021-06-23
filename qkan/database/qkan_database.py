@@ -395,12 +395,14 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Schaechte" konnte ein Trigger nicht angelegt werden.',
+            'In der Tabelle "haltung_unterucht_data" konnte ein Trigger nicht angelegt werden.',
         )
         consl.close()
         return False
 
-        sql = """CREATE TABLE Untersuchdat_haltung (
+    # untersuchungsdaten Haltung
+
+    sql = """CREATE TABLE Untersuchdat_haltung (
             pk INTEGER PRIMARY KEY,
             untersuchhal TEXT,
             untersuchrichtung TEXT,
@@ -422,11 +424,11 @@ def createdbtables(
             foto_dateiname TEXT,
             film_dateiname TEXT,
             richtung TEXT
-    )"""
+        )"""
 
-        try:
+    try:
             cursl.execute(sql)
-        except BaseException as err:
+    except BaseException as err:
             fehlermeldung(
                 "qkan_database.createdbtables: {}".format(err),
                 'Tabelle "Untersuchdat_Haltungen" konnte nicht erstellt werden.',
@@ -434,35 +436,35 @@ def createdbtables(
             consl.close()
             return False
 
-        sql = "SELECT AddGeometryColumn('Untersuchdat_haltung','geom',{},'LINESTRING',2)".format(epsg)
-        sqlindex = "SELECT CreateSpatialIndex('Untersuchdat_haltung','geom')"
-        try:
-            cursl.execute(sql)
-            cursl.execute(sqlindex)
-        except BaseException as err:
-            fehlermeldung(
+    sql = "SELECT AddGeometryColumn('Untersuchdat_haltung','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('Untersuchdat_haltung','geom')"
+    try:
+        cursl.execute(sql)
+        cursl.execute(sqlindex)
+    except BaseException as err:
+        fehlermeldung(
                 "qkan_database.createdbtables: {}".format(err),
                 'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-            )
-            consl.close()
-            return False
+        )
+        consl.close()
+        return False
 
-        sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
+    sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
                   SELECT
                     untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, kuerzel, 
                         charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, richtung
                   FROM Untersuchdat_haltung;"""
-        try:
-            cursl.execute(sql)
-        except BaseException as err:
-            fehlermeldung(
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
                 "qkan_database.createdbtables: {}".format(err),
                 'View "haltung_data" konnte nicht erstellt werden.',
-            )
-            consl.close()
-            return False
+        )
+        consl.close()
+        return False
 
-        sql = f"""CREATE TRIGGER IF NOT EXISTS Untersuchdat_haltung_insert_clipboard
+    sql = f"""CREATE TRIGGER IF NOT EXISTS Untersuchdat_haltung_insert_clipboard
                     INSTEAD OF INSERT ON untersuchdat_haltung_data FOR EACH ROW
                   BEGIN
                     INSERT INTO untersuchdat_haltung
@@ -756,32 +758,32 @@ def createdbtables(
                     haltungen AS haltung
                     WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten AND haltung.haltnam = new.untersuchhal;
                   END"""
-        try:
-            cursl.execute(sql)
-        except BaseException as err:
-            fehlermeldung(
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
                 "qkan_database.createdbtables: {}".format(err),
                 'In der Tabelle "untersuchhal" konnte ein Trigger nicht angelegt werden.',
             )
-            consl.close()
-            return False
+        consl.close()
+        return False
 
-        sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
+    sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
                       SELECT
                         untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, station, timecode, kuerzel, 
                         charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname
                       FROM untersuchdat_haltung;"""
-        try:
-            cursl.execute(sql)
-        except BaseException as err:
-            fehlermeldung(
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
                 "qkan_database.createdbtables: {}".format(err),
                 'View "untersuchdat_haltung_data" konnte nicht erstellt werden.',
             )
-            consl.close()
-            return False
+        consl.close()
+        return False
 
-        sql = f"""CREATE TRIGGER IF NOT EXISTS untersuchdat_haltung_insert_clipboard
+    sql = f"""CREATE TRIGGER IF NOT EXISTS untersuchdat_haltung_insert_clipboard
                         INSTEAD OF INSERT ON untersuchdat_haltung_data FOR EACH ROW
                       BEGIN
                         INSERT INTO untersuchdat_haltung
@@ -792,15 +794,15 @@ def createdbtables(
                         new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.richtung
                         );
                       END"""
-        try:
-            cursl.execute(sql)
-        except BaseException as err:
-            fehlermeldung(
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
                 "qkan_database.createdbtables: {}".format(err),
                 'In der Tabelle "Haltung" konnte ein Trigger nicht angelegt werden.',
-            )
-            consl.close()
-            return False
+        )
+        consl.close()
+        return False
 
     # Schaechte ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
