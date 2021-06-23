@@ -330,6 +330,8 @@ class ToolsConfig(ClassObject):
 class XmlConfig(ClassObject):
     export_file: str = ""
     import_file: str = ""
+    richt_choice: str = ""
+    ordner: str = ""
     # init_database: bool = True
 
 
