@@ -219,9 +219,9 @@ class MuPorter(QKanPlugin):
                 self.import_dlg.cb_einzugsgebiete.isChecked()
             )
 
-            QKan.config.check_import.tezg_ef = self.import_dlg.cb_tezg_ef.isChecked()
+            # QKan.config.check_import.tezg_ef = self.import_dlg.cb_tezg_ef.isChecked()
             QKan.config.check_import.tezg_hf = self.import_dlg.cb_tezg_hf.isChecked()
-            QKan.config.check_import.tezg_tf = self.import_dlg.cb_tezg_tf.isChecked()
+            # QKan.config.check_import.tezg_tf = self.import_dlg.cb_tezg_tf.isChecked()
 
             QKan.config.check_import.append = self.import_dlg.rb_append.isChecked()
             QKan.config.check_import.update = self.import_dlg.rb_update.isChecked()

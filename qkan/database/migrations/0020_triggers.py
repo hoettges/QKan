@@ -90,7 +90,7 @@ def run(dbcon: DBConnection) -> bool:
                     coalesce(new.entwart, 'Regenwasser'), new.strasse, new.teilgebiet, 
                     new.knotentyp, new.auslasstyp, coalesce(new.schachttyp, 'Schacht'), 
                     coalesce(new.simstatus, 'vorhanden'),
-                    new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
+                    new.kommentar, coalesce(new.createdat, (datetime('now'))),
                     MakePoint(new.xsch, new.ysch, {dbcon.epsg}),
                     CastToMultiPolygon(
                         MakePolygon(
@@ -149,7 +149,7 @@ def run(dbcon: DBConnection) -> bool:
                     new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
                     coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
                     coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
-                    coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), 
+                    coalesce(new.createdat, (datetime('now'))), 
                     MakeLine(
                         coalesce(
                             MakePoint(new.xschob, new.yschob, {dbcon.epsg}),

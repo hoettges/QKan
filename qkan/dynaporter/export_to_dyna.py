@@ -222,7 +222,7 @@ def write12(
     fortschritt("Export Datensätze Typ12", 0.3)
     if progress_bar:
         progress_bar.setValue(30)
-    # createdat = time.strftime('%d.%m.%Y %H:%M:%S', time.localtime())
+    # createdat = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
     # Lesen der Daten aus der SQL-Abfrage und Schreiben in die DYNA-Datei --------------------
     for attr in db_qkan.fetchall():

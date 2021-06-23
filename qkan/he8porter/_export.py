@@ -60,8 +60,8 @@ class ExportTask:
         result = all(
             [
                 # self._profile(),
-                # self._bodenklassen(),
-                # self._abflussparameter(),
+                self._bodenklassen(),
+                self._abflussparameter(),
                 self._schaechte(),
                 self._auslaesse(),
                 self._speicher(),
@@ -72,7 +72,7 @@ class ExportTask:
                 # self._einleitdirekt(),
                 # self._aussengebiete(),
                 # self._einzugsgebiet(),
-                # self._tezg()
+                self._tezg()
             ]
         )
 
@@ -114,9 +114,8 @@ class ExportTask:
                         schaechte.deckelhoehe AS gelaendehoehe, 
                         1 AS art, 
                         st.he_nr AS planungsstatus, 
-                        strftime('%Y-%m-%d %H:%M:%S', 
-                            coalesce(schaechte.createdat, 'now'
-                    )               ) AS lastmodified, 
+                        coalesce(schaechte.createdat, datetime('now'))
+                                                AS lastmodified, 
                         schaechte.durchm*1000 AS durchmesser,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
@@ -148,7 +147,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (35) in QKan_Export",
+                        "Fehler (30) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -170,7 +169,7 @@ class ExportTask:
                           schaechte.deckelhoehe AS gelaendehoehe, 
                           1 AS art, 
                           st.he_nr AS planungsstatus, 
-                          strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                          coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                           schaechte.rowid + {id0} AS id, 
                           schaechte.durchm*1000 AS durchmesser,
                           SetSrid(schaechte.geop, -1) AS geometry
@@ -218,7 +217,7 @@ class ExportTask:
                         schaechte.deckelhoehe AS gelaendehoehe,
                         schaechte.deckelhoehe AS scheitelhoehe,
                         st.he_nr AS planungsstatus, 
-                        strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                        coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                         kommentar AS kommentar,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
@@ -247,7 +246,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (35) in QKan_Export",
+                        "Fehler (31) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -275,7 +274,7 @@ class ExportTask:
                           schaechte.deckelhoehe AS scheitelhoehe,
                           schaechte.deckelhoehe AS hoehevollfuellung,
                           st.he_nr AS planungsstatus, 
-                          strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                          coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                           kommentar AS kommentar,
                           SetSrid(schaechte.geop, -1) AS geometry
                         FROM schaechte
@@ -324,7 +323,7 @@ class ExportTask:
                         schaechte.deckelhoehe AS gelaendehoehe,
                         schaechte.deckelhoehe AS scheitelhoehe,
                         st.he_nr AS planungsstatus, 
-                        strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                        coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                         kommentar AS kommentar,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
@@ -355,7 +354,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (35) in QKan_Export",
+                        "Fehler (32) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -382,7 +381,7 @@ class ExportTask:
                           2 AS anzahlkanten, 
                           schaechte.deckelhoehe AS scheitelhoehe,
                           st.he_nr AS planungsstatus, 
-                          strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                          coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                           kommentar AS kommentar,
                           SetSrid(schaechte.geop, -1) AS geometry
                         FROM schaechte
@@ -447,7 +446,7 @@ class ExportTask:
                       entwaesserungsarten.he_nr AS kanalart,
                       coalesce(haltungen.ks * 1000., 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
                       coalesce(haltungen.ks * 1000., 1.5) AS rauhigkeitanzeige,
-                      coalesce(haltungen.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                      coalesce(haltungen.createdat, datetime('now')) AS lastmodified, 
                       28 AS materialart, 
                       0 AS einzugsgebiet, 
                       0 AS konstanterzuflusstezg, 
@@ -483,7 +482,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (35) in QKan_Export",
+                        "Fehler (33) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -528,7 +527,7 @@ class ExportTask:
                         coalesce(haltungen.ks * 1000., 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
                         1 AS rauigkeitsansatz, 
                         coalesce(haltungen.ks * 1000, 1.5) AS rauigkeitanzeige,
-                        coalesce(haltungen.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                        coalesce(haltungen.createdat, datetime('now')) AS lastmodified, 
                         28 AS materialart,
                         0 AS einzugsgebiet,
                         0 AS konstanterzuflusstezg,
@@ -670,7 +669,7 @@ class ExportTask:
                         coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
                         fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
                         abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
-                        coalesce(createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                        coalesce(createdat, datetime('now')) AS lastmodified, 
                         kommentar AS Kommentar, 
                         SetSrid(geom, -1) AS geometry
                       FROM flintersect AS fi
@@ -697,7 +696,7 @@ class ExportTask:
                     logger.debug(f"idmin = {idmin}\nidmax = {idmax}\n")
                 else:
                     fehlermeldung(
-                        "Fehler (35) in QKan_Export",
+                        "Fehler (34) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -759,7 +758,7 @@ class ExportTask:
                           fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
                           abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
                           1 AS IstPolygonalflaeche, 1 AS ZuordnungGesperrt, 0 AS ZuordnUnabhEZG, 
-                          strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) AS lastmodified, 
+                          coalesce(createdat, catetime('now')) AS lastmodified, 
                           kommentar AS Kommentar, 
                           SetSrid(geom, -1) AS geometry
                         FROM flintersect AS fi
@@ -780,6 +779,99 @@ class ExportTask:
             if nr0:
                 fortschritt("{} Flaechen eingefuegt".format(self.nextid - nr0), 0.80)
         return True
+
+    def _tezg(self) -> bool:
+        """Export Haltungsflächen als befestigte und unbefestigte Flächen"""
+
+        if QKan.config.check_export.tezg_hf:
+            if self.append:
+                # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM tezg"
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg"):
+                    return False
+
+                data = self.db_qkan.fetchone()
+                if len(data) == 2:
+                    idmin, idmax = data
+                    idanz = idmax - idmin + 1
+                    logger.debug(f"idmin = {idmin}\nidmax = {idmax}\n")
+                else:
+                    fehlermeldung(
+                        "Fehler (35) in QKan_Export",
+                        f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
+                    )
+
+                if idmin is None:
+                    meldung("Einfügen tezg als Flächen", "Keine Haltungsflächen vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
+
+                    mindestflaeche = QKan.config.mindestflaeche
+
+                    sql = f"""
+                        INSERT INTO he.Flaeche (
+                          id, 
+                          Name, Haltung, Groesse, Regenschreiber, Flaechentyp, 
+                          BerechnungSpeicherkonstante, Typ, AnzahlSpeicher,
+                          Speicherkonstante, 
+                          Schwerpunktlaufzeit,
+                          FliesszeitOberflaeche, LaengsteFliesszeitKanal,
+                          Parametersatz, Neigungsklasse, ZuordnUnabhEZG, 
+                          IstPolygonalflaeche, ZuordnungGesperrt, 
+                          LastModified,
+                          Kommentar, 
+                          Geometry)
+                        SELECT 
+                          tg.rowid + {id0} + {idanz} * tb.bef AS id,                -- doppelte Anzahl
+                          CASE WHEN tb.bef = 0
+                            THEN printf('%s_b', tg.flnam)
+                            ELSE printf('%s_u', tg.flnam) 
+                          END           AS Name, 
+                          tg.haltnam AS Haltung, 
+                          area(tg.geom)*abs(tb.bef - coalesce(tg.befgrad, 0)/100.) AS Groesse, 
+                          tg.regenschreiber AS Regenschreiber, 
+                          coalesce(ft.he_nr, 0) AS Flaechentyp, 
+                          2 AS BerechnungSpeicherkonstante, 
+                          tb.bef AS Typ, 
+                          2 AS AnzahlSpeicher, 
+                          0. AS Speicherkonstante,                                  -- nicht verwendet 
+                          tg.schwerpunktlaufzeit/60. AS Schwerpunktlaufzeit,
+                          0. AS FliesszeitOberflaeche,                              -- nicht verwendet 
+                          0. AS LaengsteFliesszeitKanal,                            -- nicht verwendet
+                          CASE WHEN tb.bef = 0
+                            THEN '$Default_Bef'
+                            ELSE '$Default_Unbef'
+                          END       AS Parametersatz, 
+                          tg.neigkl AS Neigungsklasse, 
+                          1 AS IstPolygonalflaeche, 1 AS ZuordnungGesperrt, 0 AS ZuordnUnabhEZG, 
+                          coalesce(tg.createdat, datetime('now')) AS lastmodified, 
+                          tg.kommentar AS Kommentar, 
+                          SetSrid(tg.geom, -1) AS geometry
+                        FROM tezg AS tg
+                        LEFT JOIN he.Flaeche AS fh
+                        ON fh.Name = tg.flnam
+                        , (SELECT he_nr FROM flaechentypen WHERE bezeichnung = 'Gebäude') AS ft
+                        , (SELECT column1 AS bef FROM (VALUES (0) , (1))) AS tb
+                        WHERE fh.Name IS NULL AND area(tg.geom)*abs(tb.bef - coalesce(tg.befgrad, 0)/100.) > {mindestflaeche}"""
+
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_tezg (1)"
+                    ):
+                        return False
+
+                    self.nextid += (idmax - idmin + 1) * 2
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
+                    )
+            self.db_qkan.commit()
+
+            if nr0:
+                fortschritt("{} Haltungsflaechen eingefuegt".format(self.nextid - nr0), 0.80)
+
+        return True
+
 
     def _pumpen(self) -> bool:
         """Export Pumpen"""
@@ -954,7 +1046,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (36) in QKan_Export",
+                        "Fehler (37) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -1021,4 +1113,131 @@ class ExportTask:
 
                     fortschritt(f"{self.nextid - nr0} Wehre eingefügt", 0.85)
                     self.progress_bar.setValue(90)
+        return True
+
+    def _abflussparameter(self) -> bool:
+        """Export Abflussparameter"""
+
+        if QKan.config.check_export.abflussparameter:
+            if self.append:
+                # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM abflussparameter"
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_Abflussparameter (2)"):
+                    return False
+
+                data = self.db_qkan.fetchone()
+                if len(data) == 2:
+                    idmin, idmax = data
+                else:
+                    fehlermeldung(
+                        "Fehler (36) in QKan_Export",
+                        f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
+                    )
+
+                if idmin is None:
+                    meldung("Einfügen Pumpen", "Keine Abflussparameter vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
+
+                    sql = f"""
+                    INSERT INTO he.AbflussParameter (
+                        Name, 
+                        AbflussbeiwertAnfang, AbflussbeiwertEnde, 
+                        Muldenverlust, Benetzungsverlust, 
+                        BenetzungSpeicherStart, MuldenauffuellgradStart, 
+                        Typ, 
+                        Bodenklasse, 
+                        Kommentar, LastModified
+                        )
+                    SELECT 
+                        ap.apnam,
+                        ap.anfangsabflussbeiwert, ap.endabflussbeiwert,
+                        ap.muldenverlust, ap.benetzungsverlust, 
+                        ap.benetzung_startwert, ap.mulden_startwert, 
+                        CASE WHEN ap.bodenklasse IS NULL THEN 0 ELSE 1 END AS Typ,
+                        ap.bodenklasse, 
+                        ap.kommentar, ap.createdat
+                    FROM abflussparameter AS ap
+                    LEFT JOIN he.AbflussParameter AS ha
+                    ON ha.Name = ap.apnam
+                    WHERE ha.Name IS NULL
+                    """
+
+                    if not self.db_qkan.sql(
+                            sql, "dbQK: export_to_he8.export_abflussparameter (2)"
+                    ):
+                        return False
+
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
+                    )
+            self.db_qkan.commit()
+
+            if nr0:
+                fortschritt("{} Abflussparameter eingefuegt".format(self.nextid - nr0), 0.80)
+
+        return True
+
+
+    def _bodenklassen(self) -> bool:
+        """Export der Bodenklassen"""
+
+        if QKan.config.check_export.bodenklassen:
+            if self.append:
+                # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM bodenklassen"
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_Bodenklassen (2)"):
+                    return False
+
+                data = self.db_qkan.fetchone()
+                if len(data) == 2:
+                    idmin, idmax = data
+                else:
+                    fehlermeldung(
+                        "Fehler (36) in QKan_Export",
+                        f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
+                    )
+
+                if idmin is None:
+                    meldung("Einfügen Pumpen", "Keine Bodenklassen vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
+
+                    sql = f"""
+                    INSERT INTO he.Bodenklasse (
+                        Name, 
+                        InfiltrationsrateAnfang, InfiltrationsrateEnde, InfiltrationsrateStart, 
+                        Rueckgangskonstante, Regenerationskonstante, Saettigungswassergehalt, 
+                        Kommentar, LastModified
+                    )
+                    SELECT 
+                        bk.bknam, 
+                        bk.infiltrationsrateanfang, bk.infiltrationsrateende, bk.infiltrationsratestart, 
+                        bk.rueckgangskonstante, bk.regenerationskonstante, bk.saettigungswassergehalt, 
+                        bk.kommentar, bk.createdat
+                    FROM bodenklassen AS bk
+                    LEFT JOIN he.Bodenklasse AS hb
+                    ON hb.Name = bk.bknam
+                    WHERE hb.Name IS NULL
+                    """
+
+                    if not self.db_qkan.sql(
+                            sql, "dbQK: export_to_he8.export_abflussparameter (2)"
+                    ):
+                        return False
+
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
+                    )
+            self.db_qkan.commit()
+
+            if nr0:
+                fortschritt("{} Abflussparameter eingefuegt".format(self.nextid - nr0), 0.80)
+
         return True

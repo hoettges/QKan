@@ -36,7 +36,7 @@ def run(dbcon: DBConnection) -> bool:
             "teilgebiet TEXT",
             "simstatus TEXT DEFAULT 'vorhanden'",
             "kommentar TEXT",
-            "createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now'))",
+            "createdat TEXT DEFAULT (datetime('now'))",
         ],
         ["volanf", "volges"],
     )
@@ -68,7 +68,7 @@ def run(dbcon: DBConnection) -> bool:
             "teilgebiet TEXT",
             "simstatus TEXT DEFAULT 'vorhanden'",
             "kommentar TEXT",
-            "createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now'))",
+            "createdat TEXT DEFAULT (datetime('now'))",
         ],
     )
 

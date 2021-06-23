@@ -74,6 +74,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     cb_einzugsgebiete: QCheckBox
 
     cb_tezg: QCheckBox
+    cb_tezg_hf: QCheckBox
 
     rb_update: QRadioButton
     rb_append: QRadioButton
@@ -133,6 +134,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.cb_aussengebiete.setChecked(QKan.config.check_export.aussengebiete)
         self.cb_einzugsgebiete.setChecked(QKan.config.check_export.einzugsgebiete)
         self.cb_tezg.setChecked(QKan.config.check_export.tezg)
+        self.cb_tezg_hf.setChecked(QKan.config.check_export.tezg_hf)
 
         # Aktionen beim Export
         self.rb_append.setChecked(QKan.config.check_export.append)

@@ -26,6 +26,7 @@ class ImportTask:
                 self._wehre(),
                 self._pumpen(),
                 self._flaechen(),
+                self._tezg(),
             ]
         )
 
@@ -68,7 +69,7 @@ class ImportTask:
                 WHEN 3 THEN 'Auslass'
                 WHEN 4 THEN 'Speicher' END      AS schachttyp
               , 'Importiert mit QKan'           AS kommentar
-              , strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) 
+              , coalesce(createdat, datetime('now')) 
                                                 AS createdat
             FROM mu.msm_Node    AS sm
             LEFT JOIN schaechte AS sq
@@ -142,7 +143,7 @@ class ImportTask:
                                                         AS ks
                   , 'vorhanden'                         AS simstatus
                   , 'Importiert mit QKan'               AS kommentar
-                  , strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) 
+                  , coalesce(createdat, datetime('now')) 
                                                         AS createdat
                   , SetSRID(ro.geometry, {self.epsg})    AS geom
                 FROM mu.msm_Link AS ro
@@ -182,7 +183,7 @@ class ImportTask:
                   , wu.coeff                            AS uebeiwert
                   , 'vorhanden'                         AS simstatus
                   , 'Importiert mit QKan'               AS kommentar
-                  , strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) 
+                  , coalesce(createdat, datetime('now')) 
                                                         AS createdat
                   , SetSRID(wu.geometry, {self.epsg})   AS geom
                 FROM mu.msm_Weir AS wu
@@ -219,7 +220,7 @@ class ImportTask:
                   , pu.stoplevel                        AS ausschalthoehe
                   , 'vorhanden'                         AS simstatus
                   , 'Importiert mit QKan'               AS kommentar
-                  , strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) 
+                  , coalesce(createdat, datetime('now')) 
                                                         AS createdat
                   , SetSRID(pu.geometry, {self.epsg})   AS geom
                 FROM mu.msm_Pump AS pu
@@ -258,7 +259,7 @@ class ImportTask:
                   , fm.modelbparbid                     AS abflussparameter
                   , false                               AS aufteilen
                   , 'Importiert mit QKan'               AS kommentar
-                  , strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) 
+                  , coalesce(createdat, datetime('now')) 
                                                         AS createdat
                   , CastToMultiPolygon(SetSRID(fm.geometry, {self.epsg}))
                                                         AS geom
@@ -282,6 +283,7 @@ class ImportTask:
                     GROUP BY ml.fromnodeid
                 ) AS n2l
                 ON fl.nodeid = n2l.fromnodeid
+                WHERE fq.pk IS NULL
                 """
 
                 if not self.db_qkan.sql(sql, "mu_import Flaechen (1)"):
@@ -305,6 +307,67 @@ class ImportTask:
 
         return True
 
+    def _tezg(self) -> bool:
+        """Import Flächen als Haltungsflächen"""
+
+        if QKan.config.check_import.tezg_hf:
+            if self.append:
+                sql = f"""
+                INSERT INTO tezg (
+                    flnam, haltnam, schnam, neigung, 
+                    neigkl, befgrad, schwerpunktlaufzeit, 
+                    regenschreiber, abflussparameter, 
+                    kommentar, createdat, 
+                    geom
+                )
+                SELECT
+                    fm.muid                             AS flnam
+                  , coalesce(fl.linkid, n2l.muid)       AS haltnam
+                  , fl.nodeid                           AS schnam
+                  , fm.modelbslope                      AS neigung
+                  , CASE WHEN fm.modelbslope < 0.01 THEN 1
+                         WHEN fm.modelbslope < 0.04 THEN 2
+                         WHEN fm.modelbslope < 0.10 THEN 3
+                         ELSE 4 END                     AS neigkl
+                  , fm.modelaimparea*100.               AS befgrad
+                  , fm.modelblength                     AS schwerpunktlaufzeit
+                  , NULL                                AS regenschreiber
+                  , fm.modelaparaid                     AS abflussparameter
+                  , 'Importiert mit QKan'               AS kommentar
+                  , coalesce(createdat, datetime('now')) 
+                                                        AS createdat
+                  , CastToMultiPolygon(SetSRID(fm.geometry, {self.epsg}))
+                                                        AS geom
+                FROM mu.msm_Catchment AS fm
+                JOIN mu.msm_CatchCon AS fl
+                ON fl.catchid = fm.muid
+                LEFT JOIN tezg AS tg
+                ON tg.flnam = fm.muid
+                LEFT JOIN 
+                (
+                    SELECT ml.fromnodeid AS fromnodeid, ml.muid AS muid
+                    FROM mu.msm_Link AS ml
+                    LEFT JOIN 
+                    (
+                        SELECT ld.fromnodeid, max(ld.diameter) AS diameter
+                        FROM mu.msm_Link AS ld
+                        GROUP BY ld.fromnodeid
+                    ) AS lm
+                    ON lm.fromnodeid = ml.fromnodeid 
+                    WHERE ml.diameter >= lm.diameter*0.999999
+                    GROUP BY ml.fromnodeid
+                ) AS n2l
+                ON fl.nodeid = n2l.fromnodeid
+                WHERE tg.pk IS NULL
+                """
+
+            if not self.db_qkan.sql(sql, "mu_import Haltungsflaechen"):
+                return False
+
+            self.db_qkan.commit()
+
+        return True
+
     def _abflussparameter(self) -> bool:
         """Import der Abflussbeiwerte
 
@@ -315,15 +378,19 @@ class ImportTask:
             if self.append:
                 sql = """
                 INSERT INTO abflussparameter (
-                    apnam, benetzungsverlust, muldenverlust, 
+                    apnam, benetzungsverlust, muldenverlust,
+                    anfangsabflussbeiwert, endabflussbeiwert, 
+                    mulden_startwert, benetzung_startwert,  
                     kommentar, createdat 
                 )
                 SELECT 
                       ap_mu.muid AS apnam 
                     , ap_mu.wetmedium AS benetzungsverlust 
                     , ap_mu.storagemedium AS muldenverlust
+                    , 0.90, 0.90
+                    , 0.0, 0.0
                     , 'Werte aus Modell B, nicht vollständig' AS kommentar
-                    , strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) 
+                    , coalesce(createdat, datetime('now')) 
                                                         AS createdat 
                 FROM mu.msm_HParB AS ap_mu
                 LEFT JOIN abflussparameter as ap_qk

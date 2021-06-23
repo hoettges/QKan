@@ -369,9 +369,9 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     cb_aussengebiete: QCheckBox
     cb_einzugsgebiete: QCheckBox
 
-    cb_tezg_ef: QCheckBox
+    # cb_tezg_ef: QCheckBox
     cb_tezg_hf: QCheckBox
-    cb_tezg_tf: QCheckBox
+    # cb_tezg_tf: QCheckBox
 
     rb_update: QRadioButton
     rb_append: QRadioButton
@@ -414,9 +414,9 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_aussengebiete.setChecked(QKan.config.check_import.aussengebiete)
         self.cb_einzugsgebiete.setChecked(QKan.config.check_import.einzugsgebiete)
 
-        self.cb_tezg_ef.setChecked(QKan.config.check_import.tezg_ef)
+        # self.cb_tezg_ef.setChecked(QKan.config.check_import.tezg_ef)
         self.cb_tezg_hf.setChecked(QKan.config.check_import.tezg_hf)
-        self.cb_tezg_tf.setChecked(QKan.config.check_import.tezg_tf)
+        # self.cb_tezg_tf.setChecked(QKan.config.check_import.tezg_tf)
 
         self.rb_append.setChecked(QKan.config.check_import.append)
         self.rb_update.setChecked(QKan.config.check_import.update)

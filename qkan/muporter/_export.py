@@ -98,9 +98,8 @@ class ExportTask:
                         schaechte.deckelhoehe AS gelaendehoehe, 
                         1 AS art, 
                         st.mu_nr AS planungsstatus, 
-                        strftime('%Y-%m-%d %H:%M:%S', 
-                            coalesce(schaechte.createdat, 'now'
-                    )               ) AS lastmodified, 
+                        coalesce(schaechte.createdat, datetime('now')
+                        )                AS lastmodified, 
                         schaechte.durchm*1000 AS durchmesser,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
@@ -150,7 +149,7 @@ class ExportTask:
                       schaechte.deckelhoehe AS gelaendehoehe, 
                       1 AS art, 
                       st.mu_nr AS planungsstatus, 
-                      strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                      coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                       schaechte.rowid + {id0} AS id, 
                       schaechte.durchm*1000 AS durchmesser,
                       SetSrid(schaechte.geop, -1) AS geometry
@@ -198,7 +197,7 @@ class ExportTask:
                         schaechte.deckelhoehe AS gelaendehoehe,
                         schaechte.deckelhoehe AS scheitelhoehe,
                         st.mu_nr AS planungsstatus, 
-                        strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                        coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                         kommentar AS kommentar,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
@@ -251,7 +250,7 @@ class ExportTask:
                       schaechte.deckelhoehe AS scheitelhoehe,
                       schaechte.deckelhoehe AS hoehevollfuellung,
                       st.mu_nr AS planungsstatus, 
-                      strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                      coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                       kommentar AS kommentar,
                       SetSrid(schaechte.geop, -1) AS geometry
                     FROM schaechte
@@ -298,7 +297,7 @@ class ExportTask:
                         schaechte.deckelhoehe AS gelaendehoehe,
                         schaechte.deckelhoehe AS scheitelhoehe,
                         st.mu_nr AS planungsstatus, 
-                        strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                        coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                         kommentar AS kommentar,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
@@ -352,7 +351,7 @@ class ExportTask:
                       2 AS anzahlkanten, 
                       schaechte.deckelhoehe AS scheitelhoehe,
                       st.mu_nr AS planungsstatus, 
-                      strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                      coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                       kommentar AS kommentar,
                       SetSrid(schaechte.geop, -1) AS geometry
                     FROM schaechte
@@ -411,7 +410,7 @@ class ExportTask:
                       entwaesserungsarten.mu_nr AS kanalart,
                       coalesce(haltungen.ks, 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
                       coalesce(haltungen.ks, 1.5) AS rauhigkeitanzeige,
-                      coalesce(haltungen.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                      coalesce(haltungen.createdat, datetime('now')) AS lastmodified, 
                       28 AS materialart, 
                       0 AS einzugsgebiet, 
                       0 AS konstanterzuflusstezg, 
@@ -481,7 +480,7 @@ class ExportTask:
                     entwaesserungsarten.mu_nr AS kanalart,
                     coalesce(haltungen.ks, 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
                     coalesce(haltungen.ks, 1.5) AS rauhigkeitanzeige,
-                    coalesce(haltungen.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                    coalesce(haltungen.createdat, datetime('now')) AS lastmodified, 
                     28 AS materialart,
                     0 AS einzugsgebiet,
                     0 AS konstanterzuflusstezg,
@@ -620,7 +619,7 @@ class ExportTask:
                         coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
                         fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
                         abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
-                        coalesce(createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                        coalesce(createdat, datetime('now')) AS lastmodified, 
                         kommentar AS Kommentar, 
                         SetSrid(geom, -1) AS geometry
                       FROM flintersect AS fi
@@ -709,7 +708,7 @@ class ExportTask:
                           fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
                           abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
                           1 AS IstPolygonalflaeche, 1 AS ZuordnungGesperrt, 0 AS ZuordnUnabhEZG, 
-                          strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) AS lastmodified, 
+                          coalesce(createdat, datetime('now')) AS lastmodified, 
                           kommentar AS Kommentar, 
                           SetSrid(geom, -1) AS geometry
                         FROM flintersect AS fi

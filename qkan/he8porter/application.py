@@ -120,6 +120,7 @@ class He8Porter(QKanPlugin):
                 self.export_dlg.cb_einzugsgebiete.isChecked()
             )
             QKan.config.check_export.tezg = self.export_dlg.cb_tezg.isChecked()
+            QKan.config.check_export.tezg_hf = self.export_dlg.cb_tezg_hf.isChecked()
 
             QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
             QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()

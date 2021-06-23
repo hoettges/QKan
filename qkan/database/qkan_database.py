@@ -22,8 +22,8 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.2.5"  # Version der QKan-Datenbank
-__qgsVersion__ = "3.2.7"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = "3.2.8"  # Version der QKan-Datenbank
+__qgsVersion__ = "3.2.8"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -175,7 +175,7 @@ def createdbtables(
     ks REAL DEFAULT 1.5,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+    createdat TEXT DEFAULT (datetime('now')),
     xschob REAL,
     yschob REAL,
     xschun REAL,
@@ -247,7 +247,7 @@ def createdbtables(
               new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
               coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
               coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
-              coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), 
+              coalesce(new.createdat, datetime('now')), 
               MakeLine(
                 coalesce(
                   MakePoint(new.xschob, new.yschob, {epsg}),
@@ -310,7 +310,7 @@ def createdbtables(
         breite REAL,
         laenge REAL,
         kommentar TEXT,
-        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+        createdat TEXT DEFAULT (datetime('now')),
         untersuchtag TEXT, 
         untersucher TEXT, 
         wetter INTEGER DEFAULT 0, 
@@ -374,7 +374,7 @@ def createdbtables(
                   CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
                   CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
                   new.laenge, new.kommentar, 
-                  coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), 
+                  coalesce(new.createdat, datetime('now')), 
                   MakeLine(
                     coalesce(
                       MakePoint(new.xschob, new.yschob, {epsg}),
@@ -821,7 +821,7 @@ def createdbtables(
     schachttyp TEXT DEFAULT 'Schacht', 
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+    createdat TEXT DEFAULT (datetime('now')),
     xsch REAL, 
     ysch REAL)"""
 
@@ -898,7 +898,7 @@ def createdbtables(
               coalesce(new.entwart, 'Regenwasser'), new.strasse, new.teilgebiet, 
               new.knotentyp, new.auslasstyp, coalesce(new.schachttyp, 'Schacht'), 
               coalesce(new.simstatus, 'vorhanden'),
-              new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
+              new.kommentar, coalesce(new.createdat, datetime('now')),
               MakePoint(new.xsch, new.ysch, {epsg}),
               CastToMultiPolygon(
                 MakePolygon(
@@ -931,7 +931,7 @@ def createdbtables(
             schnam TEXT, 
             durchm REAL,
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+            createdat TEXT DEFAULT (datetime('now')),
             untersuchtag TEXT, 
             untersucher TEXT, 
             wetter INTEGER DEFAULT 0, 
@@ -987,7 +987,7 @@ def createdbtables(
                     SELECT
                       new.schnam, 
                       CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
-                      new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
+                      new.kommentar, coalesce(new.createdat, datetime('now')),
                       sch.geop,
                       new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
                     FROM
@@ -1031,7 +1031,7 @@ def createdbtables(
                         SELECT
                           new.schnam,
                           CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
-                          new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
+                          new.kommentar, coalesce(new.createdat, datetime('now')),
                           sch.geop,
                           new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
                         FROM
@@ -1539,7 +1539,7 @@ def createdbtables(
     teilgebiet TEXT,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -1636,7 +1636,7 @@ def createdbtables(
     teilgebiet TEXT,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -1733,7 +1733,7 @@ def createdbtables(
     stdmittel REAL,
     fremdwas REAL,
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -1772,7 +1772,7 @@ def createdbtables(
     pk INTEGER PRIMARY KEY,
     tgnam TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -1823,7 +1823,7 @@ def createdbtables(
     teilgebiet TEXT,
     tabelle TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -1850,7 +1850,7 @@ def createdbtables(
     abflussparameter TEXT,
     aufteilen TEXT DEFAULT 'nein',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -1999,11 +1999,12 @@ def createdbtables(
     neigkl INTEGER DEFAULT 1,   -- Werte [1-5], als Vorgabe fuer automatisch erzeugte unbef Flaechen
     neigung REAL,               -- absolute Neigung (%)
     befgrad REAL,               -- (-) Befestigungsgrad absolut, nur optional fuer SWMM und HE6
+    schwerpunktlaufzeit REAL,   -- Schwerpunktlaufzeit (s)
     regenschreiber TEXT,        -- Regenschreiber beziehen sich auf Zieldaten
     teilgebiet TEXT,
     abflussparameter TEXT,      -- als Vorgabe fuer automatisch erzeugte unbef Flaechen
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -2043,7 +2044,7 @@ def createdbtables(
     ew REAL,
     einzugsgebiet TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -2085,7 +2086,7 @@ def createdbtables(
         regenschreiber TEXT, 
         teilgebiet TEXT, 
         kommentar TEXT, 
-        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+        createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -2262,7 +2263,7 @@ def createdbtables(
     bodenklasse TEXT, 
     flaechentyp TEXT, 
     kommentar TEXT, 
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -2276,19 +2277,18 @@ def createdbtables(
 
     try:
         daten = [
-            "'$Default_Bef', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, NULL, '13.01.2011 08:44'",
-            "'$Default_Unbef', 'Standart qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', 'Grünfläche', '13.01.2011 08:44'",
-            "'Gebäude', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, 'Gebäude', '13.01.2020 14:13'",
-            "'Straße', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, 'Straße', '13.01.2020 14:13'",
-            "'Grünfläche', 'Standart qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', 'Grünfläche', '13.01.2020 14:13'",
-            "'Gewässer', 'Standart qkhe', 0, 0, 0, 0, 0, 0, NULL, 'Gewässer', '13.01.2020 14:13'",
+            "'$Default_Bef', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, NULL",
+            "'$Default_Unbef', 'Standart qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', 'Grünfläche'",
+            "'Gebäude', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, 'Gebäude'",
+            "'Straße', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, 'Straße'",
+            "'Grünfläche', 'Standart qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', 'Grünfläche'",
+            "'Gewässer', 'Standart qkhe', 0, 0, 0, 0, 0, 0, NULL, 'Gewässer'",
         ]
 
         for ds in daten:
             sql = """INSERT INTO abflussparameter
                      ( apnam, kommentar, anfangsabflussbeiwert, endabflussbeiwert, benetzungsverlust, 
-                       muldenverlust, benetzung_startwert, mulden_startwert, bodenklasse, flaechentyp, 
-                       createdat) Values ({})""".format(
+                       muldenverlust, benetzung_startwert, mulden_startwert, bodenklasse, flaechentyp) Values ({})""".format(
                 ds
             )
             cursl.execute(sql)
@@ -2355,7 +2355,7 @@ def createdbtables(
     regenerationskonstante REAL,                -- (1/d)
     saettigungswassergehalt REAL,               -- (mm)
     kommentar TEXT, 
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)
@@ -2368,13 +2368,12 @@ def createdbtables(
         return False
 
     daten = [
-        "'VollDurchlaessig', 10, 9, 10, 144, 1.584, 100, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-        "'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-        "'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-        "'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-        "'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-        "'Undurchlaessig', 0, 0, 0, 100, 1, 0, '13.01.2011 08:44:50', 'Importiert mit qg2he'",
-        "NULL, 0, 0, 0, 0, 0, 0, '13.01.2011 08:44:50', 'nur für interne QKan-Aufgaben'",
+        "'VollDurchlaessig', 10, 9, 10, 144, 1.584, 100, 'Importiert mit qg2he'",
+        "'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, 'Importiert mit qg2he'",
+        "'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, 'Importiert mit qg2he'",
+        "'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, 'Importiert mit qg2he'",
+        "'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, 'Importiert mit qg2he'",
+        "'Undurchlaessig', 0, 0, 0, 100, 1, 0, 'Importiert mit qg2he'",
     ]
 
     for ds in daten:
@@ -2382,7 +2381,7 @@ def createdbtables(
             sql = """INSERT INTO bodenklassen
                      ( 'bknam', 'infiltrationsrateanfang', 'infiltrationsrateende', 'infiltrationsratestart', 
                        'rueckgangskonstante', 'regenerationskonstante', 'saettigungswassergehalt', 
-                       'createdat', 'kommentar') Values ({})""".format(
+                       'kommentar') Values ({})""".format(
                 ds
             )
             cursl.execute(sql)
@@ -2594,7 +2593,7 @@ def createdbtables(
             ZuordnUnabhEZG INTEGER,
             IstPolygonalflaeche SMALLINT, 
             ZuordnungGesperrt SMALLINT, 
-            LastModified TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')), 
+            LastModified TEXT DEFAULT (datetime('now')), 
             Kommentar TEXT)"""
 
     try:
@@ -2640,7 +2639,7 @@ def createdbtables(
     pk INTEGER PRIMARY KEY, 
     subject TEXT, 
     value TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (datetime('now')))"""
 
     try:
         cursl.execute(sql)

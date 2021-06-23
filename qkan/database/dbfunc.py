@@ -424,7 +424,7 @@ class DBConnection:
                 'ueberfluessig2 TEXT',
                 "simstatus TEXT DEFAULT 'vorhanden'",
                 'teilgebiet TEXT',
-                "createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now'))"],
+                "createdat TEXT DEFAULT (datetime('now'))"],
             ['ueberfluessig1', 'ueberfluessig2'])
         """
 

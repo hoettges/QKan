@@ -25,7 +25,7 @@ def run(dbcon: DBConnection) -> bool:
         bodenklasse TEXT, 
         flaechentyp TEXT, 
         kommentar TEXT, 
-        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))""",
+        createdat TEXT DEFAULT (datetime('now')))""",
         "DELETE FROM abflussparameter_t",
         """
         INSERT INTO abflussparameter_t
@@ -61,7 +61,7 @@ def run(dbcon: DBConnection) -> bool:
             bodenklasse TEXT, 
             flaechentyp TEXT, 
             kommentar TEXT, 
-            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))""",
+            createdat TEXT DEFAULT (datetime('now')))""",
         """
         INSERT INTO abflussparameter
             (
