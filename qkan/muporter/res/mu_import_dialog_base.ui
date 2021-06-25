@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>QKan Import from Hystem-Extran</string>
+   <string>QKan Import from Mike+ (2021)</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">

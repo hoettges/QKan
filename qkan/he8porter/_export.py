@@ -829,7 +829,7 @@ class ExportTask:
                             ELSE printf('%s_u', tg.flnam) 
                           END           AS Name, 
                           tg.haltnam AS Haltung, 
-                          area(tg.geom)*abs(tb.bef - coalesce(tg.befgrad, 0)/100.) AS Groesse, 
+                          area(tg.geom)/10000.*abs(tb.bef - coalesce(tg.befgrad, 0)/100.) AS Groesse, 
                           tg.regenschreiber AS Regenschreiber, 
                           coalesce(ft.he_nr, 0) AS Flaechentyp, 
                           2 AS BerechnungSpeicherkonstante, 

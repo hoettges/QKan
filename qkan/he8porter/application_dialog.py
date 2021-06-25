@@ -105,6 +105,8 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # self.pb_database.clicked.connect(self.select_database)    # ergibt sich aus Projekt
         self.pb_exportdb.clicked.connect(self.select_exportdb)
         self.pb_template.clicked.connect(self.select_template)
+        self.cb_flaechen.clicked.connect(self.check_flaechen)
+        self.cb_tezg_hf.clicked.connect(self.check_tezg_hf)
         # self.button_box.helpRequested.connect(self.click_help)
 
         # Aktionen zu lw_teilgebiete: QListWidget
@@ -127,6 +129,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.cb_pumpen.setChecked(QKan.config.check_export.pumpen)
         self.cb_wehre.setChecked(QKan.config.check_export.wehre)
         self.cb_flaechen.setChecked(QKan.config.check_export.flaechen)
+        self.cb_tezg_hf.setChecked(QKan.config.check_export.tezg_hf)
         self.cb_rohrprofile.setChecked(QKan.config.check_export.rohrprofile)
         self.cb_abflussparameter.setChecked(QKan.config.check_export.abflussparameter)
         self.cb_bodenklassen.setChecked(QKan.config.check_export.bodenklassen)
@@ -330,6 +333,18 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
                     repr(err),
                 )
         return True
+
+    def check_flaechen(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        if self.cb_flaechen.isChecked():
+            QKan.config.check_export.tezg_hf = False
+            self.cb_tezg_hf.setChecked(False)
+
+    def check_tezg_hf(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        if self.cb_tezg_hf.isChecked():
+            QKan.config.check_export.flaechen = False
+            self.cb_flaechen.setChecked(False)
 
 
 IMPORT_CLASS, _ = uic.loadUiType(

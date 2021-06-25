@@ -391,6 +391,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_import.clicked.connect(self.select_import)
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
+        self.cb_flaechen.clicked.connect(self.check_flaechen)
+        self.cb_tezg_hf.clicked.connect(self.check_tezg_hf)
         # self.button_box.helpRequested.connect(self.click_help)
 
         # Init fields
@@ -407,6 +409,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_pumpen.setChecked(QKan.config.check_import.pumpen)
         self.cb_wehre.setChecked(QKan.config.check_import.wehre)
         self.cb_flaechen.setChecked(QKan.config.check_import.flaechen)
+        self.cb_tezg_hf.setChecked(QKan.config.check_import.tezg_hf)
         self.cb_rohrprofile.setChecked(QKan.config.check_import.rohrprofile)
         self.cb_abflussparameter.setChecked(QKan.config.check_import.abflussparameter)
         self.cb_bodenklassen.setChecked(QKan.config.check_import.bodenklassen)
@@ -456,3 +459,15 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         if filename:
             self.tf_database.setText(filename)
             self.default_dir = os.path.dirname(filename)
+
+    def check_flaechen(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        if self.cb_flaechen.isChecked():
+            QKan.config.check_import.tezg_hf = False
+            self.cb_tezg_hf.setChecked(False)
+
+    def check_tezg_hf(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        if self.cb_tezg_hf.isChecked():
+            QKan.config.check_import.flaechen = False
+            self.cb_flaechen.setChecked(False)

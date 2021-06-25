@@ -3732,8 +3732,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -3765,7 +3765,7 @@ def my_form_open(dialog, layer, feature):
         <default field="abflussparameter" expression="" applyOnUpdate="0"/>
         <default field="aufteilen" expression="" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
       </defaults>
       <constraints>
         <constraint unique_strength="1" exp_strength="0" constraints="3" field="pk" notnull_strength="1"/>
@@ -4488,8 +4488,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -4521,7 +4521,7 @@ def my_form_open(dialog, layer, feature):
         <default field="teilgebiet" expression="" applyOnUpdate="0"/>
         <default field="abflussparameter" expression="" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
       </defaults>
       <constraints>
         <constraint unique_strength="1" exp_strength="0" constraints="3" field="pk" notnull_strength="1"/>
@@ -5435,8 +5435,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -5510,7 +5510,7 @@ def my_form_open(dialog, layer, feature):
         <default field="schachttyp" expression="'Auslass'" applyOnUpdate="0"/>
         <default field="simstatus" expression="'vorhanden'" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
         <default field="geom" expression="" applyOnUpdate="0"/>
         <default field="x" expression="" applyOnUpdate="0"/>
         <default field="y" expression="" applyOnUpdate="0"/>
@@ -5897,8 +5897,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -5914,7 +5914,7 @@ def my_form_open(dialog, layer, feature):
         <default field="pk" expression="" applyOnUpdate="0"/>
         <default field="tgnam" expression="''" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
       </defaults>
       <constraints>
         <constraint unique_strength="1" exp_strength="0" constraints="3" field="pk" notnull_strength="1"/>
@@ -7204,8 +7204,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -7233,7 +7233,7 @@ def my_form_open(dialog, layer, feature):
         <default field="regenerationskonstante" expression="" applyOnUpdate="0"/>
         <default field="saettigungswassergehalt" expression="" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
       </defaults>
       <constraints>
         <constraint unique_strength="1" exp_strength="0" constraints="3" field="pk" notnull_strength="1"/>
@@ -7652,8 +7652,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -7681,7 +7681,7 @@ def my_form_open(dialog, layer, feature):
         <default field="ew" expression="" applyOnUpdate="0"/>
         <default field="einzugsgebiet" expression="" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
       </defaults>
       <constraints>
         <constraint unique_strength="1" exp_strength="0" constraints="3" field="pk" notnull_strength="1"/>
@@ -9605,8 +9605,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -9686,7 +9686,7 @@ def my_form_open(dialog, layer, feature):
         <default field="ks" expression="" applyOnUpdate="0"/>
         <default field="simstatus" expression="'vorhanden'" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
         <default field="xschob" expression="" applyOnUpdate="0"/>
         <default field="yschob" expression="" applyOnUpdate="0"/>
         <default field="xschun" expression="" applyOnUpdate="0"/>
@@ -10392,8 +10392,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -10473,7 +10473,7 @@ def my_form_open(dialog, layer, feature):
         <default field="ks" expression="" applyOnUpdate="0"/>
         <default field="simstatus" expression="'vorhanden'" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
         <default field="xschob" expression="" applyOnUpdate="0"/>
         <default field="yschob" expression="" applyOnUpdate="0"/>
         <default field="xschun" expression="" applyOnUpdate="0"/>
@@ -11969,8 +11969,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -12008,7 +12008,7 @@ def my_form_open(dialog, layer, feature):
         <default field="teilgebiet" expression="" applyOnUpdate="0"/>
         <default field="simstatus" expression="'vorhanden'" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
       </defaults>
       <constraints>
         <constraint unique_strength="1" exp_strength="0" constraints="3" field="pk" notnull_strength="1"/>
@@ -13179,8 +13179,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -13251,7 +13251,7 @@ def my_form_open(dialog, layer, feature):
         <default field="schachttyp" expression="'Schacht'" applyOnUpdate="0"/>
         <default field="simstatus" expression="'vorhanden'" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
         <default field="geop" expression="" applyOnUpdate="0"/>
         <default field="x" expression="" applyOnUpdate="0"/>
         <default field="y" expression="" applyOnUpdate="0"/>
@@ -13870,8 +13870,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="bool" value="true"/>
                 <Option name="calendar_popup" type="bool" value="true"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
                 <Option name="field_iso_format" type="bool" value="false"/>
               </Option>
             </config>
@@ -13943,7 +13943,7 @@ def my_form_open(dialog, layer, feature):
         <default field="schachttyp" expression="'Schacht'" applyOnUpdate="0"/>
         <default field="simstatus" expression="'vorhanden'" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
         <default field="geom" expression="" applyOnUpdate="0"/>
         <default field="x" expression="" applyOnUpdate="0"/>
         <default field="y" expression="" applyOnUpdate="0"/>
@@ -14951,8 +14951,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -15007,7 +15007,7 @@ def my_form_open(dialog, layer, feature):
         <default field="schachttyp" expression="'Schacht'" applyOnUpdate="0"/>
         <default field="simstatus" expression="'vorhanden'" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
         <default field="geom" expression="" applyOnUpdate="0"/>
       </defaults>
       <constraints>
@@ -15593,8 +15593,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -15649,7 +15649,7 @@ def my_form_open(dialog, layer, feature):
         <default field="schachttyp" expression="'Speicher'" applyOnUpdate="0"/>
         <default field="simstatus" expression="'vorhanden'" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
         <default field="geom" expression="" applyOnUpdate="0"/>
       </defaults>
       <constraints>
@@ -16930,8 +16930,8 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="allow_null" type="QString" value="1"/>
                 <Option name="calendar_popup" type="QString" value="1"/>
-                <Option name="display_format" type="QString" value="yyyy.MM.dd HH:mm:ss"/>
-                <Option name="field_format" type="QString" value="YYYY.MM.dd HH:mm:ss"/>
+                <Option name="display_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
+                <Option name="field_format" type="QString" value="dd.MM.yyyy HH:mm:ss"/>
               </Option>
             </config>
           </editWidget>
@@ -16969,7 +16969,7 @@ def my_form_open(dialog, layer, feature):
         <default field="teilgebiet" expression="" applyOnUpdate="0"/>
         <default field="simstatus" expression="'vorhanden'" applyOnUpdate="0"/>
         <default field="kommentar" expression="" applyOnUpdate="0"/>
-        <default field="createdat" expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0"/>
+        <default field="createdat" expression=" format_date( now(), 'dd.MM.YYYY HH:mm:ss')" applyOnUpdate="0"/>
       </defaults>
       <constraints>
         <constraint unique_strength="1" exp_strength="0" constraints="3" field="pk" notnull_strength="1"/>
