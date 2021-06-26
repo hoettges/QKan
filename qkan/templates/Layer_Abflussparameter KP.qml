@@ -105,18 +105,14 @@
       <editWidget type="ValueRelation">
         <config>
           <Option type="Map">
-            <Option type="bool" name="AllowMulti" value="false"/>
-            <Option type="bool" name="AllowNull" value="true"/>
-            <Option type="QString" name="Description" value=""/>
+            <Option type="QString" name="AllowMulti" value="false"/>
+            <Option type="QString" name="AllowNull" value="false"/>
             <Option type="QString" name="FilterExpression" value=""/>
             <Option type="QString" name="Key" value="bknam"/>
             <Option type="QString" name="Layer" value="bodenklassen20170516122309914"/>
-            <Option type="QString" name="LayerName" value="Bodenklassen"/>
-            <Option type="QString" name="LayerProviderName" value="spatialite"/>
-            <Option type="QString" name="LayerSource" value="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/QKan/test/work/itwh.sqlite' table=&quot;bodenklassen&quot;"/>
-            <Option type="int" name="NofColumns" value="1"/>
-            <Option type="bool" name="OrderByValue" value="false"/>
-            <Option type="bool" name="UseCompleter" value="false"/>
+            <Option type="QString" name="NofColumns" value="1"/>
+            <Option type="QString" name="OrderByValue" value="false"/>
+            <Option type="QString" name="UseCompleter" value="false"/>
             <Option type="QString" name="Value" value="bknam"/>
           </Option>
         </config>
@@ -126,18 +122,14 @@
       <editWidget type="ValueRelation">
         <config>
           <Option type="Map">
-            <Option type="bool" name="AllowMulti" value="false"/>
-            <Option type="bool" name="AllowNull" value="true"/>
-            <Option type="QString" name="Description" value=""/>
+            <Option type="QString" name="AllowMulti" value="false"/>
+            <Option type="QString" name="AllowNull" value="false"/>
             <Option type="QString" name="FilterExpression" value=""/>
             <Option type="QString" name="Key" value="bezeichnung"/>
             <Option type="QString" name="Layer" value="flaechentypen_ca71f66a_50bb_41cb_86df_8046fae64926"/>
-            <Option type="QString" name="LayerName" value="flaechentypen"/>
-            <Option type="QString" name="LayerProviderName" value="spatialite"/>
-            <Option type="QString" name="LayerSource" value="dbname='C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/QKan/test/work/itwh.sqlite' table=&quot;flaechentypen&quot;"/>
-            <Option type="int" name="NofColumns" value="1"/>
-            <Option type="bool" name="OrderByValue" value="false"/>
-            <Option type="bool" name="UseCompleter" value="false"/>
+            <Option type="QString" name="NofColumns" value="1"/>
+            <Option type="QString" name="OrderByValue" value="false"/>
+            <Option type="QString" name="UseCompleter" value="false"/>
             <Option type="QString" name="Value" value="bezeichnung"/>
           </Option>
         </config>
@@ -250,7 +242,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:/Users/hoettges/AppData/Roaming/QGIS/QGIS3\profiles\default/python/plugins\qkan\forms\qkan_abflussparameter.ui</editform>
+  <editform tolerant="1">C:/Users/hoettges/Documents/qkan/forms/qkan_kp_abflussparameter.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>

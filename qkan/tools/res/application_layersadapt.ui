@@ -218,7 +218,7 @@ Layer hinzuladen</string>
      <string>Wertebeziehungen in den gewählten QKan-Layern neu setzten</string>
     </property>
     <property name="text">
-     <string>Wertbeziehungungen in Tabellen aus QKan-Vorlage anpassen</string>
+     <string>Layer an QKan-Vorlage anpassen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_adaptKBS">
