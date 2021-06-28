@@ -374,7 +374,7 @@ def layersadapt(
             logger.debug(f'k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n')
 
         if anpassen_Wertebeziehungen_in_Tabellen:
-            qlsnam = os.path.join(templateDir, "Layer_{}.qml".format(layername))
+            qlsnam = os.path.join(templateDir, "qml", "{}.qml".format(layername))
             if os.path.exists(qlsnam):
                 layer.loadNamedStyle(qlsnam)
                 logger.debug("Layerstil geladen (2): {}".format(qlsnam))

@@ -1,7 +1,7 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis saveUser="Hoettges" projectname="QKan Version 3.2.10" saveUserFull="Höttges, Jörg" version="3.18.3-Zürich" saveDateTime="2021-06-06T08:11:21">
+<qgis saveUser="Hoettges" projectname="QKan Version 3.2.11" saveUserFull="Höttges, Jörg" version="3.18.3-Zürich" saveDateTime="2021-06-06T08:11:21">
   <homePath path=""/>
-  <title>QKan Version 3.2.10</title>
+  <title>QKan Version 3.2.11</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <trust active="0"/>
@@ -6974,7 +6974,7 @@ def my_form_open(dialog, layer, feature):
         <fieldstyles/>
       </conditionalstyles>
       <storedexpressions/>
-      <editform tolerant="1">../../../../../../../../Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/forms</editform>
+      <editform tolerant="1">../../../../../../../../Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_aussengebiete.ui</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath></editforminitfilepath>
@@ -17649,7 +17649,7 @@ def closeProject():&#xd;&#xd;&#xd;&#xd;&#xd;
     <parentidentifier></parentidentifier>
     <language></language>
     <type></type>
-    <title>QKan Version 3.2.10</title>
+    <title>QKan Version 3.2.11</title>
     <abstract></abstract>
     <contact>
       <name></name>
