@@ -122,6 +122,9 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     pb_import_2: QPushButton
     tf_import_2: QLineEdit
 
+    pb_import_3: QPushButton
+    tf_import_3: QLineEdit
+
     cb_import_tabinit: QCheckBox
 
     epsg: QgsProjectionSelectionWidget
@@ -136,14 +139,16 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
         # Attach events
         self.pb_import.clicked.connect(self.select_import)
-        self.pb_import_2.clicked.connect(self.select_import)
+        self.pb_import_2.clicked.connect(self.select_import_2)
+        self.pb_import_3.clicked.connect(self.select_import_3)
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
         self.tf_import.setText(QKan.config.xml.import_file)
-        self.tf_import_2.setText(QKan.config.xml.ordner)
+        self.tf_import_2.setText(QKan.config.xml.ordner_bild)
+        self.tf_import_3.setText(QKan.config.xml.ordner_video)
         # noinspection PyCallByClass,PyArgumentList
         self.epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
         self.tf_project.setText(QKan.config.project.file)
@@ -162,14 +167,25 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
     def select_import_2(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
-        ordner, _ = QFileDialog.getExistingDirectory(
+        ordner_bild = QFileDialog.getExistingDirectory(
             self,
             self.tr("Ordner Pfad"),
             self.default_dir,
         )
-        if ordner:
-            self.tf_import_2.setText(ordner)
-            self.default_dir = os.path.dirname(ordner)
+        if ordner_bild:
+            self.tf_import_2.setText(ordner_bild)
+            self.default_dir = os.path.dirname(ordner_bild)
+
+    def select_import_3(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        ordner_video = QFileDialog.getExistingDirectory(
+            self,
+            self.tr("Ordner Pfad"),
+            self.default_dir,
+        )
+        if ordner_video:
+            self.tf_import_3.setText(ordner_video)
+            self.default_dir = os.path.dirname(ordner_video)
 
     def select_project(self) -> None:
         # noinspection PyArgumentList,PyCallByClass

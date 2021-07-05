@@ -331,7 +331,8 @@ class XmlConfig(ClassObject):
     export_file: str = ""
     import_file: str = ""
     richt_choice: str = ""
-    ordner: str = ""
+    ordner_bild: str = ""
+    ordner_video: str = ""
     # init_database: bool = True
 
 

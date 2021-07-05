@@ -108,7 +108,7 @@ class QKan:
         from .surfaceTools import SurfaceTools
         from .swmmporter import ImportFromSWMM
         from .tools import QKanTools
-        # from .xmlporter import XmlPorter
+        from .xmlporter import XmlPorter
         from .ganglinienhe8 import GanglinienHE8
 
         self.plugins: List = [
@@ -120,7 +120,7 @@ class QKan:
             SurfaceTools(iface),
             ImportFromSWMM(iface),
             QKanTools(iface),
-            # XmlPorter(iface),
+            XmlPorter(iface),
             GanglinienHE8(iface),
         ]
 

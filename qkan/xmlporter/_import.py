@@ -57,6 +57,7 @@ class Untersuchdat_schacht(ClassObject):
     pos_von: int = 0
     pos_bis: int = 0
     foto_dateiname: str = ""
+    ordner: str = ""
     xsch: float = 0.0
     ysch: float = 0.0
 
@@ -103,7 +104,6 @@ class Haltung_untersucht(ClassObject):
     yschun: float = 0.0
 
 
-
 class Untersuchdat_haltung(ClassObject):
     untersuchhal: str = ""
     untersuchrichtung: str = ""
@@ -124,6 +124,8 @@ class Untersuchdat_haltung(ClassObject):
     pos_bis: int = 0
     foto_dateiname: str = ""
     film_dateiname: str = ""
+    ordner_bild: str = ""
+    ordner_video: str = ""
     richtung: str = ""
 
 class Wehr(ClassObject):
@@ -247,9 +249,10 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask:
-    def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, ordner: str):
+    def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, ordner_bild: str, ordner_video: str):
         self.db_qkan = db_qkan
-        self.ordner = ordner
+        self.ordner_bild = ordner_bild
+        self.ordner_video = ordner_video
 
         #Richutung der Untersuchungsdaten
         self.richt_choice = richt_choice
@@ -557,6 +560,7 @@ class ImportTask:
                 self.NS,
             )
 
+
             logger.debug(f"Anzahl Schächte: {len(blocks)}")
 
             for block in blocks:
@@ -686,6 +690,8 @@ class ImportTask:
                 self.NS,
             )
 
+            ordner = self.ordner_bild
+
             logger.debug(f"Anzahl Untersuchungsdaten Schacht: {len(blocks)}")
 
             name = ""
@@ -740,14 +746,15 @@ class ImportTask:
                     pos_bis = pos_bis,
                     bereich = bereich,
                     foto_dateiname = foto_dateiname,
+                    ordner = ordner,
                     )
 
         for untersuchdat_schacht in _iter():
 
             sql = f"""
             INSERT INTO untersuchdat_schacht_data (untersuchsch, id, videozaehler, timecode, kuerzel, 
-                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)
+                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
             if not self.db_qkan.sql(
                 sql,
@@ -767,7 +774,7 @@ class ImportTask:
                     untersuchdat_schacht.pos_bis,
                     untersuchdat_schacht.bereich,
                     untersuchdat_schacht.foto_dateiname,
-
+                    untersuchdat_schacht.ordner,
                 ),
             ):
                 return None
@@ -1183,6 +1190,7 @@ class ImportTask:
             )
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
+
             schoben, schunten, profilnam = ("",) * 3
             (
                 sohleoben,
@@ -1406,6 +1414,9 @@ class ImportTask:
 
             logger.debug(f"Anzahl Untersuchungsdaten Haltung: {len(blocks)}")
 
+            ordner_bild = self.ordner_bild
+            ordner_video = self.ordner_video
+
             name = ""
             untersuchrichtung = ""
             schoben = ""
@@ -1480,30 +1491,31 @@ class ImportTask:
                         pos_bis=pos_bis,
                         foto_dateiname=foto_dateiname,
                         film_dateiname=film_dateiname,
+                        ordner_bild=ordner_bild,
+                        ordner_video=ordner_video,
                         richtung=richtung,
 
             )
 
         def _iter2() -> Iterator[Untersuchdat_haltung]:
                 blocks = self.xml.findall(
-                    "d:Filme/d:Film/..",
+                    "d:Datenkollektive/d:Zustandsdatenkollektiv/d:Filme/d:Film/d:Filmname/../..",
                     self.NS,
                 )
                 logger.debug(f"Anzahl Untersuchdat_haltung: {len(blocks)}")
 
                 film_dateiname = ""
                 for block in blocks:
-                    name = block.findtext("d:Film/d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", "not found", self.NS)
+                    for _untersuchdat_haltung in block.findall("d:Film/d:FilmObjekte/..", self.NS):
 
-                    for _untersuchdat in block.findall("d:Film", self.NS):
-                        # nochmal prüfen!
-                        film_dateiname = _untersuchdat.findtext("d:Filmname", "not found", self.NS)
+                        name = _untersuchdat_haltung.findtext("d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", "not found", self.NS)
 
+                        film_dateiname = _untersuchdat_haltung.findtext("d:Filmname", "not found", self.NS)
 
-                    yield Untersuchdat_haltung(
-                        untersuchhal=name,
-                        film_dateiname=film_dateiname,
-                    )
+                        yield Untersuchdat_haltung(
+                            untersuchhal=name,
+                            film_dateiname=film_dateiname,
+                        )
 
         for untersuchdat_haltung in _iter():
 
@@ -1524,8 +1536,9 @@ class ImportTask:
 
             sql = f"""
             INSERT INTO untersuchdat_haltung_data (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler,inspektionslaenge, station, timecode, kuerzel, 
-                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname,film_dateiname, richtung)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname,
+                                                     ordner_bild, ordner_video, richtung)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
             if not self.db_qkan.sql(
                 sql,
@@ -1550,6 +1563,8 @@ class ImportTask:
                     untersuchdat_haltung.pos_bis,
                     untersuchdat_haltung.foto_dateiname,
                     untersuchdat_haltung.film_dateiname,
+                    untersuchdat_haltung.ordner_bild,
+                    untersuchdat_haltung.ordner_video,
                     untersuchdat_haltung.richtung
                 ),
             ):
@@ -1559,10 +1574,10 @@ class ImportTask:
 
         for untersuchdat_haltung in _iter2():
             if not self.db_qkan.sql(
-                "UPDATE untersuchdat_haltung_data SET film_dateiname=?" 
+                "UPDATE untersuchdat_haltung SET film_dateiname=?" 
                 " WHERE  untersuchhal= ?",
                 "xml_import untersuchhal [2a]",
-                parameters=(untersuchdat_haltung.untersuchhal, untersuchdat_haltung.film_dateiname),
+                parameters=(untersuchdat_haltung.film_dateiname, untersuchdat_haltung.untersuchhal),
             ):
                 return None
 

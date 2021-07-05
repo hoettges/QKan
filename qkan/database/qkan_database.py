@@ -423,6 +423,8 @@ def createdbtables(
             pos_bis INTEGER,
             foto_dateiname TEXT,
             film_dateiname TEXT,
+            ordner_bild TEXT,
+            ordner_video TEXT,
             richtung TEXT
         )"""
 
@@ -452,7 +454,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
                   SELECT
                     untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, richtung
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung
                   FROM Untersuchdat_haltung;"""
     try:
         cursl.execute(sql)
@@ -469,11 +471,11 @@ def createdbtables(
                   BEGIN
                     INSERT INTO untersuchdat_haltung
                       (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, richtung, geom)
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, geom)
                     SELECT
                       new.untersuchhal, new.untersuchrichtung, new.schoben,new.schunten, 
                         new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.kuerzel, 
-                        new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.richtung,
+                        new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung,
                         CASE
                         WHEN new.inspektionslaenge > haltung.laenge
                         THEN
@@ -771,7 +773,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
                       SELECT
                         untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, station, timecode, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video
                       FROM untersuchdat_haltung;"""
     try:
         cursl.execute(sql)
@@ -788,10 +790,10 @@ def createdbtables(
                       BEGIN
                         INSERT INTO untersuchdat_haltung
                           (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, richtung)
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung)
                         VALUES (
                           new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, new.id, new.videozaehler, new.inspektionslaenge, new.station, new.timecode, new.kuerzel, 
-                        new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.richtung
+                        new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung
                         );
                       END"""
     try:
@@ -938,7 +940,8 @@ def createdbtables(
             untersucher TEXT, 
             wetter INTEGER DEFAULT 0, 
             bewertungsart INTEGER DEFAULT 0, 
-            bewertungstag TEXT)"""
+            bewertungstag TEXT
+            )"""
 
     try:
         cursl.execute(sql)
@@ -1069,7 +1072,8 @@ def createdbtables(
         pos_von INTEGER,
         pos_bis INTEGER,
         bereich TEXT,
-        foto_dateiname TEXT
+        foto_dateiname TEXT,
+        ordner TEXT
         )"""
 
     try:
@@ -1099,7 +1103,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_schacht_data AS 
               SELECT
                 untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname 
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner 
               FROM Untersuchdat_schacht;"""
     try:
         cursl.execute(sql)
@@ -1116,11 +1120,11 @@ def createdbtables(
               BEGIN
                 INSERT INTO Untersuchdat_schacht
                   (untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, geop)
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner, geop)
                 SELECT 
                   new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, 
-                    new.bereich, new.foto_dateiname, sch.geop
+                    new.bereich, new.foto_dateiname, new.ordner, sch.geop
                 FROM
                     schaechte AS sch
                     WHERE sch.schnam = new.untersuchsch;
@@ -1140,7 +1144,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_schacht_data AS 
                   SELECT
                     untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname
+                    charakt1, charakt2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner
                   FROM untersuchdat_schacht;"""
     try:
         cursl.execute(sql)
@@ -1157,11 +1161,11 @@ def createdbtables(
                   BEGIN
                     INSERT INTO untersuchdat_schacht
                       (untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname)
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner)
                     VALUES (
                       new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, 
-                    new.bereich, new.foto_dateiname
+                    new.bereich, new.foto_dateiname, new.ordner
                     );
                   END"""
     try:
