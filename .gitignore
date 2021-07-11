@@ -49,3 +49,6 @@ sicher/
 sync.ffs_db
 
 .mypy_cache/
+
+# Temporary QGIS files
+*.qgs~
