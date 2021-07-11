@@ -3,11 +3,12 @@ from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
+from qkan_he7.exporthe.export_to_he7 import exportKanaldaten
+from qkan_he7.importhe.import_from_he import importKanaldaten
+
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.k_layersadapt import layersadapt
-from qkan_he7.exporthe.export_to_he7 import exportKanaldaten
-from qkan_he7.importhe.import_from_he import importKanaldaten
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)

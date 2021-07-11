@@ -13,7 +13,6 @@ from qkan import enums
 from qkan.createunbeffl.k_unbef import create_unpaved_areas
 from qkan.database.dbfunc import DBConnection
 from qkan.linkflaechen.k_link import createlinkfl, createlinksw
-from qkan.tools.k_layersadapt import layersadapt
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)

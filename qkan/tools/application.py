@@ -10,6 +10,7 @@ from typing import Optional, cast
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QListWidgetItem
+
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (

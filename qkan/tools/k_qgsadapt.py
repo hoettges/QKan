@@ -31,8 +31,9 @@ import logging
 import os
 from xml.etree import ElementTree as ET
 
-from qgis.core import Qgis ,QgsCoordinateReferenceSystem
+from qgis.core import Qgis, QgsCoordinateReferenceSystem
 from qgis.utils import pluginDirectory
+
 from qkan import QKAN_FORMS, QKAN_TABLES
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
@@ -137,7 +138,7 @@ def qgsadapt(
                 continue
 
             tex = tag_datasource.text
-            if not tex or tex[:6] != 'dbname':
+            if not tex or tex[:6] != "dbname":
                 continue
 
             # Nur QKan-Tabellen bearbeiten
@@ -235,7 +236,7 @@ def qgsadapt(
 
         for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
             text = tag_datasource.text
-            if not text or text[:6] != 'dbname':
+            if not text or text[:6] != "dbname":
                 continue
 
             tag_datasource.text = (

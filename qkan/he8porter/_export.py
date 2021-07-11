@@ -3,6 +3,7 @@ from typing import List
 
 from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import checknames, fehlermeldung, fortschritt, meldung
@@ -72,7 +73,7 @@ class ExportTask:
                 # self._einleitdirekt(),
                 # self._aussengebiete(),
                 # self._einzugsgebiet(),
-                self._tezg()
+                self._tezg(),
             ]
         )
 
@@ -184,7 +185,9 @@ class ExportTask:
                         return False
 
                     self.nextid += idmax - idmin + 1
-                    self.db_qkan.sql(f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}")
+                    self.db_qkan.sql(
+                        f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}"
+                    )
                     self.db_qkan.commit()
 
                     fortschritt(f"{self.nextid - nr0} Schaechte eingefügt", 0.30)
@@ -251,7 +254,9 @@ class ExportTask:
                     )
 
                 if idmin is None:
-                    meldung("Einfügen Speicherschächte", "Keine Speicherschächte vorhanden")
+                    meldung(
+                        "Einfügen Speicherschächte", "Keine Speicherschächte vorhanden"
+                    )
                 else:
                     nr0 = self.nextid
                     id0 = self.nextid - idmin
@@ -289,7 +294,8 @@ class ExportTask:
 
                     self.nextid += idmax - idmin + 1
                     self.db_qkan.sql(
-                        "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
                     )
                     self.db_qkan.commit()
 
@@ -396,7 +402,8 @@ class ExportTask:
 
                     self.nextid += idmax - idmin + 1
                     self.db_qkan.sql(
-                        "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
                     )
                     self.db_qkan.commit()
 
@@ -550,7 +557,8 @@ class ExportTask:
 
                     self.nextid += idmax - idmin + 1
                     self.db_qkan.sql(
-                        "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
                     )
                     self.db_qkan.commit()
 
@@ -802,7 +810,9 @@ class ExportTask:
                     )
 
                 if idmin is None:
-                    meldung("Einfügen tezg als Flächen", "Keine Haltungsflächen vorhanden")
+                    meldung(
+                        "Einfügen tezg als Flächen", "Keine Haltungsflächen vorhanden"
+                    )
                 else:
                     nr0 = self.nextid
                     id0 = self.nextid - idmin
@@ -855,9 +865,7 @@ class ExportTask:
                         , (SELECT column1 AS bef FROM (VALUES (0) , (1))) AS tb
                         WHERE fh.Name IS NULL AND area(tg.geom)*abs(tb.bef - coalesce(tg.befgrad, 0)/100.) > {mindestflaeche}"""
 
-                    if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_tezg (1)"
-                    ):
+                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg (1)"):
                         return False
 
                     self.nextid += (idmax - idmin + 1) * 2
@@ -868,10 +876,11 @@ class ExportTask:
             self.db_qkan.commit()
 
             if nr0:
-                fortschritt("{} Haltungsflaechen eingefuegt".format(self.nextid - nr0), 0.80)
+                fortschritt(
+                    "{} Haltungsflaechen eingefuegt".format(self.nextid - nr0), 0.80
+                )
 
         return True
-
 
     def _pumpen(self) -> bool:
         """Export Pumpen"""
@@ -970,12 +979,15 @@ class ExportTask:
                     WHERE (pumpen.pnam NOT IN (SELECT Name FROM he.Pumpe)){auswahl_a};
                     """
 
-                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen (3)"):
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_pumpen (3)"
+                    ):
                         return False
 
                     self.nextid += idmax - idmin + 1
                     self.db_qkan.sql(
-                        "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
                     )
                     self.db_qkan.commit()
 
@@ -1102,12 +1114,15 @@ class ExportTask:
                     WHERE (wehre.wnam NOT IN (SELECT Name FROM he.Wehr)){auswahl_a};
                     """
 
-                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre (3)"):
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_wehre (3)"
+                    ):
                         return False
 
                     self.nextid += idmax - idmin + 1
                     self.db_qkan.sql(
-                        "UPDATE he.Itwh$ProgInfo SET NextId = ?", parameters=(self.nextid,)
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
                     )
                     self.db_qkan.commit()
 
@@ -1122,7 +1137,9 @@ class ExportTask:
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM abflussparameter"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_Abflussparameter (2)"):
+                if not self.db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_Abflussparameter (2)"
+                ):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -1138,7 +1155,7 @@ class ExportTask:
                     meldung("Einfügen Pumpen", "Keine Abflussparameter vorhanden")
                 else:
                     nr0 = self.nextid
-                    id0 = self.nextid - idmin
+                    self.nextid - idmin
 
                     sql = f"""
                     INSERT INTO he.AbflussParameter (
@@ -1165,7 +1182,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                            sql, "dbQK: export_to_he8.export_abflussparameter (2)"
+                        sql, "dbQK: export_to_he8.export_abflussparameter (2)"
                     ):
                         return False
 
@@ -1177,10 +1194,11 @@ class ExportTask:
             self.db_qkan.commit()
 
             if nr0:
-                fortschritt("{} Abflussparameter eingefuegt".format(self.nextid - nr0), 0.80)
+                fortschritt(
+                    "{} Abflussparameter eingefuegt".format(self.nextid - nr0), 0.80
+                )
 
         return True
-
 
     def _bodenklassen(self) -> bool:
         """Export der Bodenklassen"""
@@ -1188,8 +1206,12 @@ class ExportTask:
         if QKan.config.check_export.bodenklassen:
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
-                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM bodenklassen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_Bodenklassen (2)"):
+                sql = (
+                    "SELECT min(rowid) as idmin, max(rowid) as idmax FROM bodenklassen"
+                )
+                if not self.db_qkan.sql(
+                    sql, "dbQK: export_to_he8.export_Bodenklassen (2)"
+                ):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -1205,7 +1227,7 @@ class ExportTask:
                     meldung("Einfügen Pumpen", "Keine Bodenklassen vorhanden")
                 else:
                     nr0 = self.nextid
-                    id0 = self.nextid - idmin
+                    self.nextid - idmin
 
                     sql = f"""
                     INSERT INTO he.Bodenklasse (
@@ -1226,7 +1248,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                            sql, "dbQK: export_to_he8.export_abflussparameter (2)"
+                        sql, "dbQK: export_to_he8.export_abflussparameter (2)"
                     ):
                         return False
 
@@ -1238,6 +1260,8 @@ class ExportTask:
             self.db_qkan.commit()
 
             if nr0:
-                fortschritt("{} Abflussparameter eingefuegt".format(self.nextid - nr0), 0.80)
+                fortschritt(
+                    "{} Abflussparameter eingefuegt".format(self.nextid - nr0), 0.80
+                )
 
         return True

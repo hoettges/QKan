@@ -31,6 +31,7 @@ from typing import List
 from qgis.core import Qgis
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QProgressBar
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 

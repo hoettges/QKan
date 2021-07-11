@@ -3,6 +3,7 @@ from pathlib import Path
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
@@ -146,7 +147,6 @@ class XmlPorter(QKanPlugin):
 
                     self._doimport()
 
-
     def _doimport(self) -> bool:
         """Start des Import aus einer ISYBAU-XML-Datei
 
@@ -156,9 +156,7 @@ class XmlPorter(QKanPlugin):
         QKan.config.xml.ordner = self.import_dlg.tf_import_2.text()
 
         self.log.info("Creating DB")
-        db_qkan = DBConnection(
-            dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
-        )
+        db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
         if not db_qkan:
             fehlermeldung(
@@ -173,7 +171,12 @@ class XmlPorter(QKanPlugin):
             return False
 
         self.log.info("DB creation finished, starting importer")
-        imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice, QKan.config.xml.ordner)
+        imp = ImportTask(
+            db_qkan,
+            QKan.config.xml.import_file,
+            QKan.config.xml.richt_choice,
+            QKan.config.xml.ordner,
+        )
         imp.run()
 
         QKan.config.project.template = str(

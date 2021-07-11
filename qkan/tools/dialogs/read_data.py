@@ -10,6 +10,7 @@ from qgis.core import QgsApplication
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QComboBox, QDialogButtonBox, QPushButton, QWidget
 from qgis.utils import spatialite_connect
+
 from qkan import QKan
 
 from . import QKanDBDialog

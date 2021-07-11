@@ -3,11 +3,11 @@ from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
-from qkan import QKan, enums
 
-from qkan.xmlporter.application import XmlPorter
-from qkan.tools.k_layersadapt import layersadapt
+from qkan import QKan, enums
 from qkan.tools.k_dbAdapt import dbAdapt
+from qkan.tools.k_layersadapt import layersadapt
+from qkan.xmlporter.application import XmlPorter
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)
@@ -22,7 +22,9 @@ class TestXmlQKan(QgisTest):
 
     def test_import(self) -> None:
         QKan.config.database.qkan = str(BASE_WORK / "guissem.sqlite")
-        QKan.config.xml.import_file = str(BASE_WORK / "Datenausgabe ISYBAU-2017_29-01-21.xml")
+        QKan.config.xml.import_file = str(
+            BASE_WORK / "Datenausgabe ISYBAU-2017_29-01-21.xml"
+        )
         QKan.config.project.file = str(BASE_WORK / "plan.qgs")
 
         imp = XmlPorter(iface())
@@ -54,9 +56,7 @@ class TestQKanHE8(QgisTest):
         # project.read(project_file)
         # LOGGER.debug("Geladene Projektdatei: %s", project.fileName())
 
-        dbAdapt(
-            qkanDB=QKan.config.database.qkan
-        )
+        dbAdapt(qkanDB=QKan.config.database.qkan)
 
         layersadapt(
             database_QKan=QKan.config.database.qkan,

@@ -24,6 +24,7 @@ import os
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QFileDialog
+
 from qkan import QKan
 from qkan.plugin import QKanPlugin
 

@@ -3,10 +3,9 @@ from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
-from qkan import QKan, enums
 
+from qkan import QKan
 from qkan.he8porter.application import He8Porter
-from qkan.tools.k_layersadapt import layersadapt
 from qkan.tools.k_dbAdapt import dbAdapt
 
 

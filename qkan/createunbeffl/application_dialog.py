@@ -14,6 +14,7 @@ from qgis.PyQt.QtWidgets import (
     QTableWidgetSelectionRange,
     QWidget,
 )
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan

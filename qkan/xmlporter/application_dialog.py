@@ -12,6 +12,7 @@ from qgis.PyQt.QtWidgets import (
     QPushButton,
     QWidget,
 )
+
 from qkan import QKan
 
 EXPORT_CLASS, _ = uic.loadUiType(

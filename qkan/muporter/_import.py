@@ -32,7 +32,6 @@ class ImportTask:
 
         return result
 
-
     def _schaechte(self) -> bool:
         """Import der Schächte"""
 

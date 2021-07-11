@@ -9,6 +9,7 @@ from qgis.gui import QgisInterface, QgsMessageBar
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt.QtWidgets import QMainWindow
 from qgis.testing import start_app, unittest
+
 from qkan import QKan
 
 LOGGER = logging.getLogger("QKan.tests")

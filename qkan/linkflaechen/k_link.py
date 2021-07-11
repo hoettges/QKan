@@ -19,6 +19,7 @@ from typing import List
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QProgressBar
+
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import check_flaechenbilanz, checknames, fehlermeldung

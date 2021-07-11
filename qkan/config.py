@@ -152,7 +152,9 @@ class CheckExport(ClassObject):
     aussengebiete: bool = True
     einzugsgebiete: bool = True
     tezg: bool = True
-    tezg_hf: bool = False           # Sonderfall: Keine Flächenobjekte, stattdessen Befestigungsgrade in tezg
+    tezg_hf: bool = (
+        False  # Sonderfall: Keine Flächenobjekte, stattdessen Befestigungsgrade in tezg
+    )
 
     # Referenztabellen
     abflussparameter: bool = True

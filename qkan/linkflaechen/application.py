@@ -8,6 +8,7 @@ from typing import List, Optional, cast
 from qgis.core import Qgis, QgsDataSourceUri, QgsProject, QgsVectorLayer
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QListWidgetItem
+
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
@@ -135,7 +136,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -391,7 +392,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -557,7 +558,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         # config in Dialog übernehmen
 
@@ -712,7 +713,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         # Anzeige initialisieren
         self.dlg_mg.show_groups()
@@ -747,7 +748,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         self.dlg_ul.tf_qkDB.setText(database_qkan)
 

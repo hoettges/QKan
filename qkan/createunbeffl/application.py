@@ -1,4 +1,5 @@
 from qgis.gui import QgisInterface
+
 from qkan import QKan
 from qkan.plugin import QKanPlugin
 

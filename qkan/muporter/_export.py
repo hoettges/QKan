@@ -3,6 +3,7 @@ from typing import List
 
 from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import checknames, fehlermeldung, fortschritt, meldung
@@ -113,17 +114,13 @@ class ExportTask:
                         WHERE schaechte.schachttyp = 'Schacht'{auswahl})
                     """
 
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_schaechte (1)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_schaechte (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_schaechte (2)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_schaechte (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -216,9 +213,7 @@ class ExportTask:
 
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_schaechte (2)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_schaechte (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -308,9 +303,7 @@ class ExportTask:
                           (SELECT schnam FROM schaechte WHERE schaechte.schachttyp = 'Auslass'{auswahl})
                     """
 
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_auslaesse (1)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_auslaesse (1)"):
                     return False
 
             if self.append:
@@ -318,9 +311,7 @@ class ExportTask:
 
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_schaechte (2)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_schaechte (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -427,17 +418,13 @@ class ExportTask:
                   ( SELECT haltnam FROM haltungen){auswahl})
                   """
 
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_haltungen (1)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_haltungen (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_haltungen (2)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_haltungen (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -495,9 +482,7 @@ class ExportTask:
                     WHERE haltungen.haltnam NOT IN (SELECT Name FROM mu.Rohr){auswahl};
                   """
 
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_haltungen (3)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_haltungen (3)"):
                     return False
 
                 self.nextid += idmax - idmin + 1

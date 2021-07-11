@@ -28,12 +28,13 @@ from qgis.core import Qgis, QgsProject
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QFileDialog, QGridLayout, QLabel, QMessageBox
-from qkan.database.sbfunc import SBConnection
-from qkan.database.navigation import Navigator
+
 from qkan import QKan
+from qkan.database.navigation import Navigator
+from qkan.database.sbfunc import SBConnection
 
 # noinspection PyUnresolvedReferences
-from . import plotter, resources
+from . import plotter
 from . import slider as s
 from .application_dialog import LaengsschnittDialog
 from .Enums import LayerType, SliderMode, Type
@@ -712,7 +713,6 @@ class GanglinienHE8:
                                 e
                             )
                         )
-                        pass
 
         def selection_changed(selection):
             """
@@ -899,9 +899,15 @@ class MyNavigator(Navigator):
                         """
         for haltung in route.get("haltungen"):
             self.db.sql(statement.format(haltung))
-            name, schachtoben, schachtunten, laenge, sohlhoeheoben, sohlhoeheunten, querschnitt = (
-                self.db.fetchone()
-            )
+            (
+                name,
+                schachtoben,
+                schachtunten,
+                laenge,
+                sohlhoeheoben,
+                sohlhoeheunten,
+                querschnitt,
+            ) = self.db.fetchone()
             haltung_info[haltung] = dict(
                 schachtoben=schachtoben,
                 schachtunten=schachtunten,

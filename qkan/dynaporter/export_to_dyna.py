@@ -12,6 +12,7 @@ from typing import List, Optional, TextIO, Union, cast
 from qgis.core import Qgis
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QProgressBar
+
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, formf, fortschritt, meldung

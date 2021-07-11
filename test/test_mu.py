@@ -3,10 +3,9 @@ from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
-from qkan import QKan, enums
 
+from qkan import QKan
 from qkan.muporter.application import MuPorter
-from qkan.tools.k_layersadapt import layersadapt
 from qkan.tools.k_dbAdapt import dbAdapt
 
 
@@ -54,9 +53,7 @@ class TestQKanMU(QgisTest):
         # project.read(project_file)
         # LOGGER.debug("Geladene Projektdatei: %s", project.fileName())
 
-        dbAdapt(
-            qkanDB=QKan.config.mu.database
-        )
+        dbAdapt(qkanDB=QKan.config.mu.database)
 
         # layersadapt(
         #     database_QKan=QKan.config.mu.database,

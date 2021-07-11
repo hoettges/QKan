@@ -6,7 +6,6 @@ from typing import Callable, List, Optional
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QStandardPaths
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
@@ -19,9 +18,10 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 from qgis.utils import pluginDirectory
+
 from qkan import QKan, list_selected_items
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import fehlermeldung
 
 logger = logging.getLogger("QKan.mu.application_dialog")
 

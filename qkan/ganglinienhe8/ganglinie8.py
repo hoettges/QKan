@@ -7,8 +7,8 @@ import matplotlib.dates as mdates
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-
 from qgis.PyQt.QtWidgets import QWidget
+
 from qkan.database.sbfunc import SBConnection
 
 from .Enums import LayerType
@@ -22,8 +22,8 @@ class Ganglinie8:
     def __init__(self, t):
         """
         Constructor
-        
-        :param t: Gibt an, in welche Figure gezeichnet wird. Darf niemals den gleichen Wert für unterschiedliche 
+
+        :param t: Gibt an, in welche Figure gezeichnet wird. Darf niemals den gleichen Wert für unterschiedliche
          Ganglinien haben.
         :type t: int
         """
@@ -48,13 +48,13 @@ class Ganglinie8:
 
     def get_dialog(self):
         """
-        Getter des Dialogs 
+        Getter des Dialogs
         """
         return self.__dialog
 
     def show(self):
         """
-        Wenn ein Längsschnitt vorhanden ist, wird dieser entsprechend den Vorgaben eingefärbt. Nach schließen 
+        Wenn ein Längsschnitt vorhanden ist, wird dieser entsprechend den Vorgaben eingefärbt. Nach schließen
         der Ganglinie, werden die Farben zurückgesetzt.
         Öffnet den Ganglinien-Dialog.
         """
@@ -74,7 +74,7 @@ class Ganglinie8:
 
     def __get_route(self, haltungen, schaechte):
         """
-        Fragt die Datenbank nach allen nötigen Informationen der ausgewählten Elemente ab, die für die Ganglinie 
+        Fragt die Datenbank nach allen nötigen Informationen der ausgewählten Elemente ab, die für die Ganglinie
         benötigt werden.
 
         :param haltungen: Enthält alle selektierten Haltungs-Namen aus QGis
@@ -88,17 +88,23 @@ class Ganglinie8:
         _schaechte = {}
         for haltung in haltungen:
             self.__db.sql(
-                u'SELECT zeitpunkt,auslastung,durchfluss,geschwindigkeit FROM lau_gl_el WHERE "KANTE"={}'.format(
+                'SELECT zeitpunkt,auslastung,durchfluss,geschwindigkeit FROM lau_gl_el WHERE "KANTE"={}'.format(
                     "'{}'".format(haltung)
                 )
             )
             res = self.__db.fetchall()
             for zeitpunkt_t, auslastung, durchfluss, geschwindigkeit in res:
                 try:
-                    zeitpunkt = datetime.datetime.strptime(zeitpunkt_t,"%Y-%m-%d %H:%M:%S.%f")
-                    self.__log.info(f'zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n')
+                    zeitpunkt = datetime.datetime.strptime(
+                        zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    self.__log.info(
+                        f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
+                    )
                 except BaseException as err:
-                    main_logger.error(f"qkan.ganglinienhe8.ganglinie8 (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}")
+                    main_logger.error(
+                        f"qkan.ganglinienhe8.ganglinie8 (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
+                    )
                 if _haltungen.get(zeitpunkt) is None:
                     _haltungen[zeitpunkt] = {}
                 _haltungen[zeitpunkt][haltung] = dict(
@@ -109,17 +115,23 @@ class Ganglinie8:
         self.__log.info("Messdaten der Haltungen wurden abgefragt")
         for schacht in schaechte:
             self.__db.sql(
-                u'SELECT zeitpunkt,zufluss,wasserstand,durchfluss FROM lau_gl_s WHERE "KNOTEN"={}'.format(
+                'SELECT zeitpunkt,zufluss,wasserstand,durchfluss FROM lau_gl_s WHERE "KNOTEN"={}'.format(
                     "'{}'".format(schacht)
                 )
             )
             res = self.__db.fetchall()
             for zeitpunkt_t, zufluss, wasserstand, durchfluss in res:
                 try:
-                    zeitpunkt = datetime.datetime.strptime(zeitpunkt_t,"%Y-%m-%d %H:%M:%S.%f")
-                    self.__log.info(f'zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n')
+                    zeitpunkt = datetime.datetime.strptime(
+                        zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    self.__log.info(
+                        f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
+                    )
                 except BaseException as err:
-                    main_logger.error(f"qkan.ganglinienhe8.ganglinie8 (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}")
+                    main_logger.error(
+                        f"qkan.ganglinienhe8.ganglinie8 (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
+                    )
                 if _schaechte.get(zeitpunkt) is None:
                     _schaechte[zeitpunkt] = {}
                 _schaechte[zeitpunkt][schacht] = dict(
@@ -143,7 +155,7 @@ class Ganglinie8:
         def draw_haltung():
             """
             Schreibt die Y-Werte für die jeweilige Methode zu einem gegebenen Zeitpunkt.
-            
+
             :return: Gibt ein Dictionary mit allen Y-Werten einer bestimmten Haltung zurück
             :rtype: dict
             """
@@ -164,7 +176,7 @@ class Ganglinie8:
         def draw_schacht():
             """
             Schreibt die Y-Werte für die jeweilige Methode zu einem gegebenen Zeitpunkt.
-            
+
             :return: Gibt ein Dictionary mit allen Y-Werten eines bestimmten Schachts zurück
             :rtype: dict
             """
@@ -214,7 +226,7 @@ class Ganglinie8:
         def plot(_y, _data):
             """
             Schreibt die Datensätze in die Figure der Ganglinie.
-            
+
             :param _y: Beinhaltet entweder alle Y-Werte der Schächte oder Haltungen.
             :type _y: dict
             :param _data: Entspricht allen Haltungs- bzw. Schachtnamen
@@ -226,7 +238,7 @@ class Ganglinie8:
                 ax.grid(True)
                 ax.xaxis.set_major_formatter(formatter)
                 self.__axes.append(ax)
-                _plot, = ax.plot_date(
+                (_plot,) = ax.plot_date(
                     self.__x,
                     _y.get(obj),
                     color=colors[index % len(colors)],
@@ -292,7 +304,7 @@ class Ganglinie8:
     def __type_changed(self, index):
         """
         Ist der Event-Listener, falls der Typ des Layers geändert wird. Von Schacht auf Haltung zb.
-        
+
         :param index: Entspricht dem aktuell ausgewählten Typen.
         :type index: int
         """
@@ -320,7 +332,7 @@ class Ganglinie8:
         if self.__time_plot is None:
             self.__time_axes = self.__fig.add_subplot(111)
             y_lim = self.__time_axes.get_ylim()
-            self.__time_plot, = self.__time_axes.plot_date(
+            (self.__time_plot,) = self.__time_axes.plot_date(
                 [timestamp, timestamp],
                 y_lim,
                 color="k",

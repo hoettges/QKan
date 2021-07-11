@@ -6,7 +6,6 @@ from typing import Callable, List, Optional
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QStandardPaths
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
@@ -19,7 +18,8 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 from qgis.utils import pluginDirectory
-from qkan import QKan, list_selected_items, enums
+
+from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 
@@ -111,7 +111,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
         # Aktionen zu lw_teilgebiete: QListWidget
         self.cb_selActive.stateChanged.connect(self.click_selection)
-        #self.lw_teilgebiete.itemClicked.connect(self.count_selection)      # ist schon in click_lw_teilgebiete enthalten
+        # self.lw_teilgebiete.itemClicked.connect(self.count_selection)      # ist schon in click_lw_teilgebiete enthalten
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
 
         # Init fields

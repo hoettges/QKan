@@ -15,6 +15,7 @@ from qgis.PyQt.QtWidgets import (
     QRadioButton,
     QWidget,
 )
+
 from qkan import QKan
 from qkan.database.qkan_utils import meldung
 

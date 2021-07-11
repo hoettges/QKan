@@ -81,13 +81,11 @@ def run(dbcon: DBConnection) -> bool:
             kommentar, createdat
         FROM abflussparameter_t
        """,
-        "DROP TABLE abflussparameter_t"
+        "DROP TABLE abflussparameter_t",
     ]
 
     for sql in sqllis:
-        if not dbcon.sql(
-            sql, "dbfunc.DBConnection.version (3.1.6)", transaction=False
-        ):
+        if not dbcon.sql(sql, "dbfunc.DBConnection.version (3.1.6)", transaction=False):
             return False
 
     dbcon.commit()

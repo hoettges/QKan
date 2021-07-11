@@ -3,11 +3,11 @@ from zipfile import ZipFile
 
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
+
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.dynaporter.export_to_dyna import export_kanaldaten
 from qkan.dynaporter.import_from_dyna import import_kanaldaten
-from qkan.tools.k_layersadapt import layersadapt
 
 
 # Fuer einen Test mit PyCharm Workingdir auf C:\Users\...\default\python\plugins einstellen (d. h. "\test" löschen)

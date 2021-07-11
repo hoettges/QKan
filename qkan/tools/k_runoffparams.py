@@ -30,6 +30,7 @@ from typing import List
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.utils import iface
+
 from qkan import enums
 from qkan.config import ToolsConfig
 from qkan.database.dbfunc import DBConnection

@@ -17,6 +17,7 @@ from qgis.PyQt.QtWidgets import (
     QRadioButton,
     QWidget,
 )
+
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (

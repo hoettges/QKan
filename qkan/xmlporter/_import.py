@@ -1,12 +1,12 @@
 import logging
 import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
+
 from lxml import etree
 
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
-
 
 logger = logging.getLogger("QKan.xml.import")
 
@@ -25,6 +25,7 @@ class Schacht(ClassObject):
     knotentyp: int = 0
     simstatus: int = 0
     kommentar: str = ""
+
 
 class Schacht_untersucht(ClassObject):
     schnam: str = ""
@@ -103,7 +104,6 @@ class Haltung_untersucht(ClassObject):
     yschun: float = 0.0
 
 
-
 class Untersuchdat_haltung(ClassObject):
     untersuchhal: str = ""
     untersuchrichtung: str = ""
@@ -125,6 +125,7 @@ class Untersuchdat_haltung(ClassObject):
     foto_dateiname: str = ""
     film_dateiname: str = ""
     richtung: str = ""
+
 
 class Wehr(ClassObject):
     wnam: str
@@ -162,13 +163,13 @@ class Pumpe(ClassObject):
 
 
 def _strip_float(value: Union[str, float], default: float = 0.0) -> float:
-     if isinstance(value, float):
-         return value
+    if isinstance(value, float):
+        return value
 
-     if isinstance(value, str) and value.strip() != "":
-         return float(value)
+    if isinstance(value, str) and value.strip() != "":
+        return float(value)
 
-     return default
+    return default
 
 
 def _strip_int(value: Union[str, int], default: int = 0) -> int:
@@ -247,11 +248,13 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask:
-    def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, ordner: str):
+    def __init__(
+        self, db_qkan: DBConnection, xml_file: str, richt_choice: str, ordner: str
+    ):
         self.db_qkan = db_qkan
         self.ordner = ordner
 
-        #Richutung der Untersuchungsdaten
+        # Richutung der Untersuchungsdaten
         self.richt_choice = richt_choice
         if self.richt_choice == "Anzeigen in Fließrichtung rechts der Haltung":
             self.richtung = "fließrichtung"
@@ -269,18 +272,18 @@ class ImportTask:
         self.mapper_bewertungsart: Dict[str, str] = {}
         self.mapper_druckdicht: Dict[str, str] = {}
 
-
         # Load XML
         self.xml = ElementTree.ElementTree()
         self.xml.parse(xml_file)
 
         # Get Namespace
         tree = etree.parse(xml_file)
-        x = tree.xpath('namespace-uri(.)')
+        x = tree.xpath("namespace-uri(.)")
         self.NS = {"d": x}
 
-    def _consume_smp_block(self,
-            _block: ElementTree.Element,
+    def _consume_smp_block(
+        self,
+        _block: ElementTree.Element,
     ) -> Tuple[str, int, float, float, float]:
         name = _block.findtext("d:Objektbezeichnung", "not found", self.NS)
         knoten_typ = 0
@@ -413,7 +416,9 @@ class ImportTask:
                     ),
                     durchm=1.0,  # TODO: Not listed in ISYBAU?
                     entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
-                    strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
+                    strasse=block.findtext(
+                        "d:Lage/d:Strassenname", "not found", self.NS
+                    ),
                     knotentyp=knoten_typ,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
@@ -432,14 +437,14 @@ class ImportTask:
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
 
                 for _schacht in block.findall("d:Schacht", self.NS):
-                    druckdicht = _strip_int(_schacht.findtext("d:DruckdichterDeckel", 0, self.NS))
-
+                    druckdicht = _strip_int(
+                        _schacht.findtext("d:DruckdichterDeckel", 0, self.NS)
+                    )
 
                 yield Schacht(
                     schnam=name,
                     druckdicht=druckdicht,
                 )
-
 
         for schacht in _iter():
             # Entwässerungsarten
@@ -548,7 +553,6 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-
     def _schaechte_untersucht(self) -> None:
         def _iter() -> Iterator[Schacht_untersucht]:
             # .//Schacht/../.. nimmt AbwassertechnischeAnlage
@@ -567,7 +571,6 @@ class ImportTask:
                     durchm=1.0,  # TODO: Not listed in ISYBAU?
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
-
 
         def _iter3() -> Iterator[Schacht_untersucht]:
             blocks = self.xml.findall(
@@ -588,17 +591,25 @@ class ImportTask:
 
                 for _schacht in block.findall("d:OptischeInspektion", self.NS):
 
-                    untersuchtag = _schacht.findtext("d:Inspektionsdatum", "not found", self.NS)
+                    untersuchtag = _schacht.findtext(
+                        "d:Inspektionsdatum", "not found", self.NS
+                    )
 
-                    untersucher = _schacht.findtext("d:NameUntersucher", "not found", self.NS)
+                    untersucher = _schacht.findtext(
+                        "d:NameUntersucher", "not found", self.NS
+                    )
 
                     wetter = _strip_int(_schacht.findtext("d:Wetter", "0", self.NS))
 
                     for _schachtz in _schacht.findall("d:Knoten/d:Bewertung", self.NS):
 
-                        bewertungsart = _strip_int(_schachtz.findtext("d:Bewertungsverfahren", "0", self.NS))
+                        bewertungsart = _strip_int(
+                            _schachtz.findtext("d:Bewertungsverfahren", "0", self.NS)
+                        )
 
-                        bewertungstag = _schachtz.findtext("d:Bewertungsdatum", "not found", self.NS)
+                        bewertungstag = _schachtz.findtext(
+                            "d:Bewertungsdatum", "not found", self.NS
+                        )
 
                 yield Schacht_untersucht(
                     schnam=name,
@@ -610,7 +621,6 @@ class ImportTask:
                 )
 
         for schacht_untersucht in _iter():
-
 
             sql = f"""
             INSERT INTO schaechte_untersucht_data (schnam, durchm, kommentar)
@@ -635,7 +645,6 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-
         for schacht_untersucht in _iter3():
             if schacht_untersucht.wetter in self.mapper_wetter:
                 wetter = self.mapper_wetter[schacht_untersucht.wetter]
@@ -646,14 +655,18 @@ class ImportTask:
                 """.format(
                     e=schacht_untersucht.wetter
                 )
-                self.mapper_untersuchrichtung[schacht_untersucht.wetter] = schacht_untersucht.wetter
+                self.mapper_untersuchrichtung[
+                    schacht_untersucht.wetter
+                ] = schacht_untersucht.wetter
                 wetter = schacht_untersucht.wetter
 
                 if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [2]"):
                     return None
 
             if schacht_untersucht.bewertungsart in self.mapper_bewertungsart:
-                bewertungsart = self.mapper_bewertungsart[schacht_untersucht.bewertungsart]
+                bewertungsart = self.mapper_bewertungsart[
+                    schacht_untersucht.bewertungsart
+                ]
             else:
                 sql = """
                            INSERT INTO bewertungsart (kuerzel, bezeichnung)
@@ -661,18 +674,26 @@ class ImportTask:
                            """.format(
                     e=schacht_untersucht.bewertungsart
                 )
-                self.mapper_untersuchrichtung[schacht_untersucht.bewertungsart] = schacht_untersucht.bewertungsart
+                self.mapper_untersuchrichtung[
+                    schacht_untersucht.bewertungsart
+                ] = schacht_untersucht.bewertungsart
                 bewertungsart = schacht_untersucht.bewertungsart
 
                 if not self.db_qkan.sql(sql, "xml_import Schächte_untersucht [3]"):
                     return None
 
             if not self.db_qkan.sql(
-                "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
+                "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?,"
                 "bewertungstag=? WHERE schnam = ?",
                 "xml_import Schächte_untersucht [4]",
-                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter, bewertungsart, schacht_untersucht.bewertungstag,
-                            schacht_untersucht.schnam),
+                parameters=(
+                    schacht_untersucht.untersuchtag,
+                    schacht_untersucht.untersucher,
+                    wetter,
+                    bewertungsart,
+                    schacht_untersucht.bewertungstag,
+                    schacht_untersucht.schnam,
+                ),
             ):
                 return None
 
@@ -702,44 +723,75 @@ class ImportTask:
             pos_bis = 0
             bereich = ""
             foto_dateiname = ""
-            xsch= 0.0
-            ysch= 0.0
 
             for block in blocks:
 
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
 
-                for _untersuchdat_schacht in block.findall("d:OptischeInspektion/d:Knoten/d:Inspektionsdaten/d:KZustand", self.NS):
+                for _untersuchdat_schacht in block.findall(
+                    "d:OptischeInspektion/d:Knoten/d:Inspektionsdaten/d:KZustand",
+                    self.NS,
+                ):
 
-                    id = _strip_int(_untersuchdat_schacht.findtext("d:Index", "0", self.NS))
-                    videozaehler = _strip_int(_untersuchdat_schacht.findtext("d:Videozaehler", "0", self.NS))
-                    timecode = _strip_int(_untersuchdat_schacht.findtext("d:Timecode", "0", self.NS))
-                    kuerzel = _untersuchdat_schacht.findtext("d:InspektionsKode", "not found", self.NS)
-                    charakt1 = _untersuchdat_schacht.findtext("d:Charakterisierung1", "not found", self.NS)
-                    charakt2 = _untersuchdat_schacht.findtext("d:Charakterisierung2", "not found", self.NS)
-                    quantnr1 = _strip_float(_untersuchdat_schacht.findtext("d:Quantifizierung1Numerisch", "0.0", self.NS))
-                    quantnr2 = _strip_float(_untersuchdat_schacht.findtext("d:Quantifizierung2Numerisch", "0.0", self.NS))
-                    streckenschaden = _untersuchdat_schacht.findtext("d:Streckenschaden", "not found", self.NS)
-                    pos_von = _strip_int(_untersuchdat_schacht.findtext("d:PositionVon", "0", self.NS))
-                    pos_bis = _strip_int(_untersuchdat_schacht.findtext("d:PositionBis", "0", self.NS))
-                    bereich = _untersuchdat_schacht.findtext("d:Schachtbereich", "not found", self.NS)
-                    foto_dateiname = _untersuchdat_schacht.findtext("d:Fotodatei", "not found", self.NS)
+                    id = _strip_int(
+                        _untersuchdat_schacht.findtext("d:Index", "0", self.NS)
+                    )
+                    videozaehler = _strip_int(
+                        _untersuchdat_schacht.findtext("d:Videozaehler", "0", self.NS)
+                    )
+                    timecode = _strip_int(
+                        _untersuchdat_schacht.findtext("d:Timecode", "0", self.NS)
+                    )
+                    kuerzel = _untersuchdat_schacht.findtext(
+                        "d:InspektionsKode", "not found", self.NS
+                    )
+                    charakt1 = _untersuchdat_schacht.findtext(
+                        "d:Charakterisierung1", "not found", self.NS
+                    )
+                    charakt2 = _untersuchdat_schacht.findtext(
+                        "d:Charakterisierung2", "not found", self.NS
+                    )
+                    quantnr1 = _strip_float(
+                        _untersuchdat_schacht.findtext(
+                            "d:Quantifizierung1Numerisch", "0.0", self.NS
+                        )
+                    )
+                    quantnr2 = _strip_float(
+                        _untersuchdat_schacht.findtext(
+                            "d:Quantifizierung2Numerisch", "0.0", self.NS
+                        )
+                    )
+                    streckenschaden = _untersuchdat_schacht.findtext(
+                        "d:Streckenschaden", "not found", self.NS
+                    )
+                    pos_von = _strip_int(
+                        _untersuchdat_schacht.findtext("d:PositionVon", "0", self.NS)
+                    )
+                    pos_bis = _strip_int(
+                        _untersuchdat_schacht.findtext("d:PositionBis", "0", self.NS)
+                    )
+                    bereich = _untersuchdat_schacht.findtext(
+                        "d:Schachtbereich", "not found", self.NS
+                    )
+                    foto_dateiname = _untersuchdat_schacht.findtext(
+                        "d:Fotodatei", "not found", self.NS
+                    )
 
                     yield Untersuchdat_schacht(
-                    untersuchsch = name,
-                    id = id,
-                    videozaehler = videozaehler,
-                    timecode = timecode,
-                    kuerzel = kuerzel,
-                    charakt1 = charakt1,
-                    charakt2 = charakt2,
-                    quantnr1 = quantnr1,
-                    quantnr2 = quantnr2,
-                    streckenschaden = streckenschaden,
-                    pos_von = pos_von,
-                    pos_bis = pos_bis,
-                    bereich = bereich,
-                    foto_dateiname = foto_dateiname,
+                        untersuchsch=name,
+                        id=id,
+                        videozaehler=videozaehler,
+                        timecode=timecode,
+                        kuerzel=kuerzel,
+                        charakt1=charakt1,
+                        charakt2=charakt2,
+                        quantnr1=quantnr1,
+                        quantnr2=quantnr2,
+                        streckenschaden=streckenschaden,
+                        pos_von=pos_von,
+                        pos_bis=pos_bis,
+                        bereich=bereich,
+                        foto_dateiname=foto_dateiname,
                     )
 
         for untersuchdat_schacht in _iter():
@@ -767,7 +819,6 @@ class ImportTask:
                     untersuchdat_schacht.pos_bis,
                     untersuchdat_schacht.bereich,
                     untersuchdat_schacht.foto_dateiname,
-
                 ),
             ):
                 return None
@@ -875,7 +926,9 @@ class ImportTask:
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
 
                 for _schacht in block.findall("d:Knoten", self.NS):
-                    knoten_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
+                    knoten_typ = _strip_int(
+                        _schacht.findtext("d:KnotenTyp", -1, self.NS)
+                    )
 
                 smp = block.find(
                     "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='KOP']",
@@ -1004,14 +1057,18 @@ class ImportTask:
                             / 1000
                         )
                         breite = (
-                            _strip_float(profil.findtext("d:Profilbreite", 0.0, self.NS))
+                            _strip_float(
+                                profil.findtext("d:Profilbreite", 0.0, self.NS)
+                            )
                             / 1000
                         )
 
                 for _haltung in block.findall(
                     "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
                 ):
-                    xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                    xschob = _strip_float(
+                        _haltung.findtext("d:Rechtswert", 0.0, self.NS)
+                    )
                     yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
                     deckeloben = _strip_float(
                         _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
@@ -1020,7 +1077,9 @@ class ImportTask:
                 for _haltung in block.findall(
                     "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
                 ):
-                    xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                    xschun = _strip_float(
+                        _haltung.findtext("d:Rechtswert", 0.0, self.NS)
+                    )
                     yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
                     deckelunten = _strip_float(
                         _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
@@ -1090,8 +1149,6 @@ class ImportTask:
                     laenge=laenge,
                     ks=ks,
                 )
-
-
 
         # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
         for haltung in _iter():
@@ -1174,7 +1231,7 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-    #Haltung_untersucht
+    # Haltung_untersucht
     def _haltungen_untersucht(self) -> None:
         def _iter() -> Iterator[Haltung_untersucht]:
             blocks = self.xml.findall(
@@ -1203,30 +1260,33 @@ class ImportTask:
 
                     laenge = _strip_float(_haltung.findtext("d:Laenge", 0.0, self.NS))
 
-
                     for profil in _haltung.findall("d:Profil", self.NS):
                         hoehe = (
                             _strip_float(profil.findtext("d:Profilhoehe", 0.0, self.NS))
                             / 1000
                         )
                         breite = (
-                            _strip_float(profil.findtext("d:Profilbreite", 0.0, self.NS))
+                            _strip_float(
+                                profil.findtext("d:Profilbreite", 0.0, self.NS)
+                            )
                             / 1000
                         )
 
                 for _haltung in block.findall(
                     "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
                 ):
-                    xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                    xschob = _strip_float(
+                        _haltung.findtext("d:Rechtswert", 0.0, self.NS)
+                    )
                     yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
-
 
                 for _haltung in block.findall(
                     "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
                 ):
-                    xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                    xschun = _strip_float(
+                        _haltung.findtext("d:Rechtswert", 0.0, self.NS)
+                    )
                     yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
-
 
                 yield Haltung_untersucht(
                     haltnam=name,
@@ -1286,17 +1346,27 @@ class ImportTask:
 
                 for _haltung in block.findall("d:OptischeInspektion", self.NS):
 
-                    untersuchtag = _haltung.findtext("d:Inspektionsdatum", "not found", self.NS)
+                    untersuchtag = _haltung.findtext(
+                        "d:Inspektionsdatum", "not found", self.NS
+                    )
 
-                    untersucher = _haltung.findtext("d:NameUntersucher", "not found", self.NS)
+                    untersucher = _haltung.findtext(
+                        "d:NameUntersucher", "not found", self.NS
+                    )
 
                     wetter = _strip_int(_haltung.findtext("d:Wetter", "0", self.NS))
 
-                    for _haltungz in _haltung.findall("d:Rohrleitung/d:Bewertung", self.NS):
+                    for _haltungz in _haltung.findall(
+                        "d:Rohrleitung/d:Bewertung", self.NS
+                    ):
 
-                        bewertungsart = _strip_int(_haltungz.findtext("d:Bewertungsverfahren", "0", self.NS))
+                        bewertungsart = _strip_int(
+                            _haltungz.findtext("d:Bewertungsverfahren", "0", self.NS)
+                        )
 
-                        bewertungstag = _haltungz.findtext("d:Bewertungsdatum", "not found", self.NS)
+                        bewertungstag = _haltungz.findtext(
+                            "d:Bewertungsdatum", "not found", self.NS
+                        )
 
                 yield Haltung_untersucht(
                     haltnam=name,
@@ -1337,7 +1407,8 @@ class ImportTask:
                 return None
 
         if not self.db_qkan.sql(
-            "UPDATE haltungen_untersucht SET geom = geom", "xml_import Haltungen_untersucht [1a]"
+            "UPDATE haltungen_untersucht SET geom = geom",
+            "xml_import Haltungen_untersucht [1a]",
         ):
             return None
 
@@ -1348,7 +1419,7 @@ class ImportTask:
             if not self.db_qkan.sql(
                 "UPDATE haltungen_untersucht SET laenge = ? WHERE haltnam = ?",
                 "xml_import Haltungen_untersucht [2]",
-                parameters=( haltung_untersucht.laenge, haltung_untersucht.haltnam),
+                parameters=(haltung_untersucht.laenge, haltung_untersucht.haltnam),
             ):
                 return None
 
@@ -1364,14 +1435,18 @@ class ImportTask:
                 """.format(
                     e=haltung_untersucht.wetter
                 )
-                self.mapper_untersuchrichtung[haltung_untersucht.wetter] = haltung_untersucht.wetter
+                self.mapper_untersuchrichtung[
+                    haltung_untersucht.wetter
+                ] = haltung_untersucht.wetter
                 wetter = haltung_untersucht.wetter
 
                 if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [3]"):
                     return None
 
             if haltung_untersucht.bewertungsart in self.mapper_bewertungsart:
-                bewertungsart = self.mapper_bewertungsart[haltung_untersucht.bewertungsart]
+                bewertungsart = self.mapper_bewertungsart[
+                    haltung_untersucht.bewertungsart
+                ]
             else:
                 sql = """
                            INSERT INTO bewertungsart (kuerzel, bezeichnung)
@@ -1379,18 +1454,26 @@ class ImportTask:
                            """.format(
                     e=haltung_untersucht.bewertungsart
                 )
-                self.mapper_untersuchrichtung[haltung_untersucht.bewertungsart] = haltung_untersucht.bewertungsart
+                self.mapper_untersuchrichtung[
+                    haltung_untersucht.bewertungsart
+                ] = haltung_untersucht.bewertungsart
                 bewertungsart = haltung_untersucht.bewertungsart
 
                 if not self.db_qkan.sql(sql, "xml_import Haltungen_untersucht [4]"):
                     return None
 
             if not self.db_qkan.sql(
-                "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
+                "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?,"
                 "bewertungstag=? WHERE haltnam = ?",
                 "xml_import Haltungen_untersucht [5]",
-                parameters=(haltung_untersucht.untersuchtag, haltung_untersucht.untersucher, wetter, bewertungsart, haltung_untersucht.bewertungstag,
-                            haltung_untersucht.haltnam),
+                parameters=(
+                    haltung_untersucht.untersuchtag,
+                    haltung_untersucht.untersucher,
+                    wetter,
+                    bewertungsart,
+                    haltung_untersucht.bewertungstag,
+                    haltung_untersucht.haltnam,
+                ),
             ):
                 return None
 
@@ -1427,88 +1510,139 @@ class ImportTask:
             film_dateiname = ""
             richtung = self.richtung
 
-
             for block in blocks:
 
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
 
-                for _untersuchdat_haltung in block.findall("d:OptischeInspektion/d:Rohrleitung", self.NS):
+                for _untersuchdat_haltung in block.findall(
+                    "d:OptischeInspektion/d:Rohrleitung", self.NS
+                ):
 
-                    untersuchrichtung = _untersuchdat_haltung.findtext("d:Inspektionsrichtung", "not found", self.NS)
-                    inspektionslaenge = _strip_float(_untersuchdat_haltung.findtext("d:Inspektionslaenge", "0.0", self.NS))
+                    untersuchrichtung = _untersuchdat_haltung.findtext(
+                        "d:Inspektionsrichtung", "not found", self.NS
+                    )
+                    inspektionslaenge = _strip_float(
+                        _untersuchdat_haltung.findtext(
+                            "d:Inspektionslaenge", "0.0", self.NS
+                        )
+                    )
                     if inspektionslaenge == 0.0:
-                        inspektionslaenge = _strip_float(_untersuchdat_haltung.findtext("d:Inspektionsdaten/d:RZustand[d:InspektionsKode='BCE'][d:Charakterisierung1='XP']/d:Station", "0.0", self.NS))
+                        inspektionslaenge = _strip_float(
+                            _untersuchdat_haltung.findtext(
+                                "d:Inspektionsdaten/d:RZustand[d:InspektionsKode='BCE'][d:Charakterisierung1='XP']/d:Station",
+                                "0.0",
+                                self.NS,
+                            )
+                        )
 
+                    schoben = _untersuchdat_haltung.findtext(
+                        "d:RGrunddaten/d:KnotenZulauf", "not found", self.NS
+                    )
+                    schunten = _untersuchdat_haltung.findtext(
+                        "d:RGrunddaten/d:KnotenAblauf", "not found", self.NS
+                    )
 
-                    schoben = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenZulauf", "not found", self.NS)
-                    schunten = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenAblauf", "not found", self.NS)
-
-
-                    for _untersuchdat in _untersuchdat_haltung.findall("d:Inspektionsdaten/d:RZustand", self.NS):
+                    for _untersuchdat in _untersuchdat_haltung.findall(
+                        "d:Inspektionsdaten/d:RZustand", self.NS
+                    ):
 
                         id = _strip_int(_untersuchdat.findtext("d:Index", "0", self.NS))
-                        videozaehler = _strip_int(_untersuchdat.findtext("d:Videozaehler", "0", self.NS))
-                        station = _strip_float(_untersuchdat.findtext("d:Station", "0.0", self.NS))
-                        timecode = _strip_int(_untersuchdat.findtext("d:Timecode", "0", self.NS))
-                        kuerzel = _untersuchdat.findtext("d:InspektionsKode", "not found", self.NS)
-                        charakt1 = _untersuchdat.findtext("d:Charakterisierung1", "not found", self.NS)
-                        charakt2 = _untersuchdat.findtext("d:Charakterisierung2", "not found", self.NS)
-                        quantnr1 = _strip_float(_untersuchdat.findtext("d:Quantifizierung1Numerisch", "0.0", self.NS))
-                        quantnr2 = _strip_float(_untersuchdat.findtext("d:Quantifizierung2Numerisch", "0.0", self.NS))
-                        streckenschaden = _untersuchdat.findtext("d:Streckenschaden", "not found", self.NS)
-                        pos_von = _strip_int(_untersuchdat.findtext("d:PositionVon", "0", self.NS))
-                        pos_bis = _strip_int(_untersuchdat.findtext("d:PositionBis", "0", self.NS))
-                        foto_dateiname = _untersuchdat.findtext("d:Fotodatei", "not found", self.NS)
+                        videozaehler = _strip_int(
+                            _untersuchdat.findtext("d:Videozaehler", "0", self.NS)
+                        )
+                        station = _strip_float(
+                            _untersuchdat.findtext("d:Station", "0.0", self.NS)
+                        )
+                        timecode = _strip_int(
+                            _untersuchdat.findtext("d:Timecode", "0", self.NS)
+                        )
+                        kuerzel = _untersuchdat.findtext(
+                            "d:InspektionsKode", "not found", self.NS
+                        )
+                        charakt1 = _untersuchdat.findtext(
+                            "d:Charakterisierung1", "not found", self.NS
+                        )
+                        charakt2 = _untersuchdat.findtext(
+                            "d:Charakterisierung2", "not found", self.NS
+                        )
+                        quantnr1 = _strip_float(
+                            _untersuchdat.findtext(
+                                "d:Quantifizierung1Numerisch", "0.0", self.NS
+                            )
+                        )
+                        quantnr2 = _strip_float(
+                            _untersuchdat.findtext(
+                                "d:Quantifizierung2Numerisch", "0.0", self.NS
+                            )
+                        )
+                        streckenschaden = _untersuchdat.findtext(
+                            "d:Streckenschaden", "not found", self.NS
+                        )
+                        pos_von = _strip_int(
+                            _untersuchdat.findtext("d:PositionVon", "0", self.NS)
+                        )
+                        pos_bis = _strip_int(
+                            _untersuchdat.findtext("d:PositionBis", "0", self.NS)
+                        )
+                        foto_dateiname = _untersuchdat.findtext(
+                            "d:Fotodatei", "not found", self.NS
+                        )
 
                         yield Untersuchdat_haltung(
-                        untersuchhal=name,
-                        untersuchrichtung=untersuchrichtung,
-                        schoben=schoben,
-                        schunten=schunten,
-                        id=id,
-                        inspektionslaenge=inspektionslaenge,
-                        videozaehler=videozaehler,
-                        station=station,
-                        timecode=timecode,
-                        kuerzel=kuerzel,
-                        charakt1=charakt1,
-                        charakt2=charakt2,
-                        quantnr1=quantnr1,
-                        quantnr2=quantnr2,
-                        streckenschaden=streckenschaden,
-                        pos_von=pos_von,
-                        pos_bis=pos_bis,
-                        foto_dateiname=foto_dateiname,
-                        film_dateiname=film_dateiname,
-                        richtung=richtung,
-
-            )
+                            untersuchhal=name,
+                            untersuchrichtung=untersuchrichtung,
+                            schoben=schoben,
+                            schunten=schunten,
+                            id=id,
+                            inspektionslaenge=inspektionslaenge,
+                            videozaehler=videozaehler,
+                            station=station,
+                            timecode=timecode,
+                            kuerzel=kuerzel,
+                            charakt1=charakt1,
+                            charakt2=charakt2,
+                            quantnr1=quantnr1,
+                            quantnr2=quantnr2,
+                            streckenschaden=streckenschaden,
+                            pos_von=pos_von,
+                            pos_bis=pos_bis,
+                            foto_dateiname=foto_dateiname,
+                            film_dateiname=film_dateiname,
+                            richtung=richtung,
+                        )
 
         def _iter2() -> Iterator[Untersuchdat_haltung]:
-                blocks = self.xml.findall(
-                    "d:Filme/d:Film/..",
+            blocks = self.xml.findall(
+                "d:Filme/d:Film/..",
+                self.NS,
+            )
+            logger.debug(f"Anzahl Untersuchdat_haltung: {len(blocks)}")
+
+            film_dateiname = ""
+            for block in blocks:
+                name = block.findtext(
+                    "d:Film/d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung",
+                    "not found",
                     self.NS,
                 )
-                logger.debug(f"Anzahl Untersuchdat_haltung: {len(blocks)}")
 
-                film_dateiname = ""
-                for block in blocks:
-                    name = block.findtext("d:Film/d:FilmObjekte/d:FilmObjekt/d:Objektbezeichnung", "not found", self.NS)
-
-                    for _untersuchdat in block.findall("d:Film", self.NS):
-                        # nochmal prüfen!
-                        film_dateiname = _untersuchdat.findtext("d:Filmname", "not found", self.NS)
-
-
-                    yield Untersuchdat_haltung(
-                        untersuchhal=name,
-                        film_dateiname=film_dateiname,
+                for _untersuchdat in block.findall("d:Film", self.NS):
+                    # nochmal prüfen!
+                    film_dateiname = _untersuchdat.findtext(
+                        "d:Filmname", "not found", self.NS
                     )
+
+                yield Untersuchdat_haltung(
+                    untersuchhal=name,
+                    film_dateiname=film_dateiname,
+                )
 
         for untersuchdat_haltung in _iter():
 
             if untersuchdat_haltung.untersuchrichtung in self.mapper_untersuchrichtung:
-                untersuchrichtung = self.mapper_untersuchrichtung[untersuchdat_haltung.untersuchrichtung]
+                untersuchrichtung = self.mapper_untersuchrichtung[
+                    untersuchdat_haltung.untersuchrichtung
+                ]
             else:
                 sql = """
                 INSERT INTO untersuchrichtung (kuerzel, bezeichnung)
@@ -1516,7 +1650,9 @@ class ImportTask:
                 """.format(
                     e=untersuchdat_haltung.untersuchrichtung
                 )
-                self.mapper_untersuchrichtung[untersuchdat_haltung.untersuchrichtung] = untersuchdat_haltung.untersuchrichtung
+                self.mapper_untersuchrichtung[
+                    untersuchdat_haltung.untersuchrichtung
+                ] = untersuchdat_haltung.untersuchrichtung
                 untersuchrichtung = untersuchdat_haltung.untersuchrichtung
 
                 if not self.db_qkan.sql(sql, "xml_import untersuchdat_haltung [1]"):
@@ -1550,7 +1686,7 @@ class ImportTask:
                     untersuchdat_haltung.pos_bis,
                     untersuchdat_haltung.foto_dateiname,
                     untersuchdat_haltung.film_dateiname,
-                    untersuchdat_haltung.richtung
+                    untersuchdat_haltung.richtung,
                 ),
             ):
                 return None
@@ -1559,15 +1695,17 @@ class ImportTask:
 
         for untersuchdat_haltung in _iter2():
             if not self.db_qkan.sql(
-                "UPDATE untersuchdat_haltung_data SET film_dateiname=?" 
+                "UPDATE untersuchdat_haltung_data SET film_dateiname=?"
                 " WHERE  untersuchhal= ?",
                 "xml_import untersuchhal [2a]",
-                parameters=(untersuchdat_haltung.untersuchhal, untersuchdat_haltung.film_dateiname),
+                parameters=(
+                    untersuchdat_haltung.untersuchhal,
+                    untersuchdat_haltung.film_dateiname,
+                ),
             ):
                 return None
 
         self.db_qkan.commit()
-
 
     def _wehre(self) -> None:
         # Hier werden die Hydraulikdaten zu den Wehren in die Datenbank geschrieben.
@@ -1597,7 +1735,9 @@ class ImportTask:
                     laenge = _strip_float(
                         _wehr.findtext("d:LaengeWehrschwelle", 0.0, self.NS)
                     )
-                    kammerhoehe = _strip_float(_wehr.findtext("d:Kammerhoehe", 0.0, self.NS))
+                    kammerhoehe = _strip_float(
+                        _wehr.findtext("d:Kammerhoehe", 0.0, self.NS)
+                    )
 
                     # Überfallbeiwert der Wehr Kante (abhängig von Form der Kante)
                     uebeiwert = _strip_float(
@@ -1679,8 +1819,12 @@ class ImportTask:
                     schunten = _pumpe.findtext("d:SchachtAblauf", "not found", self.NS)
                     steuersch = _pumpe.findtext("d:Steuerschacht", "not found", self.NS)
                     sohle = _strip_float(_pumpe.findtext("d:Sohlhoehe", 0.0, self.NS))
-                    volanf = _strip_float(_pumpe.findtext("d:Anfangsvolumen", 0.0, self.NS))
-                    volges = _strip_float(_pumpe.findtext("d:Gesamtvolumen", 0.0, self.NS))
+                    volanf = _strip_float(
+                        _pumpe.findtext("d:Anfangsvolumen", 0.0, self.NS)
+                    )
+                    volges = _strip_float(
+                        _pumpe.findtext("d:Gesamtvolumen", 0.0, self.NS)
+                    )
 
                 yield Pumpe(
                     pnam=block.findtext("d:Objektbezeichnung", "not found", self.NS),
