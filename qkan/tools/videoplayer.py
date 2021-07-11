@@ -1,17 +1,16 @@
-import sys
 import os.path
-from PyQt5 import QtGui, uic, QtWidgets
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QPalette, QColor
-from PyQt5.QtWidgets import QMainWindow, QWidget, QFrame, QSlider, QHBoxLayout, QPushButton, \
-    QVBoxLayout, QAction, QFileDialog, QApplication
-import vlc
+
+from PyQt5 import uic
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QFileDialog, QMainWindow
+
+from qkan.external.vlc import vlc
 
 
 class Videoplayer(QMainWindow):
     def __init__(self, video, foto_path):
         QMainWindow.__init__(self)
-        uic.loadUi('fenster.ui', self)
+        uic.loadUi("fenster.ui", self)
 
         self.instance = vlc.Instance()
         self.mediaplayer = self.instance.media_player_new()
@@ -44,27 +43,27 @@ class Videoplayer(QMainWindow):
     def Foto(self):
         """Screenshot"""
         foto_path = self.foto_path
-        self.mediaplayer.video_take_snapshot(0, foto_path,640,360 )
+        self.mediaplayer.video_take_snapshot(0, foto_path, 640, 360)
 
     def OpenFile(self, filename=None):
         """Open a media file in a MediaPlayer"""
         filename = self.video
         if filename is None:
-            filename = QFileDialog.getOpenFileName(self, "Open File", os.path.expanduser('~'))[0]
+            filename = QFileDialog.getOpenFileName(
+                self, "Open File", os.path.expanduser("~")
+            )[0]
         if not filename:
             return
 
         # create the media
-        if sys.version < '3':
-            filename = unicode(filename)
         self.media = self.instance.media_new(filename)
         # put the media in the media player
         self.mediaplayer.set_media(self.media)
 
         # parse the metadata of the file
         self.media.parse()
-        #hier wird die Startzeit eingegeben in sekunden!
-        self.media.add_option('start-time=00.0')
+        # hier wird die Startzeit eingegeben in sekunden!
+        self.media.add_option("start-time=00.0")
         # set the title of the track as window title
         self.setWindowTitle(self.media.get_meta(0))
         self.mediaplayer.set_hwnd(self.frame_2.winId())
@@ -84,4 +83,3 @@ class Videoplayer(QMainWindow):
             self.timer.stop()
             if not self.isPaused:
                 self.Stop()
-
