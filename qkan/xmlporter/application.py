@@ -73,6 +73,9 @@ class XmlPorter(QKanPlugin):
             QKan.config.check_export.export_haltungen = (
                 self.export_dlg.cb_export_haltungen.isChecked()
             )
+            QKan.config.check_export.export_anschlussleitungen = (
+                self.export_dlg.cb_export_anschlussleitungen.isChecked()
+            )
             QKan.config.check_export.export_pumpen = (
                 self.export_dlg.cb_export_pumpen.isChecked()
             )
@@ -109,6 +112,20 @@ class XmlPorter(QKanPlugin):
             QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
             QKan.config.xml.ordner_bilder = self.import_dlg.tf_import_2.text()
             QKan.config.xml.ordner_video = self.import_dlg.tf_import_3.text()
+
+            QKan.config.xml.import_stamm = (
+                self.import_dlg.checkBox.isChecked()
+            )
+
+            QKan.config.xml.import_haus = (
+                self.import_dlg.checkBox_2.isChecked()
+            )
+
+            QKan.config.xml.import_zustand = (
+                self.import_dlg.checkBox_3.isChecked()
+            )
+
+            QKan.config.save()
 
             QKan.config.xml.import_file = self.import_dlg.tf_import.text()
             if not QKan.config.xml.import_file:

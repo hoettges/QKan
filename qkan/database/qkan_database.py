@@ -29,6 +29,7 @@ __qgsVersion__ = "3.2.5"  # Version des Projektes und der Projektdatei. Kann hö
 import logging
 import os
 import traceback
+from datetime import datetime
 from sqlite3.dbapi2 import Connection, Cursor
 
 from qgis.core import Qgis, QgsProject
@@ -301,25 +302,43 @@ def createdbtables(
 
     # Haltungen_untersucht ----------------------------------------------------------------
 
-    sql = """CREATE TABLE haltungen_untersucht (
-        pk INTEGER PRIMARY KEY,
-        haltnam TEXT,
-        schoben TEXT,
-        schunten TEXT,
-        hoehe REAL,
-        breite REAL,
-        laenge REAL,
-        kommentar TEXT,
-        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
-        untersuchtag TEXT, 
-        untersucher TEXT, 
-        wetter INTEGER DEFAULT 0, 
-        bewertungsart INTEGER DEFAULT 0, 
-        bewertungstag TEXT,
-        xschob REAL,
-        yschob REAL,
-        xschun REAL,
-        yschun REAL)"""
+    #i = ('haltungen_untersucht_1',)
+    #try:
+     #   cursl.execute(""" SELECT count(*) FROM sqlite_master WHERE type='table' AND name= ? """, i)
+    #except BaseException as err:
+     #   fehlermeldung(
+      #      "qkan_database.createdbtables: {}".format(err),
+       #     'Tabelle "Haltungen" konnte nicht erstellt werden',
+        #)
+        #consl.close()
+        #return False
+
+    #if cursl.fetchone()[0] == 1:
+     #   print('Table exists.')
+    #else:
+     #   print('Table does not exists.')
+    #x = datetime.datetime.now()
+
+    sql = """CREATE TABLE haltungen_untersucht(
+         pk INTEGER PRIMARY KEY,
+         haltnam TEXT,
+         schoben TEXT,
+         schunten TEXT,
+         hoehe REAL,
+         breite REAL,
+         laenge REAL,
+         kommentar TEXT,
+         createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+         untersuchtag TEXT,
+         untersucher TEXT,
+         wetter INTEGER DEFAULT 0,
+         bewertungsart INTEGER DEFAULT 0,
+         bewertungstag TEXT,
+         xschob REAL,
+         yschob REAL,
+         xschun REAL,
+         yschun REAL)"""
+    #.format("haltungen_untersucht"+x.strftime('%d_%m_%Y_%H_%M'))
 
     try:
         cursl.execute(sql)
@@ -395,7 +414,7 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "haltung_unterucht_data" konnte ein Trigger nicht angelegt werden.',
+            'In der Tabelle "haltung_untersucht_data" konnte ein Trigger nicht angelegt werden.',
         )
         consl.close()
         return False
@@ -425,7 +444,8 @@ def createdbtables(
             film_dateiname TEXT,
             ordner_bild TEXT,
             ordner_video TEXT,
-            richtung TEXT
+            richtung TEXT,
+            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now'))
         )"""
 
     try:
@@ -454,7 +474,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
                   SELECT
                     untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, createdat
                   FROM Untersuchdat_haltung;"""
     try:
         cursl.execute(sql)
@@ -471,11 +491,12 @@ def createdbtables(
                   BEGIN
                     INSERT INTO untersuchdat_haltung
                       (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, geom)
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, createdat, geom)
                     SELECT
                       new.untersuchhal, new.untersuchrichtung, new.schoben,new.schunten, 
                         new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.kuerzel, 
                         new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung,
+                        coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
                         CASE
                         WHEN new.inspektionslaenge > haltung.laenge
                         THEN
@@ -773,7 +794,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
                       SELECT
                         untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, station, timecode, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, createdat
                       FROM untersuchdat_haltung;"""
     try:
         cursl.execute(sql)
@@ -790,10 +811,10 @@ def createdbtables(
                       BEGIN
                         INSERT INTO untersuchdat_haltung
                           (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung)
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, createdat)
                         VALUES (
                           new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, new.id, new.videozaehler, new.inspektionslaenge, new.station, new.timecode, new.kuerzel, 
-                        new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung
+                        new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung, new.createdat
                         );
                       END"""
     try:
@@ -805,6 +826,120 @@ def createdbtables(
         )
         consl.close()
         return False
+
+    # Anschlussleitung ----------------------------------------------------------------
+
+    sql = """CREATE TABLE anschlussleitungen (
+        pk INTEGER PRIMARY KEY,
+        leitnam TEXT,
+        schoben TEXT,
+        schunten TEXT,
+        hoehe REAL,
+        breite REAL,
+        laenge REAL,
+        sohleoben REAL,
+        sohleunten REAL,
+        deckeloben REAL,
+        deckelunten REAL,
+        teilgebiet TEXT,
+        qzu REAL,
+        profilnam TEXT DEFAULT 'Kreisquerschnitt',
+        entwart TEXT DEFAULT 'Regenwasser',
+        rohrtyp TEXT,
+        ks REAL DEFAULT 1.5,
+        simstatus TEXT DEFAULT 'vorhanden',
+        kommentar TEXT,
+        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+        xschob REAL,
+        yschob REAL,
+        xschun REAL,
+        yschun REAL)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "anschlussleitungen" konnte nicht erstellt werden',
+            )
+            consl.close()
+            return False
+
+    sql = "SELECT AddGeometryColumn('anschlussleitungen','geom',{},'LINESTRING',2)".format(epsg)
+    sqlindex = "SELECT CreateSpatialIndex('anschlussleitungen','geom')"
+    try:
+        cursl.execute(sql)
+        cursl.execute(sqlindex)
+    except BaseException as err:
+        fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'In der Tabelle "anschlussleitungen" konnte das Attribut "geom" nicht hinzugefuegt werden.',
+            )
+        consl.close()
+        return False
+
+    sql = f"""CREATE VIEW IF NOT EXISTS anschlussleitungen_data AS
+              SELECT 
+                leitnam, schoben, schunten, 
+                hoehe, breite, laenge, 
+                sohleoben, sohleunten, 
+                deckeloben, deckelunten, 
+                teilgebiet, qzu, profilnam, 
+                entwart, rohrtyp, ks,
+                simstatus, kommentar, createdat, 
+                xschob, yschob, xschun, yschun
+              FROM anschlussleitungen;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'View "anschlussleitungen_data" konnte nicht erstellt werden.',
+            )
+        consl.close()
+        return False
+
+    sql = f"""CREATE TRIGGER IF NOT EXISTS anschlussleitungen_insert_clipboard
+                INSTEAD OF INSERT ON anschlussleitungen_data FOR EACH ROW
+              BEGIN
+                INSERT INTO anschlussleitungen
+                  (leitnam, schoben, schunten,
+                   hoehe, breite, laenge,
+                   sohleoben, sohleunten,
+                   deckeloben, deckelunten, 
+                   teilgebiet, qzu, profilnam, 
+                   entwart, rohrtyp, ks,
+                   simstatus, kommentar, createdat,  
+                   geom)
+                VALUES( 
+                  new.leitnam, new.schoben, new.schunten, 
+                  CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
+                  CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
+                  new.laenge, 
+                  new.sohleoben, new.sohleunten, 
+                  new.deckeloben, new.deckelunten, 
+                  new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
+                  coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
+                  coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
+                  coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), 
+                  MakeLine(
+                      MakePoint(new.xschob, new.yschob, {epsg})
+                      , 
+                      MakePoint(new.xschun, new.yschun, {epsg})
+                  ))
+                ;
+              END;"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'In der Tabelle "anschlussleitungen" konnte ein Trigger nicht angelegt werden.',
+            )
+        consl.close()
+        return False
+
+    consl.commit()
 
     # Schaechte ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
@@ -1073,7 +1208,8 @@ def createdbtables(
         pos_bis INTEGER,
         bereich TEXT,
         foto_dateiname TEXT,
-        ordner TEXT
+        ordner TEXT,
+        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now'))
         )"""
 
     try:
@@ -1103,7 +1239,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_schacht_data AS 
               SELECT
                 untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner 
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner, createdat 
               FROM Untersuchdat_schacht;"""
     try:
         cursl.execute(sql)
@@ -1120,11 +1256,11 @@ def createdbtables(
               BEGIN
                 INSERT INTO Untersuchdat_schacht
                   (untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner, geop)
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner, createdat, geop)
                 SELECT 
                   new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, 
-                    new.bereich, new.foto_dateiname, new.ordner, sch.geop
+                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), sch.geop
                 FROM
                     schaechte AS sch
                     WHERE sch.schnam = new.untersuchsch;
@@ -1144,7 +1280,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_schacht_data AS 
                   SELECT
                     untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner
+                    charakt1, charakt2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner, createdat
                   FROM untersuchdat_schacht;"""
     try:
         cursl.execute(sql)
@@ -1161,11 +1297,11 @@ def createdbtables(
                   BEGIN
                     INSERT INTO untersuchdat_schacht
                       (untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner)
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner, createdat)
                     VALUES (
                       new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, 
-                    new.bereich, new.foto_dateiname, new.ordner
+                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now'))
                     );
                   END"""
     try:

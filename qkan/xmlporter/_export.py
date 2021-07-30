@@ -54,7 +54,7 @@ class ExportTask:
     def _export_wehre(self) -> None:
         if (
             not getattr(QKan.config.check_export, "export_wehre", True)
-            or not self.hydraulik_objekte
+            #or not self.hydraulik_objekte
             or not self.stamm
         ):
             return
@@ -115,7 +115,7 @@ class ExportTask:
     def _export_pumpen(self) -> None:
         if (
             not getattr(QKan.config.check_export, "export_pumpen", True)
-            or not self.hydraulik_objekte
+            #or not self.hydraulik_objekte
             or not self.stamm
         ):
             return
@@ -404,7 +404,7 @@ class ExportTask:
     def _export_haltungen(self) -> None:
         if (
             not getattr(QKan.config.check_export, "export_haltungen", True)
-            or not self.hydraulik_objekte
+            #or not self.hydraulik_objekte
             or not self.stamm
         ):
             return
@@ -426,10 +426,10 @@ class ExportTask:
             haltungen.ks,
             haltungen.simstatus,
             haltungen.kommentar,
-            x(PointN(haltungen.geom, 1) AS xschob,
-            y(PointN(haltungen.geom, 1) AS yschob,
-            x(PointN(haltungen.geom, 1) AS xschun,
-            y(PointN(haltungen.geom, 1) AS yschun
+            x(PointN(haltungen.geom, 1)) AS xschob,
+            y(PointN(haltungen.geom, 1)) AS yschob,
+            x(PointN(haltungen.geom, -1)) AS xschun,
+            y(PointN(haltungen.geom, -1)) AS yschun
         FROM haltungen
         LEFT JOIN Entwaesserungsarten AS ea 
         ON haltungen.entwart = ea.bezeichnung
@@ -515,6 +515,120 @@ class ExportTask:
 
         fortschritt("Haltungen eingefügt")
 
+    def _export_anschlussleitungen(self) -> None:
+        if (
+            not getattr(QKan.config.check_export, "export_anschlussleitungen", True)
+            #or not self.hydraulik_objekte
+            or not self.stamm
+        ):
+            return
+
+        sql = """
+        SELECT
+            anschlussleitungen.leitnam,
+            anschlussleitungen.schoben,
+            anschlussleitungen.schunten,
+            anschlussleitungen.hoehe,
+            anschlussleitungen.breite,
+            anschlussleitungen.laenge,
+            anschlussleitungen.sohleoben,
+            anschlussleitungen.sohleunten,
+            anschlussleitungen.deckeloben,
+            anschlussleitungen.deckelunten,
+            anschlussleitungen.profilnam,
+            ea.he_nr,
+            anschlussleitungen.ks,
+            anschlussleitungen.simstatus,
+            anschlussleitungen.kommentar,
+            x(PointN(anschlussleitungen.geom, 1)) AS xschob,
+            y(PointN(anschlussleitungen.geom, 1)) AS yschob,
+            x(PointN(anschlussleitungen.geom, -1)) AS xschun,
+            y(PointN(anschlussleitungen.geom, -1)) AS yschun
+        FROM anschlussleitungen
+        LEFT JOIN Entwaesserungsarten AS ea 
+        ON anschlussleitungen.entwart = ea.bezeichnung
+        """
+
+        if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
+            return
+
+        fortschritt("Export Anschlussleitungen...", 0.35)
+
+        for attr in self.db_qkan.fetchall():
+            obj = SubElement(self.hydraulik_objekte, "HydraulikObjekt")
+            _create_children(obj, ["HydObjektTyp", "Objektbezeichnung"])
+            _create_children_text(
+                SubElement(obj, "Leitung"),
+                {"Berechnungslaenge": attr[5], "RauigkeitsbeiwertKb": attr[12]},
+            )
+
+            abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
+            _create_children_text(
+                abw,
+                {
+                    "Objektart": None,
+                    "Objektbezeichnung": attr[0],
+                    "Entwaesserungsart": attr[11],
+                    "Status": self.mapper_simstatus.get(attr[13], -1),
+                },
+            )
+
+            kante = SubElement(abw, "Kante")
+            _create_children_text(
+                kante,
+                {
+                    "KantenTyp": None,
+                    "KnotenAblaufTyp": None,
+                    "KnotenZulaufTyp": None,
+                    "Material": None,
+                    "KnotenZulauf": attr[1],
+                    "KnotenAblauf": attr[2],
+                    "SohlhoeheZulauf": attr[6],
+                    "SohlhoeheAblauf": attr[7],
+                    "Laenge": attr[5],
+                },
+            )
+
+            _create_children_text(
+                SubElement(kante, "Profil"),
+                {
+                    "ProfilID": None,
+                    "SonderprofilVorhanden": None,
+                    "Profilart": attr[10],
+                    "Profilbreite": attr[4],
+                    "Profilhoehe": attr[3],
+                },
+            )
+
+            SubElementText(SubElement(kante, "Leitung"), "DMPLaenge", attr[5])
+
+            geom = SubElement(abw, "Geometrie")
+            _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
+
+            kante = SubElement(
+                SubElement(SubElement(geom, "Geometriedaten"), "Kanten"), "Kante"
+            )
+            _create_children_text(
+                SubElement(kante, "Start"),
+                {
+                    "PunktattributAbwasser": "DMP",
+                    "Rechtswert": attr[15],
+                    "Hochwert": attr[16],
+                    "Punkthoehe": attr[8],
+                },
+            )
+            _create_children_text(
+                SubElement(kante, "Ende"),
+                {
+                    "PunktattributAbwasser": "DMP",
+                    "Rechtswert": attr[17],
+                    "Hochwert": attr[18],
+                    "Punkthoehe": attr[9],
+                },
+            )
+
+        fortschritt("Leitung eingefügt")
+
     def run(self) -> None:
         """
         Export der Kanaldaten aus einer QKan-SpatiaLite-Datenbank und Schreiben in eine XML-Datei
@@ -583,6 +697,7 @@ class ExportTask:
         self._export_schaechte()
         self._export_speicher()
         self._export_haltungen()
+        self._export_anschlussleitungen()
 
         Path(self.export_file).write_text(
             minidom.parseString(tostring(root)).toprettyxml(indent="  ")

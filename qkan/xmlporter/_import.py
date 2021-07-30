@@ -2,7 +2,7 @@ import logging
 import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
 from lxml import etree
-
+from qkan import QKan
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
@@ -127,6 +127,28 @@ class Untersuchdat_haltung(ClassObject):
     ordner_bild: str = ""
     ordner_video: str = ""
     richtung: str = ""
+
+class Anschlussleitung(ClassObject):
+    leitnam: str = ""
+    schoben: str = ""
+    schunten: str = ""
+    hoehe: float = 0.0
+    breite: float = 0.0
+    laenge: float = 0.0
+    sohleoben: float = 0.0
+    sohleunten: float = 0.0
+    deckeloben: float = 0.0
+    deckelunten: float = 0.0
+    profilnam: str = ""
+    entwart: str = ""
+    rohrtyp: str = ""
+    ks: float = 1.5
+    simstatus: int = 0
+    kommentar: str = ""
+    xschob: float = 0.0
+    yschob: float = 0.0
+    xschun: float = 0.0
+    yschun: float = 0.0
 
 class Wehr(ClassObject):
     wnam: str
@@ -310,16 +332,20 @@ class ImportTask:
 
     def run(self) -> bool:
         self._init_mappers()
-        self._schaechte()
-        self._schaechte_untersucht()
-        self._untersuchdat_schaechte()
-        self._auslaesse()
-        self._speicher()
-        self._haltungen()
-        self._haltungen_untersucht()
-        self._untersuchdat_haltung()
-        self._wehre()
-        self._pumpen()
+        if getattr(QKan.config.xml, "import_stamm", True):
+            self._schaechte()
+            self._auslaesse()
+            self._speicher()
+            self._haltungen()
+            self._wehre()
+            self._pumpen()
+        if getattr(QKan.config.xml, "import_haus", True):
+            self._anschlussleitungen()
+        if getattr(QKan.config.xml, "import_zustand", True):
+            self._schaechte_untersucht()
+            self._untersuchdat_schaechte()
+            self._haltungen_untersucht()
+            self._untersuchdat_haltung()
 
         return True
 
@@ -1578,6 +1604,219 @@ class ImportTask:
                 " WHERE  untersuchhal= ?",
                 "xml_import untersuchhal [2a]",
                 parameters=(untersuchdat_haltung.film_dateiname, untersuchdat_haltung.untersuchhal),
+            ):
+                return None
+
+        self.db_qkan.commit()
+
+
+    def _anschlussleitungen(self) -> None:
+        def _iter() -> Iterator[Anschlussleitung]:
+            blocks = self.xml.findall(
+                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/d:Kante/d:Leitung/../..",
+                self.NS,
+            )
+            logger.debug(f"Anzahl Anschlussleitungen: {len(blocks)}")
+
+            schoben, schunten, profilnam = ("",) * 3
+            (
+                sohleoben,
+                sohleunten,
+                laenge,
+                hoehe,
+                breite,
+                deckeloben,
+                deckelunten,
+            ) = (0.0,) * 7
+            for block in blocks:
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                # TODO: Does <AbwassertechnischeAnlage> even contain multiple <Kante>?
+                for _haltung in block.findall("d:Kante/d:KantenTyp/..", self.NS):
+                    schoben = _haltung.findtext("d:KnotenZulauf", "not found", self.NS)
+                    schunten = _haltung.findtext("d:KnotenAblauf", "not found", self.NS)
+
+                    sohleoben = _strip_float(
+                        _haltung.findtext("d:SohlhoeheZulauf", 0.0, self.NS)
+                    )
+                    sohleunten = _strip_float(
+                        _haltung.findtext("d:SohlhoeheAblauf", 0.0, self.NS)
+                    )
+                    laenge = _strip_float(_haltung.findtext("d:Laenge", 0.0, self.NS))
+
+                    rohrtyp = _haltung.findtext("d:Material", "not found", self.NS)
+
+                    for profil in _haltung.findall("d:Profil", self.NS):
+                        profilnam = profil.findtext("d:Profilart", "not found", self.NS)
+                        hoehe = (
+                            _strip_float(profil.findtext("d:Profilhoehe", 0.0, self.NS))
+                            / 1000
+                        )
+                        breite = (
+                            _strip_float(profil.findtext("d:Profilbreite", 0.0, self.NS))
+                            / 1000
+                        )
+
+                for _haltung in block.findall(
+                    "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
+                ):
+                    xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                    yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                    deckeloben = _strip_float(
+                        _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                    )
+
+
+                for _haltung in block.findall(
+                    "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
+                ):
+                    xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                    yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                    deckelunten = _strip_float(
+                        _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                    )
+
+                yield Anschlussleitung(
+                    leitnam=name,
+                    schoben=schoben,
+                    schunten=schunten,
+                    hoehe=hoehe,
+                    breite=breite,
+                    laenge=laenge,
+                    rohrtyp=rohrtyp,
+                    sohleoben=sohleoben,
+                    sohleunten=sohleunten,
+                    deckeloben=deckeloben,
+                    deckelunten=deckelunten,
+                    profilnam=profilnam,
+                    entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
+                    ks=1.5,  # in Hydraulikdaten enthalten.
+                    simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
+                    kommentar=block.findtext("d:Kommentar", "-", self.NS),
+                    xschob=xschob,
+                    yschob=yschob,
+                    xschun=xschun,
+                    yschun=yschun,
+                )
+
+        def _iter2() -> Iterator[Anschlussleitung]:
+            blocks = self.xml.findall(
+                "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
+                "d:HydraulikObjekte/d:HydraulikObjekt/d:Leitung/..",
+                self.NS,
+            )
+            logger.debug(f"Anzahl HydraulikObjekte_Anschlussleitung: {len(blocks)}")
+
+            ks = 1.5
+            laenge = 0.0
+            for block in blocks:
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
+                # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
+                for _haltung in block.findall("d:Leitung", self.NS):
+                    cs1 = _haltung.findtext("d:Rauigkeitsansatz", "0", self.NS)
+                    if cs1 == "1":
+                        ks = _strip_float(
+                            _haltung.findtext("d:RauigkeitsbeiwertKb", 0.0, self.NS)
+                        )
+                    elif cs1 == "2":
+                        ks = _strip_float(
+                            _haltung.findtext("d:RauigkeitsbeiwertKst", 0.0, self.NS)
+                        )
+                    else:
+                        ks = 0.0
+                        fehlermeldung(
+                            "Fehler im XML-Import von HydraulikObjekte_Anschlussleitung",
+                            f"Ungültiger Wert für Rauigkeitsansatz {cs1} in Anschlussleitung {name}",
+                        )
+
+                    laenge = _strip_float(
+                        _haltung.findtext("d:Berechnungslaenge", 0.0, self.NS)
+                    )
+
+                yield Anschlussleitung(
+                    leitnam=name,
+                    laenge=laenge,
+                    ks=ks,
+                )
+
+
+        # 1. Teil: Hier werden die Stammdaten zu den anschlussleitung in die Datenbank geschrieben
+        for anschlussleitung in _iter():
+            if str(anschlussleitung.simstatus) in self.mapper_simstatus:
+                simstatus = self.mapper_simstatus[str(anschlussleitung.simstatus)]
+            else:
+                simstatus = f"{anschlussleitung.simstatus}_he"
+                self.mapper_simstatus[str(anschlussleitung.simstatus)] = simstatus
+                if not self.db_qkan.sql(
+                    "INSERT INTO simulationsstatus (he_nr, bezeichnung) VALUES (?, ?)",
+                    "xml_import anschlussleitung [1]",
+                    parameters=(anschlussleitung.simstatus, anschlussleitung.simstatus),
+                ):
+                    return None
+
+            if anschlussleitung.entwart in self.mapper_entwart:
+                entwart = self.mapper_entwart[anschlussleitung.entwart]
+            else:
+                self.mapper_entwart[anschlussleitung.entwart] = anschlussleitung.entwart
+                entwart = anschlussleitung.entwart
+
+                if not self.db_qkan.sql(
+                    "INSERT INTO entwaesserungsarten (kuerzel, bezeichnung) VALUES (?, ?)",
+                    "xml_import anschlussleitung [2]",
+                    parameters=(anschlussleitung.entwart, anschlussleitung.entwart),
+                ):
+                    return None
+
+            sql = f"""
+                INSERT INTO anschlussleitungen_data 
+                    (leitnam, schoben, schunten, 
+                    hoehe, breite, laenge, rohrtyp, sohleoben, sohleunten, deckeloben, deckelunten, 
+                    profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """
+
+            if not self.db_qkan.sql(
+                sql,
+                "xml_import anschlussleitung [3]",
+                parameters=(
+                    anschlussleitung.leitnam,
+                    anschlussleitung.schoben,
+                    anschlussleitung.schunten,
+                    anschlussleitung.hoehe,
+                    anschlussleitung.breite,
+                    anschlussleitung.laenge,
+                    anschlussleitung.rohrtyp,
+                    anschlussleitung.sohleoben,
+                    anschlussleitung.sohleunten,
+                    anschlussleitung.deckeloben,
+                    anschlussleitung.deckelunten,
+                    anschlussleitung.profilnam,
+                    entwart,
+                    anschlussleitung.ks,
+                    simstatus,
+                    anschlussleitung.kommentar,
+                    anschlussleitung.xschob,
+                    anschlussleitung.xschun,
+                    anschlussleitung.yschob,
+                    anschlussleitung.yschun,
+                ),
+            ):
+                return None
+
+        if not self.db_qkan.sql(
+            "UPDATE anschlussleitungen SET geom = geom", "xml_import anschlussleitung [3a]"
+        ):
+            return None
+
+        self.db_qkan.commit()
+
+        for anschlussleitung in _iter2():
+            if not self.db_qkan.sql(
+                "UPDATE anschlussleitungen SET ks = ?, laenge = ? WHERE leitnam = ?",
+                "xml_import anschlussleitung [4]",
+                parameters=(anschlussleitung.ks, anschlussleitung.laenge, anschlussleitung.leitnam),
             ):
                 return None
 

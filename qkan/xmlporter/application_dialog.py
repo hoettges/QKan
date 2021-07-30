@@ -46,6 +46,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     cb_export_haltungen: QCheckBox
     cb_export_pumpen: QCheckBox
     cb_export_wehre: QCheckBox
+    cb_export_anschlussleitungen: QCheckBox
 
     def __init__(
         self,
@@ -73,6 +74,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         )
         self.cb_export_haltungen.setChecked(
             getattr(QKan.config.check_export, "export_haltungen", True)
+        )
+        self.cb_export_anschlussleitungen.setChecked(
+            getattr(QKan.config.check_export, "export_anschlussleitungen", True)
         )
         self.cb_export_pumpen.setChecked(
             getattr(QKan.config.check_export, "export_pumpen", True)
@@ -129,6 +133,10 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
     epsg: QgsProjectionSelectionWidget
 
+    checkBox: QCheckBox
+    checkBox_2: QCheckBox
+    checkBox_3: QCheckBox
+
     def __init__(
         self,
         default_dir: str,
@@ -152,6 +160,18 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         # noinspection PyCallByClass,PyArgumentList
         self.epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
         self.tf_project.setText(QKan.config.project.file)
+
+        self.checkBox.setChecked(
+            getattr(QKan.config.xml, "import_stamm", True)
+        )
+
+        self.checkBox_2.setChecked(
+            getattr(QKan.config.xml, "import_haus", True)
+        )
+
+        self.checkBox_3.setChecked(
+            getattr(QKan.config.xml, "import_zustand", True)
+        )
 
     def select_import(self) -> None:
         # noinspection PyArgumentList,PyCallByClass

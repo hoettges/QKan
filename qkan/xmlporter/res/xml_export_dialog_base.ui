@@ -330,6 +330,27 @@
      <string>Auslässe</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="cb_export_anschlussleitungen">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>20</y>
+      <width>111</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Anschlussleitungen</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
