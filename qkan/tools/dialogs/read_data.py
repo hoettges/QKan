@@ -1,18 +1,17 @@
 import logging
 import os
-import sqlite3
-import time
-from pathlib import Path
 from sqlite3 import Connection
-from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast, Any, Callable
 
-from qgis.core import QgsApplication
+from qgis.core import QgsApplication, QgsProject
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QComboBox, QDialogButtonBox, QPushButton, QWidget
-from qgis.utils import spatialite_connect
+from qgis.PyQt.QtWidgets import QWidget
+from qkan.database.dbfunc import DBConnection
+from qkan.tools.dialogs import QKanDBDialog
+from qgis.core import Qgis
 
+from qkan.database.qkan_utils import fehlermeldung, get_database_QKan, get_qkanlayer_attributes
 from qkan import QKan
-
 from . import QKanDBDialog
 
 if TYPE_CHECKING:
@@ -28,216 +27,191 @@ REQUIRED_FIELDS = {
     "schaechte": ["schnam", "xsch", "ysch", "sohlhoehe"],
     "auslaesse": ["schnam", "xsch", "ysch", "sohlhoehe"],
     "speicher": ["schnam", "xsch", "ysch", "sohlhoehe"],
-    "haltungen": ["haltnam", "xschob", "yschob", "xschun", "yschun"],
-    "pumpen": ["pnam"],
-    "wehre": ["wnam"],
+    "haltungen": ["haltnam", "schoben", "schunten"],
+    "pumpen": ["pnam", "schoben", "schunten"],
+    "wehre": ["wnam", "schoben", "schunten"],
 }
-IMPORT_TYPES = {
-    "schnam": "TEXT",
-    "xsch": "REAL",
-    "ysch": "REAL",
-    "sohlhoehe": "REAL",
-    "xschob": "REAL",
-    "yschob": "REAL",
-    "xschun": "REAL",
-    "yschun": "REAL",
-    "pnam": "TEXT",
-    "wnam": "TEXT",
+
+SCHACHT_TYPES = {
+    "schaechte": "Schacht",
+    "speicher": "Speicher",
+    "auslaesse": "Auslass"
 }
-CF_TEXT = 1
 
-
-class ReadDataDialog(QKanDBDialog, FORM_CLASS_read_data):  # type: ignore
-    button_box: QDialogButtonBox
-    cbLayerAuslaesse: QComboBox
-    cbLayerHaltungen: QComboBox
-    cbLayerPumpen: QComboBox
-    cbLayerSchaechte: QComboBox
-    cbLayerSpeicher: QComboBox
-    cbLayerWehre: QComboBox
-
-    pbPasteAuslaesse: QPushButton
-    pbPasteHaltungen: QPushButton
-    pbPastePumpen: QPushButton
-    pbPasteSchaechte: QPushButton
-    pbPasteSpeicher: QPushButton
-    pbPasteWehre: QPushButton
+class ReadData(QKanDBDialog, FORM_CLASS_read_data):  # type: ignore
 
     def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
-        # Set up the database loader
-        self.tf_qkanDB.textChanged.connect(self.reload_database)
+        self.iface = plugin.iface
 
-        self.other_db: Optional[Connection] = None
-        self.temporary_db: Optional[Connection] = None
+        # Set up the database loader
+        # self.tf_qkanDB.textChanged.connect(self.reload_database)
+
+        self.db_qkan: Optional[Connection] = None
         self.db_name: Optional[str] = None
 
-        self.pbPasteAuslaesse.clicked.connect(lambda: self.read_clipboard("auslaesse"))
-        self.pbPasteHaltungen.clicked.connect(lambda: self.read_clipboard("haltungen"))
-        self.pbPastePumpen.clicked.connect(lambda: self.read_clipboard("pumpen"))
-        self.pbPasteSchaechte.clicked.connect(lambda: self.read_clipboard("schaechte"))
-        self.pbPasteSpeicher.clicked.connect(lambda: self.read_clipboard("speicher"))
-        self.pbPasteWehre.clicked.connect(lambda: self.read_clipboard("wehre"))
+    def connectQKanDB(self, database_qkan=None):
+        """Liest die verknüpfte QKan-DB aus dem geladenen Projekt
+        Für Test muss database_qkan vorgegeben werden
+        """
 
-    def find_compatible_tables(self) -> None:
-        cursors = []
+        # Verbindung zur Datenbank des geladenen Projekts herstellen
+        if database_qkan:
+            self.database_qkan = database_qkan
+        else:
+            self.database_qkan, _ = get_database_QKan()
+        if self.database_qkan:
+            self.db_qkan: DBConnection = DBConnection(dbname=self.database_qkan)
+            if not self.db_qkan.connected:
+                logger.error(
+                    "Fehler in he8porter.application.connectQKanDB:\n"
+                    f"QKan-Datenbank {self.database_qkan:s} wurde nicht"
+                    " gefunden oder war nicht aktuell!\nAbbruch!"
+                )
+                return False
+        else:
+            fehlermeldung("Fehler: Für den Export muss ein Projekt geladen sein!")
+            return False
 
-        if self.other_db:
-            cursors.append(self.other_db.cursor())
-        if self.temporary_db:
-            cursors.append(self.temporary_db.cursor())
-
-        compatible: Dict[str, List[str]] = {_: [] for _ in REQUIRED_FIELDS.keys()}
-
-        for cursor in cursors:
-            # Get all tables
-            cursor.execute(
-                """
-                SELECT name FROM sqlite_master 
-                WHERE type="table" AND name NOT LIKE "sqlite_%";
-                """
-            )
-
-            data = cursor.fetchall()
-            table_names = [_[0] for _ in data]
-
-            # Get all columns
-            table_columns = {}
-            for name in table_names:
-                cursor.execute("SELECT name FROM PRAGMA_TABLE_INFO(?);", (name,))
-                data = cursor.fetchall()
-                table_columns[name] = [_[0] for _ in data]
-
-            # Filter available tables
-            for name, fields in table_columns.items():
-                for table_name, table_fields in REQUIRED_FIELDS.items():
-                    if (
-                        name.startswith("idx_")
-                        or name.startswith("views_")
-                        or name.startswith("virts_")
-                    ):
-                        continue
-                    # Skip table
-                    if any(required not in fields for required in table_fields):
-                        # logger.debug("Skipping %s for %s", name, table_name)
-                        continue
-
-                    compatible.get(table_name, []).append(name)
-
-        # Fill dropdowns
-        for dropdown, layers in compatible.items():
-            target = self.get_target(dropdown)
-            # TODO: Skip dropdowns if they shouldn't be updated
-
-            # Reset dropdown
-            target.clear()
-            target.addItem("--")
-
-            for idx, layer in enumerate(layers):
-                target.addItem(layer)
-                # TODO: Add tooltip
-                # target.setItemData(idx, layer.source(), Qt.ToolTipRole)
-
-        for cursor in cursors:
-            try:
-                cursor.close()
-            except sqlite3.DatabaseError:
-                pass
-
-    def reload_database(self) -> None:
-        db_name = self.tf_qkanDB.text()
-        if not Path(db_name).exists() or db_name == self.db_name:
-            return
-
-        logger.info("Reloading database, switching to %s", db_name)
-
-        if self.other_db:
-            self.other_db.close()
-
-        try:
-            self.other_db = spatialite_connect(
-                database=db_name, check_same_thread=False
-            )
-            self.db_name = db_name
-        except sqlite3.DatabaseError:
-            # TODO: Show tooltip and mark field red
-            logger.exception("Failed to open database")
-            return
-
-        self.find_compatible_tables()
-
-    def get_target(self, name: str) -> QComboBox:
-        return {
-            "auslaesse": self.cbLayerAuslaesse,
-            "schaechte": self.cbLayerSchaechte,
-            "speicher": self.cbLayerSpeicher,
-            "haltungen": self.cbLayerHaltungen,
-            "pumpen": self.cbLayerPumpen,
-            "wehre": self.cbLayerWehre,
-        }[name]
+        # self.export_dlg.connectQKanDB(self.db_qkan)               # deaktiviert jh, 17.04.2021
+        return True
 
     def run(self) -> None:
-        """
-        TODO: Checkbox to list all tables in dropdowns
-        """
-        self.tf_qkanDB.setText(QKan.config.database.qkan)
+        """Immediately run paste procedure"""
 
-        self.show()
-        if self.exec_():
-            # TODO: Write the actual import queries
-            print("Import here")
+        layer = self.iface.activeLayer()
+        if layer is None:
+            self.iface.messageBar().pushMessage(
+                "Bedienerfehler: ",
+                'Kein Layer zum Einfügen der Daten ausgewählt',
+                level=Qgis.Critical,
+            )
+            return
+        datasource = layer.source()
+        dbname, table, geom, sql = get_qkanlayer_attributes(datasource)
+        if REQUIRED_FIELDS.get(table, None):
+            self.connectQKanDB(dbname)
+            self.read_clipboard(table, True)
+        elif layer.providerType() == 'spatialite':
+            self.connectQKanDB(dbname)
+            self.read_clipboard(table, False)
+        else:
+            return
 
-    def read_clipboard(self, table_suffix: str) -> None:
+        self.iface.messageBar().pushMessage(f"Clipboard: ", "Daten wurden in Tabelle {table} eingefügt", level=Qgis.Info)
+
+
+    def convert(self,
+                func: Callable[[Union[str, float, int]], Any],
+                nrow:int,
+                column:str,
+                value:str
+                ) -> Any:
+        """Typkonvertierung mit Fehlermeldung"""
+        try:
+            if isinstance(func(), float):
+                result = float(value.replace(',', '.'))
+            else:
+                result = func(value)
+        except:
+            _type = func.__name__
+            logger.error(f'read_data: Zeile {nrow}, Spalte {column}: {value} entspricht nicht Datentyp ({_type})')
+            result = None
+        return result
+
+    def read_clipboard(self, table_name: str, has_trigger: bool) -> None:
+        """Reads QKan data from clipboard and inserts proper columns into table 'table_name'"""
+        # Fetch data from clipboard
         data = QgsApplication.clipboard().text()
-        parsed_data: List[List[Union[str, float]]] = []
+
         if data:
+            # read data from clipboard
             lines = data.splitlines()
-            if len(lines) == 1:
+            if len(lines) <= 1:
+                return
+            headers = lines[0].split("\t")
+
+            # cursor = self.qkan_db.cursor()
+            # read names and types from qkan table
+            qkan_columntypes = {}
+
+            if not self.db_qkan.sql(
+                    "SELECT name, type FROM PRAGMA_TABLE_INFO(?);",
+                    mute_logger = True,
+                    parameters = (table_name,),
+            ):
+                del self.db_qkan
                 return
 
-            headers = lines[0].split("\t")
-            for header in headers:
-                if header not in IMPORT_TYPES:
-                    continue
+            for column in self.db_qkan.fetchall():
+                name, type = column
+                if name in headers:
+                    # Nur Spalten übernehmen, die auch in den Clipboard-Daten vorkommen
+                    qkan_columntypes[name] = type
 
-            for row, line in enumerate(lines[1:]):
-                parsed_data.append([])
-                x = line.split("\t")
-                for column, value in enumerate(x):
-                    _type = IMPORT_TYPES.get(headers[column], None)
+            # Check required column[ name]s
+            for column in REQUIRED_FIELDS[table_name]:
+                if column in headers:
+                    continue
+                logger.error(f'Notwendige Spalte fehlt: {column}')
+                return
+
+            # parse all data lines
+            parsed_data: List[List[Union[str, float, int]]] = []
+            for nrow, line in enumerate(lines[1:]):
+                parsed_dataset = []
+                values = line.split("\t")
+                if len(values) != len(headers):
+                    fehlermeldung(
+                        "Fehler in den einzufügenden Daten: Spaltenzahl stimmt nicht mit Kopfzeile überein",
+                        line
+                    )
+                    continue
+                for ncol, value in enumerate(values):
+                    column = headers[ncol]
+                    _type = qkan_columntypes.get(column, None)
                     if not _type:
                         continue
+                    if _type.lower() == "integer":
+                        parsed_dataset.append(self.convert(int, nrow, column, value))
+                    if _type.lower() == "real":
+                        parsed_dataset.append(self.convert(float, nrow, column, value))
+                    elif _type.lower() == "text":
+                        # no conversion necessary
+                        parsed_dataset.append(value)
 
-                    if _type == "REAL":
-                        parsed_data[row].append(float(value))
-                    elif _type == "TEXT":
-                        parsed_data[row].append(value)
+                # Schaechte, Speicher und Auslaesse werden in der Tabelle "schaechte" gespeichert,
+                # aber durch "schachttyp" unterschieden
+                if SCHACHT_TYPES.get(table_name, None):
+                    parsed_dataset['schachttyp']=SCHACHT_TYPES[table_name]
+                    if 'schachttyp' not in headers:
+                        headers.append('schachttyp')
 
-            create_types = [
-                f"{header} {IMPORT_TYPES.get(header, 'TEXT')}" for header in headers
-            ]
-
-            table_name = f"temp{int(time.time()) % 10000}_{table_suffix}"
-
-            sql = f"CREATE TABLE {table_name} ({', '.join(create_types)});"
-
-            if not self.temporary_db:
-                self.temporary_db = spatialite_connect(
-                    database=":memory:", check_same_thread=False
-                )
-
-            # Insert table
-            cursor = cast(Connection, self.temporary_db).cursor()
-            cursor.execute(sql)
+                parsed_data.append(parsed_dataset)
 
             # Insert table data
+            # Replace table_name for 'Auslass', 'Speicher' (listed in SCHACHT_TYPES)
+            if SCHACHT_TYPES.get(table_name, None):
+                tabnam = 'schaechte_data'
+            elif has_trigger:
+                tabnam = table_name + '_data'
+            else:
+                tabnam = table_name
+
             for values in parsed_data:
-                cursor.execute(
-                    f"INSERT INTO {table_name} VALUES ({', '.join(['?'] * len(create_types))})",
-                    values,
-                )
+                sql = f"INSERT INTO {tabnam} ({', '.join(headers)}) VALUES ({', '.join(['?'] * len(headers))})"
+                if not self.db_qkan.sql(
+                    sql,
+                    mute_logger = True,
+                    parameters = values,
+                ):
+                    del self.db_qkan
+                    return
 
-            cursor.close()
+            self.db_qkan.commit()
+            del self.db_qkan
 
-            self.find_compatible_tables()
+            # Redraw map
+            project = QgsProject.instance()
+            project.reloadAllLayers()

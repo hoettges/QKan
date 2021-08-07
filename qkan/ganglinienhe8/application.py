@@ -41,6 +41,7 @@ from .Enums import LayerType, SliderMode, Type
 from .ganglinie8 import Ganglinie8
 
 # Initialize Qt resources from file resources.py
+from . import resources  # isort:skip
 
 main_logger = logging.getLogger("QKan.ganglinienhe8.application.main")
 main_logger.info("Application-Modul gestartet")

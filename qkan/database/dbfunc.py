@@ -491,7 +491,7 @@ class DBConnection:
         data = self.fetchall()
         attr_dict_geo = dict(
             [
-                (el[0], f"'{el[0]}', {el[2]}, '{geo_type[el[1]]}', {el[3]}")
+                (el[0], [el[0], el[2], geo_type[el[1]], el[3]])
                 for el in data
             ]
         )
@@ -544,12 +544,12 @@ class DBConnection:
             return False
 
         # 1. Transaktion starten
-        if not self.sql(
-            "BEGIN TRANSACTION;",
-            "dbfunc.DBConnection.alter_table (4)",
-            transaction=False,
-        ):
-            return False
+        # if not self.sql(
+            # "BEGIN TRANSACTION;",
+            # "dbfunc.DBConnection.alter_table (4)",
+            # transaction=False,
+        # ):
+            # return False
 
         # 2. Indizes und Trigger speichern
         sql = """SELECT type, sql 
@@ -571,10 +571,11 @@ class DBConnection:
 
         # 2.2. Geo-Attribute in Tabelle ergänzen
         for attr in attr_set_geo:
+            gnam, epsg, geotype, nccords = attr_dict_geo[attr]
             if not self.sql(
-                "SELECT AddGeometryColumn('{tabnam}_t', ?)",
+                "SELECT AddGeometryColumn(?, ?, ?, ?, ?)",
                 "dbfunc.DBConnection.alter_table (7)",
-                parameters=(attr_dict_geo[attr],),
+                parameters=(f'{tabnam}_t', gnam, epsg, geotype, nccords),
                 transaction=False,
             ):
                 return False
@@ -616,10 +617,11 @@ class DBConnection:
 
         # 6.2. Geo-Attribute in Tabelle ergänzen und Indizes erstellen
         for attr in attr_set_geo:
+            gnam, epsg, geotype, nccords = attr_dict_geo[attr]
             if not self.sql(
-                "SELECT AddGeometryColumn(?, ?)",
+                "SELECT AddGeometryColumn(?, ?, ?, ?, ?)",
                 "dbfunc.DBConnection.alter_table (13)",
-                parameters=(tabnam, attr_dict_geo[attr]),
+                parameters=(tabnam, gnam, epsg, geotype, nccords),
                 transaction=False,
             ):
                 return False

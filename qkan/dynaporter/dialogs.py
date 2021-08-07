@@ -77,6 +77,8 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
     def __init__(self, plugin: "DynaPorter", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
+        self.iface = QKan.instance.iface
+
         self.db_qkan: Optional[DBConnection] = None
 
         self.button_box.helpRequested.connect(click_help)

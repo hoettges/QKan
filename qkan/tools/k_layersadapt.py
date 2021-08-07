@@ -33,9 +33,9 @@ from qgis.core import (
     QgsProject,
     QgsVectorLayer,
 )
-from qgis.utils import iface, pluginDirectory
+from qgis.utils import pluginDirectory
 
-from qkan import enums
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_database import qgs_actual_version, qgs_version
 from qkan.database.qkan_utils import (
@@ -90,6 +90,8 @@ def layersadapt(
 
     # -----------------------------------------------------------------------------------------------------
     # Datenbankverbindungen
+
+    iface = QKan.instance.iface
 
     dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank
 

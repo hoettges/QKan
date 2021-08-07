@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>589</width>
+    <width>581</width>
     <height>444</height>
    </rect>
   </property>
@@ -21,9 +21,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>170</x>
+     <x>220</x>
      <y>390</y>
-     <width>251</width>
+     <width>81</width>
      <height>32</height>
     </rect>
    </property>
@@ -41,7 +41,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Close</set>
    </property>
   </widget>
   <widget class="QGroupBox" name="groupBox_3">
@@ -135,9 +135,9 @@
   <widget class="QGroupBox" name="groupBox_4">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>60</x>
      <y>130</y>
-     <width>541</width>
+     <width>191</width>
      <height>241</height>
     </rect>
    </property>
@@ -151,7 +151,7 @@
     <string comment="Pfade der Import- und Exportdatenbank"/>
    </property>
    <property name="title">
-    <string>Zu importierende Tabellen</string>
+    <string>Spaltennamen kopieren</string>
    </property>
    <property name="flat">
     <bool>false</bool>
@@ -159,22 +159,6 @@
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <widget class="QComboBox" name="cbLayerSchaechte">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>30</y>
-      <width>351</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zu importierende Tabelle auswählen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Zu importierende Tabelle auswählen ...</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="lbSchaechte">
     <property name="geometry">
      <rect>
@@ -189,47 +173,6 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pbPasteSchaechte">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>30</y>
-      <width>51</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schachtdaten aus Clipboard übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Schachtdaten aus Clipboard übernehmen</string>
-    </property>
-    <property name="text">
-     <string>Paste</string>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
-    </property>
-    <property name="flat">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbLayerAuslaesse">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>60</y>
-      <width>351</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zu importierende Tabelle auswählen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Zu importierende Tabelle auswählen ...</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbSchaechte_2">
@@ -264,38 +207,6 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QComboBox" name="cbLayerSpeicher">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>90</y>
-      <width>351</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zu importierende Tabelle auswählen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Zu importierende Tabelle auswählen ...</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbLayerHaltungen">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>140</y>
-      <width>351</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zu importierende Tabelle auswählen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Zu importierende Tabelle auswählen ...</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="lbSchaechte_4">
     <property name="geometry">
      <rect>
@@ -310,22 +221,6 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbLayerPumpen">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>170</y>
-      <width>351</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zu importierende Tabelle auswählen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Zu importierende Tabelle auswählen ...</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbSchaechte_5">
@@ -360,26 +255,110 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QComboBox" name="cbLayerWehre">
+   <widget class="QPushButton" name="pbCopyWehre">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>110</x>
       <y>200</y>
-      <width>351</width>
+      <width>51</width>
       <height>21</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zu importierende Tabelle auswählen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wehrdaten aus Clipboard übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Zu importierende Tabelle auswählen ...</string>
+     <string>Wehrdaten aus Clipboard übernehmen</string>
+    </property>
+    <property name="text">
+     <string>Copy</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pbPasteAuslaesse">
+   <widget class="QPushButton" name="pbCopySpeicher">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>110</x>
+      <y>90</y>
+      <width>51</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Speicherdaten aus Clipboard übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Speicherdaten aus Clipboard übernehmen</string>
+    </property>
+    <property name="text">
+     <string>Copy</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbCopyHaltungen">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>140</y>
+      <width>51</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Haltungsdaten aus Clipboard übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Haltungsdaten aus Clipboard übernehmen</string>
+    </property>
+    <property name="text">
+     <string>Copy</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbCopyPumpen">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>170</y>
+      <width>51</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pumpendaten aus Clipboard übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Pumpendaten aus Clipboard übernehmen</string>
+    </property>
+    <property name="text">
+     <string>Copy</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbCopyAuslaesse">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
       <y>60</y>
       <width>51</width>
       <height>21</height>
@@ -390,6 +369,205 @@
     </property>
     <property name="statusTip">
      <string>Auslassdaten aus Clipboard übernehmen</string>
+    </property>
+    <property name="text">
+     <string>Copy</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbCopySchaechte">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>30</y>
+      <width>51</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schachtdaten aus Clipboard übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Schachtdaten aus Clipboard übernehmen</string>
+    </property>
+    <property name="text">
+     <string>Copy</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_5">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>130</y>
+     <width>241</width>
+     <height>241</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string comment="Pfade der Import- und Exportdatenbank"/>
+   </property>
+   <property name="title">
+    <string>Tabellendaten aus Clipboard einfügen</string>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <widget class="QLabel" name="lbSchaechte_7">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Schächte:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbSchaechte_8">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Auslässe:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbSchaechte_9">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Speicher:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbSchaechte_10">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>140</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Haltungen:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbSchaechte_11">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>170</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Pumpen:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbSchaechte_12">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>200</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Wehre:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbPasteSchaechte">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>30</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schachtdaten aus Clipboard übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Schachtdaten aus Clipboard übernehmen</string>
+    </property>
+    <property name="text">
+     <string>Paste</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbPasteWehre">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>200</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wehrdaten aus Clipboard übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Wehrdaten aus Clipboard übernehmen</string>
     </property>
     <property name="text">
      <string>Paste</string>
@@ -404,9 +582,9 @@
    <widget class="QPushButton" name="pbPasteSpeicher">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>100</x>
       <y>90</y>
-      <width>51</width>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -429,9 +607,9 @@
    <widget class="QPushButton" name="pbPasteHaltungen">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>100</x>
       <y>140</y>
-      <width>51</width>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -454,9 +632,9 @@
    <widget class="QPushButton" name="pbPastePumpen">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>100</x>
       <y>170</y>
-      <width>51</width>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -476,20 +654,20 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pbPasteWehre">
+   <widget class="QPushButton" name="pbPasteAuslaesse">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>200</y>
-      <width>51</width>
+      <x>100</x>
+      <y>60</y>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wehrdaten aus Clipboard übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auslassdaten aus Clipboard übernehmen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>Wehrdaten aus Clipboard übernehmen</string>
+     <string>Auslassdaten aus Clipboard übernehmen</string>
     </property>
     <property name="text">
      <string>Paste</string>

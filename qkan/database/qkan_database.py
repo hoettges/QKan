@@ -34,9 +34,10 @@ from sqlite3.dbapi2 import Connection, Cursor
 from qgis.core import Qgis, QgsProject
 from qgis.PyQt import Qt
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.utils import iface, spatialite_connect
+from qgis.utils import spatialite_connect
 
 from .qkan_utils import fehlermeldung, fortschritt, meldung
+from qkan import QKan
 
 logger = logging.getLogger("QKan.database.qkan_database")
 
@@ -59,6 +60,8 @@ def qgs_actual_version(update: bool = True, warning: bool = False) -> bool:
     Prüft im Vergleich zur Version der QKan-Datenbank, ob das geladene Projekt die gleiche oder höhere
     Versionsnummer aufweist.
     """
+
+    iface = QKan.instance.iface
 
     layers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
     if len(layers) == 0 and warning:
@@ -2009,6 +2012,7 @@ def createdbtables(
     neigkl INTEGER DEFAULT 1,   -- Werte [1-5], als Vorgabe fuer automatisch erzeugte unbef Flaechen
     neigung REAL,               -- absolute Neigung (%)
     befgrad REAL,               -- (-) Befestigungsgrad absolut, nur optional fuer SWMM und HE6
+    schwerpunktlaufzeit REAL,   -- nur, wenn nur Haltungsflächen aber keine Flächen eingelesen werden
     regenschreiber TEXT,        -- Regenschreiber beziehen sich auf Zieldaten
     teilgebiet TEXT,
     abflussparameter TEXT,      -- als Vorgabe fuer automatisch erzeugte unbef Flaechen
@@ -2888,6 +2892,9 @@ def createdbtables(
 # ----------------------------------------------------------------------------------------------------------------------
 def test() -> None:
     # Verzeichnis der Testdaten
+
+    iface = QKan.instance.iface
+
     pfad = "C:/FHAC/jupiter/hoettges/team_data/Kanalprogramme/k_qkan/k_heqk/beispiele/modelldb_itwh"
     database_qkan = os.path.join(pfad, "test1.sqlite")
 

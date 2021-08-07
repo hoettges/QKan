@@ -27,7 +27,7 @@ from .dialogs.empty_db import EmptyDBDialog
 from .dialogs.layersadapt import LayersAdaptDialog
 from .dialogs.qgsadapt import QgsAdaptDialog
 from .dialogs.qkanoptions import QKanOptionsDialog
-from .dialogs.read_data import ReadDataDialog
+from .dialogs.read_data import ReadData
 from .dialogs.runoffparams import RunoffParamsDialog
 from .k_dbAdapt import dbAdapt
 from .k_layersadapt import layersadapt
@@ -47,8 +47,8 @@ class QKanTools(QKanPlugin):
         self.dlgop = QKanOptionsDialog(self)
         self.dlgpr = QgsAdaptDialog(self)
         self.dlgro = RunoffParamsDialog(self)
-        self.dlgedb = EmptyDBDialog(self)
-        self.dlgrd = ReadDataDialog(self)
+        self.dlged = EmptyDBDialog(self)
+        self.dlgrd = ReadData(self)
         self.dlgdb = DbAdaptDialog(self)
 
     # noinspection PyPep8Naming
@@ -92,7 +92,7 @@ class QKanTools(QKanPlugin):
         QKan.instance.add_action(
             icon_emptyDB_path,
             text=self.tr("Neue QKan-Datenbank erstellen"),
-            callback=self.dlgedb.run,
+            callback=self.dlged.run,
             parent=self.iface.mainWindow(),
         )
 
@@ -101,6 +101,7 @@ class QKanTools(QKanPlugin):
             icon_readData_path,
             text=self.tr("Tabellen importieren"),
             callback=self.dlgrd.run,
+            parent=self.iface.mainWindow(),
         )
         icon_dbAdapt_path = ":/plugins/qkan/tools/res/icon_dbAdapt.png"
         QKan.instance.add_action(
@@ -115,7 +116,7 @@ class QKanTools(QKanPlugin):
         self.dlgop.close()
         self.dlgpr.close()
         self.dlgro.close()
-        self.dlgedb.close()
+        self.dlged.close()
         self.dlgrd.close()
         self.dlgdb.close()
 
