@@ -1,27 +1,18 @@
 import logging
-import os
 from sqlite3 import Connection
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast, Any, Callable
 
 from qgis.core import QgsApplication, QgsProject
-from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget
 from qkan.database.dbfunc import DBConnection
-from qkan.tools.dialogs import QKanDBDialog
 from qgis.core import Qgis
 
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan, get_qkanlayer_attributes
-from qkan import QKan
-from . import QKanDBDialog
 
 if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
 
 logger = logging.getLogger("QKan.tools.dialogs.read_data")
-
-FORM_CLASS_read_data, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), "..", "res", "application_readData.ui")
-)
 
 REQUIRED_FIELDS = {
     "schaechte": ["schnam", "xsch", "ysch", "sohlhoehe"],
@@ -38,10 +29,11 @@ SCHACHT_TYPES = {
     "auslaesse": "Auslass"
 }
 
-class ReadData(QKanDBDialog, FORM_CLASS_read_data):  # type: ignore
+
+class ReadData():  # type: ignore
 
     def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
-        super().__init__(plugin, parent)
+        super().__init__()
 
         self.iface = plugin.iface
 
@@ -88,6 +80,14 @@ class ReadData(QKanDBDialog, FORM_CLASS_read_data):  # type: ignore
                 level=Qgis.Critical,
             )
             return
+        elif layer.isEditable():
+            self.iface.messageBar().pushMessage(
+                "Bedienerfehler: ",
+                'Der gewählte Layer darf nicht im Bearbeitungsstatus "editierbar" sein',
+                level=Qgis.Critical,
+            )
+            return
+
         datasource = layer.source()
         dbname, table, geom, sql = get_qkanlayer_attributes(datasource)
         if REQUIRED_FIELDS.get(table, None):
@@ -99,7 +99,7 @@ class ReadData(QKanDBDialog, FORM_CLASS_read_data):  # type: ignore
         else:
             return
 
-        self.iface.messageBar().pushMessage(f"Clipboard: ", "Daten wurden in Tabelle {table} eingefügt", level=Qgis.Info)
+        self.iface.messageBar().pushMessage("Clipboard: ", f"Daten wurden in Tabelle {table} eingefügt", level=Qgis.Info)
 
 
     def convert(self,
