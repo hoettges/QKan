@@ -102,15 +102,14 @@ class QKan:
 
         from .createunbeffl import CreateUnbefFl
         from .dynaporter import DynaPorter
-
-        # from .xmlporter import XmlPorter
-        from .ganglinienhe8 import GanglinienHE8
         from .he8porter import He8Porter
         from .linkflaechen import LinkFl
         from .muporter import MuPorter
         from .surfaceTools import SurfaceTools
         from .swmmporter import ImportFromSWMM
         from .tools import QKanTools
+        from .xmlporter import XmlPorter
+        from .ganglinienhe8 import GanglinienHE8
 
         self.plugins: List = [
             CreateUnbefFl(iface),
@@ -121,7 +120,7 @@ class QKan:
             SurfaceTools(iface),
             ImportFromSWMM(iface),
             QKanTools(iface),
-            # XmlPorter(iface),
+            XmlPorter(iface),
             GanglinienHE8(iface),
         ]
 

@@ -3,7 +3,6 @@ from pathlib import Path
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
-
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
@@ -74,6 +73,9 @@ class XmlPorter(QKanPlugin):
             QKan.config.check_export.export_haltungen = (
                 self.export_dlg.cb_export_haltungen.isChecked()
             )
+            QKan.config.check_export.export_anschlussleitungen = (
+                self.export_dlg.cb_export_anschlussleitungen.isChecked()
+            )
             QKan.config.check_export.export_pumpen = (
                 self.export_dlg.cb_export_pumpen.isChecked()
             )
@@ -108,7 +110,22 @@ class XmlPorter(QKanPlugin):
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()
             QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
-            QKan.config.xml.ordner = self.import_dlg.tf_import_2.text()
+            QKan.config.xml.ordner_bilder = self.import_dlg.tf_import_2.text()
+            QKan.config.xml.ordner_video = self.import_dlg.tf_import_3.text()
+
+            QKan.config.xml.import_stamm = (
+                self.import_dlg.checkBox.isChecked()
+            )
+
+            QKan.config.xml.import_haus = (
+                self.import_dlg.checkBox_2.isChecked()
+            )
+
+            QKan.config.xml.import_zustand = (
+                self.import_dlg.checkBox_3.isChecked()
+            )
+
+            QKan.config.save()
 
             QKan.config.xml.import_file = self.import_dlg.tf_import.text()
             if not QKan.config.xml.import_file:
@@ -147,16 +164,20 @@ class XmlPorter(QKanPlugin):
 
                     self._doimport()
 
+
     def _doimport(self) -> bool:
         """Start des Import aus einer ISYBAU-XML-Datei
 
         Einspringpunkt für Test
         """
         QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
-        QKan.config.xml.ordner = self.import_dlg.tf_import_2.text()
+        QKan.config.xml.ordner_bild = self.import_dlg.tf_import_2.text()
+        QKan.config.xml.ordner_video = self.import_dlg.tf_import_3.text()
 
         self.log.info("Creating DB")
-        db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
+        db_qkan = DBConnection(
+            dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
+        )
 
         if not db_qkan:
             fehlermeldung(
@@ -171,12 +192,7 @@ class XmlPorter(QKanPlugin):
             return False
 
         self.log.info("DB creation finished, starting importer")
-        imp = ImportTask(
-            db_qkan,
-            QKan.config.xml.import_file,
-            QKan.config.xml.richt_choice,
-            QKan.config.xml.ordner,
-        )
+        imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice, QKan.config.xml.ordner_bild, QKan.config.xml.ordner_video )
         imp.run()
 
         QKan.config.project.template = str(

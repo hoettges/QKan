@@ -145,6 +145,7 @@ class CheckExport(ClassObject):
     auslaesse: bool = True
     speicher: bool = True
     haltungen: bool = True
+    anschlussleitungen: bool = True
     pumpen: bool = True
     wehre: bool = True
     flaechen: bool = True
@@ -338,8 +339,12 @@ class XmlConfig(ClassObject):
     export_file: str = ""
     import_file: str = ""
     richt_choice: str = ""
-    ordner: str = ""
+    ordner_bild: str = ""
+    ordner_video: str = ""
     # init_database: bool = True
+    import_stamm: bool = True
+    import_haus: bool = True
+    import_zustand: bool = True
 
 
 class Config(ClassObject):
