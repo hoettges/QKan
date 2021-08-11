@@ -157,12 +157,21 @@ class ReadData():  # type: ignore
                 logger.error(f'Notwendige Spalte fehlt: {column}')
                 return
 
+            # Schaechte, Speicher und Auslaesse werden in der Tabelle "schaechte" gespeichert,
+            # aber durch "schachttyp" unterschieden
+            schtyp_added = False                    # Spalte 'schachttyp' wurde hinzugefügt. Default: falsch
+            if SCHACHT_TYPES.get(table_name, None):
+                if 'schachttyp' not in headers:
+                    headers.append('schachttyp')
+                    schtyp_added = True
+
             # parse all data lines
             parsed_data: List[List[Union[str, float, int]]] = []
             for nrow, line in enumerate(lines[1:]):
                 parsed_dataset = []
                 values = line.split("\t")
-                if len(values) != len(headers):
+                if ((len(values) != len(headers) and not schtyp_added) or
+                    (len(values) + 1 != len(headers) and schtyp_added)):
                     fehlermeldung(
                         "Fehler in den einzufügenden Daten: Spaltenzahl stimmt nicht mit Kopfzeile überein",
                         line
@@ -181,12 +190,14 @@ class ReadData():  # type: ignore
                         # no conversion necessary
                         parsed_dataset.append(value)
 
-                # Schaechte, Speicher und Auslaesse werden in der Tabelle "schaechte" gespeichert,
-                # aber durch "schachttyp" unterschieden
+                # Falls Spalte 'schachttyp' ergänzt wurde (s.o.)
+                if schtyp_added:
+                    parsed_dataset.append(SCHACHT_TYPES[table_name])
+
                 if SCHACHT_TYPES.get(table_name, None):
-                    parsed_dataset['schachttyp']=SCHACHT_TYPES[table_name]
-                    if 'schachttyp' not in headers:
-                        headers.append('schachttyp')
+                    if 'durchm' in headers:
+                        if parsed_dataset[headers.index('durchm')] > 10.:
+                            parsed_dataset[headers.index('durchm')] /= 1000.
 
                 parsed_data.append(parsed_dataset)
 

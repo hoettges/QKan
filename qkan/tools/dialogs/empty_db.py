@@ -23,7 +23,7 @@ FORM_CLASS_empty_db, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "..", "res", "application_emptyDB.ui")
 )
 
-LOGGER = logging.getLogger("QKan.tools.dialogs.empty_db")
+logger = logging.getLogger("QKan.tools.dialogs.empty_db")
 
 
 def create_project(
@@ -54,6 +54,8 @@ def create_project(
     # Template project should be created
     template_project = Path(pluginDirectory("qkan")) / "templates" / "projekt.qgs"
 
+    logger.debug(f'empty_db(11), template_project= {template_project}')
+
     # Replace db path with relative path if the same output folder is used
     data_source = str(db_path.absolute())
     if db_path.parent.absolute() == project_path.parent.absolute():
@@ -61,6 +63,8 @@ def create_project(
 
     qgs_xml = ElementTree.parse(template_project)
     root = qgs_xml.getroot()
+
+    logger.debug(f'empty_db(12)')
 
     for tag_layer in root.findall(".//projectlayers/maplayer"):
         # Ignore unrelated tables
@@ -95,39 +99,39 @@ def create_project(
                     spatialrefsys, "ellipsoidacronym"
                 ).text = ellipsoid_acronym
 
-        # Replace path to forms
-        form_path = Path(pluginDirectory("qkan")) / "forms"
-        for maplayer in root.findall(".//projectlayers/maplayer"):
-            editform = maplayer.find("./editform")
+    # Replace path to forms
+    form_path = Path(pluginDirectory("qkan")) / "forms"
+    for maplayer in root.findall(".//projectlayers/maplayer"):
+        editform = maplayer.find("./editform")
 
-            if editform is not None and editform.text:
-                file_name = Path(editform.text).stem
+        if editform is not None and editform.text:
+            file_name = Path(editform.text).stem
 
-                # Ignore non-QKAN forms
-                if file_name not in QKAN_FORMS:
-                    continue
+            # Ignore non-QKAN forms
+            if file_name not in QKAN_FORMS:
+                continue
 
-                editform.text = str(form_path / file_name)
+            editform.text = str(form_path / file_name)
 
-        # Reset zoom
-        if len(zoom) == 0 or any([x is None for x in zoom]):
-            zoom = [0.0, 100.0, 0.0, 100.0]
-        for extent in root.findall(".//mapcanvas/extent"):
-            for idx, name in enumerate(["xmin", "ymin", "xmax", "ymax"]):
-                element = extent.find(f"./{name}")
-                if element is not None:
-                    element.text = "{:.3f}".format(zoom[idx])
+    # Reset zoom
+    if len(zoom) == 0 or any([x is None for x in zoom]):
+        zoom = [0.0, 100.0, 0.0, 100.0]
+    for extent in root.findall(".//mapcanvas/extent"):
+        for idx, name in enumerate(["xmin", "ymin", "xmax", "ymax"]):
+            element = extent.find(f"./{name}")
+            if element is not None:
+                element.text = "{:.3f}".format(zoom[idx])
 
-        # Set path to database
-        for datasource in root.findall(".//projectlayers/maplayer/datasource"):
-            text = datasource.text or ""
-            datasource.text = (
-                "dbname='" + data_source + "' " + text[text.find("table=") :]
-            )
+    # Set path to database
+    for datasource in root.findall(".//projectlayers/maplayer/datasource"):
+        text = datasource.text or ""
+        datasource.text = (
+            "dbname='" + data_source + "' " + text[text.find("table=") :]
+        )
 
-        # Write modified project file
-        qgs_xml.write(str(project_path))
-        LOGGER.debug("Created project file %s", project_path)
+    # Write modified project file
+    qgs_xml.write(str(project_path))
+    logger.debug("Created project file %s", project_path)
 
 
 class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):  # type: ignore
@@ -153,13 +157,19 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):  # ty
 
             db_qkan = DBConnection(dbname=self.tf_qkanDB.text(), epsg=QKan.config.epsg)
 
+            logger.debug('empty_db(1)')
+
             if not db_qkan.connected:
                 fehlermeldung("Fehler beim Erstellen der Datenbank:\n")
                 return
 
+            logger.debug('empty_db(2)')
+
             if self.tf_projectFile.text() == "":
                 del db_qkan
                 return
+
+            logger.debug('empty_db(3)')
 
             # Grab srid
             if not db_qkan.sql(
@@ -174,6 +184,8 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):  # ty
                 srid = 0
             else:
                 srid = db_qkan.fetchone()[0]
+
+            logger.debug('empty_db(4)')
 
             # Grab zoom states
             if not db_qkan.sql(
@@ -190,8 +202,7 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):  # ty
             else:
                 zoom = db_qkan.fetchone()
 
-            # Close database
-            del db_qkan
+            logger.debug(f'empty_db(5): project_file={project_file}')
 
             # Create project file
             create_project(
@@ -200,6 +211,13 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):  # ty
                 srid,
                 zoom,
             )
+
+            logger.debug('empty_db(6)')
+
+            # Close database
+            del db_qkan
+
+            logger.debug('empty_db(7)')
 
             # Load project
             # noinspection PyArgumentList

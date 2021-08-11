@@ -10,7 +10,7 @@
 name=QKan
 qgisMinimumVersion=3.4.1
 description=Gruppe der QKan-Erweiterung(en)
-version=3.2.12
+version=3.2.13
 author=Jörg Höttges, Leon Ochsenfeld, Yannick Linke/FH Aachen
 email=hoettges@fh-aachen.de
 
