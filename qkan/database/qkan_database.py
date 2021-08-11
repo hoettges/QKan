@@ -277,30 +277,6 @@ def createdbtables(
         consl.close()
         return False
 
-    # sql = """-- Haltungsgeoobjekt anlegen beim Einfügen neuer Datensätze aus Schachtobjekten
-    #     CREATE TRIGGER IF NOT EXISTS create_missing_geoobject_haltungen
-    #         AFTER INSERT ON haltungen FOR EACH ROW
-    #     WHEN
-    #         new.geom IS NULL
-    #     BEGIN
-    #         UPDATE haltungen SET geom =
-    #         (   SELECT MakeLine(schob.geop, schun.geop)
-    #             FROM schaechte AS schob,
-    #                  schaechte AS schun
-    #             WHERE schob.schnam = new.schoben AND
-    #                   schun.schnam = new.schunten)
-    #         WHERE haltungen.pk = new.pk;
-    #     END;"""
-    # try:
-    #     cursl.execute(sql)
-    # except BaseException as err:
-    #     fehlermeldung(
-    #         "qkan_database.createdbtables: {}".format(err),
-    #         'In der Tabelle "Haltungen" konnte ein Trigger nicht angelegt werden.',
-    #     )
-    #     consl.close()
-    #     return False
-
     consl.commit()
 
     # Haltungen_untersucht ----------------------------------------------------------------
@@ -1134,59 +1110,15 @@ def createdbtables(
                        kommentar, createdat, 
                        geop, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag)
                     SELECT
-                      new.schnam, 
+                      new.schnam,
                       CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
                       new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
                       sch.geop,
                       new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
                     FROM
-                        schaechte AS sch
-                        WHERE sch.schnam = new.schnam;
+                      schaechte AS sch
+                      WHERE sch.schnam = new.schnam;
                   END"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "schaechte_untersucht" konnte ein Trigger nicht angelegt werden.',
-        )
-        consl.close()
-        return False
-
-    consl.commit()
-
-    sql = f"""CREATE VIEW IF NOT EXISTS schaechte_untersucht_data AS 
-                      SELECT
-                        schnam, durchm, 
-                        kommentar, createdat, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag
-                      FROM schaechte_untersucht;"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'View "schaechte_untersucht_data" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = f"""CREATE TRIGGER IF NOT EXISTS schaechte_untersucht_insert_clipboard
-                        INSTEAD OF INSERT ON schaechte_untersucht_data FOR EACH ROW
-                      BEGIN
-                        INSERT INTO schaechte_untersucht
-                          (schnam, durchm,  
-                           kommentar, createdat, 
-                           geop, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag)
-                        SELECT
-                          new.schnam,
-                          CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
-                          new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
-                          sch.geop,
-                          new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
-                        FROM
-                        schaechte AS sch
-                        WHERE sch.schnam = new.schnam;
-                      END"""
     try:
         cursl.execute(sql)
     except BaseException as err:
