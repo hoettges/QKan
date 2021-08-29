@@ -357,10 +357,9 @@ class LinkFl(QKanPlugin):
                 del self.db_qkan
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
-            layers = self.iface.layerTreeCanvasBridge().rootGroup().findLayers()
-            if "Anbindungen Flächen" not in [
-                lay.name() for lay in layers
-            ]:  # layers wurde oben erstellt
+            project = QgsProject.instance()
+            layers = project.mapLayersByName("Anbindungen Flächen")
+            if not layers:
                 uri = QgsDataSourceUri()
                 uri.setDatabase(database_qkan)
                 uri.setDataSource("", "linkfl", "glink")
@@ -370,7 +369,11 @@ class LinkFl(QKanPlugin):
                     enums.QKanDBChoice.SPATIALITE.value,
                 )
                 # noinspection PyArgumentList
-                QgsProject.instance().addMapLayer(vlayer)
+                project.addMapLayer(vlayer)
+            else:
+                for lay in layers:
+                    # Sollte eigentlich nur einer sein, ist aber egal...
+                    project.layerTreeRoot().findLayer(lay.id()).setItemVisibilityCheckedParentRecursive(True)
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
@@ -513,10 +516,9 @@ class LinkFl(QKanPlugin):
                 return
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
-            layers = self.iface.layerTreeCanvasBridge().rootGroup().findLayers()
-            if "Anbindungen Direkteinleitungen" not in [
-                lay.name() for lay in layers
-            ]:  # layers wurde oben erstellt
+            project = QgsProject.instance()
+            layers = project.mapLayersByName("Anbindungen Direkteinleitungen")
+            if not layers:
                 uri = QgsDataSourceUri()
                 uri.setDatabase(database_qkan)
                 uri.setDataSource("", "linksw", "glink")
@@ -526,7 +528,12 @@ class LinkFl(QKanPlugin):
                     enums.QKanDBChoice.SPATIALITE.value,
                 )
                 # noinspection PyArgumentList
-                QgsProject.instance().addMapLayer(vlayer)
+                project.addMapLayer(vlayer)
+            else:
+                for lay in layers:
+                    # Sollte eigentlich nur einer sein, ist aber egal...
+                    project.layerTreeRoot().findLayer(lay.id()).setItemVisibilityCheckedParentRecursive(True)
+
 
         # --------------------------------------------------------------------------
         # Datenbankverbindungen schliessen
