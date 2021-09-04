@@ -99,7 +99,7 @@ class QKanTools(QKanPlugin):
         icon_readData_path = ":/plugins/qkan/tools/res/icon_readData.png"
         QKan.instance.add_action(
             icon_readData_path,
-            text=self.tr("Tabellen importieren"),
+            text=self.tr("Tabellendaten aus Clipboard einfügen"),
             callback=self.dlgrd.run,
             parent=self.iface.mainWindow(),
         )
@@ -117,7 +117,7 @@ class QKanTools(QKanPlugin):
         self.dlgpr.close()
         self.dlgro.close()
         self.dlged.close()
-        self.dlgrd.close()
+        # self.dlgrd.close()                    # doesn't use a form
         self.dlgdb.close()
 
     def run_qgsadapt(self) -> None:

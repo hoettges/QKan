@@ -324,6 +324,99 @@ class ToolsConfig(ClassObject):
         def __str__(self) -> str:
             return "<RunoffParams *hidden in __str__*>"
 
+    class Clipboard(ClassObject):
+        """Patterns for replacing column names with the QKan database names"""
+
+        # 1. required fields,
+        # 2. triggered table '*_data' instead, except [auslaesse, speicher]
+        required_fields = {
+            "schaechte": ["schnam", "xsch", "ysch", "sohlhoehe"],
+            "auslaesse": ["schnam", "xsch", "ysch", "sohlhoehe"],
+            "speicher": ["schnam", "xsch", "ysch", "sohlhoehe"],
+            "haltungen": ["haltnam", "schoben", "schunten"],
+            "pumpen": ["pnam", "schoben", "schunten"],
+            "wehre": ["wnam", "schoben", "schunten"],
+        }
+
+        # Layer names with data source table 'schaechte'
+        schacht_types = {
+            "Schächte": "Schacht",
+            "Knotenpunkte": "Schacht",
+            "Knotentyp": "Schacht",
+            "Speicher": "Speicher",
+            "Auslässe": "Auslass",
+        }
+
+        qkan_patterns = {
+            'schaechte': {
+                'schnam': ['schna*', 'nam*'],
+                'xsch': ['x*', 'laengs*', 'breit*'],
+                'ysch': ['y*', 'hoch*', 'hoeh*'],
+                'deckelhoehe': ['deckel*'],
+                'sohlhoehe': ['sohl*h*'],
+                'durchm': ['durchm*', 'diam*'],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*'],
+            },
+            'haltungen': {
+                'haltnam': ['haltn*', 'haltu*', 'kanaln*', 'nam*', ],
+                'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
+                'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                'breite': ['brei*', 'rohrbrei*', 'prof*brei*', ],
+                'hoehe': ['hoe*', 'höh*', 'h\xf6h*',
+                          'rohrhoe*', 'rohrhöh*', 'rohrh\xf6h*',
+                          'prof*hoe*', 'prof*höh*', 'prof*h\xf6*',
+                          'durchm*'],
+                'laenge': ['laen*', 'läng*'],
+                'sohleoben': ['sohl*ob*', 'sohl*anf'],
+                'sohleunten': ['sohl*un*', 'sohl*end*'],
+                'deckeloben': ['deck*ob*', 'deck*anf'],
+                'deckelunten': ['deck*un*', 'deck*end*'],
+                'profilnam': ['profil*', ],
+                'ks': ['ks*', 'rauh*'],
+                'entwart': ['entw*art', 'entw*typ*', 'kanalart*'],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*'],
+            },
+            'pumpen': {
+                'pnam': ['p*nam*', 'nam*', ],
+                'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
+                'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                'sohlhoehe': ['sohl*h*'],
+                'einschalthoehe': ['eins*h*', ],
+                'ausschalthoehe': ['auss*h*', ],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*'],
+            },
+            'wehre': {
+                'wnam': ['w*nam*', 'nam*', ],
+                'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
+                'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                'sohlhoehe': ['sohl*h*'],
+                'schwellenhoehe': ['schwel*h*', 'kant*h*', ],
+                'kammerhoehe': ['kamm*h*', ],
+                'laenge': ['*laen*', '*läng*'],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*'],
+            },
+            'abflussparameter': {
+                'apnam': ['nam*', 'bez*'],
+                'anfangsabflussbeiwert': ['*', ],
+                'endabflussbeiwert': ['*', ],
+                'benetzungsverlust': ['*', ],
+                'muldenverlust': ['*', ],
+                'benetzungs_startwert': ['*', ],
+                'mulden_startwert': ['*', ],
+                'bodenklasse': ['*', ],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*'],
+                '': ['*', ],
+            }
+        }
+
+        def __str__(self) -> str:
+            return "<Clipboard *hidden in __str__*>"
+
     apply_qkan_template: bool = True
     logeditor: str = ""
     manningrauheit_bef: float = 0.02
