@@ -8,8 +8,7 @@ import matplotlib.lines as lines
 import matplotlib.text as mtext
 import matplotlib.transforms as mtransforms
 from matplotlib import pyplot as plt
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.lines import Line2D
 from qgis.PyQt.QtWidgets import QWidget
 
@@ -61,12 +60,12 @@ class Laengsschnitt:
         """
         plt.figure(0)
         qw = QWidget()
-        canv = FigureCanvas(self.__fig)
-        toolbar = NavigationToolbar(canv, qw, True)
+        canv = FigureCanvasQTAgg(self.__fig)
         margin = self.__x_pointer * 0.05
         plt.axis([-margin, self.__x_pointer + margin, self.__minY - 1, self.__maxY + 1])
         self.__fig.axes[0].grid(True)
-        return canv, toolbar
+        return canv, qw
+        # return canv, toolbar
 
     def set_colors(self, colors):
         """

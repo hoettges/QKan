@@ -31,7 +31,7 @@ FORM_CLASS, _ = uic.loadUiType(
 )
 
 
-class LaengsschnittDialog(QDialog, FORM_CLASS):
+class LaengsschnittDialog(QDialog, FORM_CLASS):  # type: ignore
     def __init__(self, parent=None):
         """Constructor."""
         super(LaengsschnittDialog, self).__init__(parent)

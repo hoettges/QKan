@@ -3,7 +3,7 @@
 import logging
 
 from qgis.PyQt.QtCore import QPoint, Qt
-from qgis.PyQt.QtGui import QFont, QFontMetrics, QPainter
+from qgis.PyQt.QtGui import QFont, QFontMetrics, QPainter, QPaintEvent
 from qgis.PyQt.QtWidgets import QSlider, QStyle, QStyleOptionSlider
 
 from .Enums import SliderMode
@@ -12,7 +12,7 @@ main_logger = logging.getLogger("QKan.ganglinienhe8.slider")
 
 
 class Slider(QSlider):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Constructor
         * Initialisiert den Slider mit Werten zwischen 0 und 50.
@@ -31,7 +31,7 @@ class Slider(QSlider):
         self.__last_mode = None
         self.set_paused()
 
-    def paintEvent(self, e):
+    def paintEvent(self, e: QPaintEvent) -> None:
         """
         * Wird bei jedem rendern aufgerufen. Ist der Event-Listener des Sliders.
         * Ist zuständig für das korrekte Zeichnen des Sliders, da dieser custom-generiert wird.

@@ -24,6 +24,7 @@ import copy
 import logging
 import os.path
 
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 from qgis.core import Qgis, QgsProject
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
@@ -33,15 +34,12 @@ from qkan import QKan
 from qkan.database.navigation import Navigator
 from qkan.database.sbfunc import SBConnection
 
-# noinspection PyUnresolvedReferences
-from . import plotter
-from . import slider as s
 from .application_dialog import LaengsschnittDialog
 from .Enums import LayerType, SliderMode, Type
 from .ganglinie8 import Ganglinie8
 
-# Initialize Qt resources from file resources.py
-from . import resources  # isort:skip
+# noinspection PyUnresolvedReferences
+from . import plotter, resources, slider as s  # isort:skip
 
 main_logger = logging.getLogger("QKan.ganglinienhe8.application.main")
 main_logger.info("Application-Modul gestartet")
@@ -542,7 +540,9 @@ class GanglinienHE8:
             return
         laengsschnitt = plotter.Laengsschnitt(copy.deepcopy(route))
         plotter.set_ax_labels("m", "m")
-        widget, _toolbar = laengsschnitt.get_widget()
+
+        widget, qw = laengsschnitt.get_widget()
+        _toolbar = NavigationToolbar2QT(widget, qw, True)
         for i in reversed(list(range(self.__dlg.verticalLayout.count()))):
             self.__dlg.verticalLayout.itemAt(i).widget().setParent(None)
         self.__dlg.verticalLayout.addWidget(_toolbar)
