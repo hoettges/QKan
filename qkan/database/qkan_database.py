@@ -179,7 +179,7 @@ def createdbtables(
     ks REAL DEFAULT 1.5,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')),
     xschob REAL,
     yschob REAL,
     xschun REAL,
@@ -251,7 +251,7 @@ def createdbtables(
               new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
               coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
               coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
-              coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), 
+              coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now')), 
               MakeLine(
                 coalesce(
                   MakePoint(new.xschob, new.yschob, {epsg}),
@@ -307,7 +307,7 @@ def createdbtables(
          breite REAL,
          laenge REAL,
          kommentar TEXT,
-         createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+         createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')),
          untersuchtag TEXT,
          untersucher TEXT,
          wetter INTEGER DEFAULT 0,
@@ -374,7 +374,7 @@ def createdbtables(
                   CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
                   CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
                   new.laenge, new.kommentar, 
-                  coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), 
+                  coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now')), 
                   MakeLine(
                     coalesce(
                       MakePoint(new.xschob, new.yschob, {epsg}),
@@ -426,7 +426,7 @@ def createdbtables(
             ordner_bild TEXT,
             ordner_video TEXT,
             richtung TEXT,
-            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now'))
+            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now'))
         )"""
 
     try:
@@ -479,7 +479,7 @@ def createdbtables(
                       new.untersuchhal, new.untersuchrichtung, new.schoben,new.schunten, 
                         new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.kuerzel, 
                         new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung,
-                        coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
+                        coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now')),
                         CASE
                         WHEN new.inspektionslaenge > haltung.laenge
                         THEN
@@ -832,7 +832,7 @@ def createdbtables(
         ks REAL DEFAULT 1.5,
         simstatus TEXT DEFAULT 'vorhanden',
         kommentar TEXT,
-        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')),
         xschob REAL,
         yschob REAL,
         xschun REAL,
@@ -904,7 +904,7 @@ def createdbtables(
                   new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
                   coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
                   coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
-                  coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), 
+                  coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now')), 
                   MakeLine(
                       MakePoint(new.xschob, new.yschob, {epsg})
                       , 
@@ -943,7 +943,7 @@ def createdbtables(
     schachttyp TEXT DEFAULT 'Schacht', 
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')),
     xsch REAL, 
     ysch REAL)"""
 
@@ -1020,7 +1020,7 @@ def createdbtables(
               coalesce(new.entwart, 'Regenwasser'), new.strasse, new.teilgebiet, 
               new.knotentyp, new.auslasstyp, coalesce(new.schachttyp, 'Schacht'), 
               coalesce(new.simstatus, 'vorhanden'),
-              new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
+              new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now')),
               MakePoint(new.xsch, new.ysch, {epsg}),
               CastToMultiPolygon(
                 MakePolygon(
@@ -1053,7 +1053,7 @@ def createdbtables(
             schnam TEXT, 
             durchm REAL,
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')),
+            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')),
             untersuchtag TEXT, 
             untersucher TEXT, 
             wetter INTEGER DEFAULT 0, 
@@ -1112,7 +1112,7 @@ def createdbtables(
                     SELECT
                       new.schnam,
                       CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
-                      new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')),
+                      new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now')),
                       sch.geop,
                       new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
                     FROM
@@ -1150,7 +1150,7 @@ def createdbtables(
         bereich TEXT,
         foto_dateiname TEXT,
         ordner TEXT,
-        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now'))
+        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now'))
         )"""
 
     try:
@@ -1203,7 +1203,7 @@ def createdbtables(
                 SELECT 
                   new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, 
-                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now')), sch.geop
+                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now')), sch.geop
                 FROM
                     schaechte AS sch
                     WHERE sch.schnam = new.untersuchsch;
@@ -1244,7 +1244,7 @@ def createdbtables(
                     VALUES (
                       new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.pos_von, new.pos_bis, 
-                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M','now'))
+                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now'))
                     );
                   END"""
     try:
@@ -1624,7 +1624,7 @@ def createdbtables(
     teilgebiet TEXT,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -1721,7 +1721,7 @@ def createdbtables(
     teilgebiet TEXT,
     simstatus TEXT DEFAULT 'vorhanden',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -1818,7 +1818,7 @@ def createdbtables(
     stdmittel REAL,
     fremdwas REAL,
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -1857,7 +1857,7 @@ def createdbtables(
     pk INTEGER PRIMARY KEY,
     tgnam TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -1908,7 +1908,7 @@ def createdbtables(
     teilgebiet TEXT,
     tabelle TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -1935,7 +1935,7 @@ def createdbtables(
     abflussparameter TEXT,
     aufteilen TEXT DEFAULT 'nein',
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -2089,7 +2089,7 @@ def createdbtables(
     teilgebiet TEXT,
     abflussparameter TEXT,      -- als Vorgabe fuer automatisch erzeugte unbef Flaechen
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -2129,7 +2129,7 @@ def createdbtables(
     ew REAL,
     einzugsgebiet TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -2171,7 +2171,7 @@ def createdbtables(
         regenschreiber TEXT, 
         teilgebiet TEXT, 
         kommentar TEXT, 
-        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -2348,7 +2348,7 @@ def createdbtables(
     bodenklasse TEXT, 
     flaechentyp TEXT, 
     kommentar TEXT, 
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -2441,7 +2441,7 @@ def createdbtables(
     regenerationskonstante REAL,                -- (1/d)
     saettigungswassergehalt REAL,               -- (mm)
     kommentar TEXT, 
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -2680,7 +2680,7 @@ def createdbtables(
             ZuordnUnabhEZG INTEGER,
             IstPolygonalflaeche SMALLINT, 
             ZuordnungGesperrt SMALLINT, 
-            LastModified TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')), 
+            LastModified TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')), 
             Kommentar TEXT)"""
 
     try:
@@ -2720,13 +2720,36 @@ def createdbtables(
 
     consl.commit()
 
+    sql = """
+        CREATE TABLE IF NOT EXISTS qkan_check (
+            pk INTEGER PRIMARY KEY,
+            name TEXT,                          -- Beschreibung der SQL-Abfrage
+            gruppe TEXT,                        -- zur Auswahl nach Thema
+            sql TEXT,
+            layername TEXT,                     -- Objektsuche: Layername
+            idname TEXT                         -- Objektsuche: Attribut zur Objektidentifikation,
+            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))
+    """
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Fehler beim Erzeugen der Tabelle "qkan_check".',
+        )
+        consl.close()
+        return False
+
+    consl.commit()
+
     # Allgemeine Informationen -----------------------------------------------
 
     sql = """CREATE TABLE info (
     pk INTEGER PRIMARY KEY, 
     subject TEXT, 
     value TEXT,
-    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))"""
+    createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))"""
 
     try:
         cursl.execute(sql)
@@ -2737,6 +2760,8 @@ def createdbtables(
         )
         consl.close()
         return False
+
+    consl.commit()
 
     # Plausibilitätskontrollen --------------------------------------------------
 
