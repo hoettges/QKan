@@ -14,7 +14,7 @@ from qgis.PyQt.QtWidgets import QWidget
 
 from qkan.database.sbfunc import SBConnection
 
-from .Enums import LayerType, SliderMode
+from .models import LayerType, SliderMode
 
 main_logger = logging.getLogger("QKan.ganglinienhe8/plotter")
 main_logger.info("Plotter-Modul gestartet")
@@ -786,14 +786,6 @@ def set_legend():
     plt.figure(0)
     plt.legend(handles=legend_plots)
     main_logger.info("Legende wurde gesetzt")
-
-
-def reset_legend():
-    """
-    Löscht alle Plots aus der Figure des Längsschnitts
-    """
-    del plots[:]
-    main_logger.info("Alle Plots aus der Figure gelöscht")
 
 
 class ILines(lines.Line2D):

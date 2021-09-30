@@ -11,7 +11,7 @@ from qgis.PyQt.QtWidgets import QWidget
 
 from qkan.database.sbfunc import SBConnection
 
-from .Enums import LayerType
+from .models import LayerType
 from .ganglinie_dialog import GanglinieDialog
 
 main_logger = logging.getLogger("QKan")
