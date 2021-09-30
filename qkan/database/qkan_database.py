@@ -22,8 +22,8 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.2.8"  # Version der QKan-Datenbank
-__qgsVersion__ = "3.2.14"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = "3.2.15"  # Version der QKan-Datenbank
+__qgsVersion__ = "3.2.15"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -2720,14 +2720,17 @@ def createdbtables(
 
     consl.commit()
 
+    # Abfragen für Plausibilitätsprüfungen
     sql = """
-        CREATE TABLE IF NOT EXISTS qkan_check (
+        CREATE TABLE IF NOT EXISTS pruefsql (
             pk INTEGER PRIMARY KEY,
-            name TEXT,                          -- Beschreibung der SQL-Abfrage
             gruppe TEXT,                        -- zur Auswahl nach Thema
+            warntext TEXT,                      -- Beschreibung der SQL-Abfrage
+            warntyp TEXT,                       -- 'Info', 'Warnung', 'Fehler'
+            warnlevel INTEGER,                  -- zur Sortierung, 1-3: Info, 4-7: Warnung, 8-10: Fehler
             sql TEXT,
             layername TEXT,                     -- Objektsuche: Layername
-            idname TEXT                         -- Objektsuche: Attribut zur Objektidentifikation,
+            attrname TEXT                       -- Objektsuche: Attribut zur Objektidentifikation,
             createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))
     """
 
@@ -2736,7 +2739,30 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'Fehler beim Erzeugen der Tabelle "qkan_check".',
+            'Fehler beim Erzeugen der Tabelle "pruefsql".',
+        )
+        consl.close()
+        return False
+
+    # Ergebnisse der Plausibilitätsprüfungen
+    sql = """
+        CREATE TABLE IF NOT EXISTS pruefliste (
+            pk INTEGER PRIMARY KEY,
+            warntext TEXT,                      -- Beschreibung der SQL-Abfrage
+            warntyp TEXT,                       -- 'Info', 'Warnung', 'Fehler'
+            warnlevel INTEGER,                  -- zur Sortierung, 1-3: Info, 4-7: Warnung, 8-10: Fehler
+            layername TEXT,                     -- Objektsuche: Layername
+            attrname TEXT,                      -- Objektsuche: Attribut zur Objektidentifikation,
+            objname TEXT,                       -- Objektsuche: Objektname
+            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now')))
+    """
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Fehler beim Erzeugen der Tabelle "pruefliste".',
         )
         consl.close()
         return False
