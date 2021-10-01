@@ -6,7 +6,6 @@ from typing import Callable, List, Optional
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QStandardPaths
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
@@ -19,7 +18,8 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 from qgis.utils import pluginDirectory
-from qkan import QKan, list_selected_items, enums
+
+from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 
@@ -74,6 +74,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     cb_einzugsgebiete: QCheckBox
 
     cb_tezg: QCheckBox
+    cb_tezg_hf: QCheckBox
 
     rb_update: QRadioButton
     rb_append: QRadioButton
@@ -104,11 +105,13 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # self.pb_database.clicked.connect(self.select_database)    # ergibt sich aus Projekt
         self.pb_exportdb.clicked.connect(self.select_exportdb)
         self.pb_template.clicked.connect(self.select_template)
+        self.cb_flaechen.clicked.connect(self.check_flaechen)
+        self.cb_tezg_hf.clicked.connect(self.check_tezg_hf)
         # self.button_box.helpRequested.connect(self.click_help)
 
         # Aktionen zu lw_teilgebiete: QListWidget
         self.cb_selActive.stateChanged.connect(self.click_selection)
-        #self.lw_teilgebiete.itemClicked.connect(self.count_selection)      # ist schon in click_lw_teilgebiete enthalten
+        # self.lw_teilgebiete.itemClicked.connect(self.count_selection)      # ist schon in click_lw_teilgebiete enthalten
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
 
         # Init fields
@@ -126,6 +129,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.cb_pumpen.setChecked(QKan.config.check_export.pumpen)
         self.cb_wehre.setChecked(QKan.config.check_export.wehre)
         self.cb_flaechen.setChecked(QKan.config.check_export.flaechen)
+        self.cb_tezg_hf.setChecked(QKan.config.check_export.tezg_hf)
         self.cb_rohrprofile.setChecked(QKan.config.check_export.rohrprofile)
         self.cb_abflussparameter.setChecked(QKan.config.check_export.abflussparameter)
         self.cb_bodenklassen.setChecked(QKan.config.check_export.bodenklassen)
@@ -133,6 +137,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.cb_aussengebiete.setChecked(QKan.config.check_export.aussengebiete)
         self.cb_einzugsgebiete.setChecked(QKan.config.check_export.einzugsgebiete)
         self.cb_tezg.setChecked(QKan.config.check_export.tezg)
+        self.cb_tezg_hf.setChecked(QKan.config.check_export.tezg_hf)
 
         # Aktionen beim Export
         self.rb_append.setChecked(QKan.config.check_export.append)
@@ -328,6 +333,18 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
                     repr(err),
                 )
         return True
+
+    def check_flaechen(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        if self.cb_flaechen.isChecked():
+            QKan.config.check_export.tezg_hf = False
+            self.cb_tezg_hf.setChecked(False)
+
+    def check_tezg_hf(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        if self.cb_tezg_hf.isChecked():
+            QKan.config.check_export.flaechen = False
+            self.cb_flaechen.setChecked(False)
 
 
 IMPORT_CLASS, _ = uic.loadUiType(

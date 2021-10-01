@@ -12,6 +12,7 @@ from qgis.PyQt.QtWidgets import (
     QRadioButton,
     QWidget,
 )
+
 from qkan import list_selected_items
 from qkan.database.qkan_utils import sqlconditions
 

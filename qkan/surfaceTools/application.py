@@ -21,6 +21,7 @@
 """
 
 from qgis.gui import QgisInterface
+
 from qkan import QKan
 from qkan.database.qkan_utils import get_database_QKan
 from qkan.plugin import QKanPlugin

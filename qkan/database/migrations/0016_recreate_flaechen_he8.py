@@ -31,7 +31,7 @@ def run(dbcon: DBConnection) -> bool:
             ZuordnUnabhEZG INTEGER,
             IstPolygonalflaeche SMALLINT, 
             ZuordnungGesperrt SMALLINT, 
-            LastModified TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')), 
+            LastModified TEXT DEFAULT (datetime('now')), 
             Kommentar TEXT
         )
         """,

@@ -1,15 +1,15 @@
-import os
 import logging
+import os
 import shutil
 from pathlib import Path
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
-from qkan import QKan, get_default_dir, enums
-from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan, eval_node_types
 
+from qkan import QKan, enums, get_default_dir
+from qkan.database.dbfunc import DBConnection
+from qkan.database.qkan_utils import eval_node_types, fehlermeldung, get_database_QKan
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
@@ -22,6 +22,7 @@ from .application_dialog import ExportDialog, ImportDialog, ResultsDialog
 from . import resources  # isort:skip
 
 logger = logging.getLogger("QKan.he8.application")
+
 
 class He8Porter(QKanPlugin):
     def __init__(self, iface: QgisInterface):
@@ -69,7 +70,7 @@ class He8Porter(QKanPlugin):
 
         # noinspection PyArgumentList
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         # Datenbankpfad in Dialog übernehmen
         self.export_dlg.tf_database.setText(self.database_qkan)
@@ -120,6 +121,7 @@ class He8Porter(QKanPlugin):
                 self.export_dlg.cb_einzugsgebiete.isChecked()
             )
             QKan.config.check_export.tezg = self.export_dlg.cb_tezg.isChecked()
+            QKan.config.check_export.tezg_hf = self.export_dlg.cb_tezg_hf.isChecked()
 
             QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
             QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
@@ -153,10 +155,10 @@ class He8Porter(QKanPlugin):
         """Attach SQLite-Database with HE8 Data"""
         sql = f'ATTACH DATABASE "{QKan.config.he8.export_file}" AS he'
 
-        if not self.db_qkan.sql(
-            sql, "He8Porter.run_export_to_he8 Attach HE8"
-        ):
-            logger.error(f"Fehler in He8Porter._doexport(): Attach fehlgeschlagen: {QKan.config.he8.export_file}")
+        if not self.db_qkan.sql(sql, "He8Porter.run_export_to_he8 Attach HE8"):
+            logger.error(
+                f"Fehler in He8Porter._doexport(): Attach fehlgeschlagen: {QKan.config.he8.export_file}"
+            )
             return False
 
         # Run export
@@ -287,9 +289,7 @@ class He8Porter(QKanPlugin):
         """
 
         self.log.info("Creating DB")
-        db_qkan = DBConnection(
-            dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
-        )
+        db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
         if not db_qkan:
             fehlermeldung(
@@ -305,10 +305,10 @@ class He8Porter(QKanPlugin):
 
         # Attach SQLite-Database with HE8 Data
         sql = f'ATTACH DATABASE "{QKan.config.he8.import_file}" AS he'
-        if not db_qkan.sql(
-            sql, "He8Porter.run_import_to_he8 Attach HE8"
-        ):
-            logger.error(f"Fehler in He8Porter._doimport(): Attach fehlgeschlagen: {QKan.config.he8.import_file}")
+        if not db_qkan.sql(sql, "He8Porter.run_import_to_he8 Attach HE8"):
+            logger.error(
+                f"Fehler in He8Porter._doimport(): Attach fehlgeschlagen: {QKan.config.he8.import_file}"
+            )
             return False
 
         self.log.info("DB creation finished, starting importer")

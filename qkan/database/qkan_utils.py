@@ -7,6 +7,7 @@ from xml.etree.ElementTree import ElementTree
 
 from qgis.core import Qgis, QgsMessageLog, QgsProject
 from qgis.utils import iface
+
 from qkan import QKan
 
 if TYPE_CHECKING:
@@ -194,30 +195,30 @@ def get_qkanlayer_attributes(source: str) -> Tuple[str, str, str, str]:
     pos = source.find("sql=")
     if pos >= 0:
         sql = source[pos + 4 :]
-        source = source[:pos - 1]
+        source = source[: pos - 1]
     else:
         sql = ""
 
     pos = -1
-    while source.find('(', pos+1) >= 0:
-        pos = source.find('(', pos+1)
+    while source.find("(", pos + 1) >= 0:
+        pos = source.find("(", pos + 1)
     if pos >= 0:
-        geom = source[pos + 1 :-1]
-        source = source[:pos - 1]
+        geom = source[pos + 1 : -1]
+        source = source[: pos - 1]
     else:
         geom = ""
 
     pos = source.find("table=")
     if pos >= 0:
         table = source[pos + 7 : -1]
-        source = source[:pos - 1]
+        source = source[: pos - 1]
     else:
         table = ""
 
     pos = source.find("dbname=")
     if pos >= 0:
         dbname = source[pos + 8 : -1]
-        source = source[:pos - 1]
+        source = source[: pos - 1]
     else:
         dbname = ""
 

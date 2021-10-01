@@ -3,6 +3,7 @@ import os
 from typing import TYPE_CHECKING, Optional
 
 from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QLineEdit, QPushButton, QWidget
+
 from qkan.database.dbfunc import DBConnection
 
 logger = logging.getLogger("QKan.tools.dialogs")

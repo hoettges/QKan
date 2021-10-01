@@ -369,7 +369,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>270</y>
+      <y>290</y>
       <width>121</width>
       <height>20</height>
      </rect>
@@ -500,7 +500,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>180</y>
+      <y>160</y>
       <width>121</width>
       <height>20</height>
      </rect>
@@ -575,7 +575,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>310</y>
+      <y>320</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -588,7 +588,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>150</y>
+      <y>140</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -654,7 +654,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>220</y>
+      <y>260</y>
       <width>121</width>
       <height>20</height>
      </rect>
@@ -679,7 +679,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>200</y>
+      <y>240</y>
       <width>121</width>
       <height>20</height>
      </rect>
@@ -704,7 +704,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>240</y>
+      <y>270</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -717,7 +717,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>290</y>
+      <y>310</y>
       <width>121</width>
       <height>20</height>
      </rect>
@@ -736,6 +736,45 @@
     </property>
     <property name="text">
      <string>Einzugsgebiete</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>220</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_tezg_hf">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>180</y>
+      <width>121</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aus jeder Haltungsfläche werden zwei Flächendatensätze $Default_Bef und $Default_Unbef erzeugt&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Haltungsflächen mit
+Befestigungsgraden</string>
     </property>
    </widget>
   </widget>

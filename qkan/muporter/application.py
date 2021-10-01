@@ -1,11 +1,12 @@
-import os
 import logging
+import os
 import shutil
 from pathlib import Path
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
+
 from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
@@ -20,6 +21,7 @@ from .application_dialog import ExportDialog, ImportDialog
 from . import resources  # isort:skip
 
 logger = logging.getLogger("QKan.he8.application")
+
 
 class MuPorter(QKanPlugin):
     def __init__(self, iface: QgisInterface):
@@ -58,7 +60,7 @@ class MuPorter(QKanPlugin):
 
         # noinspection PyArgumentList
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         # Datenbankpfad in Dialog übernehmen
         self.export_dlg.tf_database.setText(self.database_qkan)
@@ -219,9 +221,9 @@ class MuPorter(QKanPlugin):
                 self.import_dlg.cb_einzugsgebiete.isChecked()
             )
 
-            QKan.config.check_import.tezg_ef = self.import_dlg.cb_tezg_ef.isChecked()
+            # QKan.config.check_import.tezg_ef = self.import_dlg.cb_tezg_ef.isChecked()
             QKan.config.check_import.tezg_hf = self.import_dlg.cb_tezg_hf.isChecked()
-            QKan.config.check_import.tezg_tf = self.import_dlg.cb_tezg_tf.isChecked()
+            # QKan.config.check_import.tezg_tf = self.import_dlg.cb_tezg_tf.isChecked()
 
             QKan.config.check_import.append = self.import_dlg.rb_append.isChecked()
             QKan.config.check_import.update = self.import_dlg.rb_update.isChecked()
@@ -269,9 +271,7 @@ class MuPorter(QKanPlugin):
         """
 
         self.log.info("Creating DB")
-        db_qkan = DBConnection(
-            dbname=QKan.config.mu.database, epsg=QKan.config.epsg
-        )
+        db_qkan = DBConnection(dbname=QKan.config.mu.database, epsg=QKan.config.epsg)
 
         if not db_qkan:
             fehlermeldung(
@@ -287,10 +287,10 @@ class MuPorter(QKanPlugin):
 
         # Attach SQLite-Database with Mike+ Data
         sql = f'ATTACH DATABASE "{QKan.config.mu.import_file}" AS mu'
-        if not db_qkan.sql(
-            sql, "MuPorter.run_import_to_mu Attach Mike+"
-        ):
-            logger.error(f"Fehler in MUPorter._doimport(): Attach fehlgeschlagen: {QKan.config.mu.import_file}")
+        if not db_qkan.sql(sql, "MuPorter.run_import_to_mu Attach Mike+"):
+            logger.error(
+                f"Fehler in MUPorter._doimport(): Attach fehlgeschlagen: {QKan.config.mu.import_file}"
+            )
             return False
 
         self.log.info("DB creation finished, starting importer")

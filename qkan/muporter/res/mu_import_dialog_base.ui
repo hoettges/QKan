@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>726</width>
-    <height>441</height>
+    <width>778</width>
+    <height>375</height>
    </rect>
   </property>
   <property name="font">
@@ -16,13 +16,13 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>QKan Import from Hystem-Extran</string>
+   <string>QKan Import from Mike+ (2021)</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
      <x>250</x>
-     <y>390</y>
+     <y>330</y>
      <width>251</width>
      <height>32</height>
     </rect>
@@ -167,9 +167,9 @@
   <widget class="QGroupBox" name="gb_prjectfile">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>290</y>
-     <width>411</width>
+     <x>20</x>
+     <y>230</y>
+     <width>401</width>
      <height>81</height>
     </rect>
    </property>
@@ -216,7 +216,7 @@
    <widget class="QPushButton" name="pb_project">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>360</x>
       <y>40</y>
       <width>30</width>
       <height>20</height>
@@ -234,7 +234,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>351</width>
+      <width>341</width>
       <height>20</height>
      </rect>
     </property>
@@ -256,7 +256,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>180</y>
+     <y>150</y>
      <width>401</width>
      <height>81</height>
     </rect>
@@ -345,8 +345,8 @@
     <rect>
      <x>440</x>
      <y>20</y>
-     <width>271</width>
-     <height>291</height>
+     <width>291</width>
+     <height>231</height>
     </rect>
    </property>
    <property name="font">
@@ -423,7 +423,7 @@
       <x>20</x>
       <y>100</y>
       <width>101</width>
-      <height>20</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -552,12 +552,15 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_rohrprofile">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>120</y>
+      <y>200</y>
       <width>91</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -580,9 +583,9 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>100</y>
+      <y>160</y>
       <width>121</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -605,9 +608,9 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>140</y>
+      <y>180</y>
       <width>91</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -630,9 +633,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>120</y>
+      <y>160</y>
       <width>101</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -656,7 +659,7 @@
      <rect>
       <x>10</x>
       <y>80</y>
-      <width>251</width>
+      <width>271</width>
       <height>21</height>
      </rect>
     </property>
@@ -665,12 +668,15 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_aussengebiete">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>140</y>
+      <y>200</y>
       <width>101</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -693,8 +699,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>180</y>
-      <width>251</width>
+      <y>140</y>
+      <width>271</width>
       <height>21</height>
      </rect>
     </property>
@@ -702,58 +708,16 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_26">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>199</y>
-      <width>161</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Haltungsfläche, markiert als:</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_tezg_ef">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>221</y>
-      <width>121</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;Einzugsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string>Einzugsflächen</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="cb_tezg_hf">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>241</y>
-      <width>121</width>
-      <height>20</height>
+      <x>150</x>
+      <y>100</y>
+      <width>131</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -763,47 +727,26 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;Haltungsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flächen als Haltungsflächen (&amp;quot;tezg&amp;quot;) mit Befestigungsgrad importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
      <string>aktiviert</string>
     </property>
     <property name="text">
-     <string>Haltungsflächen</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_tezg_tf">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>260</y>
-      <width>121</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;TW-Einzugsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string>TW-Einzugsflächen</string>
+     <string>Haltungsflächen mit
+Befestigungsgraden</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_einzugsgebiete">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>160</y>
+      <y>180</y>
       <width>121</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -827,8 +770,8 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>320</y>
-     <width>271</width>
+     <y>260</y>
+     <width>291</width>
      <height>51</height>
     </rect>
    </property>
@@ -842,9 +785,12 @@
     <string>Aktionen beim Import</string>
    </property>
    <widget class="QRadioButton" name="rb_synch">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>180</x>
       <y>20</y>
       <width>101</width>
       <height>21</height>
@@ -867,9 +813,12 @@
     </property>
    </widget>
    <widget class="QRadioButton" name="rb_update">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>110</x>
       <y>20</y>
       <width>81</width>
       <height>21</height>

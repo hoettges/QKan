@@ -184,6 +184,6 @@ class Slider(QSlider):
 
     def get_last_mode(self):
         """
-        Getter des letzten Modus 
+        Getter des letzten Modus
         """
         return self.__last_mode

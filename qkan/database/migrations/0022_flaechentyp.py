@@ -11,7 +11,6 @@ def run(dbcon: DBConnection) -> bool:
     """Typfehler in 'abflussparemeter.flaechentyp' korrigieren"""
 
     sqllis = [
-        "BEGIN TRANSACTION;",
         """
         CREATE TABLE IF NOT EXISTS abflussparameter_t (
         apnam TEXT, 
@@ -26,7 +25,7 @@ def run(dbcon: DBConnection) -> bool:
         bodenklasse TEXT, 
         flaechentyp TEXT, 
         kommentar TEXT, 
-        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))""",
+        createdat TEXT DEFAULT (datetime('now')))""",
         "DELETE FROM abflussparameter_t",
         """
         INSERT INTO abflussparameter_t
@@ -62,7 +61,7 @@ def run(dbcon: DBConnection) -> bool:
             bodenklasse TEXT, 
             flaechentyp TEXT, 
             kommentar TEXT, 
-            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')))""",
+            createdat TEXT DEFAULT (datetime('now')))""",
         """
         INSERT INTO abflussparameter
             (
@@ -82,13 +81,11 @@ def run(dbcon: DBConnection) -> bool:
             kommentar, createdat
         FROM abflussparameter_t
        """,
-        "DROP TABLE abflussparameter_t"
+        "DROP TABLE abflussparameter_t",
     ]
 
     for sql in sqllis:
-        if not dbcon.sql(
-            sql, "dbfunc.DBConnection.version (3.1.6)", transaction=False
-        ):
+        if not dbcon.sql(sql, "dbfunc.DBConnection.version (3.1.6)", transaction=False):
             return False
 
     dbcon.commit()

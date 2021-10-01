@@ -7,7 +7,20 @@ Eine Anleitung zum Erstellen von Flächenanbindungen
 
 - Video_QKan_Flaechenverknuepfung_
 
-.. _Video_QKan_Flaechenverknuepfung: https://youtu.be/aKKnWhqcc9s
+.. _Video_QKan_Flaechenverknuepfung: https://fh-aachen.sciebo.de/s/Z0a5sIPUd0EWrTD
+
+
+
+Übernahme von Kanaldaten aus Excel- oder ASCII-Tabellen
+-------------------------------------------------------
+
+.. index:: Video: Clipboard
+
+Eine Anleitung zum Einfügen von Kanaldaten aus Tabellendaten
+
+- Video_QKan_Clipboard_
+
+.. _Video_QKan_Clipboard: https://fh-aachen.sciebo.de/s/J1MC92ShnQWzUtD
 
 
 Anlegen eines neuen QKan-Projektes
@@ -20,10 +33,11 @@ anschließenden Einbinden von Flächendaten finden Sie hier:
 
 - Video_QKan_Kanaldatenflaechen_
 
-.. _Video_QKan_Kanaldatenflaechen: https://youtu.be/eUr5YeSrYHo
+.. _Video_QKan_Kanaldatenflaechen: https://fh-aachen.sciebo.de/s/PK3WwcNaaGJJQVi
 
 
 .. index:: Video: Projektdatei übertragen
+
 
 Übertragen einer anderen Projektdatei auf eine QKan-Datenbank
 -------------------------------------------------------------
@@ -32,7 +46,7 @@ Eine Videoanleitung, wie für eine bestehende QKan-Kanaldatenbank eine Vorlage-P
 
 - Video_QKan_Projekt_laden_
 
-.. _Video_QKan_Projekt_laden: https://youtu.be/CzBJkW0y1_U
+.. _Video_QKan_Projekt_laden: https://fh-aachen.sciebo.de/s/JOjxXdF72eLrJsw
 
 
 .. index:: Video: DXF-Datei als Zeichnungsrahmen
@@ -45,7 +59,7 @@ finden Sie hier:
 
 - QGISZeichnungsrahmen_
 
-.. _QGISZeichnungsrahmen: https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/QKan/zeichnungsrahmen.mp4
+.. _QGISZeichnungsrahmen: https://fh-aachen.sciebo.de/s/pJZayVce4VQMiFl
 
 
 .. index:: Video: Bearbeiten eines DYNA-Projektes mit QKan

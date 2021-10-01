@@ -3,6 +3,7 @@ from typing import cast
 
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtCore import QCoreApplication
+
 from qkan import get_default_dir
 
 

@@ -12,8 +12,9 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
-from . import QKanDBDialog, QKanProjectDialog
 from qkan import QKan
+
+from . import QKanDBDialog, QKanProjectDialog
 
 if TYPE_CHECKING:
     from qkan.tools.application import QKanTools

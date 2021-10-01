@@ -28,7 +28,7 @@ def run(dbcon: DBConnection) -> bool:
         Parametersatz TEXT, 
         Neigungsklasse INTEGER, 
         ZuordnUnabhEZG INTEGER,
-        LastModified TEXT DEFAULT (strftime('%d.%m.%Y %H:%M','now')), 
+        LastModified TEXT DEFAULT (datetime('now')), 
         Kommentar TEXT
     )
     """

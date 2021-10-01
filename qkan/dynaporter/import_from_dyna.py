@@ -21,6 +21,7 @@ from typing import Tuple, cast
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
 from qgis.utils import pluginDirectory
+
 from qkan import QKAN_FORMS, QKAN_TABLES, QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import eval_node_types, fehlermeldung, fzahl

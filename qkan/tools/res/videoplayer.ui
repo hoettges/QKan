@@ -54,6 +54,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="timelabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="playpause">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">

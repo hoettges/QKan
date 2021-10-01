@@ -17,6 +17,7 @@ from qgis.PyQt.QtWidgets import (
     QRadioButton,
     QWidget,
 )
+
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
@@ -75,6 +76,8 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
 
     def __init__(self, plugin: "DynaPorter", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
+
+        self.iface = QKan.instance.iface
 
         self.db_qkan: Optional[DBConnection] = None
 

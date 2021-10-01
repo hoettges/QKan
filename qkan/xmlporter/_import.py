@@ -35,6 +35,7 @@ class Schacht_untersucht(ClassObject):
     knotentyp: int = 0
     simstatus: int = 0
     kommentar: str = ""
+    baujahr: int = 0
     untersuchtag: str = ""
     untersucher: str = ""
     wetter: int = 0
@@ -53,9 +54,12 @@ class Untersuchdat_schacht(ClassObject):
     quantnr1: float = 0.0
     quantnr2: float = 0.0
     streckenschaden: str = ""
+    streckenschaden_lfdnr: int = 0
     bereich: str = ""
     pos_von: int = 0
     pos_bis: int = 0
+    vertikale_lage: float = 0.0
+    inspektionslaenge: float = 0.0
     foto_dateiname: str = ""
     ordner: str = ""
     xsch: float = 0.0
@@ -92,6 +96,7 @@ class Haltung_untersucht(ClassObject):
     hoehe: float = 0.0
     breite: float = 0.0
     laenge: float = 0.0
+    baujahr: int = 0
     kommentar: str = ""
     untersuchtag: str = ""
     untersucher: str = ""
@@ -120,6 +125,7 @@ class Untersuchdat_haltung(ClassObject):
     quantnr1: float = 0.0
     quantnr2: float = 0.0
     streckenschaden: str = ""
+    streckenschaden_lfdnr: int = 0
     pos_von: int = 0
     pos_bis: int = 0
     foto_dateiname: str = ""
@@ -461,7 +467,7 @@ class ImportTask:
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
 
                 for _schacht in block.findall("d:Schacht", self.NS):
-                    druckdicht = _strip_int(_schacht.findtext("d:DruckdichterDeckel", 0, self.NS))
+                    druckdicht = _strip_int(_schacht.findtext("d:DruckdichterDeckel", "0", self.NS))
 
 
                 yield Schacht(
@@ -615,6 +621,7 @@ class ImportTask:
 
             for block in blocks:
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                baujahr = _strip_int(block.findtext("d:Baujahr", 0, self.NS))
 
                 for _schacht in block.findall("d:OptischeInspektion", self.NS):
 
@@ -632,6 +639,7 @@ class ImportTask:
 
                 yield Schacht_untersucht(
                     schnam=name,
+                    baujahr=baujahr,
                     untersuchtag=untersuchtag,
                     untersucher=untersucher,
                     wetter=wetter,
@@ -643,14 +651,15 @@ class ImportTask:
 
 
             sql = f"""
-            INSERT INTO schaechte_untersucht_data (schnam, durchm, kommentar)
-            VALUES (?, ?, ?)
+            INSERT INTO schaechte_untersucht_data (schnam, baujahr, durchm, kommentar)
+            VALUES (?, ?, ?,?)
             """
             if not self.db_qkan.sql(
                 sql,
                 "xml_import Schächte_untersucht [1]",
                 parameters=(
                     schacht_untersucht.schnam,
+                    schacht_untersucht.baujahr,
                     schacht_untersucht.durchm,
                     schacht_untersucht.kommentar,
                 ),
@@ -721,6 +730,7 @@ class ImportTask:
             logger.debug(f"Anzahl Untersuchungsdaten Schacht: {len(blocks)}")
 
             name = ""
+            inspektionslaenge = 0.0
             id = 0
             videozaehler = 0
             timecode = 0
@@ -730,6 +740,7 @@ class ImportTask:
             quantnr1 = 0.0
             quantnr2 = 0.0
             streckenschaden = ""
+            streckenschaden_lfdnr = 0
             pos_von = 0
             pos_bis = 0
             bereich = ""
@@ -740,6 +751,9 @@ class ImportTask:
             for block in blocks:
 
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                inspektionslaenge = _strip_float(block.findtext(
+                    "d:OptischeInspektion/d:Knoten/d:Inspektionsdaten/d:KZustand[d:InspektionsKode='DDB'][d:Streckenschaden='B']/d:VertikaleLage",
+                    "0.0", self.NS))
 
                 for _untersuchdat_schacht in block.findall("d:OptischeInspektion/d:Knoten/d:Inspektionsdaten/d:KZustand", self.NS):
 
@@ -752,10 +766,13 @@ class ImportTask:
                     quantnr1 = _strip_float(_untersuchdat_schacht.findtext("d:Quantifizierung1Numerisch", "0.0", self.NS))
                     quantnr2 = _strip_float(_untersuchdat_schacht.findtext("d:Quantifizierung2Numerisch", "0.0", self.NS))
                     streckenschaden = _untersuchdat_schacht.findtext("d:Streckenschaden", "not found", self.NS)
+                    streckenschaden_lfdnr = _strip_int(_untersuchdat_schacht.findtext("d:StreckenschadenLfdNr", "0", self.NS))
                     pos_von = _strip_int(_untersuchdat_schacht.findtext("d:PositionVon", "0", self.NS))
                     pos_bis = _strip_int(_untersuchdat_schacht.findtext("d:PositionBis", "0", self.NS))
+                    vertikale_lage = _strip_float(_untersuchdat_schacht.findtext("d:VertikaleLage", "0.0", self.NS))
                     bereich = _untersuchdat_schacht.findtext("d:Schachtbereich", "not found", self.NS)
                     foto_dateiname = _untersuchdat_schacht.findtext("d:Fotodatei", "not found", self.NS)
+
 
                     yield Untersuchdat_schacht(
                     untersuchsch = name,
@@ -768,8 +785,11 @@ class ImportTask:
                     quantnr1 = quantnr1,
                     quantnr2 = quantnr2,
                     streckenschaden = streckenschaden,
+                    streckenschaden_lfdnr = streckenschaden_lfdnr,
                     pos_von = pos_von,
                     pos_bis = pos_bis,
+                    vertikale_lage = vertikale_lage,
+                    inspektionslaenge = inspektionslaenge,
                     bereich = bereich,
                     foto_dateiname = foto_dateiname,
                     ordner = ordner,
@@ -779,8 +799,8 @@ class ImportTask:
 
             sql = f"""
             INSERT INTO untersuchdat_schacht_data (untersuchsch, id, videozaehler, timecode, kuerzel, 
-                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, bereich, foto_dateiname, ordner)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
             """
             if not self.db_qkan.sql(
                 sql,
@@ -796,8 +816,11 @@ class ImportTask:
                     untersuchdat_schacht.quantnr1,
                     untersuchdat_schacht.quantnr2,
                     untersuchdat_schacht.streckenschaden,
+                    untersuchdat_schacht.streckenschaden_lfdnr,
                     untersuchdat_schacht.pos_von,
                     untersuchdat_schacht.pos_bis,
+                    untersuchdat_schacht.vertikale_lage,
+                    untersuchdat_schacht.inspektionslaenge,
                     untersuchdat_schacht.bereich,
                     untersuchdat_schacht.foto_dateiname,
                     untersuchdat_schacht.ordner,
@@ -1041,23 +1064,57 @@ class ImportTask:
                             / 1000
                         )
 
-                for _haltung in block.findall(
-                    "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
-                ):
-                    xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
-                    yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
-                    deckeloben = _strip_float(
-                        _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
-                    )
+                #hier ergännzen mit dem fall das x,y unter Polygone steht!!
 
                 for _haltung in block.findall(
-                    "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
+                        "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
                 ):
-                    xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
-                    yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
-                    deckelunten = _strip_float(
-                        _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
-                    )
+                    if _haltung is not None:
+                        xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckeloben = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
+
+                for _haltung in block.findall(
+                        "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Start",
+                        self.NS
+                ):
+                    if _haltung is not None:
+                        xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckeloben = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
+
+                for _haltung in block.findall(
+                        "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
+                ):
+                    if _haltung is not None:
+                        xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckelunten = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
+
+                for _haltung in block.findall(
+                        "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Ende",
+                        self.NS
+                ):
+                    if _haltung is not None:
+                        xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckelunten = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
 
                 yield Haltung(
                     haltnam=name,
@@ -1229,6 +1286,7 @@ class ImportTask:
             ) = (0.0,) * 7
             for block in blocks:
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                baujahr = _strip_int(block.findtext("d:Baujahr", 0, self.NS))
 
                 # TODO: Does <AbwassertechnischeAnlage> even contain multiple <Kante>?
                 for _haltung in block.findall("d:Kante/d:KantenTyp/..", self.NS):
@@ -1249,18 +1307,55 @@ class ImportTask:
                         )
 
                 for _haltung in block.findall(
-                    "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
+                        "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
                 ):
-                    xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
-                    yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                    if _haltung is not None:
+                        xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckeloben = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
 
 
                 for _haltung in block.findall(
-                    "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
+                        "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Start",
+                        self.NS
                 ):
-                    xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
-                    yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                    if _haltung is not None:
+                        xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckeloben = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
 
+                for _haltung in block.findall(
+                        "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
+                ):
+                    if _haltung is not None:
+                        xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckelunten = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
+
+                for _haltung in block.findall(
+                        "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Ende",
+                        self.NS
+                ):
+                    if _haltung is not None:
+                        xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckelunten = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
 
                 yield Haltung_untersucht(
                     haltnam=name,
@@ -1270,6 +1365,7 @@ class ImportTask:
                     breite=breite,
                     laenge=laenge,
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
+                    baujahr=baujahr,
                     xschob=xschob,
                     yschob=yschob,
                     xschun=xschun,
@@ -1347,8 +1443,8 @@ class ImportTask:
             sql = f"""
                 INSERT INTO haltungen_untersucht_data 
                     (haltnam, schoben, schunten, 
-                    hoehe, breite, laenge, kommentar, xschob, yschob, xschun, yschun)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    hoehe, breite, laenge, kommentar,baujahr, xschob, yschob, xschun, yschun)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
 
             if not self.db_qkan.sql(
@@ -1362,6 +1458,7 @@ class ImportTask:
                     haltung_untersucht.breite,
                     haltung_untersucht.laenge,
                     haltung_untersucht.kommentar,
+                    haltung_untersucht.baujahr,
                     haltung_untersucht.xschob,
                     haltung_untersucht.yschob,
                     haltung_untersucht.xschun,
@@ -1493,6 +1590,7 @@ class ImportTask:
                         quantnr1 = _strip_float(_untersuchdat.findtext("d:Quantifizierung1Numerisch", "0.0", self.NS))
                         quantnr2 = _strip_float(_untersuchdat.findtext("d:Quantifizierung2Numerisch", "0.0", self.NS))
                         streckenschaden = _untersuchdat.findtext("d:Streckenschaden", "not found", self.NS)
+                        streckenschaden_lfdnr = _strip_int(_untersuchdat.findtext("d:StreckenschadenLfdNr", "0", self.NS))
                         pos_von = _strip_int(_untersuchdat.findtext("d:PositionVon", "0", self.NS))
                         pos_bis = _strip_int(_untersuchdat.findtext("d:PositionBis", "0", self.NS))
                         foto_dateiname = _untersuchdat.findtext("d:Fotodatei", "not found", self.NS)
@@ -1513,6 +1611,7 @@ class ImportTask:
                         quantnr1=quantnr1,
                         quantnr2=quantnr2,
                         streckenschaden=streckenschaden,
+                        streckenschaden_lfdnr=streckenschaden_lfdnr,
                         pos_von=pos_von,
                         pos_bis=pos_bis,
                         foto_dateiname=foto_dateiname,
@@ -1562,9 +1661,9 @@ class ImportTask:
 
             sql = f"""
             INSERT INTO untersuchdat_haltung_data (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler,inspektionslaenge, station, timecode, kuerzel, 
-                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, pos_von, pos_bis, foto_dateiname, film_dateiname,
+                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname,
                                                      ordner_bild, ordner_video, richtung)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
             if not self.db_qkan.sql(
                 sql,
@@ -1585,6 +1684,7 @@ class ImportTask:
                     untersuchdat_haltung.quantnr1,
                     untersuchdat_haltung.quantnr2,
                     untersuchdat_haltung.streckenschaden,
+                    untersuchdat_haltung.streckenschaden_lfdnr,
                     untersuchdat_haltung.pos_von,
                     untersuchdat_haltung.pos_bis,
                     untersuchdat_haltung.foto_dateiname,
@@ -1657,24 +1757,59 @@ class ImportTask:
                             / 1000
                         )
 
+
                 for _haltung in block.findall(
                     "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
                 ):
-                    xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
-                    yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
-                    deckeloben = _strip_float(
-                        _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
-                    )
+                    if _haltung is not None:
+                        xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckeloben = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
+
+                for _haltung in block.findall(
+                        "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Start",
+                        self.NS
+                ):
+                    if _haltung is not None:
+                        xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckeloben = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
 
 
                 for _haltung in block.findall(
                     "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
                 ):
-                    xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
-                    yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
-                    deckelunten = _strip_float(
-                        _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
-                    )
+                    if _haltung is not None:
+                        xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckelunten = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
+
+                for _haltung in block.findall(
+                        "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Ende",
+                        self.NS
+                ):
+                    if _haltung is not None:
+                        xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                        yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                        deckelunten = _strip_float(
+                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                        )
+                    else:
+                        pass
+
+
 
                 yield Anschlussleitung(
                     leitnam=name,

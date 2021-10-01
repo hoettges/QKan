@@ -3,6 +3,7 @@ from typing import List
 
 from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
+
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import checknames, fehlermeldung, fortschritt, meldung
@@ -98,9 +99,8 @@ class ExportTask:
                         schaechte.deckelhoehe AS gelaendehoehe, 
                         1 AS art, 
                         st.mu_nr AS planungsstatus, 
-                        strftime('%Y-%m-%d %H:%M:%S', 
-                            coalesce(schaechte.createdat, 'now'
-                    )               ) AS lastmodified, 
+                        coalesce(schaechte.createdat, datetime('now')
+                        )                AS lastmodified, 
                         schaechte.durchm*1000 AS durchmesser,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
@@ -114,17 +114,13 @@ class ExportTask:
                         WHERE schaechte.schachttyp = 'Schacht'{auswahl})
                     """
 
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_schaechte (1)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_schaechte (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_schaechte (2)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_schaechte (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -150,7 +146,7 @@ class ExportTask:
                       schaechte.deckelhoehe AS gelaendehoehe, 
                       1 AS art, 
                       st.mu_nr AS planungsstatus, 
-                      strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                      coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                       schaechte.rowid + {id0} AS id, 
                       schaechte.durchm*1000 AS durchmesser,
                       SetSrid(schaechte.geop, -1) AS geometry
@@ -198,7 +194,7 @@ class ExportTask:
                         schaechte.deckelhoehe AS gelaendehoehe,
                         schaechte.deckelhoehe AS scheitelhoehe,
                         st.mu_nr AS planungsstatus, 
-                        strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                        coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                         kommentar AS kommentar,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
@@ -217,9 +213,7 @@ class ExportTask:
 
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_schaechte (2)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_schaechte (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -251,7 +245,7 @@ class ExportTask:
                       schaechte.deckelhoehe AS scheitelhoehe,
                       schaechte.deckelhoehe AS hoehevollfuellung,
                       st.mu_nr AS planungsstatus, 
-                      strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                      coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                       kommentar AS kommentar,
                       SetSrid(schaechte.geop, -1) AS geometry
                     FROM schaechte
@@ -298,7 +292,7 @@ class ExportTask:
                         schaechte.deckelhoehe AS gelaendehoehe,
                         schaechte.deckelhoehe AS scheitelhoehe,
                         st.mu_nr AS planungsstatus, 
-                        strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                        coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                         kommentar AS kommentar,
                         SetSrid(schaechte.geop, -1) AS geometry
                       FROM schaechte
@@ -309,9 +303,7 @@ class ExportTask:
                           (SELECT schnam FROM schaechte WHERE schaechte.schachttyp = 'Auslass'{auswahl})
                     """
 
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_auslaesse (1)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_auslaesse (1)"):
                     return False
 
             if self.append:
@@ -319,9 +311,7 @@ class ExportTask:
 
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_schaechte (2)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_schaechte (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -352,7 +342,7 @@ class ExportTask:
                       2 AS anzahlkanten, 
                       schaechte.deckelhoehe AS scheitelhoehe,
                       st.mu_nr AS planungsstatus, 
-                      strftime('%Y-%m-%d %H:%M:%S', coalesce(schaechte.createdat, 'now')) AS lastmodified, 
+                      coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                       kommentar AS kommentar,
                       SetSrid(schaechte.geop, -1) AS geometry
                     FROM schaechte
@@ -411,7 +401,7 @@ class ExportTask:
                       entwaesserungsarten.mu_nr AS kanalart,
                       coalesce(haltungen.ks, 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
                       coalesce(haltungen.ks, 1.5) AS rauhigkeitanzeige,
-                      coalesce(haltungen.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                      coalesce(haltungen.createdat, datetime('now')) AS lastmodified, 
                       28 AS materialart, 
                       0 AS einzugsgebiet, 
                       0 AS konstanterzuflusstezg, 
@@ -428,17 +418,13 @@ class ExportTask:
                   ( SELECT haltnam FROM haltungen){auswahl})
                   """
 
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_haltungen (1)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_haltungen (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_haltungen (2)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_haltungen (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -481,7 +467,7 @@ class ExportTask:
                     entwaesserungsarten.mu_nr AS kanalart,
                     coalesce(haltungen.ks, 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
                     coalesce(haltungen.ks, 1.5) AS rauhigkeitanzeige,
-                    coalesce(haltungen.createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                    coalesce(haltungen.createdat, datetime('now')) AS lastmodified, 
                     28 AS materialart,
                     0 AS einzugsgebiet,
                     0 AS konstanterzuflusstezg,
@@ -496,9 +482,7 @@ class ExportTask:
                     WHERE haltungen.haltnam NOT IN (SELECT Name FROM mu.Rohr){auswahl};
                   """
 
-                if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_mu.export_haltungen (3)"
-                ):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_mu.export_haltungen (3)"):
                     return False
 
                 self.nextid += idmax - idmin + 1
@@ -620,7 +604,7 @@ class ExportTask:
                         coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
                         fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
                         abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
-                        coalesce(createdat, strftime('%Y-%m-%d %H:%M:%S','now')) AS lastmodified, 
+                        coalesce(createdat, datetime('now')) AS lastmodified, 
                         kommentar AS Kommentar, 
                         SetSrid(geom, -1) AS geometry
                       FROM flintersect AS fi
@@ -709,7 +693,7 @@ class ExportTask:
                           fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
                           abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
                           1 AS IstPolygonalflaeche, 1 AS ZuordnungGesperrt, 0 AS ZuordnUnabhEZG, 
-                          strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) AS lastmodified, 
+                          coalesce(createdat, datetime('now')) AS lastmodified, 
                           kommentar AS Kommentar, 
                           SetSrid(geom, -1) AS geometry
                         FROM flintersect AS fi

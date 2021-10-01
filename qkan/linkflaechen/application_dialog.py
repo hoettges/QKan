@@ -23,6 +23,7 @@ from qgis.PyQt.QtWidgets import (
     QTextEdit,
     QWidget,
 )
+
 from qkan import list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.dialogs import QKanDialog

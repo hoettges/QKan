@@ -30,20 +30,17 @@ from qgis.core import (
     Qgis,
     QgsCoordinateReferenceSystem,
     QgsDataSourceUri,
-    QgsEditorWidgetSetup,
-    QgsField,
     QgsProject,
     QgsVectorLayer,
 )
-from qgis.PyQt.QtCore import QVariant
-from qgis.utils import iface, pluginDirectory
-from qkan import enums
+from qgis.utils import pluginDirectory
+
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_database import qgs_actual_version, qgs_version
 from qkan.database.qkan_utils import (
     eval_node_types,
     fehlermeldung,
-    get_layer_config_from_qgs_template,
     get_qkanlayer_attributes,
     list_qkan_layers,
     meldung,
@@ -93,6 +90,8 @@ def layersadapt(
 
     # -----------------------------------------------------------------------------------------------------
     # Datenbankverbindungen
+
+    iface = QKan.instance.iface
 
     dbQK = DBConnection(dbname=database_QKan)  # Datenbankobjekt der QKan-Datenbank
 
@@ -245,7 +244,7 @@ def layersadapt(
         )
 
     logger.debug("k_layersadapt (2), selectedLayerNames: %s", selectedLayerNames)
-    logger.debug(f'k_layersadapt (5), qkanLayers: {qkanLayers}')
+    logger.debug(f"k_layersadapt (5), qkanLayers: {qkanLayers}")
 
     layerNotQkanMeldung = False  # Am Schluss erscheint ggfs. eine Meldung, dass Nicht-QKan-Layer gefunden wurden.
 
@@ -256,10 +255,12 @@ def layersadapt(
     for layername in selectedLayerNames:
         # Nur Layer behandeln, die in der Vorlage-Projektdatei enthalten sind, d.h. QKan-Layer sind.
         if layername not in qkanLayers:
-            logger.debug(f'k_layersadapt (4): layername nicht in qkanLayers: {layername}')
+            logger.debug(
+                f"k_layersadapt (4): layername nicht in qkanLayers: {layername}"
+            )
             continue
 
-        logger.debug(f'k_layersadapt (3), layername: {layername}')
+        logger.debug(f"k_layersadapt (3), layername: {layername}")
 
         layerobjects = project.mapLayersByName(layername)
         if len(layerobjects) == 0:
@@ -293,7 +294,7 @@ def layersadapt(
             )
             continue  # Layer ist in Projekt-Templatenicht vorhanden...
         else:
-            logger.debug(f'In Vorlage-Projektdatei gefundener Layer: {layername}')
+            logger.debug(f"In Vorlage-Projektdatei gefundener Layer: {layername}")
 
         if anpassen_ProjektMakros:
             nodes = qgsxml.findall("properties/Macros")
@@ -371,10 +372,12 @@ def layersadapt(
             editFormConfig = layer.editFormConfig()
             editFormConfig.setUiForm(os.path.join(formsDir, form))
             layer.setEditFormConfig(editFormConfig)
-            logger.debug(f'k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n')
+            logger.debug(
+                f"k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n"
+            )
 
         if anpassen_Wertebeziehungen_in_Tabellen:
-            qlsnam = os.path.join(templateDir, "Layer_{}.qml".format(layername))
+            qlsnam = os.path.join(templateDir, "qml", "{}.qml".format(layername))
             if os.path.exists(qlsnam):
                 layer.loadNamedStyle(qlsnam)
                 logger.debug("Layerstil geladen (2): {}".format(qlsnam))

@@ -6,7 +6,6 @@ from typing import Callable, List, Optional
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QStandardPaths
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
@@ -19,9 +18,10 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 from qgis.utils import pluginDirectory
+
 from qkan import QKan, list_selected_items
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import fehlermeldung
 
 logger = logging.getLogger("QKan.mu.application_dialog")
 
@@ -369,9 +369,9 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     cb_aussengebiete: QCheckBox
     cb_einzugsgebiete: QCheckBox
 
-    cb_tezg_ef: QCheckBox
+    # cb_tezg_ef: QCheckBox
     cb_tezg_hf: QCheckBox
-    cb_tezg_tf: QCheckBox
+    # cb_tezg_tf: QCheckBox
 
     rb_update: QRadioButton
     rb_append: QRadioButton
@@ -391,6 +391,8 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.pb_import.clicked.connect(self.select_import)
         self.pb_project.clicked.connect(self.select_project)
         self.pb_database.clicked.connect(self.select_database)
+        self.cb_flaechen.clicked.connect(self.check_flaechen)
+        self.cb_tezg_hf.clicked.connect(self.check_tezg_hf)
         # self.button_box.helpRequested.connect(self.click_help)
 
         # Init fields
@@ -407,6 +409,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_pumpen.setChecked(QKan.config.check_import.pumpen)
         self.cb_wehre.setChecked(QKan.config.check_import.wehre)
         self.cb_flaechen.setChecked(QKan.config.check_import.flaechen)
+        self.cb_tezg_hf.setChecked(QKan.config.check_import.tezg_hf)
         self.cb_rohrprofile.setChecked(QKan.config.check_import.rohrprofile)
         self.cb_abflussparameter.setChecked(QKan.config.check_import.abflussparameter)
         self.cb_bodenklassen.setChecked(QKan.config.check_import.bodenklassen)
@@ -414,9 +417,9 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_aussengebiete.setChecked(QKan.config.check_import.aussengebiete)
         self.cb_einzugsgebiete.setChecked(QKan.config.check_import.einzugsgebiete)
 
-        self.cb_tezg_ef.setChecked(QKan.config.check_import.tezg_ef)
+        # self.cb_tezg_ef.setChecked(QKan.config.check_import.tezg_ef)
         self.cb_tezg_hf.setChecked(QKan.config.check_import.tezg_hf)
-        self.cb_tezg_tf.setChecked(QKan.config.check_import.tezg_tf)
+        # self.cb_tezg_tf.setChecked(QKan.config.check_import.tezg_tf)
 
         self.rb_append.setChecked(QKan.config.check_import.append)
         self.rb_update.setChecked(QKan.config.check_import.update)
@@ -456,3 +459,15 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         if filename:
             self.tf_database.setText(filename)
             self.default_dir = os.path.dirname(filename)
+
+    def check_flaechen(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        if self.cb_flaechen.isChecked():
+            QKan.config.check_import.tezg_hf = False
+            self.cb_tezg_hf.setChecked(False)
+
+    def check_tezg_hf(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        if self.cb_tezg_hf.isChecked():
+            QKan.config.check_import.flaechen = False
+            self.cb_flaechen.setChecked(False)

@@ -153,6 +153,9 @@ class CheckExport(ClassObject):
     aussengebiete: bool = True
     einzugsgebiete: bool = True
     tezg: bool = True
+    tezg_hf: bool = (
+        False  # Sonderfall: Keine Flächenobjekte, stattdessen Befestigungsgrade in tezg
+    )
 
     # Referenztabellen
     abflussparameter: bool = True
@@ -187,7 +190,9 @@ class CheckImport(ClassObject):
 
     # Haltungsflächen aus GIPS, drei Typen in einer Tabelle
     tezg_ef: bool = True
-    tezg_hf: bool = True
+    tezg_hf: bool = (
+        True  # Sonderfall: Keine Flächenobjekte, stattdessen Befestigungsgrade in tezg
+    )
     tezg_tf: bool = True
 
     # Referenztabellen
@@ -199,7 +204,9 @@ class CheckImport(ClassObject):
     append: bool = True  # Daten hinzufügen
     update: bool = False  # Daten ändern
     synch: bool = False  # Daten löschen
-    allrefs: bool = False # Daten aus Referenztabellen: Nicht verwendete Referenzwerte einschließen
+    allrefs: bool = (
+        False  # Daten aus Referenztabellen: Nicht verwendete Referenzwerte einschließen
+    )
 
 
 class DatabaseConfig(ClassObject):
@@ -254,23 +261,23 @@ class HEConfig(ClassObject):
 
 
 class HE8Config(ClassObject):
-    database: str = ""                          # QKan-Projektdatenbank
+    database: str = ""  # QKan-Projektdatenbank
     # database_erg: str = ""                    # ist jetzt: results_file
     qml_choice: enums.QmlChoice = enums.QmlChoice.UEBH
     qml_file_results: str = ""
-    template: str = ""                          # Vorlage für Export-Datenbank
-    import_file: str = ""                       # Import-Datenbank *.idbm
-    export_file: str = ""                       # Export-Datenbank *.idbm
-    results_file: str = ""                      # Ergebnis-Datenbank *.idbr
+    template: str = ""  # Vorlage für Export-Datenbank
+    import_file: str = ""  # Import-Datenbank *.idbm
+    export_file: str = ""  # Export-Datenbank *.idbm
+    results_file: str = ""  # Ergebnis-Datenbank *.idbr
 
 
 class MUConfig(ClassObject):
-    database: str = ""                          # QKan-Projektdatenbank
+    database: str = ""  # QKan-Projektdatenbank
     # database_erg: str = ""                    # ist jetzt: export_file
     qml_file_results: str = ""
     template: str = ""
-    import_file: str = ""                       # Import-Datenbank *.sqlite
-    export_file: str = ""                       # Export-Datenbank *.sqlite
+    import_file: str = ""  # Import-Datenbank *.sqlite
+    export_file: str = ""  # Export-Datenbank *.sqlite
 
 
 class ProjectConfig(ClassObject):

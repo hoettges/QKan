@@ -8,6 +8,7 @@ from typing import List, Optional, cast
 from qgis.core import Qgis, QgsDataSourceUri, QgsProject, QgsVectorLayer
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QListWidgetItem
+
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import (
@@ -135,7 +136,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -307,8 +308,6 @@ class LinkFl(QKanPlugin):
             QKan.config.selections.flaechen_abflussparam = liste_flaechen_abflussparam
             QKan.config.selections.hal_entw = liste_hal_entw
             QKan.config.selections.teilgebiete = liste_teilgebiete
-            if epsg:
-                QKan.config.epsg = epsg
             QKan.config.fangradius = fangradius
             QKan.config.linkflaechen.bezug_abstand = bezug_abstand
             QKan.config.linkflaechen.links_in_tezg = links_in_tezg
@@ -393,7 +392,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -487,8 +486,6 @@ class LinkFl(QKanPlugin):
 
             QKan.config.selections.hal_entw = liste_hal_entw
             QKan.config.selections.teilgebiete = liste_teilgebiete
-            if epsg:
-                QKan.config.epsg = epsg
             QKan.config.linkflaechen.suchradius = suchradius
             QKan.config.save()
 
@@ -501,7 +498,7 @@ class LinkFl(QKanPlugin):
                     self.dbQK, 
                     {liste_teilgebiete}, 
                     {suchradius}, 
-                    {epsg},
+                    {QKan.config.epsg},
             )"""
             )
 
@@ -510,7 +507,7 @@ class LinkFl(QKanPlugin):
                 self.db_qkan,
                 liste_teilgebiete,
                 suchradius,
-                epsg or QKan.config.epsg,
+                QKan.config.epsg,
             ):
                 del self.db_qkan
                 return
@@ -561,7 +558,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         # config in Dialog übernehmen
 
@@ -631,8 +628,6 @@ class LinkFl(QKanPlugin):
             #
             QKan.config.autokorrektur = autokorrektur
             QKan.config.selections.teilgebiete = liste_teilgebiete
-            if epsg:
-                QKan.config.epsg = epsg
             QKan.config.linkflaechen.auswahltyp = auswahltyp
             QKan.config.linkflaechen.bufferradius = bufferradius
 
@@ -718,7 +713,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         # Anzeige initialisieren
         self.dlg_mg.show_groups()
@@ -753,7 +748,7 @@ class LinkFl(QKanPlugin):
             )
             return
 
-        self.connectQKanDB()                            # Setzt self.db_qkan und self.database_qkan
+        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
         self.dlg_ul.tf_qkDB.setText(database_qkan)
 

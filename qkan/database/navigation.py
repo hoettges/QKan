@@ -5,6 +5,7 @@ import logging
 from typing import Dict, List, Optional, Tuple, Union, cast
 
 from qgis.PyQt import QtCore
+
 from qkan.database.dbfunc import DBConnection
 
 main_logger = logging.getLogger("QKan.database.navigation.main")

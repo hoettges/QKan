@@ -11,8 +11,8 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.lines import Line2D
-
 from qgis.PyQt.QtWidgets import QWidget
+
 from qkan.database.sbfunc import SBConnection
 
 from .Enums import LayerType, SliderMode
@@ -122,7 +122,7 @@ class Laengsschnitt:
             schacht = self.__route.get("schachtinfo").get(name)
             boden = schacht.get("sohlhoehe")
             decke = schacht.get("deckelhoehe")
-            self.__log.info(u'Schacht "{}" wird geplottet'.format(schacht))
+            self.__log.info('Schacht "{}" wird geplottet'.format(schacht))
             l = SchachtLinie(
                 [self.__x_pointer, self.__x_pointer],
                 [boden, decke],
@@ -160,7 +160,7 @@ class Laengsschnitt:
             :type name:str
             """
             haltung = self.__route.get("haltunginfo").get(name)
-            self.__log.info(u'Haltung "{}" wird geplottet'.format(name))
+            self.__log.info('Haltung "{}" wird geplottet'.format(name))
             laenge = haltung.get("laenge")
             oben = haltung.get("sohlhoeheoben")
             unten = haltung.get("sohlhoeheunten")
@@ -278,7 +278,7 @@ class Maximizer:
         haltungen = {}
         schaechte = {}
         for haltung in self.__route.get("haltungen"):
-            statement = u'SELECT wasserstandoben,wasserstandunten FROM lau_max_el WHERE "KANTE"={}'.format(
+            statement = 'SELECT wasserstandoben,wasserstandunten FROM lau_max_el WHERE "KANTE"={}'.format(
                 "'{}'".format(haltung)
             )
             self.__db.sql(statement)
@@ -290,11 +290,11 @@ class Maximizer:
         self.__log.info("Maximalwerte der Haltungen wurden abgefragt")
         for schacht in self.__route.get("schaechte"):
             self.__db.sql(
-                u'SELECT wasserstand FROM lau_max_s WHERE "KNOTEN"={}'.format(
+                'SELECT wasserstand FROM lau_max_s WHERE "KNOTEN"={}'.format(
                     "'{}'".format(schacht)
                 )
             )
-            wasserstand, = self.__db.fetchone()
+            (wasserstand,) = self.__db.fetchone()
             schaechte[schacht] = wasserstand
         self.__log.info("Maximalwerte der Schächte wurden abgefragt")
         return dict(haltungen=haltungen, schaechte=schaechte)
@@ -347,7 +347,7 @@ class Maximizer:
                 draw_haltung(self.__route.get("haltungen").pop(0))
             switch = not switch
         self.__log.debug("Y-Werte:\t{}\nX-Werte:\t{}".format(self.__y, self.__x))
-        self.__plot, = self.__ax.plot(
+        (self.__plot,) = self.__ax.plot(
             self.__x, self.__y, "b--", label="Maximum", alpha=0.6
         )
         self.__log.info("Maximal-Linie wurde geplottet")
@@ -400,12 +400,14 @@ class Animator:
         self.__schacht_breite = 1
         self.__x = []
         self.__y = []
-        self.__plot, = self.__ax.plot([], [], "b:", label="Wasserstand", alpha=1)
+        (self.__plot,) = self.__ax.plot([], [], "b:", label="Wasserstand", alpha=1)
         if plots.get("waterlevel") is None:
             plots["waterlevel"] = self.__plot
-        self.__max_value, self.__simulation, self.__timestamps = (
-            self.__fetch_simulation_data()
-        )
+        (
+            self.__max_value,
+            self.__simulation,
+            self.__timestamps,
+        ) = self.__fetch_simulation_data()
         slider.setRange(0, self.__max_value)
         self.__slider = slider
         self.__animation = None
@@ -461,17 +463,23 @@ class Animator:
         schaechte = {}
         for haltung in self.__route.get("haltungen"):
             self.__db.sql(
-                u'SELECT wasserstandoben,wasserstandunten,zeitpunkt FROM lau_gl_el WHERE "KANTE"={}'.format(
+                'SELECT wasserstandoben,wasserstandunten,zeitpunkt FROM lau_gl_el WHERE "KANTE"={}'.format(
                     "'{}'".format(haltung)
                 )
             )
             wasserstaende = self.__db.fetchall()
             for wasserstandoben, wasserstandunten, zeitpunkt_t in wasserstaende:
                 try:
-                    zeitpunkt = datetime.datetime.strptime(zeitpunkt_t,"%Y-%m-%d %H:%M:%S.%f")
-                    self.__log.info(f'zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n')
+                    zeitpunkt = datetime.datetime.strptime(
+                        zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    self.__log.info(
+                        f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
+                    )
                 except BaseException as err:
-                    main_logger.error(f"qkan.ganglinienhe8.plotter (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}")
+                    main_logger.error(
+                        f"qkan.ganglinienhe8.plotter (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
+                    )
                 if haltungen.get(zeitpunkt) is None:
                     haltungen[zeitpunkt] = {}
                 haltungen[zeitpunkt][haltung] = dict(
@@ -481,16 +489,20 @@ class Animator:
         self.__log.info("Wasserstände und Zeitpunkte der Haltungen wurden abgefragt")
         for schacht in self.__route.get("schaechte"):
             self.__db.sql(
-                u'SELECT wasserstand,zeitpunkt FROM lau_gl_s WHERE "KNOTEN"={}'.format(
+                'SELECT wasserstand,zeitpunkt FROM lau_gl_s WHERE "KNOTEN"={}'.format(
                     "'{}'".format(schacht)
                 )
             )
             wasserstaende = self.__db.fetchall()
             for wasserstand, zeitpunkt_t in wasserstaende:
                 try:
-                    zeitpunkt = datetime.datetime.strptime(zeitpunkt_t,"%Y-%m-%d %H:%M:%S.%f")
+                    zeitpunkt = datetime.datetime.strptime(
+                        zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                    )
                 except BaseException as err:
-                    main_logger.error(f"qkan.ganglinienhe8.plotter (2): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}")
+                    main_logger.error(
+                        f"qkan.ganglinienhe8.plotter (2): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
+                    )
                 if schaechte.get(zeitpunkt) is None:
                     schaechte[zeitpunkt] = {}
                 schaechte[zeitpunkt][schacht] = wasserstand
@@ -862,7 +874,6 @@ class ILines(lines.Line2D):
         :param y: Entspricht den Y-Werten des Start- und Endpunkts.
         :type y: list
         """
-        pass
 
 
 class HaltungLinie(ILines):
@@ -879,7 +890,7 @@ class HaltungLinie(ILines):
 
     def set_data(self, x, y):
         """
-        Wird von der Basis-Klasse überschrieben und setzt den Start und Endpunkt der Linie. Als auch die Position des 
+        Wird von der Basis-Klasse überschrieben und setzt den Start und Endpunkt der Linie. Als auch die Position des
         Textes.
 
         :param x: Entspricht den X-Werten des Start- und Endpunkts.
@@ -912,7 +923,7 @@ class SchachtLinie(ILines):
 
     def set_data(self, x, y):
         """
-        Wird von der Basis-Klasse überschrieben und setzt den Start und Endpunkt der Linie. Als auch die Position des 
+        Wird von der Basis-Klasse überschrieben und setzt den Start und Endpunkt der Linie. Als auch die Position des
         Textes.
 
         :param x: Entspricht den X-Werten des Start- und Endpunkts.
