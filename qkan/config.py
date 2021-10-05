@@ -442,7 +442,8 @@ class XmlConfig(ClassObject):
 
 class PlausiConfig(ClassObject):
     """Einstellungen der Plausibilitätskontrolle datacheck"""
-    thema: str = 'Netzstruktur'
+    themen: list = ['Netzstruktur']
+    keepdata: bool = False
 
 
 class Config(ClassObject):

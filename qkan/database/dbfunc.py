@@ -22,7 +22,7 @@ from qgis.utils import spatialite_connect
 from qkan import QKan
 
 from .qkan_database import createdbtables, db_version
-from .qkan_utils import fehlermeldung, meldung
+from .qkan_utils import fehlermeldung, meldung, get_database_QKan
 
 __author__ = "Joerg Hoettges"
 __date__ = "September 2016"
@@ -57,8 +57,10 @@ class DBConnection:
     ):
         """Constructor. Überprüfung, ob die QKan-Datenbank die aktuelle Version hat, mit dem Attribut isCurrentVersion.
 
-        :param dbname:      Pfad zur SpatiaLite-Datenbankdatei. Falls nicht vorhanden,
-                            wird es angelegt.
+        :param dbname:      Pfad zur SpatiaLite-Datenbankdatei.
+                            - Falls angegeben und nicht vorhanden, wird es angelegt.
+                            - Falls nicht angegeben, wird die Datenbank aus den Layern "Schächte" und
+                              "Flächen" gelesen und verbunden
         :type dbname:        String
 
         :param tab_object:   Vectorlayerobjekt, aus dem die Parameter zum
@@ -107,11 +109,17 @@ class DBConnection:
 
         self.current_version = LooseVersion("0.0.0")
 
-        if dbname is not None:
+        if not tab_object:
+            if not self.dbname:
+                self.dbname, _ = get_database_QKan()
+                if not self.dbname:
+                    fehlermeldung("Fehler: Für den Export muss ein Projekt geladen sein!")
+                    return None
+
             # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
-            if os.path.exists(dbname):
+            if os.path.exists(self.dbname):
                 self.consl = spatialite_connect(
-                    database=dbname, check_same_thread=False
+                    database=self.dbname, check_same_thread=False
                 )
                 self.cursl = self.consl.cursor()
 
@@ -119,12 +127,12 @@ class DBConnection:
                 if self.epsg is None:
                     logger.error(
                         "dbfunc.DBConnection.__init__: EPSG konnte nicht ermittelt werden. \n"
-                        + " QKan-DB: {}\n".format(dbname)
+                        + " QKan-DB: {}\n".format(self.dbname)
                     )
 
                 logger.debug(
                     "dbfunc.DBConnection.__init__: Datenbank existiert und Verbindung hergestellt:\n"
-                    + "{}".format(dbname)
+                    + "{}".format(self.dbname)
                 )
                 # Versionsprüfung
 
@@ -157,9 +165,9 @@ class DBConnection:
 
                 datenbank_qkan_template = os.path.join(QKan.template_dir, "qkan.sqlite")
                 try:
-                    shutil.copyfile(datenbank_qkan_template, dbname)
+                    shutil.copyfile(datenbank_qkan_template, self.dbname)
 
-                    self.consl = spatialite_connect(database=dbname)
+                    self.consl = spatialite_connect(database=self.dbname)
                     self.cursl = self.consl.cursor()
 
                     # sql = 'SELECT InitSpatialMetadata()'
@@ -178,11 +186,11 @@ class DBConnection:
                             "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
                         )
                 except BaseException as err:
-                    logger.debug(f"Datenbank ist nicht vorhanden: {dbname}")
+                    logger.debug(f"Datenbank ist nicht vorhanden: {self.dbname}")
                     fehlermeldung(
                         "Fehler in dbfunc.DBConnection:\n{}\n".format(err),
                         "Kopieren von: {}\nnach: {}\n nicht möglich".format(
-                            QKan.template_dir, dbname
+                            QKan.template_dir, self.dbname
                         ),
                     )
                     self.connected = False  # Verbindungsstatus zur Kontrolle
@@ -190,7 +198,7 @@ class DBConnection:
         elif tab_object is not None:
             tabconnect = tab_object.publicSource()
             t_db, t_tab, t_geo, t_sql = tuple(tabconnect.split())
-            dbname = t_db.split("=")[1].strip("'")
+            self.dbname = t_db.split("=")[1].strip("'")
             self.tabname = t_tab.split("=")[1].strip('"')
 
             # Pruefung auf korrekte Zeichen in Namen
@@ -203,7 +211,7 @@ class DBConnection:
                 self.consl = None
             else:
                 try:
-                    self.consl = spatialite_connect(database=dbname)
+                    self.consl = spatialite_connect(database=self.dbname)
                     self.cursl = self.consl.cursor()
 
                     self.epsg = self.getepsg()
@@ -211,20 +219,11 @@ class DBConnection:
                     fehlermeldung(
                         "Fehler",
                         "Fehler beim Öffnen der SpatialLite-Datenbank {}!\nAbbruch!".format(
-                            dbname
+                            self.dbname
                         ),
                     )
                     self.connected = False  # Verbindungsstatus zur Kontrolle
                     self.consl = None
-        else:
-            fehlermeldung(
-                "Fehler",
-                "Fehler beim Anbinden der SpatialLite-Datenbank {}!\nAbbruch!".format(
-                    dbname
-                ),
-            )
-            self.connected = False  # Verbindungsstatus zur Kontrolle
-            self.consl = None
 
     def __del__(self) -> None:
         """Destructor.
@@ -307,13 +306,28 @@ class DBConnection:
                 )
             self.sqlcount = 0
             return True
-
         except sqlite3.Error as e:
             fehlermeldung(
                 "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=stmt_category),
                 "{e}\n{s}".format(e=repr(e), s=sql),
             )
+            self.__del__()
             return False
+
+    def executefile(self, filenam):
+        """Liest eine Datei aus dem template-Verzeichnis und führt sie als SQL-Befehle aus"""
+        sqlfile = open(filenam).read()
+        try:
+            self.cursl.executescript(sqlfile)
+        except sqlite3.Error as e:
+            fehlermeldung(
+                "dbfunc.DBConnection.sql: SQL-Fehler beim Ausführen der SQL-Datei: {e}".format(
+                    e=stmt_category),
+                "{e}\n{f}".format(e=repr(e), f=filenam),
+            )
+            self.__del__()
+            return False
+        return True
 
     def fetchall(self) -> List[Any]:
         """Gibt alle Daten aus der vorher ausgeführten SQL-Abfrage zurueck"""
@@ -734,3 +748,5 @@ class DBConnection:
             return False
 
         return True
+
+

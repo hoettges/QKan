@@ -1,6 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/qkan/mu_porter" >
-        <file>res/icon_export.png</file>
-        <file>res/icon_import.png</file>
+    <qresource prefix="/plugins/qkan/datacheck" >
+        <file>res/icon_plausi.png</file>
     </qresource>
 </RCC>

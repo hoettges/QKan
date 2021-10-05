@@ -1,12 +1,12 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis styleCategories="AllStyleCategories" minScale="1e+08" maxScale="0" readOnly="0" version="3.20.1-Odense" hasScaleBasedVisibilityFlag="0">
+<qgis hasScaleBasedVisibilityFlag="0" maxScale="0" styleCategories="AllStyleCategories" version="3.20.1-Odense" minScale="1e+08" readOnly="0">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal accumulate="0" endExpression="" endField="" startField="" startExpression="" enabled="0" mode="0" durationField="" durationUnit="min" fixedDuration="0">
+  <temporal endField="" endExpression="" mode="0" startExpression="" durationUnit="min" enabled="0" fixedDuration="0" durationField="" accumulate="0" startField="">
     <fixedRange>
       <start></start>
       <end></end>
@@ -22,63 +22,63 @@
       <Option name="variableValues"/>
     </Option>
   </customproperties>
-  <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
+  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
     <activeChecks/>
     <checkConfiguration/>
   </geometryOptions>
   <legend showLabelLegend="0" type="default-vector"/>
   <referencedLayers/>
   <fieldConfiguration>
-    <field configurationFlags="None" name="pk">
+    <field name="pk" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="name">
+    <field name="gruppe" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="gruppe">
+    <field name="warntext" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="warntext">
+    <field name="warntyp" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="warnlevel">
+    <field name="warnlevel" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="sql">
+    <field name="sql" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="layername">
+    <field name="layername" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="idname">
+    <field name="attrname" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
@@ -88,43 +88,43 @@
   </fieldConfiguration>
   <aliases>
     <alias index="0" field="pk" name=""/>
-    <alias index="1" field="name" name=""/>
-    <alias index="2" field="gruppe" name=""/>
-    <alias index="3" field="warntext" name=""/>
+    <alias index="1" field="gruppe" name=""/>
+    <alias index="2" field="warntext" name=""/>
+    <alias index="3" field="warntyp" name=""/>
     <alias index="4" field="warnlevel" name=""/>
     <alias index="5" field="sql" name=""/>
     <alias index="6" field="layername" name=""/>
-    <alias index="7" field="idname" name=""/>
+    <alias index="7" field="attrname" name=""/>
   </aliases>
   <defaults>
     <default applyOnUpdate="0" field="pk" expression=""/>
-    <default applyOnUpdate="0" field="name" expression=""/>
     <default applyOnUpdate="0" field="gruppe" expression=""/>
     <default applyOnUpdate="0" field="warntext" expression=""/>
+    <default applyOnUpdate="0" field="warntyp" expression=""/>
     <default applyOnUpdate="0" field="warnlevel" expression=""/>
     <default applyOnUpdate="0" field="sql" expression=""/>
     <default applyOnUpdate="0" field="layername" expression=""/>
-    <default applyOnUpdate="0" field="idname" expression=""/>
+    <default applyOnUpdate="0" field="attrname" expression=""/>
   </defaults>
   <constraints>
-    <constraint constraints="3" field="pk" exp_strength="0" unique_strength="1" notnull_strength="1"/>
-    <constraint constraints="0" field="name" exp_strength="0" unique_strength="0" notnull_strength="0"/>
-    <constraint constraints="0" field="gruppe" exp_strength="0" unique_strength="0" notnull_strength="0"/>
-    <constraint constraints="0" field="warntext" exp_strength="0" unique_strength="0" notnull_strength="0"/>
-    <constraint constraints="0" field="warnlevel" exp_strength="0" unique_strength="0" notnull_strength="0"/>
-    <constraint constraints="0" field="sql" exp_strength="0" unique_strength="0" notnull_strength="0"/>
-    <constraint constraints="0" field="layername" exp_strength="0" unique_strength="0" notnull_strength="0"/>
-    <constraint constraints="0" field="idname" exp_strength="0" unique_strength="0" notnull_strength="0"/>
+    <constraint notnull_strength="1" unique_strength="1" exp_strength="0" field="pk" constraints="3"/>
+    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="gruppe" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="warntext" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="warntyp" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="warnlevel" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="sql" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="layername" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="attrname" constraints="0"/>
   </constraints>
   <constraintExpressions>
     <constraint exp="" desc="" field="pk"/>
-    <constraint exp="" desc="" field="name"/>
     <constraint exp="" desc="" field="gruppe"/>
     <constraint exp="" desc="" field="warntext"/>
+    <constraint exp="" desc="" field="warntyp"/>
     <constraint exp="" desc="" field="warnlevel"/>
     <constraint exp="" desc="" field="sql"/>
     <constraint exp="" desc="" field="layername"/>
-    <constraint exp="" desc="" field="idname"/>
+    <constraint exp="" desc="" field="attrname"/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
@@ -132,15 +132,15 @@
   </attributeactions>
   <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
     <columns>
-      <column hidden="0" type="field" name="pk" width="-1"/>
-      <column hidden="0" type="field" name="name" width="-1"/>
-      <column hidden="0" type="field" name="gruppe" width="-1"/>
-      <column hidden="0" type="field" name="warntext" width="-1"/>
-      <column hidden="0" type="field" name="warnlevel" width="-1"/>
-      <column hidden="0" type="field" name="sql" width="-1"/>
-      <column hidden="0" type="field" name="layername" width="-1"/>
-      <column hidden="0" type="field" name="idname" width="-1"/>
-      <column hidden="1" type="actions" width="-1"/>
+      <column type="field" hidden="0" name="pk" width="-1"/>
+      <column type="field" hidden="0" name="gruppe" width="-1"/>
+      <column type="field" hidden="0" name="warntext" width="-1"/>
+      <column type="field" hidden="0" name="warnlevel" width="-1"/>
+      <column type="field" hidden="0" name="sql" width="-1"/>
+      <column type="field" hidden="0" name="layername" width="-1"/>
+      <column type="actions" hidden="1" width="-1"/>
+      <column type="field" hidden="0" name="warntyp" width="-1"/>
+      <column type="field" hidden="0" name="attrname" width="-1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -148,7 +148,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1"></editform>
+  <editform tolerant="1">C:\Users/hoettges/AppData/Roaming/QGIS/QGIS3\profiles\default/python/plugins\qkan\forms\</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -172,6 +172,7 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>generatedlayout</editorlayout>
   <editable>
+    <field editable="1" name="attrname"/>
     <field editable="1" name="gruppe"/>
     <field editable="1" name="idname"/>
     <field editable="1" name="layername"/>
@@ -180,8 +181,10 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="sql"/>
     <field editable="1" name="warnlevel"/>
     <field editable="1" name="warntext"/>
+    <field editable="1" name="warntyp"/>
   </editable>
   <labelOnTop>
+    <field labelOnTop="0" name="attrname"/>
     <field labelOnTop="0" name="gruppe"/>
     <field labelOnTop="0" name="idname"/>
     <field labelOnTop="0" name="layername"/>
@@ -190,16 +193,19 @@ def my_form_open(dialog, layer, feature):
     <field labelOnTop="0" name="sql"/>
     <field labelOnTop="0" name="warnlevel"/>
     <field labelOnTop="0" name="warntext"/>
+    <field labelOnTop="0" name="warntyp"/>
   </labelOnTop>
   <reuseLastValue>
-    <field reuseLastValue="0" name="gruppe"/>
-    <field reuseLastValue="0" name="idname"/>
-    <field reuseLastValue="0" name="layername"/>
-    <field reuseLastValue="0" name="name"/>
-    <field reuseLastValue="0" name="pk"/>
-    <field reuseLastValue="0" name="sql"/>
-    <field reuseLastValue="0" name="warnlevel"/>
-    <field reuseLastValue="0" name="warntext"/>
+    <field name="attrname" reuseLastValue="0"/>
+    <field name="gruppe" reuseLastValue="0"/>
+    <field name="idname" reuseLastValue="0"/>
+    <field name="layername" reuseLastValue="0"/>
+    <field name="name" reuseLastValue="0"/>
+    <field name="pk" reuseLastValue="0"/>
+    <field name="sql" reuseLastValue="0"/>
+    <field name="warnlevel" reuseLastValue="0"/>
+    <field name="warntext" reuseLastValue="0"/>
+    <field name="warntyp" reuseLastValue="0"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>

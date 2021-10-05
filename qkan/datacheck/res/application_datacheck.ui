@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>341</width>
-    <height>373</height>
+    <width>330</width>
+    <height>411</height>
    </rect>
   </property>
   <property name="font">
@@ -21,9 +21,9 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>320</y>
-     <width>181</width>
+     <x>40</x>
+     <y>360</y>
+     <width>251</width>
      <height>23</height>
     </rect>
    </property>
@@ -93,7 +93,7 @@
     <bool>true</bool>
    </property>
    <property name="selectionMode">
-    <enum>QAbstractItemView::SingleSelection</enum>
+    <enum>QAbstractItemView::MultiSelection</enum>
    </property>
   </widget>
   <widget class="QLineEdit" name="le_anzahl">
@@ -128,7 +128,65 @@
     <string>Plausibilitätsabfragen ausgewählt</string>
    </property>
   </widget>
+  <widget class="QCheckBox" name="cb_keepdata">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>300</y>
+     <width>261</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bereits aufgelistete Ergebnisse erhalten und neue hinzufügen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="statusTip">
+    <string>bisherige Ergebnisse ergänzen</string>
+   </property>
+   <property name="text">
+    <string>Ergebnisse zu bestehenden hinzufügen</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ConnectDialogBase</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>331</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>186</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ConnectDialogBase</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>331</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>186</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

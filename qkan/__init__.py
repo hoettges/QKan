@@ -110,6 +110,7 @@ class QKan:
         from .tools import QKanTools
         from .xmlporter import XmlPorter
         from .ganglinienhe8 import GanglinienHE8
+        from .datacheck import Plausi
 
         self.plugins: List = [
             CreateUnbefFl(iface),
@@ -122,6 +123,7 @@ class QKan:
             QKanTools(iface),
             XmlPorter(iface),
             GanglinienHE8(iface),
+            Plausi(iface),
         ]
 
         actions = cast(QMenuBar, self.iface.mainWindow().menuBar()).actions()

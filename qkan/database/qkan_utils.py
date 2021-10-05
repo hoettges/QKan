@@ -754,3 +754,5 @@ def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> float:
             return default
     else:
         return float(zahl) / 10.0 ** n
+
+
