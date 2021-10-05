@@ -32,7 +32,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-116</y>
         <width>493</width>
         <height>668</height>
        </rect>
@@ -68,7 +68,7 @@
           <string comment="Nach dem Import eine Projektdatei neu erzeugen und speichern (optional)"/>
          </property>
          <property name="title">
-          <string>Schadensklassen</string>
+          <string>Anzeige der Schadenskürzel</string>
          </property>
          <property name="flat">
           <bool>false</bool>
