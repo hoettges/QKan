@@ -33,32 +33,6 @@ class ReadData():  # type: ignore
         self.schacht_types = QKan.config.tools.Clipboard.schacht_types
         self.qkan_patterns = QKan.config.tools.Clipboard.qkan_patterns
 
-    def connectQKanDB(self, database_qkan=None):
-        """Liest die verknüpfte QKan-DB aus dem geladenen Projekt
-        Für Test muss database_qkan vorgegeben werden
-        """
-
-        # Verbindung zur Datenbank des geladenen Projekts herstellen
-        if database_qkan:
-            self.database_qkan = database_qkan
-        else:
-            self.database_qkan, _ = get_database_QKan()
-        if self.database_qkan:
-            self.db_qkan: DBConnection = DBConnection(dbname=self.database_qkan)
-            if not self.db_qkan.connected:
-                logger.error(
-                    "Fehler in he8porter.application.connectQKanDB:\n"
-                    f"QKan-Datenbank {self.database_qkan:s} wurde nicht"
-                    " gefunden oder war nicht aktuell!\nAbbruch!"
-                )
-                return False
-        else:
-            fehlermeldung("Fehler: Kein Projekt geladen. Gegebenenfalls muss ein neues erstellt werden.")
-            return False
-
-        # self.export_dlg.connectQKanDB(self.db_qkan)               # deaktiviert jh, 17.04.2021
-        return True
-
     def run(self) -> None:
         """Immediately run paste procedure"""
 
@@ -80,7 +54,7 @@ class ReadData():  # type: ignore
         layername = layer.name()
         dbname, table, geom, sql = get_qkanlayer_attributes(datasource)
         if layer.providerType() == 'spatialite':
-            self.connectQKanDB(dbname)
+            self.database_qkan = DBConnection(dbname)
             self.read_clipboard(table, layername)
         else:
             return

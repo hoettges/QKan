@@ -30,7 +30,6 @@ FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "application_dialog_base.ui")
 )
 
-
 def click_help() -> None:
     """Reaktion auf Klick auf Help-Schaltfläche"""
     helpfile = (
@@ -38,6 +37,29 @@ def click_help() -> None:
     )
     webbrowser.open_new_tab(str(helpfile) + "#erzeugen-der-unbefestigten-flachen")
 
+def list_selected_tab_items(table_widget: QTableWidget, n_cols: int = 5) -> List:
+    """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
+
+    :param table_widget:    Tabelle zur Auswahl der Arten von Haltungsflächen.
+    :param n_cols:          Anzahl Spalten des tableWidget-Elements
+    """
+    items = table_widget.selectedItems()
+    anz = len(items)
+    n_rows = anz // n_cols
+
+    if len(items) > n_cols:
+        # mehr als eine Zeile ausgewählt
+        if table_widget.row(items[1]) == 1:
+            # Elemente wurden spaltenweise übergeben
+            liste = [[el.text() for el in items][i:anz:n_rows] for i in range(n_rows)]
+        else:
+            # Elemente wurden zeilenweise übergeben
+            liste = [[el.text() for el in items][i : i + 5] for i in range(0, anz, 5)]
+    else:
+        # Elemente wurden zeilenweise übergeben oder Liste ist leer
+        liste = [[el.text() for el in items][i : i + 5] for i in range(0, anz, 5)]
+
+    return liste
 
 class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
     button_box: QDialogButtonBox
@@ -51,7 +73,11 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
     lf_anzahl_tezg: QLabel
     tw_selAbflparamTeilgeb: QTableWidget
 
-    def __init__(self, plugin: "CreateUnbefFl", parent: Optional[QWidget] = None):
+    def __init__(
+        self,
+        plugin: "CreateUnbefFl",
+        parent: Optional[QWidget] = None
+        ):
         super().__init__(plugin, parent)
 
         self.db_qkan: Optional[DBConnection] = None
@@ -288,10 +314,6 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
         logger.debug("result = {}".format(repr(result)))
         # See if OK was pressed
         if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            # pass
-
             selected_abflparam = list_selected_tab_items(self.tw_selAbflparamTeilgeb)
             logger.debug(
                 "\nliste_selAbflparamTeilgeb (1): {}".format(selected_abflparam)
@@ -322,29 +344,3 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
             ):
                 del self.db_qkan
                 return
-
-
-def list_selected_tab_items(table_widget: QTableWidget, n_cols: int = 5) -> List:
-    """
-    Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
-
-    :param table_widget:    Tabelle zur Auswahl der Arten von Haltungsflächen.
-    :param n_cols:          Anzahl Spalten des tableWidget-Elements
-    """
-    items = table_widget.selectedItems()
-    anz = len(items)
-    n_rows = anz // n_cols
-
-    if len(items) > n_cols:
-        # mehr als eine Zeile ausgewählt
-        if table_widget.row(items[1]) == 1:
-            # Elemente wurden spaltenweise übergeben
-            liste = [[el.text() for el in items][i:anz:n_rows] for i in range(n_rows)]
-        else:
-            # Elemente wurden zeilenweise übergeben
-            liste = [[el.text() for el in items][i : i + 5] for i in range(0, anz, 5)]
-    else:
-        # Elemente wurden zeilenweise übergeben oder Liste ist leer
-        liste = [[el.text() for el in items][i : i + 5] for i in range(0, anz, 5)]
-
-    return liste

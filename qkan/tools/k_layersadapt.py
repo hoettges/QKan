@@ -32,6 +32,7 @@ from qgis.core import (
     QgsDataSourceUri,
     QgsProject,
     QgsVectorLayer,
+    QgsAction
 )
 from qgis.utils import pluginDirectory
 
@@ -56,6 +57,44 @@ logger = logging.getLogger("QKan.tools.k_layersadapt")
 
 progress_bar = None
 
+def load_plausisql(dbQK):
+    """Lädt die Standardplausibilitätsprüfungen in die Tabelle 'pruefsql'"""
+    templateDir = os.path.join(pluginDirectory("qkan"), "templates")
+    filenam = os.path.join(templateDir, 'Plausibilitaetspruefungen.sql')
+    if not dbQK.executefile(filenam):
+        fehlermeldung("Fehler beim Lesen der Plausibilitätsabfragen:",
+                      f"Die Datei {filenam} konnten nicht gelesen werden!")
+        return False
+    dbQK.commit()
+
+def load_plausiaction(layer):
+    """Lädt für den Layer 'Fehlerliste' die Aktion zum Aktivieren und Zoomen auf das fehlerhaft Objekt"""
+    acManager = layer.actions()
+
+    code = """from qgis.PyQt import QtWidgets
+    from qgis.core import Qgis
+
+    obj = '[%objname%]'
+    attr = '[%attrname%]'
+
+    activeproject = QgsProject().instance()
+    layername = '[%layername%]'
+    clayers = activeproject.mapLayersByName(layername)
+    if not clayers:
+        QtWidgets.QMessageBox.information(None, "Fehler im Programmcode der Aktion", f'Layer "{layername}"nicht definiert')
+    else:
+        clayer = clayers[0]
+        clayer.selectByExpression(f"{attr} = '{obj}'")
+        qgis.utils.iface.setActiveLayer(clayer)
+        box = clayer.boundingBoxOfSelected()
+        canvas = qgis.utils.iface.mapCanvas()
+        canvas.zoomToFeatureExtent(box)
+    """
+
+    acActor = QgsAction(QgsAction.GenericPython, "Objekt Aktivieren und Zoom/Pan zum Objekt", code,
+                        'C:/FHAC/hoettges/Kanalprogramme/QKan/qkan/datacheck/jump.png', False, "Zoom/Pan zum Objekt",
+                        actionScopes={'Feature'}, notificationMessage='Meldung')
+    acManager.addAction(acActor)
 
 def layersadapt(
     database_QKan: str,
@@ -151,6 +190,7 @@ def layersadapt(
 
     layersRoot = project.layerTreeRoot()
     for layername in qkanLayers:
+        layer = None
         if len(project.mapLayersByName(layername)) == 0:
             # layername fehlt in aktuellem Projekt
             isVector = (
@@ -179,17 +219,28 @@ def layersadapt(
                     atcGroup = layersRoot.addGroup(group)
                 atcGroup.addLayer(layer)
 
-                # Stildatei laden, falls vorhanden
-                qlsnam = os.path.join(templateDir, "Layer_{}.qml".format(layername))
-                if os.path.exists(qlsnam):
-                    layer.loadNamedStyle(qlsnam)
-                    logger.debug("Layerstil geladen (1): {}".format(qlsnam))
-                # layerList[layer.name()] = layer           --> in QGIS3 nicht nötig
+                layer_exists = True
                 logger.debug("k_layersadapt: Layer ergänzt: {}".format(layername))
             else:
                 logger.debug("k_layersadapt: Layer nicht ergänzt: {}".format(layername))
-        # else:
-        # logger.debug("k_layersadapt: Layer schon vorhanden: {}".format(layername))
+        else:
+            layer = project.mapLayersByName(layername)[0]
+
+        # Stildatei laden, falls vorhanden
+        if layer:
+            qlsnam = os.path.join(templateDir, "qml", "{}.qml".format(layername))
+            if os.path.exists(qlsnam):
+                layer.loadNamedStyle(qlsnam)
+                logger.debug("Layerstil geladen (1): {}".format(qlsnam))
+
+            if layer.name() == 'Plausibilitätsprüfungen':
+                load_plausisql(dbQK)
+                logger.debug("Plausibilitätsprüfungen mit Datei 'Plausibilitaetspruefungen.sql' ergänzt.")
+            elif layer.name() == 'Fehlerliste':
+                load_plausiaction(layer)
+                logger.debug("Aktion 'Zoom zum Objekt' für Layer 'Fehlerliste' ergänzt")
+        else:
+            logger.debug(f"k_layersadapt.Stildatei: Layer schon vorhanden: {layer.name()}")
 
     # Dictionary, das alle LayerIDs aus der Template-Projektdatei den entsprechenden (QKan-) LayerIDs
     # des aktuell geladenen Projekts zuordnet. Diese Liste wird bei der Korrektur der Wertelisten
@@ -382,89 +433,6 @@ def layersadapt(
                 layer.loadNamedStyle(qlsnam)
                 logger.debug("Layerstil geladen (2): {}".format(qlsnam))
 
-            # Layerstile werden nicht mehr aus der Template-Projektdatei gelesen
-            #
-            # dictOfEditWidgets, displayExpression = get_layer_config_from_qgs_template(
-            #     qgsxml, layername
-            # )
-            #
-            # # Anpassen der Wertebeziehungen
-            # # iterating over all fieldnames in template project
-            # for idx, field in enumerate(layer.fields()):
-            #     fieldname = field.name()
-            #     if fieldname in dictOfEditWidgets:
-            #         type, options = dictOfEditWidgets[fieldname]
-            #         if "Layer" in options:
-            #             # LayerId aus Template-Projektdatei muss durch den
-            #             # entsprechenden LayerId der Projektdatei ersetzt werden.
-            #             try:
-            #                 templateLayerName = options["Layer"]
-            #                 projectLayerName = layerIdList[templateLayerName]
-            #             except BaseException as err:
-            #                 fehlermeldung(
-            #                     f"Fehler in k_layersadapt (4) in layer {layername}: {err}",
-            #                     "Möglicherweise ist der Template-Projektdatei fehlerhaft",
-            #                 )
-            #                 del dbQK
-            #                 return
-            #             options["Layer"] = projectLayerName
-            #         ews = QgsEditorWidgetSetup(type, options)
-            #         layer.setEditorWidgetSetup(idx, ews)
-            #
-            # # Anpassen des Anzeige-Ausdrucks, nur wenn nicht schon anderweitig sinnvoll gesetzt.
-            # logger.debug(
-            #     f"DisplayExpression zu Layer {layer.name()}: {layer.displayExpression()}\n"
-            # )
-            # if layer.displayExpression() in (
-            #     "pk",
-            #     '"pk"',
-            #     "",
-            #     """COALESCE("pk", '<NULL>')""",
-            # ):
-            #     logger.debug(
-            #         f"DisplayExpression zu Layer {layer.name()} gesetzt: {displayExpression}\n"
-            #     )
-            #     layer.setDisplayExpression(displayExpression)
-
-    # Koordinaten in einer eigenen Spalte, nur für Layer Schächte, Auslässe, Speicher
-    # for layername in ["Schächte", "Auslässe", "Speicher"]:
-    #     # Expressions aus Projektvorlage (xml) lesen
-    #     tagLayer = (
-    #         f"projectlayers/maplayer[layername='{layername}']/expressionfields/field"
-    #     )
-    #     qgsLayers = qgsxml.findall(tagLayer)
-    #     exprList = {}  # zur Vermeidung von Doppelungen
-    #     for lay in qgsLayers:
-    #         expression = lay.attrib["expression"]
-    #         name = lay.attrib["name"]
-    #         typeName = lay.attrib["typeName"]
-    #         comment = lay.attrib["comment"]
-    #         exprList[name] = [expression, typeName, comment]
-    #
-    #     # Expressions in Attributtabelle einfügen
-    #     # noinspection PyArgumentList
-    #     project = QgsProject.instance()
-    #     layer = project.mapLayersByName(layername)[0]
-    #     for name in exprList.keys():
-    #         expression, typeName, comment = exprList[name]
-    #         if typeName == "double precision":
-    #             # noinspection PyArgumentList
-    #             layer.addExpressionField(
-    #                 expression,
-    #                 QgsField(name=name, type=QVariant.Double, comment=comment),
-    #             )
-    #         elif typeName == "integer":
-    #             # noinspection PyArgumentList
-    #             layer.addExpressionField(
-    #                 expression,
-    #                 QgsField(name=name, type=QVariant.Int, comment=comment),
-    #             )
-    #         else:
-    #             fehlermeldung(
-    #                 "Programmfehler", f"Datentyp noch nicht programmiert: {exprList[name]}"
-    #             )
-    #             return
-
     if layerNotInProjektMeldung:
         meldung(
             "Information zu den Layern",
@@ -516,5 +484,3 @@ def layersadapt(
 
     return
 
-
-# def dbAdapt(database_QKan):

@@ -233,7 +233,7 @@ class SWMMConfig(ClassObject):
 
 
 class LinkFlConfig(ClassObject):
-    # Linkflaechen
+    """Einstellungen der Flächenverknüpfungsfunktionen Linkflaechen"""
     auswahltyp: enums.AuswahlTyp = enums.AuswahlTyp.WITHIN
     bezug_abstand: enums.BezugAbstand = enums.BezugAbstand.KANTE
     bufferradius: float = 0.0
@@ -440,6 +440,12 @@ class XmlConfig(ClassObject):
     import_zustand: bool = True
 
 
+class PlausiConfig(ClassObject):
+    """Einstellungen der Plausibilitätskontrolle datacheck"""
+    themen: list = ['Netzstruktur']
+    keepdata: bool = False
+
+
 class Config(ClassObject):
     autokorrektur: bool = True
     epsg: int = 25832
@@ -462,6 +468,7 @@ class Config(ClassObject):
     project: ProjectConfig = ProjectConfig()
     tools: ToolsConfig = ToolsConfig()
     xml: XmlConfig = XmlConfig()
+    plausi: PlausiConfig = PlausiConfig()
 
     def __init__(self, **kwargs: Any):
         super().__init__(**kwargs)
