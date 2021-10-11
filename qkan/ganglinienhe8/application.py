@@ -510,12 +510,13 @@ class GanglinienHE8:
         for l in layers:
             features += [f[1] for f in l.selectedFeatures()]
         features = list(set(features))
-        self.__log.debug("{} wurde ausgewählt.".format(features))
+        self.__log.debug("{} (Typ: {}) wurde ausgewählt.".format(features, layer_type))
         self.__iface.messageBar().pushMessage(
             "Navigation", "Route wird berechnet...", level=Qgis.Info, duration=60
         )
 
-        route = find_route(self.__spatialite, features)
+        route = find_route(self.__spatialite, features, layer_type)
+        self.__log.debug(f'route: {route}')
         self.__iface.messageBar().clearWidgets()
         if route:
             self.__log.info("Navigation wurde erfolgreich durchgeführt!")

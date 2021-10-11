@@ -3,12 +3,13 @@ from typing import Any, Dict, List, Optional, Tuple, cast
 
 from qkan.database.dbfunc import DBConnection
 from qkan.ganglinienhe8.models import HaltungenStruct
+from .models import LayerType
 
 MAX_WEIGHT = 999999.0  # Defaultwert für Schacht ohne Verbindung
 
 logger = logging.getLogger("QKan.ganglinienhe8.dijkstra")
 
-NetzType = List[Tuple[str, str, str, int]]
+NetzType = List[Tuple[str, str, str, float]]
 
 
 class Netz:
@@ -211,7 +212,7 @@ def get_info(db: DBConnection, route: Dict[str, List[str]]) -> Tuple[Any, Any]:
     return schacht_info, haltung_info
 
 
-def find_route(dbname: str, schachtauswahl: List[str]) -> Optional[HaltungenStruct]:
+def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[HaltungenStruct]:
     qkan_db: DBConnection = DBConnection(dbname=dbname)
     if not qkan_db:
         logger.error(
@@ -235,17 +236,34 @@ def find_route(dbname: str, schachtauswahl: List[str]) -> Optional[HaltungenStru
     qkan_db.sql(sql)
     netz = cast(NetzType, qkan_db.fetchall())
 
+    if layer_type == LayerType.Haltung:
+        netzdict = dict([(hal[0], (hal[1], hal[2])) for hal in netz])
+        schachtauswahl = list(set([netzdict[haltung][0] for haltung in auswahl] + \
+                                  [netzdict[haltung][1] for haltung in auswahl]))
+    elif layer_type == LayerType.Schacht:
+        schachtauswahl = auswahl
+    else:
+        logger.error(f'Fehler bei der Objektauswahl\n'
+                     f'Schachtauswahl: {schachtauswahl}\n'
+                     f'Auswahltyp: {layer_type}')
+        return None
+
+    logger.debug(f'Objektauswahl\n'
+                 f'Schachtauswahl: {schachtauswahl}\n'
+                 f'Auswahltyp: {layer_type}')
+
     # schachtauswahl prüfen: Schacht muss als Anfangs- oder Endschacht im Netz vorhanden sein
-    for schacht in schachtauswahl:
-        if schacht not in [e[1] for e in netz] + [e[2] for e in netz]:
-            schachtauswahl.remove(schacht)
+    if layer_type == LayerType.Schacht:
+        for schacht in schachtauswahl.copy():
+            if schacht not in [e[1] for e in netz] + [e[2] for e in netz]:
+                schachtauswahl.remove(schacht)
 
     # Dict mit Gewichten bezogen auf die Schächte in 'schachtauswahl'
     # Hinweis: Parameter netz ist nur beim ersten Aufruf wirksam, um Netz.links und Netz.haltungen
     # als Klassenattribute zu erstellen
     knotennetz: Dict[str, Netz] = {e: Netz(netz) for e in schachtauswahl}
 
-    for schacht in schachtauswahl:
+    for schacht in schachtauswahl.copy():
         if schacht in knotennetz:
             knotennetz[schacht].analyse(schacht)
         else:

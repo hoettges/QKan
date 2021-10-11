@@ -472,9 +472,9 @@ class Animator:
                     zeitpunkt = datetime.datetime.strptime(
                         zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
                     )
-                    self.__log.info(
-                        f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
-                    )
+                    # self.__log.info(
+                        # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
+                    # )
                 except BaseException as err:
                     main_logger.error(
                         f"qkan.ganglinienhe8.plotter (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
