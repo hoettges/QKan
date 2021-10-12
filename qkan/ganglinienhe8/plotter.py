@@ -14,7 +14,7 @@ from qgis.PyQt.QtWidgets import QWidget
 
 from qkan.database.sbfunc import SBConnection
 
-from .Enums import LayerType, SliderMode
+from .models import LayerType, SliderMode
 
 main_logger = logging.getLogger("QKan.ganglinienhe8/plotter")
 main_logger.info("Plotter-Modul gestartet")
@@ -472,9 +472,9 @@ class Animator:
                     zeitpunkt = datetime.datetime.strptime(
                         zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
                     )
-                    self.__log.info(
-                        f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
-                    )
+                    # self.__log.info(
+                        # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
+                    # )
                 except BaseException as err:
                     main_logger.error(
                         f"qkan.ganglinienhe8.plotter (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
@@ -786,14 +786,6 @@ def set_legend():
     plt.figure(0)
     plt.legend(handles=legend_plots)
     main_logger.info("Legende wurde gesetzt")
-
-
-def reset_legend():
-    """
-    Löscht alle Plots aus der Figure des Längsschnitts
-    """
-    del plots[:]
-    main_logger.info("Alle Plots aus der Figure gelöscht")
 
 
 class ILines(lines.Line2D):

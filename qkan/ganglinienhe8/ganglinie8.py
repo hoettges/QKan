@@ -11,7 +11,7 @@ from qgis.PyQt.QtWidgets import QWidget
 
 from qkan.database.sbfunc import SBConnection
 
-from .Enums import LayerType
+from .models import LayerType
 from .ganglinie_dialog import GanglinieDialog
 
 main_logger = logging.getLogger("QKan")
@@ -98,9 +98,9 @@ class Ganglinie8:
                     zeitpunkt = datetime.datetime.strptime(
                         zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
                     )
-                    self.__log.info(
-                        f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
-                    )
+                    # self.__log.info(
+                        # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
+                    # )
                 except BaseException as err:
                     main_logger.error(
                         f"qkan.ganglinienhe8.ganglinie8 (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
@@ -125,9 +125,9 @@ class Ganglinie8:
                     zeitpunkt = datetime.datetime.strptime(
                         zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
                     )
-                    self.__log.info(
-                        f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
-                    )
+                    # self.__log.info(
+                        # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
+                    # )
                 except BaseException as err:
                     main_logger.error(
                         f"qkan.ganglinienhe8.ganglinie8 (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
@@ -282,7 +282,7 @@ class Ganglinie8:
         ):
             self.__x.append(zeitpunkt)
         self.__x = sorted(self.__x)
-        self.__log.debug("Alle möglichen Zeitpunkte:\t{}".format(self.__x))
+        # self.__log.debug("Alle möglichen Zeitpunkte:\t{}".format(self.__x))
 
     def __get_widget(self):
         """

@@ -6,7 +6,7 @@ from qgis.PyQt.QtCore import QPoint, Qt
 from qgis.PyQt.QtGui import QFont, QFontMetrics, QPainter, QPaintEvent
 from qgis.PyQt.QtWidgets import QSlider, QStyle, QStyleOptionSlider
 
-from .Enums import SliderMode
+from .models import SliderMode
 
 main_logger = logging.getLogger("QKan.ganglinienhe8.slider")
 

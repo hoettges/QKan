@@ -23,23 +23,26 @@
 import copy
 import logging
 import os.path
+from typing import Any, List, Optional, Union
 
+from PyQt5.QtGui import QMouseEvent
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
-from qgis.core import Qgis, QgsProject
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QFileDialog, QGridLayout, QLabel, QMessageBox
+from qgis._core import QgsVectorLayer
+from qgis.core import Qgis, QgsProject
+from qgis.gui import QgisInterface
 
 from qkan import QKan
-from qkan.database.navigation import Navigator
 from qkan.database.sbfunc import SBConnection
-
-from .application_dialog import LaengsschnittDialog
-from .Enums import LayerType, SliderMode, Type
-from .ganglinie8 import Ganglinie8
 
 # noinspection PyUnresolvedReferences
 from . import plotter, resources, slider as s  # isort:skip
+from .application_dialog import LaengsschnittDialog
+from .dijkstra import find_route
+from .ganglinie8 import Ganglinie8
+from .models import HaltungenStruct, LayerType, SliderMode, Type
 
 main_logger = logging.getLogger("QKan.ganglinienhe8.application.main")
 main_logger.info("Application-Modul gestartet")
@@ -48,7 +51,7 @@ main_logger.info("Application-Modul gestartet")
 class GanglinienHE8:
     """QGIS Plugin Implementation."""
 
-    def __init__(self, iface):
+    def __init__(self, iface: QgisInterface):
         """Constructor.
 
         :param iface: An interface instance that will be passed to this class
@@ -67,14 +70,14 @@ class GanglinienHE8:
         self.__spatialite = ""
         self.__maximizer = None
         self.__animator = None
-        self.__speed_controller = None
+        self.__speed_controller: Optional[s.Slider] = None
         self.__speed_label = None
         self.__default_function = None
         self.__ganglinie = Ganglinie8(1)
         self.__dlg2 = self.__ganglinie.get_dialog()
         self.__workspace = ""
 
-    def initGui(self):
+    def initGui(self) -> None:
         """
         Längsschnitt- und Ganglinie-Tool werden als unabhängige Werkzeuge dargestellt.
         Hier werden die GUI-Elemente mit bestimmten Event-Listenern verbunden.
@@ -110,17 +113,17 @@ class GanglinienHE8:
         self.__dlg.btn_backward.clicked.connect(self.__step_backward)
         self.__dlg.btn_ganglinie.clicked.connect(self.__ganglinie.show)
 
-    def __finished(self):
+    def __finished(self) -> None:
         """
         Schließt den Ganglinien-Dialog, falls geöffnet
         """
         self.__log.info("Ganglinien-Dialog wird geschlossen")
         self.__dlg2.close()
 
-    def unload(self):
+    def unload(self) -> None:
         pass
 
-    def __step_forward(self):
+    def __step_forward(self) -> None:
         """
         Geht einen Datensatz nach rechts im Zeitstrahl, falls der Entpunkt nicht erreicht ist.
         Pausiert die Animation, falls diese läuft.
@@ -138,7 +141,7 @@ class GanglinienHE8:
             )
             self.__dlg.slider.setValue(value + 1)
 
-    def __step_backward(self):
+    def __step_backward(self) -> None:
         """
         Geht einen Datensatz nach links im Zeitstrahl, falls der Anfangspunkt nicht erreicht ist.
         Pausiert die Animation, falls diese läuft.
@@ -156,7 +159,7 @@ class GanglinienHE8:
             )
             self.__dlg.slider.setValue(value - 1)
 
-    def __switch_max_values(self, activate):
+    def __switch_max_values(self, activate: int) -> None:
         """
         Macht die Maximal-Linie sichtbar bzw unsichtbar, abhängig vom Zustand der Checkbox.
         Plottet die Maximal-Linie falls nicht vorhanden.
@@ -170,7 +173,7 @@ class GanglinienHE8:
             self.__maximizer.hide()
 
     @staticmethod
-    def __show_message_box(title, _string, _type):
+    def __show_message_box(title: str, _string: str, _type: Type) -> Any:
         """
         Generiert eine Messagebox.
         Abhängig vom _type werden unterschiedliche Optionen in den Dialog eingebunden.
@@ -202,7 +205,7 @@ class GanglinienHE8:
         else:
             msg.exec_()
 
-    def __speed_control(self, value):
+    def __speed_control(self, value: int) -> None:
         """
         * Übergibt der Animation die neue Geschwindigkeit.
         * Updatet den Stil des Sliders
@@ -244,7 +247,7 @@ class GanglinienHE8:
             self.__log.info("Animation wird in gewünschte Konfiguration abgespielt")
             self.__animator.play(value, self.__speed_controller.get_mode())
 
-    def __slider_click(self, event):
+    def __slider_click(self, event: QMouseEvent) -> None:
         """
         * Ist der Eventlistener des Zeitstrahl-Sliders bei einem Mausklick.
         * Definiert das Verhalten je nach gedrückter Taste.
@@ -274,7 +277,7 @@ class GanglinienHE8:
             )
             self.__default_function(event)
 
-    def __select_db(self, ganglinie=False):
+    def __select_db(self, ganglinie: bool = False) -> None:
         """
         Diese Funktion öffnet einen Datei-Dialog, welcher den User auffordert eine Ergebnis-Datenbank auszuwählen.
 
@@ -298,7 +301,7 @@ class GanglinienHE8:
             else:
                 self.__run()
 
-    def __layer_to_type(self, layer):
+    def __layer_to_type(self, layer: QgsVectorLayer) -> Union[LayerType, int]:
         """
         Wandelt layer in einen LayerType um. So wird unabhängig von der User-spezifischen Benennung der richtige Layer
         gewählt.
@@ -318,24 +321,24 @@ class GanglinienHE8:
                 self.__spatialite = kv.split("=")[1][1:-1]
                 self.__log.info("SpatiaLite-Datenbank wurde gesetzt")
                 self.__log.debug(
-                    u'SpatiaLite-Datenbank liegt in "{}"'.format(self.__spatialite)
+                    'SpatiaLite-Datenbank liegt in "{}"'.format(self.__spatialite)
                 )
                 self.__workspace = os.path.dirname(self.__spatialite)
                 self.__log.debug(
-                    u'Workspace wurde auf "{}" gesetzt'.format(self.__workspace)
+                    'Workspace wurde auf "{}" gesetzt'.format(self.__workspace)
                 )
         types = dict(
-            wehre=LayerType.Wehr,
+            wehre=LayerType.Haltung,
             haltungen=LayerType.Haltung,
             schaechte=LayerType.Schacht,
-            pumpen=LayerType.Pumpe,
+            pumpen=LayerType.Haltung,
         )
         try:
             return types[name]
         except KeyError:
             return -1
 
-    def __check_resultDB(self, route):
+    def __check_resultDB(self, route: HaltungenStruct) -> bool:
         """
         Prüft, ob alle übergebenen Elemente in der Ergebnisdatenbank liegen.
 
@@ -354,12 +357,12 @@ class GanglinienHE8:
                     self.__result_db
                 )
             )
-        statement = u'SELECT kante FROM lau_max_el WHERE "KANTE"={}'
+        statement = 'SELECT kante FROM lau_max_el WHERE "KANTE"={}'
         for haltung in haltungen:
             db.sql(statement.format("'{}'".format(haltung)))
             if db.fetchone() is None:
                 return False
-        statement = u'SELECT knoten FROM lau_max_s WHERE "KNOTEN"={}'
+        statement = 'SELECT knoten FROM lau_max_s WHERE "KNOTEN"={}'
         for schacht in schaechte:
             db.sql(statement.format("'{}'".format(schacht)))
             if db.fetchone() is None:
@@ -368,13 +371,13 @@ class GanglinienHE8:
         del db
         return True
 
-    def __run(self):
+    def __run(self) -> None:
         """
         Wird aufgerufen, wenn der Längsschnitt angeklickt wird.
         """
         self.__log.info("Längsschnitt-Tool gestartet!")
 
-        def init_application():
+        def init_application() -> Any:
             """
             Initialisiert den Längsschnitt und liest die gewählten Layer aus.
             Prüft außerdem auf Kompatibilität und Anzahl der Layer.
@@ -397,28 +400,24 @@ class GanglinienHE8:
             if len(selected_layers) == 0:
                 self.__log.critical("Es wurde kein Layer ausgewählt!")
                 self.__iface.messageBar().pushCritical(
-                    "Fehler", "Wählen Sie zunächst ein Layer!"
+                    "Fehler", "Wählen Sie zunächst einen Layer!"
                 )
                 return False
             layer_types = []
             for layer in selected_layers:
                 layer_types.append(self.__layer_to_type(layer))
             layer_types = list(set(layer_types))
+            self.__log.debug(f'layer_types = {layer_types}')
             if len(layer_types) != 1:
-                for _l in layer_types:
-                    if _l not in [LayerType.Haltung, LayerType.Wehr, LayerType.Pumpe]:
-                        self.__log.critical(
-                            "Gewählte Layer sind inkompatibel zueinander!"
-                        )
-                        self.__iface.messageBar().pushCritical(
-                            "Fehler", "Inkompatible Layer-Kombination!"
-                        )
-                        return False
-                _layer_type = LayerType.Haltung
+                self.__log.critical(
+                    "Gewählte Layer sind inkompatibel zueinander!"
+                )
+                self.__iface.messageBar().pushCritical(
+                    "Fehler", "Inkompatible Layer-Kombination!"
+                )
+                return False
             else:
                 _layer_type = layer_types[0]
-            if _layer_type in [LayerType.Wehr, LayerType.Pumpe]:
-                _layer_type = LayerType.Haltung
             if _layer_type not in [LayerType.Haltung, LayerType.Schacht]:
                 self.__log.critical("Ausgewählter Layer wird nicht unterstützt.")
                 self.__iface.messageBar().pushCritical(
@@ -507,15 +506,13 @@ class GanglinienHE8:
         for l in layers:
             features += [f[1] for f in l.selectedFeatures()]
         features = list(set(features))
-        self.__log.debug("{} wurde ausgewählt.".format(features))
+        self.__log.debug("{} (Typ: {}) wurde ausgewählt.".format(features, layer_type))
         self.__iface.messageBar().pushMessage(
             "Navigation", "Route wird berechnet...", level=Qgis.Info, duration=60
         )
-        navigator = MyNavigator(self.__spatialite)
-        if layer_type == LayerType.Haltung:
-            route = navigator.calculate_route_haltung(features)
-        else:
-            route = navigator.calculate_route_schacht(features)
+
+        route = find_route(self.__spatialite, features, layer_type)
+        self.__log.debug(f'route: {route}')
         self.__iface.messageBar().clearWidgets()
         if route:
             self.__log.info("Navigation wurde erfolgreich durchgeführt!")
@@ -532,11 +529,9 @@ class GanglinienHE8:
                 return
             self.__log.debug("Route:\t{}".format(route))
         else:
-            error_msg = navigator.get_error_msg()
-            self.__log.critical(
-                u'Es trat ein Fehler in der Navigation auf:\t"{}"'.format(error_msg)
-            )
-            self.__iface.messageBar().pushCritical("Fehler", error_msg)
+            self.__log.critical('Es trat ein Fehler in der Navigation auf:\t"{}"')
+            # TODO: Error message
+            self.__iface.messageBar().pushCritical("Fehler", "")
             return
         laengsschnitt = plotter.Laengsschnitt(copy.deepcopy(route))
         plotter.set_ax_labels("m", "m")
@@ -608,7 +603,7 @@ class GanglinienHE8:
         self.__speed_controller.reset()
         self.__log.info("Längsschnitt wurde geschlossen!")
 
-    def __run_ganglinie(self):
+    def __run_ganglinie(self) -> None:
         """
         Wird aufgerufen, wenn das Ganglinien-Tool angeklickt wird.
         """
@@ -616,7 +611,7 @@ class GanglinienHE8:
         self.__t += 1
         self.__log.info("Ganglinie8 hinzugefügt")
 
-        def init_application():
+        def init_application() -> bool:
             """
             Initialisiert die Ganglinie mit den nötigen Parametern. Fragt unter anderem die Datenbanken ab und
             prüft auf Kompatibilität und Anzahl der Layer.
@@ -647,23 +642,28 @@ class GanglinienHE8:
             if len(selected_layers) == 0:
                 self.__log.critical("Es wurde kein Layer ausgewählt!")
                 self.__iface.messageBar().pushCritical(
-                    "Fehler", "Wählen Sie zunächst ein Layer"
+                    "Fehler", "Wählen Sie zunächst einen Layer"
                 )
                 return False
             layer_types = []
             for layer in selected_layers:
                 layer_types.append(self.__layer_to_type(layer))
             layer_types = list(set(layer_types))
+            self.__log.debug(f'layer_types = {layer_types}')
             if len(layer_types) != 1:
-                _layer_type = LayerType.Haltung
+                self.__log.critical(
+                    "Gewählte Layer sind inkompatibel zueinander!"
+                )
+                self.__iface.messageBar().pushCritical(
+                    "Fehler", "Inkompatible Layer-Kombination!"
+                )
+                return False
             else:
                 _layer_type = layer_types[0]
-            if _layer_type in [LayerType.Wehr, LayerType.Pumpe]:
-                _layer_type = LayerType.Haltung
             if _layer_type not in [LayerType.Haltung, LayerType.Schacht]:
                 self.__log.critical("Ausgewählter Layer wird nicht unterstützt.")
                 self.__iface.messageBar().pushCritical(
-                    "Fehler", "Ausgewählter Layer wird nicht unterstützt"
+                    "Fehler", "Ausgewählter Layer wird nicht unterstützt!"
                 )
                 return False
             self.__log.info("Layer wurde ausgewählt")
@@ -674,7 +674,7 @@ class GanglinienHE8:
             )
             return True
 
-        def auto_update_changed(state):
+        def auto_update_changed(state: int) -> None:
             """
             Ist der Event-Listener der "Automatische Updates"-Checkbox.
 
@@ -692,7 +692,7 @@ class GanglinienHE8:
             else:
                 subscribe_auto_update(False)
 
-        def subscribe_auto_update(subscribing=True):
+        def subscribe_auto_update(subscribing: bool = True) -> None:
             """
             Fügt die entsprechenden Event-Listener hinzu, falls subscribing True ist. Es werden ausschließlich die
             wichtigen Layer subscribed, da nicht alle relevant sind.
@@ -715,7 +715,7 @@ class GanglinienHE8:
                             )
                         )
 
-        def selection_changed(selection):
+        def selection_changed(selection: List[Any]) -> None:
             """
             Wird aufgerufen, wenn ein subscribter Layer eine Veränderung in seinen selektierten Elementen registriert.
 
@@ -754,6 +754,7 @@ class GanglinienHE8:
         else:
             self.__log.warning("Initiierung abgebrochen. Ganglinien-Tool wird beendet.")
             return
+        # noinspection PyArgumentList
         _layers = [layer for layer in QgsProject.instance().mapLayers().values()]
         important_layers = []
         for l in _layers:
@@ -808,123 +809,3 @@ class GanglinienHE8:
         self.__log.info("Ganglinie8 wurde initiiert und geplottet.")
         subscribe_auto_update(False)
         self.__log.info("Event-Listener auf Layer wurden entfernt.")
-
-
-class MyNavigator(Navigator):
-    def get_info(self, route):
-        """
-        * Erstellt Dictionarys, welche folgende Informationen beinhalten.
-        * Es wird je ein Dictionary für die Schächte und die Haltungen gemacht.
-        * Schacht- bzw. Haltungs-Name entspricht dem Key.
-        - Schacht:
-            +sohlhoehe:float
-            +deckelhoehe:float
-        - Haltung:
-            +laenge:float
-            +schachtoben:str (Schacht-Name aus QGis)
-            +schachtunten:str (Schacht-Name aus QGis)
-            +sohlhoeheunten:float
-            +sohlhoeheoben:float
-            +querschnitt:float
-
-        :param route: Beinhaltet getrennt von einander die Haltungs- und Schacht-Namen aus QGis.
-        :type route: dict
-        :return: Gibt ein Tuple von zwei Dictionaries zurück mit allen Haltungs- und Schacht-Namen und den nötigen Informationen zu
-                diesen
-        :rtype: dict, dict
-        """
-        haltung_info = {}
-        schacht_info = {}
-        statement = """
-                        SELECT * FROM (SELECT
-                                 haltnam                            AS name,
-                                 schoben,
-                                 schunten,
-                                 laenge,
-                                 COALESCE(sohleoben, SO.sohlhoehe)  AS sohleoben,
-                                 COALESCE(sohleunten, SU.sohlhoehe) AS sohleunten,
-                                 hoehe
-                               FROM haltungen
-                                 LEFT JOIN
-                                 (SELECT
-                                    sohlhoehe,
-                                    schnam
-                                  FROM schaechte) AS SO ON haltungen.schoben = SO.schnam
-                                 LEFT JOIN
-                                 (SELECT
-                                    sohlhoehe,
-                                    schnam
-                                  FROM schaechte) AS SU ON haltungen.schunten = SU.schnam
-                               UNION
-                               SELECT
-                                 wnam         AS name,
-                                 schoben,
-                                 schunten,
-                                 laenge,
-                                 SO.sohlhoehe AS sohleoben,
-                                 SU.sohlhoehe AS sohleunten,
-                                 0.5          AS hoehe
-                               FROM wehre
-                                 LEFT JOIN
-                                 (SELECT
-                                    sohlhoehe,
-                                    schnam
-                                  FROM schaechte) AS SO ON wehre.schoben = SO.schnam
-                                 LEFT JOIN
-                                 (SELECT
-                                    sohlhoehe,
-                                    schnam
-                                  FROM schaechte) AS SU ON wehre.schunten = SU.schnam
-                               UNION
-                               SELECT
-                                 pnam        AS name,
-                                 schoben,
-                                 schunten,
-                                 5            AS laenge,
-                                 SO.sohlhoehe AS sohleoben,
-                                 SU.sohlhoehe AS sohleunten,
-                                 0.5          AS hoehe
-                               FROM pumpen
-                                 LEFT JOIN
-                                 (SELECT
-                                    sohlhoehe,
-                                    schnam
-                                  FROM schaechte) AS SO ON pumpen.schoben = SO.schnam
-                                 LEFT JOIN
-                                 (SELECT
-                                    sohlhoehe,
-                                    schnam
-                                  FROM schaechte) AS SU ON pumpen.schunten = SU.schnam
-                              )
-                        WHERE name="{}"
-                        """
-        for haltung in route.get("haltungen"):
-            self.db.sql(statement.format(haltung))
-            (
-                name,
-                schachtoben,
-                schachtunten,
-                laenge,
-                sohlhoeheoben,
-                sohlhoeheunten,
-                querschnitt,
-            ) = self.db.fetchone()
-            haltung_info[haltung] = dict(
-                schachtoben=schachtoben,
-                schachtunten=schachtunten,
-                laenge=laenge,
-                sohlhoeheoben=sohlhoeheoben,
-                sohlhoeheunten=sohlhoeheunten,
-                querschnitt=querschnitt,
-            )
-        self.log.info("Haltunginfo wurde erstellt")
-        statement = """
-                SELECT sohlhoehe,deckelhoehe FROM schaechte WHERE schnam="{}"
-                """
-        for schacht in route.get("schaechte"):
-            self.db.sql(statement.format(schacht))
-            res = self.db.fetchone()
-            schacht_info[schacht] = dict(deckelhoehe=res[1], sohlhoehe=res[0])
-
-        self.log.info("Schachtinfo wurde erstellt")
-        return schacht_info, haltung_info
