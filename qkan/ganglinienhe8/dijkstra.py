@@ -21,50 +21,84 @@ class Netz:
     haltung: Dict[str, Dict[str, str]] = {}
     faktor = 2.0  # Faktor zur Unterscheidung der Fließrichtung
 
-    def __init__(self, netz: Optional[NetzType] = None):
+    def __init__(self, netz = None):
         """Beim ersten Aufruf muss das Netz angegeben werden, damit die Verknüpfungen
         erstellt werden können"""
 
         self.netz = netz
+        if self.netz:
+            if Netz.links == {}:
+                # Nur beim ersten Aufruf
+                for (name, schob, schun, laenge) in self.netz:
+                    # In Fließrichtung
+                    if schob in Netz.links:
+                        Netz.links[schob][schun]=laenge
+                        Netz.haltung[schob][schun]=name
+                    else:
+                        Netz.links[schob] = {schun: laenge}
+                        Netz.haltung[schob] = {schun: name}
 
-        if netz is None and len(Netz.links) == 0:
-            raise RuntimeError(
-                "Programmfehler: Erstmaliger Aufruf von Netz ohne Netzdaten"
-            )
+                    # Gegen die Fließrichtung
+                    if schun in Netz.links:
+                        Netz.links[schun][schob]=laenge*Netz.faktor
+                        Netz.haltung[schun][schob]=name
+                    else:
+                        Netz.links[schun] = {schob: laenge*Netz.faktor}
+                        Netz.haltung[schun] = {schob: name}
+
+                    # Template mit Gewichtungen erstellen
+                    Netz.weights_template = {schacht: MAX_WEIGHT for schacht in Netz.links.keys()}
+            else:
+                """Verknüpfungen wurden schon aufgebaut"""
+                pass
+        else:
+            if Netz.links == {}:
+                raise RuntimeError("Programmfehler: Erstmaliger Aufruf von Netz ohne Netzdaten")
 
         # Initialisierung der Gewichtungen für die Instanz
         self.__weight = Netz.weights_template.copy()
 
-        # netz ist None, hier muss nichts erledigt werden
-        if self.netz is None:
-            return
-
-        # Verknüpfungen wurden schon aufgebaut
-        if len(Netz.links) != 0:
-            return
-
-        # Nur beim ersten Aufruf
-        for name, schob, schun, laenge in cast(NetzType, self.netz):
-            # In Fließrichtung
-            if schob in Netz.links:
-                Netz.links[schob][schun] = laenge
-                Netz.haltung[schob][schun] = name
-            else:
-                Netz.links[schob] = {schun: laenge}
-                Netz.haltung[schob] = {schun: name}
-
-            # Gegen die Fließrichtung
-            if schun in Netz.links:
-                Netz.links[schun][schob] = laenge * Netz.faktor
-                Netz.haltung[schun][schob] = name
-            else:
-                Netz.links[schun] = {schob: laenge * Netz.faktor}
-                Netz.haltung[schun] = {schob: name}
-
-            # Template mit Gewichtungen erstellen
-            Netz.weights_template = {
-                schacht: MAX_WEIGHT for schacht in Netz.links.keys()
-            }
+        #
+        # self.netz = netz
+        #
+        # if netz is None and len(Netz.links) == 0:
+        #     raise RuntimeError(
+        #         "Programmfehler: Erstmaliger Aufruf von Netz ohne Netzdaten"
+        #     )
+        #
+        # # Initialisierung der Gewichtungen für die Instanz
+        # self.__weight = Netz.weights_template.copy()
+        #
+        # # netz ist None, hier muss nichts erledigt werden
+        # if self.netz is None:
+        #     return
+        #
+        # # Verknüpfungen wurden schon aufgebaut
+        # if len(Netz.links) != 0:
+        #     return
+        #
+        # # Nur beim ersten Aufruf
+        # for name, schob, schun, laenge in cast(NetzType, self.netz):
+        #     # In Fließrichtung
+        #     if schob in Netz.links:
+        #         Netz.links[schob][schun] = laenge
+        #         Netz.haltung[schob][schun] = name
+        #     else:
+        #         Netz.links[schob] = {schun: laenge}
+        #         Netz.haltung[schob] = {schun: name}
+        #
+        #     # Gegen die Fließrichtung
+        #     if schun in Netz.links:
+        #         Netz.links[schun][schob] = laenge * Netz.faktor
+        #         Netz.haltung[schun][schob] = name
+        #     else:
+        #         Netz.links[schun] = {schob: laenge * Netz.faktor}
+        #         Netz.haltung[schun] = {schob: name}
+        #
+        #     # Template mit Gewichtungen erstellen
+        #     Netz.weights_template = {
+        #         schacht: MAX_WEIGHT for schacht in Netz.links.keys()
+        #     }
 
     def analyse(self, schacht: str) -> None:
         """Verteilt die Schachtgewichtungen ausgehend vom vorgegebenen Schacht"""
@@ -109,7 +143,7 @@ class Netz:
         return self.__weight
 
 
-def get_info(db: DBConnection, route: Dict[str, List[str]]) -> Tuple[Any, Any]:
+def get_info(qkan_db: DBConnection, schaechte: List[str], haltungen: List[str]) -> Tuple[Any, Any]:
     """
     * Erstellt Dictionarys, welche folgende Informationen beinhalten.
     * Es wird je ein Dictionary für die Schächte und die Haltungen gemacht.
@@ -125,13 +159,14 @@ def get_info(db: DBConnection, route: Dict[str, List[str]]) -> Tuple[Any, Any]:
         +sohlhoeheoben:float
         +querschnitt:float
 
-    :param db: QKan DB
+    :param qkan_db: QKan DB
     :param route: Beinhaltet getrennt von einander die Haltungs- und Schacht-Namen aus QGis.
     :return: Gibt ein Tuple von zwei Dictionaries zurück mit allen Haltungs- und Schacht-Namen und den
     nötigen Informationen zu diesen
     """
     haltung_info = {}
     schacht_info = {}
+
     statement = """
         SELECT
             * 
@@ -175,22 +210,20 @@ def get_info(db: DBConnection, route: Dict[str, List[str]]) -> Tuple[Any, Any]:
                 LEFT JOIN ( SELECT sohlhoehe, schnam FROM schaechte ) AS SU ON pumpen.schunten = SU.schnam 
             ) 
         WHERE
-            name = "{}"
+            name IN ('{}')
         """
-
-    # TODO: SQL bind param, group instead of separate queries
-    for haltung in route.get("haltungen", []):
-        db.sql(statement.format(haltung))
-        (
-            name,
-            schachtoben,
-            schachtunten,
-            laenge,
-            sohlhoeheoben,
-            sohlhoeheunten,
-            querschnitt,
-        ) = db.fetchone()
-        haltung_info[haltung] = dict(
+    halselected = "', '".join(haltungen)
+    qkan_db.sql(statement.format(halselected))
+    for (
+        name,
+        schachtoben,
+        schachtunten,
+        laenge,
+        sohlhoeheoben,
+        sohlhoeheunten,
+        querschnitt,
+        ) in qkan_db.fetchall():
+        haltung_info[name] = dict(
             schachtoben=schachtoben,
             schachtunten=schachtunten,
             laenge=laenge,
@@ -199,16 +232,21 @@ def get_info(db: DBConnection, route: Dict[str, List[str]]) -> Tuple[Any, Any]:
             querschnitt=querschnitt,
         )
     logger.info("Haltunginfo wurde erstellt")
-    statement = """
-    SELECT sohlhoehe,deckelhoehe FROM schaechte WHERE schnam="{}"
-    """
 
-    for schacht in route.get("schaechte", []):
-        db.sql(statement.format(schacht))
-        res = db.fetchone()
-        schacht_info[schacht] = dict(deckelhoehe=res[1], sohlhoehe=res[0])
-
+    statement = """SELECT schnam, deckelhoehe, sohlhoehe FROM schaechte WHERE schnam IN ('{}')"""
+    schselected = "', '".join(schaechte)
+    qkan_db.sql(statement.format(schselected))
+    for (
+        name,
+        deckelhoehe,
+        sohlhoehe,
+        ) in qkan_db.fetchall():
+        schacht_info[name] = dict(
+            deckelhoehe=deckelhoehe,
+            sohlhoehe=sohlhoehe,
+        )
     logger.info("Schachtinfo wurde erstellt")
+
     return schacht_info, haltung_info
 
 
@@ -244,19 +282,18 @@ def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[Hal
         schachtauswahl = auswahl
     else:
         logger.error(f'Fehler bei der Objektauswahl\n'
-                     f'Schachtauswahl: {schachtauswahl}\n'
+                     f'Auswahl: {schachtauswahl}\n'
                      f'Auswahltyp: {layer_type}')
         return None
 
     logger.debug(f'Objektauswahl\n'
-                 f'Schachtauswahl: {schachtauswahl}\n'
-                 f'Auswahltyp: {layer_type}')
+                 f'Auswahl: {schachtauswahl}\n'
+                 f'Auswahltyp ({LayerType.Schacht}=Schächte, {LayerType.Haltung}=Haltungen): {layer_type}')
 
     # schachtauswahl prüfen: Schacht muss als Anfangs- oder Endschacht im Netz vorhanden sein
-    if layer_type == LayerType.Schacht:
-        for schacht in schachtauswahl.copy():
-            if schacht not in [e[1] for e in netz] + [e[2] for e in netz]:
-                schachtauswahl.remove(schacht)
+    for schacht in schachtauswahl.copy():
+        if schacht not in [e[1] for e in netz] + [e[2] for e in netz]:
+            schachtauswahl.remove(schacht)
 
     # Dict mit Gewichten bezogen auf die Schächte in 'schachtauswahl'
     # Hinweis: Parameter netz ist nur beim ersten Aufruf wirksam, um Netz.links und Netz.haltungen
@@ -337,13 +374,13 @@ def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[Hal
         return None
 
     # Sukzessives Durchhangeln mit schacht zum jeweils nächsten Knoten in knotenlaengs
+    schnext = None
+    haltnext = None
     for knach in knotenlaengs:
         # Schleife solange, bis knach erreicht ist, d.h. kvon == knach
         while schacht != knach:
             # Auswahl des nächsten Schachtes mit der kleinsten Gewichtung bezogen auf knach
             wertung = MAX_WEIGHT
-            schnext = None
-            haltnext = None
 
             for schtest in Netz.links[schacht].keys():
                 wertakt = knotennetz[knach].weight[schtest]
@@ -354,23 +391,24 @@ def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[Hal
 
             if schnext is not None and haltnext is not None:
                 # Damit der letzte Schacht nicht doppelt auftaucht
-                if schnext != knach:
-                    schaechtelaengs.append(schnext)
-
+                # if schnext != knach:
+                schaechtelaengs.append(schnext)
                 haltungenlaengs.append(haltnext)
 
                 # Schritt zum nächsten Schacht
-                schacht = schnext
+            schacht = schnext
 
     # Letzten Knoten noch anhängen
-    schaechtelaengs.append(schacht)
+    # schaechtelaengs.append(schacht)
 
-    route = {"schaechte": schaechtelaengs, "haltungen": haltungenlaengs}
-    r = get_info(qkan_db, route)
+    logger.debug(f'Haltungen längs: {haltungenlaengs}')
+    logger.debug(f'Schächte längs: {schaechtelaengs}')
+
+    schinfolaengs, halinfolaengs = get_info(qkan_db, schaechtelaengs, haltungenlaengs)
 
     return {
-        "schaechte": schaechtelaengs,
         "haltungen": haltungenlaengs,
-        "schachtinfo": r[0],
-        "haltunginfo": r[1],
+        "schaechte": schaechtelaengs,
+        "schachtinfo": schinfolaengs,
+        "haltunginfo": halinfolaengs,
     }

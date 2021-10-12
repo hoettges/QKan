@@ -328,10 +328,10 @@ class GanglinienHE8:
                     'Workspace wurde auf "{}" gesetzt'.format(self.__workspace)
                 )
         types = dict(
-            wehre=LayerType.Wehr,
+            wehre=LayerType.Haltung,
             haltungen=LayerType.Haltung,
             schaechte=LayerType.Schacht,
-            pumpen=LayerType.Pumpe,
+            pumpen=LayerType.Haltung,
         )
         try:
             return types[name]
@@ -400,28 +400,24 @@ class GanglinienHE8:
             if len(selected_layers) == 0:
                 self.__log.critical("Es wurde kein Layer ausgewählt!")
                 self.__iface.messageBar().pushCritical(
-                    "Fehler", "Wählen Sie zunächst ein Layer!"
+                    "Fehler", "Wählen Sie zunächst einen Layer!"
                 )
                 return False
             layer_types = []
             for layer in selected_layers:
                 layer_types.append(self.__layer_to_type(layer))
             layer_types = list(set(layer_types))
+            self.__log.debug(f'layer_types = {layer_types}')
             if len(layer_types) != 1:
-                for _l in layer_types:
-                    if _l not in [LayerType.Haltung, LayerType.Wehr, LayerType.Pumpe]:
-                        self.__log.critical(
-                            "Gewählte Layer sind inkompatibel zueinander!"
-                        )
-                        self.__iface.messageBar().pushCritical(
-                            "Fehler", "Inkompatible Layer-Kombination!"
-                        )
-                        return False
-                _layer_type = LayerType.Haltung
+                self.__log.critical(
+                    "Gewählte Layer sind inkompatibel zueinander!"
+                )
+                self.__iface.messageBar().pushCritical(
+                    "Fehler", "Inkompatible Layer-Kombination!"
+                )
+                return False
             else:
                 _layer_type = layer_types[0]
-            if _layer_type in [LayerType.Wehr, LayerType.Pumpe]:
-                _layer_type = LayerType.Haltung
             if _layer_type not in [LayerType.Haltung, LayerType.Schacht]:
                 self.__log.critical("Ausgewählter Layer wird nicht unterstützt.")
                 self.__iface.messageBar().pushCritical(
@@ -646,23 +642,28 @@ class GanglinienHE8:
             if len(selected_layers) == 0:
                 self.__log.critical("Es wurde kein Layer ausgewählt!")
                 self.__iface.messageBar().pushCritical(
-                    "Fehler", "Wählen Sie zunächst ein Layer"
+                    "Fehler", "Wählen Sie zunächst einen Layer"
                 )
                 return False
             layer_types = []
             for layer in selected_layers:
                 layer_types.append(self.__layer_to_type(layer))
             layer_types = list(set(layer_types))
+            self.__log.debug(f'layer_types = {layer_types}')
             if len(layer_types) != 1:
-                _layer_type = LayerType.Haltung
+                self.__log.critical(
+                    "Gewählte Layer sind inkompatibel zueinander!"
+                )
+                self.__iface.messageBar().pushCritical(
+                    "Fehler", "Inkompatible Layer-Kombination!"
+                )
+                return False
             else:
                 _layer_type = layer_types[0]
-            if _layer_type in [LayerType.Wehr, LayerType.Pumpe]:
-                _layer_type = LayerType.Haltung
             if _layer_type not in [LayerType.Haltung, LayerType.Schacht]:
                 self.__log.critical("Ausgewählter Layer wird nicht unterstützt.")
                 self.__iface.messageBar().pushCritical(
-                    "Fehler", "Ausgewählter Layer wird nicht unterstützt"
+                    "Fehler", "Ausgewählter Layer wird nicht unterstützt!"
                 )
                 return False
             self.__log.info("Layer wurde ausgewählt")
