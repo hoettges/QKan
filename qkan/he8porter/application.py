@@ -9,7 +9,7 @@ from qgis.utils import pluginDirectory
 
 from qkan import QKan, enums, get_default_dir
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import eval_node_types, fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import eval_node_types, fehlermeldung
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
@@ -70,10 +70,11 @@ class He8Porter(QKanPlugin):
 
         # noinspection PyArgumentList
 
-        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
+        self.db_qkan = DBConnection()
+        dbname = self.db_qkan.dbname
 
         # Datenbankpfad in Dialog übernehmen
-        self.export_dlg.tf_database.setText(self.database_qkan)
+        self.export_dlg.tf_database.setText(dbname)
 
         if not self.export_dlg.prepareDialog(self.db_qkan):
             return False
@@ -168,32 +169,6 @@ class He8Porter(QKanPlugin):
         del self.db_qkan
         self.log.debug("Closed DB")
 
-        return True
-
-    def connectQKanDB(self, database_qkan=None):
-        """Liest die verknüpfte QKan-DB aus dem geladenen Projekt
-        Für Test muss database_qkan vorgegeben werden
-        """
-
-        # Verbindung zur Datenbank des geladenen Projekts herstellen
-        if database_qkan:
-            self.database_qkan = database_qkan
-        else:
-            self.database_qkan, _ = get_database_QKan()
-        if self.database_qkan:
-            self.db_qkan: DBConnection = DBConnection(dbname=self.database_qkan)
-            if not self.db_qkan.connected:
-                logger.error(
-                    "Fehler in he8porter.application.connectQKanDB:\n"
-                    f"QKan-Datenbank {self.database_qkan:s} wurde nicht"
-                    " gefunden oder war nicht aktuell!\nAbbruch!"
-                )
-                return False
-        else:
-            fehlermeldung("Fehler: Für den Export muss ein Projekt geladen sein!")
-            return False
-
-        # self.export_dlg.connectQKanDB(self.db_qkan)               # deaktiviert jh, 17.04.2021
         return True
 
     def run_import(self) -> None:
