@@ -17,7 +17,7 @@ from .application_dialog import ExportDialog, ImportDialog
 from . import resources  # isort:skip
 
 
-class XmlPorter(QKanPlugin):
+class IsyPorter(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
 
@@ -26,17 +26,17 @@ class XmlPorter(QKanPlugin):
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
-        icon_export = ":/plugins/qkan/xmlporter2/res/icon_export.png"
+        icon_export = ":/plugins/qkan/isyporter/res/icon_export.png"
         QKan.instance.add_action(
             icon_export,
-            text=self.tr("Export nach DWA-XML"),
-            callback=self.run_export2,
+            text=self.tr("Export nach ISYBAU-XML"),
+            callback=self.run_export,
             parent=self.iface.mainWindow(),
         )
-        icon_import = ":/plugins/qkan/xmlporter2/res/icon_import.png"
+        icon_import = ":/plugins/qkan/isyporter/res/icon_import.png"
         QKan.instance.add_action(
             icon_import,
-            text=self.tr("Import au2s DWA-XML"),
+            text=self.tr("Import aus ISYBAU-XML"),
             callback=self.run_import,
             parent=self.iface.mainWindow(),
         )
@@ -45,7 +45,7 @@ class XmlPorter(QKanPlugin):
         self.export_dlg.close()
         self.import_dlg.close()
 
-    def run_export2(self) -> None:
+    def run_export(self) -> None:
         self.export_dlg.show()
 
         # Fill dialog with current info
@@ -100,7 +100,7 @@ class XmlPorter(QKanPlugin):
             # Run export
             ExportTask(db_qkan, export_file).run()
 
-    def run_import2(self) -> None:
+    def run_import(self) -> None:
         """Anzeigen des Importformulars ISYBAU-XML und anschließender Start des Import"""
 
         self.import_dlg.show()
