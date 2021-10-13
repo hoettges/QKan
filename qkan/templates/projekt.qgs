@@ -1,7 +1,7 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="QKan Version 3.2.14" version="3.16.5-Hannover" saveUser="Nora" saveUserFull="Nora Blase" saveDateTime="2021-09-28T16:52:39">
+<qgis projectname="QKan Version 3.2.16" version="3.16.5-Hannover" saveUser="Nora" saveUserFull="Nora Blase" saveDateTime="2021-09-28T16:52:39">
   <homePath path=""/>
-  <title>QKan Version 3.2.14</title>
+  <title>QKan Version 3.2.16</title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <trust active="0"/>
@@ -20254,7 +20254,7 @@ def closeProject():&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
     <parentidentifier></parentidentifier>
     <language></language>
     <type></type>
-    <title>QKan Version 3.2.14</title>
+    <title>QKan Version 3.2.16</title>
     <abstract></abstract>
     <contact>
       <name></name>
