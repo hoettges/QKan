@@ -109,6 +109,7 @@ class QKan:
         from .swmmporter import ImportFromSWMM
         from .tools import QKanTools
         from .isyporter import IsyPorter
+        from .m145porter import M145Porter
         from .ganglinienhe8 import GanglinienHE8
         from .datacheck import Plausi
 
@@ -122,6 +123,7 @@ class QKan:
             ImportFromSWMM(iface),
             QKanTools(iface),
             IsyPorter(iface),
+            M145Porter(iface),
             GanglinienHE8(iface),
             Plausi(iface),
         ]

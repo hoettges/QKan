@@ -1581,18 +1581,18 @@ class ImportTask:
                     for _untersuchdat in _untersuchdat_haltung.findall("d:Inspektionsdaten/d:RZustand", self.NS):
 
                         id = _strip_int(_untersuchdat.findtext("d:Index", "0", self.NS))
-                        videozaehler = _strip_int(_untersuchdat.findtext("d:Videozaehler", "0", self.NS))
-                        station = _strip_float(_untersuchdat.findtext("d:Station", "0.0", self.NS))
-                        timecode = _strip_int(_untersuchdat.findtext("d:Timecode", "0", self.NS))
+                        videozaehler = _strip_int(_untersuchdat.findtext("d:Videozaehler", 0, self.NS))
+                        station = _strip_float(_untersuchdat.findtext("d:Station", 0.0, self.NS))
+                        timecode = _strip_int(_untersuchdat.findtext("d:Timecode", 0, self.NS))
                         kuerzel = _untersuchdat.findtext("d:InspektionsKode", "not found", self.NS)
                         charakt1 = _untersuchdat.findtext("d:Charakterisierung1", "not found", self.NS)
                         charakt2 = _untersuchdat.findtext("d:Charakterisierung2", "not found", self.NS)
-                        quantnr1 = _strip_float(_untersuchdat.findtext("d:Quantifizierung1Numerisch", "0.0", self.NS))
-                        quantnr2 = _strip_float(_untersuchdat.findtext("d:Quantifizierung2Numerisch", "0.0", self.NS))
+                        quantnr1 = _strip_float(_untersuchdat.findtext("d:Quantifizierung1Numerisch", 0.0, self.NS))
+                        quantnr2 = _strip_float(_untersuchdat.findtext("d:Quantifizierung2Numerisch", 0.0, self.NS))
                         streckenschaden = _untersuchdat.findtext("d:Streckenschaden", "not found", self.NS)
-                        streckenschaden_lfdnr = _strip_int(_untersuchdat.findtext("d:StreckenschadenLfdNr", "0", self.NS))
-                        pos_von = _strip_int(_untersuchdat.findtext("d:PositionVon", "0", self.NS))
-                        pos_bis = _strip_int(_untersuchdat.findtext("d:PositionBis", "0", self.NS))
+                        streckenschaden_lfdnr = _strip_int(_untersuchdat.findtext("d:StreckenschadenLfdNr", 0, self.NS))
+                        pos_von = _strip_int(_untersuchdat.findtext("d:PositionVon", 0, self.NS))
+                        pos_bis = _strip_int(_untersuchdat.findtext("d:PositionBis", 0, self.NS))
                         foto_dateiname = _untersuchdat.findtext("d:Fotodatei", "not found", self.NS)
 
                         yield Untersuchdat_haltung(

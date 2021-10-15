@@ -26,17 +26,17 @@ class M145Porter(QKanPlugin):
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
-        icon_export = ":/plugins/qkan/m145porter/res/icon_export.png"
-        QKan.instance.add_action(
-            icon_export,
-            text=self.tr("Export nach DWA-XML"),
-            callback=self.run_export2,
-            parent=self.iface.mainWindow(),
-        )
+        #icon_export = ":/plugins/qkan/m145porter/res/icon_export.png"
+        #QKan.instance.add_action(
+         #   icon_export,
+         #   text=self.tr("Export nach DWA-XML"),
+         #   callback=self.run_export,
+         #   parent=self.iface.mainWindow(),
+        #)
         icon_import = ":/plugins/qkan/m145porter/res/icon_import.png"
         QKan.instance.add_action(
             icon_import,
-            text=self.tr("Import au2s DWA-XML"),
+            text=self.tr("Import aus DWA-XML"),
             callback=self.run_import,
             parent=self.iface.mainWindow(),
         )
@@ -45,7 +45,7 @@ class M145Porter(QKanPlugin):
         self.export_dlg.close()
         self.import_dlg.close()
 
-    def run_export2(self) -> None:
+    def run_export(self) -> None:
         self.export_dlg.show()
 
         # Fill dialog with current info
@@ -100,7 +100,7 @@ class M145Porter(QKanPlugin):
             # Run export
             ExportTask(db_qkan, export_file).run()
 
-    def run_import2(self) -> None:
+    def run_import(self) -> None:
         """Anzeigen des Importformulars ISYBAU-XML und anschließender Start des Import"""
 
         self.import_dlg.show()
