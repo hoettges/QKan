@@ -23,6 +23,7 @@ class Schacht(ClassObject):
     entwart: str = ""
     strasse: str = ""
     knotentyp: int = 0
+    material: str= ""
     simstatus: int = 0
     kommentar: str = ""
 
@@ -451,6 +452,7 @@ class ImportTask:
                     strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
                     knotentyp=knoten_typ,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
+                    material=block.findtext("d:Knoten/d:Schacht/d:Aufbau/d:MaterialAufbau", "not found", self.NS),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
 
@@ -543,8 +545,8 @@ class ImportTask:
 
             sql = f"""
             INSERT INTO schaechte_data (schnam, sohlhoehe, deckelhoehe, durchm,druckdicht, entwart, strasse,
-                    schachttyp, simstatus, kommentar, xsch, ysch)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?, ?, ?)
+                    schachttyp, simstatus, material, kommentar, xsch, ysch)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?, ?, ?, ?)
             """
             if not self.db_qkan.sql(
                 sql,
@@ -558,6 +560,7 @@ class ImportTask:
                     entwart,
                     schacht.strasse,
                     simstatus,
+                    schacht.material,
                     schacht.kommentar,
                     schacht.xsch,
                     schacht.ysch,

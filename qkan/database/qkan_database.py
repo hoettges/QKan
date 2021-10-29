@@ -845,6 +845,7 @@ def createdbtables(
     auslasstyp TEXT,
     schachttyp TEXT DEFAULT 'Schacht', 
     simstatus TEXT DEFAULT 'vorhanden',
+    material TEXT,
     kommentar TEXT,
     createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now','localtime')),
     xsch REAL, 
@@ -890,7 +891,7 @@ def createdbtables(
             druckdicht, ueberstauflaeche, 
             entwart, strasse, teilgebiet, 
             knotentyp, auslasstyp, schachttyp, 
-            simstatus, 
+            simstatus, material,
             kommentar, createdat
           FROM schaechte;"""
     try:
@@ -912,7 +913,7 @@ def createdbtables(
                druckdicht, ueberstauflaeche, 
                entwart, strasse, teilgebiet, 
                knotentyp, auslasstyp, schachttyp, 
-               simstatus, 
+               simstatus, material,
                kommentar, createdat, 
                geop, geom)
             VALUES (
@@ -922,7 +923,7 @@ def createdbtables(
               new.druckdicht, coalesce(new.ueberstauflaeche, 0), 
               coalesce(new.entwart, 'Regenwasser'), new.strasse, new.teilgebiet, 
               new.knotentyp, new.auslasstyp, coalesce(new.schachttyp, 'Schacht'), 
-              coalesce(new.simstatus, 'vorhanden'),
+              coalesce(new.simstatus, 'vorhanden'), new.material,
               new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime')),
               MakePoint(new.xsch, new.ysch, {epsg}),
               CastToMultiPolygon(

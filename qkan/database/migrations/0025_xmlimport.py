@@ -65,11 +65,11 @@ def run(dbcon: DBConnection) -> bool:
                       coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime')), new.baujahr,
                       MakeLine(
                         coalesce(
-                          MakePoint(new.xschob, new.yschob, {epsg}),
+                          MakePoint(new.xschob, new.yschob, {dbcon.epsg}),
                           schob.geop
                         ), 
                         coalesce(
-                          MakePoint(new.xschun, new.yschun, {epsg}),
+                          MakePoint(new.xschun, new.yschun, {dbcon.epsg}),
                           schun.geop
                         )
                       ), new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
@@ -150,11 +150,11 @@ def run(dbcon: DBConnection) -> bool:
                             THEN 
                             MakeLine(
                                 coalesce(
-                                MakePoint((ST_X(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {epsg}),
+                                MakePoint((ST_X(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {dbcon.epsg}),
                                     schob.geop
                                 ), 
                                 coalesce(
-                                MakePoint((ST_X(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))+2*((-1)/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))+2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {epsg}),
+                                MakePoint((ST_X(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))+2*((-1)/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))+2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {dbcon.epsg}),
                                     schun.geop
                                 )
                             )
@@ -170,11 +170,11 @@ def run(dbcon: DBConnection) -> bool:
                             THEN 
                             MakeLine(
                                 coalesce(
-                                MakePoint((ST_X(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {epsg}),
+                                MakePoint((ST_X(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), {dbcon.epsg}),
                                     schob.geop
                                 ), 
                                 coalesce(
-                                MakePoint((ST_X(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))-2*((-1)/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))-2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {epsg}),
+                                MakePoint((ST_X(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))-2*((-1)/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))-2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), {dbcon.epsg}),
                                     schun.geop
                                 )
                             )
@@ -190,11 +190,11 @@ def run(dbcon: DBConnection) -> bool:
                             THEN 
                             MakeLine(
                                 coalesce(
-                                MakePoint((ST_X(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {epsg}),
+                                MakePoint((ST_X(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {dbcon.epsg}),
                                     schob.geop
                                 ), 
                                 coalesce(
-                                MakePoint((ST_X(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))-2*((-1)/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))-2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                MakePoint((ST_X(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))-2*((-1)/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))-2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {dbcon.epsg}),
                                     schun.geop
                                 )
                             )
@@ -210,11 +210,11 @@ def run(dbcon: DBConnection) -> bool:
                             THEN 
                             MakeLine(
                                 coalesce(
-                                MakePoint((ST_X(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {epsg}),
+                                MakePoint((ST_X(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), {dbcon.epsg}),
                                     schob.geop
                                 ), 
                                 coalesce(
-                                MakePoint((ST_X(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))+2*((-1)/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))+2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                MakePoint((ST_X(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))+2*((-1)/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))+2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {dbcon.epsg}),
                                     schun.geop
                                 )
                             )
@@ -327,9 +327,9 @@ def run(dbcon: DBConnection) -> bool:
                       coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
                       coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime')), 
                       MakeLine(
-                          MakePoint(new.xschob, new.yschob, {epsg})
+                          MakePoint(new.xschob, new.yschob, {dbcon.epsg})
                           , 
-                          MakePoint(new.xschun, new.yschun, {epsg})
+                          MakePoint(new.xschun, new.yschun, {dbcon.epsg})
                       ))
                     ;
                   END;"""
@@ -470,6 +470,101 @@ def run(dbcon: DBConnection) -> bool:
     if not dbcon.sql(sql):
         logger.debug(f"Fehler bei Migration zu Version {VERSION}")
         return False
+
+    if not dbcon.sql(
+        "ALTER TABLE schaechte ADD COLUMN material TEXT",
+        "dbfunc.DBConnection.version (VERSION)",
+    ):
+        return False
+
+    sql = """CREATE TABLE IF NOT EXISTS wetter (
+                    pk INTEGER PRIMARY KEY, 
+                    kuerzel INTEGER, 
+                    bezeichnung TEXT, 
+                    bemerkung TEXT)"""
+
+    if not dbcon.sql(sql, "dbfunc.DBConnection.version (VERSION)"):
+        return False
+
+    # Initialisierung
+    for kuerzel, bezeichnung in [
+        [0, 'keine Angabe'],
+        [1, 'kein Niederschlag'],
+        [2, 'Regen'],
+        [3, 'Schnee- oder Eisschmelzwasser'],
+    ]:
+        if not dbcon.sql(
+                "INSERT INTO wetter (kuerzel, bezeichnung) Values (?, ?)",
+                "dbfunc.DBConnection.version (VERSION)",
+                parameters=[kuerzel, bezeichnung],
+        ):
+            return False
+
+    sql = """CREATE TABLE untersuchrichtung (
+                pk INTEGER PRIMARY KEY, 
+                kuerzel TEXT, 
+                bezeichnung TEXT, 
+                bemerkung TEXT)"""
+
+    if not dbcon.sql(sql, "dbfunc.DBConnection.version (VERSION)"):
+        return False
+
+    # Initialisierung
+    for kuerzel, bezeichnung in [
+        ['O', 'in Fließrichtung'],
+        ['U', 'gegen Fließrichtung'],
+    ]:
+        if not dbcon.sql(
+                "INSERT INTO untersuchrichtung (kuerzel, bezeichnung) Values (?, ?)",
+                "dbfunc.DBConnection.version (VERSION)",
+                parameters=[kuerzel, bezeichnung],
+        ):
+            return False
+
+    sql = """CREATE TABLE bewertungsart (
+                pk INTEGER PRIMARY KEY, 
+                kuerzel INTEGER, 
+                bezeichnung TEXT, 
+                bemerkung TEXT)"""
+
+    if not dbcon.sql(sql, "dbfunc.DBConnection.version (VERSION)"):
+        return False
+
+    # Initialisierung
+    for kuerzel, bezeichnung in [
+        [0, 'keine Angabe'],
+        [1, 'ISYBAU 2006/DIN-EN 13508-2:2011'],
+        [2, 'ISYBAU 2001'],
+        [3, 'ISYBAU 1996'],
+        [4, 'Anderes Verfahren'],
+    ]:
+        if not dbcon.sql(
+                "INSERT INTO bewertungsart (kuerzel, bezeichnung) Values (?, ?)",
+                "dbfunc.DBConnection.version (VERSION)",
+                parameters=[kuerzel, bezeichnung],
+        ):
+            return False
+
+    sql = """CREATE TABLE druckdicht (
+                    pk INTEGER PRIMARY KEY, 
+                    kuerzel INTEGER, 
+                    bezeichnung TEXT, 
+                    bemerkung TEXT)"""
+
+    if not dbcon.sql(sql, "dbfunc.DBConnection.version (VERSION)"):
+        return False
+
+    # Initialisierung
+    for kuerzel, bezeichnung in [
+        [1, 'vorhanden'],
+        [0, 'nicht vorhanden'],
+    ]:
+        if not dbcon.sql(
+                "INSERT INTO druckdicht (kuerzel, bezeichnung) Values (?, ?)",
+                "dbfunc.DBConnection.version (VERSION)",
+                parameters=[kuerzel, bezeichnung],
+        ):
+            return False
 
     dbcon.commit()
     return True

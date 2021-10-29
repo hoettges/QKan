@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/qkan/xmlporter" >
+    <qresource prefix="/plugins/qkan/m145porter" >
         <file>res/icon_export.png</file>
         <file>res/icon_import.png</file>
     </qresource>
