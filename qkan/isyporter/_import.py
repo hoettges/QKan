@@ -23,6 +23,7 @@ class Schacht(ClassObject):
     entwart: str = ""
     strasse: str = ""
     knotentyp: int = 0
+    material: str= ""
     simstatus: int = 0
     kommentar: str = ""
 
@@ -451,6 +452,7 @@ class ImportTask:
                     strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
                     knotentyp=knoten_typ,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
+                    material=block.findtext("d:Knoten/d:Schacht/d:Aufbau/d:MaterialAufbau", "not found", self.NS),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
                 )
 
@@ -543,8 +545,8 @@ class ImportTask:
 
             sql = f"""
             INSERT INTO schaechte_data (schnam, sohlhoehe, deckelhoehe, durchm,druckdicht, entwart, strasse,
-                    schachttyp, simstatus, kommentar, xsch, ysch)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?, ?, ?)
+                    schachttyp, simstatus, material, kommentar, xsch, ysch)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?, ?, ?, ?)
             """
             if not self.db_qkan.sql(
                 sql,
@@ -558,6 +560,7 @@ class ImportTask:
                     entwart,
                     schacht.strasse,
                     simstatus,
+                    schacht.material,
                     schacht.kommentar,
                     schacht.xsch,
                     schacht.ysch,
@@ -1581,18 +1584,18 @@ class ImportTask:
                     for _untersuchdat in _untersuchdat_haltung.findall("d:Inspektionsdaten/d:RZustand", self.NS):
 
                         id = _strip_int(_untersuchdat.findtext("d:Index", "0", self.NS))
-                        videozaehler = _strip_int(_untersuchdat.findtext("d:Videozaehler", "0", self.NS))
-                        station = _strip_float(_untersuchdat.findtext("d:Station", "0.0", self.NS))
-                        timecode = _strip_int(_untersuchdat.findtext("d:Timecode", "0", self.NS))
+                        videozaehler = _strip_int(_untersuchdat.findtext("d:Videozaehler", 0, self.NS))
+                        station = _strip_float(_untersuchdat.findtext("d:Station", 0.0, self.NS))
+                        timecode = _strip_int(_untersuchdat.findtext("d:Timecode", 0, self.NS))
                         kuerzel = _untersuchdat.findtext("d:InspektionsKode", "not found", self.NS)
                         charakt1 = _untersuchdat.findtext("d:Charakterisierung1", "not found", self.NS)
                         charakt2 = _untersuchdat.findtext("d:Charakterisierung2", "not found", self.NS)
-                        quantnr1 = _strip_float(_untersuchdat.findtext("d:Quantifizierung1Numerisch", "0.0", self.NS))
-                        quantnr2 = _strip_float(_untersuchdat.findtext("d:Quantifizierung2Numerisch", "0.0", self.NS))
+                        quantnr1 = _strip_float(_untersuchdat.findtext("d:Quantifizierung1Numerisch", 0.0, self.NS))
+                        quantnr2 = _strip_float(_untersuchdat.findtext("d:Quantifizierung2Numerisch", 0.0, self.NS))
                         streckenschaden = _untersuchdat.findtext("d:Streckenschaden", "not found", self.NS)
-                        streckenschaden_lfdnr = _strip_int(_untersuchdat.findtext("d:StreckenschadenLfdNr", "0", self.NS))
-                        pos_von = _strip_int(_untersuchdat.findtext("d:PositionVon", "0", self.NS))
-                        pos_bis = _strip_int(_untersuchdat.findtext("d:PositionBis", "0", self.NS))
+                        streckenschaden_lfdnr = _strip_int(_untersuchdat.findtext("d:StreckenschadenLfdNr", 0, self.NS))
+                        pos_von = _strip_int(_untersuchdat.findtext("d:PositionVon", 0, self.NS))
+                        pos_bis = _strip_int(_untersuchdat.findtext("d:PositionBis", 0, self.NS))
                         foto_dateiname = _untersuchdat.findtext("d:Fotodatei", "not found", self.NS)
 
                         yield Untersuchdat_haltung(
