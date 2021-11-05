@@ -712,7 +712,7 @@ def importKanaldaten(
     # Datenbankverbindungen schliessen
 
     template_project = Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-    qgsadapt(str(template_project), database_qkan, swmm.dbQK, projectfile, epsg)
+    qgsadapt(database_qkan, swmm.dbQK, projectfile, str(template_project), epsg)
 
     # noinspection PyArgumentList
     project = QgsProject.instance()

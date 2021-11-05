@@ -200,10 +200,10 @@ class IsyPorter(QKanPlugin):
         )
 
         qgsadapt(
-            QKan.config.project.template,
             QKan.config.database.qkan,
             db_qkan,
             QKan.config.project.file,
+            QKan.config.project.template,
             QKan.config.epsg,
         )
 

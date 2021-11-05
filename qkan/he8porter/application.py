@@ -142,6 +142,11 @@ class He8Porter(QKanPlugin):
         Einspringpunkt für Test
         """
 
+        # Für Test muss noch die Datenbankverbindung hergestellt werden
+        if not self.db_qkan:
+            self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
+            dbname = self.db_qkan.dbname
+
         # Zieldatenbank aus Vorlage kopieren
         if os.path.exists(QKan.config.he8.template):
             try:
@@ -296,10 +301,10 @@ class He8Porter(QKanPlugin):
             Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
         )
         qgsadapt(
-            QKan.config.project.template,
             QKan.config.database.qkan,
             db_qkan,
             QKan.config.project.file,
+            QKan.config.project.template,
             QKan.config.epsg,
         )
 

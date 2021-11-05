@@ -736,7 +736,7 @@ class DBConnection:
                 return False
 
             # Update progress bar
-            progress_bar.setValue(100 / len(migrations) * (i + 1))
+            progress_bar.setValue(100 // len(migrations) * (i + 1))
 
         self.commit()
 

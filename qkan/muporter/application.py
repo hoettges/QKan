@@ -301,10 +301,10 @@ class MuPorter(QKanPlugin):
             Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
         )
         qgsadapt(
-            QKan.config.project.template,
             QKan.config.mu.database,
             db_qkan,
             QKan.config.project.file,
+            QKan.config.project.template,
             QKan.config.epsg,
         )
 

@@ -240,7 +240,7 @@ def layersadapt(
                 load_plausiaction(layer)
                 logger.debug("Aktion 'Zoom zum Objekt' für Layer 'Fehlerliste' ergänzt")
         else:
-            logger.debug(f"k_layersadapt.Stildatei: Layer schon vorhanden: {layer.name()}")
+            logger.debug(f"k_layersadapt.Stildatei: Layer schon vorhanden: {layername}")
 
     # Dictionary, das alle LayerIDs aus der Template-Projektdatei den entsprechenden (QKan-) LayerIDs
     # des aktuell geladenen Projekts zuordnet. Diese Liste wird bei der Korrektur der Wertelisten

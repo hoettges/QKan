@@ -205,10 +205,10 @@ class QKanTools(QKanPlugin):
                 return None
 
             qgsadapt(
-                project_template,
                 self.db_qkan,
                 db_qkan,
                 project_file,
+                project_template,
                 epsg=epsg,
             )
 

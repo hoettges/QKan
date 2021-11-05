@@ -36,7 +36,7 @@ from qgis.utils import pluginDirectory
 
 from qkan import QKAN_FORMS, QKAN_TABLES
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung
+from qkan.database.qkan_utils import fehlermeldung, list_qkan_layers
 
 logger = logging.getLogger("QKan.tools.k_qgsadapt")
 
@@ -44,10 +44,10 @@ progress_bar = None
 
 
 def qgsadapt(
-    projecttemplate: str,
     database_QKan: str,
     dbQK: DBConnection,
     projectfile: str,
+    projecttemplate: str = None,
     epsg: int = None,
 ) -> bool:
     """Lädt eine (Vorlage-) Projektdatei (*.qgs) und adaptiert diese auf eine QKan-Datenbank an.
@@ -117,9 +117,26 @@ def qgsadapt(
     # --------------------------------------------------------------------------
     # Projektdatei schreiben, falls ausgewählt
 
+    # Liste aller QKan-Layer erstellen. Dafür wird auf jeden Fall auf die
+    # Standard-Projektdatei von QKan zurückgegriffen
+
+    templateDir = os.path.join(pluginDirectory("qkan"), "templates")
+    qkanprojectTemplate = os.path.join(templateDir, "Projekt.qgs")
+
+    logger.debug(f"k_qgsadapt.QKan-Projekttemplate: {qkanprojectTemplate}")
+
+    qkanLayers = list_qkan_layers(
+        qkanprojectTemplate
+    )  # Liste aller Layernamen aus gewählter QGS-Vorlage
+    logger.debug(f'k_qgsadapt.qkanLayers: {qkanLayers}')
+
+    # Fehlende Layer ergänzen. Unabhängig von der Auswahl werden die fehlenden Referenztabellen
+    # auf jeden Fall ergänzt.
+
     if projectfile is not None and projectfile != "":
         templatepath = os.path.join(pluginDirectory("qkan"), "templates")
-        projecttemplate = os.path.join(templatepath, "projekt.qgs")
+        if not projecttemplate:
+            projecttemplate = os.path.join(templatepath, "projekt.qgs")
         projectpath = os.path.dirname(projectfile)
         if os.path.dirname(database_QKan) == projectpath:
             datasource = database_QKan.replace(os.path.dirname(database_QKan), ".")
@@ -142,7 +159,7 @@ def qgsadapt(
                 continue
 
             # Nur QKan-Tabellen bearbeiten
-            if tex[tex.index('table="') + 7 :].split('" ')[0] in QKAN_TABLES:
+            if 'table="' in tex and tex[tex.index('table="') + 7 :].split('" ')[0] in qkanLayers:
 
                 # <extent> löschen
                 for tag_extent in tag_maplayer.findall("./extent"):
