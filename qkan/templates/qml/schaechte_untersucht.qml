@@ -1,9 +1,9 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis simplifyDrawingTol="1" hasScaleBasedVisibilityFlag="0" labelsEnabled="0" simplifyMaxScale="1" simplifyAlgorithm="0" simplifyLocal="1" styleCategories="Symbology|Labeling|Fields|Forms|Actions|AttributeTable|Rendering" simplifyDrawingHints="0" version="3.16.5-Hannover" maxScale="0" minScale="100000000">
-  <renderer-v2 symbollevels="0" forceraster="0" enableorderby="0" type="singleSymbol">
+<qgis styleCategories="Symbology|Labeling|Fields|Forms|Actions|AttributeTable|Rendering" simplifyDrawingHints="0" simplifyMaxScale="1" simplifyLocal="1" hasScaleBasedVisibilityFlag="0" labelsEnabled="0" maxScale="0" minScale="100000000" simplifyAlgorithm="0" simplifyDrawingTol="1" version="3.16.5-Hannover">
+  <renderer-v2 forceraster="0" type="singleSymbol" enableorderby="0" symbollevels="0">
     <symbols>
-      <symbol clip_to_extent="1" name="0" alpha="1" force_rhr="0" type="marker">
-        <layer enabled="1" class="SimpleMarker" pass="0" locked="0">
+      <symbol name="0" alpha="1" type="marker" clip_to_extent="1" force_rhr="0">
+        <layer locked="0" class="SimpleMarker" enabled="1" pass="0">
           <prop v="0" k="angle"/>
           <prop v="255,127,0,255" k="color"/>
           <prop v="1" k="horizontal_anchor_point"/>
@@ -39,70 +39,89 @@
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
   <fieldConfiguration>
-    <field configurationFlags="None" name="pk">
+    <field name="pk" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="schnam">
+    <field name="schnam" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="durchm">
+    <field name="durchm" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="kommentar">
+    <field name="kommentar" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="createdat">
+    <field name="createdat" configurationFlags="None">
+      <editWidget type="DateTime">
+        <config>
+          <Option type="Map">
+            <Option value="true" name="allow_null" type="bool"/>
+            <Option value="true" name="calendar_popup" type="bool"/>
+            <Option value="dd.MM.yyyy HH:mm" name="display_format" type="QString"/>
+            <Option value="dd.MM.yyyy HH:mm" name="field_format" type="QString"/>
+            <Option value="false" name="field_iso_format" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="baujahr" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="untersuchtag">
+    <field name="untersuchtag" configurationFlags="None">
+      <editWidget type="DateTime">
+        <config>
+          <Option type="Map">
+            <Option value="true" name="allow_null" type="bool"/>
+            <Option value="true" name="calendar_popup" type="bool"/>
+            <Option value="dd.MM.yyyy HH:mm" name="display_format" type="QString"/>
+            <Option value="dd.MM.yyyy HH:mm" name="field_format" type="QString"/>
+            <Option value="false" name="field_iso_format" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="untersucher" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="untersucher">
+    <field name="wetter" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="wetter">
+    <field name="bewertungsart" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="bewertungsart">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="bewertungstag">
+    <field name="bewertungstag" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
@@ -116,11 +135,12 @@
     <alias field="durchm" name="" index="2"/>
     <alias field="kommentar" name="" index="3"/>
     <alias field="createdat" name="" index="4"/>
-    <alias field="untersuchtag" name="" index="5"/>
-    <alias field="untersucher" name="" index="6"/>
-    <alias field="wetter" name="" index="7"/>
-    <alias field="bewertungsart" name="" index="8"/>
-    <alias field="bewertungstag" name="" index="9"/>
+    <alias field="baujahr" name="" index="5"/>
+    <alias field="untersuchtag" name="" index="6"/>
+    <alias field="untersucher" name="" index="7"/>
+    <alias field="wetter" name="" index="8"/>
+    <alias field="bewertungsart" name="" index="9"/>
+    <alias field="bewertungstag" name="" index="10"/>
   </aliases>
   <defaults>
     <default field="pk" expression="" applyOnUpdate="0"/>
@@ -128,6 +148,7 @@
     <default field="durchm" expression="" applyOnUpdate="0"/>
     <default field="kommentar" expression="" applyOnUpdate="0"/>
     <default field="createdat" expression="" applyOnUpdate="0"/>
+    <default field="baujahr" expression="" applyOnUpdate="0"/>
     <default field="untersuchtag" expression="" applyOnUpdate="0"/>
     <default field="untersucher" expression="" applyOnUpdate="0"/>
     <default field="wetter" expression="" applyOnUpdate="0"/>
@@ -135,16 +156,17 @@
     <default field="bewertungstag" expression="" applyOnUpdate="0"/>
   </defaults>
   <constraints>
-    <constraint field="pk" constraints="3" unique_strength="1" notnull_strength="1" exp_strength="0"/>
-    <constraint field="schnam" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="durchm" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="kommentar" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="createdat" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="untersuchtag" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="untersucher" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="wetter" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="bewertungsart" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="bewertungstag" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint constraints="3" field="pk" notnull_strength="1" exp_strength="0" unique_strength="1"/>
+    <constraint constraints="0" field="schnam" notnull_strength="0" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" field="durchm" notnull_strength="0" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" field="kommentar" notnull_strength="0" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" field="createdat" notnull_strength="0" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" field="baujahr" notnull_strength="0" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" field="untersuchtag" notnull_strength="0" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" field="untersucher" notnull_strength="0" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" field="wetter" notnull_strength="0" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" field="bewertungsart" notnull_strength="0" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" field="bewertungstag" notnull_strength="0" exp_strength="0" unique_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint field="pk" desc="" exp=""/>
@@ -152,6 +174,7 @@
     <constraint field="durchm" desc="" exp=""/>
     <constraint field="kommentar" desc="" exp=""/>
     <constraint field="createdat" desc="" exp=""/>
+    <constraint field="baujahr" desc="" exp=""/>
     <constraint field="untersuchtag" desc="" exp=""/>
     <constraint field="untersucher" desc="" exp=""/>
     <constraint field="wetter" desc="" exp=""/>
@@ -162,19 +185,20 @@
   <attributeactions>
     <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
   </attributeactions>
-  <attributetableconfig sortOrder="0" actionWidgetStyle="dropDown" sortExpression="">
+  <attributetableconfig sortExpression="" actionWidgetStyle="dropDown" sortOrder="0">
     <columns>
-      <column name="pk" type="field" hidden="0" width="-1"/>
-      <column name="schnam" type="field" hidden="0" width="-1"/>
-      <column name="durchm" type="field" hidden="0" width="-1"/>
-      <column name="kommentar" type="field" hidden="0" width="-1"/>
-      <column name="createdat" type="field" hidden="0" width="-1"/>
-      <column name="untersuchtag" type="field" hidden="0" width="-1"/>
-      <column name="untersucher" type="field" hidden="0" width="-1"/>
-      <column name="wetter" type="field" hidden="0" width="-1"/>
-      <column name="bewertungsart" type="field" hidden="0" width="-1"/>
-      <column name="bewertungstag" type="field" hidden="0" width="-1"/>
-      <column type="actions" hidden="1" width="-1"/>
+      <column width="-1" name="pk" type="field" hidden="0"/>
+      <column width="-1" name="schnam" type="field" hidden="0"/>
+      <column width="-1" name="durchm" type="field" hidden="0"/>
+      <column width="-1" name="kommentar" type="field" hidden="0"/>
+      <column width="-1" name="createdat" type="field" hidden="0"/>
+      <column width="-1" name="untersuchtag" type="field" hidden="0"/>
+      <column width="-1" name="untersucher" type="field" hidden="0"/>
+      <column width="-1" name="wetter" type="field" hidden="0"/>
+      <column width="-1" name="bewertungsart" type="field" hidden="0"/>
+      <column width="-1" name="bewertungstag" type="field" hidden="0"/>
+      <column width="-1" type="actions" hidden="1"/>
+      <column width="-1" name="baujahr" type="field" hidden="0"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -182,7 +206,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:/Users/Nora/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/schaechte_untersucht.ui</editform>
+  <editform tolerant="1">../AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/schaechte_untersucht.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -206,18 +230,20 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field editable="1" name="bewertungsart"/>
-    <field editable="1" name="bewertungstag"/>
-    <field editable="1" name="createdat"/>
-    <field editable="1" name="durchm"/>
-    <field editable="1" name="kommentar"/>
-    <field editable="1" name="pk"/>
-    <field editable="1" name="schnam"/>
-    <field editable="1" name="untersucher"/>
-    <field editable="1" name="untersuchtag"/>
-    <field editable="1" name="wetter"/>
+    <field name="baujahr" editable="1"/>
+    <field name="bewertungsart" editable="1"/>
+    <field name="bewertungstag" editable="1"/>
+    <field name="createdat" editable="1"/>
+    <field name="durchm" editable="1"/>
+    <field name="kommentar" editable="1"/>
+    <field name="pk" editable="1"/>
+    <field name="schnam" editable="1"/>
+    <field name="untersucher" editable="1"/>
+    <field name="untersuchtag" editable="1"/>
+    <field name="wetter" editable="1"/>
   </editable>
   <labelOnTop>
+    <field labelOnTop="0" name="baujahr"/>
     <field labelOnTop="0" name="bewertungsart"/>
     <field labelOnTop="0" name="bewertungstag"/>
     <field labelOnTop="0" name="createdat"/>

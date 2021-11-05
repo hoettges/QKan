@@ -1,9 +1,9 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis simplifyDrawingTol="1" hasScaleBasedVisibilityFlag="0" labelsEnabled="0" simplifyMaxScale="1" simplifyAlgorithm="0" simplifyLocal="1" styleCategories="Symbology|Labeling|Fields|Forms|Actions|AttributeTable|Rendering" simplifyDrawingHints="0" version="3.16.5-Hannover" maxScale="0" minScale="100000000">
-  <renderer-v2 symbollevels="0" forceraster="0" enableorderby="0" type="singleSymbol">
+<qgis maxScale="0" labelsEnabled="0" simplifyDrawingTol="1" simplifyMaxScale="1" simplifyDrawingHints="0" hasScaleBasedVisibilityFlag="0" simplifyAlgorithm="0" styleCategories="Symbology|Labeling|Fields|Forms|Actions|AttributeTable|Rendering" minScale="100000000" version="3.16.5-Hannover" simplifyLocal="1">
+  <renderer-v2 type="singleSymbol" symbollevels="0" forceraster="0" enableorderby="0">
     <symbols>
-      <symbol clip_to_extent="1" name="0" alpha="1" force_rhr="0" type="marker">
-        <layer enabled="1" class="SimpleMarker" pass="0" locked="0">
+      <symbol clip_to_extent="1" force_rhr="0" type="marker" name="0" alpha="1">
+        <layer locked="0" class="SimpleMarker" enabled="1" pass="0">
           <prop v="0" k="angle"/>
           <prop v="255,127,0,255" k="color"/>
           <prop v="1" k="horizontal_anchor_point"/>
@@ -24,9 +24,9 @@
           <prop v="1" k="vertical_anchor_point"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option value="" name="name" type="QString"/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option value="collection" name="type" type="QString"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
@@ -42,74 +42,114 @@
     <field configurationFlags="None" name="pk">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="untersuchsch">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="id">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="videozaehler">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="timecode">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="kuerzel">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="charakt1">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="charakt2">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="quantnr1">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="quantnr2">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="streckenschaden">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field configurationFlags="None" name="streckenschaden_lfdnr">
       <editWidget type="TextEdit">
         <config>
           <Option/>
@@ -119,11 +159,31 @@
     <field configurationFlags="None" name="pos_von">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="pos_bis">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field configurationFlags="None" name="vertikale_lage">
+      <editWidget type="TextEdit">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field configurationFlags="None" name="inspektionslaenge">
       <editWidget type="TextEdit">
         <config>
           <Option/>
@@ -133,21 +193,43 @@
     <field configurationFlags="None" name="bereich">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="foto_dateiname">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field configurationFlags="None" name="ordner">
       <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field configurationFlags="None" name="createdat">
+      <editWidget type="DateTime">
+        <config>
+          <Option type="Map">
+            <Option type="bool" value="true" name="allow_null"/>
+            <Option type="bool" value="true" name="calendar_popup"/>
+            <Option type="QString" value="dd.MM.yyyy HH:mm" name="display_format"/>
+            <Option type="QString" value="dd.MM.yyyy HH:mm" name="field_format"/>
+            <Option type="bool" value="false" name="field_iso_format"/>
+          </Option>
         </config>
       </editWidget>
     </field>
@@ -164,93 +246,113 @@
     <alias field="quantnr1" name="" index="8"/>
     <alias field="quantnr2" name="" index="9"/>
     <alias field="streckenschaden" name="" index="10"/>
-    <alias field="pos_von" name="" index="11"/>
-    <alias field="pos_bis" name="" index="12"/>
-    <alias field="bereich" name="" index="13"/>
-    <alias field="foto_dateiname" name="" index="14"/>
-    <alias field="ordner" name="" index="15"/>
+    <alias field="streckenschaden_lfdnr" name="" index="11"/>
+    <alias field="pos_von" name="" index="12"/>
+    <alias field="pos_bis" name="" index="13"/>
+    <alias field="vertikale_lage" name="" index="14"/>
+    <alias field="inspektionslaenge" name="" index="15"/>
+    <alias field="bereich" name="" index="16"/>
+    <alias field="foto_dateiname" name="" index="17"/>
+    <alias field="ordner" name="" index="18"/>
+    <alias field="createdat" name="" index="19"/>
   </aliases>
   <defaults>
-    <default field="pk" expression="" applyOnUpdate="0"/>
-    <default field="untersuchsch" expression="" applyOnUpdate="0"/>
-    <default field="id" expression="" applyOnUpdate="0"/>
-    <default field="videozaehler" expression="" applyOnUpdate="0"/>
-    <default field="timecode" expression="" applyOnUpdate="0"/>
-    <default field="kuerzel" expression="" applyOnUpdate="0"/>
-    <default field="charakt1" expression="" applyOnUpdate="0"/>
-    <default field="charakt2" expression="" applyOnUpdate="0"/>
-    <default field="quantnr1" expression="" applyOnUpdate="0"/>
-    <default field="quantnr2" expression="" applyOnUpdate="0"/>
-    <default field="streckenschaden" expression="" applyOnUpdate="0"/>
-    <default field="pos_von" expression="" applyOnUpdate="0"/>
-    <default field="pos_bis" expression="" applyOnUpdate="0"/>
-    <default field="bereich" expression="" applyOnUpdate="0"/>
-    <default field="foto_dateiname" expression="" applyOnUpdate="0"/>
-    <default field="ordner" expression="" applyOnUpdate="0"/>
+    <default field="pk" applyOnUpdate="0" expression=""/>
+    <default field="untersuchsch" applyOnUpdate="0" expression=""/>
+    <default field="id" applyOnUpdate="0" expression=""/>
+    <default field="videozaehler" applyOnUpdate="0" expression=""/>
+    <default field="timecode" applyOnUpdate="0" expression=""/>
+    <default field="kuerzel" applyOnUpdate="0" expression=""/>
+    <default field="charakt1" applyOnUpdate="0" expression=""/>
+    <default field="charakt2" applyOnUpdate="0" expression=""/>
+    <default field="quantnr1" applyOnUpdate="0" expression=""/>
+    <default field="quantnr2" applyOnUpdate="0" expression=""/>
+    <default field="streckenschaden" applyOnUpdate="0" expression=""/>
+    <default field="streckenschaden_lfdnr" applyOnUpdate="0" expression=""/>
+    <default field="pos_von" applyOnUpdate="0" expression=""/>
+    <default field="pos_bis" applyOnUpdate="0" expression=""/>
+    <default field="vertikale_lage" applyOnUpdate="0" expression=""/>
+    <default field="inspektionslaenge" applyOnUpdate="0" expression=""/>
+    <default field="bereich" applyOnUpdate="0" expression=""/>
+    <default field="foto_dateiname" applyOnUpdate="0" expression=""/>
+    <default field="ordner" applyOnUpdate="0" expression=""/>
+    <default field="createdat" applyOnUpdate="0" expression=""/>
   </defaults>
   <constraints>
-    <constraint field="pk" constraints="3" unique_strength="1" notnull_strength="1" exp_strength="0"/>
-    <constraint field="untersuchsch" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="id" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="videozaehler" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="timecode" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="kuerzel" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="charakt1" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="charakt2" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="quantnr1" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="quantnr2" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="streckenschaden" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="pos_von" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="pos_bis" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="bereich" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="foto_dateiname" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="ordner" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="pk" exp_strength="0" unique_strength="1" notnull_strength="1" constraints="3"/>
+    <constraint field="untersuchsch" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="id" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="videozaehler" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="timecode" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="kuerzel" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="charakt1" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="charakt2" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="quantnr1" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="quantnr2" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="streckenschaden" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="streckenschaden_lfdnr" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="pos_von" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="pos_bis" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="vertikale_lage" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="inspektionslaenge" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="bereich" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="foto_dateiname" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="ordner" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
+    <constraint field="createdat" exp_strength="0" unique_strength="0" notnull_strength="0" constraints="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint field="pk" desc="" exp=""/>
-    <constraint field="untersuchsch" desc="" exp=""/>
-    <constraint field="id" desc="" exp=""/>
-    <constraint field="videozaehler" desc="" exp=""/>
-    <constraint field="timecode" desc="" exp=""/>
-    <constraint field="kuerzel" desc="" exp=""/>
-    <constraint field="charakt1" desc="" exp=""/>
-    <constraint field="charakt2" desc="" exp=""/>
-    <constraint field="quantnr1" desc="" exp=""/>
-    <constraint field="quantnr2" desc="" exp=""/>
-    <constraint field="streckenschaden" desc="" exp=""/>
-    <constraint field="pos_von" desc="" exp=""/>
-    <constraint field="pos_bis" desc="" exp=""/>
-    <constraint field="bereich" desc="" exp=""/>
-    <constraint field="foto_dateiname" desc="" exp=""/>
-    <constraint field="ordner" desc="" exp=""/>
+    <constraint field="pk" exp="" desc=""/>
+    <constraint field="untersuchsch" exp="" desc=""/>
+    <constraint field="id" exp="" desc=""/>
+    <constraint field="videozaehler" exp="" desc=""/>
+    <constraint field="timecode" exp="" desc=""/>
+    <constraint field="kuerzel" exp="" desc=""/>
+    <constraint field="charakt1" exp="" desc=""/>
+    <constraint field="charakt2" exp="" desc=""/>
+    <constraint field="quantnr1" exp="" desc=""/>
+    <constraint field="quantnr2" exp="" desc=""/>
+    <constraint field="streckenschaden" exp="" desc=""/>
+    <constraint field="streckenschaden_lfdnr" exp="" desc=""/>
+    <constraint field="pos_von" exp="" desc=""/>
+    <constraint field="pos_bis" exp="" desc=""/>
+    <constraint field="vertikale_lage" exp="" desc=""/>
+    <constraint field="inspektionslaenge" exp="" desc=""/>
+    <constraint field="bereich" exp="" desc=""/>
+    <constraint field="foto_dateiname" exp="" desc=""/>
+    <constraint field="ordner" exp="" desc=""/>
+    <constraint field="createdat" exp="" desc=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
-    <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
-    <actionsetting id="{430856dd-9270-413a-be77-36d19abb2d6a}" action="[%ordner %]/[%'Band'+substr(foto_dateiname,0,5)%]/[%foto_dateiname%]" name="Bild öffnen" shortTitle="Bild öffnen" icon="" capture="0" type="5" notificationMessage="" isEnabledOnlyWhenEditable="0">
+    <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
+    <actionsetting icon="" action="[%ordner%]/Band[%substr(foto_dateiname,0,5)%]/[%foto_dateiname%]" capture="0" notificationMessage="" id="{6a7ccf62-fbb3-48e1-bd21-b1c5c799f460}" type="5" name="Bild öffnen" shortTitle="Bild öffnen" isEnabledOnlyWhenEditable="0">
       <actionScope id="Canvas"/>
       <actionScope id="Feature"/>
     </actionsetting>
   </attributeactions>
-  <attributetableconfig sortOrder="0" actionWidgetStyle="dropDown" sortExpression="">
+  <attributetableconfig sortExpression="" actionWidgetStyle="dropDown" sortOrder="0">
     <columns>
-      <column name="pk" type="field" hidden="0" width="-1"/>
-      <column name="untersuchsch" type="field" hidden="0" width="-1"/>
-      <column name="id" type="field" hidden="0" width="-1"/>
-      <column name="videozaehler" type="field" hidden="0" width="-1"/>
-      <column name="timecode" type="field" hidden="0" width="-1"/>
-      <column name="kuerzel" type="field" hidden="0" width="-1"/>
-      <column name="charakt1" type="field" hidden="0" width="-1"/>
-      <column name="charakt2" type="field" hidden="0" width="-1"/>
-      <column name="quantnr1" type="field" hidden="0" width="-1"/>
-      <column name="quantnr2" type="field" hidden="0" width="-1"/>
-      <column name="streckenschaden" type="field" hidden="0" width="-1"/>
-      <column name="pos_von" type="field" hidden="0" width="-1"/>
-      <column name="pos_bis" type="field" hidden="0" width="-1"/>
-      <column name="bereich" type="field" hidden="0" width="-1"/>
-      <column name="foto_dateiname" type="field" hidden="0" width="-1"/>
-      <column name="ordner" type="field" hidden="0" width="-1"/>
-      <column type="actions" hidden="1" width="-1"/>
+      <column hidden="0" type="field" name="pk" width="-1"/>
+      <column hidden="0" type="field" name="untersuchsch" width="-1"/>
+      <column hidden="0" type="field" name="id" width="-1"/>
+      <column hidden="0" type="field" name="videozaehler" width="-1"/>
+      <column hidden="0" type="field" name="timecode" width="-1"/>
+      <column hidden="0" type="field" name="kuerzel" width="-1"/>
+      <column hidden="0" type="field" name="charakt1" width="-1"/>
+      <column hidden="0" type="field" name="charakt2" width="-1"/>
+      <column hidden="0" type="field" name="quantnr1" width="-1"/>
+      <column hidden="0" type="field" name="quantnr2" width="-1"/>
+      <column hidden="0" type="field" name="streckenschaden" width="-1"/>
+      <column hidden="0" type="field" name="pos_von" width="-1"/>
+      <column hidden="0" type="field" name="pos_bis" width="-1"/>
+      <column hidden="0" type="field" name="bereich" width="-1"/>
+      <column hidden="0" type="field" name="foto_dateiname" width="-1"/>
+      <column hidden="0" type="field" name="ordner" width="501"/>
+      <column hidden="1" type="actions" width="-1"/>
+      <column hidden="0" type="field" name="streckenschaden_lfdnr" width="-1"/>
+      <column hidden="0" type="field" name="vertikale_lage" width="-1"/>
+      <column hidden="0" type="field" name="inspektionslaenge" width="-1"/>
+      <column hidden="0" type="field" name="createdat" width="-1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -282,40 +384,48 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field editable="1" name="bereich"/>
-    <field editable="1" name="charakt1"/>
-    <field editable="1" name="charakt2"/>
-    <field editable="1" name="foto_dateiname"/>
-    <field editable="1" name="id"/>
-    <field editable="1" name="kuerzel"/>
-    <field editable="1" name="ordner"/>
-    <field editable="1" name="pk"/>
-    <field editable="1" name="pos_bis"/>
-    <field editable="1" name="pos_von"/>
-    <field editable="1" name="quantnr1"/>
-    <field editable="1" name="quantnr2"/>
-    <field editable="1" name="streckenschaden"/>
-    <field editable="1" name="timecode"/>
-    <field editable="1" name="untersuchsch"/>
-    <field editable="1" name="videozaehler"/>
+    <field name="bereich" editable="1"/>
+    <field name="charakt1" editable="1"/>
+    <field name="charakt2" editable="1"/>
+    <field name="createdat" editable="1"/>
+    <field name="foto_dateiname" editable="1"/>
+    <field name="id" editable="1"/>
+    <field name="inspektionslaenge" editable="1"/>
+    <field name="kuerzel" editable="1"/>
+    <field name="ordner" editable="1"/>
+    <field name="pk" editable="1"/>
+    <field name="pos_bis" editable="1"/>
+    <field name="pos_von" editable="1"/>
+    <field name="quantnr1" editable="1"/>
+    <field name="quantnr2" editable="1"/>
+    <field name="streckenschaden" editable="1"/>
+    <field name="streckenschaden_lfdnr" editable="1"/>
+    <field name="timecode" editable="1"/>
+    <field name="untersuchsch" editable="1"/>
+    <field name="vertikale_lage" editable="1"/>
+    <field name="videozaehler" editable="1"/>
   </editable>
   <labelOnTop>
-    <field labelOnTop="0" name="bereich"/>
-    <field labelOnTop="0" name="charakt1"/>
-    <field labelOnTop="0" name="charakt2"/>
-    <field labelOnTop="0" name="foto_dateiname"/>
-    <field labelOnTop="0" name="id"/>
-    <field labelOnTop="0" name="kuerzel"/>
-    <field labelOnTop="0" name="ordner"/>
-    <field labelOnTop="0" name="pk"/>
-    <field labelOnTop="0" name="pos_bis"/>
-    <field labelOnTop="0" name="pos_von"/>
-    <field labelOnTop="0" name="quantnr1"/>
-    <field labelOnTop="0" name="quantnr2"/>
-    <field labelOnTop="0" name="streckenschaden"/>
-    <field labelOnTop="0" name="timecode"/>
-    <field labelOnTop="0" name="untersuchsch"/>
-    <field labelOnTop="0" name="videozaehler"/>
+    <field name="bereich" labelOnTop="0"/>
+    <field name="charakt1" labelOnTop="0"/>
+    <field name="charakt2" labelOnTop="0"/>
+    <field name="createdat" labelOnTop="0"/>
+    <field name="foto_dateiname" labelOnTop="0"/>
+    <field name="id" labelOnTop="0"/>
+    <field name="inspektionslaenge" labelOnTop="0"/>
+    <field name="kuerzel" labelOnTop="0"/>
+    <field name="ordner" labelOnTop="0"/>
+    <field name="pk" labelOnTop="0"/>
+    <field name="pos_bis" labelOnTop="0"/>
+    <field name="pos_von" labelOnTop="0"/>
+    <field name="quantnr1" labelOnTop="0"/>
+    <field name="quantnr2" labelOnTop="0"/>
+    <field name="streckenschaden" labelOnTop="0"/>
+    <field name="streckenschaden_lfdnr" labelOnTop="0"/>
+    <field name="timecode" labelOnTop="0"/>
+    <field name="untersuchsch" labelOnTop="0"/>
+    <field name="vertikale_lage" labelOnTop="0"/>
+    <field name="videozaehler" labelOnTop="0"/>
   </labelOnTop>
   <dataDefinedFieldProperties/>
   <widgets/>
