@@ -49,8 +49,18 @@ wird.
 
 Das Projekt wird mit Förderung durch das Programm "Mittelstand.innovativ!" 
 des Landes NRW von folgenden Ingenieurbüros finanziert:
-- blue-ing, Düsseldorf: www.blue-ing.de
-- Ingenieurbüro Reinhard Beck, Wuppertal: www.ibbeck.de
+- Ingenieurbüro Achten und Jansen GmbH, Aachen (1): https://www.achten-jansen.de/
+- ATD Ingenieurgesellschaft mbH, Aachen (1): https://www.atdgmbh.de/
+- TUTTAHS & MEYER Ingenieurgesellschaft mbH, Aachen (1): https://tuttahs-meyer.de/
+- Ingenieurgesellschaft Dr. Ing. Nacken mbH, Aachen (2): https://www.nacken-ingenieure.de/
+- Fischer Teamplan Ingenieurbüro GmbH (2): https://www.fischer-teamplan.de/
+- blue-ing, Düsseldorf (3): www.blue-ing.de
+- Ingenieurbüro Reinhard Beck, Wuppertal (3): www.ibbeck.de
+
+Projektförderung durch das Ministerium für Innovation, Wissenschaft und Forschung des Landes Nordrhein-Westfalen während des Zeitraums
+1) Nov. 2020 - Dez. 2021
+2) Dez. 2019 - Nov. 2020
+3) Aug. 2016 - Aug. 2017
 
 Details zum Projekt "QKan" sind in mehreren Vorträgen erläutert:
 
