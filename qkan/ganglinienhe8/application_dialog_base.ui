@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1206</width>
-    <height>694</height>
+    <width>1011</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -97,6 +97,18 @@
      </item>
      <item>
       <widget class="QLabel" name="label_dbname">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="text">
         <string>BeispielTest</string>
        </property>
@@ -133,6 +145,18 @@
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QPushButton" name="btn_backward">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="text">
           <string>BACK</string>
          </property>
@@ -140,6 +164,18 @@
        </item>
        <item>
         <widget class="QPushButton" name="btn_forward">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="text">
           <string>FORWARD</string>
          </property>
@@ -150,21 +186,36 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>10</width>
-           <height>0</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
-       <item alignment="Qt::AlignLeft">
+       <item>
         <widget class="QSlider" name="slider">
          <property name="enabled">
           <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="font">
           <font>
@@ -180,10 +231,23 @@
         </widget>
        </item>
        <item>
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>10</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
         <widget class="QWidget" name="widget" native="true">
          <property name="minimumSize">
           <size>
-           <width>250</width>
+           <width>0</width>
            <height>0</height>
           </size>
          </property>
@@ -222,8 +286,8 @@
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="minimumSize">
       <size>
-       <width>300</width>
-       <height>300</height>
+       <width>100</width>
+       <height>100</height>
       </size>
      </property>
      <property name="styleSheet">

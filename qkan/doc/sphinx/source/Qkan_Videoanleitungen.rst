@@ -51,6 +51,20 @@ Eine Videoanleitung, wie für eine bestehende QKan-Kanaldatenbank eine Vorlage-P
 
 .. index:: Video: DXF-Datei als Zeichnungsrahmen
 
+
+Anzeigen von Berechnungsergebnissen aus HYSTEM-EXTRAN 8.x
+---------------------------------------------------------
+
+Eine Videoanleitung, wie Ergebnisdaten als Ganglinien und als animierte Längsschnitte angezeigt werden können:
+
+- Laengsschnitte_
+
+.. _Laengsschnitte: https://fh-aachen.sciebo.de/s/mbWT9CwP2ljEwCW
+
+
+.. index:: Video: Berechnungsergebnisse aus HYSTEM-EXTRAN-Berechnungen als Ganglinien und Längsschnitte
+
+
 Einfügen eines Zeichnungsrahmens aus einer mit Autocad erstellten Vorlage
 -------------------------------------------------------------------------
 
@@ -64,28 +78,14 @@ finden Sie hier:
 
 .. index:: Video: Bearbeiten eines DYNA-Projektes mit QKan
 
-Übertragen eines Kanal++ Projektes nach QKan und zurück
+Import eines Kanal++ Projektes nach QKan
 -------------------------------------------------------------------------
 
-Eine Videoanleitung, wie ein Kanal++ Projekt nach QKan übertragen werden kann, um es nach 
-der Bearbeitung wieder zurückzuspielen und dort eine Berechnung auszuführen. 
+Eine Videoanleitung, wie ein Kanal++ Projekt nach QKan übertragen werden kann. 
 
 - Video_Kanalpp_nach_QKan_1_
-- Video_Kanalpp_nach_QKan_2_
 
-.. _Video_Kanalpp_nach_QKan_1: https://youtu.be/UcAW8JGQZ1w
-.. _Video_Kanalpp_nach_QKan_2: https://youtu.be/Lgl9eGOmMNw
+.. _Video_Kanalpp_nach_QKan_1: https://fh-aachen.sciebo.de/s/1VwlghfBHcHZWRi
 
 Für diese Anleitung werden zwei SQL-Anweisungen benötigt. Diese können Sie hier kopieren:
 
-::
-
-    SELECT Name AS flnam, replace(ltrim(Name, '0 '), ' ', '0') AS haltnam, 
-    Neigungskl AS neigkl, 'aus Kanal++ HoltorfV5' AS kommentar, 
-    ShiftCoordinates(geometry, 4000000, 5000000) AS geom FROM mw
-
-::
-
-    SELECT Name AS elnam, replace(ltrim(Name, '0 '), ' ', '0') AS haltnam, 
-    Einwohner AS ew,  
-    ShiftCoordinates(Centroid(geometry), 4000000, 5000000) AS geom FROM mw

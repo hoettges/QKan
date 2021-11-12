@@ -465,7 +465,7 @@ class GanglinienHE8:
         if speed_controller_initialized:
             self.__speed_controller = s.Slider()
             self.__speed_controller.setMaximumWidth(500)
-            self.__speed_controller.setMinimumWidth(300)
+            self.__speed_controller.setMinimumWidth(100)
             layout.addWidget(self.__speed_controller, 0, 0, 1, 1, Qt.AlignRight)
             self.__speed_label = QLabel("Geschwindigkeit: 0x")
             self.__speed_label.setStyleSheet(
