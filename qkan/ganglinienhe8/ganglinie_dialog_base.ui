@@ -88,6 +88,11 @@
            <string>Auslastung</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Wassertiefe</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item>

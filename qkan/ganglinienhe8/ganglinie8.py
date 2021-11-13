@@ -88,12 +88,12 @@ class Ganglinie8:
         _schaechte = {}
         for haltung in haltungen:
             self.__db.sql(
-                'SELECT zeitpunkt,auslastung,durchfluss,geschwindigkeit FROM lau_gl_el WHERE "KANTE"={}'.format(
+                'SELECT zeitpunkt,auslastung,durchfluss,geschwindigkeit,wasserstand AS wassertiefe FROM lau_gl_el WHERE "KANTE"={}'.format(
                     "'{}'".format(haltung)
                 )
             )
             res = self.__db.fetchall()
-            for zeitpunkt_t, auslastung, durchfluss, geschwindigkeit in res:
+            for zeitpunkt_t, auslastung, durchfluss, geschwindigkeit, wassertiefe in res:
                 try:
                     zeitpunkt = datetime.datetime.strptime(
                         zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
@@ -111,16 +111,29 @@ class Ganglinie8:
                     auslastung=auslastung,
                     durchfluss=durchfluss,
                     geschwindigkeit=geschwindigkeit,
+                    wassertiefe=wassertiefe,
                 )
         self.__log.info("Messdaten der Haltungen wurden abgefragt")
         for schacht in schaechte:
             self.__db.sql(
-                'SELECT zeitpunkt,zufluss,wasserstand,durchfluss FROM lau_gl_s WHERE "KNOTEN"={}'.format(
+                '''SELECT es.zeitpunkt AS zeitpunkt,
+                          es.zufluss AS zufluss,
+                          es.wasserstand AS wasserstand,
+                          es.durchfluss AS durchfluss,
+                          es.wasserstand - kn.Sohlhoehe AS wassertiefe  
+                   FROM LAU_GL_S AS es
+                   INNER JOIN (
+                     SELECT Name, Sohlhoehe FROM Schacht UNION
+                     SELECT Name, Sohlhoehe FROM Speicherschacht UNION
+                     SELECT Name, Sohlhoehe FROM Auslass
+                   ) AS kn
+                   ON es.Knoten = kn.Name
+                   WHERE es.Knoten={}'''.format(
                     "'{}'".format(schacht)
                 )
             )
             res = self.__db.fetchall()
-            for zeitpunkt_t, zufluss, wasserstand, durchfluss in res:
+            for zeitpunkt_t, zufluss, wasserstand, durchfluss, wassertiefe in res:
                 try:
                     zeitpunkt = datetime.datetime.strptime(
                         zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
@@ -135,7 +148,7 @@ class Ganglinie8:
                 if _schaechte.get(zeitpunkt) is None:
                     _schaechte[zeitpunkt] = {}
                 _schaechte[zeitpunkt][schacht] = dict(
-                    zufluss=zufluss, durchfluss=durchfluss, wasserstand=wasserstand
+                    zufluss=zufluss, durchfluss=durchfluss, wasserstand=wasserstand, wassertiefe=wassertiefe,
                 )
 
         self.__log.info("Messdaten der Schächte wurden abgefragt")
@@ -202,11 +215,11 @@ class Ganglinie8:
             "Aktueller Index der Methoden-Combobox:\t{}".format(method_idx)
         )
         methods = [
-            ["durchfluss", "geschwindigkeit", "auslastung"],
-            ["zufluss", "wasserstand", "durchfluss"],
+            ["durchfluss", "geschwindigkeit", "auslastung", "wassertiefe"],
+            ["zufluss", "wasserstand", "wassertiefe", "durchfluss"],
         ]
         method = methods[idx][method_idx]
-        axes = [["cbm/s", "m/s", "%"], ["cbm/s", "m NN", "cbm/s"]]
+        axes = [["m³/s", "m/s", "%", "m"], ["m³/s", "m NN", "m", "m³/s"]]
 
         colors = [
             "#00BFFF",
@@ -310,8 +323,8 @@ class Ganglinie8:
         """
         self.__log.info("Layer-Combobox wurde umgeschaltet")
         methods = [
-            ["Durchfluss", "Geschwindigkeit", "Auslastung"],
-            ["Zufluss", "Wasserstand", "Durchfluss"],
+            ["Durchfluss", "Geschwindigkeit", "Auslastung", "Wassertiefe",],
+            ["Zufluss", "Wasserstand", "Wassertiefe", "Durchfluss",],
         ]
         for i in range(self.__dialog.combo_method.count()):
             self.__dialog.combo_method.setItemText(i, methods[index][i])

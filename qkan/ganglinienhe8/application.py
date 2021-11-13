@@ -766,8 +766,8 @@ class GanglinienHE8:
         self.__log.debug("Es wurden {} Elemente selektiert.".format(feature_count))
         if feature_count < 1:
             self.__log.critical("Es wurde kein Element selektiert!")
-            self.__iface.messageBar().pushCritical(
-                "Fehler", "Bitte wählen Sie mindestens ein Element aus!"
+            self.__iface.messageBar().pushMessage(
+                "Hinweis:", "Bitte wählen Sie mindestens ein Element aus!"
             )
             return
         schaechte = []
