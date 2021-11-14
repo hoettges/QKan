@@ -37,7 +37,7 @@ class PlausiTask(QKanPlugin):
             sql = f"""INSERT INTO pruefliste (objname, warntext, warntyp, warnlevel, layername, attrname)
                 SELECT
                     {attrname},
-                    '{warntext}' AS warntext,
+                    bemerkung AS warntext,
                     '{warntyp}' AS warntyp,
                     {warnlevel} AS warnlevel,
                     '{layername}' AS layername,

@@ -1,3 +1,5 @@
+import os
+from qgis.utils import pluginDirectory
 from qgis.gui import QgisInterface
 
 from qkan import QKan, get_default_dir
@@ -43,6 +45,10 @@ class Plausi(QKanPlugin):
         self.db_qkan = DBConnection()
         if not self.db_qkan:            # Setzt self.db_qkan und self.database_qkan
             return False
+
+        plausisqlfile = os.path.join(pluginDirectory("qkan"), "templates", "plausibilitaetspruefungen.sql")
+        if not self.db_qkan.executefile(plausisqlfile):
+            self.log.error(f'Plausibilitätsabfragen konnten nicht gelesen oder ausgeführt werden:\n{plausisqlfile}\n')
 
         if not self.plausi_dlg.prepareDialog(self.db_qkan):
             return False

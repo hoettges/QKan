@@ -321,8 +321,7 @@ class DBConnection:
             self.cursl.executescript(sqlfile)
         except sqlite3.Error as e:
             fehlermeldung(
-                "dbfunc.DBConnection.sql: SQL-Fehler beim Ausführen der SQL-Datei: {e}".format(
-                    e=stmt_category),
+                "dbfunc.DBConnection.sql: SQL-Fehler beim Ausführen der SQL-Datei",
                 "{e}\n{f}".format(e=repr(e), f=filenam),
             )
             self.__del__()
