@@ -444,8 +444,8 @@ class ExportTask:
                       coalesce(haltungen.laenge, glength(haltungen.geom)) AS laenge,
                       coalesce(haltungen.sohleoben,sob.sohlhoehe) AS sohlhoeheoben,
                       coalesce(haltungen.sohleunten,sun.sohlhoehe) AS sohlhoeheunten,
-                      profile.he_nr AS profiltyp, 
-                      CASE WHEN profile.he_nr = 68 THEN haltungen.profilnam
+                      coalesce(profile.he_nr, 68) AS profiltyp, 
+                      CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN haltungen.profilnam
                       ELSE NULL
                       END
                       AS sonderprofilbezeichnung, 
@@ -524,8 +524,8 @@ class ExportTask:
                         coalesce(haltungen.laenge, glength(haltungen.geom)) AS laenge,
                         coalesce(haltungen.sohleoben,sob.sohlhoehe) AS sohlhoeheoben,
                         coalesce(haltungen.sohleunten,sun.sohlhoehe) AS sohlhoeheunten,
-                        profile.he_nr AS profiltyp,
-                        CASE WHEN profile.he_nr = 68 THEN haltungen.profilnam
+                        coalesce(profile.he_nr, 68) AS profiltyp,
+                        CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN haltungen.profilnam
                         ELSE NULL
                         END
                         AS sonderprofilbezeichnung, 
