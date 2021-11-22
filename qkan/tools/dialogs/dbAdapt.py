@@ -46,6 +46,5 @@ class DbAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_dbAdapt):  # typ
     def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
-        self.pb_selectQKanDB.clicked.connect(self.select_qkan_db)
-        self.pb_selectProjectFile.clicked.connect(self.select_qkan_db)
+        self.pb_selectProjectFile.clicked.connect(self.select_project_file)
         self.button_box.helpRequested.connect(click_help)

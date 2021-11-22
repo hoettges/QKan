@@ -65,6 +65,7 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
 
     pb_select_KP_dest: QPushButton
     pb_select_KP_template: QPushButton
+    pb_selectQKanDB: QPushButton            # disabled in Form "export.ui"
 
     rb_flaechen: QRadioButton
     rb_profkey: QRadioButton
@@ -443,6 +444,7 @@ class ImportDialog(QKanDBDialog, IMPORT_CLASS):  # type: ignore
 
     pb_selectDynaFile: QPushButton
     pb_selectProjectFile: QPushButton
+    pb_selectQKanDB: QPushButton
 
     qsw_epsg: QgsProjectionSelectionWidget
 
@@ -452,19 +454,14 @@ class ImportDialog(QKanDBDialog, IMPORT_CLASS):  # type: ignore
     def __init__(self, plugin: "DynaPorter", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
 
+        QKanDBDialog.open_mode = False
+
         self.bind_select_path(
             title="Dateinamen der zu lesenden Kanal++-Datei eingeben",
             file_filter="*.ein",
             line_edit=self.tf_dynaFile,
             push_button=self.pb_selectDynaFile,
             is_open=True,
-        )
-        self.bind_select_path(
-            title="Namen der zu erstellenden QKan-Datenbank eingeben",
-            file_filter="*.sqlite",
-            line_edit=self.tf_qkanDB,
-            push_button=self.pb_selectQKanDB,
-            is_open=False,
         )
         self.bind_select_path(
             title="Dateinamen der zu erstellenden Projektdatei eingeben",
