@@ -1,6 +1,7 @@
 import os
 from qgis.utils import pluginDirectory
 from qgis.gui import QgisInterface
+from qgis.core import QgsProject
 
 from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
@@ -62,7 +63,7 @@ class Plausi(QKanPlugin):
 
             QKan.config.save()
 
-            self._doplausi(self.db_qkan)
+            self._doplausi()            # Datenbank ist schon in self.db_qkan gespeichert...
 
     def _doplausi(self, db_test: DBConnection = None) -> bool:
         """Start der Plausibilitätsabragen
@@ -75,6 +76,10 @@ class Plausi(QKanPlugin):
         # Nur für Test: Datenbankverbindung zur Testdatenbank herstellen
         if db_test:
             self.db_qkan = db_test
+            plausisqlfile = os.path.join(pluginDirectory("qkan"), "templates", "plausibilitaetspruefungen.sql")
+            if not self.db_qkan.executefile(plausisqlfile):
+                self.log.error(f'Plausibilitätsabfragen konnten nicht gelesen oder '
+                               f'ausgeführt werden:\n{plausisqlfile}\n')
 
         plau = PlausiTask(self.db_qkan)
         plau.run()
@@ -84,6 +89,7 @@ class Plausi(QKanPlugin):
 
         # Anzeige der Attributtabelle, nicht im Testmodus
         if not db_test:
+            project = QgsProject.instance()
             layers = project.mapLayersByName("Fehlerliste")
             if not layers:
                 self.log.warning('Layer "Fehlerliste" fehlt!')

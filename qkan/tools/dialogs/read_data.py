@@ -54,7 +54,7 @@ class ReadData():  # type: ignore
         layername = layer.name()
         dbname, table, geom, sql = get_qkanlayer_attributes(datasource)
         if layer.providerType() == 'spatialite':
-            self.database_qkan = DBConnection(dbname)
+            self.db_qkan = DBConnection(dbname)
             self.read_clipboard(table, layername)
         else:
             return
@@ -197,8 +197,8 @@ class ReadData():  # type: ignore
                     # if not field:
                         self.iface.messageBar().pushMessage(
                             "Datenfehler",
-                            'Datentyp konnte nicht erkannt werden. ' + \
-                            f'Spalte: {column}, Wert: {value}' + \
+                            'Datentyp konnte nicht erkannt werden. '
+                            f'Spalte: {column}, Wert: {value}'
                             f'Typ: {type(value)}',
                             level=Qgis.Critical, )
                         # return
@@ -217,8 +217,8 @@ class ReadData():  # type: ignore
                       f"VALUES ({', '.join(['?'] * len(qkan_colnames))})"
                 if not self.db_qkan.sql(
                     sql,
-                    mute_logger = True,
-                    parameters = list(parsed_dataset.values()),
+                    mute_logger=True,
+                    parameters=list(parsed_dataset.values()),
                 ):
                     del self.db_qkan
                     return

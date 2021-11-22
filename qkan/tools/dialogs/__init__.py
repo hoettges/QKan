@@ -29,6 +29,7 @@ class QKanDialog(QDialog):
         is_open: bool,
         default_dir: Optional[str] = None,
     ) -> None:
+        logger.debug(f'bind_select_path: \nfile_filter: {file_filter}\nis_open: {is_open}')
         if not default_dir:
             default_dir = self.plugin.default_dir
 
@@ -46,6 +47,7 @@ class QKanDialog(QDialog):
         is_open: bool,
         default_dir: str,
     ) -> None:
+        logger.debug(f'select_path: \nfile_filter: {file_filter}\nis_open: {is_open}')
         if is_open:
             # noinspection PyArgumentList,PyCallByClass
             filename, __ = QFileDialog.getOpenFileName(
@@ -72,28 +74,7 @@ class QKanDBDialog(QKanDialog):
 
     def __init__(self, plugin: "QKanPlugin", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
-        self.pb_selectQKanDB.clicked.connect(self.select_qkan_db)
         self.db_qkan: Optional[DBConnection] = None
-
-    def select_qkan_db(self) -> None:
-        """Anzubindende QKan-Datenbank festlegen"""
-
-        if self.open_mode:
-            # noinspection PyArgumentList,PyCallByClass
-            filename, __ = QFileDialog.getOpenFileName(
-                self, "QKan-Datenbank auswählen", self.plugin.default_dir, "*.sqlite"
-            )
-        else:
-            # noinspection PyArgumentList,PyCallByClass
-            filename, __ = QFileDialog.getSaveFileName(
-                self,
-                "Zu erstellende QKan-Datenbank auswählen",
-                self.plugin.default_dir,
-                "*.sqlite",
-            )
-
-        if os.path.dirname(filename) != "":
-            self.tf_qkanDB.setText(filename)
 
 
 class QKanProjectDialog(QKanDialog):

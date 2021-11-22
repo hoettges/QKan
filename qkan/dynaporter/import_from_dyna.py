@@ -18,6 +18,7 @@ import logging
 import os
 import xml.etree.ElementTree as ElementTree
 from typing import Tuple, cast
+from pathlib import Path
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
 from qgis.utils import pluginDirectory
@@ -25,6 +26,7 @@ from qgis.utils import pluginDirectory
 from qkan import QKAN_FORMS, QKAN_TABLES, QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import eval_node_types, fehlermeldung, fzahl
+from qkan.tools.k_qgsadapt import qgsadapt
 
 logger = logging.getLogger("QKan.dynaporter.import_from_dyna")
 
@@ -242,7 +244,7 @@ def import_kanaldaten(
     # abflspendelis = {}             # Wird aus der dyna-Datei gelesen
 
     # ------------------------------------------------------------------------------
-    # Vorverarbeitung der überhaupt nicht Datenbank kopatiblen Datenstruktur aus DYNA...
+    # Vorverarbeitung der überhaupt nicht Datenbank kompatiblen Datenstruktur aus DYNA...
 
     # Einlesen der DYNA-Datei
 
@@ -703,15 +705,18 @@ def import_kanaldaten(
 
     # Daten aus temporären DYNA-Tabellen abfragen
     sql = """
+        INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
+                                    schachttyp, simstatus, kommentar)
         SELECT 
             dyna12.schoben as schnam,
             dyna12.xob as xsch, 
             dyna12.yob as ysch, 
             dyna12.sohleoben as sohlhoehe, 
             dyna12.deckeloben as deckelhoehe, 
-            1000 as durchm, 
+            1.0 as durchm, 
             0 as druckdicht, 
             entwaesserungsarten.bezeichnung as entwart, 
+            'Schacht' AS schachttyp, 
             simulationsstatus.bezeichnung AS simstatus, 
             'Importiert mit QKan' AS kommentar
         FROM dyna12
@@ -724,102 +729,6 @@ def import_kanaldaten(
     if not db_qkan.sql(sql, "importkanaldaten_dyna (11)"):
         del db_qkan
         return False
-    daten = db_qkan.fetchall()
-
-    # Schachtdaten aufbereiten und in die QKan-DB schreiben
-
-    for attr in daten:
-        (
-            schnam,
-            xsch,
-            ysch,
-            sohlhoehe,
-            deckelhoehe,
-            durchm,
-            druckdicht,
-            entwart,
-            simstatus,
-            kommentar,
-        ) = ["NULL" if el is None else el for el in attr]
-
-        # schnam = schnam_ansi.decode('iso-8859-1')
-
-        # # Entwasserungsarten
-        # if entwart_kp in ref_entwart:
-        # entwart = ref_entwart[entwart_kp]
-        # else:
-        # # Noch nicht in Tabelle [entwaesserungsarten] enthalten, also ergänzen
-        # sql = "INSERT INTO entwaesserungsarten (bezeichnung, kp_nr) Values ('({0:})', {0:d})".format(entwart_kp)
-        # entwart = u'({:})'.format(entwart_kp)
-        # if not dbQK.sql(sql, 'importkanaldaten_dyna (11)'):
-        # return None
-
-        # # Simstatus-Nr aus EIN-Datei ersetzten
-        # if simstat_kp in ref_simstat:
-        # simstatus = ref_simstat[simstat_kp]
-        # else:
-        # # Noch nicht in Tabelle [simulationsstatus] enthalten, also ergqenzen
-        # simstatus = u'({}_kp)'.format(simstat_kp)
-        # sql = "INSERT INTO simulationsstatus (bezeichnung, kp_nr) Values ('{simstatus}', {kp_nr})".format( \
-        # simstatus=simstatus, kp_nr=simstat_kp)
-        # ref_simstat[simstat_kp] = simstatus
-        # if not dbQK.sql(sql, 'importkanaldaten_dyna (12)'):
-        # return None
-
-        # Geo-Objekte erzeugen
-
-        # if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
-        #     geop = f"MakePoint({xsch},{ysch},{epsg})"
-        #     du = 1.0 if durchm == "NULL" else durchm / 1000.0
-        #     geom = f"CastToMultiPolygon(MakePolygon(MakeCircle({xsch},{ysch},{du},{epsg})))"
-        # elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
-        #     geop = f"ST_SetSRID(ST_MakePoint({xsch},{ysch}),{epsg})"
-        # else:
-        #     fehlermeldung(
-        #         "Programmfehler!",
-        #         "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(
-        #             QKan.config.database.type
-        #         ),
-        #     )
-
-        # Datensatz in die QKan-DB schreiben
-
-        try:
-            sql = f"""
-                INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
-                        schachttyp, simstatus, kommentar)
-                VALUES (?, ?, ?, ?, ?, ?/1000, ?, ?, 'Schacht', ?, ?)"""
-            if not db_qkan.sql(
-                sql,
-                "importkanaldaten_dyna (13)",
-                parameters=(
-                    schnam,
-                    xsch,
-                    ysch,
-                    sohlhoehe,
-                    deckelhoehe,
-                    durchm,
-                    druckdicht,
-                    entwart,
-                    simstatus,
-                    kommentar,
-                ),
-            ):
-                del db_qkan
-                return False
-        except BaseException as e:
-            fehlermeldung("SQL-Fehler", str(e))
-            fehlermeldung(
-                "Fehler in QKan_Import_from_KP",
-                "\nSchächte: in sql: \n" + sql + "\n\n",
-            )
-
-    if not db_qkan.sql(
-        "UPDATE schaechte SET (geom, geop) = (geom, geop) ",
-        "importkanaldaten_dyna (13a)",
-    ):
-        del db_qkan
-        return False
 
     db_qkan.commit()
 
@@ -828,16 +737,19 @@ def import_kanaldaten(
 
     # Daten aus temporären DYNA-Tabellen abfragen
     sql = """
+        INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
+                                    schachttyp, simstatus, kommentar)
         SELECT
             dyna41.schnam as schnam,
             dyna41.xkoor as xsch, 
             dyna41.ykoor as ysch, 
             dyna12.sohleunten as sohlhoehe, 
             dyna41.deckelhoehe as deckelhoehe, 
-            1000 as durchm, 
+            1.0 as durchm, 
             0 as druckdicht, 
-            entwaesserungsarten.bezeichnung as entwart, 
-            simulationsstatus.bezeichnung AS simstat, 
+            entwaesserungsarten.bezeichnung as entwart,
+            'Auslass' AS schachttyp, 
+            simulationsstatus.bezeichnung AS simstatus, 
             'Importiert mit QKan' AS kommentar
         FROM dyna41
         LEFT JOIN dyna12
@@ -849,101 +761,6 @@ def import_kanaldaten(
         GROUP BY dyna41.schnam"""
 
     if not db_qkan.sql(sql, "importkanaldaten_dyna (14)"):
-        del db_qkan
-        return False
-    daten = db_qkan.fetchall()
-
-    # Auslassdaten aufbereiten und in die QKan-DB schreiben
-
-    for attr in daten:
-        (
-            schnam,
-            xsch,
-            ysch,
-            sohlhoehe,
-            deckelhoehe,
-            durchm,
-            druckdicht,
-            entwart,
-            simstat,
-            kommentar,
-        ) = ["NULL" if el is None else el for el in attr]
-
-        # schnam = schnam_ansi.decode('iso-8859-1')
-
-        # # Entwasserungsarten
-        # if entwart_kp in ref_entwart:
-        # entwart = ref_entwart[entwart_kp]
-        # else:
-        # # Noch nicht in Tabelle [entwaesserungsarten] enthalten, also ergänzen
-        # sql = "INSERT INTO entwaesserungsarten (bezeichnung, kp_nr) Values ('({0:})', {0:d})".format(entwart_kp)
-        # entwart = u'({:})'.format(entwart_kp)
-        # if not dbQK.sql(sql, 'importkanaldaten_dyna (14)'):
-        # return None
-
-        # # Simstatus-Nr aus EIN-Datei ersetzten
-        # if simstat_kp in ref_simstat:
-        # simstatus = ref_simstat[simstat_kp]
-        # else:
-        # # Noch nicht in Tabelle [simulationsstatus] enthalten, also ergqenzen
-        # simstatus = u'({}_kp)'.format(simstat_kp)
-        # sql = "INSERT INTO simulationsstatus (bezeichnung, kp_nr) Values ('{simstatus}', {kp_nr})".format( \
-        # simstatus=simstatus, kp_nr=simstat_kp)
-        # ref_simstat[simstat_kp] = simstatus
-        # if not dbQK.sql(sql, 'importkanaldaten_dyna (15)'):
-        # return None
-
-        # Geo-Objekte erzeugen
-
-        # if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
-        #     geop = f"MakePoint({xsch},{ysch},{epsg})"
-        #     du = 1.0 if durchm == "NULL" else durchm / 1000.0
-        #     geom = f"CastToMultiPolygon(MakePolygon(MakeCircle({xsch},{ysch},{du},{epsg})))"
-        # elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
-        #     geop = f"ST_SetSRID(ST_MakePoint({xsch},{ysch}),{epsg})"
-        # else:
-        #     fehlermeldung(
-        #         "Programmfehler!",
-        #         "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(dbtyp),
-        #     )
-
-        # Datensatz in die QKan-DB schreiben
-
-        try:
-            sql = f"""
-                INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
-                        schachttyp, simstatus, kommentar)
-                VALUES (?, ?, ?, ?, ?, ?/1000, ?, ?, 'Auslass', ?, ?)
-                """
-            if not db_qkan.sql(
-                sql,
-                "importkanaldaten_dyna (16)",
-                parameters=(
-                    schnam,
-                    xsch,
-                    ysch,
-                    sohlhoehe,
-                    deckelhoehe,
-                    durchm,
-                    druckdicht,
-                    entwart,
-                    simstat,
-                    kommentar,
-                ),
-            ):
-                del db_qkan
-                return False
-        except BaseException as e:
-            fehlermeldung("SQL-Fehler", str(e))
-            fehlermeldung(
-                "Fehler in QKan_Import_from_KP",
-                "\nSchächte: in sql: \n" + sql + "\n\n",
-            )
-
-    if not db_qkan.sql(
-        "UPDATE schaechte SET (geom, geop) = (geom, geop) ",
-        "importkanaldaten_dyna (16a)",
-    ):
         del db_qkan
         return False
 
@@ -958,8 +775,13 @@ def import_kanaldaten(
     # if not dbQK.sql(sql, 'importkanaldaten_dyna (6)'):
     # return None
 
-    # Daten aUS temporären DYNA-Tabellen abfragen
+    # Daten aus temporären DYNA-Tabellen abfragen
+
     sql = """
+        INSERT INTO haltungen_data 
+            (haltnam, schoben, schunten, 
+            hoehe, breite, laenge, sohleoben, sohleunten, 
+            deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus, kommentar)
         SELECT 
             printf('%s-%s', dyna12.kanalnummer, dyna12.haltungsnummer) AS haltnam, 
             dyna12.schoben AS schoben, 
@@ -976,11 +798,7 @@ def import_kanaldaten(
             entwaesserungsarten.bezeichnung as entwart, 
             dynarauheit.ks as ks, 
             simulationsstatus.bezeichnung as simstatus, 
-            'DYNA-Import' AS kommentar, 
-            dyna12.xob as xob, 
-            dyna12.yob as yob, 
-            coalesce(dy12un.xob, dyna41.xkoor) as xun, 
-            coalesce(dy12un.yob, dyna41.ykoor) as yun
+            'DYNA-Import' AS kommentar
         FROM dyna12
         LEFT JOIN dyna12 AS dy12un
         ON dyna12.schunten = dy12un.schoben
@@ -999,88 +817,32 @@ def import_kanaldaten(
     if not db_qkan.sql(sql, "importkanaldaten_dyna (7)"):
         del db_qkan
         return False
-    daten = db_qkan.fetchall()
 
-    # Haltungsdaten in die QKan-DB schreiben
+    db_qkan.commit()
 
-    for attr in daten:
-        (
-            haltnam,
-            schoben,
-            schunten,
-            hoehe,
-            breite,
-            laenge,
-            sohleoben,
-            sohleunten,
-            deckeloben,
-            deckelunten,
-            teilgebiet,
-            profilnam,
-            entwart,
-            ks,
-            simstatus,
-            kommentar,
-            xob,
-            yob,
-            xun,
-            yun,
-        ) = ["NULL" if el is None else el for el in attr]
+    # --------------------------------------------------------------------------
 
-        # (haltnam, schoben, schunten) = \
-        # [tt.decode('iso-8859-1') for tt in (haltnam_ansi, schoben_ansi, schunten_ansi)]
+    sql = """
+        INSERT INTO tezg_data
+            (flnam, haltnam, schnam, neigkl, 
+            schwerpunktlaufzeit, regenschreiber, 
+            teilgebiet, abflussparameter, 
+            flaeche, befgrad, 
+             kommentar)
+        SELECT
+            printf('f_%s-%s', dyna12.kanalnummer, dyna12.haltungsnummer) AS flnam, 
+            printf('%s-%s', dyna12.kanalnummer, dyna12.haltungsnummer) AS haltnam, 
+            dyna12.schoben AS schnam, 
+            dyna12.neigkl AS neigkl,
+            NULL AS schwerpunktlaufzeit, NULL AS regenschreiber, 
+            NULL AS teilgebiet, '$Default_Unbef' AS abflussparameter, 
+            dyna12.flaeche AS flaeche,
+            dyna12.flaecheund / (dyna12.flaeche + 1.0e-19) AS befgrad, 
+            'DYNA-Import' AS kommentar
+        FROM dyna12
+        GROUP BY dyna12.kanalnummer, dyna12.haltungsnummer"""
 
-        # Geo-Objekt erzeugen
-        # if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
-        #     geom = (
-        #         f"MakeLine(MakePoint({xob},{yob},{epsg}),MakePoint({xun},{yun},{epsg}))"
-        #     )
-        # elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
-        #     geom = f"ST_MakeLine(ST_SetSRID(ST_MakePoint({xob},{yob}),{epsg}),ST_SetSRID(ST_MakePoint({xun},{yun}),{epsg}))"
-        # else:
-        #     fehlermeldung(
-        #         "Programmfehler!",
-        #         "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(
-        #             QKan.config.database.type
-        #         ),
-        #     )
-
-        # Datensatz aufbereiten in die QKan-DB schreiben
-
-        if not db_qkan.sql(
-            """
-            INSERT INTO haltungen_data 
-            (haltnam, schoben, schunten, 
-            hoehe, breite, laenge, sohleoben, sohleunten, 
-            deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus, kommentar)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            "importkanaldaten_dyna (9a)",
-            parameters=(
-                haltnam,
-                schoben,
-                schunten,
-                hoehe,
-                breite,
-                laenge,
-                sohleoben,
-                sohleunten,
-                deckeloben,
-                deckelunten,
-                teilgebiet,
-                profilnam,
-                entwart,
-                ks,
-                simstatus,
-                kommentar,
-            ),
-        ):
-            del db_qkan
-            return False
-
-    if not db_qkan.sql(
-        "UPDATE haltungen SET geom = geom", "importkanaldaten_dyna (9a)"
-    ):
+    if not db_qkan.sql(sql, "importkanaldaten_dyna (8)"):
         del db_qkan
         return False
 
@@ -1088,187 +850,27 @@ def import_kanaldaten(
 
     # --------------------------------------------------------------------------
     # Schachttypen auswerten
+
     eval_node_types(db_qkan)  # in qkan.database.qkan_utils
 
     # --------------------------------------------------------------------------
-    # Zoom-Bereich für die Projektdatei vorbereiten
-    sql = """SELECT min(x(geop)) AS xmin, 
-                    max(x(geop)) AS xmax, 
-                    min(y(geop)) AS ymin, 
-                    max(y(geop)) AS ymax
-             FROM schaechte"""
-    try:
-        if not db_qkan.sql(sql, "importkanaldaten_dyna (17)"):
-            del db_qkan
-            return False
-    except BaseException as e:
-        fehlermeldung("SQL-Fehler", str(e))
-        fehlermeldung(
-            "Fehler in QKan_Import_from_KP", "\nFehler in sql_zoom: \n" + sql + "\n\n"
-        )
+    # Projektdatei schreiben
 
-    try:
-        zoom = db_qkan.fetchone()
-    except BaseException as e:
-        fehlermeldung("SQL-Fehler", str(e))
-        fehlermeldung(
-            "Fehler in QKan_Import_from_KP",
-            "\nFehler in sql_zoom; daten= " + str(daten) + "\n",
-        )
-        zoom = [0.0, 100.0, 0.0, 100.0]
-
-    # --------------------------------------------------------------------------
-    # Projektionssystem für die Projektdatei vorbereiten
-    sql = """SELECT srid
-            FROM geom_cols_ref_sys
-            WHERE Lower(f_table_name) = Lower('schaechte')
-            AND Lower(f_geometry_column) = Lower('geom')"""
-    if not db_qkan.sql(sql, "importkanaldaten_dyna (37)"):
-        del db_qkan
-        return False
-
-    srid = db_qkan.fetchone()[0]
-    try:
-        crs = QgsCoordinateReferenceSystem(srid, QgsCoordinateReferenceSystem.EpsgCrsId)
-        srsid = crs.srsid()
-        proj4text = crs.toProj4()
-        description = crs.description()
-        projectionacronym = crs.projectionAcronym()
-        if "ellipsoidAcronym" in dir(crs):
-            ellipsoidacronym = crs.ellipsoidAcronym()
-        else:
-            ellipsoidacronym = None
-    except BaseException as e:
-        srid, srsid, proj4text, description, projectionacronym, ellipsoidacronym = (
-            "dummy",
-            "dummy",
-            "dummy",
-            "dummy",
-            "dummy",
-            "dummy",
-        )
-
-        fehlermeldung('\nFehler in "daten"', str(e))
-        fehlermeldung(
-            "Fehler in QKan_Import_from_KP",
-            "\nFehler bei der Ermittlung der srid: \n" + str(daten),
-        )
+    QKan.config.project.template = str(
+        Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
+    )
+    qgsadapt(
+        QKan.config.database.qkan,
+        db_qkan,
+        QKan.config.project.file,
+        QKan.config.project.template,
+        QKan.config.epsg,
+    )
 
     # --------------------------------------------------------------------------
     # Datenbankverbindungen schliessen
 
     del db_qkan
-
-    # --------------------------------------------------------------------------
-    # Projektdatei schreiben, falls ausgewählt
-
-    if projectfile is not None and projectfile != "":
-        templatepath = os.path.join(pluginDirectory("qkan"), "templates")
-        projecttemplate = os.path.join(templatepath, "projekt.qgs")
-        projectpath = os.path.dirname(projectfile)
-        if os.path.dirname(database_qkan) == projectpath:
-            datasource = database_qkan.replace(os.path.dirname(database_qkan), ".")
-        else:
-            datasource = database_qkan
-
-        # Lesen der Projektdatei ------------------------------------------------------------------
-        qgsxml = ElementTree.parse(projecttemplate)
-        root = qgsxml.getroot()
-
-        # Projektionssystem anpassen --------------------------------------------------------------
-
-        for tag_maplayer in root.findall(".//projectlayers/maplayer"):
-            tag_datasource = tag_maplayer.find("./datasource")
-            if not tag_datasource:
-                continue
-
-            tex = tag_datasource.text
-            if not tex:
-                continue
-
-            # Nur QKan-Tabellen bearbeiten
-            if tex[tex.index('table="') + 7 :].split('" ')[0] in QKAN_TABLES:
-
-                # <extend> löschen
-                for tag_extent in tag_maplayer.findall("./extent"):
-                    tag_maplayer.remove(tag_extent)
-
-                for tag_spatialrefsys in tag_maplayer.findall("./srs/spatialrefsys"):
-                    tag_spatialrefsys.clear()
-
-                    elem = ElementTree.SubElement(tag_spatialrefsys, "proj4")
-                    elem.text = proj4text
-                    elem = ElementTree.SubElement(tag_spatialrefsys, "srsid")
-                    elem.text = "{}".format(srsid)
-                    elem = ElementTree.SubElement(tag_spatialrefsys, "srid")
-                    elem.text = "{}".format(srid)
-                    elem = ElementTree.SubElement(tag_spatialrefsys, "authid")
-                    elem.text = "EPSG: {}".format(srid)
-                    elem = ElementTree.SubElement(tag_spatialrefsys, "description")
-                    elem.text = description
-                    elem = ElementTree.SubElement(
-                        tag_spatialrefsys, "projectionacronym"
-                    )
-                    elem.text = projectionacronym
-                    if ellipsoidacronym is not None:
-                        elem = ElementTree.SubElement(
-                            tag_spatialrefsys, "ellipsoidacronym"
-                        )
-                        elem.text = ellipsoidacronym
-
-        # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
-        formspath = os.path.join(pluginDirectory("qkan"), "forms")
-        for tag_maplayer in root.findall(".//projectlayers/maplayer"):
-            tag_editform = tag_maplayer.find("./editform")
-            if tag_editform and tag_editform.text:
-                dateiname = os.path.basename(tag_editform.text)
-                if dateiname in QKAN_FORMS:
-                    # Nur QKan-Tabellen bearbeiten
-                    tag_editform.text = os.path.join(formspath, dateiname)
-
-        # Zoom für Kartenfenster einstellen -------------------------------------------------------
-        if len(zoom) == 0 or any([x is None for x in zoom]):
-            zoom = [0.0, 100.0, 0.0, 100.0]
-        for tag_extent in root.findall(".//mapcanvas/extent"):
-            for extent in root.findall(".//mapcanvas/extent"):
-                for idx, name in enumerate(["xmin", "ymin", "xmax", "ymax"]):
-                    element = extent.find(f"./{name}")
-                    if element is not None:
-                        element.text = "{:.3f}".format(zoom[idx])
-
-        # Projektionssystem anpassen --------------------------------------------------------------
-
-        for tag_spatialrefsys in root.findall(".//projectCrs/spatialrefsys"):
-            tag_spatialrefsys.clear()
-
-            elem = ElementTree.SubElement(tag_spatialrefsys, "proj4")
-            elem.text = proj4text
-            elem = ElementTree.SubElement(tag_spatialrefsys, "srid")
-            elem.text = "{}".format(srid)
-            elem = ElementTree.SubElement(tag_spatialrefsys, "authid")
-            elem.text = "EPSG: {}".format(srid)
-            elem = ElementTree.SubElement(tag_spatialrefsys, "description")
-            elem.text = description
-            elem = ElementTree.SubElement(tag_spatialrefsys, "projectionacronym")
-            elem.text = projectionacronym
-            if ellipsoidacronym is not None:
-                elem = ElementTree.SubElement(tag_spatialrefsys, "ellipsoidacronym")
-                elem.text = ellipsoidacronym
-
-        # Pfad zur QKan-Datenbank anpassen
-
-        for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
-            text = tag_datasource.text
-            if not text:
-                continue
-
-            tag_datasource.text = (
-                "dbname='" + datasource + "' " + text[text.find("table=") :]
-            )
-
-        qgsxml.write(projectfile)  # writing modified project file
-        logger.debug("Projektdatei: {}".format(projectfile))
-        # logger.debug(u'encoded string: {}'.format(tex))
 
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen

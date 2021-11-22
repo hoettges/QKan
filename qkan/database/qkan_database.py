@@ -22,8 +22,8 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.2.15"  # Version der QKan-Datenbank
-__qgsVersion__ = "3.2.17"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = "3.2.18"  # Version der QKan-Datenbank
+__qgsVersion__ = "3.2.18"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -224,7 +224,7 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'View "schaechte_data" konnte nicht erstellt werden.',
+            'View "haltungen_data" konnte nicht erstellt werden.',
         )
         consl.close()
         return False
@@ -272,7 +272,7 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Schaechte" konnte ein Trigger nicht angelegt werden.',
+            'In der Tabelle "haltungen_data" konnte ein Trigger nicht angelegt werden.',
         )
         consl.close()
         return False
@@ -280,23 +280,6 @@ def createdbtables(
     consl.commit()
 
     # Haltungen_untersucht ----------------------------------------------------------------
-
-    #i = ('haltungen_untersucht_1',)
-    #try:
-     #   cursl.execute(""" SELECT count(*) FROM sqlite_master WHERE type='table' AND name= ? """, i)
-    #except BaseException as err:
-     #   fehlermeldung(
-      #      "qkan_database.createdbtables: {}".format(err),
-       #     'Tabelle "Haltungen" konnte nicht erstellt werden',
-        #)
-        #consl.close()
-        #return False
-
-    #if cursl.fetchone()[0] == 1:
-     #   print('Table exists.')
-    #else:
-     #   print('Table does not exists.')
-    #x = datetime.datetime.now()
 
     sql = """CREATE TABLE haltungen_untersucht(
          pk INTEGER PRIMARY KEY,
@@ -318,7 +301,6 @@ def createdbtables(
          yschob REAL,
          xschun REAL,
          yschun REAL)"""
-    #.format("haltungen_untersucht"+x.strftime('%d_%m_%Y_%H_%M'))
 
     try:
         cursl.execute(sql)
@@ -472,7 +454,7 @@ def createdbtables(
         consl.close()
         return False
 
-    sql = f"""CREATE TRIGGER IF NOT EXISTS Untersuchdat_haltung_insert_clipboard
+    sql = f"""CREATE TRIGGER IF NOT EXISTS untersuchdat_haltung_insert_clipboard
                         INSTEAD OF INSERT ON untersuchdat_haltung_data FOR EACH ROW
                       BEGIN
                         INSERT INTO untersuchdat_haltung
@@ -560,7 +542,7 @@ def createdbtables(
                                     schob.geop
                                 ), 
                                 coalesce(
-                                MakePoint((ST_X(schun.geop)+(new.station*COALESCE(haltung.laenge/NULLIF(new.inspektionslaenge, 0),1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))+2*((-1)/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*COALESCE(haltung.laenge/NULLIF(new.inspektionslaenge, 0),1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))+2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
+                                MakePoint((ST_X(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))+2*((-1)/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(new.station*MAX(haltung.laenge/new.inspektionslaenge,1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))+2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), {epsg}),
                                     schun.geop
                                 )
                             )
@@ -664,51 +646,14 @@ def createdbtables(
                         schaechte AS schob,
                         schaechte AS schun,
                         anschlussleitungen AS leitung
-                        WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten AND leitung.leitnam = new.untersuchhal 
-                        ;
+                        WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten AND leitung.leitnam = new.untersuchhal;
                       END"""
     try:
         cursl.execute(sql)
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "untersuchhal" konnte ein Trigger nicht angelegt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
-                      SELECT
-                        untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, station, timecode, video_offset, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, createdat
-                      FROM untersuchdat_haltung;"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'View "untersuchdat_haltung_data" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = f"""CREATE TRIGGER IF NOT EXISTS untersuchdat_haltung_insert_clipboard
-                        INSTEAD OF INSERT ON untersuchdat_haltung_data FOR EACH ROW
-                      BEGIN
-                        INSERT INTO untersuchdat_haltung
-                          (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, createdat)
-                        VALUES (
-                          new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, new.id, new.videozaehler, new.inspektionslaenge, new.station, new.timecode, new.video_offset, new.kuerzel, 
-                        new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung, new.createdat
-                        );
-                      END"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Haltung" konnte ein Trigger nicht angelegt werden.',
+            'In der Tabelle "untersuchdat_haltung_data" konnte ein Trigger nicht angelegt werden.',
         )
         consl.close()
         return False
@@ -820,7 +765,7 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
                 "qkan_database.createdbtables: {}".format(err),
-                'In der Tabelle "anschlussleitungen" konnte ein Trigger nicht angelegt werden.',
+                'In der Tabelle "anschlussleitungen_data" konnte ein Trigger nicht angelegt werden.',
             )
         consl.close()
         return False
@@ -942,7 +887,7 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Schaechte" konnte ein Trigger nicht angelegt werden.',
+            'In der Tabelle "schaechte_data" konnte ein Trigger nicht angelegt werden.',
         )
         consl.close()
         return False
@@ -987,7 +932,7 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "schaechte_untersucht" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden.',
+            'In der Tabelle "schaechte_untersucht" konnte das Attribut "geop" nicht hinzugefuegt werden.',
         )
         consl.close()
         return False
@@ -1029,7 +974,7 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "schaechte_untersucht" konnte ein Trigger nicht angelegt werden.',
+            'In der Tabelle "schaechte_untersucht_data" konnte ein Trigger nicht angelegt werden.',
         )
         consl.close()
         return False
@@ -1102,7 +1047,7 @@ def createdbtables(
         consl.close()
         return False
 
-    sql = f"""CREATE TRIGGER IF NOT EXISTS Untersuchdat_schacht_insert_clipboard
+    sql = f"""CREATE TRIGGER IF NOT EXISTS untersuchdat_schacht_insert_clipboard
                 INSTEAD OF INSERT ON untersuchdat_schacht_data FOR EACH ROW
               BEGIN
                 INSERT INTO Untersuchdat_schacht
@@ -1121,46 +1066,7 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "untersuchsch" konnte ein Trigger nicht angelegt werden.',
-        )
-        consl.close()
-        return False
-
-    # consl.commit()
-
-    sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_schacht_data AS 
-                  SELECT
-                    untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, createdat
-                  FROM untersuchdat_schacht;"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'View "untersuchdat_schacht_data" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = f"""CREATE TRIGGER IF NOT EXISTS untersuchdat_schacht_insert_clipboard
-                    INSTEAD OF INSERT ON untersuchdat_schacht_data FOR EACH ROW
-                  BEGIN
-                    INSERT INTO untersuchdat_schacht
-                      (untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, createdat)
-                    VALUES (
-                      new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
-                    new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.vertikale_lage, new.inspektionslaenge,
-                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime'))
-                    );
-                  END"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Schaechte" konnte ein Trigger nicht angelegt werden.',
+            'In der Tabelle "untersuchdat_schacht_data" konnte ein Trigger nicht angelegt werden.',
         )
         consl.close()
         return False
@@ -2020,6 +1926,77 @@ def createdbtables(
         )
         consl.close()
         return False
+
+    sql = f"""CREATE VIEW IF NOT EXISTS tezg_data AS
+          SELECT
+            flnam, haltnam, schnam,
+            NULL AS x, NULL AS y,
+            neigkl, neigung, NULL AS flaeche, befgrad,
+            NULL AS schwerpunktlaufzeit, NULL AS regenschreiber, 
+            NULL AS teilgebiet, '$Default_Unbef' AS abflussparameter, 
+            kommentar, createdat
+          FROM tezg
+        """
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'View "tezg_data" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    sql = f"""CREATE TRIGGER IF NOT EXISTS tezg_insert_clipboard
+            INSTEAD OF INSERT ON tezg_data FOR EACH ROW
+          BEGIN
+            INSERT INTO tezg (
+              flnam, haltnam, schnam,
+              neigkl, neigung, befgrad,
+              schwerpunktlaufzeit, regenschreiber,
+              teilgebiet, abflussparameter, 
+              kommentar, createdat, 
+              geom)
+            SELECT
+              new.flnam, new.haltnam, new.schnam, 
+              new.neigkl, 
+              CASE WHEN new.neigkl = 1 THEN 0.005
+                WHEN new.neigkl = 2 THEN 0.025
+                WHEN new.neigkl = 3 THEN 0.07
+                ELSE 0.12 END AS neigung, 
+              new.befgrad, 
+              new.schwerpunktlaufzeit, new.regenschreiber, 
+              new.teilgebiet, new.abflussparameter, 
+              new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime')),
+              CASE WHEN new.x + new.y IS NOT NULL THEN 
+                CastToMultiPolygon(MakePolygon(MakeCircle(new.x, new.y, SQRT(new.flaeche/3), {epsg}, 30)))
+              WHEN new.haltnam IS NOT NULL THEN
+                CastToMultiPolygon(MakePolygon(MakeCircle(
+                  (x(PointN(haltungen.geom,1)) + x(PointN(haltungen.geom,-1)))/2.0, 
+                  (y(PointN(haltungen.geom,1)) + y(PointN(haltungen.geom,-1)))/2.0, 
+                  SQRT(new.flaeche/3), {epsg},
+                  30)))
+              WHEN new.schnam IS NOT NULL THEN
+                CastToMultiPolygon(MakePolygon(MakeCircle(
+                  x(schaechte.geop) + x(schaechte.geop), 
+                  SQRT(new.flaeche/3), {epsg}, 
+                  30)))
+              ELSE
+                NULL
+              END AS geom
+            FROM haltungen, schaechte
+            WHERE haltungen.haltnam = new.haltnam AND schaechte.schnam = new.schnam;
+          END"""
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'In der Tabelle "tezg_data" konnte ein Trigger nicht angelegt werden.',
+        )
+        consl.close()
+        return False
+
     consl.commit()
 
     # Direkte Einleitungen ----------------------------------------------------------

@@ -316,8 +316,9 @@ class DBConnection:
 
     def executefile(self, filenam):
         """Liest eine Datei aus dem template-Verzeichnis und führt sie als SQL-Befehle aus"""
-        sqlfile = open(filenam).read()
         try:
+            with open(filenam) as fr:
+                sqlfile = fr.read()
             self.cursl.executescript(sqlfile)
         except sqlite3.Error as e:
             fehlermeldung(

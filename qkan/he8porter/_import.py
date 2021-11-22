@@ -534,7 +534,7 @@ class ImportTask:
                     ag_he.Kommentar AS kommentar, 
                     ag_he.LastModified AS createdat,
                     CastToMultiPolygon(
-                        CastToPolygon(
+                        MakePolygon(
                             MakeCircle(
                                 x(ag_he.Geometry),
                                 y(ag_he.Geometry),

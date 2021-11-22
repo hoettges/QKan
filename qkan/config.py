@@ -336,6 +336,7 @@ class ToolsConfig(ClassObject):
             "haltungen": ["haltnam", "schoben", "schunten"],
             "pumpen": ["pnam", "schoben", "schunten"],
             "wehre": ["wnam", "schoben", "schunten"],
+            "tezg": ["flnam", "flaeche", "befgrad"],
         }
 
         # Layer names with data source table 'schaechte'
@@ -356,7 +357,7 @@ class ToolsConfig(ClassObject):
                 'sohlhoehe': ['sohl*h*'],
                 'durchm': ['durchm*', 'diam*'],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
-                'createdat': ['crea*da*', 'erst*', '*änder*'],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
             },
             'haltungen': {
                 'haltnam': ['haltn*', 'haltu*', 'kanaln*', 'nam*', ],
@@ -376,7 +377,7 @@ class ToolsConfig(ClassObject):
                 'ks': ['ks*', 'rauh*'],
                 'entwart': ['entw*art', 'entw*typ*', 'kanalart*'],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
-                'createdat': ['crea*da*', 'erst*', '*änder*'],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
             },
             'pumpen': {
                 'pnam': ['p*nam*', 'nam*', ],
@@ -386,7 +387,7 @@ class ToolsConfig(ClassObject):
                 'einschalthoehe': ['eins*h*', ],
                 'ausschalthoehe': ['auss*h*', ],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
-                'createdat': ['crea*da*', 'erst*', '*änder*'],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
             },
             'wehre': {
                 'wnam': ['w*nam*', 'nam*', ],
@@ -397,7 +398,7 @@ class ToolsConfig(ClassObject):
                 'kammerhoehe': ['kamm*h*', ],
                 'laenge': ['*laen*', '*läng*'],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
-                'createdat': ['crea*da*', 'erst*', '*änder*'],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
             },
             'abflussparameter': {
                 'apnam': ['nam*', 'bez*'],
@@ -409,9 +410,15 @@ class ToolsConfig(ClassObject):
                 'mulden_startwert': ['*', ],
                 'bodenklasse': ['*', ],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
-                'createdat': ['crea*da*', 'erst*', '*änder*'],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
                 '': ['*', ],
-            }
+            },
+            'tezg': {
+                'flnam': ['nam*', 'bez*'],
+                'flaeche': ['flae*', 'flä*', 'fl\x4e*'],
+                'befgrad': ['*bef*', '*und*'],
+            },
+
         }
 
         def __str__(self) -> str:

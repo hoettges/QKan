@@ -460,6 +460,13 @@ class ImportDialog(QKanDBDialog, IMPORT_CLASS):  # type: ignore
             is_open=True,
         )
         self.bind_select_path(
+            title="Namen der zu erstellenden QKan-Datenbank eingeben",
+            file_filter="*.sqlite",
+            line_edit=self.tf_qkanDB,
+            push_button=self.pb_selectQKanDB,
+            is_open=False,
+        )
+        self.bind_select_path(
             title="Dateinamen der zu erstellenden Projektdatei eingeben",
             file_filter="*.qgs",
             line_edit=self.tf_projectFile,
