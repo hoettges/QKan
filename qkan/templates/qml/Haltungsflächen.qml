@@ -291,8 +291,8 @@
           <Option type="Map">
             <Option value="1" name="allow_null" type="QString"/>
             <Option value="1" name="calendar_popup" type="QString"/>
-            <Option value="yyyy.MM.dd HH:mm:ss" name="display_format" type="QString"/>
-            <Option value="YYYY.MM.dd HH:mm:ss" name="field_format" type="QString"/>
+            <Option value="dd.MM.yyyy HH:mm:ss" name="display_format" type="QString"/>
+            <Option value="YYYY-MM-dd HH:mm:ss" name="field_format" type="QString"/>
           </Option>
         </config>
       </editWidget>

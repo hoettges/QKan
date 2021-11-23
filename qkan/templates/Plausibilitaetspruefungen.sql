@@ -1,5 +1,5 @@
 DELETE FROM pruefsql WHERE gruppe = 'Netzstruktur' AND warntext IN ('Schacht oben fehlerhaft', 'Schacht unten fehlerhaft');
-DELETE FROM pruefsql WHERE gruppe = 'HYSTEM-EXTRAN' AND warntext = 'Abflussparameter fehlen';
+DELETE FROM pruefsql WHERE gruppe = 'HYSTEM-EXTRAN' AND warntext IN ('Abflussparameter fehlen', 'Schwerpunktlaufzeiten fehlen');
 INSERT INTO pruefsql (gruppe, warntext, warntyp, warnlevel, sql, layername, attrname)
 SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, pn.attrname FROM
 (SELECT column1 AS gruppe, column2 AS warntext, column3 AS warntyp, column4 AS warnlevel, column5 AS sql, column6 AS layername, column7 AS attrname FROM 
@@ -9,7 +9,8 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
  'Haltungen nach Typ', 'haltnam'),
 ('Netzstruktur', 'Schacht unten fehlerhaft', 'Fehler', 9, 'SELECT haltnam, ''Schacht unten fehlerhaft'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS su ON ha.schunten = su.schnam WHERE within(su.geop, buffer(pointn(ha.geom,-1), 0.1)) <> 1', 'Haltungen nach Typ', 'haltnam'),
 ('HYSTEM-EXTRAN', 'Abflussparameter fehlen', 'Fehler', 9, 'SELECT flaechen.flnam, ''Abflussparameter fehlen'' AS bemerkung FROM flaechen LEFT JOIN abflussparameter ON flaechen.abflussparameter = abflussparameter.apnam WHERE abflussparameter.pk IS NULL GROUP BY flaechen.flnam', 'Abflussparameter', 'flnam'),
-('Netzstruktur', 'Kreuzende Haltungen', 'Warnung', 6, 
+('HYSTEM-EXTRAN', 'Schwerpunktlaufzeiten fehlen', 'Fehler', 9, 'SELECT flnam, printf("Spalte schwerpunktlaufzeit in %d Datensätzen leer", (SELECT count(*) FROM tezg WHERE schwerpunktlaufzeit IS NULL GROUP BY schwerpunktlaufzeit)) AS bemerkung FROM tezg WHERE schwerpunktlaufzeit IS NULL LIMIT 5', 'Haltungsflächen', 'flnam'),
+('Kreuzende Haltungen', 'Kreuzende Haltungen', 'Warnung', 6, 
 'SELECT
      haltna1 AS haltnam, 
      printf("Theoretischer Abstand zu Haltung %s beträgt d = %.2f", haltna2, abs((huax-hoax)*vx+(huay-hoay)*vy+(huaz-hoaz)*vz)/SQRT(vx*vx+vy*vy+vz*vz)) as bemerkung

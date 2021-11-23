@@ -104,8 +104,8 @@
           <Option type="Map">
             <Option value="true" name="allow_null" type="bool"/>
             <Option value="true" name="calendar_popup" type="bool"/>
-            <Option value="dd.MM.yyyy HH:mm" name="display_format" type="QString"/>
-            <Option value="dd.MM.yyyy HH:mm" name="field_format" type="QString"/>
+            <Option value="dd.MM.yyyy HH:mm:ss" name="display_format" type="QString"/>
+            <Option value="YYYY-MM-dd HH:mm:ss" name="field_format" type="QString"/>
             <Option value="false" name="field_iso_format" type="bool"/>
           </Option>
         </config>

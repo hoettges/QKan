@@ -21,7 +21,7 @@ def run(dbcon: DBConnection) -> bool:
          breite REAL,
          laenge REAL,
          kommentar TEXT,
-         createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now','localtime')),
+         createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
          baujahr INTEGER,
          untersuchtag TEXT,
          untersucher TEXT,
@@ -74,7 +74,7 @@ def run(dbcon: DBConnection) -> bool:
                   CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
                   CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
                   new.laenge, new.kommentar, 
-                  coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime')), new.baujahr,
+                  coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), new.baujahr,
                   MakeLine(
                     coalesce(
                       MakePoint(new.xschob, new.yschob, {dbcon.epsg}),
@@ -121,7 +121,7 @@ def run(dbcon: DBConnection) -> bool:
             ordner_bild TEXT,
             ordner_video TEXT,
             richtung TEXT,
-            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now','localtime'))
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime'))
         )"""
 
     if not dbcon.sql(sql):
@@ -160,7 +160,7 @@ def run(dbcon: DBConnection) -> bool:
                           new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
                             new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
                             new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung,
-                            coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime')),
+                            coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
                             CASE
                             WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
                                     (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
@@ -254,7 +254,7 @@ def run(dbcon: DBConnection) -> bool:
                         new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
                             new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
                             new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung,
-                            coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime')),
+                            coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
                             CASE
                             WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
                                     (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
@@ -369,7 +369,7 @@ def run(dbcon: DBConnection) -> bool:
         ks REAL DEFAULT 1.5,
         simstatus TEXT DEFAULT 'vorhanden',
         kommentar TEXT,
-        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now','localtime')),
+        createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
         xschob REAL,
         yschob REAL,
         xschun REAL,
@@ -429,7 +429,7 @@ def run(dbcon: DBConnection) -> bool:
                   new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
                   coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
                   coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
-                  coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime')), 
+                  coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), 
                   MakeLine(
                       MakePoint(new.xschob, new.yschob, {dbcon.epsg})
                       , 
@@ -447,7 +447,7 @@ def run(dbcon: DBConnection) -> bool:
             schnam TEXT, 
             durchm REAL,
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now','localtime')),
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
             baujahr INTEGER,
             untersuchtag TEXT, 
             untersucher TEXT, 
@@ -492,7 +492,7 @@ def run(dbcon: DBConnection) -> bool:
                     SELECT
                       new.schnam,
                       CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
-                      new.kommentar, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime')), new.baujahr,
+                      new.kommentar, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), new.baujahr,
                       sch.geop,
                       new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
                     FROM
@@ -524,7 +524,7 @@ def run(dbcon: DBConnection) -> bool:
         bereich TEXT,
         foto_dateiname TEXT,
         ordner TEXT,
-        createdat TEXT DEFAULT (strftime('%d.%m.%Y %H:%M:%S','now','localtime'))
+        createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime'))
         )"""
 
     if not dbcon.sql(sql):
@@ -562,7 +562,7 @@ def run(dbcon: DBConnection) -> bool:
                 SELECT 
                   new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.vertikale_lage, new.inspektionslaenge,
-                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%d.%m.%Y %H:%M:%S','now','localtime')), sch.geop
+                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), sch.geop
                 FROM
                     schaechte AS sch
                     WHERE sch.schnam = new.untersuchsch;
