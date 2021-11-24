@@ -509,23 +509,23 @@ def import_kanaldaten(
                     try:
                         strschluessel = zeile[2:6].strip()
                         n = 2
-                        laenge = fzahl(zeile[17:24], 2)
+                        laenge = fzahl(zeile[17:24])
                         n = 5
-                        deckeloben = fzahl(zeile[24:31], 3)
+                        deckeloben = fzahl(zeile[24:31])
                         n = 6
-                        sohleoben = fzahl(zeile[31:38], 3)
+                        sohleoben = fzahl(zeile[31:38])
                         n = 7
-                        sohleunten = fzahl(zeile[38:45], 3)
+                        sohleunten = fzahl(zeile[38:45])
                         n = 8
                         material = zeile[45:46]
                         n = 9
                         profil_key = zeile[46:48].strip()
                         n = 10
-                        hoehe = fzahl(zeile[48:52], 0) / 1000.0
+                        hoehe = fzahl(zeile[48:52]) / 1000.0
                         n = 11
                         ks_key = zeile[52:53].strip()
                         n = 12
-                        flaeche = fzahl(zeile[71:76], 2) * 10000.0
+                        flaeche = fzahl(zeile[71:76]) * 10000.0
                         n = 20
                         flaecheund = round(fzahl(zeile[53:55]) / 100.0 * flaeche, 1)
                         n = 13
@@ -535,7 +535,7 @@ def import_kanaldaten(
                         n = 15
                         zuflussid = zeile[57:58]
                         n = 16
-                        qzu = fzahl(zeile[58:63], 1)
+                        qzu = fzahl(zeile[58:63])
                         n = 17
                         if status_einw:
                             ew = fzahl(zeile[63:66])
@@ -624,11 +624,11 @@ def import_kanaldaten(
                     n = 2  # wegen der eigenwilligen DYNA-Logik für Kanalnamen;
                     haltungsnummer = zeile[14:17]
                     n = 3
-                    deckelhoehe = fzahl(zeile[24:31], 3)
+                    deckelhoehe = fzahl(zeile[24:31])
                     n = 4
-                    xkoor = fzahl(zeile[31:45], 0)
+                    xkoor = fzahl(zeile[31:45])
                     n = 5
-                    ykoor = fzahl(zeile[45:59], 0)
+                    ykoor = fzahl(zeile[45:59])
                     n = 6
                     schnam = zeile[59:71].strip()
                     n = 7
