@@ -1,5 +1,6 @@
 import logging
 import sys
+import re
 import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
 from lxml import etree
@@ -310,9 +311,9 @@ class ImportTask:
         self.xml.parse(xml_file)
 
         # Get Namespace
-        tree = etree.parse(xml_file)
-        x = tree.xpath('namespace-uri(.)')
-        self.NS = {"d": x}
+        #tree = etree.parse(xml_file)
+        #x = tree.xpath('namespace-uri(.)')
+        #self.NS = {"d": x}
 
     def _consume_smp_block(self,
             _block: ElementTree.Element,
@@ -335,7 +336,15 @@ class ImportTask:
             xsch, ysch, sohlhoehe = (0.0,) * 3
         else:
             xsch = _strip_float(smp.findtext("GP003", 0.0))
+            if xsch == 0.0:
+                xsch = _strip_float(smp.findtext("GP005", 0.0))
+            else:
+                pass
             ysch = _strip_float(smp.findtext("GP004", 0.0))
+            if ysch == 0.0:
+                ysch = _strip_float(smp.findtext("GP006", 0.0))
+            else:
+                pass
             sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
         return name, knoten_typ, xsch, ysch, sohlhoehe
 
@@ -344,9 +353,9 @@ class ImportTask:
         if getattr(QKan.config.xml, "import_stamm", True):
             self._schaechte()
             self._auslaesse()
-            self._speicher()
+            #self._speicher()
             self._haltungen()
-            self._wehre()
+            #self._wehre()
             self._pumpen()
         if getattr(QKan.config.xml, "import_haus", True):
             self._anschlussleitungen()
@@ -452,7 +461,15 @@ class ImportTask:
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:
                     xsch = _strip_float(smp.findtext("GP003", 0.0))
+                    if xsch == 0.0:
+                        xsch = _strip_float(smp.findtext("GP005", 0.0))
+                    else:
+                        pass
                     ysch = _strip_float(smp.findtext("GP004", 0.0))
+                    if ysch == 0.0:
+                        ysch = _strip_float(smp.findtext("GP006", 0.0))
+                    else:
+                        pass
                     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
 
@@ -463,10 +480,9 @@ class ImportTask:
                     sohlhoehe=sohlhoehe,
                     deckelhoehe=_strip_float(
                         block.findtext(
-                            "d:Geometrie/d:Geometriedaten/d:Knoten"
-                            "/d:Punkt[d:PunktattributAbwasser='DMP']/d:Punkthoehe",
-                            0.0,
-                            self.NS,
+                            "Geometrie/Geometriedaten/Knoten"
+                            "/Punkt[PunktattributAbwasser='DMP']/Punkthoehe",
+                            0.0
                         )
                     ),
                     durchm=_strip_int(block.findtext("KG309", 0)),
@@ -600,7 +616,15 @@ class ImportTask:
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:
                     xsch = _strip_float(smp.findtext("GP003", 0.0))
+                    if xsch == 0.0:
+                        xsch = _strip_float(smp.findtext("GP005", 0.0))
+                    else:
+                        pass
                     ysch = _strip_float(smp.findtext("GP004", 0.0))
+                    if ysch == 0.0:
+                        ysch = _strip_float(smp.findtext("GP006", 0.0))
+                    else:
+                        pass
                     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
                 yield Schacht_untersucht(
@@ -862,7 +886,15 @@ class ImportTask:
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:
                     xsch = _strip_float(smp.findtext("GP003", 0.0))
+                    if xsch == 0.0:
+                        xsch = _strip_float(smp.findtext("GP005", 0.0))
+                    else:
+                        pass
                     ysch = _strip_float(smp.findtext("GP004", 0.0))
+                    if ysch == 0.0:
+                        ysch = _strip_float(smp.findtext("GP006", 0.0))
+                    else:
+                        pass
                     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
 
@@ -873,10 +905,9 @@ class ImportTask:
                     sohlhoehe=sohlhoehe,
                     deckelhoehe=_strip_float(
                         block.findtext(
-                            "d:Geometrie/d:Geometriedaten/d:Knoten"
-                            "/d:Punkt[d:PunktattributAbwasser='DMP']/d:Punkthoehe",
-                            0.0,
-                            self.NS,
+                            "Geometrie/Geometriedaten/Knoten"
+                            "/Punkt[PunktattributAbwasser='DMP']/Punkthoehe",
+                            0.0
                         )
                     ),
                     durchm=_strip_int(block.findtext("KG309", 0)),
@@ -938,107 +969,107 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-    def _speicher(self) -> None:
-        def _iter() -> Iterator[Schacht]:
-            # .//Becken/../../.. nimmt AbwassertechnischeAnlage
-            blocks = self.xml.findall(
-                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage"
-                "/d:Knoten/d:Bauwerk/d:Becken/../../..",
-                self.NS,
-            )
-
-            logger.debug(f"Anzahl Becken: {len(blocks)}")
-
-            knoten_typ = 0
-            for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
-
-                for _schacht in block.findall("d:Knoten", self.NS):
-                    knoten_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
-
-                smp = block.find(
-                    "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='KOP']",
-                    self.NS,
-                )
-
-                if not smp:
-                    fehlermeldung(
-                        "Fehler beim XML-Import: Speicher",
-                        f'Keine Geometrie "KOP" für Becken {name}',
-                    )
-                    xsch, ysch, sohlhoehe = (0.0,) * 3
-                else:
-                    xsch = _strip_float(smp.findtext("d:Rechtswert", 0.0, self.NS))
-                    ysch = _strip_float(
-                        smp.findtext("d:Hochwert", 0.0, self.NS),
-                    )
-                    sohlhoehe = _strip_float(smp.findtext("d:Punkthoehe", 0.0, self.NS))
-
-                yield Schacht(
-                    schnam=name,
-                    xsch=xsch,
-                    ysch=ysch,
-                    sohlhoehe=sohlhoehe,
-                    deckelhoehe=float(
-                        block.findtext(
-                            "d:Geometrie/d:Geometriedaten/d:Knoten"
-                            "/d:Punkt[d:PunktattributAbwasser='DMP']/d:Punkthoehe",
-                            0.0,
-                            self.NS,
-                        )
-                    ),
-                    durchm=0.5,
-                    entwart="",
-                    knotentyp=knoten_typ,
-                    simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
-                    kommentar=block.findtext("d:Kommentar", "-", self.NS),
-                )
-
-        for speicher in _iter():
-            if str(speicher.simstatus) in self.mapper_simstatus:
-                simstatus = self.mapper_simstatus[str(speicher.simstatus)]
-            else:
-                simstatus = f"{speicher.simstatus}_he"
-                self.mapper_simstatus[str(speicher.simstatus)] = simstatus
-                if not self.db_qkan.sql(
-                    "INSERT INTO simulationsstatus (he_nr, bezeichnung) VALUES (?, ?)",
-                    "xml_import Speicher [1]",
-                    parameters=(speicher.simstatus, speicher.simstatus),
-                ):
-                    return None
-
-            # Geo-Objekte
-            # geop, geom = geo_smp(speicher)
-
-            sql = f"""
-            INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
-                    schachttyp, simstatus, kommentar)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Speicher', ?, ?)
-            """
-            if not self.db_qkan.sql(
-                sql,
-                "xml_import Speicher [2]",
-                parameters=(
-                    speicher.schnam,
-                    speicher.xsch,
-                    speicher.ysch,
-                    speicher.sohlhoehe,
-                    speicher.deckelhoehe,
-                    speicher.durchm,
-                    speicher.entwart,
-                    simstatus,
-                    speicher.kommentar,
-                ),
-            ):
-                return None
-
-        if not self.db_qkan.sql(
-            "UPDATE schaechte SET (geom, geop) = (geom, geop)",
-            "xml_import Speicher [2a]",
-        ):
-            return None
-
-        self.db_qkan.commit()
+    # def _speicher(self) -> None:
+    #     def _iter() -> Iterator[Schacht]:
+    #         # .//Becken/../../.. nimmt AbwassertechnischeAnlage
+    #         blocks = self.xml.findall(
+    #             "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage"
+    #             "/d:Knoten/d:Bauwerk/d:Becken/../../..",
+    #             self.NS,
+    #         )
+    #
+    #         logger.debug(f"Anzahl Becken: {len(blocks)}")
+    #
+    #         knoten_typ = 0
+    #         for block in blocks:
+    #             name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+    #
+    #             for _schacht in block.findall("d:Knoten", self.NS):
+    #                 knoten_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
+    #
+    #             smp = block.find(
+    #                 "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='KOP']",
+    #                 self.NS,
+    #             )
+    #
+    #             if not smp:
+    #                 fehlermeldung(
+    #                     "Fehler beim XML-Import: Speicher",
+    #                     f'Keine Geometrie "KOP" für Becken {name}',
+    #                 )
+    #                 xsch, ysch, sohlhoehe = (0.0,) * 3
+    #             else:
+    #                 xsch = _strip_float(smp.findtext("d:Rechtswert", 0.0, self.NS))
+    #                 ysch = _strip_float(
+    #                     smp.findtext("d:Hochwert", 0.0, self.NS),
+    #                 )
+    #                 sohlhoehe = _strip_float(smp.findtext("d:Punkthoehe", 0.0, self.NS))
+    #
+    #             yield Schacht(
+    #                 schnam=name,
+    #                 xsch=xsch,
+    #                 ysch=ysch,
+    #                 sohlhoehe=sohlhoehe,
+    #                 deckelhoehe=float(
+    #                     block.findtext(
+    #                         "d:Geometrie/d:Geometriedaten/d:Knoten"
+    #                         "/d:Punkt[d:PunktattributAbwasser='DMP']/d:Punkthoehe",
+    #                         0.0,
+    #                         self.NS,
+    #                     )
+    #                 ),
+    #                 durchm=0.5,
+    #                 entwart="",
+    #                 knotentyp=knoten_typ,
+    #                 simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
+    #                 kommentar=block.findtext("d:Kommentar", "-", self.NS),
+    #             )
+    #
+    #     for speicher in _iter():
+    #         if str(speicher.simstatus) in self.mapper_simstatus:
+    #             simstatus = self.mapper_simstatus[str(speicher.simstatus)]
+    #         else:
+    #             simstatus = f"{speicher.simstatus}_he"
+    #             self.mapper_simstatus[str(speicher.simstatus)] = simstatus
+    #             if not self.db_qkan.sql(
+    #                 "INSERT INTO simulationsstatus (he_nr, bezeichnung) VALUES (?, ?)",
+    #                 "xml_import Speicher [1]",
+    #                 parameters=(speicher.simstatus, speicher.simstatus),
+    #             ):
+    #                 return None
+    #
+    #         # Geo-Objekte
+    #         # geop, geom = geo_smp(speicher)
+    #
+    #         sql = f"""
+    #         INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart,
+    #                 schachttyp, simstatus, kommentar)
+    #         VALUES (?, ?, ?, ?, ?, ?, ?, 'Speicher', ?, ?)
+    #         """
+    #         if not self.db_qkan.sql(
+    #             sql,
+    #             "xml_import Speicher [2]",
+    #             parameters=(
+    #                 speicher.schnam,
+    #                 speicher.xsch,
+    #                 speicher.ysch,
+    #                 speicher.sohlhoehe,
+    #                 speicher.deckelhoehe,
+    #                 speicher.durchm,
+    #                 speicher.entwart,
+    #                 simstatus,
+    #                 speicher.kommentar,
+    #             ),
+    #         ):
+    #             return None
+    #
+    #     if not self.db_qkan.sql(
+    #         "UPDATE schaechte SET (geom, geop) = (geom, geop)",
+    #         "xml_import Speicher [2a]",
+    #     ):
+    #         return None
+    #
+    #     self.db_qkan.commit()
 
     def _haltungen(self) -> None:
         def _iter() -> Iterator[Haltung]:
@@ -1094,7 +1125,15 @@ class ImportTask:
                         "GO/GP[1]"
                 ):
                     xschob = _strip_float(_haltung.findtext("GP003", 0.0))
+                    if xschob == 0.0:
+                        xschob = _strip_float(_haltung.findtext("GP005", 0.0))
+                    else:
+                        pass
                     yschob = _strip_float(_haltung.findtext("GP004", 0.0))
+                    if yschob == 0.0:
+                        yschob = _strip_float(_haltung.findtext("GP006", 0.0))
+                    else:
+                        pass
                     deckeloben = _strip_float(
                         _haltung.findtext("GP007", 0.0)
                     )
@@ -1103,7 +1142,15 @@ class ImportTask:
                         "GO/GP[2]"
                 ):
                     xschun = _strip_float(_haltung.findtext("GP003", 0.0))
+                    if xschun == 0.0:
+                        xschun = _strip_float(_haltung.findtext("GP005", 0.0))
+                    else:
+                        pass
                     yschun = _strip_float(_haltung.findtext("GP004", 0.0))
+                    if yschun == 0.0:
+                        yschun = _strip_float(_haltung.findtext("GP006", 0.0))
+                    else:
+                        pass
                     deckelunten = _strip_float(
                         _haltung.findtext("GP007", 0.0)
                     )
@@ -1131,50 +1178,50 @@ class ImportTask:
                     yschun=yschun,
                 )
 
-        def _iter2() -> Iterator[Haltung]:
-            blocks = self.xml.findall(
-                "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
-                "d:HydraulikObjekte/d:HydraulikObjekt/d:Haltung/..",
-                self.NS,
-            )
-            logger.debug(f"Anzahl HydraulikObjekte_Haltungen: {len(blocks)}")
-
-            ks = 1.5
-            laenge = 0.0
-            for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
-
-                # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
-
-                #nicht vorhanden in DWA?
-
-                # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
-                for _haltung in block.findall("d:Haltung", self.NS):
-                    cs1 = _haltung.findtext("d:Rauigkeitsansatz", "0", self.NS)
-                    if cs1 == "1":
-                        ks = _strip_float(
-                            _haltung.findtext("d:RauigkeitsbeiwertKb", 0.0, self.NS)
-                        )
-                    elif cs1 == "2":
-                        ks = _strip_float(
-                            _haltung.findtext("d:RauigkeitsbeiwertKst", 0.0, self.NS)
-                        )
-                    else:
-                        ks = 0.0
-                        fehlermeldung(
-                            "Fehler im XML-Import von HydraulikObjekte_Haltungen",
-                            f"Ungültiger Wert für Rauigkeitsansatz {cs1} in Haltung {name}",
-                        )
-
-                    laenge = _strip_float(
-                        _haltung.findtext("d:Berechnungslaenge", 0.0, self.NS)
-                    )
-
-                yield Haltung(
-                    haltnam=name,
-                    laenge=laenge,
-                    ks=ks,
-                )
+        # def _iter2() -> Iterator[Haltung]:
+        #     blocks = self.xml.findall(
+        #         "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
+        #         "d:HydraulikObjekte/d:HydraulikObjekt/d:Haltung/..",
+        #         self.NS,
+        #     )
+        #     logger.debug(f"Anzahl HydraulikObjekte_Haltungen: {len(blocks)}")
+        #
+        #     ks = 1.5
+        #     laenge = 0.0
+        #     for block in blocks:
+        #         name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+        #
+        #         # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
+        #
+        #         #nicht vorhanden in DWA?
+        #
+        #         # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
+        #         for _haltung in block.findall("d:Haltung", self.NS):
+        #             cs1 = _haltung.findtext("d:Rauigkeitsansatz", "0", self.NS)
+        #             if cs1 == "1":
+        #                 ks = _strip_float(
+        #                     _haltung.findtext("d:RauigkeitsbeiwertKb", 0.0, self.NS)
+        #                 )
+        #             elif cs1 == "2":
+        #                 ks = _strip_float(
+        #                     _haltung.findtext("d:RauigkeitsbeiwertKst", 0.0, self.NS)
+        #                 )
+        #             else:
+        #                 ks = 0.0
+        #                 fehlermeldung(
+        #                     "Fehler im XML-Import von HydraulikObjekte_Haltungen",
+        #                     f"Ungültiger Wert für Rauigkeitsansatz {cs1} in Haltung {name}",
+        #                 )
+        #
+        #             laenge = _strip_float(
+        #                 _haltung.findtext("d:Berechnungslaenge", 0.0, self.NS)
+        #             )
+        #
+        #         yield Haltung(
+        #             haltnam=name,
+        #             laenge=laenge,
+        #             ks=ks,
+        #        )
 
 
 
@@ -1249,15 +1296,15 @@ class ImportTask:
         self.db_qkan.commit()
 
         # 2. Teil: Hier werden die hydraulischen Haltungsdaten in die Datenbank geschrieben
-        for haltung in _iter2():
-            if not self.db_qkan.sql(
-                "UPDATE haltungen SET ks = ?, laenge = ? WHERE haltnam = ?",
-                "xml_import Haltung [4]",
-                parameters=(haltung.ks, haltung.laenge, haltung.haltnam),
-            ):
-                return None
-
-        self.db_qkan.commit()
+        # for haltung in _iter2():
+        #     if not self.db_qkan.sql(
+        #         "UPDATE haltungen SET ks = ?, laenge = ? WHERE haltnam = ?",
+        #         "xml_import Haltung [4]",
+        #         parameters=(haltung.ks, haltung.laenge, haltung.haltnam),
+        #     ):
+        #         return None
+        #
+        # self.db_qkan.commit()
 
     #Haltung_untersucht
     def _haltungen_untersucht(self) -> None:
@@ -1302,7 +1349,15 @@ class ImportTask:
                         "GO/GP[1]"
                 ):
                     xschob = _strip_float(_haltung.findtext("GP003", 0.0))
+                    if xschob == 0.0:
+                        xschob = _strip_float(_haltung.findtext("GP005", 0.0))
+                    else:
+                        pass
                     yschob = _strip_float(_haltung.findtext("GP004", 0.0))
+                    if yschob == 0.0:
+                        yschob = _strip_float(_haltung.findtext("GP006", 0.0))
+                    else:
+                        pass
                     deckeloben = _strip_float(
                         _haltung.findtext("GP007", 0.0)
                     )
@@ -1311,7 +1366,15 @@ class ImportTask:
                         "GO/GP[2]"
                 ):
                     xschun = _strip_float(_haltung.findtext("GP003", 0.0))
+                    if xschun == 0.0:
+                        xschun = _strip_float(_haltung.findtext("GP005", 0.0))
+                    else:
+                        pass
                     yschun = _strip_float(_haltung.findtext("GP004", 0.0))
+                    if yschun == 0.0:
+                        yschun = _strip_float(_haltung.findtext("GP006", 0.0))
+                    else:
+                        pass
                     deckelunten = _strip_float(
                         _haltung.findtext("GP007", 0.0)
                     )
@@ -1331,30 +1394,30 @@ class ImportTask:
                     yschun=yschun,
                 )
 
-        def _iter2() -> Iterator[Haltung_untersucht]:
-            blocks = self.xml.findall(
-                "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
-                "d:HydraulikObjekte/d:HydraulikObjekt/d:Haltung/..",
-                self.NS,
-            )
-            logger.debug(f"Anzahl HydraulikObjekte_Haltungen: {len(blocks)}")
-
-            laenge = 0.0
-            for block in blocks:
-                name = block.findtext("d:HG001", "not found", self.NS)
-
-                # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
-                # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
-                for _haltung in block.findall("d:Haltung", self.NS):
-
-                    laenge = _strip_float(
-                        _haltung.findtext("d:Berechnungslaenge", 0.0, self.NS)
-                    )
-
-                yield Haltung_untersucht(
-                    haltnam=name,
-                    laenge=laenge,
-                )
+        # def _iter2() -> Iterator[Haltung_untersucht]:
+        #     blocks = self.xml.findall(
+        #         "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
+        #         "d:HydraulikObjekte/d:HydraulikObjekt/d:Haltung/..",
+        #         self.NS,
+        #     )
+        #     logger.debug(f"Anzahl HydraulikObjekte_Haltungen: {len(blocks)}")
+        #
+        #     laenge = 0.0
+        #     for block in blocks:
+        #         name = block.findtext("HG001", "not found")
+        #
+        #         # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
+        #         # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
+        #         for _haltung in block.findall("d:Haltung", self.NS):
+        #
+        #             laenge = _strip_float(
+        #                 _haltung.findtext("d:Berechnungslaenge", 0.0, self.NS)
+        #             )
+        #
+        #         yield Haltung_untersucht(
+        #             haltnam=name,
+        #             laenge=laenge,
+        #         )
 
         def _iter3() -> Iterator[Haltung_untersucht]:
             blocks = self.xml.findall(
@@ -1369,7 +1432,7 @@ class ImportTask:
             bewertungstag = ""
 
             for block in blocks:
-                name = block.findtext("HG001", "not found", self.NS)
+                name = block.findtext("HG001", "not found")
 
                 for _haltung in block.findall("HI"):
 
@@ -1431,15 +1494,15 @@ class ImportTask:
         self.db_qkan.commit()
 
         # 2. Teil: Hier werden die hydraulischen Haltungsdaten in die Datenbank geschrieben
-        for haltung_untersucht in _iter2():
-            if not self.db_qkan.sql(
-                "UPDATE haltungen_untersucht SET laenge = ? WHERE haltnam = ?",
-                "xml_import Haltungen_untersucht [2]",
-                parameters=( haltung_untersucht.laenge, haltung_untersucht.haltnam),
-            ):
-                return None
-
-        self.db_qkan.commit()
+        # for haltung_untersucht in _iter2():
+        #     if not self.db_qkan.sql(
+        #         "UPDATE haltungen_untersucht SET laenge = ? WHERE haltnam = ?",
+        #         "xml_import Haltungen_untersucht [2]",
+        #         parameters=( haltung_untersucht.laenge, haltung_untersucht.haltnam),
+        #     ):
+        #         return None
+        #
+        # self.db_qkan.commit()
 
         for haltung_untersucht in _iter3():
             if haltung_untersucht.wetter in self.mapper_wetter:
@@ -1487,7 +1550,6 @@ class ImportTask:
         def _iter() -> Iterator[Untersuchdat_haltung]:
             blocks = self.xml.findall(
                 "HG/HI/..",
-                self.NS,
             )
 
             logger.debug(f"Anzahl Untersuchungsdaten Haltung: {len(blocks)}")
@@ -1542,7 +1604,7 @@ class ImportTask:
                     #schunten = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenAblauf", "not found", self.NS)
 
 
-                for _untersuchdat in block.findall("HI/HZ", self.NS):
+                for _untersuchdat in block.findall("HI/HZ"):
 
                     #id = _strip_int(_untersuchdat.findtext("d:Index", "0", self.NS))
                     videozaehler = _untersuchdat.findtext("HZ008", "0")
@@ -1554,7 +1616,11 @@ class ImportTask:
                     quantnr1 = _strip_float(_untersuchdat.findtext("HZ003", 0.0))
                     quantnr2 = _strip_float(_untersuchdat.findtext("HZ004", 0.0))
                     streckenschaden = (_untersuchdat.findtext("HZ005", "not found"))[0]
-                    streckenschaden_lfdnr = _strip_int((_untersuchdat.findtext("HZ005", "not found"))[-1])
+                    streckenschaden_lfdnra = _untersuchdat.findtext("HZ005", "not found")
+                    if any(i.isdigit() for i in streckenschaden_lfdnra) == True:
+                        streckenschaden_lfdnr = [int(num) for num in re.findall(r"\d+", streckenschaden_lfdnra)][0]
+                    else:
+                        streckenschaden_lfdnr = 0
                     #if streckenschaden_lfdnr is not None or streckenschaden_lfdnr != "" or streckenschaden_lfdnr != "not found":
                     #    streckenschaden_lfdnr = int(streckenschaden_lfdnr)
                     pos_von = _strip_int(_untersuchdat.findtext("HZ006", 0))
@@ -1680,7 +1746,6 @@ class ImportTask:
         def _iter() -> Iterator[Anschlussleitung]:
             blocks = self.xml.findall(
                 "HG[HG006='L']",
-                self.NS,
             )
             logger.debug(f"Anzahl Anschlussleitungen: {len(blocks)}")
 
@@ -1724,7 +1789,15 @@ class ImportTask:
                         "GO/GP[1]"
                 ):
                     xschob = _strip_float(_haltung.findtext("GP003", 0.0))
+                    if xschob == 0.0:
+                        xschob = _strip_float(_haltung.findtext("GP005", 0.0))
+                    else:
+                        pass
                     yschob = _strip_float(_haltung.findtext("GP004", 0.0))
+                    if yschob == 0.0:
+                        yschob = _strip_float(_haltung.findtext("GP006", 0.0))
+                    else:
+                        pass
                     deckeloben = _strip_float(
                         _haltung.findtext("GP007", 0.0)
                     )
@@ -1733,7 +1806,15 @@ class ImportTask:
                         "GO/GP[2]"
                 ):
                     xschun = _strip_float(_haltung.findtext("GP003", 0.0))
+                    if xschun == 0.0:
+                        xschun = _strip_float(_haltung.findtext("GP005", 0.0))
+                    else:
+                        pass
                     yschun = _strip_float(_haltung.findtext("GP004", 0.0))
+                    if yschun == 0.0:
+                        yschun = _strip_float(_haltung.findtext("GP006", 0.0))
+                    else:
+                        pass
                     deckelunten = _strip_float(
                         _haltung.findtext("GP007", 0.0)
                     )
@@ -1759,49 +1840,6 @@ class ImportTask:
                     yschob=yschob,
                     xschun=xschun,
                     yschun=yschun,
-                )
-
-
-        def _iter2() -> Iterator[Anschlussleitung]:
-            blocks = self.xml.findall(
-                "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
-                "d:HydraulikObjekte/d:HydraulikObjekt/d:Leitung/..",
-                self.NS,
-            )
-            logger.debug(f"Anzahl HydraulikObjekte_Anschlussleitung: {len(blocks)}")
-
-            ks = 1.5
-            laenge = 0.0
-            for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
-
-                # RauigkeitsbeiwertKst nach Manning-Strickler oder RauigkeitsbeiwertKb nach Prandtl-Colebrook?
-                # TODO: Does <HydraulikObjekt> even contain multiple <Haltung>?
-                for _haltung in block.findall("d:Leitung", self.NS):
-                    cs1 = _haltung.findtext("d:Rauigkeitsansatz", "0", self.NS)
-                    if cs1 == "1":
-                        ks = _strip_float(
-                            _haltung.findtext("d:RauigkeitsbeiwertKb", 0.0, self.NS)
-                        )
-                    elif cs1 == "2":
-                        ks = _strip_float(
-                            _haltung.findtext("d:RauigkeitsbeiwertKst", 0.0, self.NS)
-                        )
-                    else:
-                        ks = 0.0
-                        fehlermeldung(
-                            "Fehler im XML-Import von HydraulikObjekte_Anschlussleitung",
-                            f"Ungültiger Wert für Rauigkeitsansatz {cs1} in Anschlussleitung {name}",
-                        )
-
-                    laenge = _strip_float(
-                        _haltung.findtext("d:Berechnungslaenge", 0.0, self.NS)
-                    )
-
-                yield Anschlussleitung(
-                    leitnam=name,
-                    laenge=laenge,
-                    ks=ks,
                 )
 
 
@@ -1875,89 +1913,81 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        for anschlussleitung in _iter2():
-            if not self.db_qkan.sql(
-                "UPDATE anschlussleitungen SET ks = ?, laenge = ? WHERE leitnam = ?",
-                "xml_import anschlussleitung [4]",
-                parameters=(anschlussleitung.ks, anschlussleitung.laenge, anschlussleitung.leitnam),
-            ):
-                return None
-
-        self.db_qkan.commit()
 
 
-    def _wehre(self) -> None:
-        # Hier werden die Hydraulikdaten zu den Wehren in die Datenbank geschrieben.
-        # Bei Wehren stehen alle wesentlichen Daten im Hydraulikdatenkollektiv, weshalb im Gegensatz zu den
-        # Haltungsdaten keine Stammdaten verarbeitet werden.
 
-        def _iter() -> Iterator[Wehr]:
-            blocks = self.xml.findall(
-                "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
-                "d:HydraulikObjekte/d:HydraulikObjekt/d:Wehr/..",
-                self.NS,
-            )
-            logger.debug(f"Anzahl HydraulikObjekte_Wehre: {len(blocks)}")
-
-            schoben, schunten, wehrtyp = ("",) * 3
-            schwellenhoehe, kammerhoehe, laenge, uebeiwert = (0.0,) * 4
-            for block in blocks:
-                # TODO: Does <HydraulikObjekt> even contain multiple <Wehr>?
-                for _wehr in block.findall("d:Wehr", self.NS):
-                    schoben = _wehr.findtext("d:SchachtZulauf", "not found", self.NS)
-                    schunten = _wehr.findtext("d:SchachtAblauf", "not found", self.NS)
-                    wehrtyp = _wehr.findtext("d:WehrTyp", "not found", self.NS)
-
-                    schwellenhoehe = _strip_float(
-                        _wehr.findtext("d:Schwellenhoehe", 0.0, self.NS)
-                    )
-                    laenge = _strip_float(
-                        _wehr.findtext("d:LaengeWehrschwelle", 0.0, self.NS)
-                    )
-                    kammerhoehe = _strip_float(_wehr.findtext("d:Kammerhoehe", 0.0, self.NS))
-
-                    # Überfallbeiwert der Wehr Kante (abhängig von Form der Kante)
-                    uebeiwert = _strip_float(
-                        _wehr.findtext("d:Ueberfallbeiwert", 0.0, self.NS)
-                    )
-
-                yield Wehr(
-                    wnam=block.findtext("d:Objektbezeichnung", "not found", self.NS),
-                    schoben=schoben,
-                    schunten=schunten,
-                    wehrtyp=wehrtyp,
-                    schwellenhoehe=schwellenhoehe,
-                    kammerhoehe=kammerhoehe,
-                    laenge=laenge,
-                    uebeiwert=uebeiwert,
-                )
-
-        for wehr in _iter():
-            # geom = geo_hydro()
-
-            # Bei den Wehren muessen im Gegensatz zu den Haltungen die
-            # Koordinaten aus den Schachtdaten entnommen werden.
-            # Dies ist in QKan einfach, da auch Auslaesse und Speicher in der
-            # Tabelle "schaechte" gespeichert werden.
-
-            sql = f"""
-                INSERT INTO wehre_data 
-                                (wnam, schoben, schunten, wehrtyp, schwellenhoehe, kammerhoehe, laenge, uebeiwert)
-                SELECT '{wehr.wnam}', '{wehr.schoben}', '{wehr.schunten}', '{wehr.wehrtyp}', {wehr.schwellenhoehe}, 
-                        {wehr.kammerhoehe}, {wehr.laenge}, {wehr.uebeiwert}
-                FROM schaechte AS SCHOB, schaechte AS SCHUN
-                WHERE SCHOB.schnam = '{wehr.schoben}' AND SCHUN.schnam = '{wehr.schunten}'
-                """
-
-            if not self.db_qkan.sql(sql, "xml_import Wehre [1]"):
-                return None
-
-        if not self.db_qkan.sql(
-            "UPDATE wehre SET geom = geom", "xml_import Wehre [1a]"
-        ):
-            return None
-
-        self.db_qkan.commit()
+    # def _wehre(self) -> None:
+    #     # Hier werden die Hydraulikdaten zu den Wehren in die Datenbank geschrieben.
+    #     # Bei Wehren stehen alle wesentlichen Daten im Hydraulikdatenkollektiv, weshalb im Gegensatz zu den
+    #     # Haltungsdaten keine Stammdaten verarbeitet werden.
+    #
+    #     def _iter() -> Iterator[Wehr]:
+    #         blocks = self.xml.findall(
+    #             "d:Datenkollektive/d:Hydraulikdatenkollektiv/d:Rechennetz/"
+    #             "d:HydraulikObjekte/d:HydraulikObjekt/d:Wehr/..",
+    #             self.NS,
+    #         )
+    #         logger.debug(f"Anzahl HydraulikObjekte_Wehre: {len(blocks)}")
+    #
+    #         schoben, schunten, wehrtyp = ("",) * 3
+    #         schwellenhoehe, kammerhoehe, laenge, uebeiwert = (0.0,) * 4
+    #         for block in blocks:
+    #             # TODO: Does <HydraulikObjekt> even contain multiple <Wehr>?
+    #             for _wehr in block.findall("d:Wehr", self.NS):
+    #                 schoben = _wehr.findtext("d:SchachtZulauf", "not found", self.NS)
+    #                 schunten = _wehr.findtext("d:SchachtAblauf", "not found", self.NS)
+    #                 wehrtyp = _wehr.findtext("d:WehrTyp", "not found", self.NS)
+    #
+    #                 schwellenhoehe = _strip_float(
+    #                     _wehr.findtext("d:Schwellenhoehe", 0.0, self.NS)
+    #                 )
+    #                 laenge = _strip_float(
+    #                     _wehr.findtext("d:LaengeWehrschwelle", 0.0, self.NS)
+    #                 )
+    #                 kammerhoehe = _strip_float(_wehr.findtext("d:Kammerhoehe", 0.0, self.NS))
+    #
+    #                 # Überfallbeiwert der Wehr Kante (abhängig von Form der Kante)
+    #                 uebeiwert = _strip_float(
+    #                     _wehr.findtext("d:Ueberfallbeiwert", 0.0, self.NS)
+    #                 )
+    #
+    #             yield Wehr(
+    #                 wnam=block.findtext("d:Objektbezeichnung", "not found", self.NS),
+    #                 schoben=schoben,
+    #                 schunten=schunten,
+    #                 wehrtyp=wehrtyp,
+    #                 schwellenhoehe=schwellenhoehe,
+    #                 kammerhoehe=kammerhoehe,
+    #                 laenge=laenge,
+    #                 uebeiwert=uebeiwert,
+    #             )
+    #
+    #     for wehr in _iter():
+    #         # geom = geo_hydro()
+    #
+    #         # Bei den Wehren muessen im Gegensatz zu den Haltungen die
+    #         # Koordinaten aus den Schachtdaten entnommen werden.
+    #         # Dies ist in QKan einfach, da auch Auslaesse und Speicher in der
+    #         # Tabelle "schaechte" gespeichert werden.
+    #
+    #         sql = f"""
+    #             INSERT INTO wehre_data
+    #                             (wnam, schoben, schunten, wehrtyp, schwellenhoehe, kammerhoehe, laenge, uebeiwert)
+    #             SELECT '{wehr.wnam}', '{wehr.schoben}', '{wehr.schunten}', '{wehr.wehrtyp}', {wehr.schwellenhoehe},
+    #                     {wehr.kammerhoehe}, {wehr.laenge}, {wehr.uebeiwert}
+    #             FROM schaechte AS SCHOB, schaechte AS SCHUN
+    #             WHERE SCHOB.schnam = '{wehr.schoben}' AND SCHUN.schnam = '{wehr.schunten}'
+    #             """
+    #
+    #         if not self.db_qkan.sql(sql, "xml_import Wehre [1]"):
+    #             return None
+    #
+    #     if not self.db_qkan.sql(
+    #         "UPDATE wehre SET geom = geom", "xml_import Wehre [1a]"
+    #     ):
+    #         return None
+    #
+    #     self.db_qkan.commit()
 
     def _pumpen(self) -> None:
 
@@ -2003,7 +2033,15 @@ class ImportTask:
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:
                     xsch = _strip_float(smp.findtext("GP003", 0.0))
+                    if xsch == 0.0:
+                        xsch = _strip_float(smp.findtext("GP005", 0.0))
+                    else:
+                        pass
                     ysch = _strip_float(smp.findtext("GP004", 0.0))
+                    if ysch == 0.0:
+                        ysch = _strip_float(smp.findtext("GP006", 0.0))
+                    else:
+                        pass
                     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
                 yield Pumpe(
