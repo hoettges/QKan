@@ -9,7 +9,8 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
  'Haltungen nach Typ', 'haltnam'),
 ('Netzstruktur', 'Schacht unten fehlerhaft', 'Fehler', 9, 'SELECT haltnam, ''Schacht unten fehlerhaft'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS su ON ha.schunten = su.schnam WHERE within(su.geop, buffer(pointn(ha.geom,-1), 0.1)) <> 1', 'Haltungen nach Typ', 'haltnam'),
 ('HYSTEM-EXTRAN', 'Abflussparameter fehlen', 'Fehler', 9, 'SELECT flaechen.flnam, ''Abflussparameter fehlen'' AS bemerkung FROM flaechen LEFT JOIN abflussparameter ON flaechen.abflussparameter = abflussparameter.apnam WHERE abflussparameter.pk IS NULL GROUP BY flaechen.flnam', 'Abflussparameter', 'flnam'),
-('HYSTEM-EXTRAN', 'Schwerpunktlaufzeiten fehlen', 'Fehler', 9, 'SELECT flnam, printf("Spalte schwerpunktlaufzeit in %d Datensätzen leer", (SELECT count(*) FROM tezg WHERE schwerpunktlaufzeit IS NULL GROUP BY schwerpunktlaufzeit)) AS bemerkung FROM tezg WHERE schwerpunktlaufzeit IS NULL LIMIT 5', 'Haltungsflächen', 'flnam'),
+('HYSTEM-EXTRAN', 'Schwerpunktlaufzeiten fehlen', 'Fehler', 9, 'SELECT flnam, printf("Spalte schwerpunktlaufzeit in %d Datensätzen leer (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM tezg WHERE schwerpunktlaufzeit IS NULL)) AS bemerkung FROM tezg WHERE schwerpunktlaufzeit IS NULL LIMIT 5', 'Haltungsflächen', 'flnam'),
+('HYSTEM-EXTRAN', 'Simulationsstatus fehlt oder nicht in Tabelle "Simulationsstatus"', 'Fehler', 9, 'SELECT s.schnam, printf("Spalte simstatus = %s in Spalte leer oder nicht in Simulationsstatus (nur 1 exemplarisch aufgelistet!)", s.simstatus) AS bemerkung FROM schaechte AS s LEFT JOIN simulationsstatus AS u ON s.simstatus = u.bezeichnung WHERE u.bezeichnung IS NULL GROUP BY s.simstatus', 'Schächte', 'schnam'),
 ('Kreuzende Haltungen', 'Kreuzende Haltungen', 'Warnung', 6, 
 'SELECT
      haltna1 AS haltnam, 

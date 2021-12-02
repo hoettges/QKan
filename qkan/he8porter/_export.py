@@ -766,7 +766,7 @@ class ExportTask:
                           fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
                           abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
                           1 AS IstPolygonalflaeche, 1 AS ZuordnungGesperrt, 0 AS ZuordnUnabhEZG, 
-                          coalesce(createdat, catetime('now')) AS lastmodified, 
+                          coalesce(createdat, datetime('now')) AS lastmodified, 
                           kommentar AS Kommentar, 
                           SetSrid(geom, -1) AS geometry
                         FROM flintersect AS fi

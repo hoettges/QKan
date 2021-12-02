@@ -512,6 +512,13 @@ class GanglinienHE8:
         )
 
         route = find_route(self.__spatialite, features, layer_type)
+        self.__log.debug(f"route, set(route): {len(route['haltungen'])}, {len(set(route['haltungen']))}")
+        if len(set(route['haltungen'])) != len(route['haltungen']):
+            self.__log.warning('Die Auswahl enthält Unterbrechungen oder Seitenarme. Bitte Auswahl korrigieren.\t"{}"')
+            # TODO: Error message
+            self.__iface.messageBar().pushWarning("Die Auswahl enthält Unterbrechungen oder Seitenarme. Bitte Auswahl korrigieren.", "")
+            return
+
         self.__log.debug(f'route: {route}')
         self.__iface.messageBar().clearWidgets()
         if route:

@@ -1,4 +1,5 @@
 import logging
+import sys
 import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
 from lxml import etree
@@ -206,7 +207,10 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
         return value
 
     if isinstance(value, str) and value.strip() != "":
-        return int(value)
+        try:
+            return int(value)
+        except Exception:
+            print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
 
     return default
 
