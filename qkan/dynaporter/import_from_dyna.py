@@ -860,11 +860,11 @@ def import_kanaldaten(
         Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
     )
     qgsadapt(
-        QKan.config.database.qkan,
+        database_qkan,
         db_qkan,
-        QKan.config.project.file,
+        projectfile,
         QKan.config.project.template,
-        QKan.config.epsg,
+        epsg,
     )
 
     # --------------------------------------------------------------------------

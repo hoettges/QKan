@@ -128,7 +128,9 @@ def qgsadapt(
     qkanLayers = list_qkan_layers(
         qkanprojectTemplate
     )  # Liste aller Layernamen aus gewählter QGS-Vorlage
-    logger.debug(f'k_qgsadapt.qkanLayers: {qkanLayers}')
+    qkanTables = set([el[0] for el in qkanLayers.values()])
+    #logger.debug(f'k_qgsadapt.qkanLayers: {qkanLayers}')
+    #logger.debug(f'k_qgsadapt.qkanLayers: {qkanTables}')
 
     # Fehlende Layer ergänzen. Unabhängig von der Auswahl werden die fehlenden Referenztabellen
     # auf jeden Fall ergänzt.
@@ -159,7 +161,7 @@ def qgsadapt(
                 continue
 
             # Nur QKan-Tabellen bearbeiten
-            if 'table="' in tex and tex[tex.index('table="') + 7 :].split('" ')[0] in qkanLayers:
+            if 'table="' in tex and tex[tex.index('table="') + 7 :].split('" ')[0] in qkanTables:
 
                 # <extent> löschen
                 for tag_extent in tag_maplayer.findall("./extent"):
