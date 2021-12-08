@@ -102,10 +102,13 @@
     </property>
    </widget>
    <widget class="QPushButton" name="pb_selectQKanDB">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>540</x>
-      <y>40</y>
+      <y>30</y>
       <width>31</width>
       <height>21</height>
      </rect>
@@ -125,7 +128,7 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>511</width>
+      <width>551</width>
       <height>21</height>
      </rect>
     </property>
@@ -140,6 +143,9 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>

@@ -398,6 +398,8 @@ class QKanTools(QKanPlugin):
                 # if len(daten) == 1:
                 # self.dlgro.lw_abflussparameter.setCurrentRow(0)
 
+        self.dlgro.db_qkan = db_qkan
+
         self.dlgro.count_selection()
 
         # Funktionen zur Berechnung des Oberflächenabflusses

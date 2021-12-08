@@ -303,22 +303,23 @@ class ToolsConfig(ClassObject):
     class RunoffParams(ClassObject):
         # TODO: Implement user choice of hard-coded and custom functions
         itwh: list = [
-            "0.8693*log(area(geom))+ 5.6317",
-            "pow(18.904*pow(neigkl,0.686)*area(geom), 0.2535*pow(neigkl,0.244))",
+            "round(0.8693*log(area(geom))+ 5.6317, 2)",
+            "round(pow(18.904*pow(neigkl,0.686)*area(geom), 0.2535*pow(neigkl,0.244)), 2)",
         ]
         dyna: list = [
-            "0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*0.02 * "
-            "(abstand + fliesslaenge) / SQRT(neigung), 0.467)",
-            "pow(2*0.10 * (abstand + fliesslaenge) / SQRT(neigung), 0.467)",
+            "round(0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*0.02 * "
+                "(abstand + fliesslaenge) / SQRT(neigung), 0.467), 2)",
+            "round(pow(2*0.10 * (abstand + fliesslaenge) / SQRT(neigung), 0.467), 2)",
         ]
         maniak: list = [
-            "0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*0.02 * "
-            "(abstand + fliesslaenge) / SQRT(neigung), 0.467)",
-            "pow(2*0.10 * (abstand + fliesslaenge) / SQRT(neigung), 0.467)",
-            "0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*0.02 * abstand / SQRT(neigung), 0.467)",
-            "pow(2*0.10 * abstand / SQRT(neigung), 0.467)",
-            "0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*0.02 * fliesslaenge / SQRT(neigung), 0.467)",
-            "pow(2*0.10 * fliesslaenge / SQRT(neigung), 0.467)",
+            "round(0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*0.02 * "
+                "(abstand + fliesslaenge) / SQRT(neigung), 0.467), 2)",
+            "round(pow(2*0.10 * (abstand + fliesslaenge) / SQRT(neigung), 0.467), 2)",
+            "round(0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + pow(2*0.02 * abstand / SQRT(neigung), 0.467), 2)",
+            "round(pow(2*0.10 * abstand / SQRT(neigung), 0.467), 2)",
+            "round(0.02 * pow(abstand, 0.77) * pow(neigung, -0.385) + "
+                "pow(2*0.02 * fliesslaenge / SQRT(neigung), 0.467), 2)",
+            "round(pow(2*0.10 * fliesslaenge / SQRT(neigung), 0.467), 2)",
         ]
 
         def __str__(self) -> str:
@@ -432,7 +433,7 @@ class ToolsConfig(ClassObject):
         enums.RunOffModelType.SPEICHERKASKADE
     )
     runoffparamsfunctions: RunoffParams = RunoffParams()
-    runoffparamstype_choice: enums.RunOffParamsType = enums.RunOffParamsType.MANIAK
+    runoffparamstype_choice: enums.RunOffParamsType = enums.RunOffParamsType.ITWH
 
 
 class XmlConfig(ClassObject):

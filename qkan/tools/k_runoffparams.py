@@ -86,7 +86,7 @@ def setRunoffparams(
 
     # Beide Funktionen werden in einer for-Schleife abgearbeitet
     funlis = getattr(runoffparamsfunctions, runoffparamstype_choice.value)
-    # logger.debug("\nfunlis:\n{}".format(funlis))
+    logger.debug("\nfunlis:\n{}".format(funlis))
     kriterienlis = ["IS NULL", "IS NOT NULL"]
 
     # Auswahl der zu bearbeitenden Flächen
@@ -106,8 +106,9 @@ def setRunoffparams(
             sql = """
                 WITH flintersect AS (
                     SELECT
+                        lf.pk,
                         lf.flnam AS flnam, 
-                        fl.neigkl AS neigkl,
+                        coalesce(fl.neigkl, 1) AS neigkl,
                         fl.abflussparameter AS abflussparameter, 
                         fl.teilgebiet AS teilgebiet, 
                         CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
@@ -129,7 +130,7 @@ def setRunoffparams(
                        CASE fl.neigkl WHEN 1 THEN 0.5 WHEN 2 THEN 2.5 WHEN 3 THEN 7.0 WHEN 4 THEN 12 WHEN 5 THEN 20 END AS "neigung"
                     FROM linkfl AS lf
                     INNER JOIN flintersect AS fl
-                    ON lf.flnam = fl.flnam
+                    ON lf.pk = fl.pk
                     INNER JOIN haltungen AS ha
                     ON ha.haltnam = lf.haltnam
                     INNER JOIN abflussparameter AS ap
@@ -138,21 +139,21 @@ def setRunoffparams(
                 )
                 UPDATE linkfl 
                 SET (abflusstyp, speicherzahl, speicherkonst) = (
-                    SELECT 'Speicherkaskade', 3, ({fun})/3
+                    SELECT 'Speicherkaskade', 3, ({fun})*0.3333
                     FROM qdist
                     WHERE qdist.pk = linkfl.pk)
                 WHERE pk IN (
                     SELECT lf.pk
                     FROM linkfl AS lf
                     INNER JOIN flintersect AS fl
-                    ON lf.flnam = fl.flnam
+                    ON lf.pk = fl.pk
                     INNER JOIN abflussparameter AS ap
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}
                 )""".format(
                 auswahl=auswahl, fun=fun, kriterium=kriterium
             )
-            if not dbQK.sql(sql, "QKan.tools.setRunoffparams (1)"):
+            if not dbQK.sql(sql, "QKan.tools.setRunoffparams (1), {}".format(kriterium)):
                 return
 
     elif runoffmodeltype_choice == enums.RunOffModelType.SPEICHERKASKADE:
@@ -161,8 +162,9 @@ def setRunoffparams(
             sql = """
                 WITH flintersect AS (
                     SELECT
+                        lf.pk,
                         lf.flnam AS flnam, 
-                        fl.neigkl AS neigkl,
+                        coalesce(fl.neigkl, 1) AS neigkl,
                         fl.abflussparameter AS abflussparameter, 
                         fl.teilgebiet AS teilgebiet, 
                         CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
@@ -184,7 +186,7 @@ def setRunoffparams(
                        CASE fl.neigkl WHEN 1 THEN 0.5 WHEN 2 THEN 2.5 WHEN 3 THEN 7.0 WHEN 4 THEN 12 WHEN 5 THEN 20 END AS "neigung"
                     FROM linkfl AS lf
                     INNER JOIN flintersect AS fl
-                    ON lf.flnam = fl.flnam
+                    ON lf.pk = fl.pk
                     INNER JOIN haltungen AS ha
                     ON ha.haltnam = lf.haltnam
                     INNER JOIN abflussparameter AS ap
@@ -200,7 +202,7 @@ def setRunoffparams(
                     SELECT lf.pk
                     FROM linkfl AS lf
                     INNER JOIN flintersect AS fl
-                    ON lf.flnam = fl.flnam
+                    ON lf.pk = fl.pk
                     INNER JOIN abflussparameter AS ap
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}
@@ -215,8 +217,9 @@ def setRunoffparams(
             sql = """
                 WITH flintersect AS (
                     SELECT
+                        lf.pk,
                         lf.flnam AS flnam, 
-                        fl.neigkl AS neigkl,
+                        coalesce(fl.neigkl, 1) AS neigkl,
                         fl.abflussparameter AS abflussparameter, 
                         fl.teilgebiet AS teilgebiet, 
                         CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
@@ -238,7 +241,7 @@ def setRunoffparams(
                        CASE fl.neigkl WHEN 1 THEN 0.5 WHEN 2 THEN 2.5 WHEN 3 THEN 7.0 WHEN 4 THEN 12 WHEN 5 THEN 20 END AS "neigung"
                     FROM linkfl AS lf
                     INNER JOIN flintersect AS fl
-                    ON lf.flnam = fl.flnam
+                    ON lf.pk = fl.pk
                     INNER JOIN haltungen AS ha
                     ON ha.haltnam = lf.haltnam
                     INNER JOIN abflussparameter AS ap
@@ -254,7 +257,7 @@ def setRunoffparams(
                     SELECT lf.pk
                     FROM linkfl AS lf
                     INNER JOIN flintersect AS fl
-                    ON lf.flnam = fl.flnam
+                    ON lf.pk = fl.pk
                     INNER JOIN abflussparameter AS ap
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}
@@ -269,8 +272,9 @@ def setRunoffparams(
             sql = """
                 WITH flintersect AS (
                     SELECT
+                        lf.pk,
                         lf.flnam AS flnam, 
-                        fl.neigkl AS neigkl,
+                        coalesce(fl.neigkl, 1) AS neigkl,
                         fl.abflussparameter AS abflussparameter, 
                         fl.teilgebiet AS teilgebiet, 
                         CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
@@ -292,7 +296,7 @@ def setRunoffparams(
                        CASE fl.neigkl WHEN 1 THEN 0.5 WHEN 2 THEN 2.5 WHEN 3 THEN 7.0 WHEN 4 THEN 12 WHEN 5 THEN 20 END AS "neigung"
                     FROM linkfl AS lf
                     INNER JOIN flintersect AS fl
-                    ON lf.flnam = fl.flnam
+                    ON lf.pk = fl.pk
                     INNER JOIN haltungen AS ha
                     ON ha.haltnam = lf.haltnam
                     INNER JOIN abflussparameter AS ap
@@ -308,7 +312,7 @@ def setRunoffparams(
                     SELECT lf.pk
                     FROM linkfl AS lf
                     INNER JOIN flintersect AS fl
-                    ON lf.flnam = fl.flnam
+                    ON lf.pk = fl.pk
                     INNER JOIN abflussparameter AS ap
                     ON fl.abflussparameter = ap.apnam
                     WHERE ap.bodenklasse {kriterium}{auswahl}

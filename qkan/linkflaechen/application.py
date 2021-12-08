@@ -4,6 +4,7 @@ Flaechenzuordnungen
 Verknüpft Flächen mit nächster Haltung
 """
 from typing import List, Optional, cast
+import logging
 
 from qgis.core import Qgis, QgsDataSourceUri, QgsProject, QgsVectorLayer
 from qgis.gui import QgisInterface
@@ -32,6 +33,7 @@ from .k_link import assigntgeb, createlinkfl, createlinksw
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
 
+logger = logging.getLogger("QKan.linkflaechen.application")
 
 class LinkFl(QKanPlugin):
     def __init__(self, iface: QgisInterface):
@@ -361,7 +363,7 @@ class LinkFl(QKanPlugin):
             layers = project.mapLayersByName("Anbindungen Flächen")
             if not layers:
                 uri = QgsDataSourceUri()
-                uri.setDatabase(database_qkan)
+                uri.setDatabase(self.database_qkan)
                 uri.setDataSource("", "linkfl", "glink")
                 vlayer = QgsVectorLayer(
                     uri.uri(),
@@ -520,7 +522,7 @@ class LinkFl(QKanPlugin):
             layers = project.mapLayersByName("Anbindungen Direkteinleitungen")
             if not layers:
                 uri = QgsDataSourceUri()
-                uri.setDatabase(database_qkan)
+                uri.setDatabase(self.database_qkan)
                 uri.setDataSource("", "linksw", "glink")
                 vlayer = QgsVectorLayer(
                     uri.uri(),
@@ -757,7 +759,7 @@ class LinkFl(QKanPlugin):
 
         self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
 
-        self.dlg_ul.tf_qkDB.setText(database_qkan)
+        self.dlg_ul.tf_qkDB.setText(self.database_qkan)
 
         # Festlegung des Fangradius
         fangradius = QKan.config.fangradius

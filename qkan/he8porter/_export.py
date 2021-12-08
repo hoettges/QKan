@@ -676,7 +676,7 @@ class ExportTask:
                         speicherkonst AS Speicherkonstante, 
                         coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
                         fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
-                        abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
+                        abflussparameter AS Parametersatz, coalesce(neigkl, 1) AS Neigungsklasse, 
                         coalesce(createdat, datetime('now')) AS lastmodified, 
                         kommentar AS Kommentar, 
                         SetSrid(geom, -1) AS geometry
@@ -764,7 +764,7 @@ class ExportTask:
                           speicherkonst AS Speicherkonstante, 
                           coalesce(fliesszeitflaeche, 0.0) AS Schwerpunktlaufzeit, 
                           fliesszeitflaeche AS FliesszeitOberflaeche, fliesszeitkanal AS LaengsteFliesszeitKanal, 
-                          abflussparameter AS Parametersatz, neigkl AS Neigungsklasse, 
+                          abflussparameter AS Parametersatz, coalesce(neigkl, 1) AS Neigungsklasse, 
                           1 AS IstPolygonalflaeche, 1 AS ZuordnungGesperrt, 0 AS ZuordnUnabhEZG, 
                           coalesce(createdat, datetime('now')) AS lastmodified, 
                           kommentar AS Kommentar, 
@@ -846,14 +846,14 @@ class ExportTask:
                           tb.bef AS Typ, 
                           2 AS AnzahlSpeicher, 
                           0. AS Speicherkonstante,                                  -- nicht verwendet 
-                          tg.schwerpunktlaufzeit/60. AS Schwerpunktlaufzeit,
+                          coalesce(tg.schwerpunktlaufzeit/60., 0.) AS Schwerpunktlaufzeit,
                           0. AS FliesszeitOberflaeche,                              -- nicht verwendet 
                           0. AS LaengsteFliesszeitKanal,                            -- nicht verwendet
                           CASE WHEN tb.bef = 0
                             THEN '$Default_Bef'
                             ELSE '$Default_Unbef'
                           END       AS Parametersatz, 
-                          tg.neigkl AS Neigungsklasse, 
+                          coalesce(tg.neigkl, 1) AS Neigungsklasse, 
                           1 AS IstPolygonalflaeche, 1 AS ZuordnungGesperrt, 0 AS ZuordnUnabhEZG, 
                           coalesce(tg.createdat, datetime('now')) AS lastmodified, 
                           tg.kommentar AS Kommentar, 

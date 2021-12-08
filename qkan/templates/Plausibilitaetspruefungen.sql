@@ -9,8 +9,15 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
  'Haltungen nach Typ', 'haltnam'),
 ('Netzstruktur', 'Schacht unten fehlerhaft', 'Fehler', 9, 'SELECT haltnam, ''Schacht unten fehlerhaft'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS su ON ha.schunten = su.schnam WHERE within(su.geop, buffer(pointn(ha.geom,-1), 0.1)) <> 1', 'Haltungen nach Typ', 'haltnam'),
 ('HYSTEM-EXTRAN', 'Abflussparameter fehlen', 'Fehler', 9, 'SELECT flaechen.flnam, ''Abflussparameter fehlen'' AS bemerkung FROM flaechen LEFT JOIN abflussparameter ON flaechen.abflussparameter = abflussparameter.apnam WHERE abflussparameter.pk IS NULL GROUP BY flaechen.flnam', 'Abflussparameter', 'flnam'),
-('HYSTEM-EXTRAN', 'Schwerpunktlaufzeiten fehlen', 'Fehler', 9, 'SELECT flnam, printf("Spalte schwerpunktlaufzeit in %d Datensätzen leer (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM tezg WHERE schwerpunktlaufzeit IS NULL)) AS bemerkung FROM tezg WHERE schwerpunktlaufzeit IS NULL LIMIT 5', 'Haltungsflächen', 'flnam'),
+('HYSTEM-EXTRAN', 'Schwerpunktlaufzeiten fehlen', 'Fehler', 9, 'SELECT flnam, printf("Spalte ""fliesszeitflaeche"" in Layer ""Anbindungen Flächen"" in %d Datensätzen leer (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM linkfl WHERE fliesszeitflaeche IS NULL)) AS bemerkung FROM linkfl WHERE fliesszeitflaeche IS NULL LIMIT 5', 'Anbindungen Flächen', 'flnam'),
 ('HYSTEM-EXTRAN', 'Simulationsstatus fehlt oder nicht in Tabelle "Simulationsstatus"', 'Fehler', 9, 'SELECT s.schnam, printf("Spalte simstatus = %s in Spalte leer oder nicht in Simulationsstatus (nur 1 exemplarisch aufgelistet!)", s.simstatus) AS bemerkung FROM schaechte AS s LEFT JOIN simulationsstatus AS u ON s.simstatus = u.bezeichnung WHERE u.bezeichnung IS NULL GROUP BY s.simstatus', 'Schächte', 'schnam'),
+('HYSTEM-EXTRAN', 'Neigungsklasse fehlt', 'Fehler', 9, 'SELECT flnam, printf("Spalte ""neigung"" in Layer ""Flächen"" in %d Datensätzen leer (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM flaechen WHERE neigung IS NULL)) AS bemerkung FROM flaechen WHERE neigung IS NULL LIMIT 5', 'Flächen', 'flnam'),
+('HYSTEM-EXTRAN', 'Profil fehlt in Layer "Profile"', 'Fehler', 9,
+'SELECT h.haltnam, printf("Profil ''%s'' fehlt in Layer Profile", h.profilnam) AS bemerkung FROM haltungen AS h
+LEFT JOIN profile AS p
+ON h.profilnam = p.profilnam
+WHERE p.profilnam IS NULL
+GROUP BY h.profilnam', 'Haltungen nach Typ', 'haltnam'),
 ('Kreuzende Haltungen', 'Kreuzende Haltungen', 'Warnung', 6, 
 'SELECT 
   haltna1, haltna2, hoehob, hoehun, 

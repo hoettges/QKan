@@ -64,6 +64,8 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
         self.button_box.helpRequested.connect(click_help)
         self.rb_itwh.toggled.connect(self.toggle_itwh)
 
+        self.db_qkan = None
+
     def click_lw_teilgebiete(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
@@ -126,6 +128,7 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
         if not self.db_qkan:
+            logger.debug("Error in RunoffParamsDialog.count_selection: db_qkan nicht verbunden...")
             return
 
         liste_teilgebiete: List[str] = list_selected_items(self.lw_teilgebiete)
@@ -140,12 +143,17 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
             [liste_teilgebiete, liste_abflussparameter],
         )
 
+        logger.debug(f'RunoffParamsDialog.count_selection: auswahl = {auswahl}')
+
         if not self.db_qkan.sql(
             f"SELECT count(*) AS anzahl FROM flaechen {auswahl}",
-            "QKan_Tools.application.dlgro_countselection (1)",
+            "RunoffParamsDialog.count_selection (1)",
         ):
             return
         daten = self.db_qkan.fetchone()
+
+        logger.debug(f'RunoffParamsDialog.count_selection: daten = {daten}')
+
         if daten is not None:
             self.lf_anzahl_flaechen.setText(str(daten[0]))
         else:
