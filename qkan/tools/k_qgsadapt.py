@@ -97,11 +97,11 @@ def qgsadapt(
     # Projektionssystem für die Projektdatei vorbereiten,
     # außer: Wenn epsg aus Parameterliste vorgegeben, dann übernehmen
     if epsg:
-        srsid = epsg
+        srid = epsg
         if Qgis.QGIS_VERSION_INT < 31000:
-            proj4text = QgsCoordinateReferenceSystem(srsid).toProj4()
+            proj4text = QgsCoordinateReferenceSystem(srid).toProj4()
         else:
-            proj4text = QgsCoordinateReferenceSystem(srsid).toProj()
+            proj4text = QgsCoordinateReferenceSystem(srid).toProj()
         logger.debug(f"Vorgabe epsg: %s", epsg)
     else:
         sql = """SELECT srid, proj4text
@@ -110,9 +110,9 @@ def qgsadapt(
                 AND Lower(f_geometry_column) = Lower('geom')"""
         if not dbQK.sql(sql, "k_qgsadapt (1)"):
             return False
-        srsid, proj4text = dbQK.fetchone()
+        srid, proj4text = dbQK.fetchone()
 
-    srid = srsid
+    srsid = QgsCoordinateReferenceSystem(srid).srsid()
 
     # --------------------------------------------------------------------------
     # Projektdatei schreiben, falls ausgewählt

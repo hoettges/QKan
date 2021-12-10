@@ -26,6 +26,7 @@ class TestXmlQKan(QgisTest):
             BASE_WORK / "Datenausgabe ISYBAU-2017_29-01-21.xml"
         )
         QKan.config.project.file = str(BASE_WORK / "plan.qgs")
+        QKan.config.epsg = 25832
 
         imp = XmlPorter(iface())
         erg = imp._doimport()
@@ -91,7 +92,7 @@ class TestQKanHE8(QgisTest):
         QKan.config.check_export.update = False
         QKan.config.check_export.synch = False
 
-        imp = He8Porter(iface())
+        imp = XmlPorter(iface())
         imp.connectQKanDB(QKan.config.database.qkan)
         erg = imp._doexport()
 

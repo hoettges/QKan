@@ -1,5 +1,6 @@
 DELETE FROM pruefsql WHERE gruppe = 'Netzstruktur' AND warntext IN ('Schacht oben fehlerhaft', 'Schacht unten fehlerhaft');
 DELETE FROM pruefsql WHERE gruppe = 'HYSTEM-EXTRAN' AND warntext IN ('Abflussparameter fehlen', 'Schwerpunktlaufzeiten fehlen');
+DELETE FROM pruefsql WHERE gruppe = 'Kreuzende Haltungen';
 INSERT INTO pruefsql (gruppe, warntext, warntyp, warnlevel, sql, layername, attrname)
 SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, pn.attrname FROM
 (SELECT column1 AS gruppe, column2 AS warntext, column3 AS warntyp, column4 AS warnlevel, column5 AS sql, column6 AS layername, column7 AS attrname FROM 
@@ -19,7 +20,11 @@ ON h.profilnam = p.profilnam
 WHERE p.profilnam IS NULL
 GROUP BY h.profilnam', 'Haltungen nach Typ', 'haltnam'),
 ('Kreuzende Haltungen', 'Kreuzende Haltungen', 'Warnung', 6, 
-'SELECT 
+'SELECT
+     haltna1 AS haltnam, 
+     printf("Theoretischer Abstand zu Haltung %s beträgt d = %.2f", haltna2, COALESCE(abstkreuz, d3)) as bemerkung
+FROM (
+SELECT 
   haltna1, haltna2, hoehob, hoehun, 
   abs((p3x-p1x)*ex+(p3y-p1y)*ey+(p3z-p1z)*ez)/SQRT(ex*ex+ey*ey+ez*ez) AS abstkreuz, 
   abs(L13/SQRT(L12))         AS abstpar,
@@ -111,7 +116,7 @@ CASE WHEN d1 IS NOT NULL AND d1 <= 0 AND d2 <= 0
     THEN abstkreuz <= (hoehob + hoehun) / 2.0 + 0.5
 WHEN d1 IS NULL AND d3 <= 0
     THEN abstpar <= (hoehob + hoehun) / 2.0 + 0.5
-ELSE FALSE END
+ELSE FALSE END)
 ', 'Haltungen nach Typ', 'haltnam'))) AS pn
 LEFT JOIN pruefsql AS ps
 ON (pn.gruppe = ps.gruppe AND pn.warntext = ps.warntext)
