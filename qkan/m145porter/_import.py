@@ -1089,6 +1089,7 @@ class ImportTask:
                 deckeloben,
                 deckelunten,
             ) = (0.0,) * 7
+
             for block in blocks:
                 if block.findtext("HG006")is not None:
                     continue
@@ -1120,40 +1121,67 @@ class ImportTask:
                     / 1000
                 )
 
+                xschob = 0.0
+                yschob = 0.0
+                xschun = 0.0
+                yschun = 0.0
+                x=0
 
                 for _haltung in block.findall(
-                        "GO/GP[1]"
+                        "GO/GP[GP999='S']"
                 ):
-                    xschob = _strip_float(_haltung.findtext("GP003", 0.0))
-                    if xschob == 0.0:
-                        xschob = _strip_float(_haltung.findtext("GP005", 0.0))
-                    else:
-                        pass
-                    yschob = _strip_float(_haltung.findtext("GP004", 0.0))
-                    if yschob == 0.0:
-                        yschob = _strip_float(_haltung.findtext("GP006", 0.0))
-                    else:
-                        pass
-                    deckeloben = _strip_float(
-                        _haltung.findtext("GP007", 0.0)
-                    )
+                    if x == 0:
+                        xschob = _strip_float(_haltung.findtext("GP003", 0.0))
+                        if xschob == 0.0:
+                            xschob = _strip_float(_haltung.findtext("GP005", 0.0))
+                            print(str(xschob))
+                        yschob = _strip_float(_haltung.findtext("GP004", 0.0))
+                        if yschob == 0.0:
+                            yschob = _strip_float(_haltung.findtext("GP006", 0.0))
+                        deckeloben = _strip_float(
+                            _haltung.findtext("GP007", 0.0)
+                        )
 
-                for _haltung in block.findall(
-                        "GO/GP[2]"
-                ):
-                    xschun = _strip_float(_haltung.findtext("GP003", 0.0))
-                    if xschun == 0.0:
-                        xschun = _strip_float(_haltung.findtext("GP005", 0.0))
-                    else:
-                        pass
-                    yschun = _strip_float(_haltung.findtext("GP004", 0.0))
-                    if yschun == 0.0:
-                        yschun = _strip_float(_haltung.findtext("GP006", 0.0))
-                    else:
-                        pass
-                    deckelunten = _strip_float(
-                        _haltung.findtext("GP007", 0.0)
-                    )
+                    if x == 1:
+                        xschun = _strip_float(_haltung.findtext("GP003", 0.0))
+                        if xschun == 0.0:
+                            xschun = _strip_float(_haltung.findtext("GP005", 0.0))
+                            print(str(xschun))
+                        yschun = _strip_float(_haltung.findtext("GP004", 0.0))
+                        if yschun == 0.0:
+                            yschun = _strip_float(_haltung.findtext("GP006", 0.0))
+                        deckelunten = _strip_float(
+                            _haltung.findtext("GP007", 0.0)
+                        )
+                    x += 1
+
+                if xschob== 0.0 and yschob== 0.0:
+                    for _haltung in block.findall(
+                            "GO/GP[1]"
+                    ):
+                        xschob = _strip_float(_haltung.findtext("GP003", 0.0))
+                        if xschob == 0.0:
+                            xschob = _strip_float(_haltung.findtext("GP005", 0.0))
+                        yschob = _strip_float(_haltung.findtext("GP004", 0.0))
+                        if yschob == 0.0:
+                            yschob = _strip_float(_haltung.findtext("GP006", 0.0))
+                        deckeloben = _strip_float(
+                            _haltung.findtext("GP007", 0.0)
+                        )
+
+                if xschun == 0.0 and yschun == 0.0:
+                    for _haltung in block.findall(
+                            "GO/GP[2]"
+                    ):
+                        xschun = _strip_float(_haltung.findtext("GP003", 0.0))
+                        if xschun == 0.0:
+                            xschun = _strip_float(_haltung.findtext("GP005", 0.0))
+                        yschun = _strip_float(_haltung.findtext("GP004", 0.0))
+                        if yschun == 0.0:
+                            yschun = _strip_float(_haltung.findtext("GP006", 0.0))
+                        deckelunten = _strip_float(
+                            _haltung.findtext("GP007", 0.0)
+                        )
 
                 yield Haltung(
                     haltnam=name,
