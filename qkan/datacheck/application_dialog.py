@@ -4,7 +4,6 @@ import webbrowser
 from pathlib import Path
 from typing import Callable, List, Optional
 
-from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (

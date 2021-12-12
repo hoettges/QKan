@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ElementTree
 from typing import Tuple, cast
 from pathlib import Path
 
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
+from qgis.core import Qgis, QgsMessageLog, QgsProject
 from qgis.utils import pluginDirectory
 
 from qkan import QKAN_FORMS, QKAN_TABLES, QKan

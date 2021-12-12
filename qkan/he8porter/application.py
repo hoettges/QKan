@@ -262,6 +262,12 @@ class He8Porter(QKanPlugin):
 
                     self._doimport()
 
+                    # Load generated project
+                    # noinspection PyArgumentList
+                    project = QgsProject.instance()
+                    project.read(QKan.config.project.file)
+                    project.reloadAllLayers()
+
     def _doimport(self) -> bool:
         """Start des Import aus einer HE8-Datenbank
 
@@ -310,12 +316,6 @@ class He8Porter(QKanPlugin):
 
         del db_qkan
         self.log.debug("Closed DB")
-
-        # Load generated project
-        # noinspection PyArgumentList
-        project = QgsProject.instance()
-        project.read(QKan.config.project.file)
-        project.reloadAllLayers()
 
         # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
 

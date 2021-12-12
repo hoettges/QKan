@@ -29,6 +29,7 @@ __copyright__ = "(C) 2016, Joerg Hoettges"
 
 import logging
 import os
+from pathlib import Path
 from xml.etree import ElementTree as ET
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem
@@ -98,21 +99,37 @@ def qgsadapt(
     # außer: Wenn epsg aus Parameterliste vorgegeben, dann übernehmen
     if epsg:
         srid = epsg
-        if Qgis.QGIS_VERSION_INT < 31000:
-            proj4text = QgsCoordinateReferenceSystem(srid).toProj4()
-        else:
-            proj4text = QgsCoordinateReferenceSystem(srid).toProj()
         logger.debug(f"Vorgabe epsg: %s", epsg)
     else:
-        sql = """SELECT srid, proj4text
+        sql = """SELECT srid
                 FROM geom_cols_ref_sys
                 WHERE Lower(f_table_name) = Lower('schaechte')
                 AND Lower(f_geometry_column) = Lower('geom')"""
         if not dbQK.sql(sql, "k_qgsadapt (1)"):
             return False
-        srid, proj4text = dbQK.fetchone()
+        srid = dbQK.fetchone()
 
-    srsid = QgsCoordinateReferenceSystem(srid).srsid()
+    try:
+        crs = QgsCoordinateReferenceSystem.fromEpsgId(srid)
+        srsid = crs.srsid()
+        proj4 = crs.toProj()
+        description = crs.description()
+        projection_acronym = crs.projectionAcronym()
+        if callable(getattr(crs, "ellipsoidAcronym", None)):
+            ellipsoid_acronym = crs.ellipsoidAcronym()
+        else:
+            ellipsoid_acronym = None
+    except BaseException as e:
+        srsid, proj4, description, projection_acronym, ellipsoid_acronym = (
+            "dummy",
+        ) * 5
+
+        fehlermeldung('\nFehler in "create_project"', str(e))
+        fehlermeldung(
+            "Fehler beim Erstellen des Projekts",
+            f"\nFehler bei der Ermittlung der srid: {srid}\n",
+        )
+        srid = -1
 
     # --------------------------------------------------------------------------
     # Projektdatei schreiben, falls ausgewählt
@@ -120,13 +137,12 @@ def qgsadapt(
     # Liste aller QKan-Layer erstellen. Dafür wird auf jeden Fall auf die
     # Standard-Projektdatei von QKan zurückgegriffen
 
-    templateDir = os.path.join(pluginDirectory("qkan"), "templates")
-    qkanprojectTemplate = os.path.join(templateDir, "Projekt.qgs")
+    qkanTemplate = Path(pluginDirectory("qkan")) / "templates" / "projekt.qgs"
 
-    logger.debug(f"k_qgsadapt.QKan-Projekttemplate: {qkanprojectTemplate}")
+    logger.debug(f"k_qgsadapt.QKan-Projekttemplate: {qkanTemplate}")
 
     qkanLayers = list_qkan_layers(
-        qkanprojectTemplate
+        qkanTemplate
     )  # Liste aller Layernamen aus gewählter QGS-Vorlage
     qkanTables = set([el[0] for el in qkanLayers.values()])
     #logger.debug(f'k_qgsadapt.qkanLayers: {qkanLayers}')
@@ -144,6 +160,12 @@ def qgsadapt(
             datasource = database_QKan.replace(os.path.dirname(database_QKan), ".")
         else:
             datasource = database_QKan
+
+        # Replace db path with relative path if the same output folder is used
+        db_path = Path(database_QKan)
+        datasource = str(db_path.absolute())
+        if db_path.parent.absolute() == Path(projectfile).parent.absolute():
+            datasource = db_path.name
 
         # Lesen der Projektdatei ------------------------------------------------------------------
         qgsxml = ET.parse(projecttemplate)
@@ -170,42 +192,16 @@ def qgsadapt(
                 for tag_spatialrefsys in tag_maplayer.findall("./srs/spatialrefsys"):
                     tag_spatialrefsys.clear()
 
-                    elem = ET.SubElement(tag_spatialrefsys, "proj4")
-                    elem.text = proj4text
-                    elem = ET.SubElement(tag_spatialrefsys, "srsid")
-                    elem.text = "{}".format(srsid)
-                    # elem = ET.SubElement(tag_spatialrefsys, "srid")
-                    # elem.text = "{}".format(srid)
-                    elem = ET.SubElement(tag_spatialrefsys, "authid")
-                    elem.text = "EPSG:{}".format(srsid)
-                    # elem = ET.SubElement(tag_spatialrefsys, "description")
-                    # elem.text = description
-                    # elem = ET.SubElement(tag_spatialrefsys, "projectionacronym")
-                    # elem.text = projectionacronym
-                    # if ellipsoidacronym is not None:
-                    #     elem = ET.SubElement(tag_spatialrefsys, "ellipsoidacronym")
-                    #     elem.text = ellipsoidacronym
-
-        # Pfad zu Formularen auf plugin-Verzeichnis setzen -----------------------------------------
-
-        formspath = os.path.join(pluginDirectory("qkan"), "forms")
-        for tag_maplayer in root.findall(".//projectlayers/maplayer"):
-            tag_editform = tag_maplayer.find("./editform")
-            if not (tag_editform is None):
-                if tag_editform.text:
-                    dateiname = os.path.basename(tag_editform.text)
-                    if dateiname in QKAN_FORMS:
-                        # Nur QKan-Tabellen bearbeiten
-                        tag_editform.text = os.path.join(formspath, dateiname)
-
-        # Zoom für Kartenfenster einstellen -------------------------------------------------------
-        if len(zoom) == 0 or any([x is None for x in zoom]):
-            zoom = [0.0, 0.0, 100.0, 100.0]
-        for tag_extent in root.findall(".//mapcanvas/extent"):
-            for idx, name in enumerate(["xmin", "ymin", "xmax", "ymax"]):
-                element = tag_extent.find(f"./{name}")
-                if element is not None:
-                    element.text = "{:.3f}".format(zoom[idx])
+                    ET.SubElement(tag_spatialrefsys, "srid").text = f"{srid}"
+                    ET.SubElement(tag_spatialrefsys, "proj4").text = proj4
+                    ET.SubElement(tag_spatialrefsys, "srsid").text = f"{srsid}"
+                    ET.SubElement(tag_spatialrefsys, "authid").text = f"EPSG: {srid}"
+                    ET.SubElement(tag_spatialrefsys, "description").text = description
+                    ET.SubElement(tag_spatialrefsys, "projectionacronym").text = projection_acronym
+                    if ellipsoid_acronym is not None:
+                        ET.SubElement(
+                            tag_spatialrefsys, "ellipsoidacronym"
+                        ).text = ellipsoid_acronym
 
         # Projektionssystem des Plans anpassen --------------------------------------------------------------
 
@@ -214,57 +210,68 @@ def qgsadapt(
         ):
             tag_spatialrefsys.clear()
 
-            elem = ET.SubElement(tag_spatialrefsys, "proj4")
-            elem.text = proj4text
-            # elem = ET.SubElement(tag_spatialrefsys, "srid")
-            # elem.text = "{}".format(srid)
-            elem = ET.SubElement(tag_spatialrefsys, "srsid")
-            elem.text = "{}".format(srsid)
-            elem = ET.SubElement(tag_spatialrefsys, "authid")
-            elem.text = "EPSG:{}".format(srid)
-            # elem = ET.SubElement(tag_spatialrefsys, "description")
-            # elem.text = description
-            # elem = ET.SubElement(tag_spatialrefsys, "projectionacronym")
-            # elem.text = projectionacronym
-            # if ellipsoidacronym is not None:
-            #     elem = ET.SubElement(tag_spatialrefsys, "ellipsoidacronym")
-            #     elem.text = ellipsoidacronym
+            ET.SubElement(tag_spatialrefsys, "srid").text = f"{srid}"
+            ET.SubElement(tag_spatialrefsys, "proj4").text = proj4
+            ET.SubElement(tag_spatialrefsys, "srsid").text = f"{srsid}"
+            ET.SubElement(tag_spatialrefsys, "authid").text = f"EPSG: {srid}"
+            ET.SubElement(tag_spatialrefsys, "description").text = description
+            ET.SubElement(tag_spatialrefsys, "projectionacronym").text = projection_acronym
+            if ellipsoid_acronym is not None:
+                ET.SubElement(
+                    tag_spatialrefsys, "ellipsoidacronym"
+                ).text = ellipsoid_acronym
 
         # Projektionssystem von QGIS anpassen --------------------------------------------------------------
 
         for tag_spatialrefsys in root.findall(".//projectCrs/spatialrefsys"):
             tag_spatialrefsys.clear()
 
-            elem = ET.SubElement(tag_spatialrefsys, "proj4")
-            elem.text = proj4text
-            # elem = ET.SubElement(tag_spatialrefsys, "srid")
-            # elem.text = "{}".format(srid)
-            elem = ET.SubElement(tag_spatialrefsys, "srsid")
-            elem.text = "{}".format(srsid)
-            elem = ET.SubElement(tag_spatialrefsys, "authid")
-            elem.text = "EPSG:{}".format(srid)
-            # elem = ET.SubElement(tag_spatialrefsys, "description")
-            # elem.text = description
-            # elem = ET.SubElement(tag_spatialrefsys, "projectionacronym")
-            # elem.text = projectionacronym
-            # if ellipsoidacronym is not None:
-            #     elem = ET.SubElement(tag_spatialrefsys, "ellipsoidacronym")
-            #     elem.text = ellipsoidacronym
+            ET.SubElement(tag_spatialrefsys, "srid").text = f"{srid}"
+            ET.SubElement(tag_spatialrefsys, "proj4").text = proj4
+            ET.SubElement(tag_spatialrefsys, "srsid").text = f"{srsid}"
+            ET.SubElement(tag_spatialrefsys, "authid").text = f"EPSG: {srid}"
+            ET.SubElement(tag_spatialrefsys, "description").text = description
+            ET.SubElement(tag_spatialrefsys, "projectionacronym").text = projection_acronym
+            if ellipsoid_acronym is not None:
+                ET.SubElement(
+                    tag_spatialrefsys, "ellipsoidacronym"
+                ).text = ellipsoid_acronym
 
-        # Pfad zur QKan-Datenbank anpassen
+        # Replace path to forms
+        form_path = Path(pluginDirectory("qkan")) / "forms"
+        for tag_maplayer in root.findall(".//projectlayers/maplayer"):
+            tag_editform = tag_maplayer.find("./editform")
 
+            if tag_editform is not None and tag_editform.text:
+                file_name = Path(tag_editform.text).name
+                logger.debug(f'create_project: file_name={file_name}')
+
+                # Ignore non-QKAN forms
+                if file_name not in QKAN_FORMS:
+                    continue
+
+                tag_editform.text = str(form_path / file_name)
+                logger.debug(f'create_project: tag_editform.text={tag_editform.text}')
+
+        # Reset zoom
+        if len(zoom) == 0 or any([x is None for x in zoom]):
+            zoom = [0.0, 0.0, 100.0, 100.0]
+        for tag_extent in root.findall(".//mapcanvas/extent"):
+            for idx, name in enumerate(["xmin", "ymin", "xmax", "ymax"]):
+                element = tag_extent.find(f"./{name}")
+                if element is not None:
+                    element.text = "{:.3f}".format(zoom[idx])
+
+        # Set path to database
         for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
-            text = tag_datasource.text
-            if not text or text[:6] != "dbname":
-                continue
-
+            text = tag_datasource.text or ""
             tag_datasource.text = (
                 "dbname='" + datasource + "' " + text[text.find("table=") :]
             )
 
-        qgsxml.write(projectfile)  # writing modified project file
+        # writing modified project file
+        qgsxml.write(projectfile)
         logger.debug("Projektdatei: {}".format(projectfile))
-        # logger.debug(u'encoded string: {}'.format(tex))
 
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen

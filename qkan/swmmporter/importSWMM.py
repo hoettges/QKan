@@ -477,11 +477,9 @@ class SWMM:
 
         srid = self.dbQK.fetchone()[0]
         try:
-            crs = QgsCoordinateReferenceSystem(
-                srid, QgsCoordinateReferenceSystem.EpsgCrsId
-            )
+            crs = QgsCoordinateReferenceSystem.fromEpsgId(srid)
             srsid = crs.srsid()
-            proj4text = crs.toProj4()
+            proj4text = crs.toProj()
             description = crs.description()
             projectionacronym = crs.projectionAcronym()
             if "ellipsoidAcronym" in dir(crs):

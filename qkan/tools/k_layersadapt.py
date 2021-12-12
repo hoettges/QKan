@@ -401,9 +401,7 @@ def layersadapt(
                 else:
                     logger.debug("\nTabelle hat kein KBS: {}\n".format(datasource))
 
-                crs = QgsCoordinateReferenceSystem(
-                    epsg, QgsCoordinateReferenceSystem.EpsgCrsId
-                )
+                crs = QgsCoordinateReferenceSystem.fromEpsgId(epsg)
                 if crs.isValid():
                     layer.setCrs(crs)
                     logger.debug(
