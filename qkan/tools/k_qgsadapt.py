@@ -195,7 +195,7 @@ def qgsadapt(
                     ET.SubElement(tag_spatialrefsys, "srid").text = f"{srid}"
                     ET.SubElement(tag_spatialrefsys, "proj4").text = proj4
                     ET.SubElement(tag_spatialrefsys, "srsid").text = f"{srsid}"
-                    ET.SubElement(tag_spatialrefsys, "authid").text = f"EPSG: {srid}"
+                    ET.SubElement(tag_spatialrefsys, "authid").text = f"EPSG:{srid}"
                     ET.SubElement(tag_spatialrefsys, "description").text = description
                     ET.SubElement(tag_spatialrefsys, "projectionacronym").text = projection_acronym
                     if ellipsoid_acronym is not None:
@@ -213,7 +213,7 @@ def qgsadapt(
             ET.SubElement(tag_spatialrefsys, "srid").text = f"{srid}"
             ET.SubElement(tag_spatialrefsys, "proj4").text = proj4
             ET.SubElement(tag_spatialrefsys, "srsid").text = f"{srsid}"
-            ET.SubElement(tag_spatialrefsys, "authid").text = f"EPSG: {srid}"
+            ET.SubElement(tag_spatialrefsys, "authid").text = f"EPSG:{srid}"
             ET.SubElement(tag_spatialrefsys, "description").text = description
             ET.SubElement(tag_spatialrefsys, "projectionacronym").text = projection_acronym
             if ellipsoid_acronym is not None:
@@ -229,7 +229,7 @@ def qgsadapt(
             ET.SubElement(tag_spatialrefsys, "srid").text = f"{srid}"
             ET.SubElement(tag_spatialrefsys, "proj4").text = proj4
             ET.SubElement(tag_spatialrefsys, "srsid").text = f"{srsid}"
-            ET.SubElement(tag_spatialrefsys, "authid").text = f"EPSG: {srid}"
+            ET.SubElement(tag_spatialrefsys, "authid").text = f"EPSG:{srid}"
             ET.SubElement(tag_spatialrefsys, "description").text = description
             ET.SubElement(tag_spatialrefsys, "projectionacronym").text = projection_acronym
             if ellipsoid_acronym is not None:
