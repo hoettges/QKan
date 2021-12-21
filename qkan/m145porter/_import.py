@@ -315,39 +315,6 @@ class ImportTask:
         #x = tree.xpath('namespace-uri(.)')
         #self.NS = {"d": x}
 
-    def _consume_smp_block(self,
-            _block: ElementTree.Element,
-    ) -> Tuple[str, int, float, float, float]:
-        name = _block.findtext("KG001", "not found")
-        knoten_typ = 0
-
-        for _schacht in _block.findall("KG"):
-            knoten_typ = _strip_int(_schacht.findtext("KG305", -1))
-
-        smp = _block.find(
-            "KG/GO/GP"
-        )
-
-        if not smp:
-            fehlermeldung(
-                "Fehler beim XML-Import: Schächte",
-                f'Keine Geometrie "SMP" für Schacht {name}',
-            )
-            xsch, ysch, sohlhoehe = (0.0,) * 3
-        else:
-            xsch = _strip_float(smp.findtext("GP003", 0.0))
-            if xsch == 0.0:
-                xsch = _strip_float(smp.findtext("GP005", 0.0))
-            else:
-                pass
-            ysch = _strip_float(smp.findtext("GP004", 0.0))
-            if ysch == 0.0:
-                ysch = _strip_float(smp.findtext("GP006", 0.0))
-            else:
-                pass
-            sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
-        return name, knoten_typ, xsch, ysch, sohlhoehe
-
     def run(self) -> bool:
         self._init_mappers()
         if getattr(QKan.config.xml, "import_stamm", True):
@@ -449,14 +416,12 @@ class ImportTask:
 
                 knoten_typ = block.findtext("KG305", -1)
 
-                smp = block.find(
-                    "GO/GP"
-                )
+                smp = block.find("GO[GO002='G']/GP")
 
                 if not smp:
                     fehlermeldung(
                         "Fehler beim XML-Import: Schächte",
-                        f'Keine Geometrie "SMP" für Schacht {name}',
+                        f'Keine Geometrie "SMP[G=002=\'G\']" für Schacht {name}',
                     )
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:
@@ -472,19 +437,19 @@ class ImportTask:
                         pass
                     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
+                smpD = block.find("GO[GO002='D']/GP")
+
+                deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
+                if name == '13358032':
+                    print(f"Deckelhöhe von Schacht 13358032: {deckelhoehe}")
+
 
                 yield Schacht(
                     schnam=name,
                     xsch=xsch,
                     ysch=ysch,
                     sohlhoehe=sohlhoehe,
-                    deckelhoehe=_strip_float(
-                        block.findtext(
-                            "Geometrie/Geometriedaten/Knoten"
-                            "/Punkt[PunktattributAbwasser='DMP']/Punkthoehe",
-                            0.0
-                        )
-                    ),
+                    deckelhoehe=deckelhoehe,
                     durchm=_strip_int(block.findtext("KG309", 0)),
                     entwart=block.findtext("KG302", "not found"),
                     strasse=block.findtext("KG102", "not found"),
@@ -874,14 +839,12 @@ class ImportTask:
 
                 knoten_typ = block.findtext("KG305", -1)
 
-                smp = block.find(
-                    "GO/GP"
-                )
+                smp = block.find("GO[GO002='G']/GP")
 
                 if not smp:
                     fehlermeldung(
                         "Fehler beim XML-Import: Schächte",
-                        f'Keine Geometrie "SMP" für Schacht {name}',
+                        f'Keine Geometrie "SMP[G=002=\'G\']" für Schacht {name}',
                     )
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:
@@ -897,19 +860,19 @@ class ImportTask:
                         pass
                     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
+                smpD = block.find("GO[GO002='D']/GP")
+
+                deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
+                if name == '13358032':
+                    print(f"Deckelhöhe von Schacht 13358032: {deckelhoehe}")
+
 
                 yield Schacht(
                     schnam=name,
                     xsch=xsch,
                     ysch=ysch,
                     sohlhoehe=sohlhoehe,
-                    deckelhoehe=_strip_float(
-                        block.findtext(
-                            "Geometrie/Geometriedaten/Knoten"
-                            "/Punkt[PunktattributAbwasser='DMP']/Punkthoehe",
-                            0.0
-                        )
-                    ),
+                    deckelhoehe=deckelhoehe,
                     durchm=_strip_int(block.findtext("KG309", 0)),
                     entwart=block.findtext("KG302", "not found"),
                     strasse=block.findtext("KG102", "not found"),
@@ -1127,60 +1090,56 @@ class ImportTask:
                 yschun = 0.0
                 x=0
 
-                for _haltung in block.findall(
-                        "GO/GP[GP999='S']"
-                ):
+                for _gp in block.findall("GO[GO002='H']/GP"):
                     if x == 0:
-                        xschob = _strip_float(_haltung.findtext("GP003", 0.0))
+                        xschob = _strip_float(_gp.findtext("GP003", 0.0))
                         if xschob == 0.0:
-                            xschob = _strip_float(_haltung.findtext("GP005", 0.0))
-                            print(str(xschob))
-                        yschob = _strip_float(_haltung.findtext("GP004", 0.0))
+                            xschob = _strip_float(_gp.findtext("GP005", 0.0))
+                        yschob = _strip_float(_gp.findtext("GP004", 0.0))
                         if yschob == 0.0:
-                            yschob = _strip_float(_haltung.findtext("GP006", 0.0))
+                            yschob = _strip_float(_gp.findtext("GP006", 0.0))
                         deckeloben = _strip_float(
-                            _haltung.findtext("GP007", 0.0)
+                            _gp.findtext("GP007", 0.0)
                         )
 
                     if x == 1:
-                        xschun = _strip_float(_haltung.findtext("GP003", 0.0))
+                        xschun = _strip_float(_gp.findtext("GP003", 0.0))
                         if xschun == 0.0:
-                            xschun = _strip_float(_haltung.findtext("GP005", 0.0))
-                            print(str(xschun))
-                        yschun = _strip_float(_haltung.findtext("GP004", 0.0))
+                            xschun = _strip_float(_gp.findtext("GP005", 0.0))
+                        yschun = _strip_float(_gp.findtext("GP004", 0.0))
                         if yschun == 0.0:
-                            yschun = _strip_float(_haltung.findtext("GP006", 0.0))
+                            yschun = _strip_float(_gp.findtext("GP006", 0.0))
                         deckelunten = _strip_float(
-                            _haltung.findtext("GP007", 0.0)
+                            _gp.findtext("GP007", 0.0)
                         )
                     x += 1
 
                 if xschob== 0.0 and yschob== 0.0:
-                    for _haltung in block.findall(
-                            "GO/GP[1]"
+                    for _gp in block.findall(
+                            "GO[GO002='H']/GP[1]"
                     ):
-                        xschob = _strip_float(_haltung.findtext("GP003", 0.0))
+                        xschob = _strip_float(_gp.findtext("GP003", 0.0))
                         if xschob == 0.0:
-                            xschob = _strip_float(_haltung.findtext("GP005", 0.0))
-                        yschob = _strip_float(_haltung.findtext("GP004", 0.0))
+                            xschob = _strip_float(_gp.findtext("GP005", 0.0))
+                        yschob = _strip_float(_gp.findtext("GP004", 0.0))
                         if yschob == 0.0:
-                            yschob = _strip_float(_haltung.findtext("GP006", 0.0))
+                            yschob = _strip_float(_gp.findtext("GP006", 0.0))
                         deckeloben = _strip_float(
-                            _haltung.findtext("GP007", 0.0)
+                            _gp.findtext("GP007", 0.0)
                         )
 
                 if xschun == 0.0 and yschun == 0.0:
-                    for _haltung in block.findall(
-                            "GO/GP[2]"
+                    for _gp in block.findall(
+                            "GO[GO002='H']/GP[2]"
                     ):
-                        xschun = _strip_float(_haltung.findtext("GP003", 0.0))
+                        xschun = _strip_float(_gp.findtext("GP003", 0.0))
                         if xschun == 0.0:
-                            xschun = _strip_float(_haltung.findtext("GP005", 0.0))
-                        yschun = _strip_float(_haltung.findtext("GP004", 0.0))
+                            xschun = _strip_float(_gp.findtext("GP005", 0.0))
+                        yschun = _strip_float(_gp.findtext("GP004", 0.0))
                         if yschun == 0.0:
-                            yschun = _strip_float(_haltung.findtext("GP006", 0.0))
+                            yschun = _strip_float(_gp.findtext("GP006", 0.0))
                         deckelunten = _strip_float(
-                            _haltung.findtext("GP007", 0.0)
+                            _gp.findtext("GP007", 0.0)
                         )
 
                 yield Haltung(
