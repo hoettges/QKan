@@ -219,6 +219,7 @@ class ImportTask:
                     y(PointN(ro.Geometry, -1)) AS yschun
                 FROM he.Rohr AS ro
                 INNER JOIN (SELECT Name, Deckelhoehe FROM he.Schacht
+                     UNION SELECT Name, Gelaendehoehe AS Deckelhoehe FROM he.Auslass
                      UNION SELECT Name, Gelaendehoehe AS Deckelhoehe FROM he.Speicherschacht) AS so
                 ON ro.Schachtoben = so.Name 
                 INNER JOIN (SELECT Name, Deckelhoehe FROM he.Schacht
@@ -274,6 +275,7 @@ class ImportTask:
                     we.Lastmodified AS createdat
                 FROM he.Wehr AS we
                 LEFT JOIN (SELECT Name, Deckelhoehe FROM he.Schacht
+                     UNION SELECT Name, Gelaendehoehe AS deckelhoehe FROM he.Auslass
                      UNION SELECT Name, Gelaendehoehe AS deckelhoehe FROM he.Speicherschacht) AS so
                 ON we.Schachtoben = so.Name 
                 LEFT JOIN (SELECT Name, Deckelhoehe FROM he.Schacht
@@ -318,6 +320,7 @@ class ImportTask:
                     pu.Lastmodified AS createdat
                 FROM he.Pumpe AS pu
                 LEFT JOIN (SELECT Name FROM he.Schacht
+                     UNION SELECT Name FROM he.Auslass
                      UNION SELECT Name FROM he.Speicherschacht) AS so
                 ON pu.Schachtoben = SO.Name 
                 LEFT JOIN (SELECT Name FROM he.Schacht
