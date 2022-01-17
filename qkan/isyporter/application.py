@@ -103,6 +103,9 @@ class IsyPorter(QKanPlugin):
     def run_import(self) -> None:
         """Anzeigen des Importformulars ISYBAU-XML und anschließender Start des Import"""
 
+        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
+        self.import_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
+
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
@@ -195,27 +198,30 @@ class IsyPorter(QKanPlugin):
         imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice, QKan.config.xml.ordner_bild, QKan.config.xml.ordner_video )
         imp.run()
 
-        QKan.config.project.template = str(
-            Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-        )
+        # Write and load new project file, only if new project
+        if QgsProject.instance().fileName() == '':
 
-        qgsadapt(
-            QKan.config.database.qkan,
-            db_qkan,
-            QKan.config.project.file,
-            QKan.config.project.template,
-            QKan.config.epsg,
-        )
+            QKan.config.project.template = str(
+                Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
+            )
+
+            qgsadapt(
+                QKan.config.database.qkan,
+                db_qkan,
+                QKan.config.project.file,
+                QKan.config.project.template,
+                QKan.config.epsg,
+            )
+
+            # Load generated project
+            # noinspection PyArgumentList
+            project = QgsProject.instance()
+            project.read(QKan.config.project.file)
+            project.reloadAllLayers()
+
+            # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
 
         del db_qkan
         self.log.debug("Closed DB")
-
-        # Load generated project
-        # noinspection PyArgumentList
-        project = QgsProject.instance()
-        project.read(QKan.config.project.file)
-        project.reloadAllLayers()
-
-        # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
 
         return True

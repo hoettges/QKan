@@ -145,7 +145,6 @@ class He8Porter(QKanPlugin):
         # Für Test muss noch die Datenbankverbindung hergestellt werden
         if not self.db_qkan:
             self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
-            dbname = self.db_qkan.dbname
 
         # Zieldatenbank aus Vorlage kopieren
         if os.path.exists(QKan.config.he8.template):
@@ -178,6 +177,9 @@ class He8Porter(QKanPlugin):
 
     def run_import(self) -> None:
         """Anzeigen des Importformulars HE8 und anschließender Start des Import aus einer HE8-Datenbank"""
+
+        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
+        self.import_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
 
         self.import_dlg.show()
 
@@ -262,11 +264,6 @@ class He8Porter(QKanPlugin):
 
                     self._doimport()
 
-                    # Load generated project
-                    # noinspection PyArgumentList
-                    project = QgsProject.instance()
-                    project.read(QKan.config.project.file)
-                    project.reloadAllLayers()
 
     def _doimport(self) -> bool:
         """Start des Import aus einer HE8-Datenbank
@@ -303,16 +300,24 @@ class He8Porter(QKanPlugin):
 
         eval_node_types(db_qkan)  # in qkan.database.qkan_utils
 
-        QKan.config.project.template = str(
-            Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-        )
-        qgsadapt(
-            QKan.config.database.qkan,
-            db_qkan,
-            QKan.config.project.file,
-            QKan.config.project.template,
-            QKan.config.epsg,
-        )
+        # Write and load new project file, only if new project
+        if QgsProject.instance().fileName() == '':
+            QKan.config.project.template = str(
+                Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
+            )
+            qgsadapt(
+                QKan.config.database.qkan,
+                db_qkan,
+                QKan.config.project.file,
+                QKan.config.project.template,
+                QKan.config.epsg,
+            )
+
+            # Load generated project
+            # noinspection PyArgumentList
+            project = QgsProject.instance()
+            project.read(QKan.config.project.file)
+            project.reloadAllLayers()
 
         del db_qkan
         self.log.debug("Closed DB")

@@ -330,333 +330,334 @@ def import_kanaldaten(
 
     try:
         profilnam = ""
-        for zeile in open(dynafile, encoding="windows-1252"):
-            if zeile[0:2] == "##":
-                continue  # Kommentarzeile wird übersprungen
+        with open(dynafile, encoding="windows-1252") as frobj:
+            for zeile in frobj:
+                if zeile[0:2] == "##":
+                    continue  # Kommentarzeile wird übersprungen
 
-            # Zuerst werden Abschnitte mit besonderen Daten bearbeitet (Profildaten etc.)
-            if profilmodus >= 0:
-                if profilmodus == 0:
-                    # Bezeichnung des gesamten Profile-Blocks. Wird nicht weiter verwendet
-                    profilmodus = 1
-                    grenzen = Rahmen()  # Grenzen-Objekt erstellen
-                    continue
-                elif profilmodus == 2:
-                    # Profilnr.
+                # Zuerst werden Abschnitte mit besonderen Daten bearbeitet (Profildaten etc.)
+                if profilmodus >= 0:
+                    if profilmodus == 0:
+                        # Bezeichnung des gesamten Profile-Blocks. Wird nicht weiter verwendet
+                        profilmodus = 1
+                        grenzen = Rahmen()  # Grenzen-Objekt erstellen
+                        continue
+                    elif profilmodus == 2:
+                        # Profilnr.
 
-                    profil_key = zeile.strip()
-                    profilmodus = 3
-                    continue
-                elif profilmodus == 3:
-                    # Erster Profilpunkt
-                    werte = (
-                        zeile.strip()[1:-2]
-                        .replace(")(", ",")
-                        .replace(")", ",")
-                        .split(",")
-                    )
-                    if len(werte) != 2:
-                        logger.error(
-                            "Erste Zeile von Profil {} ist keine Punktkoordinate: {}".format(
-                                profilnam, zeile
-                            )
-                        )
-                    xp, yp = [float(w) for w in werte]
-                    grenzen.reset(xp, yp)
-
-                    plmodus = "Linie"  # Alternative: 'Kreis'
-                    profilmodus = 1
-                    x1, y1 = (
-                        xp,
-                        yp,
-                    )  # Punkt als Startpunkt für nächstes Teilstück speichern
-                    continue
-                elif profilmodus == 1:
-                    # weitere Profilpunkte, nächstes Profil oder Ende der Profile
-                    if zeile[0:1] == "(":
-                        # profilmodus == 1, weitere Profilpunkte
+                        profil_key = zeile.strip()
+                        profilmodus = 3
+                        continue
+                    elif profilmodus == 3:
+                        # Erster Profilpunkt
                         werte = (
                             zeile.strip()[1:-2]
                             .replace(")(", ",")
                             .replace(")", ",")
                             .split(",")
                         )
-                        nargs = len(werte)
-
-                        if nargs == 2:
-                            # Geradensegment
-                            xp, yp = cast(
-                                Tuple[float, float], [float(w) for w in werte]
+                        if len(werte) != 2:
+                            logger.error(
+                                "Erste Zeile von Profil {} ist keine Punktkoordinate: {}".format(
+                                    profilnam, zeile
+                                )
                             )
-                            grenzen.line(
-                                cast(float, x1),
-                                cast(float, y1),
-                                xp,
-                                yp,
-                            )  # Grenzen aktualisieren
-                            x1, y1 = (
-                                xp,
-                                yp,
-                            )  # Punkt als Startpunkt für nächstes Teilstück speichern
+                        xp, yp = [float(w) for w in werte]
+                        grenzen.reset(xp, yp)
 
-                        elif nargs == 3:
-                            # Polyliniensegment mit Radius und Endpunkt
-                            xp, yp, radius = cast(
-                                Tuple[float, float, float], [float(w) for w in werte]
-                            )
-                            grenzen.line(
-                                cast(float, x1), cast(float, y1), xp, yp
-                            )  # Grenzen mit Stützstellen aktualisieren
-                            grenzen.ppr(
-                                cast(float, x1),
-                                cast(float, y1),
-                                xp,
-                                yp,
-                                radius,
-                            )  # Grenzen für äußeren Punkt des Bogens aktualisieren
-                            x1, y1 = (
-                                xp,
-                                yp,
-                            )  # Punkt als Startpunkt für nächstes Teilstück speichern
-
-                        elif nargs == 4:
-                            # Polyliniensegment mit Punkt auf Bogen und Endpunkt
-                            xm, ym, xp, yp = cast(
-                                Tuple[float, float, float, float],
-                                [float(w) for w in werte],
-                            )
-                            grenzen.line(
-                                cast(float, x1), cast(float, y1), xm, ym
-                            )  # Grenzen mit Stützstellen aktualisieren
-                            grenzen.p(xp, yp)  # Grenzen mit Stützstellen aktualisieren
-                            grenzen.ppp(
-                                cast(float, x1), cast(float, y1), xm, ym, xp, yp
-                            )  # Grenzen für äußere Punkte des Bogens aktualisieren
-                            x1, y1 = (
-                                xp,
-                                yp,
-                            )  # Punkt als Startpunkt für nächstes Teilstück speichern
-
+                        plmodus = "Linie"  # Alternative: 'Kreis'
+                        profilmodus = 1
+                        x1, y1 = (
+                            xp,
+                            yp,
+                        )  # Punkt als Startpunkt für nächstes Teilstück speichern
                         continue
-                    else:
-                        # Nächstes Profil oder Ende Querprofile (=Ende des aktuellen Profils)
+                    elif profilmodus == 1:
+                        # weitere Profilpunkte, nächstes Profil oder Ende der Profile
+                        if zeile[0:1] == "(":
+                            # profilmodus == 1, weitere Profilpunkte
+                            werte = (
+                                zeile.strip()[1:-2]
+                                .replace(")(", ",")
+                                .replace(")", ",")
+                                .split(",")
+                            )
+                            nargs = len(werte)
 
-                        # Beschriftung des Profils. Grund: Berechnung von Breite und Höhe ist erst nach
-                        # Einlesen aller Profilzeilen möglich.
+                            if nargs == 2:
+                                # Geradensegment
+                                xp, yp = cast(
+                                    Tuple[float, float], [float(w) for w in werte]
+                                )
+                                grenzen.line(
+                                    cast(float, x1),
+                                    cast(float, y1),
+                                    xp,
+                                    yp,
+                                )  # Grenzen aktualisieren
+                                x1, y1 = (
+                                    xp,
+                                    yp,
+                                )  # Punkt als Startpunkt für nächstes Teilstück speichern
 
-                        # Erst wenn das erste Profil eingelesen wurde
-                        if x1 is not None:
-                            # Höhe zu Breite-Verhältnis berechnen
-                            breite = (grenzen.xmax - grenzen.xmin) / 1000.0
-                            hoehe = (grenzen.ymax - grenzen.ymin) / 1000.0
-                            sql = """INSERT INTO dynaprofil (profil_key, profilnam, breite, hoehe)
-                                        VALUES (?, ?, ?, ?)"""
-                            logger.debug("sql = {}".format(sql))
+                            elif nargs == 3:
+                                # Polyliniensegment mit Radius und Endpunkt
+                                xp, yp, radius = cast(
+                                    Tuple[float, float, float], [float(w) for w in werte]
+                                )
+                                grenzen.line(
+                                    cast(float, x1), cast(float, y1), xp, yp
+                                )  # Grenzen mit Stützstellen aktualisieren
+                                grenzen.ppr(
+                                    cast(float, x1),
+                                    cast(float, y1),
+                                    xp,
+                                    yp,
+                                    radius,
+                                )  # Grenzen für äußeren Punkt des Bogens aktualisieren
+                                x1, y1 = (
+                                    xp,
+                                    yp,
+                                )  # Punkt als Startpunkt für nächstes Teilstück speichern
+
+                            elif nargs == 4:
+                                # Polyliniensegment mit Punkt auf Bogen und Endpunkt
+                                xm, ym, xp, yp = cast(
+                                    Tuple[float, float, float, float],
+                                    [float(w) for w in werte],
+                                )
+                                grenzen.line(
+                                    cast(float, x1), cast(float, y1), xm, ym
+                                )  # Grenzen mit Stützstellen aktualisieren
+                                grenzen.p(xp, yp)  # Grenzen mit Stützstellen aktualisieren
+                                grenzen.ppp(
+                                    cast(float, x1), cast(float, y1), xm, ym, xp, yp
+                                )  # Grenzen für äußere Punkte des Bogens aktualisieren
+                                x1, y1 = (
+                                    xp,
+                                    yp,
+                                )  # Punkt als Startpunkt für nächstes Teilstück speichern
+
+                            continue
+                        else:
+                            # Nächstes Profil oder Ende Querprofile (=Ende des aktuellen Profils)
+
+                            # Beschriftung des Profils. Grund: Berechnung von Breite und Höhe ist erst nach
+                            # Einlesen aller Profilzeilen möglich.
+
+                            # Erst wenn das erste Profil eingelesen wurde
+                            if x1 is not None:
+                                # Höhe zu Breite-Verhältnis berechnen
+                                breite = (grenzen.xmax - grenzen.xmin) / 1000.0
+                                hoehe = (grenzen.ymax - grenzen.ymin) / 1000.0
+                                sql = """INSERT INTO dynaprofil (profil_key, profilnam, breite, hoehe)
+                                            VALUES (?, ?, ?, ?)"""
+                                logger.debug("sql = {}".format(sql))
+                                if not db_qkan.sql(
+                                    sql,
+                                    "importkanaldaten_kp (1)",
+                                    parameters=(profil_key, profilnam, breite, hoehe),
+                                ):
+                                    del db_qkan
+                                    return False
+
+                            if zeile[0:2] != "++":
+                                # Profilname
+                                profilnam = zeile.strip()
+                                profilmodus = 2
+                                continue
+                            else:
+                                # Ende Block Querprofile (es sind mehrere möglich!)
+                                profilmodus = -1
+                                x1 = y1 = None
+
+                # Optionen und Daten
+                if zeile[0:6] == "++QUER":
+                    profilmodus = 0
+
+                elif zeile[0:6] == "++KANA" and not status_einw:
+                    status_einw = "EINW" in zeile
+
+                elif zeile[0:2] == "05":
+                    ks_key = zeile[3:4].strip()
+                    abflspende = float("0" + zeile[10:20].strip())
+                    ks = float("0" + zeile[20:30].strip())
+
+                    if not db_qkan.sql(
+                        "INSERT INTO dynarauheit (ks_key, ks) Values (?, ?)",
+                        "importkanaldaten_kp (2)",
+                        parameters=(ks_key, ks),
+                    ):
+                        del db_qkan
+                        return False
+
+                elif zeile[0:2] == "12":
+
+                    n = 1
+                    kanalnummer = zeile[6:14].lstrip("0 ").replace(" ", "0")
+                    n = 3  # wegen der merkwürdigen DYNA-Logik für Kanalnamen
+                    haltungsnummer = str(int("0" + zeile[14:17].strip()))
+                    n = 4
+                    if (kanalnummer, haltungsnummer) != (
+                        kanalnummer_vor,
+                        haltungnummer_vor,
+                    ):
+                        kanalnummer_vor, haltungnummer_vor = (
+                            kanalnummer,
+                            haltungsnummer,
+                        )  # doppelte Haltungen werden übersprungen, weil Flächen-
+                        # daten z.Zt. nicht eingelesen werden.
+                        try:
+                            strschluessel = zeile[2:6].strip()
+                            n = 2
+                            laenge = fzahl(zeile[17:24])
+                            n = 5
+                            deckeloben = fzahl(zeile[24:31])
+                            n = 6
+                            sohleoben = fzahl(zeile[31:38])
+                            n = 7
+                            sohleunten = fzahl(zeile[38:45])
+                            n = 8
+                            material = zeile[45:46]
+                            n = 9
+                            profil_key = zeile[46:48].strip()
+                            n = 10
+                            hoehe = fzahl(zeile[48:52]) / 1000.0
+                            n = 11
+                            ks_key = zeile[52:53].strip()
+                            n = 12
+                            flaeche = fzahl(zeile[71:76]) * 10000.0
+                            n = 20
+                            flaecheund = round(fzahl(zeile[53:55]) / 100.0 * flaeche, 1)
+                            n = 13
+                            qgewerbeind = zeile[55:56].strip()
+                            n = 14
+                            qfremdind = zeile[56:57].strip()
+                            n = 15
+                            zuflussid = zeile[57:58]
+                            n = 16
+                            qzu = fzahl(zeile[58:63])
+                            n = 17
+                            if status_einw:
+                                ew = fzahl(zeile[63:66])
+                                n = 18
+                            else:
+                                ew = fzahl(zeile[63:66]) * flaeche / 10000.0
+                            flaechenid = zeile[66:71]
+                            n = 19
+                            neigkl = int("0" + zeile[76:77].strip())
+                            n = 21
+                            entwart_nr = int("0" + zeile[77:78].strip())
+                            n = 22
+                            simstatus_nr = int("0" + zeile[78:79].strip())
+                            n = 23
+                            haeufigkeit = int("0" + zeile[80:81].strip())
+                            n = 24
+                            schoben = zeile[81:93].strip()
+                            n = 25
+                            schunten = zeile[94:106].strip()
+                            n = 26
+                            xob = fzahl(zeile[106:120])
+                            n = 27
+                            yob = fzahl(zeile[120:134])
+                            n = 28
+                            schdmoben = fzahl(zeile[180:187])
+                        except BaseException as err:
+                            fehlermeldung(
+                                "Programmfehler", "import_from_dyna.importKanaldaten (1)"
+                            )
+                            logger.error(
+                                "12er: Wert Nr. {} - {}\nZeile: {}".format(n, err, zeile)
+                            )
+                            del db_qkan
+                            return False
+
+                        try:
+                            sql = """
+                            INSERT INTO dyna12
+                            (kanalnummer, haltungsnummer, schoben, schunten,
+                            xob, yob, laenge, deckeloben, sohleoben, sohleunten,
+                            material, profil_key, hoehe, ks_key, flaeche, flaecheund, neigkl,
+                            entwart_nr, simstatus_nr, 
+                            flaechenid, strschluessel, haeufigkeit, schdmoben)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            """
+
+                        except BaseException as err:
+                            logger.error("12er: {}\n{}".format(err, zeile))
+                        else:
                             if not db_qkan.sql(
                                 sql,
-                                "importkanaldaten_kp (1)",
-                                parameters=(profil_key, profilnam, breite, hoehe),
+                                "importkanaldaten_dyna import typ12",
+                                parameters=(
+                                    kanalnummer,
+                                    haltungsnummer,
+                                    schoben,
+                                    schunten,
+                                    xob,
+                                    yob,
+                                    laenge,
+                                    deckeloben,
+                                    sohleoben,
+                                    sohleunten,
+                                    material,
+                                    profil_key,
+                                    hoehe,
+                                    ks_key,
+                                    flaeche,
+                                    flaecheund,
+                                    neigkl,
+                                    entwart_nr,
+                                    simstatus_nr,
+                                    flaechenid,
+                                    strschluessel,
+                                    haeufigkeit,
+                                    schdmoben,
+                                ),
                             ):
                                 del db_qkan
                                 return False
 
-                        if zeile[0:2] != "++":
-                            # Profilname
-                            profilnam = zeile.strip()
-                            profilmodus = 2
-                            continue
-                        else:
-                            # Ende Block Querprofile (es sind mehrere möglich!)
-                            profilmodus = -1
-                            x1 = y1 = None
-
-            # Optionen und Daten
-            if zeile[0:6] == "++QUER":
-                profilmodus = 0
-
-            elif zeile[0:6] == "++KANA" and not status_einw:
-                status_einw = "EINW" in zeile
-
-            elif zeile[0:2] == "05":
-                ks_key = zeile[3:4].strip()
-                abflspende = float("0" + zeile[10:20].strip())
-                ks = float("0" + zeile[20:30].strip())
-
-                if not db_qkan.sql(
-                    "INSERT INTO dynarauheit (ks_key, ks) Values (?, ?)",
-                    "importkanaldaten_kp (2)",
-                    parameters=(ks_key, ks),
-                ):
-                    del db_qkan
-                    return False
-
-            elif zeile[0:2] == "12":
-
-                n = 1
-                kanalnummer = zeile[6:14].lstrip("0 ").replace(" ", "0")
-                n = 3  # wegen der merkwürdigen DYNA-Logik für Kanalnamen
-                haltungsnummer = str(int("0" + zeile[14:17].strip()))
-                n = 4
-                if (kanalnummer, haltungsnummer) != (
-                    kanalnummer_vor,
-                    haltungnummer_vor,
-                ):
-                    kanalnummer_vor, haltungnummer_vor = (
-                        kanalnummer,
-                        haltungsnummer,
-                    )  # doppelte Haltungen werden übersprungen, weil Flächen-
-                    # daten z.Zt. nicht eingelesen werden.
+                elif zeile[0:2] == "41":
                     try:
-                        strschluessel = zeile[2:6].strip()
-                        n = 2
-                        laenge = fzahl(zeile[17:24])
+                        n = 1
+                        kanalnummer = zeile[6:14].lstrip("0 ").replace(" ", "0")
+                        n = 2  # wegen der eigenwilligen DYNA-Logik für Kanalnamen;
+                        haltungsnummer = zeile[14:17]
+                        n = 3
+                        deckelhoehe = fzahl(zeile[24:31])
+                        n = 4
+                        xkoor = fzahl(zeile[31:45])
                         n = 5
-                        deckeloben = fzahl(zeile[24:31])
+                        ykoor = fzahl(zeile[45:59])
                         n = 6
-                        sohleoben = fzahl(zeile[31:38])
+                        schnam = zeile[59:71].strip()
                         n = 7
-                        sohleunten = fzahl(zeile[38:45])
-                        n = 8
-                        material = zeile[45:46]
-                        n = 9
-                        profil_key = zeile[46:48].strip()
-                        n = 10
-                        hoehe = fzahl(zeile[48:52]) / 1000.0
-                        n = 11
-                        ks_key = zeile[52:53].strip()
-                        n = 12
-                        flaeche = fzahl(zeile[71:76]) * 10000.0
-                        n = 20
-                        flaecheund = round(fzahl(zeile[53:55]) / 100.0 * flaeche, 1)
-                        n = 13
-                        qgewerbeind = zeile[55:56].strip()
-                        n = 14
-                        qfremdind = zeile[56:57].strip()
-                        n = 15
-                        zuflussid = zeile[57:58]
-                        n = 16
-                        qzu = fzahl(zeile[58:63])
-                        n = 17
-                        if status_einw:
-                            ew = fzahl(zeile[63:66])
-                            n = 18
-                        else:
-                            ew = fzahl(zeile[63:66]) * flaeche / 10000.0
-                        flaechenid = zeile[66:71]
-                        n = 19
-                        neigkl = int("0" + zeile[76:77].strip())
-                        n = 21
-                        entwart_nr = int("0" + zeile[77:78].strip())
-                        n = 22
-                        simstatus_nr = int("0" + zeile[78:79].strip())
-                        n = 23
-                        haeufigkeit = int("0" + zeile[80:81].strip())
-                        n = 24
-                        schoben = zeile[81:93].strip()
-                        n = 25
-                        schunten = zeile[94:106].strip()
-                        n = 26
-                        xob = fzahl(zeile[106:120])
-                        n = 27
-                        yob = fzahl(zeile[120:134])
-                        n = 28
-                        schdmoben = fzahl(zeile[180:187])
                     except BaseException as err:
-                        fehlermeldung(
-                            "Programmfehler", "import_from_dyna.importKanaldaten (1)"
-                        )
                         logger.error(
-                            "12er: Wert Nr. {} - {}\nZeile: {}".format(n, err, zeile)
+                            "16er: Wert Nr. {} - {}\nZeile: {}".format(n, err, zeile)
                         )
-                        del db_qkan
                         return False
 
-                    try:
-                        sql = """
-                        INSERT INTO dyna12
-                        (kanalnummer, haltungsnummer, schoben, schunten,
-                        xob, yob, laenge, deckeloben, sohleoben, sohleunten,
-                        material, profil_key, hoehe, ks_key, flaeche, flaecheund, neigkl,
-                        entwart_nr, simstatus_nr, 
-                        flaechenid, strschluessel, haeufigkeit, schdmoben)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """
-
-                    except BaseException as err:
-                        logger.error("12er: {}\n{}".format(err, zeile))
-                    else:
-                        if not db_qkan.sql(
-                            sql,
-                            "importkanaldaten_dyna import typ12",
-                            parameters=(
-                                kanalnummer,
-                                haltungsnummer,
-                                schoben,
-                                schunten,
-                                xob,
-                                yob,
-                                laenge,
-                                deckeloben,
-                                sohleoben,
-                                sohleunten,
-                                material,
-                                profil_key,
-                                hoehe,
-                                ks_key,
-                                flaeche,
-                                flaecheund,
-                                neigkl,
-                                entwart_nr,
-                                simstatus_nr,
-                                flaechenid,
-                                strschluessel,
-                                haeufigkeit,
-                                schdmoben,
-                            ),
-                        ):
-                            del db_qkan
-                            return False
-
-            elif zeile[0:2] == "41":
-                try:
-                    n = 1
-                    kanalnummer = zeile[6:14].lstrip("0 ").replace(" ", "0")
-                    n = 2  # wegen der eigenwilligen DYNA-Logik für Kanalnamen;
-                    haltungsnummer = zeile[14:17]
-                    n = 3
-                    deckelhoehe = fzahl(zeile[24:31])
-                    n = 4
-                    xkoor = fzahl(zeile[31:45])
-                    n = 5
-                    ykoor = fzahl(zeile[45:59])
-                    n = 6
-                    schnam = zeile[59:71].strip()
-                    n = 7
-                except BaseException as err:
-                    logger.error(
-                        "16er: Wert Nr. {} - {}\nZeile: {}".format(n, err, zeile)
-                    )
-                    return False
-
-                sql = """
-                INSERT INTO dyna41
-                (schnam, deckelhoehe, xkoor, ykoor, kanalnummer, haltungsnummer)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """
-                if not db_qkan.sql(
-                    sql,
-                    "importkanaldaten_dyna typ16",
-                    parameters=(
-                        schnam,
-                        deckelhoehe,
-                        xkoor,
-                        ykoor,
-                        kanalnummer,
-                        haltungsnummer,
-                    ),
-                ):
-                    del db_qkan
-                    return False
+                    sql = """
+                    INSERT INTO dyna41
+                    (schnam, deckelhoehe, xkoor, ykoor, kanalnummer, haltungsnummer)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """
+                    if not db_qkan.sql(
+                        sql,
+                        "importkanaldaten_dyna typ16",
+                        parameters=(
+                            schnam,
+                            deckelhoehe,
+                            xkoor,
+                            ykoor,
+                            kanalnummer,
+                            haltungsnummer,
+                        ),
+                    ):
+                        del db_qkan
+                        return False
     except BaseException as err:
         fehlermeldung(
             "Dateifehler",
@@ -854,18 +855,25 @@ def import_kanaldaten(
     eval_node_types(db_qkan)  # in qkan.database.qkan_utils
 
     # --------------------------------------------------------------------------
-    # Projektdatei schreiben
+    # Projektdatei schreiben und laden, nur wenn neues Projekt
 
-    QKan.config.project.template = str(
-        Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-    )
-    qgsadapt(
-        database_qkan,
-        db_qkan,
-        projectfile,
-        QKan.config.project.template,
-        epsg,
-    )
+    if QgsProject.instance().fileName() == '':
+
+        QKan.config.project.template = str(
+            Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
+        )
+        qgsadapt(
+            database_qkan,
+            db_qkan,
+            projectfile,
+            QKan.config.project.template,
+            epsg,
+        )
+
+        # noinspection PyArgumentList
+        project = QgsProject.instance()
+        project.read(projectfile)  # read the new project file
+
 
     # --------------------------------------------------------------------------
     # Datenbankverbindungen schliessen
@@ -883,10 +891,5 @@ def import_kanaldaten(
     QgsMessageLog.logMessage(
         message="\nFertig: Datenimport erfolgreich!", level=Qgis.Info
     )
-
-    # Importiertes Projekt laden
-    # noinspection PyArgumentList
-    project = QgsProject.instance()
-    project.read(projectfile)  # read the new project file
 
     return True

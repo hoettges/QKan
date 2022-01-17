@@ -260,7 +260,7 @@ class LinkFl(QKanPlugin):
             del self.db_qkan
             return
 
-        self.dlg_cl.count_selection()
+        self.dlg_cl.count_selection(self.db_qkan)
 
         # show the dialog
         self.dlg_cl.show()
@@ -465,7 +465,7 @@ class LinkFl(QKanPlugin):
         # Haltungen direkt in einleit eintragen. Es kann wegen der längeren Zeitdauer sinnvoll
         # sein, dies erst am Schluss der Bearbeitung in einem eigenen Vorgang zu machen.
 
-        self.dlg_sw.count_selection()
+        self.dlg_sw.count_selection(self.db_qkan)
 
         # show the dialog
         self.dlg_sw.show()

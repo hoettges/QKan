@@ -95,9 +95,14 @@ class Ganglinie8:
             res = self.__db.fetchall()
             for zeitpunkt_t, auslastung, durchfluss, geschwindigkeit, wassertiefe in res:
                 try:
-                    zeitpunkt = datetime.datetime.strptime(
-                        zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
-                    )
+                    if '.' in zeitpunkt_t:
+                        zeitpunkt = datetime.datetime.strptime(
+                            zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                        )
+                    else:
+                        zeitpunkt = datetime.datetime.strptime(
+                            zeitpunkt_t, "%Y-%m-%d %H:%M:%S"
+                        )
                     # self.__log.info(
                         # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
                     # )
@@ -135,9 +140,14 @@ class Ganglinie8:
             res = self.__db.fetchall()
             for zeitpunkt_t, zufluss, wasserstand, durchfluss, wassertiefe in res:
                 try:
-                    zeitpunkt = datetime.datetime.strptime(
-                        zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
-                    )
+                    if '.' in zeitpunkt_t:
+                        zeitpunkt = datetime.datetime.strptime(
+                            zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                        )
+                    else:
+                        zeitpunkt = datetime.datetime.strptime(
+                            zeitpunkt_t, "%Y-%m-%d %H:%M:%S"
+                        )
                     # self.__log.info(
                         # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
                     # )
