@@ -129,7 +129,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2">
+  <widget class="QGroupBox" name="gb_projectfile">
    <property name="geometry">
     <rect>
      <x>20</x>

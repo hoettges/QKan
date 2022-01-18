@@ -164,7 +164,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="gb_prjectfile">
+  <widget class="QGroupBox" name="gb_projectfile">
    <property name="geometry">
     <rect>
      <x>20</x>

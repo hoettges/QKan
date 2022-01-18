@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional, cast
 
-from qgis.core import Qgis, QgsCoordinateReferenceSystem
+from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
@@ -481,6 +481,8 @@ class ImportDialog(QKanDBDialog, IMPORT_CLASS):  # type: ignore
         self.qsw_epsg.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg))
 
         self.tf_projectFile.setText(QKan.config.project.file)
+        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
+        self.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
 
         # show the dialog
         self.show()

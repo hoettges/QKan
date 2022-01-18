@@ -181,6 +181,9 @@ class MuPorter(QKanPlugin):
     def run_import(self) -> None:
         """Anzeigen des Importformulars Mike+ und anschließender Start des Import aus einer Mike+-Datenbank"""
 
+        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
+        self.import_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
+
         self.import_dlg.show()
 
         if self.import_dlg.exec_():
@@ -297,26 +300,28 @@ class MuPorter(QKanPlugin):
         imp = ImportTask(db_qkan)
         imp.run()
 
-        QKan.config.project.template = str(
-            Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-        )
-        qgsadapt(
-            QKan.config.mu.database,
-            db_qkan,
-            QKan.config.project.file,
-            QKan.config.project.template,
-            QKan.config.epsg,
-        )
+        # Write and load new project file, only if new project
+        if QgsProject.instance().fileName() == '':
+            QKan.config.project.template = str(
+                Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
+            )
+            qgsadapt(
+                QKan.config.mu.database,
+                db_qkan,
+                QKan.config.project.file,
+                QKan.config.project.template,
+                QKan.config.epsg,
+            )
+
+            # Load generated project
+            # noinspection PyArgumentList
+            project = QgsProject.instance()
+            project.read(QKan.config.project.file)
+            project.reloadAllLayers()
+
+            # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
 
         del db_qkan
         self.log.debug("Closed DB")
-
-        # Load generated project
-        # noinspection PyArgumentList
-        project = QgsProject.instance()
-        project.read(QKan.config.project.file)
-        project.reloadAllLayers()
-
-        # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
 
         return True

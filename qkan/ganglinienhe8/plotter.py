@@ -469,9 +469,14 @@ class Animator:
             wasserstaende = self.__db.fetchall()
             for wasserstandoben, wasserstandunten, zeitpunkt_t in wasserstaende:
                 try:
-                    zeitpunkt = datetime.datetime.strptime(
-                        zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
-                    )
+                    if '.' in zeitpunkt_t:
+                        zeitpunkt = datetime.datetime.strptime(
+                            zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                        )
+                    else:
+                        zeitpunkt = datetime.datetime.strptime(
+                            zeitpunkt_t, "%Y-%m-%d %H:%M:%S"
+                        )
                     # self.__log.info(
                         # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
                     # )
@@ -495,9 +500,14 @@ class Animator:
             wasserstaende = self.__db.fetchall()
             for wasserstand, zeitpunkt_t in wasserstaende:
                 try:
-                    zeitpunkt = datetime.datetime.strptime(
-                        zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
-                    )
+                    if '.' in zeitpunkt_t:
+                        zeitpunkt = datetime.datetime.strptime(
+                            zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                        )
+                    else:
+                        zeitpunkt = datetime.datetime.strptime(
+                            zeitpunkt_t, "%Y-%m-%d %H:%M:%S"
+                        )
                 except BaseException as err:
                     main_logger.error(
                         f"qkan.ganglinienhe8.plotter (2): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"

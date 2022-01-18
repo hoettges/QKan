@@ -32,7 +32,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-116</y>
+        <y>0</y>
         <width>493</width>
         <height>668</height>
        </rect>
@@ -226,7 +226,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QgsProjectionSelectionWidget" name="epsg" native="true"/>
+            <widget class="QgsProjectionSelectionWidget" name="epsg"/>
            </item>
           </layout>
          </widget>
@@ -487,7 +487,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QGroupBox" name="groupBox_2">
+        <widget class="QGroupBox" name="gb_projectfile">
          <property name="minimumSize">
           <size>
            <width>0</width>
