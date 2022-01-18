@@ -112,6 +112,8 @@ class QKan:
         from .m145porter import M145Porter
         from .ganglinienhe8 import GanglinienHE8
         from .datacheck import Plausi
+        from .zustandsklassen import zustandsklassen
+        from .sanierungsbedarfszahl import sanierungsbedarfszahl
 
         self.plugins: List = [
             CreateUnbefFl(iface),
@@ -126,6 +128,9 @@ class QKan:
             M145Porter(iface),
             GanglinienHE8(iface),
             Plausi(iface),
+            zustandsklassen(iface),
+            sanierungsbedarfszahl(iface),
+
         ]
 
         actions = cast(QMenuBar, self.iface.mainWindow().menuBar()).actions()

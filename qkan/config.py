@@ -447,6 +447,17 @@ class XmlConfig(ClassObject):
     import_haus: bool = True
     import_zustand: bool = True
 
+class ZustandConfig(ClassObject):
+    db: str = ""
+    date: str = ""
+
+class SanierungConfig(ClassObject):
+    db: str = ""
+    date: str = ""
+    speicher: str = ""
+    atlas: str = ""
+    speicher2: str = ""
+
 
 class PlausiConfig(ClassObject):
     """Einstellungen der Plausibilitätskontrolle datacheck"""
@@ -477,6 +488,8 @@ class Config(ClassObject):
     tools: ToolsConfig = ToolsConfig()
     xml: XmlConfig = XmlConfig()
     plausi: PlausiConfig = PlausiConfig()
+    zustand: ZustandConfig = ZustandConfig()
+    sanierung: SanierungConfig = SanierungConfig()
 
     def __init__(self, **kwargs: Any):
         super().__init__(**kwargs)

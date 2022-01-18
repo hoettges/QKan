@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/qkan/zustandsklassen" >
+        <file>res/icon_zustandsklassen.png</file>
+    </qresource>
+</RCC>
