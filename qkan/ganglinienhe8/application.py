@@ -36,6 +36,7 @@ from qgis.gui import QgisInterface
 
 from qkan import QKan
 from qkan.database.sbfunc import SBConnection
+from qkan.database.qkan_utils import get_qkanlayer_attributes
 
 # noinspection PyUnresolvedReferences
 from . import plotter, resources, slider as s  # isort:skip
@@ -312,21 +313,17 @@ class GanglinienHE8:
         :rtype: LayerType
         """
         layer_source = layer.source()
-        kvp = layer_source.split(" ")
-        name = ""
-        for kv in kvp:
-            if kv.startswith("table"):
-                name = kv.split("=")[1][1:-1]
-            elif kv.startswith("dbname") and self.__spatialite == "":
-                self.__spatialite = kv.split("=")[1][1:-1]
-                self.__log.info("SpatiaLite-Datenbank wurde gesetzt")
-                self.__log.debug(
-                    'SpatiaLite-Datenbank liegt in "{}"'.format(self.__spatialite)
-                )
-                self.__workspace = os.path.dirname(self.__spatialite)
-                self.__log.debug(
-                    'Workspace wurde auf "{}" gesetzt'.format(self.__workspace)
-                )
+        dbname, name, _1, _2 = get_qkanlayer_attributes(layer_source)
+        if self.__spatialite == "":
+            self.__spatialite = dbname
+            self.__log.info("SpatiaLite-Datenbank wurde gesetzt")
+            self.__log.debug(
+                'SpatiaLite-Datenbank liegt in "{}"'.format(self.__spatialite)
+            )
+            self.__workspace = os.path.dirname(self.__spatialite)
+            self.__log.debug(
+                'Workspace wurde auf "{}" gesetzt'.format(self.__workspace)
+            )
         types = dict(
             wehre=LayerType.Haltung,
             haltungen=LayerType.Haltung,

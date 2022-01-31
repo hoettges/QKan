@@ -265,14 +265,15 @@ def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[Hal
             SELECT haltnam, schoben, schunten, laenge
             FROM haltungen
         UNION
-            SELECT wnam AS haltnam, schoben, schunten, 10 AS laenge
+            SELECT wnam AS haltnam, schoben, schunten, 10.0 AS laenge
             FROM wehre
         UNION
-            SELECT pnam AS haltnam, schoben, schunten, 10 AS laenge
+            SELECT pnam AS haltnam, schoben, schunten, 10.0 AS laenge
             FROM pumpen
         """
     qkan_db.sql(sql)
-    netz = cast(NetzType, qkan_db.fetchall())
+    data = qkan_db.fetchall()
+    netz = cast(NetzType, data)
 
     if layer_type == LayerType.Haltung:
         netzdict = dict([(hal[0], (hal[1], hal[2])) for hal in netz])
