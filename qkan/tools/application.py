@@ -48,7 +48,8 @@ class QKanTools(QKanPlugin):
         self.dlgpr = QgsAdaptDialog(self)
         self.dlgro = RunoffParamsDialog(self)
         self.dlged = EmptyDBDialog(self)
-        self.dlgrd = ReadData(self)
+        self.dlgrd = ReadData(self, proceed=True)
+        self.dlgrc = ReadData(self, proceed=False)
         self.dlgdb = DbAdaptDialog(self)
 
     # noinspection PyPep8Naming
@@ -96,6 +97,14 @@ class QKanTools(QKanPlugin):
             parent=self.iface.mainWindow(),
         )
 
+        icon_readCheck_path = ":/plugins/qkan/tools/res/icon_readCheck.png"
+        QKan.instance.add_action(
+            icon_readCheck_path,
+            text=self.tr("Tabellendaten aus Clipboard: Zuordnung anzeigen"),
+            callback=self.dlgrc.run,
+            parent=self.iface.mainWindow(),
+        )
+
         icon_readData_path = ":/plugins/qkan/tools/res/icon_readData.png"
         QKan.instance.add_action(
             icon_readData_path,
@@ -103,6 +112,7 @@ class QKanTools(QKanPlugin):
             callback=self.dlgrd.run,
             parent=self.iface.mainWindow(),
         )
+
         icon_dbAdapt_path = ":/plugins/qkan/tools/res/icon_dbAdapt.png"
         QKan.instance.add_action(
             icon_dbAdapt_path,

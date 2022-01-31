@@ -7,5 +7,6 @@
         <file>res/icon_dbAdapt.png</file>
         <file>res/icon_emptyDB.png</file>
         <file>res/icon_readData.png</file>
+        <file>res/icon_readCheck.png</file>
     </qresource>
 </RCC>

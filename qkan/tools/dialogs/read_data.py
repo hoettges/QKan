@@ -2,7 +2,7 @@ import logging
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast, Any, Callable
 from fnmatch import fnmatch
 
-from qgis.core import QgsApplication, QgsProject
+from qgis.core import QgsApplication, QgsProject, QgsMessageLog
 from qgis.PyQt.QtWidgets import QWidget
 from qkan.database.dbfunc import DBConnection
 from qgis.core import Qgis
@@ -18,7 +18,7 @@ logger = logging.getLogger("QKan.tools.dialogs.read_data")
 
 class ReadData():  # type: ignore
 
-    def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
+    def __init__(self, plugin: "QKanTools", proceed: bool = False, parent: Optional[QWidget] = None):
         super().__init__()
 
         self.iface = plugin.iface
@@ -33,8 +33,10 @@ class ReadData():  # type: ignore
         self.schacht_types = QKan.config.tools.Clipboard.schacht_types
         self.qkan_patterns = QKan.config.tools.Clipboard.qkan_patterns
 
+        self.proceed = proceed
+
     def run(self) -> None:
-        """Immediately run paste procedure"""
+        """Immediately run paste procedure, when proceed == True, otherwise only print mapping list"""
 
         layer = self.iface.activeLayer()
         if layer is None:
@@ -151,87 +153,100 @@ class ReadData():  # type: ignore
             # Schaechte, Speicher und Auslaesse werden in der Tabelle "schaechte" gespeichert,
             # aber durch "schachttyp" unterschieden
             schtyp_added = False                    # Spalte 'schachttyp' wurde hinzugefügt. Default: falsch
-            if tabnam_db == 'schaechte':
+            logger.info(f'tabnam_db: {tabnam_db}')
+            if tabnam_db == 'schaechte_data':
                 if 'schachttyp' not in qkan_cols:
-                    qkan_cols['schachttyp'] = None  # dazu gibt es keine Spalte in den Clipboard-Daten
+                    col_schachttyp = len(head_qk)
+                    qkan_cols['schachttyp'] = col_schachttyp  # dazu gibt es keine Spalte in den Clipboard-Daten
                     schtyp_added = True
+                    logger.debug(f'Spalte "schachttyp" hinzugefügt.')
 
             # parse all data lines
             qkan_colnames = list(qkan_cols.keys())
-            data_colnames = [headers[qkan_cols[column]] for column in qkan_colnames]
 
             logger.info(f'Es wurden folgende Spaltennamen zugeordnet: ')
             for column in qkan_colnames:
-                logger.info(f'{headers[qkan_cols[column]]} -> {column}')
+                logger.info(f'{qkan_cols[column]} -> {column}')
             logger.info(f'Umgewandelte Spaltennamen: {head_qk}')
 
-            meldung = ", ".join([f'"{el[0]}" ({el[1]})' for el in zip(data_colnames, qkan_colnames)])
+            if schtyp_added:
+                meldung = " | ".join([f'{headers[col]} > {head_qk[col]}' for col in list(qkan_cols.values())[:-1]])
+            else:
+                meldung = " | ".join([f'{headers[col]} > {head_qk[col]}' for col in list(qkan_cols.values())])
+            # meldung = f'\nhead_qk: {head_qk}\nheaders: {headers}\nqkan_cols: {qkan_cols}\nqkan_colnames: {qkan_colnames}'
             self.iface.messageBar().pushMessage(
                 "Info",
                 f'Folgende Spalten konnten erkannt werden: {meldung}',
                 level=Qgis.Info,
             )
 
-            for nrow, line in enumerate(lines[1:]):
-                parsed_dataset = {}
-                values = line.split("\t")
-                if len(values) != len(head_qk):
-                    fehlermeldung(
-                        "Fehler in den einzufügenden Daten: Spaltenzahl stimmt nicht mit Kopfzeile überein",
-                        line)
-                    continue
-                for column in qkan_colnames:
-                    value = values[qkan_cols.get(column, None)]
-                    _type = qkan_columntypes.get(column, None)          # Typ aus DB-Tabelle
-                    if not _type:
+            if not self.proceed:
+                QgsMessageLog.logMessage( f'Folgende Spalten konnten erkannt werden: {meldung}', 'QKan Clipboard',
+                                         level=Qgis.Info, notifyUser=True)
+                self.iface.openMessageLog()
+
+            else:
+                for nrow, line in enumerate(lines[1:]):
+                    parsed_dataset = {}
+                    values = line.split("\t")
+                    if len(values) != len(head_qk):
+                        fehlermeldung(
+                            "Fehler in den einzufügenden Daten: Spaltenzahl stimmt nicht mit Kopfzeile überein",
+                            line)
                         continue
-                    if _type.lower() == "integer":
-                        field = self.convert(int, nrow, column, value)
-                    elif _type.lower() == "real":
-                        field = self.convert(float, nrow, column, value)
-                    elif _type.lower() == "text":
-                        # no conversion necessary
-                        field = value
-                    else:
-                    #     logger.error(f'Feldtyp Spalte {column} fehlerhaft: {_type}')
-                    # if not field:
-                        self.iface.messageBar().pushMessage(
-                            "Datenfehler",
-                            'Datentyp konnte nicht erkannt werden. '
-                            f'Spalte: {column}, Wert: {value}'
-                            f'Typ: {type(value)}',
-                            level=Qgis.Critical, )
-                        # return
-                    parsed_dataset[column] = field
+                    for column in qkan_colnames:
+                        if (not schtyp_added) or column != 'schachttyp':
+                            value = values[qkan_cols.get(column, None)]
+                            _type = qkan_columntypes.get(column, None)          # Typ aus DB-Tabelle
+                            if not _type:
+                                continue
+                            if _type.lower() == "integer":
+                                field = self.convert(int, nrow, column, value)
+                            elif _type.lower() == "real":
+                                field = self.convert(float, nrow, column, value)
+                            elif _type.lower() == "text":
+                                # no conversion necessary
+                                field = value
+                            else:
+                            #     logger.error(f'Feldtyp Spalte {column} fehlerhaft: {_type}')
+                            # if not field:
+                                self.iface.messageBar().pushMessage(
+                                    "Datenfehler",
+                                    'Datentyp konnte nicht erkannt werden. '
+                                    f'Spalte: {column}, Wert: {value}'
+                                    f'Typ: {type(value)}',
+                                    level=Qgis.Critical, )
+                                # return
+                            parsed_dataset[column] = field
 
-                # Falls Spalte 'schachttyp' ergänzt wurde (s.o.)
-                if schtyp_added:
-                    parsed_dataset['schachttyp'] = self.schacht_types[layer_name]
+                    # Falls Spalte 'schachttyp' ergänzt wurde (s.o.)
+                    if schtyp_added:
+                        parsed_dataset['schachttyp'] = self.schacht_types[layer_name]
 
-                if self.schacht_types.get(layer_name, None):
-                    if 'durchm' in qkan_cols:
-                        if parsed_dataset['durchm'] > 10.:
-                            parsed_dataset['durchm'] /= 1000.
+                    if self.schacht_types.get(layer_name, None):
+                        if 'durchm' in qkan_cols:
+                            if parsed_dataset['durchm'] > 10.:
+                                parsed_dataset['durchm'] /= 1000.
 
-                sql = f"INSERT INTO {tabnam_db} ({', '.join(qkan_colnames)}) " \
-                      f"VALUES ({', '.join(['?'] * len(qkan_colnames))})"
-                if not self.db_qkan.sql(
-                    sql,
-                    mute_logger=True,
-                    parameters=list(parsed_dataset.values()),
-                ):
-                    del self.db_qkan
-                    return
+                    sql = f"INSERT INTO {tabnam_db} ({', '.join(qkan_colnames)}) " \
+                          f"VALUES ({', '.join(['?'] * len(qkan_colnames))})"
+                    if not self.db_qkan.sql(
+                        sql,
+                        mute_logger=True,
+                        parameters=list(parsed_dataset.values()),
+                    ):
+                        del self.db_qkan
+                        return
 
-            self.db_qkan.commit()
-            del self.db_qkan
+                self.db_qkan.commit()
+                del self.db_qkan
 
-            # Redraw map
-            project = QgsProject.instance()
-            project.reloadAllLayers()
+                # Redraw map
+                project = QgsProject.instance()
+                project.reloadAllLayers()
 
-            self.iface.messageBar().pushMessage(
-                "Info",
-                f'Daten in Layer "{layer_name}" (Datenbanktabelle "{tabnam_db}") eingefügt.',
-                level=Qgis.Info,
-            )
+                self.iface.messageBar().pushMessage(
+                    "Info",
+                    f'Daten in Layer "{layer_name}" (Datenbanktabelle "{tabnam_db}") eingefügt.',
+                    level=Qgis.Info,
+                )
