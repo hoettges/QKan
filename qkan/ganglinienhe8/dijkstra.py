@@ -294,6 +294,7 @@ def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[Hal
     for schacht in schachtauswahl.copy():
         if schacht not in [e[1] for e in netz] + [e[2] for e in netz]:
             schachtauswahl.remove(schacht)
+            logger.debug(f'Schacht war nicht im Netz enthalten, deshalb entfernt: {schacht}')
 
     # Dict mit Gewichten bezogen auf die Schächte in 'schachtauswahl'
     # Hinweis: Parameter netz ist nur beim ersten Aufruf wirksam, um Netz.links und Netz.haltungen
