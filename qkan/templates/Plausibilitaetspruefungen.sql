@@ -1,14 +1,15 @@
 DELETE FROM pruefsql WHERE gruppe = 'Netzstruktur' AND warntext IN ('Schacht oben fehlerhaft', 'Schacht unten fehlerhaft');
 DELETE FROM pruefsql WHERE gruppe = 'HYSTEM-EXTRAN' AND warntext IN ('Abflussparameter fehlen', 'Schwerpunktlaufzeiten fehlen');
 DELETE FROM pruefsql WHERE gruppe = 'Kreuzende Haltungen';
+DELETE FROM pruefsql WHERE warntext = 'Neigungsklasse fehlt';
 INSERT INTO pruefsql (gruppe, warntext, warntyp, warnlevel, sql, layername, attrname)
 SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, pn.attrname FROM
 (SELECT column1 AS gruppe, column2 AS warntext, column3 AS warntyp, column4 AS warnlevel, column5 AS sql, column6 AS layername, column7 AS attrname FROM 
 (VALUES
-('Netzstruktur', 'Schacht oben fehlerhaft', 'Fehler', 9, 
- 'SELECT haltnam, ''Schacht oben fehlerhaft'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS so ON ha.schoben = so.schnam WHERE within(so.geop, buffer(pointn(ha.geom,1), 0.1)) <> 1', 
+('Netzstruktur', 'Schacht oben mehr als 1.0 m von Haltungsende entfernt', 'Fehler', 9, 
+ 'SELECT haltnam, ''Schacht oben mehr als 1.0 m von Haltungsende entfernt'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS so ON ha.schoben = so.schnam WHERE within(so.geop, buffer(pointn(ha.geom,1), 1.0)) <> 1', 
  'Haltungen nach Typ', 'haltnam'),
-('Netzstruktur', 'Schacht unten fehlerhaft', 'Fehler', 9, 'SELECT haltnam, ''Schacht unten fehlerhaft'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS su ON ha.schunten = su.schnam WHERE within(su.geop, buffer(pointn(ha.geom,-1), 0.1)) <> 1', 'Haltungen nach Typ', 'haltnam'),
+('Netzstruktur', 'Schacht unten mehr als 1.0 m von Haltungsende entfernt', 'Fehler', 9, 'SELECT haltnam, ''Schacht unten mehr als 1.0 m von Haltungsende entfernt'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS su ON ha.schunten = su.schnam WHERE within(su.geop, buffer(pointn(ha.geom,-1), 1.0)) <> 1', 'Haltungen nach Typ', 'haltnam'),
 ('HYSTEM-EXTRAN', 'Abflussparameter fehlen', 'Fehler', 9, 'SELECT f1.flnam
     ,printf("Abflussparameter ""%s"" wird in Layer ""Flächen"" verwendet, fehlt aber in Referenztabelle ""Abflussparameter HE"" bzw. ""... KP"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", 
             f1.abflussparameter, (
@@ -23,7 +24,7 @@ GROUP BY f1.flnam LIMIT 5
 ', 'Abflussparameter', 'flnam'),
 ('HYSTEM-EXTRAN', 'Schwerpunktlaufzeiten fehlen', 'Fehler', 9, 'SELECT flnam, printf("Spalte ""fliesszeitflaeche"" in Layer ""Anbindungen Flächen"" in %d Datensätzen leer (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM linkfl WHERE fliesszeitflaeche IS NULL)) AS bemerkung FROM linkfl WHERE fliesszeitflaeche IS NULL LIMIT 5', 'Anbindungen Flächen', 'flnam'),
 ('HYSTEM-EXTRAN', 'Simulationsstatus fehlt oder nicht in Tabelle "Simulationsstatus"', 'Fehler', 9, 'SELECT s.schnam, printf("Spalte simstatus = %s in Spalte leer oder nicht in Simulationsstatus (nur 1 exemplarisch aufgelistet!)", s.simstatus) AS bemerkung FROM schaechte AS s LEFT JOIN simulationsstatus AS u ON s.simstatus = u.bezeichnung WHERE u.bezeichnung IS NULL GROUP BY s.simstatus', 'Schächte', 'schnam'),
-('HYSTEM-EXTRAN', 'Neigungsklasse fehlt', 'Fehler', 9, 'SELECT flnam, printf("Spalte ""neigung"" in Layer ""Flächen"" in %d Datensätzen leer (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM flaechen WHERE neigung IS NULL)) AS bemerkung FROM flaechen WHERE neigung IS NULL LIMIT 5', 'Flächen', 'flnam'),
+('HYSTEM-EXTRAN', 'Neigungsklasse fehlt', 'Fehler', 9, 'SELECT flnam, printf("Spalte ""neigkl"" in Layer ""Flächen"" in %d Datensätzen leer (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM flaechen WHERE neigkl IS NULL)) AS bemerkung FROM flaechen WHERE neigkl IS NULL LIMIT 5', 'Flächen', 'flnam'),
 ('HYSTEM-EXTRAN', 'Profil fehlt in Layer "Profile"', 'Fehler', 9,
 'SELECT h.haltnam, printf("Profil ''%s'' fehlt in Layer Profile", h.profilnam) AS bemerkung FROM haltungen AS h
 LEFT JOIN profile AS p

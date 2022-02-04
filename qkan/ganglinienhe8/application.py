@@ -590,8 +590,8 @@ class GanglinienHE8:
 
         # Längsschnitt starten
         self.__speed_controller.setValue(5)
-        self.__animator.play(5, SliderMode.Forward)
-        self.__speed_controller.set_paused()
+        # self.__animator.play(5, SliderMode.Forward)
+        # self.__speed_controller.set_paused()
 
         # Run the dialog event loop
         result = self.__dlg.exec_()

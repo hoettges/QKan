@@ -332,6 +332,10 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
                     ),
                     repr(err),
                 )
+
+        # Initialisierung der Anzeige der Anzahl zu exportierender Objekte
+        self.count_selection()
+
         return True
 
     def check_flaechen(self) -> None:
