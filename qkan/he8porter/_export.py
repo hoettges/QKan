@@ -19,8 +19,8 @@ class ExportTask:
         self.liste_teilgebiete = liste_teilgebiete
         self.db_qkan = db_qkan
 
-        self.append = QKan.config.check_import.append
-        self.update = QKan.config.check_import.update
+        self.append = QKan.config.check_export.append
+        self.update = QKan.config.check_export.update
 
         self.nextid = 0
 
@@ -468,7 +468,7 @@ class ExportTask:
                       LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
                       WHERE haltungen.haltnam = he.Rohr.Name{auswahl})
                   WHERE he.Rohr.Name IN 
-                  ( SELECT haltnam FROM haltungen){auswahl})
+                  ( SELECT haltnam FROM haltungen){auswahl}
                   """
 
                 if not self.db_qkan.sql(

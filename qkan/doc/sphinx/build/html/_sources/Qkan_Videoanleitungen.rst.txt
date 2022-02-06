@@ -36,11 +36,25 @@ anschließenden Einbinden von Flächendaten finden Sie hier:
 .. _Video_QKan_Kanaldatenflaechen: https://fh-aachen.sciebo.de/s/PK3WwcNaaGJJQVi
 
 
-.. index:: Video: Projektdatei übertragen
+Vorbereitung eines einfachen Projektes für den HYSTEM-EXTRAN-Export
+-------------------------------------------------------------------
+
+.. index:: Video: Vorbereitung eines einfachen Projektes für den HYSTEM-EXTRAN-Export
+
+In der Videoanleitung wird an einem einfachen Beispiel die Datenvorbereitung für einen Export
+nach HYSTEM-EXTRAN 8.4 gezeigt. In diesem Projekt wird auf die Verwendung von Haltungsflächen
+verzichtet. 
+
+- Video_QKan_Vorbereitung_HE8-Export_
+
+.. _Video_QKan_Vorbereitung_HE8-Export: https://fh-aachen.sciebo.de/s/zoSzm5br6fmsJnj
+
 
 
 Übertragen einer anderen Projektdatei auf eine QKan-Datenbank
 -------------------------------------------------------------
+
+.. index:: Video: Projektdatei übertragen
 
 Eine Videoanleitung, wie für eine bestehende QKan-Kanaldatenbank eine Vorlage-Projektdatei geladen werden kann:
 
