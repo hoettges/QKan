@@ -615,7 +615,7 @@ class ExportTask:
                 # temporäre Tabelle tempfl geschrieben
                 sqllis = (
                     """CREATE TEMP TABLE IF NOT EXISTS flupdate (flnam TEXT)""",
-                    """DELETE FROM flupdate"""
+                    """DELETE FROM flupdate""",
                     f"""
                     INSERT INTO flupdate (flnam)
                       SELECT substr(printf('%s-%d', fl.flnam, lf.pk),1,30) AS flnam 
@@ -782,10 +782,12 @@ class ExportTask:
                         "UPDATE he.Itwh$ProgInfo SET NextId = ?",
                         parameters=(self.nextid,),
                     )
+
+                    fortschritt("{} Flaechen eingefuegt".format(self.nextid - nr0), 0.80)
+                    self.progress_bar.setValue(80)
+
             self.db_qkan.commit()
 
-            if nr0:
-                fortschritt("{} Flaechen eingefuegt".format(self.nextid - nr0), 0.80)
         return True
 
     def _tezg(self) -> bool:
@@ -873,12 +875,11 @@ class ExportTask:
                         "UPDATE he.Itwh$ProgInfo SET NextId = ?",
                         parameters=(self.nextid,),
                     )
-            self.db_qkan.commit()
 
-            if nr0:
-                fortschritt(
-                    "{} Haltungsflaechen eingefuegt".format(self.nextid - nr0), 0.80
-                )
+                    fortschritt("{} Haltungsflaechen eingefuegt".format(self.nextid - nr0), 0.80)
+                    self.progress_bar.setValue(80)
+
+            self.db_qkan.commit()
 
         return True
 
@@ -922,7 +923,7 @@ class ExportTask:
                         ON pumpen.simstatus = simulationsstatus.bezeichnung{auswahl_w}
                     )
                     WHERE (he.Pumpe.Name IN 
-                    (   SELECT pnam FROM pumpen)){auswahl_a})
+                    (   SELECT pnam FROM pumpen)){auswahl_a}
                     """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen (1)"):
@@ -1016,10 +1017,7 @@ class ExportTask:
                         SohlhoeheOben, SohlhoeheUnten, 
                         Schwellenhoehe, Geometrie1, 
                         Geometrie2, Ueberfallbeiwert, 
-                        Rueckschlagklappe, Verfahrbar, Profiltyp, 
-                        Ereignisbilanzierung, EreignisGrenzwertEnde,
-                        EreignisGrenzwertAnfang, EreignisTrenndauer, 
-                        EreignisIndividuell, Planungsstatus, 
+                        Planungsstatus, 
                         Kommentar, LastModified 
                     ) = 
                     (   SELECT
@@ -1035,13 +1033,15 @@ class ExportTask:
                             wehre.kommentar AS kommentar,
                             wehre.createdat AS createdat
                         FROM wehre
-                        LEFT JOIN pumpentypen
-                        ON pumpen.pumpentyp = pumpentypen.bezeichnung
                         LEFT JOIN simulationsstatus
-                        ON wehre.simstatus = simulationsstatus.bezeichnung{auswahl_w}
+                        ON wehre.simstatus = simulationsstatus.bezeichnung
+                        LEFT JOIN schaechte AS sob 
+                        ON wehre.schoben = sob.schnam
+                        LEFT JOIN schaechte AS sun 
+                        ON wehre.schunten = sun.schnam{auswahl_w}
                     )
                     WHERE (he.Wehr.Name IN 
-                    (   SELECT wnam FROM wehre)){auswahl_a})
+                    (   SELECT wnam FROM wehre)){auswahl_a}
                     """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre (1)"):
@@ -1126,7 +1126,7 @@ class ExportTask:
                     )
                     self.db_qkan.commit()
 
-                    fortschritt(f"{self.nextid - nr0} Wehre eingefügt", 0.85)
+                    fortschritt(f"{self.nextid - nr0} Wehre eingefügt", 0.90)
                     self.progress_bar.setValue(90)
         return True
 
@@ -1191,12 +1191,11 @@ class ExportTask:
                         "UPDATE he.Itwh$ProgInfo SET NextId = ?",
                         parameters=(self.nextid,),
                     )
-            self.db_qkan.commit()
 
-            if nr0:
-                fortschritt(
-                    "{} Abflussparameter eingefuegt".format(self.nextid - nr0), 0.80
-                )
+                    fortschritt("{} Abflussparameter eingefuegt".format(self.nextid - nr0), 0.92)
+                    self.progress_bar.setValue(92)
+
+            self.db_qkan.commit()
 
         return True
 
@@ -1257,11 +1256,9 @@ class ExportTask:
                         "UPDATE he.Itwh$ProgInfo SET NextId = ?",
                         parameters=(self.nextid,),
                     )
-            self.db_qkan.commit()
 
-            if nr0:
-                fortschritt(
-                    "{} Abflussparameter eingefuegt".format(self.nextid - nr0), 0.80
-                )
+                    fortschritt("{} Abflussparameter eingefuegt".format(self.nextid - nr0), 1.00)
+                    self.progress_bar.setValue(100)
+            self.db_qkan.commit()
 
         return True

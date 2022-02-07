@@ -156,6 +156,7 @@ class sanierungsbedarfszahl(QKanPlugin):
         self.log.info("DB creation finished, starting Zustandsklassen")
         zustand = sanierungsbedarfszahl_funkt(check_cb, QKan.config.database.qkan, QKan.config.sanierung.date, QKan.config.sanierung.speicher, QKan.config.sanierung.atlas, massstab, format, excel_format, QKan.config.sanierung.speicher2, QKan.config.epsg, db_format)
         zustand.run()
+        del zustand
 
         #QKan.config.project.template = str(
         #    Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"

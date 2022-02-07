@@ -299,6 +299,7 @@ class MuPorter(QKanPlugin):
         self.log.info("DB creation finished, starting importer")
         imp = ImportTask(db_qkan)
         imp.run()
+        del imp
 
         # Write and load new project file, only if new project
         if QgsProject.instance().fileName() == '':

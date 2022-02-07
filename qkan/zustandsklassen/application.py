@@ -150,6 +150,7 @@ class zustandsklassen(QKanPlugin):
         self.log.info("DB creation finished, starting Zustandsklassen")
         zustand = zustandsklassen_funkt(check_cb, QKan.config.database.qkan, QKan.config.zustand.date, QKan.config.epsg )
         zustand.run()
+        del zustand
 
         #QKan.config.project.template = str(
         #    Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"

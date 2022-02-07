@@ -197,6 +197,7 @@ class IsyPorter(QKanPlugin):
         self.log.info("DB creation finished, starting importer")
         imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice, QKan.config.xml.ordner_bild, QKan.config.xml.ordner_video )
         imp.run()
+        del imp
 
         # Write and load new project file, only if new project
         if QgsProject.instance().fileName() == '':

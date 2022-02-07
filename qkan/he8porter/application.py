@@ -297,6 +297,7 @@ class He8Porter(QKanPlugin):
         self.log.info("DB creation finished, starting importer")
         imp = ImportTask(db_qkan)
         imp.run()
+        del imp
 
         eval_node_types(db_qkan)  # in qkan.database.qkan_utils
 

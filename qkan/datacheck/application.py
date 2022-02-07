@@ -83,6 +83,7 @@ class Plausi(QKanPlugin):
 
         plau = PlausiTask(self.db_qkan)
         plau.run()
+        del plau
 
         del self.db_qkan
         self.log.debug("Closed DB")
