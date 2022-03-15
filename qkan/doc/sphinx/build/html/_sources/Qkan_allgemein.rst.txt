@@ -35,3 +35,14 @@ Bei QKan handelt es sich um ein Open-Source-Projekt von `Jörg Höttges`_ .
 .. _`Jörg Höttges`: https://www.fh-aachen.de/hoettges  
 
 Es steht auf der Plattform GITHUB zum Download zur Verfügung (siehe Installation von QKan) und unterliegt der Open-Source-Lizenz GPL 3.0. 
+
+Die Entwicklung wurde durch das Land NRW im Rahmen der Förderprogramme "Mittelstand.Innovativ! - Innovationsgutschein F+E" (1)
+und "Mittelstand Innovativ & Digital (MID) – Teil MID-Digitalisierung" (2) sowie durch folgende Ingenieurbüros unterstützt: 
+
+ - Ingenieurbüro Reinhard Beck GmbH (1)
+ - blue-ing. GmbH (1)
+ - Fischer Teamplan Ingenieurbüro GmbH (1)
+ - Ingenieurgesellschaft Dr. Ing. Nacken mbH (1)
+ - ATD Ingenieurgesellschaft mbH (2)
+ - Tuttahs & Meyer Ing.-GmbH (2)
+ - Ingenieurbüro Achten und Jansen GmbH (2)

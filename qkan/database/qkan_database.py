@@ -22,14 +22,13 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.2.18"  # Version der QKan-Datenbank
-__qgsVersion__ = "3.2.27"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = "3.2.29"  # Version der QKan-Datenbank
+__qgsVersion__ = "3.2.29"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
 import os
 import traceback
-from datetime import datetime
 from sqlite3.dbapi2 import Connection, Cursor
 
 from qgis.core import Qgis, QgsProject
@@ -107,37 +106,6 @@ def qgs_actual_version(update: bool = True, warning: bool = False) -> bool:
 
     # Änderungen an den Layern werden nur in layersadapt vorgenommen.
 
-    #
-    # isActual = not versionolder(act_qgs_version_lis, cur_qgs_version_lis)
-    # if not isActual:
-    #     if warning:
-    #         meldung(
-    #             "Warnung: ",
-    #             "Das geladene Projekt entspricht nicht der aktuellen Version. ",
-    #         )
-    #     if update:
-    #
-    #         # Bis Version 2.5.11
-    #         if versionolder(act_qgs_version_lis, [2, 5, 12]):
-    #             wlayers = [la for la in layers if la.name() == "Abflussparameter"]
-    #             if len(wlayers) != 1:
-    #                 logger.debug(
-    #                     'Fehler in Layerliste: Es gibt mehr als einen Layer "Abflussparameter"'
-    #                 )
-    #                 layerList = [la.name() for la in layers]
-    #                 logger.debug("layerList: {}".format(layerList))
-    #                 return False
-    #             wlayer = wlayers[0]
-    #             logger.debug("vorher: wlayer.name(): {}".format(wlayer.name()))
-    #             wlayer.setName("Abflussparameter HE")
-    #             logger.debug("nachher: wlayer.name(): {}".format(wlayer.name()))
-    #
-    #             project = QgsProject.instance()
-    #             project.setTitle("QKan Version {}".format(qgs_version()))
-    #
-    #         isActual = True
-    # return isActual
-
     return True
 
 
@@ -159,56 +127,48 @@ def createdbtables(
 
     # Haltungen ----------------------------------------------------------------
 
-    sql = """CREATE TABLE haltungen (
-    pk INTEGER PRIMARY KEY,
-    haltnam TEXT,
-    schoben TEXT,
-    schunten TEXT,
-    hoehe REAL,
-    breite REAL,
-    laenge REAL,
-    sohleoben REAL,
-    sohleunten REAL,
-    deckeloben REAL,
-    deckelunten REAL,
-    teilgebiet TEXT,
-    qzu REAL,
-    profilnam TEXT DEFAULT 'Kreisquerschnitt',
-    entwart TEXT DEFAULT 'Regenwasser',
-    rohrtyp TEXT,
-    ks REAL DEFAULT 1.5,
-    simstatus TEXT DEFAULT 'vorhanden',
-    kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
-    xschob REAL,
-    yschob REAL,
-    xschun REAL,
-    yschun REAL)"""
+    sqls = [
+        """CREATE TABLE haltungen (
+            pk INTEGER PRIMARY KEY,
+            haltnam TEXT,
+            schoben TEXT,
+            schunten TEXT,
+            hoehe REAL,
+            breite REAL,
+            laenge REAL,
+            sohleoben REAL,
+            sohleunten REAL,
+            deckeloben REAL,
+            deckelunten REAL,
+            teilgebiet TEXT,
+            qzu REAL,
+            profilnam TEXT DEFAULT 'Kreisquerschnitt',
+            entwart TEXT DEFAULT 'Regenwasser',
+            rohrtyp TEXT,
+            ks REAL DEFAULT 1.5,
+            simstatus TEXT DEFAULT 'vorhanden',
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+            xschob REAL,
+            yschob REAL,
+            xschun REAL,
+            yschun REAL)""",
+        "SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg),
+        "SELECT CreateSpatialIndex('haltungen','geom')",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Haltungen" konnte nicht erstellt werden',
+            )
+            consl.close()
+            return False
 
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "Haltungen" konnte nicht erstellt werden',
-        )
-        consl.close()
-        return False
 
-    sql = "SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('haltungen','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = f"""CREATE VIEW IF NOT EXISTS haltungen_data AS
+    sql = """CREATE VIEW IF NOT EXISTS haltungen_data AS
           SELECT 
             haltnam, schoben, schunten, 
             hoehe, breite, laenge, 
@@ -281,51 +241,40 @@ def createdbtables(
 
     # Haltungen_untersucht ----------------------------------------------------------------
 
-    sql = """CREATE TABLE haltungen_untersucht(
-         pk INTEGER PRIMARY KEY,
-         haltnam TEXT,
-         schoben TEXT,
-         schunten TEXT,
-         hoehe REAL,
-         breite REAL,
-         laenge REAL,
-         kommentar TEXT,
-         createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
-         baujahr INTEGER,
-         untersuchtag TEXT,
-         untersucher TEXT,
-         wetter INTEGER DEFAULT 0,
-         bewertungsart INTEGER DEFAULT 0,
-         bewertungstag TEXT,
-         xschob REAL,
-         yschob REAL,
-         xschun REAL,
-         yschun REAL)"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "Haltungen" konnte nicht erstellt werden',
-        )
-        consl.close()
-        return False
-
-    sql = "SELECT AddGeometryColumn('haltungen_untersucht','geom',{},'LINESTRING',2)".format(
-        epsg
-    )
-    sqlindex = "SELECT CreateSpatialIndex('haltungen_untersucht','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
+    sqls = [
+        """CREATE TABLE haltungen_untersucht(
+             pk INTEGER PRIMARY KEY,
+             haltnam TEXT,
+             schoben TEXT,
+             schunten TEXT,
+             hoehe REAL,
+             breite REAL,
+             laenge REAL,
+             kommentar TEXT,
+             createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+             baujahr INTEGER,
+             untersuchtag TEXT,
+             untersucher TEXT,
+             wetter INTEGER DEFAULT 0,
+             bewertungsart INTEGER DEFAULT 0,
+             bewertungstag TEXT,
+             xschob REAL,
+             yschob REAL,
+             xschun REAL,
+             yschun REAL)""",
+        "SELECT AddGeometryColumn('haltungen_untersucht','geom',{},'LINESTRING',2)".format(epsg),
+        "SELECT CreateSpatialIndex('haltungen_untersucht','geom')"
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Haltungen" konnte nicht erstellt werden',
+            )
+            consl.close()
+            return False
 
     sql = f"""CREATE VIEW IF NOT EXISTS haltungen_untersucht_data AS
               SELECT 
@@ -385,7 +334,8 @@ def createdbtables(
 
     # untersuchungsdaten Haltung
 
-    sql = """CREATE TABLE Untersuchdat_haltung (
+    sqls = [
+        """CREATE TABLE Untersuchdat_haltung (
             pk INTEGER PRIMARY KEY,
             untersuchhal TEXT,
             untersuchrichtung TEXT,
@@ -411,33 +361,20 @@ def createdbtables(
             ordner_bild TEXT,
             ordner_video TEXT,
             richtung TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime'))
-        )"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "Untersuchdat_Haltungen" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = "SELECT AddGeometryColumn('Untersuchdat_haltung','geom',{},'LINESTRING',2)".format(
-        epsg
-    )
-    sqlindex = "SELECT CreateSpatialIndex('Untersuchdat_haltung','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Haltungen" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+        "SELECT AddGeometryColumn('Untersuchdat_haltung','geom',{},'LINESTRING',2)".format(epsg),
+        "SELECT CreateSpatialIndex('Untersuchdat_haltung','geom')",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Untersuchdat_Haltungen" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
                   SELECT
@@ -660,54 +597,45 @@ def createdbtables(
 
     # Anschlussleitung ----------------------------------------------------------------
 
-    sql = """CREATE TABLE anschlussleitungen (
-        pk INTEGER PRIMARY KEY,
-        leitnam TEXT,
-        schoben TEXT,
-        schunten TEXT,
-        hoehe REAL,
-        breite REAL,
-        laenge REAL,
-        sohleoben REAL,
-        sohleunten REAL,
-        deckeloben REAL,
-        deckelunten REAL,
-        teilgebiet TEXT,
-        qzu REAL,
-        profilnam TEXT DEFAULT 'Kreisquerschnitt',
-        entwart TEXT DEFAULT 'Regenwasser',
-        rohrtyp TEXT,
-        ks REAL DEFAULT 1.5,
-        simstatus TEXT DEFAULT 'vorhanden',
-        kommentar TEXT,
-        createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
-        xschob REAL,
-        yschob REAL,
-        xschun REAL,
-        yschun REAL)"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-            fehlermeldung(
-                "qkan_database.createdbtables: {}".format(err),
-                'Tabelle "anschlussleitungen" konnte nicht erstellt werden',
-            )
-            consl.close()
-            return False
-
-    sql = "SELECT AddGeometryColumn('anschlussleitungen','geom',{},'LINESTRING',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('anschlussleitungen','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-                "qkan_database.createdbtables: {}".format(err),
-                'In der Tabelle "anschlussleitungen" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-            )
-        consl.close()
-        return False
+    sqls = [
+        """CREATE TABLE anschlussleitungen (
+            pk INTEGER PRIMARY KEY,
+            leitnam TEXT,
+            schoben TEXT,
+            schunten TEXT,
+            hoehe REAL,
+            breite REAL,
+            laenge REAL,
+            sohleoben REAL,
+            sohleunten REAL,
+            deckeloben REAL,
+            deckelunten REAL,
+            teilgebiet TEXT,
+            qzu REAL,
+            profilnam TEXT DEFAULT 'Kreisquerschnitt',
+            entwart TEXT DEFAULT 'Regenwasser',
+            rohrtyp TEXT,
+            ks REAL DEFAULT 1.5,
+            simstatus TEXT DEFAULT 'vorhanden',
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+            xschob REAL,
+            yschob REAL,
+            xschun REAL,
+            yschun REAL)""",
+        "SELECT AddGeometryColumn('anschlussleitungen','geom',{},'LINESTRING',2)".format(epsg),
+        "SELECT CreateSpatialIndex('anschlussleitungen','geom')",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+                fehlermeldung(
+                    "qkan_database.createdbtables: {}".format(err),
+                    'Tabelle "anschlussleitungen" konnte nicht erstellt werden',
+                )
+                consl.close()
+                return False
 
     sql = f"""CREATE VIEW IF NOT EXISTS anschlussleitungen_data AS
               SELECT 
@@ -775,57 +703,44 @@ def createdbtables(
     # Schaechte ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
 
-    sql = """CREATE TABLE schaechte (
-    pk INTEGER PRIMARY KEY,
-    schnam TEXT,
-    sohlhoehe REAL,
-    deckelhoehe REAL,
-    durchm REAL,
-    druckdicht INTEGER, 
-    ueberstauflaeche REAL DEFAULT 0,
-    entwart TEXT DEFAULT 'Regenwasser',
-    strasse TEXT,
-    teilgebiet TEXT,
-    knotentyp TEXT,
-    auslasstyp TEXT,
-    schachttyp TEXT DEFAULT 'Schacht', 
-    simstatus TEXT DEFAULT 'vorhanden',
-    material TEXT,
-    kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
-    xsch REAL, 
-    ysch REAL)"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "Schaechte" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql1 = """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg)
-    sql2 = (
-        """SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(
-            epsg
-        )
-    )
-    sqlindex1 = """SELECT CreateSpatialIndex('schaechte','geom')"""
-    sqlindex2 = """SELECT CreateSpatialIndex('schaechte','geop')"""
-    try:
-        cursl.execute(sql1)
-        cursl.execute(sql2)
-        cursl.execute(sqlindex1)
-        cursl.execute(sqlindex2)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Schaechte" konnten die Attribute "geop" und "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
+    sqls = [
+        """CREATE TABLE schaechte (
+            pk INTEGER PRIMARY KEY,
+            schnam TEXT,
+            sohlhoehe REAL,
+            deckelhoehe REAL,
+            durchm REAL,
+            druckdicht INTEGER, 
+            ueberstauflaeche REAL DEFAULT 0,
+            entwart TEXT DEFAULT 'Regenwasser',
+            strasse TEXT,
+            teilgebiet TEXT,
+            knotentyp TEXT,
+            auslasstyp TEXT,
+            schachttyp TEXT DEFAULT 'Schacht', 
+            simstatus TEXT DEFAULT 'vorhanden',
+            material TEXT,
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+            xsch REAL, 
+            ysch REAL)""",
+        """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg),
+        """SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg),
+        """SELECT CreateSpatialIndex('schaechte','geom')""",
+        """SELECT CreateSpatialIndex('schaechte','geop')""",
+        "DROP TRIGGER ggi_schaechte_geom",
+        "DROP TRIGGER ggu_schaechte_geom",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Schaechte" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
     sql = f"""CREATE VIEW IF NOT EXISTS schaechte_data AS 
           SELECT
@@ -897,7 +812,8 @@ def createdbtables(
     # Schaechte_untersucht ----------------------------------------------------------------
     # [knotentyp]: Typ der Verknüpfung (kommt aus Kanal++)
 
-    sql = """CREATE TABLE schaechte_untersucht (
+    sqls = [
+        """CREATE TABLE schaechte_untersucht (
             pk INTEGER PRIMARY KEY,
             schnam TEXT, 
             durchm REAL,
@@ -909,33 +825,20 @@ def createdbtables(
             wetter INTEGER DEFAULT 0, 
             bewertungsart INTEGER DEFAULT 0, 
             bewertungstag TEXT
-            )"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "schaechte_untersucht" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql1 = """SELECT AddGeometryColumn('schaechte_untersucht','geop',{},'POINT',2);""".format(
-        epsg
-    )
-
-    sqlindex2 = """SELECT CreateSpatialIndex('schaechte_untersucht','geop')"""
-    try:
-        cursl.execute(sql1)
-        cursl.execute(sqlindex2)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "schaechte_untersucht" konnte das Attribut "geop" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
+            )""",
+        """SELECT AddGeometryColumn('schaechte_untersucht','geop',{},'POINT',2);""".format(epsg),
+        """SELECT CreateSpatialIndex('schaechte_untersucht','geop')""",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "schaechte_untersucht" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
     sql = f"""CREATE VIEW IF NOT EXISTS schaechte_untersucht_data AS 
                   SELECT
@@ -983,55 +886,43 @@ def createdbtables(
 
     # untersuchungsdaten Schaechte
 
-    sql = """CREATE TABLE Untersuchdat_schacht (
-        pk INTEGER PRIMARY KEY,
-        untersuchsch TEXT,
-        id INTEGER,
-        videozaehler INTEGER,
-        timecode INTEGER,
-        kuerzel TEXT,
-        charakt1 TEXT,
-        charakt2 TEXT,
-        quantnr1 REAL,
-        quantnr2 REAL,
-        streckenschaden TEXT,
-        streckenschaden_lfdnr INTEGER,
-        pos_von INTEGER,
-        pos_bis INTEGER,
-        vertikale_lage INTEGER,
-        inspektionslaenge INTEGER,
-        bereich TEXT,
-        foto_dateiname TEXT,
-        ordner TEXT,
-        createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime'))
-        )"""
+    sqls = [
+        """CREATE TABLE Untersuchdat_schacht (
+            pk INTEGER PRIMARY KEY,
+            untersuchsch TEXT,
+            id INTEGER,
+            videozaehler INTEGER,
+            timecode INTEGER,
+            kuerzel TEXT,
+            charakt1 TEXT,
+            charakt2 TEXT,
+            quantnr1 REAL,
+            quantnr2 REAL,
+            streckenschaden TEXT,
+            streckenschaden_lfdnr INTEGER,
+            pos_von INTEGER,
+            pos_bis INTEGER,
+            vertikale_lage INTEGER,
+            inspektionslaenge INTEGER,
+            bereich TEXT,
+            foto_dateiname TEXT,
+            ordner TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime'))
+            )""",
+        """SELECT AddGeometryColumn('Untersuchdat_schacht','geop',{},'POINT',2);""".format(epsg),
+        """SELECT CreateSpatialIndex('Untersuchdat_schacht','geop')""",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Untersuchdat_Schächte" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "Untersuchdat_Schächte" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql1 = """SELECT AddGeometryColumn('Untersuchdat_schacht','geop',{},'POINT',2);""".format(
-        epsg
-    )
-
-    sqlindex2 = """SELECT CreateSpatialIndex('Untersuchdat_schacht','geop')"""
-    try:
-        cursl.execute(sql1)
-
-        cursl.execute(sqlindex2)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Untersuchdat_Schächte" konnten die Attribute "geop" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_schacht_data AS 
               SELECT
                 untersuchsch, id, videozaehler, timecode, kuerzel, 
@@ -1422,45 +1313,36 @@ def createdbtables(
 
     # Pumpen -------------------------------------------------------------------
 
-    sql = """CREATE TABLE pumpen (
-    pk INTEGER PRIMARY KEY,
-    pnam TEXT,
-    schoben TEXT,
-    schunten TEXT,
-    pumpentyp TEXT,
-    volanf REAL,
-    volges REAL,
-    sohle REAL,
-    steuersch TEXT,
-    einschalthoehe REAL,
-    ausschalthoehe REAL,
-    teilgebiet TEXT,
-    simstatus TEXT DEFAULT 'vorhanden',
-    kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "pumpen" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = "SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('pumpen','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "pumpen" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
+    sqls = [
+        """CREATE TABLE pumpen (
+            pk INTEGER PRIMARY KEY,
+            pnam TEXT,
+            schoben TEXT,
+            schunten TEXT,
+            pumpentyp TEXT,
+            volanf REAL,
+            volges REAL,
+            sohle REAL,
+            steuersch TEXT,
+            einschalthoehe REAL,
+            ausschalthoehe REAL,
+            teilgebiet TEXT,
+            simstatus TEXT DEFAULT 'vorhanden',
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+        "SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg),
+        "SELECT CreateSpatialIndex('pumpen','geom')",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "pumpen" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
     sql = f"""CREATE VIEW IF NOT EXISTS pumpen_data AS
           SELECT 
@@ -1519,45 +1401,36 @@ def createdbtables(
 
     # Wehre --------------------------------------------------------------------
 
-    sql = """CREATE TABLE wehre (
-    pk INTEGER PRIMARY KEY,
-    wnam TEXT,
-    schoben TEXT,
-    schunten TEXT,
-    wehrtyp TEXT,
-    schwellenhoehe REAL,
-    kammerhoehe REAL,
-    laenge REAL,
-    uebeiwert REAL,
-    aussentyp TEXT,
-    aussenwsp REAL,
-    teilgebiet TEXT,
-    simstatus TEXT DEFAULT 'vorhanden',
-    kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "wehre" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = "SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('wehre','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "wehre" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
+    sqls = [
+        """CREATE TABLE wehre (
+            pk INTEGER PRIMARY KEY,
+            wnam TEXT,
+            schoben TEXT,
+            schunten TEXT,
+            wehrtyp TEXT,
+            schwellenhoehe REAL,
+            kammerhoehe REAL,
+            laenge REAL,
+            uebeiwert REAL,
+            aussentyp TEXT,
+            aussenwsp REAL,
+            teilgebiet TEXT,
+            simstatus TEXT DEFAULT 'vorhanden',
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+        "SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg),
+        "SELECT CreateSpatialIndex('wehre','geom')",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "wehre" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
     sql = f"""CREATE VIEW IF NOT EXISTS wehre_data AS
           SELECT 
@@ -1623,42 +1496,32 @@ def createdbtables(
     #  - fremdwas: %
     #  - flaeche: ha
 
-    sql = """CREATE TABLE einzugsgebiete (
-    pk INTEGER PRIMARY KEY,
-    tgnam TEXT,
-    ewdichte REAL,
-    wverbrauch REAL,
-    stdmittel REAL,
-    fremdwas REAL,
-    kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
+    sqls = [
+        """CREATE TABLE einzugsgebiete (
+            pk INTEGER PRIMARY KEY,
+            tgnam TEXT,
+            ewdichte REAL,
+            wverbrauch REAL,
+            stdmittel REAL,
+            fremdwas REAL,
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+        "SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg),
+        "SELECT CreateSpatialIndex('einzugsgebiete','geom')",
+        "DROP TRIGGER ggi_einzugsgebiete_geom",
+        "DROP TRIGGER ggu_einzugsgebiete_geom",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Einzugsgebiete" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "Einzugsgebiete" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = (
-        "SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(
-            epsg
-        )
-    )
-    sqlindex = "SELECT CreateSpatialIndex('einzugsgebiete','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Einzugsgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
     consl.commit()
 
     # Teilgebiete ------------------------------------------------------------------
@@ -1666,36 +1529,29 @@ def createdbtables(
     # Auswahl von Objekten in verschiedenen Tabellen für verschiedene Aufgaben (z. B.
     # automatische Verknüpfung von befestigten Flächen und direkten Einleitungen).
 
-    sql = """CREATE TABLE teilgebiete (
-    pk INTEGER PRIMARY KEY,
-    tgnam TEXT,
-    kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
+    sqls = [
+        """CREATE TABLE
+            teilgebiete (
+            pk INTEGER PRIMARY KEY,
+            tgnam TEXT,
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+        "SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg),
+        "SELECT CreateSpatialIndex('teilgebiete','geom')",
+        "DROP TRIGGER ggi_teilgebiete_geom",
+        "DROP TRIGGER ggu_teilgebiete_geom",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "Teilgebiete" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "Teilgebiete" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = "SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(
-        epsg
-    )
-    sqlindex = "SELECT CreateSpatialIndex('teilgebiete','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "Teilgebiete" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
     consl.commit()
 
     # Gruppen ------------------------------------------------------------------
@@ -1736,44 +1592,36 @@ def createdbtables(
 
     # Befestigte und unbefestigte Flächen ------------------------------------------------------
 
-    sql = """CREATE TABLE flaechen (
-    pk INTEGER PRIMARY KEY,
-    flnam TEXT,
-    haltnam TEXT,
-    schnam TEXT,
-    neigkl INTEGER DEFAULT 1,
-    neigung REAL,               -- absolute Neigung (%)
-    teilgebiet TEXT,
-    regenschreiber TEXT,
-    abflussparameter TEXT,
-    aufteilen TEXT DEFAULT 'nein',
-    kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
+    sqls = [
+        """CREATE TABLE flaechen (
+            pk INTEGER PRIMARY KEY,
+            flnam TEXT,
+            haltnam TEXT,
+            schnam TEXT,
+            neigkl INTEGER DEFAULT 1,
+            neigung REAL,               -- absolute Neigung (%)
+            teilgebiet TEXT,
+            regenschreiber TEXT,
+            abflussparameter TEXT,
+            aufteilen TEXT DEFAULT 'nein',
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+        """SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)""".format(epsg),
+        """SELECT CreateSpatialIndex('flaechen','geom')""",
+        "DROP TRIGGER ggi_flaechen_geom",
+        "DROP TRIGGER ggu_flaechen_geom",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "flaechen" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "flaechen" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = """SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)""".format(
-        epsg
-    )
-    sqlindex = """SELECT CreateSpatialIndex('flaechen','geom')"""
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "flaechen" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
     consl.commit()
 
     # Anbindung Flächen
@@ -1783,57 +1631,39 @@ def createdbtables(
     # Werkzeug "QKan_Link_Flaechen" mit allen durch die Verschneidung mit tezg entstehenden
     # Anteilen zugeordnet.
 
-    sql = """CREATE TABLE linkfl (
-    pk INTEGER PRIMARY KEY,
-    flnam TEXT,
-    haltnam TEXT,
-    schnam TEXT,
-    tezgnam TEXT,
-    teilgebiet TEXT,
-    abflusstyp TEXT,
-    speicherzahl INTEGER,
-    speicherkonst REAL,
-    fliesszeitkanal REAL,
-    fliesszeitflaeche REAL)"""
+    sqls = [
+        """CREATE TABLE linkfl (
+            pk INTEGER PRIMARY KEY,
+            flnam TEXT,
+            haltnam TEXT,
+            schnam TEXT,
+            tezgnam TEXT,
+            teilgebiet TEXT,
+            abflusstyp TEXT,
+            speicherzahl INTEGER,
+            speicherkonst REAL,
+            fliesszeitkanal REAL,
+            fliesszeitflaeche REAL)""",
+        """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
+        """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
+        """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg),
+        "SELECT CreateSpatialIndex('linkfl','glink')",
+        "DROP TRIGGER ggi_linkfl_geom",
+        "DROP TRIGGER ggi_linkfl_gbuf",
+        "DROP TRIGGER ggu_linkfl_geom",
+        "DROP TRIGGER ggu_linkfl_gbuf",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "linkfl" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "linkfl" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql1 = (
-        """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(
-            epsg=epsg
-        )
-    )
-    sql2 = (
-        """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(
-            epsg=epsg
-        )
-    )
-    sql3 = (
-        """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(
-            epsg=epsg
-        )
-    )
-    sqlindex = "SELECT CreateSpatialIndex('linkfl','glink')"
-    try:
-        cursl.execute(sql1)
-        cursl.execute(sql2)
-        cursl.execute(sql3)
-        cursl.execute(sqlindex)
-    except Exception as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            "QKan_Database (1) SQL-Fehler in SpatiaLite:",
-        )
-        consl.close()
-        return False
     consl.commit()
 
     # Anbindung Direkteinleitungen --------------------------------------------------------------
@@ -1841,91 +1671,68 @@ def createdbtables(
     # wird anschließend in das Feld haltnam eingetragen. Der Export erfolgt allerdings anhand
     # der grafischen Verknüpfungen dieser Tabelle.
 
-    sql = """CREATE TABLE linksw (
-    pk INTEGER PRIMARY KEY,
-    elnam TEXT,
-    haltnam TEXT,
-    schnam TEXT,
-    teilgebiet TEXT)"""
+    sqls = [
+        """CREATE TABLE linksw (
+            pk INTEGER PRIMARY KEY,
+            elnam TEXT,
+            haltnam TEXT,
+            schnam TEXT,
+            teilgebiet TEXT)""",
+        """SELECT AddGeometryColumn('linksw','geom',{epsg},'POLYGON',2)""".format(epsg=epsg),
+        """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
+        """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg),
+        "SELECT CreateSpatialIndex('linksw','geom')",
+        "DROP TRIGGER ggi_linksw_geom",
+        "DROP TRIGGER ggi_linksw_gbuf",
+        "DROP TRIGGER ggu_linksw_geom",
+        "DROP TRIGGER ggu_linksw_gbuf",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(traceback.format_exc()),
+                'Tabelle "linksw" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
-    try:
-        cursl.execute(sql)
-    except:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(traceback.format_exc()),
-            'Tabelle "linksw" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql1 = """SELECT AddGeometryColumn('linksw','geom',{epsg},'POLYGON',2)""".format(
-        epsg=epsg
-    )
-    sql2 = (
-        """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(
-            epsg=epsg
-        )
-    )
-    sql3 = (
-        """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(
-            epsg=epsg
-        )
-    )
-    sqlindex = "SELECT CreateSpatialIndex('linksw','geom')"
-    try:
-        cursl.execute(sql1)
-        cursl.execute(sql2)
-        cursl.execute(sql3)
-        cursl.execute(sqlindex)
-    except:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(traceback.format_exc()),
-            "QKan_Database (2) SQL-Fehler in SpatiaLite: \n",
-        )
-        consl.close()
-        return False
     consl.commit()
 
     # Teileinzugsgebiete ------------------------------------------------------------------
 
-    sql = """-- Haltungsflächen. Verschneidung, Verwaltung der Befestigungsgrade (alte Programme)
-    CREATE TABLE tezg (
-    pk INTEGER PRIMARY KEY,
-    flnam TEXT,
-    haltnam TEXT,
-    schnam TEXT,
-    neigkl INTEGER DEFAULT 1,   -- Werte [1-5], als Vorgabe fuer automatisch erzeugte unbef Flaechen
-    neigung REAL,               -- absolute Neigung (%)
-    befgrad REAL,               -- (-) Befestigungsgrad absolut, nur optional fuer SWMM und HE6
-    schwerpunktlaufzeit REAL,   -- nur, wenn nur Haltungsflächen aber keine Flächen eingelesen werden
-    regenschreiber TEXT,        -- Regenschreiber beziehen sich auf Zieldaten
-    teilgebiet TEXT,
-    abflussparameter TEXT,      -- als Vorgabe fuer automatisch erzeugte unbef Flaechen
-    kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "tezg" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = "SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('tezg','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "tezg" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
+    sqls = [
+        """-- Haltungsflächen. Verschneidung, Verwaltung der Befestigungsgrade (alte Programme)
+            CREATE TABLE tezg (
+            pk INTEGER PRIMARY KEY,
+            flnam TEXT,
+            haltnam TEXT,
+            schnam TEXT,
+            neigkl INTEGER DEFAULT 1,   -- Werte [1-5], als Vorgabe fuer automatisch erzeugte unbef Flaechen
+            neigung REAL,               -- absolute Neigung (%)
+            befgrad REAL,               -- (-) Befestigungsgrad absolut, nur optional fuer SWMM und HE6
+            schwerpunktlaufzeit REAL,   -- nur, wenn nur Haltungsflächen aber keine Flächen eingelesen werden
+            regenschreiber TEXT,        -- Regenschreiber beziehen sich auf Zieldaten
+            teilgebiet TEXT,
+            abflussparameter TEXT,      -- als Vorgabe fuer automatisch erzeugte unbef Flaechen
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+        "SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg),
+        "SELECT CreateSpatialIndex('tezg','geom')",
+        "DROP TRIGGER ggi_tezg_geom",
+        "DROP TRIGGER ggu_tezg_geom",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "tezg" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
     sql = f"""CREATE VIEW IF NOT EXISTS tezg_data AS
           SELECT
@@ -2003,86 +1810,69 @@ def createdbtables(
     # Erfasst alle Direkteinleitungen mit festem SW-Zufluss (m³/a)
     # Die Zuordnung zum Teilgebiet dient nur der Auswahl
 
-    sql = """CREATE TABLE einleit (
-    pk INTEGER PRIMARY KEY,
-    elnam TEXT,
-    haltnam TEXT,
-    schnam TEXT,
-    teilgebiet TEXT, 
-    zufluss REAL,
-    ew REAL,
-    einzugsgebiet TEXT,
-    kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
+    sqls = [
+        """CREATE TABLE einleit (
+            pk INTEGER PRIMARY KEY,
+            elnam TEXT,
+            haltnam TEXT,
+            schnam TEXT,
+            teilgebiet TEXT, 
+            zufluss REAL,
+            ew REAL,
+            einzugsgebiet TEXT,
+            kommentar TEXT,
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+        "SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)".format(epsg),
+        "SELECT CreateSpatialIndex('einleit','geom')",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "einleit" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "einleit" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = "SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)".format(epsg)
-    sqlindex = "SELECT CreateSpatialIndex('einleit','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "einleit" konnte das Attribut "geom" nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
     consl.commit()
 
     # Einleitungen aus Aussengebieten ----------------------------------------------------------------
     # Erfasst alle Außengebiete
     # Die Zuordnung zum Teilgebiet dient nur der Auswahl
 
-    sql = """CREATE TABLE aussengebiete (
-        pk INTEGER PRIMARY KEY, 
-        gebnam TEXT, 
-        schnam TEXT, 
-        hoeheob REAL, 
-        hoeheun REAL, 
-        fliessweg REAL, 
-        basisabfluss REAL, 
-        cn REAL, 
-        regenschreiber TEXT, 
-        teilgebiet TEXT, 
-        kommentar TEXT, 
-        createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            'Tabelle "aussengebiete" konnte nicht erstellt werden: \n{}'.format(
-                repr(err)
+    sqls = [
+        """CREATE TABLE aussengebiete (
+            pk INTEGER PRIMARY KEY, 
+            gebnam TEXT, 
+            schnam TEXT, 
+            hoeheob REAL, 
+            hoeheun REAL, 
+            fliessweg REAL, 
+            basisabfluss REAL, 
+            cn REAL, 
+            regenschreiber TEXT, 
+            teilgebiet TEXT, 
+            kommentar TEXT, 
+            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+        """SELECT AddGeometryColumn('aussengebiete','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
+        "SELECT CreateSpatialIndex('aussengebiete','geom')",
+        "DROP TRIGGER ggi_aussengebiete_geom",
+        "DROP TRIGGER ggu_aussengebiete_geom",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                'Tabelle "aussengebiete" konnte nicht erstellt werden: \n{}'.format(
+                    repr(err)
+                )
             )
-        )
-        consl.close()
-        return False
+            consl.close()
+            return False
 
-    sql = """SELECT AddGeometryColumn('aussengebiete','geom',{epsg},'MULTIPOLYGON',2)""".format(
-        epsg=epsg
-    )
-    sqlindex = "SELECT CreateSpatialIndex('aussengebiete','geom')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except BaseException as err:
-        fehlermeldung(
-            'In der Tabelle "aussengebiete" konnte das Attribut "geom" nicht hinzugefuegt werden: \n{}'.format(
-                repr(err)
-            )
-        )
-        consl.close()
-        return False
     consl.commit()
 
     # Anbindung Aussengebiete -----------------------------------------------------------------------------
@@ -2090,37 +1880,25 @@ def createdbtables(
     # wird anschließend in das Feld schnam eingetragen. Der Export erfolgt allerdings anhand
     # der grafischen Verknüpfungen dieser Tabelle.
 
-    sql = """CREATE TABLE linkageb (
-    pk INTEGER PRIMARY KEY,
-    gebnam TEXT,
-    schnam TEXT)"""
+    sqls = [
+        """CREATE TABLE linkageb (
+            pk INTEGER PRIMARY KEY,
+            gebnam TEXT,
+            schnam TEXT)""",
+        """SELECT AddGeometryColumn('linkageb','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg),
+        "SELECT CreateSpatialIndex('linkageb','glink')",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Tabelle "linkageb" konnte nicht erstellt werden.',
+            )
+            consl.close()
+            return False
 
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "linkageb" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = (
-        """SELECT AddGeometryColumn('linkageb','glink',{epsg},'LINESTRING',2)""".format(
-            epsg=epsg
-        )
-    )
-    sqlindex = "SELECT CreateSpatialIndex('linkageb','glink')"
-    try:
-        cursl.execute(sql)
-        cursl.execute(sqlindex)
-    except:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(traceback.format_exc()),
-            "QKan_Database (2) SQL-Fehler in SpatiaLite: \n",
-        )
-        consl.close()
-        return False
     consl.commit()
 
     # Simulationsstatus/Planungsstatus -----------------------------------------
@@ -2544,8 +2322,8 @@ def createdbtables(
 
     # Hilfstabelle für den Flächen-Export
 
-    sql = """
-        CREATE TABLE IF NOT EXISTS flaechen_he8 (
+    sqls = [
+        """CREATE TABLE IF NOT EXISTS flaechen_he8 (
             pk INTEGER PRIMARY KEY,
             Name TEXT, 
             Haltung TEXT, 
@@ -2565,42 +2343,22 @@ def createdbtables(
             IstPolygonalflaeche SMALLINT, 
             ZuordnungGesperrt SMALLINT, 
             LastModified TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')), 
-            Kommentar TEXT)"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Fehler beim Erzeugen der Tabelle "flaechen_he8".',
-        )
-        consl.close()
-        return False
-
-    sql = """SELECT AddGeometryColumn('flaechen_he8','Geometry', -1,
-            'MULTIPOLYGON',2)"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Fehler beim Erzeugen des Attributes "flaechen_he8.Geometry".',
-        )
-        consl.close()
-        return False
-
-    sql = """SELECT CreateSpatialIndex('flaechen_he8', 'Geometry')"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Fehler beim Erzeugen des Spatial Index für Attribut "Geometry".',
-        )
-        consl.close()
-        return False
+            Kommentar TEXT)""",
+        """SELECT AddGeometryColumn('flaechen_he8','Geometry', -1,'MULTIPOLYGON',2)""",
+        """SELECT CreateSpatialIndex('flaechen_he8', 'Geometry')""",
+        "DROP TRIGGER ggi_flaechen_he8_geometry",
+        "DROP TRIGGER ggu_flaechen_he8_geometry",
+    ]
+    for sql in sqls:
+        try:
+            cursl.execute(sql)
+        except BaseException as err:
+            fehlermeldung(
+                "qkan_database.createdbtables: {}".format(err),
+                'Fehler beim Erzeugen der Tabelle "flaechen_he8".',
+            )
+            consl.close()
+            return False
 
     consl.commit()
 

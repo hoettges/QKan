@@ -286,8 +286,11 @@ class DBConnection:
         try:
             self.cursl.execute(sql, parameters)
 
+            if mute_logger:
+                return True
+
             # Suppress log message for 2 seconds if category is identical to last query
-            if self.sqltext == stmt_category and not mute_logger:
+            if self.sqltext == stmt_category:
                 if (self.sqltime.now() - self.sqltime).seconds < 2:
                     self.sqlcount += 1
                     return True
@@ -296,12 +299,12 @@ class DBConnection:
             self.sqltime = self.sqltime.now()
             if self.sqlcount == 0:
                 logger.debug(
-                    "dbfunc.DBConnection.sql: {}\n{}\n".format(stmt_category, sql)
+                    "dbfunc.DBConnection.sql: {}\nsql: {}\nparameters: {}\n".format(stmt_category, sql, parameters)
                 )
             else:
                 logger.debug(
-                    "dbfunc.DBConnection.sql (Nr. {}): {}\n{}\n".format(
-                        self.sqlcount, stmt_category, sql
+                    "dbfunc.DBConnection.sql (Nr. {}): {}\n{}\n{}\n".format(
+                        self.sqlcount, stmt_category, sql, parameters
                     )
                 )
             self.sqlcount = 0
@@ -309,7 +312,7 @@ class DBConnection:
         except sqlite3.Error as e:
             fehlermeldung(
                 "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=stmt_category),
-                "{e}\n{s}".format(e=repr(e), s=sql),
+                "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=parameters),
             )
             self.__del__()
             return False

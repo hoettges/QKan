@@ -331,13 +331,14 @@ class ToolsConfig(ClassObject):
         # 1. required fields,
         # 2. triggered table '*_data' instead, except [auslaesse, speicher]
         required_fields = {
-            "schaechte": ["schnam", "xsch", "ysch", "sohlhoehe"],
-            "auslaesse": ["schnam", "xsch", "ysch", "sohlhoehe"],
-            "speicher": ["schnam", "xsch", "ysch", "sohlhoehe"],
+            "schaechte": ["schnam", "sohlhoehe"],
+            "auslaesse": ["schnam", "sohlhoehe"],
+            "speicher": ["schnam", "sohlhoehe"],
             "haltungen": ["haltnam", "schoben", "schunten"],
             "pumpen": ["pnam", "schoben", "schunten"],
             "wehre": ["wnam", "schoben", "schunten"],
-            "tezg": ["flnam", "flaeche", "befgrad"],
+            "tezg": [],
+            "flaechen": [],
         }
 
         # Layer names with data source table 'schaechte'
@@ -359,6 +360,8 @@ class ToolsConfig(ClassObject):
                 'durchm': ['durchm*', 'diam*'],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['geom'],
+                'geop': ['wkt_geom', 'geo*'],
             },
             'haltungen': {
                 'haltnam': ['haltn*', 'haltu*', 'kanaln*', 'nam*', ],
@@ -379,6 +382,7 @@ class ToolsConfig(ClassObject):
                 'entwart': ['entw*art', 'entw*typ*', 'kanalart*'],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['wkt_geom', 'geo*'],
             },
             'pumpen': {
                 'pnam': ['p*nam*', 'nam*', ],
@@ -389,6 +393,7 @@ class ToolsConfig(ClassObject):
                 'ausschalthoehe': ['auss*h*', ],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['wkt_geom', 'geo*'],
             },
             'wehre': {
                 'wnam': ['w*nam*', 'nam*', ],
@@ -400,6 +405,7 @@ class ToolsConfig(ClassObject):
                 'laenge': ['*laen*', '*läng*'],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['wkt_geom', 'geo*'],
             },
             'abflussparameter': {
                 'apnam': ['nam*', 'bez*'],
@@ -412,14 +418,24 @@ class ToolsConfig(ClassObject):
                 'bodenklasse': ['*', ],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
-                '': ['*', ],
             },
             'tezg': {
                 'flnam': ['nam*', 'bez*'],
                 'flaeche': ['flae*', 'flä*', 'fl\x4e*'],
                 'befgrad': ['*bef*', '*und*'],
+                'geom': ['wkt_geom', 'geo*'],
             },
-
+            'flaechen': {
+                'flnam': ['f*nam*', 'bez*'],
+                'haltnam': ['haltn*', 'haltu*', 'kanaln*', 'nam*', ],
+                'schnam': ['schnam', 'sch*ob*', 'sch*anf', ],
+                'neigkl': ['neig*kl*'],
+                'neigung': ['neigung', 'neig*grad'],
+                'regenschreiber': ['regen*'],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['wkt_geom', 'geo*'],
+            },
         }
 
         def __str__(self) -> str:
