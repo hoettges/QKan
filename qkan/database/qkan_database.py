@@ -146,6 +146,7 @@ def createdbtables(
             entwart TEXT DEFAULT 'Regenwasser',
             rohrtyp TEXT,
             ks REAL DEFAULT 1.5,
+            sonderelement TEXT,
             simstatus TEXT DEFAULT 'vorhanden',
             kommentar TEXT,
             createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
@@ -175,7 +176,7 @@ def createdbtables(
             sohleoben, sohleunten, 
             deckeloben, deckelunten, 
             teilgebiet, qzu, profilnam, 
-            entwart, rohrtyp, ks,
+            entwart, rohrtyp, ks, klappe, 
             simstatus, kommentar, createdat, 
             xschob, yschob, xschun, yschun
           FROM haltungen;"""
@@ -198,7 +199,7 @@ def createdbtables(
                sohleoben, sohleunten,
                deckeloben, deckelunten, 
                teilgebiet, qzu, profilnam, 
-               entwart, rohrtyp, ks,
+               entwart, rohrtyp, ks, klappe, 
                simstatus, kommentar, createdat,  
                geom)
             SELECT 
@@ -209,7 +210,7 @@ def createdbtables(
               new.sohleoben, new.sohleunten, 
               new.deckeloben, new.deckelunten, 
               new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
-              coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
+              coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), new.klappe,  
               coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
               coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), 
               MakeLine(
@@ -1098,6 +1099,45 @@ def createdbtables(
         return False
     consl.commit()
 
+    # Sonderelemente Haltungen -------------------------------------------------
+
+    sql = """CREATE TABLE sonderelementehaltungen(
+        pk INTEGER PRIMARY KEY, 
+        bezeichnung TEXT, 
+        bemerkung TEXT)"""
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabelle "sonderelementehaltungen" konnte nicht erstellt werden.',
+        )
+        consl.close()
+        return False
+
+    try:
+        daten = [
+            ('Drossel', 'HYSTEM-EXTRAN 8'),
+            ('H-Regler', 'HYSTEM-EXTRAN 8'),
+            ('Q-Regler', 'HYSTEM-EXTRAN 8'),
+            ('Schieber', 'HYSTEM-EXTRAN 8'),
+            ('GrundSeitenauslass', 'HYSTEM-EXTRAN 8'),
+            ('Pumpe', None),
+            ('Wehr', None),
+        ]
+        sql = "INSERT INTO sonderelementehaltungen (bezeichnung, bemerkung) VALUES (?, ?)"
+        for dat in daten:
+            cursl.execute(sql, dat)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabellendaten "sonderelementehaltungen" konnten nicht hinzugefuegt werden.',
+        )
+        consl.close()
+        return False
+    consl.commit()
+
     # Untersuchungsrichtung ----------------------------------------------------
 
     sql = """CREATE TABLE untersuchrichtung (
@@ -1390,7 +1430,7 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'View "pumpen_insert_clipboard" konnte nicht erstellt werden',
+            'Trigger "pumpen_insert_clipboard" konnte nicht erstellt werden',
         )
         consl.close()
         return False
@@ -1475,7 +1515,7 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'View "wehre_insert_clipboard" konnte nicht erstellt werden',
+            'Trigger "wehre_insert_clipboard" konnte nicht erstellt werden',
         )
         consl.close()
         return False
