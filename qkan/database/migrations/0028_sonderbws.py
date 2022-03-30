@@ -12,12 +12,14 @@ def run(dbcon: DBConnection) -> bool:
     """
 
     # Attribut sonderelement in Tabelle haltungen ergänzen
-    sql = """
-        ALTER TABLE haltungen ADD sonderelement TEXT
-    """
-    if not dbcon.sql(sql):
-        logger.error(f"Fehler bei Migration zu Version {VERSION}")
-        return False
+    sqllis = [
+        """ALTER TABLE haltungen ADD sonderelement TEXT""",
+        """ALTER TABLE haltungen ADD material TEXT""",
+    ]
+    for sql in sqllis:
+        if not dbcon.sql(sql):
+            logger.error(f"Fehler bei Migration zu Version {VERSION}")
+            return False
 
     # Tabelle SonderelementeHaltungen ergänzen, mit der "normale" Haltungen von
     # Sonderbauwerksarten unterschieden werden
@@ -27,7 +29,8 @@ def run(dbcon: DBConnection) -> bool:
         bemerkung TEXT)"""
     if not dbcon.sql(sql):
         logger.error("Fehler bei Migration zu Version {VERSION}:\n{err}\n"
-            'Tabelle "sonderelementehaltungen" konnte nicht erstellt werden.',
+                    'Tabelle "sonderelementehaltungen" konnte nicht erstellt werden.'
+        )
         return False
     daten = [
         ('Drossel', 'HYSTEM-EXTRAN 8'),
@@ -44,7 +47,7 @@ def run(dbcon: DBConnection) -> bool:
             logger.error(f"Fehler bei Migration zu Version {VERSION}:\n{err}"
                         '\nTabellendaten "sonderelementehaltungen" konnten nicht hinzugefuegt werden.'
                         '\nDaten: {dat}\n'
-        )
+            )
         return False
     dbcon.commit()
     return True

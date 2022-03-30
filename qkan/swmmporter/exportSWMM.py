@@ -417,7 +417,7 @@ def exportKanaldaten(
     progress_bar.setValue(40)
 
     sql = """SELECT
-        h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, rohrtyp, hoehe, breite
+        h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, material, hoehe, breite
     FROM
         haltungen AS h
     JOIN

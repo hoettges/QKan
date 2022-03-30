@@ -147,7 +147,7 @@
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="rohrtyp">
+    <field configurationFlags="None" name="material">
       <editWidget type="TextEdit">
         <config>
           <Option/>
@@ -227,7 +227,7 @@
     <alias field="qzu" name="" index="12"/>
     <alias field="profilnam" name="" index="13"/>
     <alias field="entwart" name="" index="14"/>
-    <alias field="rohrtyp" name="" index="15"/>
+    <alias field="material" name="" index="15"/>
     <alias field="ks" name="" index="16"/>
     <alias field="simstatus" name="" index="17"/>
     <alias field="kommentar" name="" index="18"/>
@@ -253,7 +253,7 @@
     <default field="qzu" expression="" applyOnUpdate="0"/>
     <default field="profilnam" expression="" applyOnUpdate="0"/>
     <default field="entwart" expression="" applyOnUpdate="0"/>
-    <default field="rohrtyp" expression="" applyOnUpdate="0"/>
+    <default field="material" expression="" applyOnUpdate="0"/>
     <default field="ks" expression="" applyOnUpdate="0"/>
     <default field="simstatus" expression="" applyOnUpdate="0"/>
     <default field="kommentar" expression="" applyOnUpdate="0"/>
@@ -279,7 +279,7 @@
     <constraint field="qzu" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint field="profilnam" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint field="entwart" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="rohrtyp" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="material" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint field="ks" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint field="simstatus" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint field="kommentar" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
@@ -305,7 +305,7 @@
     <constraint field="qzu" desc="" exp=""/>
     <constraint field="profilnam" desc="" exp=""/>
     <constraint field="entwart" desc="" exp=""/>
-    <constraint field="rohrtyp" desc="" exp=""/>
+    <constraint field="material" desc="" exp=""/>
     <constraint field="ks" desc="" exp=""/>
     <constraint field="simstatus" desc="" exp=""/>
     <constraint field="kommentar" desc="" exp=""/>
@@ -336,7 +336,7 @@
       <column name="qzu" type="field" hidden="0" width="-1"/>
       <column name="profilnam" type="field" hidden="0" width="-1"/>
       <column name="entwart" type="field" hidden="0" width="-1"/>
-      <column name="rohrtyp" type="field" hidden="0" width="-1"/>
+      <column name="material" type="field" hidden="0" width="-1"/>
       <column name="ks" type="field" hidden="0" width="-1"/>
       <column name="simstatus" type="field" hidden="0" width="-1"/>
       <column name="kommentar" type="field" hidden="0" width="-1"/>
@@ -390,7 +390,7 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="pk"/>
     <field editable="1" name="profilnam"/>
     <field editable="1" name="qzu"/>
-    <field editable="1" name="rohrtyp"/>
+    <field editable="1" name="material"/>
     <field editable="1" name="schoben"/>
     <field editable="1" name="schunten"/>
     <field editable="1" name="simstatus"/>
@@ -416,7 +416,7 @@ def my_form_open(dialog, layer, feature):
     <field labelOnTop="0" name="pk"/>
     <field labelOnTop="0" name="profilnam"/>
     <field labelOnTop="0" name="qzu"/>
-    <field labelOnTop="0" name="rohrtyp"/>
+    <field labelOnTop="0" name="material"/>
     <field labelOnTop="0" name="schoben"/>
     <field labelOnTop="0" name="schunten"/>
     <field labelOnTop="0" name="simstatus"/>

@@ -1618,7 +1618,7 @@
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="rohrtyp">
+    <field configurationFlags="None" name="material">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -1721,7 +1721,7 @@
     <alias field="qzu" name="" index="12"/>
     <alias field="profilnam" name="" index="13"/>
     <alias field="entwart" name="" index="14"/>
-    <alias field="rohrtyp" name="" index="15"/>
+    <alias field="material" name="" index="15"/>
     <alias field="ks" name="" index="16"/>
     <alias field="simstatus" name="" index="17"/>
     <alias field="kommentar" name="" index="18"/>
@@ -1747,7 +1747,7 @@
     <default applyOnUpdate="0" field="qzu" expression=""/>
     <default applyOnUpdate="0" field="profilnam" expression="'Kreisquerschnitt'"/>
     <default applyOnUpdate="0" field="entwart" expression=""/>
-    <default applyOnUpdate="0" field="rohrtyp" expression=""/>
+    <default applyOnUpdate="0" field="material" expression=""/>
     <default applyOnUpdate="0" field="ks" expression=""/>
     <default applyOnUpdate="0" field="simstatus" expression="'vorhanden'"/>
     <default applyOnUpdate="0" field="kommentar" expression=""/>
@@ -1773,7 +1773,7 @@
     <constraint notnull_strength="0" field="qzu" constraints="0" unique_strength="0" exp_strength="0"/>
     <constraint notnull_strength="0" field="profilnam" constraints="0" unique_strength="0" exp_strength="0"/>
     <constraint notnull_strength="0" field="entwart" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="rohrtyp" constraints="0" unique_strength="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="material" constraints="0" unique_strength="0" exp_strength="0"/>
     <constraint notnull_strength="0" field="ks" constraints="0" unique_strength="0" exp_strength="0"/>
     <constraint notnull_strength="0" field="simstatus" constraints="0" unique_strength="0" exp_strength="0"/>
     <constraint notnull_strength="0" field="kommentar" constraints="0" unique_strength="0" exp_strength="0"/>
@@ -1799,7 +1799,7 @@
     <constraint exp="" desc="" field="qzu"/>
     <constraint exp="" desc="" field="profilnam"/>
     <constraint exp="" desc="" field="entwart"/>
-    <constraint exp="" desc="" field="rohrtyp"/>
+    <constraint exp="" desc="" field="material"/>
     <constraint exp="" desc="" field="ks"/>
     <constraint exp="" desc="" field="simstatus"/>
     <constraint exp="" desc="" field="kommentar"/>
@@ -1830,7 +1830,7 @@
       <column width="-1" name="qzu" hidden="0" type="field"/>
       <column width="-1" name="profilnam" hidden="0" type="field"/>
       <column width="-1" name="entwart" hidden="0" type="field"/>
-      <column width="-1" name="rohrtyp" hidden="0" type="field"/>
+      <column width="-1" name="material" hidden="0" type="field"/>
       <column width="-1" name="ks" hidden="0" type="field"/>
       <column width="-1" name="simstatus" hidden="0" type="field"/>
       <column width="-1" name="kommentar" hidden="0" type="field"/>
@@ -1882,7 +1882,7 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="pk"/>
     <field editable="1" name="profilnam"/>
     <field editable="1" name="qzu"/>
-    <field editable="1" name="rohrtyp"/>
+    <field editable="1" name="material"/>
     <field editable="1" name="schoben"/>
     <field editable="1" name="schunten"/>
     <field editable="1" name="simstatus"/>
@@ -1908,7 +1908,7 @@ def my_form_open(dialog, layer, feature):
     <field labelOnTop="0" name="pk"/>
     <field labelOnTop="0" name="profilnam"/>
     <field labelOnTop="0" name="qzu"/>
-    <field labelOnTop="0" name="rohrtyp"/>
+    <field labelOnTop="0" name="material"/>
     <field labelOnTop="0" name="schoben"/>
     <field labelOnTop="0" name="schunten"/>
     <field labelOnTop="0" name="simstatus"/>
@@ -1934,7 +1934,7 @@ def my_form_open(dialog, layer, feature):
     <field name="pk" reuseLastValue="0"/>
     <field name="profilnam" reuseLastValue="0"/>
     <field name="qzu" reuseLastValue="0"/>
-    <field name="rohrtyp" reuseLastValue="0"/>
+    <field name="material" reuseLastValue="0"/>
     <field name="schoben" reuseLastValue="0"/>
     <field name="schunten" reuseLastValue="0"/>
     <field name="simstatus" reuseLastValue="0"/>

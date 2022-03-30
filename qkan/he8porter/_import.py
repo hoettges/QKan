@@ -185,17 +185,14 @@ class ImportTask:
         if QKan.config.check_import.haltungen:
             if self.append:
                 sql = """
-                WITH nodes AS (SELECT Name FROM he.Schacht
-                     UNION SELECT Name, FROM he.Auslass
-                     UNION SELECT Name, FROM he.Speicherschacht) 
-                INSERT INTO haltungen_data (
+                INSERT INTO haltungen (
                     haltnam, schoben, schunten, 
                     hoehe, breite, laenge, 
-                    sohleoben, sohleunten, deckeloben, deckelunten, 
+                    sohleoben, sohleunten,
                     profilnam, entwart, 
-                    ks, simstatus, typ,  
+                    ks, simstatus,  
                     kommentar, createdat, 
-                    xschob, yschob, xschun, yschun
+                    geom
                 )
                 SELECT 
                     ro.Name AS haltnam, 
@@ -212,18 +209,10 @@ class ImportTask:
                     ea.bezeichnung AS entwart, 
                     ro.Rauigkeitsbeiwert AS ks, 
                     si.bezeichnung AS simstatus,
-                    'haltung' AS typ, 
                     ro.Kommentar AS kommentar, 
                     ro.Lastmodified AS createdat, 
-                    x(PointN(ro.Geometry, 1)) AS xschob, 
-                    y(PointN(ro.Geometry, 1)) AS yschob,
-                    x(PointN(ro.Geometry, -1)) AS xschun, 
-                    y(PointN(ro.Geometry, -1)) AS yschun
+                    SetSrid(Geometry,?) AS geom
                 FROM he.Rohr AS ro
-                INNER JOIN nodes AS so
-                ON ro.Schachtoben = so.Name 
-                INNER JOIN nodes AS su
-                ON ro.Schachtunten = su.Name
                 LEFT JOIN (SELECT pk, he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON ro.Profiltyp = pr.he_nr
                 LEFT JOIN entwaesserungsarten AS ea 
@@ -235,7 +224,7 @@ class ImportTask:
                 WHERE ha.pk IS NULL
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import Haltungen"):
+                if not self.db_qkan.sql(sql, "he8_import Haltungen", (self.epsg,)):
                     return False
 
                 self.db_qkan.commit()
@@ -329,38 +318,27 @@ class ImportTask:
         if QKan.config.check_import.drosseln:
             if self.append:
                 sql = """
-                WITH nodes AS (SELECT Name FROM he.Schacht
-                     UNION SELECT Name FROM he.Auslass
-                     UNION SELECT Name FROM he.Speicherschacht) 
-                INSERT INTO drosseln_data (
-                    name, schoben, schunten,
-                    typ, sohlabstand, rueckschlagklappe,  
-                    simstatus, 
+                INSERT INTO haltungen (
+                    haltnam, schoben, schunten,
+                    hoehe,
+                    sonderelement, 
+                    simstatus,
                     kommentar, createdat, 
                     xschob, yschob, xschun, yschun)
                 SELECT 
-                    dr.Name AS name,
+                    dr.Name AS haltnam,
                     dr.Schachtoben AS schoben, 
                     dr.Schachtunten AS schunten, 
-                    'drossel' AS typ, 
-                    dr.Sohlabstand AS sohlabstand, 
-                    dr.Rueckschlagklappe AS rueckschlagklappe,
+                    dr.Sohlabstand AS hoehe, 
+                    'drossel' AS sonderelement, 
                     si.bezeichnung AS simstatus, 
                     dr.Kommentar AS kommentar, 
                     dr.Lastmodified AS createdat,
-                    x(PointN(dr.Geometry, 1)) AS xschob, 
-                    y(PointN(dr.Geometry, 1)) AS yschob,
-                    x(PointN(dr.Geometry, -1)) AS xschun, 
-                    y(PointN(dr.Geometry, -1)) AS yschun
+                    SetSrid(Geometry,?) AS geom
                 FROM he.Drossel AS dr
-                LEFT JOIN nodes AS so
-                ON dr.Schachtoben = so.Name 
-                LEFT JOIN nodes AS su
-                ON dr.Schachtunten = su.Name
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = dr.Planungsstatus"""
-
-                if not self.db_qkan.sql(sql, "he8_import Drosseln"):
+                if not self.db_qkan.sql(sql, "he8_import Drosseln", (self.epsg,)):
                     return False
 
                 self.db_qkan.commit()

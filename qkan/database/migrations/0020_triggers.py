@@ -121,7 +121,7 @@ def run(dbcon: DBConnection) -> bool:
                 deckeloben, deckelunten,
                 xschob, yschob, xschun, yschun,
                 teilgebiet, qzu, profilnam,
-                entwart, rohrtyp, ks,
+                entwart, material, ks,
                 simstatus, kommentar, createdat
             FROM haltungen
             """,
@@ -139,7 +139,7 @@ def run(dbcon: DBConnection) -> bool:
                 INSERT INTO haltungen
                 (haltnam, schoben, schunten, hoehe, breite, laenge,
                 sohleoben, sohleunten, deckeloben, deckelunten, 
-                teilgebiet, qzu, profilnam, entwart, rohrtyp, ks,
+                teilgebiet, qzu, profilnam, entwart, material, ks,
                 simstatus, kommentar, createdat, geom)
                 SELECT
                     new.haltnam, new.schoben, new.schunten,
@@ -147,7 +147,7 @@ def run(dbcon: DBConnection) -> bool:
                     CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
                     new.laenge, new.sohleoben, new.sohleunten, new.deckeloben, new.deckelunten, 
                     new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
-                    coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
+                    coalesce(new.entwart, 'Regenwasser'), new.material, coalesce(new.ks, 1.5), 
                     coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
                     coalesce(new.createdat, (datetime('now'))), 
                     MakeLine(

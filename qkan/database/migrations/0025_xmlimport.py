@@ -365,7 +365,7 @@ def run(dbcon: DBConnection) -> bool:
         qzu REAL,
         profilnam TEXT DEFAULT 'Kreisquerschnitt',
         entwart TEXT DEFAULT 'Regenwasser',
-        rohrtyp TEXT,
+        material TEXT,
         ks REAL DEFAULT 1.5,
         simstatus TEXT DEFAULT 'vorhanden',
         kommentar TEXT,
@@ -398,7 +398,7 @@ def run(dbcon: DBConnection) -> bool:
                 sohleoben, sohleunten, 
                 deckeloben, deckelunten, 
                 teilgebiet, qzu, profilnam, 
-                entwart, rohrtyp, ks,
+                entwart, material, ks,
                 simstatus, kommentar, createdat, 
                 xschob, yschob, xschun, yschun
               FROM anschlussleitungen;"""
@@ -416,7 +416,7 @@ def run(dbcon: DBConnection) -> bool:
                    sohleoben, sohleunten,
                    deckeloben, deckelunten, 
                    teilgebiet, qzu, profilnam, 
-                   entwart, rohrtyp, ks,
+                   entwart, material, ks,
                    simstatus, kommentar, createdat,  
                    geom)
                 VALUES( 
@@ -427,7 +427,7 @@ def run(dbcon: DBConnection) -> bool:
                   new.sohleoben, new.sohleunten, 
                   new.deckeloben, new.deckelunten, 
                   new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
-                  coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
+                  coalesce(new.entwart, 'Regenwasser'), new.material, coalesce(new.ks, 1.5), 
                   coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
                   coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), 
                   MakeLine(

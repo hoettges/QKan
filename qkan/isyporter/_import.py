@@ -80,7 +80,7 @@ class Haltung(ClassObject):
     deckelunten: float = 0.0
     profilnam: str = ""
     entwart: str = ""
-    rohrtyp: str = ""
+    material: str = ""
     ks: float = 1.5
     simstatus: int = 0
     kommentar: str = ""
@@ -148,7 +148,7 @@ class Anschlussleitung(ClassObject):
     deckelunten: float = 0.0
     profilnam: str = ""
     entwart: str = ""
-    rohrtyp: str = ""
+    material: str = ""
     ks: float = 1.5
     simstatus: int = 0
     kommentar: str = ""
@@ -1054,7 +1054,7 @@ class ImportTask:
                     )
                     laenge = _strip_float(_haltung.findtext("d:Laenge", 0.0, self.NS))
 
-                    rohrtyp = _haltung.findtext("d:Material", "not found", self.NS)
+                    material = _haltung.findtext("d:Material", "not found", self.NS)
 
                     for profil in _haltung.findall("d:Profil", self.NS):
                         profilnam = profil.findtext("d:Profilart", "not found", self.NS)
@@ -1126,7 +1126,7 @@ class ImportTask:
                     hoehe=hoehe,
                     breite=breite,
                     laenge=laenge,
-                    rohrtyp=rohrtyp,
+                    material=material,
                     sohleoben=sohleoben,
                     sohleunten=sohleunten,
                     deckeloben=deckeloben,
@@ -1216,7 +1216,7 @@ class ImportTask:
             sql = f"""
                 INSERT INTO haltungen_data 
                     (haltnam, schoben, schunten, 
-                    hoehe, breite, laenge, rohrtyp, sohleoben, sohleunten, deckeloben, deckelunten, 
+                    hoehe, breite, laenge, material, sohleoben, sohleunten, deckeloben, deckelunten, 
                     profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
@@ -1231,7 +1231,7 @@ class ImportTask:
                     haltung.hoehe,
                     haltung.breite,
                     haltung.laenge,
-                    haltung.rohrtyp,
+                    haltung.material,
                     haltung.sohleoben,
                     haltung.sohleunten,
                     haltung.deckeloben,
@@ -1747,7 +1747,7 @@ class ImportTask:
                     )
                     laenge = _strip_float(_haltung.findtext("d:Laenge", 0.0, self.NS))
 
-                    rohrtyp = _haltung.findtext("d:Material", "not found", self.NS)
+                    material = _haltung.findtext("d:Material", "not found", self.NS)
 
                     for profil in _haltung.findall("d:Profil", self.NS):
                         profilnam = profil.findtext("d:Profilart", "not found", self.NS)
@@ -1821,7 +1821,7 @@ class ImportTask:
                     hoehe=hoehe,
                     breite=breite,
                     laenge=laenge,
-                    rohrtyp=rohrtyp,
+                    material=material,
                     sohleoben=sohleoben,
                     sohleunten=sohleunten,
                     deckeloben=deckeloben,
@@ -1910,7 +1910,7 @@ class ImportTask:
             sql = f"""
                 INSERT INTO anschlussleitungen_data 
                     (leitnam, schoben, schunten, 
-                    hoehe, breite, laenge, rohrtyp, sohleoben, sohleunten, deckeloben, deckelunten, 
+                    hoehe, breite, laenge, material, sohleoben, sohleunten, deckeloben, deckelunten, 
                     profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
@@ -1925,7 +1925,7 @@ class ImportTask:
                     anschlussleitung.hoehe,
                     anschlussleitung.breite,
                     anschlussleitung.laenge,
-                    anschlussleitung.rohrtyp,
+                    anschlussleitung.material,
                     anschlussleitung.sohleoben,
                     anschlussleitung.sohleunten,
                     anschlussleitung.deckeloben,

@@ -29,6 +29,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -55,6 +56,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -82,6 +84,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -120,6 +123,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -142,6 +146,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -168,13 +173,14 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>270</y>
+     <y>250</y>
      <width>411</width>
      <height>81</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -202,6 +208,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -240,6 +247,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -256,13 +264,14 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>170</y>
+     <y>160</y>
      <width>401</width>
      <height>81</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -290,6 +299,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -328,6 +338,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -346,11 +357,12 @@
      <x>440</x>
      <y>20</y>
      <width>271</width>
-     <height>251</height>
+     <height>171</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -378,6 +390,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -403,6 +416,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -428,6 +442,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -453,6 +468,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -481,6 +497,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -509,6 +526,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -537,6 +555,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -562,6 +581,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -600,6 +620,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -614,114 +635,6 @@
      <string>Außengebiete</string>
     </property>
    </widget>
-   <widget class="Line" name="line_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>251</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_26">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>159</y>
-      <width>161</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Haltungsfläche, markiert als:</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_tezg_ef">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>181</y>
-      <width>121</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;Einzugsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string>Einzugsflächen</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_tezg_hf">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>201</y>
-      <width>121</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;Haltungsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string>Haltungsflächen</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_tezg_tf">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>220</y>
-      <width>121</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;TW-Einzugsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string>TW-Einzugsflächen</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="cb_einzugsgebiete">
     <property name="geometry">
      <rect>
@@ -733,6 +646,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -752,13 +666,14 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>370</y>
+     <y>340</y>
      <width>411</width>
      <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -777,6 +692,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -802,6 +718,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -827,6 +744,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -849,31 +767,33 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>280</y>
+     <y>340</y>
      <width>271</width>
-     <height>141</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
    <property name="title">
-    <string>Referenztabellen</string>
+    <string>Referenztabellen importieren</string>
    </property>
    <widget class="QCheckBox" name="cb_bodenklassen">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>60</y>
+      <x>140</x>
+      <y>20</y>
       <width>91</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -888,42 +808,18 @@
      <string>Bodenklassen</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_rohrprofile">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>40</y>
-      <width>91</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sonderprofile importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>aktiviert</string>
-    </property>
-    <property name="text">
-     <string>Sonderprofile</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="cb_abflussparameter">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>20</x>
       <y>20</y>
-      <width>121</width>
+      <width>111</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -941,14 +837,15 @@
    <widget class="QCheckBox" name="cb_allrefs">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>90</y>
+      <x>20</x>
+      <y>40</y>
       <width>141</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -961,7 +858,105 @@
     </property>
     <property name="text">
      <string>Auch nicht verwendete
-Datensätze importieren</string>
+Datennsätze importieren</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>240</y>
+     <width>271</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Haltungsflächen importieren, markiert als:</string>
+   </property>
+   <widget class="QCheckBox" name="cb_tezg_ef">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>21</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;Einzugsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Einzugsflächen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_tezg_hf">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>41</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;Haltungsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Haltungsflächen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_tezg_tf">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;TW-Einzugsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>TW-Einzugsflächen</string>
     </property>
    </widget>
   </widget>

@@ -131,7 +131,7 @@ class zustandsklassen_funkt:
                     Untersuchdat_haltung_bewertung.richtung,
                     Untersuchdat_haltung_bewertung.createdat,
                     haltungen.haltnam,
-                    haltungen.rohrtyp,
+                    haltungen.material,
                     haltungen.hoehe,
                     haltungen.createdat
                 FROM Untersuchdat_haltung_bewertung, haltungen
@@ -166,7 +166,7 @@ class zustandsklassen_funkt:
                         Untersuchdat_haltung_bewertung.richtung,
                         Untersuchdat_haltung_bewertung.createdat,
                         anschlussleitungen.leitnam,
-                        anschlussleitungen.rohrtyp,
+                        anschlussleitungen.material,
                         anschlussleitungen.hoehe,
                         anschlussleitungen.createdat
                     FROM Untersuchdat_haltung_bewertung, anschlussleitungen
@@ -2370,7 +2370,7 @@ class zustandsklassen_funkt:
                             Untersuchdat_haltung_bewertung.bw_bs,
                             Untersuchdat_haltung_bewertung.createdat,
                             haltungen.haltnam,
-                            haltungen.rohrtyp,
+                            haltungen.material,
                             haltungen.hoehe,
                             haltungen.createdat
                         FROM Untersuchdat_haltung_bewertung, haltungen
@@ -2407,7 +2407,7 @@ class zustandsklassen_funkt:
                             Untersuchdat_haltung_bewertung.bw_bs,
                             Untersuchdat_haltung_bewertung.createdat,
                             anschlussleitungen.leitnam,
-                            anschlussleitungen.rohrtyp,
+                            anschlussleitungen.material,
                             anschlussleitungen.hoehe,
                             anschlussleitungen.createdat
                         FROM Untersuchdat_haltung_bewertung, anschlussleitungen
@@ -2726,7 +2726,7 @@ class zustandsklassen_funkt:
             sql = """
                 SELECT
                     haltungen.haltnam,
-                    haltungen.rohrtyp,
+                    haltungen.material,
                     haltungen.hoehe,
                     Untersuchdat_haltung_bewertung.untersuchhal
                 FROM haltungen, Untersuchdat_haltung_bewertung
@@ -2736,7 +2736,7 @@ class zustandsklassen_funkt:
             sql = """
                     SELECT
                         anschlussleitungen.leitnam,
-                        anschlussleitungen.rohrtyp,
+                        anschlussleitungen.material,
                         anschlussleitungen.hoehe,
                         Untersuchdat_haltung_bewertung.untersuchhal
                     FROM anschlussleitungen, Untersuchdat_haltung_bewertung
@@ -2820,7 +2820,7 @@ class zustandsklassen_funkt:
                     Untersuchdat_haltung_bewertung.bw_bs,
                     Untersuchdat_haltung_bewertung.createdat,
                     haltungen.haltnam,
-                    haltungen.rohrtyp,
+                    haltungen.material,
                     haltungen.hoehe,
                     haltungen.createdat
                 FROM Untersuchdat_haltung_bewertung, haltungen
@@ -2857,7 +2857,7 @@ class zustandsklassen_funkt:
                     Untersuchdat_haltung_bewertung.bw_bs,
                     Untersuchdat_haltung_bewertung.createdat,
                     anschlussleitungen.leitnam,
-                    anschlussleitungen.rohrtyp,
+                    anschlussleitungen.material,
                     anschlussleitungen.hoehe,
                     anschlussleitungen.createdat
                 FROM Untersuchdat_haltung_bewertung, anschlussleitungen
@@ -8709,7 +8709,7 @@ class zustandsklassen_funkt:
             sql = """
                 SELECT
                     haltungen.haltnam,
-                    haltungen.rohrtyp,
+                    haltungen.material,
                     haltungen.hoehe,
                     Untersuchdat_haltung_bewertung.untersuchhal
                 FROM haltungen, Untersuchdat_haltung_bewertung
@@ -8719,7 +8719,7 @@ class zustandsklassen_funkt:
             sql = """
                 SELECT
                     anschlussleitungen.leitnam,
-                    anschlussleitungen.rohrtyp,
+                    anschlussleitungen.material,
                     anschlussleitungen.hoehe,
                     Untersuchdat_haltung_bewertung.untersuchhal
                 FROM anschlussleitungen, Untersuchdat_haltung_bewertung
@@ -8802,7 +8802,7 @@ class zustandsklassen_funkt:
                     Untersuchdat_haltung_bewertung.bw_bs,
                     Untersuchdat_haltung_bewertung.createdat,
                     haltungen.haltnam,
-                    haltungen.rohrtyp,
+                    haltungen.material,
                     haltungen.hoehe,
                     haltungen.createdat
                 FROM Untersuchdat_haltung_bewertung, Haltungen
@@ -8838,7 +8838,7 @@ class zustandsklassen_funkt:
                     Untersuchdat_haltung_bewertung.bw_bs,
                     Untersuchdat_haltung_bewertung.createdat,
                     anschlussleitungen.leitnam,
-                    anschlussleitungen.rohrtyp,
+                    anschlussleitungen.material,
                     anschlussleitungen.hoehe,
                     anschlussleitungen.createdat
                 FROM Untersuchdat_haltung_bewertung, anschlussleitungen

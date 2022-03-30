@@ -148,6 +148,11 @@ class CheckExport(ClassObject):
     anschlussleitungen: bool = True
     pumpen: bool = True
     wehre: bool = True
+    drosseln: bool = True
+    grundseitenauslaesse: bool = True
+    schieber: bool = True
+    qregler: bool = True
+    hregler: bool = True
     flaechen: bool = True
     einleitdirekt: bool = True
     aussengebiete: bool = True
@@ -183,6 +188,11 @@ class CheckImport(ClassObject):
     haltungen: bool = True
     pumpen: bool = True
     wehre: bool = True
+    drosseln: bool = True
+    grundseitenauslaesse: bool = True
+    schieber: bool = True
+    qregler: bool = True
+    hregler: bool = True
     flaechen: bool = True
     einleitdirekt: bool = True
     aussengebiete: bool = True
@@ -337,6 +347,11 @@ class ToolsConfig(ClassObject):
             "haltungen": ["haltnam", "schoben", "schunten"],
             "pumpen": ["pnam", "schoben", "schunten"],
             "wehre": ["wnam", "schoben", "schunten"],
+            "drosseln": ["wnam", "schoben", "schunten"],
+            "schieber": ["wnam", "schoben", "schunten"],
+            "grundseitenauslaesse": ["wnam", "schoben", "schunten"],
+            "qregler": ["wnam", "schoben", "schunten"],
+            "hregler": ["wnam", "schoben", "schunten"],
             "tezg": [],
             "flaechen": [],
         }
@@ -375,8 +390,6 @@ class ToolsConfig(ClassObject):
                 'laenge': ['laen*', 'läng*'],
                 'sohleoben': ['sohl*ob*', 'sohl*anf'],
                 'sohleunten': ['sohl*un*', 'sohl*end*'],
-                'deckeloben': ['deck*ob*', 'deck*anf'],
-                'deckelunten': ['deck*un*', 'deck*end*'],
                 'profilnam': ['profil*', ],
                 'ks': ['ks*', 'rauh*'],
                 'entwart': ['entw*art', 'entw*typ*', 'kanalart*'],
@@ -403,6 +416,83 @@ class ToolsConfig(ClassObject):
                 'schwellenhoehe': ['schwel*h*', 'kant*h*', ],
                 'kammerhoehe': ['kamm*h*', ],
                 'laenge': ['*laen*', '*läng*'],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['wkt_geom', 'geo*'],
+            },
+            'drosseln': {
+                'name': ['*nam*', 'nam*', ],
+                'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
+                'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                'sohlabstand': ['sohl*ab*'],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['wkt_geom', 'geo*'],
+            },
+            'schieber': {
+                'name': ['nam*', '*nam*'],
+                'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
+                'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                'breite': ['brei*', 'rohrbrei*', 'prof*brei*', ],
+                'hoehe': ['hoe*', 'höh*', 'h\xf6h*',
+                          'rohrhoe*', 'rohrhöh*', 'rohrh\xf6h*',
+                          'prof*hoe*', 'prof*höh*', 'prof*h\xf6*',
+                          'durchm*'],
+                'sohleoben': ['sohl*ob*', 'sohl*anf'],
+                'sohleunten': ['sohl*un*', 'sohl*end*'],
+                'profilnam': ['profil*', ],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['wkt_geom', 'geo*'],
+            },
+            'grundseitenanlaesse': {
+                'name': ['nam*', '*nam*'],
+                'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
+                'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                'breite': ['brei*', 'rohrbrei*', 'prof*brei*', ],
+                'hoehe': ['hoe*', 'höh*', 'h\xf6h*',
+                          'rohrhoe*', 'rohrhöh*', 'rohrh\xf6h*',
+                          'prof*hoe*', 'prof*höh*', 'prof*h\xf6*',
+                          'durchm*'],
+                'sohleoben': ['sohl*ob*', 'sohl*anf'],
+                'sohleunten': ['sohl*un*', 'sohl*end*'],
+                'profilnam': ['profil*', ],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['wkt_geom', 'geo*'],
+            },
+            'qregler': {
+                'name': ['nam*', '*nam*'],
+                'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
+                'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                'breite': ['brei*', 'rohrbrei*', 'prof*brei*', ],
+                'hoehe': ['hoe*', 'höh*', 'h\xf6h*',
+                          'rohrhoe*', 'rohrhöh*', 'rohrh\xf6h*',
+                          'prof*hoe*', 'prof*höh*', 'prof*h\xf6*',
+                          'durchm*'],
+                'laenge': ['laen*', 'läng*'],
+                'sohleoben': ['sohl*ob*', 'sohl*anf'],
+                'sohleunten': ['sohl*un*', 'sohl*end*'],
+                'profilnam': ['profil*', ],
+                'ks': ['ks*', 'rauh*'],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['wkt_geom', 'geo*'],
+            },
+            'hregler': {
+                'name': ['nam*', '*nam*'],
+                'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
+                'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                'breite': ['brei*', 'rohrbrei*', 'prof*brei*', ],
+                'hoehe': ['hoe*', 'höh*', 'h\xf6h*',
+                          'rohrhoe*', 'rohrhöh*', 'rohrh\xf6h*',
+                          'prof*hoe*', 'prof*höh*', 'prof*h\xf6*',
+                          'durchm*'],
+                'laenge': ['laen*', 'läng*'],
+                'sohleoben': ['sohl*ob*', 'sohl*anf'],
+                'sohleunten': ['sohl*un*', 'sohl*end*'],
+                'profilnam': ['profil*', ],
+                'ks': ['ks*', 'rauh*'],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
                 'geom': ['wkt_geom', 'geo*'],

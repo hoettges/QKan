@@ -445,7 +445,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="rohrtyp" configurationFlags="None">
+    <field name="material" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -554,7 +554,7 @@
     <alias name="" index="12" field="qzu"/>
     <alias name="" index="13" field="profilnam"/>
     <alias name="" index="14" field="entwart"/>
-    <alias name="" index="15" field="rohrtyp"/>
+    <alias name="" index="15" field="material"/>
     <alias name="" index="16" field="ks"/>
     <alias name="" index="17" field="simstatus"/>
     <alias name="" index="18" field="kommentar"/>
@@ -580,7 +580,7 @@
     <default expression="" applyOnUpdate="0" field="qzu"/>
     <default expression="" applyOnUpdate="0" field="profilnam"/>
     <default expression="" applyOnUpdate="0" field="entwart"/>
-    <default expression="" applyOnUpdate="0" field="rohrtyp"/>
+    <default expression="" applyOnUpdate="0" field="material"/>
     <default expression="" applyOnUpdate="0" field="ks"/>
     <default expression="" applyOnUpdate="0" field="simstatus"/>
     <default expression="" applyOnUpdate="0" field="kommentar"/>
@@ -606,7 +606,7 @@
     <constraint unique_strength="0" constraints="0" field="qzu" notnull_strength="0" exp_strength="0"/>
     <constraint unique_strength="0" constraints="0" field="profilnam" notnull_strength="0" exp_strength="0"/>
     <constraint unique_strength="0" constraints="0" field="entwart" notnull_strength="0" exp_strength="0"/>
-    <constraint unique_strength="0" constraints="0" field="rohrtyp" notnull_strength="0" exp_strength="0"/>
+    <constraint unique_strength="0" constraints="0" field="material" notnull_strength="0" exp_strength="0"/>
     <constraint unique_strength="0" constraints="0" field="ks" notnull_strength="0" exp_strength="0"/>
     <constraint unique_strength="0" constraints="0" field="simstatus" notnull_strength="0" exp_strength="0"/>
     <constraint unique_strength="0" constraints="0" field="kommentar" notnull_strength="0" exp_strength="0"/>
@@ -632,7 +632,7 @@
     <constraint desc="" exp="" field="qzu"/>
     <constraint desc="" exp="" field="profilnam"/>
     <constraint desc="" exp="" field="entwart"/>
-    <constraint desc="" exp="" field="rohrtyp"/>
+    <constraint desc="" exp="" field="material"/>
     <constraint desc="" exp="" field="ks"/>
     <constraint desc="" exp="" field="simstatus"/>
     <constraint desc="" exp="" field="kommentar"/>
@@ -663,7 +663,7 @@
       <column type="field" name="qzu" width="-1" hidden="0"/>
       <column type="field" name="profilnam" width="-1" hidden="0"/>
       <column type="field" name="entwart" width="-1" hidden="0"/>
-      <column type="field" name="rohrtyp" width="-1" hidden="0"/>
+      <column type="field" name="material" width="-1" hidden="0"/>
       <column type="field" name="ks" width="-1" hidden="0"/>
       <column type="field" name="simstatus" width="-1" hidden="0"/>
       <column type="field" name="kommentar" width="-1" hidden="0"/>
@@ -715,7 +715,7 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="pk"/>
     <field editable="1" name="profilnam"/>
     <field editable="1" name="qzu"/>
-    <field editable="1" name="rohrtyp"/>
+    <field editable="1" name="material"/>
     <field editable="1" name="schoben"/>
     <field editable="1" name="schunten"/>
     <field editable="1" name="simstatus"/>
@@ -741,7 +741,7 @@ def my_form_open(dialog, layer, feature):
     <field name="pk" labelOnTop="0"/>
     <field name="profilnam" labelOnTop="0"/>
     <field name="qzu" labelOnTop="0"/>
-    <field name="rohrtyp" labelOnTop="0"/>
+    <field name="material" labelOnTop="0"/>
     <field name="schoben" labelOnTop="0"/>
     <field name="schunten" labelOnTop="0"/>
     <field name="simstatus" labelOnTop="0"/>
@@ -767,7 +767,7 @@ def my_form_open(dialog, layer, feature):
     <field name="pk" reuseLastValue="0"/>
     <field name="profilnam" reuseLastValue="0"/>
     <field name="qzu" reuseLastValue="0"/>
-    <field name="rohrtyp" reuseLastValue="0"/>
+    <field name="material" reuseLastValue="0"/>
     <field name="schoben" reuseLastValue="0"/>
     <field name="schunten" reuseLastValue="0"/>
     <field name="simstatus" reuseLastValue="0"/>
