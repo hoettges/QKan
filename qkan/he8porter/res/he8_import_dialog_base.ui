@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>726</width>
-    <height>506</height>
+    <height>487</height>
    </rect>
   </property>
   <property name="font">
@@ -173,7 +173,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>250</y>
+     <y>270</y>
      <width>411</width>
      <height>81</height>
     </rect>
@@ -264,7 +264,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>160</y>
+     <y>170</y>
      <width>401</width>
      <height>81</height>
     </rect>
@@ -357,7 +357,7 @@
      <x>440</x>
      <y>20</y>
      <width>271</width>
-     <height>171</height>
+     <height>211</height>
     </rect>
    </property>
    <property name="font">
@@ -435,7 +435,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>100</y>
+      <y>160</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -574,7 +574,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>120</y>
+      <y>180</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -600,7 +600,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>80</y>
+      <y>140</y>
       <width>251</width>
       <height>21</height>
      </rect>
@@ -613,7 +613,7 @@
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>100</y>
+      <y>160</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -639,7 +639,7 @@
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>120</y>
+      <y>180</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -661,12 +661,142 @@
      <string>Einzugsgebiete</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="cb_drosseln">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Drosseln</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_schieber">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>80</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Schieber</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_hregler">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>100</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>H-Regler</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_grundseitenauslaesse">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>120</y>
+      <width>181</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Grund-/Seitenauslässe</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_qregler">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Q-Regler</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>340</y>
+     <y>370</y>
      <width>411</width>
      <height>51</height>
     </rect>
@@ -767,9 +897,9 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>340</y>
+     <y>320</y>
      <width>271</width>
-     <height>81</height>
+     <height>101</height>
     </rect>
    </property>
    <property name="font">
@@ -788,7 +918,7 @@
       <x>140</x>
       <y>20</y>
       <width>91</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -814,7 +944,7 @@
       <x>20</x>
       <y>20</y>
       <width>111</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -837,10 +967,10 @@
    <widget class="QCheckBox" name="cb_allrefs">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>40</y>
+      <x>110</x>
+      <y>60</y>
       <width>141</width>
-      <height>41</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -858,7 +988,33 @@
     </property>
     <property name="text">
      <string>Auch nicht verwendete
-Datennsätze importieren</string>
+Datensätze importieren</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_rohrprofile">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bodenklassen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Rohrprofile</string>
     </property>
    </widget>
   </widget>
@@ -868,7 +1024,7 @@ Datennsätze importieren</string>
      <x>440</x>
      <y>240</y>
      <width>271</width>
-     <height>91</height>
+     <height>71</height>
     </rect>
    </property>
    <property name="font">
@@ -886,8 +1042,8 @@ Datennsätze importieren</string>
      <rect>
       <x>20</x>
       <y>21</y>
-      <width>121</width>
-      <height>20</height>
+      <width>111</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -912,8 +1068,8 @@ Datennsätze importieren</string>
      <rect>
       <x>20</x>
       <y>41</y>
-      <width>121</width>
-      <height>20</height>
+      <width>111</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -936,10 +1092,10 @@ Datennsätze importieren</string>
    <widget class="QCheckBox" name="cb_tezg_tf">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>60</y>
+      <x>140</x>
+      <y>20</y>
       <width>121</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">

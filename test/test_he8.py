@@ -81,7 +81,6 @@ class TestQKanHE8(QgisTest):
 
         QKan.config.check_export.abflussparameter = False
         QKan.config.check_export.bodenklassen = False
-        QKan.config.check_export.rohrprofile = False
 
         QKan.config.check_export.append = True
         QKan.config.check_export.update = False
@@ -145,7 +144,6 @@ class TestQKanUpdateHE8(QgisTest):
 
         QKan.config.check_export.abflussparameter = False
         QKan.config.check_export.bodenklassen = False
-        QKan.config.check_export.rohrprofile = False
 
         QKan.config.check_export.append = False
         QKan.config.check_export.update = True

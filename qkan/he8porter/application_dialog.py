@@ -65,6 +65,11 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     cb_speicher: QCheckBox
     cb_pumpen: QCheckBox
     cb_wehre: QCheckBox
+    cb_drosseln: QCheckBox
+    cb_schieber: QCheckBox
+    cb_qregler: QCheckBox
+    cb_hregler: QCheckBox
+    cb_grundseitenauslaesse: QCheckBox
     cb_flaechen: QCheckBox
     cb_rohrprofile: QCheckBox
     cb_abflussparameter: QCheckBox
@@ -82,13 +87,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     lw_teilgebiete: QListWidget
 
     db_qkan: DBConnection
-
-    # cb_export_schaechte: QCheckBox
-    # cb_export_auslaesse: QCheckBox
-    # cb_export_speicher: QCheckBox
-    # cb_export_haltungen: QCheckBox
-    # cb_export_pumpen: QCheckBox
-    # cb_export_wehre: QCheckBox
 
     def __init__(
         self,
@@ -128,6 +126,11 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.cb_speicher.setChecked(QKan.config.check_export.speicher)
         self.cb_pumpen.setChecked(QKan.config.check_export.pumpen)
         self.cb_wehre.setChecked(QKan.config.check_export.wehre)
+        self.cb_drosseln.setChecked(QKan.config.check_export.drosseln)
+        self.cb_schieber.setChecked(QKan.config.check_export.schieber)
+        self.cb_qregler.setChecked(QKan.config.check_export.qregler)
+        self.cb_hregler.setChecked(QKan.config.check_export.hregler)
+        self.cb_grundseitenauslaesse.setChecked(QKan.config.check_export.grundseitenauslaesse)
         self.cb_flaechen.setChecked(QKan.config.check_export.flaechen)
         self.cb_tezg_hf.setChecked(QKan.config.check_export.tezg_hf)
         self.cb_rohrprofile.setChecked(QKan.config.check_export.rohrprofile)
@@ -373,6 +376,11 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     cb_speicher: QCheckBox
     cb_pumpen: QCheckBox
     cb_wehre: QCheckBox
+    cb_drosseln: QCheckBox
+    cb_schieber: QCheckBox
+    cb_qregler: QCheckBox
+    cb_hregler: QCheckBox
+    cb_grundseitenauslaesse: QCheckBox
     cb_flaechen: QCheckBox
     cb_rohrprofile: QCheckBox
     cb_abflussparameter: QCheckBox
@@ -420,6 +428,11 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.cb_speicher.setChecked(QKan.config.check_import.speicher)
         self.cb_pumpen.setChecked(QKan.config.check_import.pumpen)
         self.cb_wehre.setChecked(QKan.config.check_import.wehre)
+        self.cb_drosseln.setChecked(QKan.config.check_import.drosseln)
+        self.cb_schieber.setChecked(QKan.config.check_import.schieber)
+        self.cb_qregler.setChecked(QKan.config.check_import.qregler)
+        self.cb_hregler.setChecked(QKan.config.check_import.hregler)
+        self.cb_grundseitenauslaesse.setChecked(QKan.config.check_import.grundseitenauslaesse)
         self.cb_flaechen.setChecked(QKan.config.check_import.flaechen)
         self.cb_rohrprofile.setChecked(QKan.config.check_import.rohrprofile)
         self.cb_abflussparameter.setChecked(QKan.config.check_import.abflussparameter)

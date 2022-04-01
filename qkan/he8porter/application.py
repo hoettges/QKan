@@ -102,6 +102,11 @@ class He8Porter(QKanPlugin):
             QKan.config.check_export.speicher = self.export_dlg.cb_speicher.isChecked()
             QKan.config.check_export.pumpen = self.export_dlg.cb_pumpen.isChecked()
             QKan.config.check_export.wehre = self.export_dlg.cb_wehre.isChecked()
+            QKan.config.check_export.drosseln = self.export_dlg.cb_drosseln.isChecked()
+            QKan.config.check_export.speicher = self.export_dlg.cb_speicher.isChecked()
+            QKan.config.check_export.qregler = self.export_dlg.cb_qregler.isChecked()
+            QKan.config.check_export.hregler = self.export_dlg.cb_hregler.isChecked()
+            QKan.config.check_export.grundseitenauslaesse = self.export_dlg.cb_grundseitenauslaesse.isChecked()
             QKan.config.check_export.flaechen = self.export_dlg.cb_flaechen.isChecked()
             QKan.config.check_export.rohrprofile = (
                 self.export_dlg.cb_rohrprofile.isChecked()
@@ -201,6 +206,11 @@ class He8Porter(QKanPlugin):
             QKan.config.check_import.speicher = self.import_dlg.cb_speicher.isChecked()
             QKan.config.check_import.pumpen = self.import_dlg.cb_pumpen.isChecked()
             QKan.config.check_import.wehre = self.import_dlg.cb_wehre.isChecked()
+            QKan.config.check_import.drosseln = self.import_dlg.cb_drosseln.isChecked()
+            QKan.config.check_import.speicher = self.import_dlg.cb_speicher.isChecked()
+            QKan.config.check_import.qregler = self.import_dlg.cb_qregler.isChecked()
+            QKan.config.check_import.hregler = self.import_dlg.cb_hregler.isChecked()
+            QKan.config.check_import.grundseitenauslaesse = self.import_dlg.cb_grundseitenauslaesse.isChecked()
             QKan.config.check_import.flaechen = self.import_dlg.cb_flaechen.isChecked()
             QKan.config.check_import.rohrprofile = (
                 self.import_dlg.cb_rohrprofile.isChecked()

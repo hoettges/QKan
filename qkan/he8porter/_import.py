@@ -29,6 +29,11 @@ class ImportTask:
                 self._haltungen(),
                 self._wehre(),
                 self._pumpen(),
+                self._drosseln(),
+                self._schieber(),
+                self._qregler(),
+                self._hregler(),
+                self._grundseitenauslaesse(),
                 self._flaechen(),
                 self._einleitdirekt(),
                 self._aussengebiete(),
@@ -201,8 +206,8 @@ class ImportTask:
                     ro.Geometrie1 AS hoehe, 
                     ro.Geometrie2 AS breite, 
                     ro.Laenge AS laenge, 
-                    ro.Sohlhoeheoben AS sohleoben, 
-                    ro.Sohlhoeheunten AS sohleunten, 
+                    ro.SohlhoeheOben AS sohleoben, 
+                    ro.SohlhoeheUnten AS sohleunten, 
                     CASE WHEN ro.Profiltyp = 68 
                          THEN ro.Sonderprofilbezeichnung 
                          ELSE pr.profilnam END AS profilnam, 
@@ -213,7 +218,7 @@ class ImportTask:
                     ro.Lastmodified AS createdat, 
                     SetSrid(Geometry,?) AS geom
                 FROM he.Rohr AS ro
-                LEFT JOIN (SELECT pk, he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
+                LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON ro.Profiltyp = pr.he_nr
                 LEFT JOIN entwaesserungsarten AS ea 
                 ON ea.he_nr = ro.Kanalart
@@ -263,7 +268,11 @@ class ImportTask:
                 LEFT JOIN nodes AS su
                 ON we.Schachtunten = su.Name
                 LEFT JOIN simulationsstatus AS si 
-                ON si.he_nr = we.Planungsstatus"""
+                ON si.he_nr = we.Planungsstatus
+                LEFT JOIN wehre AS wq
+                ON wq.wnam = we.Name
+                WHERE wq.pk IS NULL
+                """
 
                 if not self.db_qkan.sql(sql, "he8_import Wehre"):
                     return False
@@ -303,7 +312,11 @@ class ImportTask:
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = pu.Planungsstatus
                 LEFT JOIN pumpentypen AS pt 
-                ON pt.he_nr = pu.Typ"""
+                ON pt.he_nr = pu.Typ
+                LEFT JOIN pumpen AS pq
+                ON pq.pnam = pu.Name
+                WHERE pq.pk IS NULL
+                """
 
                 if not self.db_qkan.sql(sql, "he8_import Pumpen"):
                     return False
@@ -312,7 +325,7 @@ class ImportTask:
 
         return True
 
-    def _drossel(self) -> bool:
+    def _drosseln(self) -> bool:
         """Import der Drosseln"""
 
         if QKan.config.check_import.drosseln:
@@ -324,25 +337,222 @@ class ImportTask:
                     sonderelement, 
                     simstatus,
                     kommentar, createdat, 
-                    xschob, yschob, xschun, yschun)
+                    geom)
                 SELECT 
                     dr.Name AS haltnam,
                     dr.Schachtoben AS schoben, 
                     dr.Schachtunten AS schunten, 
                     dr.Sohlabstand AS hoehe, 
-                    'drossel' AS sonderelement, 
+                    'Drossel' AS sonderelement, 
                     si.bezeichnung AS simstatus, 
                     dr.Kommentar AS kommentar, 
                     dr.Lastmodified AS createdat,
                     SetSrid(Geometry,?) AS geom
                 FROM he.Drossel AS dr
                 LEFT JOIN simulationsstatus AS si 
-                ON si.he_nr = dr.Planungsstatus"""
+                ON si.he_nr = dr.Planungsstatus
+                LEFT JOIN haltungen AS ha
+                ON ha.haltnam = dr.Name
+                WHERE ha.pk IS NULL
+                """
                 if not self.db_qkan.sql(sql, "he8_import Drosseln", (self.epsg,)):
                     return False
 
                 self.db_qkan.commit()
+        return True
 
+    def _schieber(self) -> bool:
+        """Import der Schieber"""
+
+        if QKan.config.check_import.schieber:
+            if self.append:
+                sql = """
+                INSERT INTO haltungen (
+                    haltnam, schoben, schunten,
+                    hoehe, breite,
+                    sohleoben, sohleunten,
+                    profilnam,
+                    sonderelement,
+                    simstatus,
+                    kommentar, createdat, 
+                    geom)
+                SELECT 
+                    sr.Name AS haltnam,
+                    sr.Schachtoben AS schoben, 
+                    sr.Schachtunten AS schunten, 
+                    sr.Geometrie1 AS hoehe, 
+                    sr.Geometrie2 AS breite,
+                    sr.SohlhoeheOben AS sohleoben, 
+                    sr.SohlhoeheUnten AS sohleunten, 
+                    CASE WHEN sr.Profiltyp = 68 
+                         THEN sr.Sonderprofilbezeichnung 
+                         ELSE pr.profilnam END AS profilnam, 
+                    'Schieber' AS sonderelement, 
+                    si.bezeichnung AS simstatus, 
+                    sr.Kommentar AS kommentar, 
+                    sr.Lastmodified AS createdat,
+                    SetSrid(Geometry,?) AS geom
+                FROM he.Schieber AS sr
+                LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
+                ON sr.Profiltyp = pr.he_nr
+                LEFT JOIN simulationsstatus AS si 
+                ON si.he_nr = sr.Planungsstatus
+                LEFT JOIN haltungen AS ha
+                ON ha.haltnam = sr.Name
+                WHERE ha.pk IS NULL
+                """
+                if not self.db_qkan.sql(sql, "he8_import Schieber", (self.epsg,)):
+                    return False
+
+                self.db_qkan.commit()
+        return True
+
+    def _qregler(self) -> bool:
+        """Import der Q-Regler"""
+
+        if QKan.config.check_import.qregler:
+            if self.append:
+                sql = """
+                INSERT INTO haltungen (
+                    haltnam, schoben, schunten, 
+                    hoehe, breite, laenge, 
+                    sohleoben, sohleunten,
+                    profilnam, entwart, ks,
+                    sonderelement, 
+                    simstatus,  
+                    kommentar, createdat, 
+                    geom
+                )
+                SELECT 
+                    qr.Name AS haltnam, 
+                    qr.Schachtoben AS schoben, 
+                    qr.Schachtunten AS schunten, 
+                    qr.Geometrie1 AS hoehe, 
+                    qr.Geometrie2 AS breite, 
+                    qr.Laenge AS laenge, 
+                    qr.SohlhoeheOben AS sohleoben, 
+                    qr.SohlhoeheUnten AS sohleunten, 
+                    CASE WHEN qr.Profiltyp = 68 
+                         THEN qr.Sonderprofilbezeichnung 
+                         ELSE pr.profilnam END AS profilnam, 
+                    ea.bezeichnung AS entwart, 
+                    qr.Rauigkeitsbeiwert AS ks, 
+                    'Q-Regler' AS sonderelement, 
+                    si.bezeichnung AS simstatus,
+                    qr.Kommentar AS kommentar, 
+                    qr.Lastmodified AS createdat, 
+                    SetSrid(Geometry,?) AS geom
+                FROM he.qRegler AS qr
+                LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
+                ON qr.Profiltyp = pr.he_nr
+                LEFT JOIN entwaesserungsarten AS ea 
+                ON ea.he_nr = qr.Kanalart
+                LEFT JOIN simulationsstatus AS si 
+                ON si.he_nr = qr.Planungsstatus
+                LEFT JOIN haltungen AS ha
+                ON ha.haltnam = qr.Name
+                WHERE ha.pk IS NULL
+                """
+                if not self.db_qkan.sql(sql, "he8_import Q-Regler", (self.epsg,)):
+                    return False
+                self.db_qkan.commit()
+        return True
+
+    def _hregler(self) -> bool:
+        """Import der H-Regler"""
+
+        if QKan.config.check_import.hregler:
+            if self.append:
+                sql = """
+                INSERT INTO haltungen (
+                    haltnam, schoben, schunten, 
+                    hoehe, breite, laenge, 
+                    sohleoben, sohleunten,
+                    profilnam, entwart, ks,
+                    sonderelement,
+                    simstatus,
+                    kommentar, createdat, 
+                    geom
+                )
+                SELECT 
+                    hr.Name AS haltnam,
+                    hr.Schachtoben AS schoben,
+                    hr.Schachtunten AS schunten,
+                    hr.Geometrie1 AS hoehe,
+                    hr.Geometrie2 AS breite,
+                    hr.Laenge AS laenge,
+                    hr.SohlhoeheOben AS sohleoben,
+                    hr.SohlhoeheUnten AS sohleunten,
+                    CASE WHEN hr.Profiltyp = 68 
+                         THEN hr.Sonderprofilbezeichnung 
+                         ELSE pr.profilnam END AS profilnam,
+                    ea.bezeichnung AS entwart,
+                    hr.Rauigkeitsbeiwert AS ks,
+                    'H-Regler' AS sonderelement,
+                    si.bezeichnung AS simstatus,
+                    hr.Kommentar AS kommentar,
+                    hr.Lastmodified AS createdat,
+                    SetSrid(Geometry,?) AS geom
+                FROM he.hRegler AS hr
+                LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
+                ON hr.Profiltyp = pr.he_nr
+                LEFT JOIN entwaesserungsarten AS ea 
+                ON ea.he_nr = hr.Kanalart
+                LEFT JOIN simulationsstatus AS si 
+                ON si.he_nr = hr.Planungsstatus
+                LEFT JOIN haltungen AS ha
+                ON ha.haltnam = hr.Name
+                WHERE ha.pk IS NULL
+                """
+                if not self.db_qkan.sql(sql, "he8_import H-Regler", (self.epsg,)):
+                    return False
+                self.db_qkan.commit()
+        return True
+
+    def _grundseitenauslaesse(self) -> bool:
+        """Import der Grund- und Seitenauslässe"""
+
+        if QKan.config.check_import.grundseitenauslaesse:
+            if self.append:
+                sql = """
+                INSERT INTO haltungen (
+                    haltnam, schoben, schunten,
+                    hoehe, breite,
+                    sohleoben, sohleunten,
+                    profilnam,
+                    sonderelement,
+                    simstatus,  
+                    kommentar, createdat, 
+                    geom
+                )
+                SELECT 
+                    gs.Name AS haltnam, 
+                    gs.Schachtoben AS schoben, 
+                    gs.Schachtunten AS schunten,
+                    gs.Geometrie1 AS hoehe,
+                    gs.Geometrie2 AS breite,
+                    gs.SohlhoeheOben AS sohleoben, 
+                    gs.SohlhoeheUnten AS sohleunten, 
+                    CASE WHEN gs.Profiltyp = 68 
+                         THEN gs.Sonderprofilbezeichnung 
+                         ELSE pr.profilnam END AS profilnam,
+                    'GrundSeitenauslass' AS sonderelement, 
+                    si.bezeichnung AS simstatus,
+                    gs.Kommentar AS kommentar, 
+                    gs.Lastmodified AS createdat, 
+                    SetSrid(Geometry,?) AS geom
+                FROM he.grundseitenauslass AS gs
+                LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
+                ON gs.Profiltyp = pr.he_nr
+                LEFT JOIN simulationsstatus AS si 
+                ON si.he_nr = gs.Planungsstatus
+                LEFT JOIN haltungen AS ha
+                ON ha.haltnam = gs.Name
+                WHERE ha.pk IS NULL
+                """
+                if not self.db_qkan.sql(sql, "he8_import Grund- und Seitenauslässe", (self.epsg,)):
+                    return False
+                self.db_qkan.commit()
         return True
 
     def _flaechen(self) -> bool:
