@@ -66,12 +66,16 @@ class ImportTask:
                     sh.Deckelhoehe AS deckelhoehe, 
                     sh.Durchmesser/1000 AS durchm, 
                     sh.Druckdichterdeckel AS druckdicht, 
-                    sh.Kanalart AS entwart, 
+                    ea.bezeichnung AS entwart, 
                     'Schacht' AS schachttyp,
-                    sh.Planungsstatus AS simstatus, 
+                    si.bezeichnung AS simstatus, 
                     sh.Kommentar AS kommentar, 
                     sh.Lastmodified AS createdat
                 FROM he.Schacht AS sh
+                LEFT JOIN entwaesserungsarten AS ea 
+                ON ea.he_nr = sh.Kanalart
+                LEFT JOIN simulationsstatus AS si 
+                ON si.he_nr = sh.Planungsstatus
                 LEFT JOIN schaechte AS sq
                 ON sh.Name = sq.schnam
                 WHERE sq.pk IS NULL
@@ -103,10 +107,12 @@ class ImportTask:
                     al.Sohlhoehe AS sohlhoehe, 
                     al.Gelaendehoehe AS deckelhoehe, 
                     'Auslass' AS schachttyp,
-                    al.Planungsstatus AS simstatus, 
+                    si.bezeichnung AS simstatus,
                     al.Kommentar AS kommentar, 
                     al.Lastmodified AS createdat
                 FROM he.Auslass AS al
+                LEFT JOIN simulationsstatus AS si
+                ON si.he_nr = al.Planungsstatus
                 LEFT JOIN schaechte AS sq
                 ON al.Name = sq.schnam
                 WHERE sq.pk IS NULL
@@ -138,10 +144,12 @@ class ImportTask:
                     sp.Sohlhoehe AS sohlhoehe, 
                     sp.Gelaendehoehe AS deckelhoehe, 
                     'Speicher' AS schachttyp,
-                    sp.Planungsstatus AS simstatus, 
+                    si.bezeichnung AS simstatus,
                     sp.Kommentar AS kommentar, 
                     sp.Lastmodified AS createdat
                 FROM he.Speicherschacht AS sp
+                LEFT JOIN simulationsstatus AS si
+                ON si.he_nr = sp.Planungsstatus
                 LEFT JOIN schaechte AS sq
                 ON sp.Name = sq.schnam
                 WHERE sq.pk IS NULL
@@ -277,6 +285,44 @@ class ImportTask:
                 if not self.db_qkan.sql(sql, "he8_import Wehre"):
                     return False
 
+                sql = """
+                INSERT INTO haltungen (
+                    haltnam, schoben, schunten,
+                    hoehe, breite,
+                    sohleoben, sohleunten,
+                    profilnam,
+                    sonderelement,
+                    simstatus,
+                    kommentar, createdat, 
+                    geom)
+                SELECT 
+                    we.Name AS haltnam,
+                    we.Schachtoben AS schoben, 
+                    we.Schachtunten AS schunten, 
+                    we.Geometrie1 AS hoehe, 
+                    we.Geometrie2 AS breite,
+                    we.SohlhoeheOben AS sohleoben, 
+                    we.SohlhoeheUnten AS sohleunten, 
+                    CASE WHEN we.Profiltyp = 68 
+                         THEN we.Sonderprofilbezeichnung 
+                         ELSE pr.profilnam END AS profilnam, 
+                    'Wehr' AS sonderelement, 
+                    si.bezeichnung AS simstatus, 
+                    we.Kommentar AS kommentar, 
+                    we.Lastmodified AS createdat,
+                    SetSrid(Geometry,?) AS geom
+                FROM he.Wehr AS we
+                LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
+                ON we.Profiltyp = pr.he_nr
+                LEFT JOIN simulationsstatus AS si 
+                ON si.he_nr = we.Planungsstatus
+                LEFT JOIN haltungen AS ha
+                ON ha.haltnam = we.Name
+                WHERE ha.pk IS NULL
+                """
+                if not self.db_qkan.sql(sql, "he8_import Wehre", (self.epsg,)):
+                    return False
+
                 self.db_qkan.commit()
 
         return True
@@ -319,6 +365,32 @@ class ImportTask:
                 """
 
                 if not self.db_qkan.sql(sql, "he8_import Pumpen"):
+                    return False
+
+                sql = """
+                INSERT INTO haltungen (
+                    haltnam, schoben, schunten,
+                    sonderelement, 
+                    simstatus,
+                    kommentar, createdat, 
+                    geom)
+                SELECT 
+                    pu.Name AS haltnam,
+                    pu.Schachtoben AS schoben, 
+                    pu.Schachtunten AS schunten, 
+                    'Pumpe' AS sonderelement, 
+                    si.bezeichnung AS simstatus, 
+                    pu.Kommentar AS kommentar, 
+                    pu.Lastmodified AS createdat,
+                    SetSrid(Geometry,?) AS geom
+                FROM he.Pumpe AS pu
+                LEFT JOIN simulationsstatus AS si 
+                ON si.he_nr = pu.Planungsstatus
+                LEFT JOIN haltungen AS ha
+                ON ha.haltnam = pu.Name
+                WHERE ha.pk IS NULL
+                """
+                if not self.db_qkan.sql(sql, "he8_import Pumpen", (self.epsg,)):
                     return False
 
                 self.db_qkan.commit()
@@ -369,9 +441,8 @@ class ImportTask:
                 sql = """
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
-                    hoehe, breite,
-                    sohleoben, sohleunten,
-                    profilnam,
+                    breite, hoehe,
+                    ks,
                     sonderelement,
                     simstatus,
                     kommentar, createdat, 
@@ -380,13 +451,9 @@ class ImportTask:
                     sr.Name AS haltnam,
                     sr.Schachtoben AS schoben, 
                     sr.Schachtunten AS schunten, 
-                    sr.Geometrie1 AS hoehe, 
-                    sr.Geometrie2 AS breite,
-                    sr.SohlhoeheOben AS sohleoben, 
-                    sr.SohlhoeheUnten AS sohleunten, 
-                    CASE WHEN sr.Profiltyp = 68 
-                         THEN sr.Sonderprofilbezeichnung 
-                         ELSE pr.profilnam END AS profilnam, 
+                    sr.Geometrie2 AS breite, 
+                    sr.MaximaleHubHoehe - sr.Anfangsstellung AS hoehe,
+                    sr.Verluste AS ks, 
                     'Schieber' AS sonderelement, 
                     si.bezeichnung AS simstatus, 
                     sr.Kommentar AS kommentar, 

@@ -468,7 +468,8 @@ class ExportTask:
                       LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
                       WHERE haltungen.haltnam = he.Rohr.Name{auswahl})
                   WHERE he.Rohr.Name IN 
-                  ( SELECT haltnam FROM haltungen){auswahl}
+                  ( SELECT haltnam FROM haltungen AND 
+                    (haltungen.sonderelement IS NULL OR haltungen.sonderelement = 'Haltung')){auswahl}
                   """
 
                 if not self.db_qkan.sql(
@@ -542,12 +543,14 @@ class ExportTask:
                         0 AS unbefestigteflaeche,
                       SetSrid(haltungen.geom, -1) AS Geometry
                       FROM
-                        (haltungen JOIN schaechte AS sob ON haltungen.schoben = sob.schnam)
+                        haltungen 
+                        JOIN schaechte AS sob ON haltungen.schoben = sob.schnam
                         JOIN schaechte AS sun ON haltungen.schunten = sun.schnam
                         LEFT JOIN profile ON haltungen.profilnam = profile.profilnam
                         LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.bezeichnung
                         LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
-                        WHERE haltungen.haltnam NOT IN (SELECT Name FROM he.Rohr){auswahl};
+                        WHERE haltungen.haltnam NOT IN (SELECT Name FROM he.Rohr) 
+                        AND (haltungen.sonderelement IS NULL OR haltungen.sonderelement = 'Haltung'){auswahl};
                       """
 
                     if not self.db_qkan.sql(
@@ -891,8 +894,8 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE pumpen.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND pumpen.teilgebiet in ('{lis}')"
+                auswahl_w = f" WHERE haltungen.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND haltungen.teilgebiet in ('{lis}')"
             else:
                 auswahl_w = ""
                 auswahl_a = ""
@@ -901,29 +904,23 @@ class ExportTask:
                 sql = f"""
                     UPDATE he.Pumpe SET
                     (   SchachtOben, SchachtUnten, 
-                        Typ, Steuerschacht, 
-                        Einschalthoehe, Ausschalthoehe, 
                         Planungsstatus, 
                         Kommentar, LastModified 
                     ) = 
                     (   SELECT
-                            pumpen.schoben AS schoben,
-                            pumpen.schunten AS schunten,
-                            pumpentypen.he_nr AS pumpentypnr,
-                            pumpen.steuersch AS steuersch,
-                            pumpen.einschalthoehe AS einschalthoehe_t,
-                            pumpen.ausschalthoehe AS ausschalthoehe_t,
+                            haltungen.schoben AS schoben,
+                            haltungen.schunten AS schunten,
                             simulationsstatus.he_nr AS simstatusnr,
-                            pumpen.kommentar AS kommentar,
-                            pumpen.createdat AS createdat
-                        FROM pumpen
-                        LEFT JOIN pumpentypen
-                        ON pumpen.pumpentyp = pumpentypen.bezeichnung
+                            haltungen.kommentar AS kommentar,
+                            haltungen.createdat AS createdat
+                        FROM haltungen
                         LEFT JOIN simulationsstatus
-                        ON pumpen.simstatus = simulationsstatus.bezeichnung{auswahl_w}
+                        ON haltungen.simstatus = simulationsstatus.bezeichnung
+                        WHERE haltungen.haltnam = he.Pumpe.Name
                     )
-                    WHERE (he.Pumpe.Name IN 
-                    (   SELECT pnam FROM pumpen)){auswahl_a}
+                    WHERE he.Pumpe.Name IN (
+                        SELECT pnam FROM haltungen WHERE haltungen.sonderelement = 'Pumpe'{auswahl_a}
+                        )
                     """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen (1)"):
@@ -931,7 +928,7 @@ class ExportTask:
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
-                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM pumpen"
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen (2)"):
                     return False
 
@@ -954,30 +951,23 @@ class ExportTask:
                     INSERT INTO he.Pumpe (
                         Id,
                         Name, 
-                        SchachtOben, SchachtUnten, 
-                        Typ, Steuerschacht, 
-                        Einschalthoehe, Ausschalthoehe, 
+                        SchachtOben, SchachtUnten,
                         Planungsstatus, 
                         Kommentar, LastModified 
                     ) 
                     SELECT
-                        pumpen.rowid + {id0} AS id, 
-                        pumpen.pnam AS Name,
-                        pumpen.schoben AS schoben,
-                        pumpen.schunten AS schunten,
-                        pumpentypen.he_nr AS pumpentypnr,
-                        pumpen.steuersch AS steuersch,
-                        pumpen.einschalthoehe AS einschalthoehe_t,
-                        pumpen.ausschalthoehe AS ausschalthoehe_t,
+                        haltungen.rowid + {id0} AS id, 
+                        haltungen.haltnam AS Name,
+                        haltungen.schoben AS schoben,
+                        haltungen.schunten AS schunten,
                         simulationsstatus.he_nr AS simstatusnr,
-                        pumpen.kommentar AS kommentar,
-                        pumpen.createdat AS createdat
-                    FROM pumpen
-                    LEFT JOIN pumpentypen
-                    ON pumpen.pumpentyp = pumpentypen.bezeichnung
+                        haltungen.kommentar AS kommentar,
+                        haltungen.createdat AS createdat
+                    FROM haltungen
                     LEFT JOIN simulationsstatus
-                    ON pumpen.simstatus = simulationsstatus.bezeichnung
-                    WHERE (pumpen.pnam NOT IN (SELECT Name FROM he.Pumpe)){auswahl_a};
+                    ON haltungen.simstatus = simulationsstatus.bezeichnung
+                    WHERE sonderelement = 'Pumpe'
+                    AND haltungen.haltnam NOT IN (SELECT Name FROM he.Pumpe){auswahl_a};
                     """
 
                     if not self.db_qkan.sql(
@@ -1004,8 +994,8 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE wehre.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND wehre.teilgebiet in ('{lis}')"
+                auswahl_w = f" WHERE haltungen.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND haltungen.teilgebiet in ('{lis}')"
             else:
                 auswahl_w = ""
                 auswahl_a = ""
@@ -1014,34 +1004,25 @@ class ExportTask:
                 sql = f"""
                     UPDATE he.Wehr SET
                     (   SchachtOben, SchachtUnten, 
-                        SohlhoeheOben, SohlhoeheUnten, 
-                        Schwellenhoehe, Geometrie1, 
-                        Geometrie2, Ueberfallbeiwert, 
+                        Ueberfallbeiwert, 
                         Planungsstatus, 
                         Kommentar, LastModified 
                     ) = 
                     (   SELECT
-                            wehre.schoben AS schoben,
-                            wehre.schunten AS schunten,
-                            coalesce(sob.sohlhoehe, 0) AS sohleoben_t,
-                            coalesce(sun.sohlhoehe, 0) AS sohleunten_t,
-                            wehre.schwellenhoehe AS schwellenhoehe_t,
-                            wehre.kammerhoehe AS kammerhoehe_t,
-                            wehre.laenge AS laenge_t,
-                            wehre.uebeiwert AS uebeiwert_t,
+                            haltungen.schoben AS schoben,
+                            haltungen.schunten AS schunten,
+                            wehre.uebeiwert AS uebeiwert,
                             simulationsstatus.he_nr AS simstatusnr,
-                            wehre.kommentar AS kommentar,
-                            wehre.createdat AS createdat
-                        FROM wehre
+                            haltungen.kommentar AS kommentar,
+                            haltungen.createdat AS createdat
+                        FROM haltungen
                         LEFT JOIN simulationsstatus
-                        ON wehre.simstatus = simulationsstatus.bezeichnung
-                        LEFT JOIN schaechte AS sob 
-                        ON wehre.schoben = sob.schnam
-                        LEFT JOIN schaechte AS sun 
-                        ON wehre.schunten = sun.schnam{auswahl_w}
+                        ON haltungen.simstatus = simulationsstatus.bezeichnung
+                        WHERE haltungen.haltnam = he.Wehr.Name{auswahl_a}
                     )
-                    WHERE (he.Wehr.Name IN 
-                    (   SELECT wnam FROM wehre)){auswahl_a}
+                    WHERE he.Wehr.Name IN (
+                        SELECT wnam FROM haltungen AND haltungen.sonderelement = 'Wehr'{auswahl_a}
+                        )
                     """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre (1)"):
@@ -1049,7 +1030,7 @@ class ExportTask:
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
-                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM wehre"
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre (2)"):
                     return False
 
@@ -1073,45 +1054,24 @@ class ExportTask:
                         Id,
                         Name, 
                         SchachtOben, SchachtUnten, 
-                        SohlhoeheOben, SohlhoeheUnten, 
-                        Schwellenhoehe, Geometrie1, 
-                        Geometrie2, Ueberfallbeiwert, 
-                        Rueckschlagklappe, Verfahrbar, Profiltyp, 
-                        Ereignisbilanzierung, EreignisGrenzwertEnde,
-                        EreignisGrenzwertAnfang, EreignisTrenndauer, 
-                        EreignisIndividuell, Planungsstatus, 
+                        Ueberfallbeiwert, 
+                        Planungsstatus, 
                         Kommentar, LastModified 
                     ) 
                     SELECT
-                        wehre.rowid + {id0} AS id, 
-                        wehre.wnam AS Name,
-                        wehre.schoben AS schoben,
-                        wehre.schunten AS schunten,
-                        coalesce(sob.sohlhoehe, 0) AS sohleoben_t,
-                        coalesce(sun.sohlhoehe, 0) AS sohleunten_t,
-                        wehre.schwellenhoehe AS schwellenhoehe_t,
-                        wehre.kammerhoehe AS kammerhoehe_t,
-                        wehre.laenge AS laenge_t,
-                        wehre.uebeiwert AS uebeiwert_t,
-                        0 AS rueckschlagklappe,
-                        0 AS verfahrbar,
-                        52 AS profiltyp,
-                        0 AS ereignisbilanzierung,
-                        0 AS ereignisgrenzwertende,
-                        0 AS ereignisgrenzwertanfang,
-                        0 AS ereignistrenndauer,
-                        0 AS ereignisindividuell,
+                        haltungen.rowid + {id0} AS id, 
+                        haltungen.haltnam AS Name,
+                        haltungen.schoben AS schoben,
+                        haltungen.schunten AS schunten,
+                        haltungen.ks AS uebeiwert,
                         simulationsstatus.he_nr AS simstatusnr,
-                        wehre.kommentar AS kommentar,
-                        wehre.createdat AS createdat
-                    FROM wehre
+                        haltungen.kommentar AS kommentar,
+                        haltungen.createdat AS createdat
+                    FROM haltungen
                     LEFT JOIN simulationsstatus
-                    ON wehre.simstatus = simulationsstatus.bezeichnung
-                    LEFT JOIN schaechte AS sob 
-                    ON wehre.schoben = sob.schnam
-                    LEFT JOIN schaechte AS sun 
-                    ON wehre.schunten = sun.schnam
-                    WHERE (wehre.wnam NOT IN (SELECT Name FROM he.Wehr)){auswahl_a};
+                    ON haltungen.simstatus = simulationsstatus.bezeichnung
+                    WHERE sonderelement = 'Wehr'
+                    AND haltungen.haltnam NOT IN (SELECT Name FROM he.Wehr){auswahl_a};
                     """
 
                     if not self.db_qkan.sql(

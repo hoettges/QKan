@@ -9,14 +9,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>631</width>
-    <height>393</height>
+    <width>690</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>631</width>
-    <height>393</height>
+    <width>690</width>
+    <height>400</height>
    </size>
   </property>
   <property name="font">
@@ -26,53 +26,27 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Schacht</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_20">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>120</y>
-      <width>140</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Simulationsstatus</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>10</y>
-      <width>46</width>
+      <width>90</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Name</string>
-    </property>
-   </widget>
-   <widget class="Line" name="line">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>30</y>
-      <width>631</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
+     <string>Schachtname</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>260</y>
+      <x>340</x>
+      <y>240</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -81,354 +55,30 @@
      <string>Kommentar</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_11">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>120</y>
-      <width>41</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>m</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>90</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Deckelhöhe</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_8">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>60</y>
-      <width>41</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>m NHN</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_70">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>210</y>
-      <width>100</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Erstelldatum</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_9">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>150</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Y-Koordinate</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_12">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>150</y>
-      <width>41</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>m</string>
-    </property>
-   </widget>
-   <widget class="Line" name="line_2">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>230</y>
-      <width>631</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_6">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>120</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>X-Koordinate</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>90</y>
-      <width>41</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>m NHN</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>60</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Sohlhöhe</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_27">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>180</y>
-      <width>41</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>mm</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_39">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>180</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Durchmesser</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_40">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>60</y>
-      <width>140</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Entwässerungssystem</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_41">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>180</y>
-      <width>130</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Druckdichter Deckel</string>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="schnam">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>120</x>
       <y>10</y>
-      <width>161</width>
+      <width>230</width>
       <height>20</height>
      </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="sohlhoehe">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>60</y>
-      <width>120</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="deckelhoehe">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>90</y>
-      <width>120</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="durchm">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>180</y>
-      <width>120</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="simstatus">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>120</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="entwart">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>60</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="druckdicht">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>180</y>
-      <width>70</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
     </property>
    </widget>
    <widget class="QTextEdit" name="kommentar">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>280</y>
-      <width>581</width>
-      <height>71</height>
+      <x>330</x>
+      <y>260</y>
+      <width>350</width>
+      <height>110</height>
      </rect>
     </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>150</y>
-      <width>75</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Straße</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_42">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>210</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Überstaufläche</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="ueberstauflaeche">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>210</y>
-      <width>120</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_28">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>210</y>
-      <width>41</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>m²</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="strasse">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>150</y>
-      <width>141</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_13">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>90</y>
-      <width>100</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Teilgebiet</string>
-    </property>
-    <property name="buddy">
-     <cstring>simstatus</cstring>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="teilgebiet">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>90</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
+    <property name="minimumSize">
+     <size>
+      <width>350</width>
+      <height>110</height>
+     </size>
     </property>
    </widget>
    <widget class="QComboBox" name="schachttyp">
@@ -436,13 +86,14 @@
      <rect>
       <x>450</x>
       <y>10</y>
-      <width>141</width>
+      <width>171</width>
       <height>22</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <italic>true</italic>
      </font>
     </property>
@@ -468,54 +119,432 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
-      <italic>true</italic>
+      <pointsize>10</pointsize>
+      <italic>false</italic>
      </font>
     </property>
     <property name="text">
      <string>Typ</string>
     </property>
    </widget>
-   <widget class="QgsDateTimeEdit" name="createdat">
+   <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>210</y>
-      <width>141</width>
-      <height>23</height>
+      <x>10</x>
+      <y>40</y>
+      <width>671</width>
+      <height>191</height>
      </rect>
     </property>
-    <property name="currentSection">
-     <enum>QDateTimeEdit::DaySection</enum>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+     </font>
     </property>
-    <property name="displayFormat">
-     <string>dd.MM.yyyy HH:mm</string>
+    <property name="title">
+     <string>Objektdaten</string>
     </property>
+    <widget class="QLineEdit" name="x">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>90</y>
+       <width>120</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>81</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Sohlhöhe</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="sohlhoehe">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>30</y>
+       <width>120</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>90</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>m</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>81</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Deckelhöhe</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_39">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>150</y>
+       <width>81</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Durchmesser</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="ueberstauflaeche">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>90</y>
+       <width>120</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_12">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>120</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>m</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="deckelhoehe">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>60</y>
+       <width>120</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="durchm">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>150</y>
+       <width>120</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>120</y>
+       <width>81</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Y-Koordinate</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_28">
+     <property name="geometry">
+      <rect>
+       <x>620</x>
+       <y>90</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>m²</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_42">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>90</y>
+       <width>131</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Überstaufläche</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>60</y>
+       <width>51</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>m NHN</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_27">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>150</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>mm</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>30</y>
+       <width>51</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>m NHN</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>81</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>X-Koordinate</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="y">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>120</y>
+       <width>120</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="druckdicht">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>150</y>
+       <width>70</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="entwart">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>30</y>
+       <width>141</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_41">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>150</y>
+       <width>130</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Druckdichter Deckel</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="strasse">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>120</y>
+       <width>141</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>120</y>
+       <width>131</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Straße</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_40">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>30</y>
+       <width>131</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Entwässerungssystem</string>
+     </property>
+    </widget>
    </widget>
-   <widget class="QLineEdit" name="y">
+   <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>150</y>
-      <width>120</width>
-      <height>20</height>
+      <x>10</x>
+      <y>240</y>
+      <width>301</width>
+      <height>131</height>
      </rect>
     </property>
-    <property name="readOnly">
-     <bool>true</bool>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+     </font>
     </property>
-   </widget>
-   <widget class="QLineEdit" name="x">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>120</y>
-      <width>120</width>
-      <height>20</height>
-     </rect>
+    <property name="title">
+     <string>Sonstige Daten</string>
     </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
+    <widget class="QComboBox" name="teilgebiet">
+     <property name="geometry">
+      <rect>
+       <x>109</x>
+       <y>30</y>
+       <width>171</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_13">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>71</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Teilgebiet</string>
+     </property>
+     <property name="buddy">
+      <cstring>simstatus</cstring>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="simstatus">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>60</y>
+       <width>171</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QgsDateTimeEdit" name="createdat">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>90</y>
+       <width>171</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="currentSection">
+      <enum>QDateTimeEdit::DaySection</enum>
+     </property>
+     <property name="displayFormat">
+      <string>dd.MM.yyyy HH:mm:ss</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_15">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>111</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Planungsstatus</string>
+     </property>
+     <property name="buddy">
+      <cstring>simstatus</cstring>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_71">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>151</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Erstelldatum</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -523,8 +552,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>631</width>
-     <height>21</height>
+     <width>690</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -544,12 +573,6 @@
   <tabstop>deckelhoehe</tabstop>
   <tabstop>durchm</tabstop>
   <tabstop>ueberstauflaeche</tabstop>
-  <tabstop>entwart</tabstop>
-  <tabstop>teilgebiet</tabstop>
-  <tabstop>simstatus</tabstop>
-  <tabstop>strasse</tabstop>
-  <tabstop>druckdicht</tabstop>
-  <tabstop>createdat</tabstop>
   <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>

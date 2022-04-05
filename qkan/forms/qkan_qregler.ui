@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -22,6 +25,12 @@
     <height>480</height>
    </size>
   </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
   <property name="baseSize">
    <size>
     <width>0</width>
@@ -35,15 +44,15 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Haltung</string>
+   <string>Q-Regler</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>20</y>
-      <width>90</width>
+      <width>40</width>
       <height>20</height>
      </rect>
     </property>
@@ -54,16 +63,16 @@
      </font>
     </property>
     <property name="text">
-     <string>Haltungsname</string>
+     <string>Name</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QLineEdit" name="haltnam">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>311</width>
-      <height>101</height>
+      <x>90</x>
+      <y>20</y>
+      <width>230</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="font">
@@ -72,158 +81,6 @@
       <pointsize>10</pointsize>
      </font>
     </property>
-    <property name="title">
-     <string>Anfangsschacht</string>
-    </property>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>91</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Name</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_5">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>60</y>
-       <width>91</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>abw. Sohlhöhe</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_14">
-     <property name="geometry">
-      <rect>
-       <x>280</x>
-       <y>60</y>
-       <width>21</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>m</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="schoben">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>30</y>
-       <width>170</width>
-       <height>20</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="sohleoben">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>60</y>
-       <width>120</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>von Schachtsohle abweichende Sohlhöhe</string>
-     </property>
-     <property name="statusTip">
-      <string>von Schachtsohle abweichende Sohlhöhe</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_3">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>50</y>
-      <width>311</width>
-      <height>101</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="title">
-     <string>Endschacht</string>
-    </property>
-    <widget class="QLineEdit" name="sohleunten">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>60</y>
-       <width>120</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>von Schachtsohle abweichende Sohlhöhe</string>
-     </property>
-     <property name="statusTip">
-      <string>von Schachtsohle abweichende Sohlhöhe</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_9">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>71</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Name</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_8">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>60</y>
-       <width>101</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>abw. Sohlhöhe</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_15">
-     <property name="geometry">
-      <rect>
-       <x>280</x>
-       <y>60</y>
-       <width>21</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>m</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="schunten">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>30</y>
-       <width>170</width>
-       <height>20</height>
-      </rect>
-     </property>
-    </widget>
    </widget>
    <widget class="QTextEdit" name="kommentar">
     <property name="geometry">
@@ -258,22 +115,6 @@
     </property>
     <property name="text">
      <string>Kommentar</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="haltnam">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>20</y>
-      <width>230</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-     </font>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
@@ -578,6 +419,174 @@
      </property>
     </widget>
    </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>50</y>
+      <width>311</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Endschacht</string>
+    </property>
+    <widget class="QLineEdit" name="sohleunten">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>60</y>
+       <width>120</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>von Schachtsohle abweichende Sohlhöhe</string>
+     </property>
+     <property name="statusTip">
+      <string>von Schachtsohle abweichende Sohlhöhe</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Name</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>abw. Sohlhöhe</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_15">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>60</y>
+       <width>21</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>m</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="schunten">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>30</y>
+       <width>170</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>311</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Anfangsschacht</string>
+    </property>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Name</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>abw. Sohlhöhe</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_14">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>60</y>
+       <width>21</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>m</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="schoben">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>30</y>
+       <width>170</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="sohleoben">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>60</y>
+       <width>120</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>von Schachtsohle abweichende Sohlhöhe</string>
+     </property>
+     <property name="statusTip">
+      <string>von Schachtsohle abweichende Sohlhöhe</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -600,20 +609,6 @@
  </customwidgets>
  <tabstops>
   <tabstop>haltnam</tabstop>
-  <tabstop>schoben</tabstop>
-  <tabstop>sohleoben</tabstop>
-  <tabstop>schunten</tabstop>
-  <tabstop>sohleunten</tabstop>
-  <tabstop>profilnam</tabstop>
-  <tabstop>hoehe</tabstop>
-  <tabstop>breite</tabstop>
-  <tabstop>laenge</tabstop>
-  <tabstop>ks</tabstop>
-  <tabstop>entwart</tabstop>
-  <tabstop>teilgebiet</tabstop>
-  <tabstop>simstatus</tabstop>
-  <tabstop>createdat</tabstop>
-  <tabstop>kommentar</tabstop>
  </tabstops>
  <resources/>
  <connections/>
