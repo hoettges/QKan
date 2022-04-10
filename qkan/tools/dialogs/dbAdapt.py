@@ -44,7 +44,7 @@ class DbAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_dbAdapt):  # typ
     tf_qkanDB: QLineEdit
 
     def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
-        super().__init__(plugin, parent)
+        super().__init__(plugin, parent, readonly=True)
 
         self.pb_selectProjectFile.clicked.connect(self.select_project_file)
         self.button_box.helpRequested.connect(click_help)

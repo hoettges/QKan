@@ -34,7 +34,7 @@
             <Option value="MM" name="dash_pattern_offset_unit" type="QString"/>
             <Option value="0" name="draw_inside_polygon" type="QString"/>
             <Option value="bevel" name="joinstyle" type="QString"/>
-            <Option value="255,35,35,255" name="line_color" type="QString"/>
+            <Option value="255,127,0,255" name="line_color" type="QString"/>
             <Option value="solid" name="line_style" type="QString"/>
             <Option value="0.26" name="line_width" type="QString"/>
             <Option value="MM" name="line_width_unit" type="QString"/>
@@ -62,7 +62,7 @@
           <prop v="MM" k="dash_pattern_offset_unit"/>
           <prop v="0" k="draw_inside_polygon"/>
           <prop v="bevel" k="joinstyle"/>
-          <prop v="255,35,35,255" k="line_color"/>
+          <prop v="255,127,0,255" k="line_color"/>
           <prop v="solid" k="line_style"/>
           <prop v="0.26" k="line_width"/>
           <prop v="MM" k="line_width_unit"/>
@@ -95,7 +95,7 @@
   <customproperties>
     <Option type="Map">
       <Option name="dualview/previewExpressions" type="List">
-        <Option value="&quot;leitnam&quot;" type="QString"/>
+        <Option value="&quot;haltnam&quot;" type="QString"/>
       </Option>
       <Option value="0" name="embeddedWidgets/count" type="QString"/>
       <Option name="variableNames" type="invalid"/>
@@ -210,7 +210,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="leitnam" configurationFlags="None">
+    <field name="haltnam" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -270,116 +270,6 @@
         </config>
       </editWidget>
     </field>
-    <field name="sohleoben" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="sohleunten" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="deckeloben" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="deckelunten" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="teilgebiet" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="qzu" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="profilnam" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="entwart" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="material" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="ks" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="simstatus" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
     <field name="kommentar" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
@@ -391,6 +281,69 @@
       </editWidget>
     </field>
     <field name="createdat" configurationFlags="None">
+      <editWidget type="DateTime">
+        <config>
+          <Option type="Map">
+            <Option value="true" name="allow_null" type="bool"/>
+            <Option value="true" name="calendar_popup" type="bool"/>
+            <Option value="dd.MM.yyyy HH:mm:ss" name="display_format" type="QString"/>
+            <Option value="YYYY-MM-dd HH:mm:ss" name="field_format" type="QString"/>
+            <Option value="false" name="field_iso_format" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="baujahr" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="untersuchtag" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="untersucher" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="wetter" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="bewertungsart" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="bewertungstag" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -431,51 +384,41 @@
   </fieldConfiguration>
   <aliases>
     <alias name="" field="pk" index="0"/>
-    <alias name="Name" field="leitnam" index="1"/>
+    <alias name="Name" field="haltnam" index="1"/>
     <alias name="Anfangsschacht" field="schoben" index="2"/>
     <alias name="Endschacht" field="schunten" index="3"/>
     <alias name="Profilhöhe" field="hoehe" index="4"/>
     <alias name="Profilbreite" field="breite" index="5"/>
     <alias name="Haltungslänge" field="laenge" index="6"/>
-    <alias name="Sohlhöhe Anfang" field="sohleoben" index="7"/>
-    <alias name="Sohlhöhe Ende" field="sohleunten" index="8"/>
-    <alias name="" field="deckeloben" index="9"/>
-    <alias name="" field="deckelunten" index="10"/>
-    <alias name="Teilgebiet" field="teilgebiet" index="11"/>
-    <alias name="Zufluss (m³/s)" field="qzu" index="12"/>
-    <alias name="Profilbezeichnung" field="profilnam" index="13"/>
-    <alias name="Entwässerungssystem" field="entwart" index="14"/>
-    <alias name="Material" field="material" index="15"/>
-    <alias name="Rauheitsbeiwert" field="ks" index="16"/>
-    <alias name="Planungsstatus" field="simstatus" index="17"/>
-    <alias name="Kommentar" field="kommentar" index="18"/>
-    <alias name="bearbeitet" field="createdat" index="19"/>
-    <alias name="" field="xschob" index="20"/>
-    <alias name="" field="yschob" index="21"/>
-    <alias name="" field="xschun" index="22"/>
-    <alias name="" field="yschun" index="23"/>
+    <alias name="Kommentar" field="kommentar" index="7"/>
+    <alias name="bearbeitet" field="createdat" index="8"/>
+    <alias name="Baujahr" field="baujahr" index="9"/>
+    <alias name="Untersuchungstag" field="untersuchtag" index="10"/>
+    <alias name="durchgeführt vom" field="untersucher" index="11"/>
+    <alias name="Wetter" field="wetter" index="12"/>
+    <alias name="Bewertungsart" field="bewertungsart" index="13"/>
+    <alias name="Bewertungstag" field="bewertungstag" index="14"/>
+    <alias name="" field="xschob" index="15"/>
+    <alias name="" field="yschob" index="16"/>
+    <alias name="" field="xschun" index="17"/>
+    <alias name="" field="yschun" index="18"/>
   </aliases>
   <defaults>
     <default expression="" applyOnUpdate="0" field="pk"/>
-    <default expression="" applyOnUpdate="0" field="leitnam"/>
+    <default expression="" applyOnUpdate="0" field="haltnam"/>
     <default expression="" applyOnUpdate="0" field="schoben"/>
     <default expression="" applyOnUpdate="0" field="schunten"/>
     <default expression="" applyOnUpdate="0" field="hoehe"/>
     <default expression="" applyOnUpdate="0" field="breite"/>
     <default expression="" applyOnUpdate="0" field="laenge"/>
-    <default expression="" applyOnUpdate="0" field="sohleoben"/>
-    <default expression="" applyOnUpdate="0" field="sohleunten"/>
-    <default expression="" applyOnUpdate="0" field="deckeloben"/>
-    <default expression="" applyOnUpdate="0" field="deckelunten"/>
-    <default expression="" applyOnUpdate="0" field="teilgebiet"/>
-    <default expression="" applyOnUpdate="0" field="qzu"/>
-    <default expression="" applyOnUpdate="0" field="profilnam"/>
-    <default expression="" applyOnUpdate="0" field="entwart"/>
-    <default expression="" applyOnUpdate="0" field="material"/>
-    <default expression="" applyOnUpdate="0" field="ks"/>
-    <default expression="" applyOnUpdate="0" field="simstatus"/>
     <default expression="" applyOnUpdate="0" field="kommentar"/>
     <default expression="" applyOnUpdate="0" field="createdat"/>
+    <default expression="" applyOnUpdate="0" field="baujahr"/>
+    <default expression="" applyOnUpdate="0" field="untersuchtag"/>
+    <default expression="" applyOnUpdate="0" field="untersucher"/>
+    <default expression="" applyOnUpdate="0" field="wetter"/>
+    <default expression="" applyOnUpdate="0" field="bewertungsart"/>
+    <default expression="" applyOnUpdate="0" field="bewertungstag"/>
     <default expression="" applyOnUpdate="0" field="xschob"/>
     <default expression="" applyOnUpdate="0" field="yschob"/>
     <default expression="" applyOnUpdate="0" field="xschun"/>
@@ -483,25 +426,20 @@
   </defaults>
   <constraints>
     <constraint constraints="3" notnull_strength="1" field="pk" exp_strength="0" unique_strength="1"/>
-    <constraint constraints="0" notnull_strength="0" field="leitnam" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="haltnam" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="schoben" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="schunten" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="hoehe" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="breite" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="laenge" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="sohleoben" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="sohleunten" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="deckeloben" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="deckelunten" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="teilgebiet" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="qzu" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="profilnam" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="entwart" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="material" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="ks" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="simstatus" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="kommentar" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="createdat" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="baujahr" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="untersuchtag" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="untersucher" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="wetter" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="bewertungsart" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="bewertungstag" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="xschob" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="yschob" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="xschun" exp_strength="0" unique_strength="0"/>
@@ -509,25 +447,20 @@
   </constraints>
   <constraintExpressions>
     <constraint desc="" exp="" field="pk"/>
-    <constraint desc="" exp="" field="leitnam"/>
+    <constraint desc="" exp="" field="haltnam"/>
     <constraint desc="" exp="" field="schoben"/>
     <constraint desc="" exp="" field="schunten"/>
     <constraint desc="" exp="" field="hoehe"/>
     <constraint desc="" exp="" field="breite"/>
     <constraint desc="" exp="" field="laenge"/>
-    <constraint desc="" exp="" field="sohleoben"/>
-    <constraint desc="" exp="" field="sohleunten"/>
-    <constraint desc="" exp="" field="deckeloben"/>
-    <constraint desc="" exp="" field="deckelunten"/>
-    <constraint desc="" exp="" field="teilgebiet"/>
-    <constraint desc="" exp="" field="qzu"/>
-    <constraint desc="" exp="" field="profilnam"/>
-    <constraint desc="" exp="" field="entwart"/>
-    <constraint desc="" exp="" field="material"/>
-    <constraint desc="" exp="" field="ks"/>
-    <constraint desc="" exp="" field="simstatus"/>
     <constraint desc="" exp="" field="kommentar"/>
     <constraint desc="" exp="" field="createdat"/>
+    <constraint desc="" exp="" field="baujahr"/>
+    <constraint desc="" exp="" field="untersuchtag"/>
+    <constraint desc="" exp="" field="untersucher"/>
+    <constraint desc="" exp="" field="wetter"/>
+    <constraint desc="" exp="" field="bewertungsart"/>
+    <constraint desc="" exp="" field="bewertungstag"/>
     <constraint desc="" exp="" field="xschob"/>
     <constraint desc="" exp="" field="yschob"/>
     <constraint desc="" exp="" field="xschun"/>
@@ -540,30 +473,25 @@
   <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
     <columns>
       <column name="pk" type="field" hidden="0" width="-1"/>
-      <column name="leitnam" type="field" hidden="0" width="-1"/>
+      <column name="haltnam" type="field" hidden="0" width="-1"/>
       <column name="schoben" type="field" hidden="0" width="-1"/>
       <column name="schunten" type="field" hidden="0" width="-1"/>
       <column name="hoehe" type="field" hidden="0" width="-1"/>
       <column name="breite" type="field" hidden="0" width="-1"/>
       <column name="laenge" type="field" hidden="0" width="-1"/>
-      <column name="sohleoben" type="field" hidden="0" width="-1"/>
-      <column name="sohleunten" type="field" hidden="0" width="-1"/>
-      <column name="deckeloben" type="field" hidden="0" width="-1"/>
-      <column name="deckelunten" type="field" hidden="0" width="-1"/>
-      <column name="teilgebiet" type="field" hidden="0" width="-1"/>
-      <column name="qzu" type="field" hidden="0" width="-1"/>
-      <column name="profilnam" type="field" hidden="0" width="-1"/>
-      <column name="entwart" type="field" hidden="0" width="-1"/>
-      <column name="material" type="field" hidden="0" width="-1"/>
-      <column name="ks" type="field" hidden="0" width="-1"/>
-      <column name="simstatus" type="field" hidden="0" width="-1"/>
       <column name="kommentar" type="field" hidden="0" width="-1"/>
       <column name="createdat" type="field" hidden="0" width="-1"/>
+      <column name="untersuchtag" type="field" hidden="0" width="-1"/>
+      <column name="untersucher" type="field" hidden="0" width="-1"/>
+      <column name="wetter" type="field" hidden="0" width="-1"/>
+      <column name="bewertungsart" type="field" hidden="0" width="-1"/>
+      <column name="bewertungstag" type="field" hidden="0" width="-1"/>
       <column name="xschob" type="field" hidden="0" width="-1"/>
       <column name="yschob" type="field" hidden="0" width="-1"/>
       <column name="xschun" type="field" hidden="0" width="-1"/>
       <column name="yschun" type="field" hidden="0" width="-1"/>
       <column type="actions" hidden="1" width="-1"/>
+      <column name="baujahr" type="field" hidden="0" width="-1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -571,7 +499,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:/FHAC/hoettges/Kanalprogramme/Nora/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/anschlussleitungen.ui</editform>
+  <editform tolerant="1">C:/FHAC/hoettges/Kanalprogramme/Nora/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/haltungen_untersucht.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -595,78 +523,63 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
+    <field editable="1" name="baujahr"/>
+    <field editable="1" name="bewertungsart"/>
+    <field editable="1" name="bewertungstag"/>
     <field editable="1" name="breite"/>
     <field editable="1" name="createdat"/>
-    <field editable="1" name="deckeloben"/>
-    <field editable="1" name="deckelunten"/>
-    <field editable="1" name="entwart"/>
+    <field editable="1" name="haltnam"/>
     <field editable="1" name="hoehe"/>
     <field editable="1" name="kommentar"/>
-    <field editable="1" name="ks"/>
     <field editable="1" name="laenge"/>
-    <field editable="1" name="leitnam"/>
-    <field editable="1" name="material"/>
     <field editable="1" name="pk"/>
-    <field editable="1" name="profilnam"/>
-    <field editable="1" name="qzu"/>
     <field editable="1" name="schoben"/>
     <field editable="1" name="schunten"/>
-    <field editable="1" name="simstatus"/>
-    <field editable="1" name="sohleoben"/>
-    <field editable="1" name="sohleunten"/>
-    <field editable="1" name="teilgebiet"/>
+    <field editable="1" name="untersucher"/>
+    <field editable="1" name="untersuchtag"/>
+    <field editable="1" name="wetter"/>
     <field editable="1" name="xschob"/>
     <field editable="1" name="xschun"/>
     <field editable="1" name="yschob"/>
     <field editable="1" name="yschun"/>
   </editable>
   <labelOnTop>
+    <field name="baujahr" labelOnTop="0"/>
+    <field name="bewertungsart" labelOnTop="0"/>
+    <field name="bewertungstag" labelOnTop="0"/>
     <field name="breite" labelOnTop="0"/>
     <field name="createdat" labelOnTop="0"/>
-    <field name="deckeloben" labelOnTop="0"/>
-    <field name="deckelunten" labelOnTop="0"/>
-    <field name="entwart" labelOnTop="0"/>
+    <field name="haltnam" labelOnTop="0"/>
     <field name="hoehe" labelOnTop="0"/>
     <field name="kommentar" labelOnTop="0"/>
-    <field name="ks" labelOnTop="0"/>
     <field name="laenge" labelOnTop="0"/>
-    <field name="leitnam" labelOnTop="0"/>
-    <field name="material" labelOnTop="0"/>
     <field name="pk" labelOnTop="0"/>
-    <field name="profilnam" labelOnTop="0"/>
-    <field name="qzu" labelOnTop="0"/>
     <field name="schoben" labelOnTop="0"/>
     <field name="schunten" labelOnTop="0"/>
-    <field name="simstatus" labelOnTop="0"/>
-    <field name="sohleoben" labelOnTop="0"/>
-    <field name="sohleunten" labelOnTop="0"/>
-    <field name="teilgebiet" labelOnTop="0"/>
+    <field name="untersucher" labelOnTop="0"/>
+    <field name="untersuchtag" labelOnTop="0"/>
+    <field name="wetter" labelOnTop="0"/>
     <field name="xschob" labelOnTop="0"/>
     <field name="xschun" labelOnTop="0"/>
     <field name="yschob" labelOnTop="0"/>
     <field name="yschun" labelOnTop="0"/>
   </labelOnTop>
   <reuseLastValue>
+    <field name="baujahr" reuseLastValue="0"/>
+    <field name="bewertungsart" reuseLastValue="0"/>
+    <field name="bewertungstag" reuseLastValue="0"/>
     <field name="breite" reuseLastValue="0"/>
     <field name="createdat" reuseLastValue="0"/>
-    <field name="deckeloben" reuseLastValue="0"/>
-    <field name="deckelunten" reuseLastValue="0"/>
-    <field name="entwart" reuseLastValue="0"/>
+    <field name="haltnam" reuseLastValue="0"/>
     <field name="hoehe" reuseLastValue="0"/>
     <field name="kommentar" reuseLastValue="0"/>
-    <field name="ks" reuseLastValue="0"/>
     <field name="laenge" reuseLastValue="0"/>
-    <field name="leitnam" reuseLastValue="0"/>
-    <field name="material" reuseLastValue="0"/>
     <field name="pk" reuseLastValue="0"/>
-    <field name="profilnam" reuseLastValue="0"/>
-    <field name="qzu" reuseLastValue="0"/>
     <field name="schoben" reuseLastValue="0"/>
     <field name="schunten" reuseLastValue="0"/>
-    <field name="simstatus" reuseLastValue="0"/>
-    <field name="sohleoben" reuseLastValue="0"/>
-    <field name="sohleunten" reuseLastValue="0"/>
-    <field name="teilgebiet" reuseLastValue="0"/>
+    <field name="untersucher" reuseLastValue="0"/>
+    <field name="untersuchtag" reuseLastValue="0"/>
+    <field name="wetter" reuseLastValue="0"/>
     <field name="xschob" reuseLastValue="0"/>
     <field name="xschun" reuseLastValue="0"/>
     <field name="yschob" reuseLastValue="0"/>
@@ -674,7 +587,7 @@ def my_form_open(dialog, layer, feature):
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>
-  <previewExpression>"leitnam"</previewExpression>
+  <previewExpression>"haltnam"</previewExpression>
   <mapTip></mapTip>
   <layerGeometryType>1</layerGeometryType>
 </qgis>

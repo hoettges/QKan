@@ -1671,11 +1671,12 @@ def createdbtables(
             schnam TEXT,
             tezgnam TEXT,
             teilgebiet TEXT,
-            abflusstyp TEXT,
-            speicherzahl INTEGER,
-            speicherkonst REAL,
-            fliesszeitkanal REAL,
-            fliesszeitflaeche REAL)""",
+            abflusstyp TEXT,            -- JOIN abflusstypen.abflusstyp
+            speicherzahl INTEGER,       -- HE8: AnzahlSpeicher
+            speicherkonst REAL,         -- HE8: Speicherkonstante (Typ 0)
+            fliesszeitkanal REAL,       -- HE8: LaengsteFliesszeitKanal (Typ 1)
+            fliesszeitflaeche REAL      -- HE8: FliesszeitOberflaeche (Typ 1) oder Schwerpunktlaufzeit (Typ 2)
+            )""",
         """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
         """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
         """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg),
@@ -2171,7 +2172,7 @@ def createdbtables(
     sql = """CREATE TABLE abflusstypen (
     pk INTEGER PRIMARY KEY, 
     abflusstyp TEXT,
-    he_nr INTEGER,
+    he_nr INTEGER,              -- JOIN he.Flaeche.BerechnungSpeicherkonstante
     kp_nr INTEGER)"""
 
     try:
@@ -2186,10 +2187,8 @@ def createdbtables(
 
     daten = [
         "'Speicherkaskade', 0, 0",
-        "'Direktabfluss', 0, 0",
         "'Fliesszeiten', 1, 1",
         "'Schwerpunktlaufzeit', 2, 2",
-        "'Schwerpunktfließzeit', 2, 2",
     ]
 
     for ds in daten:

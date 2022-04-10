@@ -228,7 +228,8 @@ def layersadapt(
 
         # Stildatei laden, falls vorhanden
         if layer:
-            qlsnam = os.path.join(templateDir, "qml", "{}.qml".format(layername))
+            qlsnam = os.path.join(templateDir, "qml",
+                                  "{}.qml".format(layername.replace('/', '_')))
             if os.path.exists(qlsnam):
                 layer.loadNamedStyle(qlsnam)
                 logger.debug("Layerstil geladen (1): {}".format(qlsnam))
@@ -347,6 +348,13 @@ def layersadapt(
         else:
             logger.debug(f"In Vorlage-Projektdatei gefundener Layer: {layername}")
 
+        if anpassen_Wertebeziehungen_in_Tabellen:
+            qlsnam = os.path.join(templateDir, "qml",
+                                  "{}_wertebeziehungen.qml".format(layername.replace('/', '_')))
+            if os.path.exists(qlsnam):
+                layer.loadNamedStyle(qlsnam)
+                logger.debug("Layerstil geladen (2): {}".format(qlsnam))
+
         if anpassen_ProjektMakros:
             nodes = qgsxml.findall("properties/Macros")
             for node in nodes:
@@ -424,12 +432,6 @@ def layersadapt(
             logger.debug(
                 f"k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n"
             )
-
-        if anpassen_Wertebeziehungen_in_Tabellen:
-            qlsnam = os.path.join(templateDir, "qml", "{}.qml".format(layername))
-            if os.path.exists(qlsnam):
-                layer.loadNamedStyle(qlsnam)
-                logger.debug("Layerstil geladen (2): {}".format(qlsnam))
 
     if layerNotInProjektMeldung:
         meldung(

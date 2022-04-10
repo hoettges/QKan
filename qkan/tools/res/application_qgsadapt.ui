@@ -29,6 +29,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -55,6 +56,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -101,6 +103,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -147,6 +150,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -189,28 +193,6 @@
      <string>QKan-Datenbank aktualisieren, falls ältere Version</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectQKanDB">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>30</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Suchfenster öffnen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>Suchfenster öffnen ...</string>
-    </property>
-    <property name="text">
-     <string>...</string>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="tf_qkanDB">
     <property name="geometry">
      <rect>
@@ -222,6 +204,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -274,6 +257,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -292,6 +276,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
       <weight>50</weight>
       <bold>false</bold>
      </font>

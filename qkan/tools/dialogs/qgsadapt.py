@@ -38,7 +38,7 @@ class QgsAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_qgsadapt):  # t
     tf_projectTemplate: QLineEdit
 
     def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
-        super().__init__(plugin, parent)
+        super().__init__(plugin, parent, readonly=True)
 
         self.pb_selectProjectTemplate.clicked.connect(self.select_project_template)
         self.cb_applyQKanTemplate.clicked.connect(self.click_apply_template)

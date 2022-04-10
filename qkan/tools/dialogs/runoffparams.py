@@ -55,7 +55,7 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
     rb_schwerpunktlaufzeit: QRadioButton
 
     def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
-        super().__init__(plugin, parent)
+        super().__init__(plugin, parent, readonly=True)
 
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
         self.lw_abflussparameter.itemClicked.connect(self.click_lw_abflussparam)

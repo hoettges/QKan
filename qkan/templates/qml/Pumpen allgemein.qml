@@ -27,13 +27,13 @@
             <Option value="4" type="QString" name="average_angle_length"/>
             <Option value="3x:0,0,0,0,0,0" type="QString" name="average_angle_map_unit_scale"/>
             <Option value="MM" type="QString" name="average_angle_unit"/>
-            <Option value="15" type="QString" name="interval"/>
+            <Option value="5" type="QString" name="interval"/>
             <Option value="3x:0,0,0,0,0,0" type="QString" name="interval_map_unit_scale"/>
-            <Option value="Pixel" type="QString" name="interval_unit"/>
+            <Option value="MapUnit" type="QString" name="interval_unit"/>
             <Option value="0" type="QString" name="offset"/>
-            <Option value="5" type="QString" name="offset_along_line"/>
+            <Option value="3" type="QString" name="offset_along_line"/>
             <Option value="3x:0,0,0,0,0,0" type="QString" name="offset_along_line_map_unit_scale"/>
-            <Option value="MM" type="QString" name="offset_along_line_unit"/>
+            <Option value="MapUnit" type="QString" name="offset_along_line_unit"/>
             <Option value="3x:0,0,0,0,0,0" type="QString" name="offset_map_unit_scale"/>
             <Option value="MM" type="QString" name="offset_unit"/>
             <Option value="interval" type="QString" name="placement"/>
@@ -43,13 +43,13 @@
           <prop k="average_angle_length" v="4"/>
           <prop k="average_angle_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="average_angle_unit" v="MM"/>
-          <prop k="interval" v="15"/>
+          <prop k="interval" v="5"/>
           <prop k="interval_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="interval_unit" v="Pixel"/>
+          <prop k="interval_unit" v="MapUnit"/>
           <prop k="offset" v="0"/>
-          <prop k="offset_along_line" v="5"/>
+          <prop k="offset_along_line" v="3"/>
           <prop k="offset_along_line_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="offset_along_line_unit" v="MM"/>
+          <prop k="offset_along_line_unit" v="MapUnit"/>
           <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="offset_unit" v="MM"/>
           <prop k="placement" v="interval"/>
@@ -72,44 +72,44 @@
             </data_defined_properties>
             <layer pass="0" enabled="1" class="SimpleMarker" locked="0">
               <Option type="Map">
-                <Option value="90" type="QString" name="angle"/>
+                <Option value="0" type="QString" name="angle"/>
                 <Option value="square" type="QString" name="cap_style"/>
-                <Option value="72,123,182,255" type="QString" name="color"/>
+                <Option value="227,26,28,255" type="QString" name="color"/>
                 <Option value="1" type="QString" name="horizontal_anchor_point"/>
                 <Option value="bevel" type="QString" name="joinstyle"/>
-                <Option value="triangle" type="QString" name="name"/>
+                <Option value="filled_arrowhead" type="QString" name="name"/>
                 <Option value="0,0" type="QString" name="offset"/>
                 <Option value="3x:0,0,0,0,0,0" type="QString" name="offset_map_unit_scale"/>
                 <Option value="MM" type="QString" name="offset_unit"/>
-                <Option value="50,87,128,255" type="QString" name="outline_color"/>
+                <Option value="0,0,0,255" type="QString" name="outline_color"/>
                 <Option value="solid" type="QString" name="outline_style"/>
-                <Option value="0.4" type="QString" name="outline_width"/>
+                <Option value="0" type="QString" name="outline_width"/>
                 <Option value="3x:0,0,0,0,0,0" type="QString" name="outline_width_map_unit_scale"/>
                 <Option value="MM" type="QString" name="outline_width_unit"/>
-                <Option value="diameter" type="QString" name="scale_method"/>
-                <Option value="2" type="QString" name="size"/>
+                <Option value="area" type="QString" name="scale_method"/>
+                <Option value="4" type="QString" name="size"/>
                 <Option value="3x:0,0,0,0,0,0" type="QString" name="size_map_unit_scale"/>
-                <Option value="MM" type="QString" name="size_unit"/>
+                <Option value="MapUnit" type="QString" name="size_unit"/>
                 <Option value="1" type="QString" name="vertical_anchor_point"/>
               </Option>
-              <prop k="angle" v="90"/>
+              <prop k="angle" v="0"/>
               <prop k="cap_style" v="square"/>
-              <prop k="color" v="72,123,182,255"/>
+              <prop k="color" v="227,26,28,255"/>
               <prop k="horizontal_anchor_point" v="1"/>
               <prop k="joinstyle" v="bevel"/>
-              <prop k="name" v="triangle"/>
+              <prop k="name" v="filled_arrowhead"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
               <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="50,87,128,255"/>
+              <prop k="outline_color" v="0,0,0,255"/>
               <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.4"/>
+              <prop k="outline_width" v="0"/>
               <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
               <prop k="outline_width_unit" v="MM"/>
-              <prop k="scale_method" v="diameter"/>
-              <prop k="size" v="2"/>
+              <prop k="scale_method" v="area"/>
+              <prop k="size" v="4"/>
               <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-              <prop k="size_unit" v="MM"/>
+              <prop k="size_unit" v="MapUnit"/>
               <prop k="vertical_anchor_point" v="1"/>
               <data_defined_properties>
                 <Option type="Map">
@@ -135,7 +135,7 @@
             <Option value="MM" type="QString" name="offset_along_line_unit"/>
             <Option value="3x:0,0,0,0,0,0" type="QString" name="offset_map_unit_scale"/>
             <Option value="MM" type="QString" name="offset_unit"/>
-            <Option value="centralpoint" type="QString" name="placement"/>
+            <Option value="interval" type="QString" name="placement"/>
             <Option value="0" type="QString" name="ring_filter"/>
             <Option value="0" type="QString" name="rotate"/>
           </Option>
@@ -151,7 +151,7 @@
           <prop k="offset_along_line_unit" v="MM"/>
           <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="offset_unit" v="MM"/>
-          <prop k="placement" v="centralpoint"/>
+          <prop k="placement" v="interval"/>
           <prop k="ring_filter" v="0"/>
           <prop k="rotate" v="0"/>
           <data_defined_properties>
@@ -173,110 +173,7 @@
               <Option type="Map">
                 <Option value="0" type="QString" name="angle"/>
                 <Option value="P" type="QString" name="chr"/>
-                <Option value="255,21,21,255" type="QString" name="color"/>
-                <Option value="Source Sans Pro" type="QString" name="font"/>
-                <Option value="Bold" type="QString" name="font_style"/>
-                <Option value="1" type="QString" name="horizontal_anchor_point"/>
-                <Option value="miter" type="QString" name="joinstyle"/>
-                <Option value="0,0" type="QString" name="offset"/>
-                <Option value="3x:0,0,0,0,0,0" type="QString" name="offset_map_unit_scale"/>
-                <Option value="MM" type="QString" name="offset_unit"/>
-                <Option value="255,255,255,255" type="QString" name="outline_color"/>
-                <Option value="0.8" type="QString" name="outline_width"/>
-                <Option value="3x:0,0,0,0,0,0" type="QString" name="outline_width_map_unit_scale"/>
-                <Option value="MM" type="QString" name="outline_width_unit"/>
-                <Option value="8" type="QString" name="size"/>
-                <Option value="3x:0,0,0,0,0,0" type="QString" name="size_map_unit_scale"/>
-                <Option value="MM" type="QString" name="size_unit"/>
-                <Option value="1" type="QString" name="vertical_anchor_point"/>
-              </Option>
-              <prop k="angle" v="0"/>
-              <prop k="chr" v="P"/>
-              <prop k="color" v="255,21,21,255"/>
-              <prop k="font" v="Source Sans Pro"/>
-              <prop k="font_style" v="Bold"/>
-              <prop k="horizontal_anchor_point" v="1"/>
-              <prop k="joinstyle" v="miter"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="255,255,255,255"/>
-              <prop k="outline_width" v="0.8"/>
-              <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="size" v="8"/>
-              <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-              <prop k="size_unit" v="MM"/>
-              <prop k="vertical_anchor_point" v="1"/>
-              <data_defined_properties>
-                <Option type="Map">
-                  <Option value="" type="QString" name="name"/>
-                  <Option type="Map" name="properties">
-                    <Option type="Map" name="name">
-                      <Option value="false" type="bool" name="active"/>
-                      <Option value="'W'" type="QString" name="expression"/>
-                      <Option value="3" type="int" name="type"/>
-                    </Option>
-                  </Option>
-                  <Option value="collection" type="QString" name="type"/>
-                </Option>
-              </data_defined_properties>
-            </layer>
-          </symbol>
-        </layer>
-        <layer pass="0" enabled="1" class="MarkerLine" locked="0">
-          <Option type="Map">
-            <Option value="4" type="QString" name="average_angle_length"/>
-            <Option value="3x:0,0,0,0,0,0" type="QString" name="average_angle_map_unit_scale"/>
-            <Option value="MM" type="QString" name="average_angle_unit"/>
-            <Option value="3" type="QString" name="interval"/>
-            <Option value="3x:0,0,0,0,0,0" type="QString" name="interval_map_unit_scale"/>
-            <Option value="MM" type="QString" name="interval_unit"/>
-            <Option value="0" type="QString" name="offset"/>
-            <Option value="0" type="QString" name="offset_along_line"/>
-            <Option value="3x:0,0,0,0,0,0" type="QString" name="offset_along_line_map_unit_scale"/>
-            <Option value="MM" type="QString" name="offset_along_line_unit"/>
-            <Option value="3x:0,0,0,0,0,0" type="QString" name="offset_map_unit_scale"/>
-            <Option value="MM" type="QString" name="offset_unit"/>
-            <Option value="centralpoint" type="QString" name="placement"/>
-            <Option value="0" type="QString" name="ring_filter"/>
-            <Option value="0" type="QString" name="rotate"/>
-          </Option>
-          <prop k="average_angle_length" v="4"/>
-          <prop k="average_angle_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="average_angle_unit" v="MM"/>
-          <prop k="interval" v="3"/>
-          <prop k="interval_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="interval_unit" v="MM"/>
-          <prop k="offset" v="0"/>
-          <prop k="offset_along_line" v="0"/>
-          <prop k="offset_along_line_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="offset_along_line_unit" v="MM"/>
-          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="offset_unit" v="MM"/>
-          <prop k="placement" v="centralpoint"/>
-          <prop k="ring_filter" v="0"/>
-          <prop k="rotate" v="0"/>
-          <data_defined_properties>
-            <Option type="Map">
-              <Option value="" type="QString" name="name"/>
-              <Option name="properties"/>
-              <Option value="collection" type="QString" name="type"/>
-            </Option>
-          </data_defined_properties>
-          <symbol clip_to_extent="1" force_rhr="0" alpha="1" type="marker" name="@0@2">
-            <data_defined_properties>
-              <Option type="Map">
-                <Option value="" type="QString" name="name"/>
-                <Option name="properties"/>
-                <Option value="collection" type="QString" name="type"/>
-              </Option>
-            </data_defined_properties>
-            <layer pass="0" enabled="1" class="FontMarker" locked="0">
-              <Option type="Map">
-                <Option value="0" type="QString" name="angle"/>
-                <Option value="P" type="QString" name="chr"/>
-                <Option value="255,0,0,255" type="QString" name="color"/>
+                <Option value="227,26,28,255" type="QString" name="color"/>
                 <Option value="Source Sans Pro" type="QString" name="font"/>
                 <Option value="Regular" type="QString" name="font_style"/>
                 <Option value="1" type="QString" name="horizontal_anchor_point"/>
@@ -285,7 +182,7 @@
                 <Option value="3x:0,0,0,0,0,0" type="QString" name="offset_map_unit_scale"/>
                 <Option value="MM" type="QString" name="offset_unit"/>
                 <Option value="255,255,255,255" type="QString" name="outline_color"/>
-                <Option value="0.2" type="QString" name="outline_width"/>
+                <Option value="0" type="QString" name="outline_width"/>
                 <Option value="3x:0,0,0,0,0,0" type="QString" name="outline_width_map_unit_scale"/>
                 <Option value="MM" type="QString" name="outline_width_unit"/>
                 <Option value="8" type="QString" name="size"/>
@@ -295,7 +192,7 @@
               </Option>
               <prop k="angle" v="0"/>
               <prop k="chr" v="P"/>
-              <prop k="color" v="255,0,0,255"/>
+              <prop k="color" v="227,26,28,255"/>
               <prop k="font" v="Source Sans Pro"/>
               <prop k="font_style" v="Regular"/>
               <prop k="horizontal_anchor_point" v="1"/>
@@ -304,7 +201,7 @@
               <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
               <prop k="offset_unit" v="MM"/>
               <prop k="outline_color" v="255,255,255,255"/>
-              <prop k="outline_width" v="0.2"/>
+              <prop k="outline_width" v="0"/>
               <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
               <prop k="outline_width_unit" v="MM"/>
               <prop k="size" v="8"/>
@@ -332,8 +229,8 @@
         <Option value="&quot;pnam&quot;" type="QString"/>
       </Option>
       <Option value="0" type="QString" name="embeddedWidgets/count"/>
-      <Option name="variableNames"/>
-      <Option name="variableValues"/>
+      <Option type="invalid" name="variableNames"/>
+      <Option type="invalid" name="variableValues"/>
     </Option>
   </customproperties>
   <blendMode>0</blendMode>
@@ -447,7 +344,7 @@
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="haltnam">
+    <field configurationFlags="None" name="pnam">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -469,7 +366,7 @@
             <Option value="schaechte20161016203756252" type="QString" name="Layer"/>
             <Option value="Knotenpunkte" type="QString" name="LayerName"/>
             <Option value="spatialite" type="QString" name="LayerProviderName"/>
-            <Option value="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;schaechte&quot; (geom)" type="QString" name="LayerSource"/>
+            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;schaechte&quot; (geom)" type="QString" name="LayerSource"/>
             <Option value="1" type="int" name="NofColumns"/>
             <Option value="false" type="bool" name="OrderByValue"/>
             <Option value="true" type="bool" name="UseCompleter"/>
@@ -490,7 +387,7 @@
             <Option value="schaechte20161016203756252" type="QString" name="Layer"/>
             <Option value="Knotenpunkte" type="QString" name="LayerName"/>
             <Option value="spatialite" type="QString" name="LayerProviderName"/>
-            <Option value="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;schaechte&quot; (geom)" type="QString" name="LayerSource"/>
+            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;schaechte&quot; (geom)" type="QString" name="LayerSource"/>
             <Option value="1" type="int" name="NofColumns"/>
             <Option value="false" type="bool" name="OrderByValue"/>
             <Option value="true" type="bool" name="UseCompleter"/>
@@ -499,7 +396,28 @@
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="hoehe">
+    <field configurationFlags="None" name="pumpentyp">
+      <editWidget type="ValueRelation">
+        <config>
+          <Option type="Map">
+            <Option value="false" type="bool" name="AllowMulti"/>
+            <Option value="true" type="bool" name="AllowNull"/>
+            <Option value="" type="QString" name="Description"/>
+            <Option value="" type="QString" name="FilterExpression"/>
+            <Option value="bezeichnung" type="QString" name="Key"/>
+            <Option value="pumpentypen20161018090730556" type="QString" name="Layer"/>
+            <Option value="Pumpentypen" type="QString" name="LayerName"/>
+            <Option value="spatialite" type="QString" name="LayerProviderName"/>
+            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;pumpentypen&quot;" type="QString" name="LayerSource"/>
+            <Option value="1" type="int" name="NofColumns"/>
+            <Option value="false" type="bool" name="OrderByValue"/>
+            <Option value="true" type="bool" name="UseCompleter"/>
+            <Option value="bezeichnung" type="QString" name="Value"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field configurationFlags="None" name="volanf">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -509,7 +427,7 @@
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="breite">
+    <field configurationFlags="None" name="volges">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -519,7 +437,7 @@
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="laenge">
+    <field configurationFlags="None" name="sohle">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -529,7 +447,28 @@
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="sohleoben">
+    <field configurationFlags="None" name="steuersch">
+      <editWidget type="ValueRelation">
+        <config>
+          <Option type="Map">
+            <Option value="false" type="bool" name="AllowMulti"/>
+            <Option value="true" type="bool" name="AllowNull"/>
+            <Option value="" type="QString" name="Description"/>
+            <Option value="" type="QString" name="FilterExpression"/>
+            <Option value="schnam" type="QString" name="Key"/>
+            <Option value="schaechte20161016203756252" type="QString" name="Layer"/>
+            <Option value="Knotenpunkte" type="QString" name="LayerName"/>
+            <Option value="spatialite" type="QString" name="LayerProviderName"/>
+            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;schaechte&quot; (geom)" type="QString" name="LayerSource"/>
+            <Option value="1" type="int" name="NofColumns"/>
+            <Option value="false" type="bool" name="OrderByValue"/>
+            <Option value="true" type="bool" name="UseCompleter"/>
+            <Option value="schnam" type="QString" name="Value"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field configurationFlags="None" name="einschalthoehe">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -539,27 +478,7 @@
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="sohleunten">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" type="bool" name="IsMultiline"/>
-            <Option value="false" type="bool" name="UseHtml"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="deckeloben">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" type="bool" name="IsMultiline"/>
-            <Option value="false" type="bool" name="UseHtml"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="deckelunten">
+    <field configurationFlags="None" name="ausschalthoehe">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -581,71 +500,11 @@
             <Option value="Teilgebiete_786fa926_704f_4cb1_bc67_eb8571f2f6c0" type="QString" name="Layer"/>
             <Option value="Teilgebiete" type="QString" name="LayerName"/>
             <Option value="spatialite" type="QString" name="LayerProviderName"/>
-            <Option value="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;teilgebiete&quot; (geom)" type="QString" name="LayerSource"/>
+            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;teilgebiete&quot; (geom)" type="QString" name="LayerSource"/>
             <Option value="1" type="int" name="NofColumns"/>
             <Option value="false" type="bool" name="OrderByValue"/>
             <Option value="true" type="bool" name="UseCompleter"/>
             <Option value="tgnam" type="QString" name="Value"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="qzu">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" type="bool" name="IsMultiline"/>
-            <Option value="false" type="bool" name="UseHtml"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="profilnam">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" type="bool" name="IsMultiline"/>
-            <Option value="false" type="bool" name="UseHtml"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="entwart">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" type="bool" name="IsMultiline"/>
-            <Option value="false" type="bool" name="UseHtml"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="material">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" type="bool" name="IsMultiline"/>
-            <Option value="false" type="bool" name="UseHtml"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="ks">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" type="bool" name="IsMultiline"/>
-            <Option value="false" type="bool" name="UseHtml"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="sonderelement">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" type="bool" name="IsMultiline"/>
-            <Option value="false" type="bool" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
@@ -662,7 +521,7 @@
             <Option value="simulationsstatus20161201095050780" type="QString" name="Layer"/>
             <Option value="Simulationsstatus" type="QString" name="LayerName"/>
             <Option value="spatialite" type="QString" name="LayerProviderName"/>
-            <Option value="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;simulationsstatus&quot;" type="QString" name="LayerSource"/>
+            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;simulationsstatus&quot;" type="QString" name="LayerSource"/>
             <Option value="1" type="int" name="NofColumns"/>
             <Option value="false" type="bool" name="OrderByValue"/>
             <Option value="false" type="bool" name="UseCompleter"/>
@@ -688,148 +547,80 @@
             <Option value="true" type="bool" name="allow_null"/>
             <Option value="true" type="bool" name="calendar_popup"/>
             <Option value="dd.MM.yyyy HH:mm:ss" type="QString" name="display_format"/>
-            <Option value="YYYY-MM-dd HH:mm:ss" type="QString" name="field_format"/>
+            <Option value="yyyy-MM-dd HH:mm:ss" type="QString" name="field_format"/>
             <Option value="false" type="bool" name="field_iso_format"/>
           </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="xschob">
-      <editWidget type="Hidden">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="yschob">
-      <editWidget type="Hidden">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="xschun">
-      <editWidget type="Hidden">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="yschun">
-      <editWidget type="Hidden">
-        <config>
-          <Option/>
         </config>
       </editWidget>
     </field>
   </fieldConfiguration>
   <aliases>
     <alias index="0" field="pk" name=""/>
-    <alias index="1" field="haltnam" name="Name"/>
+    <alias index="1" field="pnam" name="Name"/>
     <alias index="2" field="schoben" name="Anfangsschacht"/>
     <alias index="3" field="schunten" name="Endschacht"/>
-    <alias index="4" field="hoehe" name="Öffnungshöhe (m)"/>
-    <alias index="5" field="breite" name=""/>
-    <alias index="6" field="laenge" name=""/>
-    <alias index="7" field="sohleoben" name=""/>
-    <alias index="8" field="sohleunten" name=""/>
-    <alias index="9" field="deckeloben" name=""/>
-    <alias index="10" field="deckelunten" name=""/>
+    <alias index="4" field="pumpentyp" name="Pumpentyp"/>
+    <alias index="5" field="volanf" name=""/>
+    <alias index="6" field="volges" name=""/>
+    <alias index="7" field="sohle" name="Sohlhöhe"/>
+    <alias index="8" field="steuersch" name=""/>
+    <alias index="9" field="einschalthoehe" name="Einschalthöhe"/>
+    <alias index="10" field="ausschalthoehe" name="Ausschalthöhe"/>
     <alias index="11" field="teilgebiet" name="Teilgebiet"/>
-    <alias index="12" field="qzu" name=""/>
-    <alias index="13" field="profilnam" name=""/>
-    <alias index="14" field="entwart" name="Entwässerungssystem"/>
-    <alias index="15" field="material" name=""/>
-    <alias index="16" field="ks" name=""/>
-    <alias index="17" field="sonderelement" name="Sonderelementttyp"/>
-    <alias index="18" field="simstatus" name="Planungsstatus"/>
-    <alias index="19" field="kommentar" name="Kommentar"/>
-    <alias index="20" field="createdat" name="erstellt"/>
-    <alias index="21" field="xschob" name=""/>
-    <alias index="22" field="yschob" name=""/>
-    <alias index="23" field="xschun" name=""/>
-    <alias index="24" field="yschun" name=""/>
+    <alias index="12" field="simstatus" name="Planungsstatus"/>
+    <alias index="13" field="kommentar" name="Kommentar"/>
+    <alias index="14" field="createdat" name="bearbeitet"/>
   </aliases>
   <defaults>
     <default expression="" field="pk" applyOnUpdate="0"/>
-    <default expression="" field="haltnam" applyOnUpdate="0"/>
+    <default expression="" field="pnam" applyOnUpdate="0"/>
     <default expression="" field="schoben" applyOnUpdate="0"/>
     <default expression="" field="schunten" applyOnUpdate="0"/>
-    <default expression="" field="hoehe" applyOnUpdate="0"/>
-    <default expression="" field="breite" applyOnUpdate="0"/>
-    <default expression="" field="laenge" applyOnUpdate="0"/>
-    <default expression="" field="sohleoben" applyOnUpdate="0"/>
-    <default expression="" field="sohleunten" applyOnUpdate="0"/>
-    <default expression="" field="deckeloben" applyOnUpdate="0"/>
-    <default expression="" field="deckelunten" applyOnUpdate="0"/>
+    <default expression="" field="pumpentyp" applyOnUpdate="0"/>
+    <default expression="" field="volanf" applyOnUpdate="0"/>
+    <default expression="" field="volges" applyOnUpdate="0"/>
+    <default expression="" field="sohle" applyOnUpdate="0"/>
+    <default expression="" field="steuersch" applyOnUpdate="0"/>
+    <default expression="" field="einschalthoehe" applyOnUpdate="0"/>
+    <default expression="" field="ausschalthoehe" applyOnUpdate="0"/>
     <default expression="" field="teilgebiet" applyOnUpdate="0"/>
-    <default expression="" field="qzu" applyOnUpdate="0"/>
-    <default expression="" field="profilnam" applyOnUpdate="0"/>
-    <default expression="" field="entwart" applyOnUpdate="0"/>
-    <default expression="" field="material" applyOnUpdate="0"/>
-    <default expression="" field="ks" applyOnUpdate="0"/>
-    <default expression="'Pumpe'" field="sonderelement" applyOnUpdate="1"/>
     <default expression="" field="simstatus" applyOnUpdate="0"/>
     <default expression="''" field="kommentar" applyOnUpdate="0"/>
     <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" field="createdat" applyOnUpdate="1"/>
-    <default expression="" field="xschob" applyOnUpdate="0"/>
-    <default expression="" field="yschob" applyOnUpdate="0"/>
-    <default expression="" field="xschun" applyOnUpdate="0"/>
-    <default expression="" field="yschun" applyOnUpdate="0"/>
   </defaults>
   <constraints>
     <constraint unique_strength="1" exp_strength="0" field="pk" notnull_strength="1" constraints="3"/>
-    <constraint unique_strength="0" exp_strength="0" field="haltnam" notnull_strength="0" constraints="0"/>
+    <constraint unique_strength="0" exp_strength="0" field="pnam" notnull_strength="0" constraints="0"/>
     <constraint unique_strength="0" exp_strength="0" field="schoben" notnull_strength="0" constraints="0"/>
     <constraint unique_strength="0" exp_strength="0" field="schunten" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="hoehe" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="breite" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="laenge" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="sohleoben" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="sohleunten" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="deckeloben" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="deckelunten" notnull_strength="0" constraints="0"/>
+    <constraint unique_strength="0" exp_strength="0" field="pumpentyp" notnull_strength="0" constraints="0"/>
+    <constraint unique_strength="0" exp_strength="0" field="volanf" notnull_strength="0" constraints="0"/>
+    <constraint unique_strength="0" exp_strength="0" field="volges" notnull_strength="0" constraints="0"/>
+    <constraint unique_strength="0" exp_strength="0" field="sohle" notnull_strength="0" constraints="0"/>
+    <constraint unique_strength="0" exp_strength="0" field="steuersch" notnull_strength="0" constraints="0"/>
+    <constraint unique_strength="0" exp_strength="0" field="einschalthoehe" notnull_strength="0" constraints="0"/>
+    <constraint unique_strength="0" exp_strength="0" field="ausschalthoehe" notnull_strength="0" constraints="0"/>
     <constraint unique_strength="0" exp_strength="0" field="teilgebiet" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="qzu" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="profilnam" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="entwart" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="material" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="ks" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="sonderelement" notnull_strength="0" constraints="0"/>
     <constraint unique_strength="0" exp_strength="0" field="simstatus" notnull_strength="0" constraints="0"/>
     <constraint unique_strength="0" exp_strength="0" field="kommentar" notnull_strength="0" constraints="0"/>
     <constraint unique_strength="0" exp_strength="0" field="createdat" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="xschob" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="yschob" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="xschun" notnull_strength="0" constraints="0"/>
-    <constraint unique_strength="0" exp_strength="0" field="yschun" notnull_strength="0" constraints="0"/>
   </constraints>
   <constraintExpressions>
     <constraint desc="" field="pk" exp=""/>
-    <constraint desc="" field="haltnam" exp=""/>
+    <constraint desc="" field="pnam" exp=""/>
     <constraint desc="" field="schoben" exp=""/>
     <constraint desc="" field="schunten" exp=""/>
-    <constraint desc="" field="hoehe" exp=""/>
-    <constraint desc="" field="breite" exp=""/>
-    <constraint desc="" field="laenge" exp=""/>
-    <constraint desc="" field="sohleoben" exp=""/>
-    <constraint desc="" field="sohleunten" exp=""/>
-    <constraint desc="" field="deckeloben" exp=""/>
-    <constraint desc="" field="deckelunten" exp=""/>
+    <constraint desc="" field="pumpentyp" exp=""/>
+    <constraint desc="" field="volanf" exp=""/>
+    <constraint desc="" field="volges" exp=""/>
+    <constraint desc="" field="sohle" exp=""/>
+    <constraint desc="" field="steuersch" exp=""/>
+    <constraint desc="" field="einschalthoehe" exp=""/>
+    <constraint desc="" field="ausschalthoehe" exp=""/>
     <constraint desc="" field="teilgebiet" exp=""/>
-    <constraint desc="" field="qzu" exp=""/>
-    <constraint desc="" field="profilnam" exp=""/>
-    <constraint desc="" field="entwart" exp=""/>
-    <constraint desc="" field="material" exp=""/>
-    <constraint desc="" field="ks" exp=""/>
-    <constraint desc="" field="sonderelement" exp=""/>
     <constraint desc="" field="simstatus" exp=""/>
     <constraint desc="" field="kommentar" exp=""/>
     <constraint desc="" field="createdat" exp=""/>
-    <constraint desc="" field="xschob" exp=""/>
-    <constraint desc="" field="yschob" exp=""/>
-    <constraint desc="" field="xschun" exp=""/>
-    <constraint desc="" field="yschun" exp=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
@@ -838,27 +629,17 @@
   <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
     <columns>
       <column width="-1" hidden="0" type="field" name="pk"/>
-      <column width="-1" hidden="0" type="field" name="haltnam"/>
+      <column width="-1" hidden="0" type="field" name="pnam"/>
       <column width="-1" hidden="0" type="field" name="schoben"/>
       <column width="-1" hidden="0" type="field" name="schunten"/>
-      <column width="-1" hidden="0" type="field" name="hoehe"/>
-      <column width="-1" hidden="1" type="field" name="breite"/>
-      <column width="-1" hidden="1" type="field" name="laenge"/>
-      <column width="-1" hidden="1" type="field" name="sohleoben"/>
-      <column width="-1" hidden="1" type="field" name="sohleunten"/>
-      <column width="-1" hidden="1" type="field" name="deckeloben"/>
-      <column width="-1" hidden="1" type="field" name="deckelunten"/>
-      <column width="-1" hidden="1" type="field" name="qzu"/>
-      <column width="-1" hidden="1" type="field" name="profilnam"/>
-      <column width="-1" hidden="0" type="field" name="entwart"/>
-      <column width="-1" hidden="1" type="field" name="material"/>
-      <column width="-1" hidden="1" type="field" name="ks"/>
+      <column width="-1" hidden="0" type="field" name="pumpentyp"/>
+      <column width="-1" hidden="0" type="field" name="volanf"/>
+      <column width="-1" hidden="0" type="field" name="volges"/>
+      <column width="-1" hidden="0" type="field" name="sohle"/>
+      <column width="-1" hidden="0" type="field" name="steuersch"/>
+      <column width="-1" hidden="0" type="field" name="einschalthoehe"/>
+      <column width="-1" hidden="0" type="field" name="ausschalthoehe"/>
       <column width="-1" hidden="0" type="field" name="teilgebiet"/>
-      <column width="-1" hidden="0" type="field" name="sonderelement"/>
-      <column width="-1" hidden="1" type="field" name="xschob"/>
-      <column width="-1" hidden="1" type="field" name="yschob"/>
-      <column width="-1" hidden="1" type="field" name="xschun"/>
-      <column width="-1" hidden="1" type="field" name="yschun"/>
       <column width="-1" hidden="0" type="field" name="simstatus"/>
       <column width="-1" hidden="0" type="field" name="kommentar"/>
       <column width="-1" hidden="0" type="field" name="createdat"/>
@@ -893,108 +674,54 @@ def my_form_open(dialog, layer, feature):
   <editorlayout>uifilelayout</editorlayout>
   <editable>
     <field editable="1" name="ausschalthoehe"/>
-    <field editable="1" name="breite"/>
     <field editable="1" name="createdat"/>
-    <field editable="1" name="deckeloben"/>
-    <field editable="1" name="deckelunten"/>
     <field editable="1" name="einschalthoehe"/>
-    <field editable="1" name="entwart"/>
-    <field editable="1" name="haltnam"/>
-    <field editable="1" name="hoehe"/>
     <field editable="1" name="kommentar"/>
-    <field editable="1" name="ks"/>
-    <field editable="1" name="laenge"/>
-    <field editable="1" name="material"/>
     <field editable="1" name="pk"/>
     <field editable="1" name="pnam"/>
-    <field editable="1" name="profilnam"/>
     <field editable="1" name="pumpentyp"/>
-    <field editable="1" name="qzu"/>
     <field editable="1" name="schoben"/>
     <field editable="1" name="schunten"/>
     <field editable="1" name="simstatus"/>
     <field editable="1" name="sohle"/>
-    <field editable="1" name="sohleoben"/>
-    <field editable="1" name="sohleunten"/>
-    <field editable="1" name="sonderelement"/>
     <field editable="1" name="steuersch"/>
     <field editable="1" name="teilgebiet"/>
     <field editable="1" name="volanf"/>
     <field editable="1" name="volges"/>
-    <field editable="1" name="xschob"/>
-    <field editable="1" name="xschun"/>
-    <field editable="1" name="yschob"/>
-    <field editable="1" name="yschun"/>
   </editable>
   <labelOnTop>
     <field labelOnTop="0" name="ausschalthoehe"/>
-    <field labelOnTop="0" name="breite"/>
     <field labelOnTop="0" name="createdat"/>
-    <field labelOnTop="0" name="deckeloben"/>
-    <field labelOnTop="0" name="deckelunten"/>
     <field labelOnTop="0" name="einschalthoehe"/>
-    <field labelOnTop="0" name="entwart"/>
-    <field labelOnTop="0" name="haltnam"/>
-    <field labelOnTop="0" name="hoehe"/>
     <field labelOnTop="0" name="kommentar"/>
-    <field labelOnTop="0" name="ks"/>
-    <field labelOnTop="0" name="laenge"/>
-    <field labelOnTop="0" name="material"/>
     <field labelOnTop="0" name="pk"/>
     <field labelOnTop="0" name="pnam"/>
-    <field labelOnTop="0" name="profilnam"/>
     <field labelOnTop="0" name="pumpentyp"/>
-    <field labelOnTop="0" name="qzu"/>
     <field labelOnTop="0" name="schoben"/>
     <field labelOnTop="0" name="schunten"/>
     <field labelOnTop="0" name="simstatus"/>
     <field labelOnTop="0" name="sohle"/>
-    <field labelOnTop="0" name="sohleoben"/>
-    <field labelOnTop="0" name="sohleunten"/>
-    <field labelOnTop="0" name="sonderelement"/>
     <field labelOnTop="0" name="steuersch"/>
     <field labelOnTop="0" name="teilgebiet"/>
     <field labelOnTop="0" name="volanf"/>
     <field labelOnTop="0" name="volges"/>
-    <field labelOnTop="0" name="xschob"/>
-    <field labelOnTop="0" name="xschun"/>
-    <field labelOnTop="0" name="yschob"/>
-    <field labelOnTop="0" name="yschun"/>
   </labelOnTop>
   <reuseLastValue>
     <field reuseLastValue="0" name="ausschalthoehe"/>
-    <field reuseLastValue="0" name="breite"/>
     <field reuseLastValue="0" name="createdat"/>
-    <field reuseLastValue="0" name="deckeloben"/>
-    <field reuseLastValue="0" name="deckelunten"/>
     <field reuseLastValue="0" name="einschalthoehe"/>
-    <field reuseLastValue="0" name="entwart"/>
-    <field reuseLastValue="0" name="haltnam"/>
-    <field reuseLastValue="0" name="hoehe"/>
     <field reuseLastValue="0" name="kommentar"/>
-    <field reuseLastValue="0" name="ks"/>
-    <field reuseLastValue="0" name="laenge"/>
-    <field reuseLastValue="0" name="material"/>
     <field reuseLastValue="0" name="pk"/>
     <field reuseLastValue="0" name="pnam"/>
-    <field reuseLastValue="0" name="profilnam"/>
     <field reuseLastValue="0" name="pumpentyp"/>
-    <field reuseLastValue="0" name="qzu"/>
     <field reuseLastValue="0" name="schoben"/>
     <field reuseLastValue="0" name="schunten"/>
     <field reuseLastValue="0" name="simstatus"/>
     <field reuseLastValue="0" name="sohle"/>
-    <field reuseLastValue="0" name="sohleoben"/>
-    <field reuseLastValue="0" name="sohleunten"/>
-    <field reuseLastValue="0" name="sonderelement"/>
     <field reuseLastValue="0" name="steuersch"/>
     <field reuseLastValue="0" name="teilgebiet"/>
     <field reuseLastValue="0" name="volanf"/>
     <field reuseLastValue="0" name="volges"/>
-    <field reuseLastValue="0" name="xschob"/>
-    <field reuseLastValue="0" name="xschun"/>
-    <field reuseLastValue="0" name="yschob"/>
-    <field reuseLastValue="0" name="yschun"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>

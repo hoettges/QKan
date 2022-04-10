@@ -66,7 +66,7 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
     tf_projectTemplate: QLineEdit
 
     def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
-        super().__init__(plugin, parent)
+        super().__init__(plugin, parent, readonly=True)
 
         self.pb_selectProjectTemplate.clicked.connect(self.select_project_template)
         self.button_box.helpRequested.connect(click_help)

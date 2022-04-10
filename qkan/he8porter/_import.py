@@ -13,6 +13,7 @@ class ImportTask:
         self.append = QKan.config.check_import.append
         self.update = QKan.config.check_import.update
         self.allrefs = QKan.config.check_import.allrefs
+        self.fangradius = QKan.config.fangradius
 
         self.epsg = QKan.config.epsg
 
@@ -249,48 +250,47 @@ class ImportTask:
 
         if QKan.config.check_import.wehre:
             if self.append:
-                sql = """
-                WITH nodes AS (SELECT Name FROM he.Schacht
-                     UNION SELECT Name FROM he.Auslass
-                     UNION SELECT Name FROM he.Speicherschacht) 
-                INSERT INTO wehre_data (
-                    wnam, schoben, schunten, 
-                    wehrtyp, schwellenhoehe, kammerhoehe, 
-                    laenge, uebeiwert, simstatus, 
-                    kommentar, createdat)
-                SELECT 
-                    we.Name AS wnam,
-                    we.Schachtoben AS schoben, 
-                    we.Schachtunten AS schunten, 
-                    we.Typ AS typ_he, 
-                    we.Schwellenhoehe AS schwellenhoehe, 
-                    we.Geometrie1 AS kammerhoehe, 
-                    we.Geometrie2 AS laenge,
-                    we.Ueberfallbeiwert AS uebeiwert,
-                    si.bezeichnung AS simstatus, 
-                    we.Kommentar AS kommentar, 
-                    we.Lastmodified AS createdat
-                FROM he.Wehr AS we
-                LEFT JOIN nodes AS so
-                ON we.Schachtoben = so.Name 
-                LEFT JOIN nodes AS su
-                ON we.Schachtunten = su.Name
-                LEFT JOIN simulationsstatus AS si 
-                ON si.he_nr = we.Planungsstatus
-                LEFT JOIN wehre AS wq
-                ON wq.wnam = we.Name
-                WHERE wq.pk IS NULL
-                """
-
-                if not self.db_qkan.sql(sql, "he8_import Wehre"):
-                    return False
+                # sql = """
+                # WITH nodes AS (SELECT Name FROM he.Schacht
+                #      UNION SELECT Name FROM he.Auslass
+                #      UNION SELECT Name FROM he.Speicherschacht)
+                # INSERT INTO wehre_data (
+                #     wnam, schoben, schunten,
+                #     wehrtyp, schwellenhoehe, kammerhoehe,
+                #     laenge, uebeiwert, simstatus,
+                #     kommentar, createdat)
+                # SELECT
+                #     we.Name AS wnam,
+                #     we.Schachtoben AS schoben,
+                #     we.Schachtunten AS schunten,
+                #     we.Typ AS typ_he,
+                #     we.Schwellenhoehe AS schwellenhoehe,
+                #     we.Geometrie1 AS kammerhoehe,
+                #     we.Geometrie2 AS laenge,
+                #     we.Ueberfallbeiwert AS uebeiwert,
+                #     si.bezeichnung AS simstatus,
+                #     we.Kommentar AS kommentar,
+                #     we.Lastmodified AS createdat
+                # FROM he.Wehr AS we
+                # LEFT JOIN nodes AS so
+                # ON we.Schachtoben = so.Name
+                # LEFT JOIN nodes AS su
+                # ON we.Schachtunten = su.Name
+                # LEFT JOIN simulationsstatus AS si
+                # ON si.he_nr = we.Planungsstatus
+                # LEFT JOIN wehre AS wq
+                # ON wq.wnam = we.Name
+                # WHERE wq.pk IS NULL
+                # """
+                #
+                # if not self.db_qkan.sql(sql, "he8_import Wehre"):
+                #     return False
 
                 sql = """
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
                     hoehe, breite,
                     sohleoben, sohleunten,
-                    profilnam,
                     sonderelement,
                     simstatus,
                     kommentar, createdat, 
@@ -301,11 +301,8 @@ class ImportTask:
                     we.Schachtunten AS schunten, 
                     we.Geometrie1 AS hoehe, 
                     we.Geometrie2 AS breite,
-                    we.SohlhoeheOben AS sohleoben, 
-                    we.SohlhoeheUnten AS sohleunten, 
-                    CASE WHEN we.Profiltyp = 68 
-                         THEN we.Sonderprofilbezeichnung 
-                         ELSE pr.profilnam END AS profilnam, 
+                    we.Schwellenhoehe AS sohleoben, 
+                    we.Schwellenhoehe AS sohleunten, 
                     'Wehr' AS sonderelement, 
                     si.bezeichnung AS simstatus, 
                     we.Kommentar AS kommentar, 
@@ -332,44 +329,45 @@ class ImportTask:
 
         if QKan.config.check_import.pumpen:
             if self.append:
-                sql = """
-                WITH nodes AS (SELECT Name FROM he.Schacht
-                     UNION SELECT Name FROM he.Auslass
-                     UNION SELECT Name FROM he.Speicherschacht)
-                INSERT INTO pumpen_data (
-                    pnam, schoben, schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, 
-                    simstatus, kommentar, createdat)
-                SELECT 
-                    pu.Name AS pnam, 
-                    pu.Schachtoben AS schoben, 
-                    pu.Schachtunten AS schunten, 
-                    pt.bezeichnung AS pumpentyp, 
-                    pu.Steuerschacht AS steuersch, 
-                    pu.Einschalthoehe AS einschalthoehe, 
-                    pu.Ausschalthoehe AS ausschalthoehe,
-                    si.bezeichnung AS simstatus, 
-                    pu.Kommentar AS kommentar, 
-                    pu.Lastmodified AS createdat
-                FROM he.Pumpe AS pu
-                LEFT JOIN nodes AS so
-                ON pu.Schachtoben = SO.Name 
-                LEFT JOIN nodes AS su
-                ON pu.Schachtunten = su.Name
-                LEFT JOIN simulationsstatus AS si 
-                ON si.he_nr = pu.Planungsstatus
-                LEFT JOIN pumpentypen AS pt 
-                ON pt.he_nr = pu.Typ
-                LEFT JOIN pumpen AS pq
-                ON pq.pnam = pu.Name
-                WHERE pq.pk IS NULL
-                """
-
-                if not self.db_qkan.sql(sql, "he8_import Pumpen"):
-                    return False
+                # sql = """
+                # WITH nodes AS (SELECT Name FROM he.Schacht
+                #      UNION SELECT Name FROM he.Auslass
+                #      UNION SELECT Name FROM he.Speicherschacht)
+                # INSERT INTO pumpen_data (
+                #     pnam, schoben, schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe,
+                #     simstatus, kommentar, createdat)
+                # SELECT
+                #     pu.Name AS pnam,
+                #     pu.Schachtoben AS schoben,
+                #     pu.Schachtunten AS schunten,
+                #     pt.bezeichnung AS pumpentyp,
+                #     pu.Steuerschacht AS steuersch,
+                #     pu.Einschalthoehe AS einschalthoehe,
+                #     pu.Ausschalthoehe AS ausschalthoehe,
+                #     si.bezeichnung AS simstatus,
+                #     pu.Kommentar AS kommentar,
+                #     pu.Lastmodified AS createdat
+                # FROM he.Pumpe AS pu
+                # LEFT JOIN nodes AS so
+                # ON pu.Schachtoben = SO.Name
+                # LEFT JOIN nodes AS su
+                # ON pu.Schachtunten = su.Name
+                # LEFT JOIN simulationsstatus AS si
+                # ON si.he_nr = pu.Planungsstatus
+                # LEFT JOIN pumpentypen AS pt
+                # ON pt.he_nr = pu.Typ
+                # LEFT JOIN pumpen AS pq
+                # ON pq.pnam = pu.Name
+                # WHERE pq.pk IS NULL
+                # """
+                #
+                # if not self.db_qkan.sql(sql, "he8_import Pumpen"):
+                #     return False
 
                 sql = """
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
+                    hoehe,
                     sonderelement, 
                     simstatus,
                     kommentar, createdat, 
@@ -377,7 +375,8 @@ class ImportTask:
                 SELECT 
                     pu.Name AS haltnam,
                     pu.Schachtoben AS schoben, 
-                    pu.Schachtunten AS schunten, 
+                    pu.Schachtunten AS schunten,
+                    0.3 AS hoehe,                   /* nur fuer Laengsschnitt */ 
                     'Pumpe' AS sonderelement, 
                     si.bezeichnung AS simstatus, 
                     pu.Kommentar AS kommentar, 
@@ -649,6 +648,38 @@ class ImportTask:
                     return False
 
                 self.db_qkan.commit()
+
+                sql = f"""
+                INSERT INTO linkfl (
+                    flnam, 
+                    haltnam, 
+                    abflusstyp,
+                    speicherzahl,
+                    speicherkonst,
+                    fliesszeitkanal,
+                    fliesszeitflaeche,
+                    glink
+                )
+                SELECT
+                    fl.Name                     AS flnam,
+                    fl.Haltung                  AS haltnam,
+                    at.abflusstyp               AS abflusstyp,
+                    fl.AnzahlSpeicher           AS speicherzahl,
+                    fl.Speicherkonstante        AS speicherkonst,
+                    fl.LaengsteFliesszeitKanal  AS fliesszeitkanal,
+                    CASE fl.BerechnungSpeicherkonstante 
+                        WHEN 1 THEN fl.FliesszeitOberflaeche
+                        WHEN 2 THEN fl.Schwerpunktlaufzeit
+                        ELSE 0. END           AS fliesszeitflaeche,  
+                    MakeLine(PointOnSurface(Buffer(fl.Geometry, -1.1*{self.fangradius})), Centroid(ro.Geometry)) 
+                                                AS link
+                    FROM he.Rohr AS ro
+                    INNER JOIN he.Flaeche AS fl
+                    ON fl.Haltung = ro.Name
+                    LEFT JOIN abflusstypen AS at
+                    ON at.he_nr = fl.BerechnungSpeicherkonstante
+                    WHERE fl.Geometry IS NOT NULL AND ro.Geometry IS NOT NULL
+                """
 
         return True
 
@@ -922,13 +953,15 @@ class ImportTask:
 
                 sql = f"""
                 INSERT INTO tezg (
-                    flnam, haltnam, 
-                    kommentar, createdat, 
+                    flnam, haltnam,
+                    abflussparameter,
+                    kommentar, createdat,
                     geom
                 )
                 SELECT
                     eg_he.Name AS flnam, 
                     eg_he.Haltung AS haltnam, 
+                    '$Default_Unbef' AS abflussparameter,
                     eg_he.Kommentar AS kommentar, 
                     eg_he.LastModified AS createdat, 
                     SetSRID(eg_he.Geometry, {self.epsg}) AS geom

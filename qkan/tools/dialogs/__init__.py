@@ -72,10 +72,11 @@ class QKanDBDialog(QKanDialog):
 
     open_mode = True
 
-    def __init__(self, plugin: "QKanPlugin", parent: Optional[QWidget] = None):
+    def __init__(self, plugin: "QKanPlugin", parent: Optional[QWidget] = None, readonly: bool = False):
         super().__init__(plugin, parent)
-        self.pb_selectQKanDB.clicked.connect(self.select_qkan_db)
         self.db_qkan: Optional[DBConnection] = None
+        if not readonly:
+            self.pb_selectQKanDB.clicked.connect(self.select_qkan_db)
 
     def select_qkan_db(self) -> None:
         """Anzubindende QKan-Datenbank festlegen"""

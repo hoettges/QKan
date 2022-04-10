@@ -1,15 +1,12 @@
-DELETE FROM pruefsql WHERE gruppe = 'Netzstruktur' AND warntext IN ('Schacht oben fehlerhaft', 'Schacht unten fehlerhaft');
-DELETE FROM pruefsql WHERE gruppe = 'HYSTEM-EXTRAN' AND warntext IN ('Abflussparameter fehlen', 'Schwerpunktlaufzeiten fehlen');
-DELETE FROM pruefsql WHERE gruppe = 'Kreuzende Haltungen';
-DELETE FROM pruefsql WHERE warntext = 'Neigungsklasse fehlt';
+DELETE FROM pruefsql;
 INSERT INTO pruefsql (gruppe, warntext, warntyp, warnlevel, sql, layername, attrname)
 SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, pn.attrname FROM
 (SELECT column1 AS gruppe, column2 AS warntext, column3 AS warntyp, column4 AS warnlevel, column5 AS sql, column6 AS layername, column7 AS attrname FROM 
 (VALUES
 ('Netzstruktur', 'Schacht oben mehr als 1.0 m von Haltungsende entfernt', 'Fehler', 9, 
- 'SELECT haltnam, ''Schacht oben mehr als 1.0 m von Haltungsende entfernt'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS so ON ha.schoben = so.schnam WHERE within(so.geop, buffer(pointn(ha.geom,1), 1.0)) <> 1', 
+ 'SELECT haltnam, ''Schacht oben mehr als 1.0 m von Haltungsende entfernt'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS so ON ha.schoben = so.schnam WHERE within(so.geop, buffer(pointn(ha.geom,1), 1.0)) <> 1 AND (sonderelement = ''Haltung'' OR sonderelement IS NULL)', 
  'Haltungen nach Typ', 'haltnam'),
-('Netzstruktur', 'Schacht unten mehr als 1.0 m von Haltungsende entfernt', 'Fehler', 9, 'SELECT haltnam, ''Schacht unten mehr als 1.0 m von Haltungsende entfernt'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS su ON ha.schunten = su.schnam WHERE within(su.geop, buffer(pointn(ha.geom,-1), 1.0)) <> 1', 'Haltungen nach Typ', 'haltnam'),
+('Netzstruktur', 'Schacht unten mehr als 1.0 m von Haltungsende entfernt', 'Fehler', 9, 'SELECT haltnam, ''Schacht unten mehr als 1.0 m von Haltungsende entfernt'' AS bemerkung FROM haltungen AS ha LEFT JOIN schaechte AS su ON ha.schunten = su.schnam WHERE within(su.geop, buffer(pointn(ha.geom,-1), 1.0)) <> 1 AND (sonderelement = ''Haltung'' OR sonderelement IS NULL)', 'Haltungen nach Typ', 'haltnam'),
 ('HYSTEM-EXTRAN', 'Abflussparameter fehlen', 'Fehler', 9, 'SELECT f1.flnam
     ,printf("Abflussparameter ""%s"" wird in Layer ""Flächen"" verwendet, fehlt aber in Referenztabelle ""Abflussparameter HE"" bzw. ""... KP"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", 
             f1.abflussparameter, (
@@ -29,7 +26,7 @@ GROUP BY f1.flnam LIMIT 5
 'SELECT h.haltnam, printf("Profil ''%s'' fehlt in Layer Profile", h.profilnam) AS bemerkung FROM haltungen AS h
 LEFT JOIN profile AS p
 ON h.profilnam = p.profilnam
-WHERE p.profilnam IS NULL
+WHERE p.profilnam IS NULL AND (sonderelement = ''Haltung'' OR sonderelement IS NULL)
 GROUP BY h.profilnam', 'Haltungen nach Typ', 'haltnam'),
 ('Kreuzende Haltungen', 'Kreuzende Haltungen', 'Warnung', 6, 
 'SELECT
@@ -97,6 +94,7 @@ FROM (
         ON ha.schoben = so.schnam
         INNER JOIN schaechte AS su 
         ON ha.schunten = su.schnam
+        WHERE (sonderelement = ''Haltung'' OR sonderelement IS NULL)
       ) AS ho 
       INNER JOIN (
         SELECT
@@ -113,6 +111,7 @@ FROM (
         ON ha.schoben = so.schnam
         INNER JOIN schaechte AS su 
         ON ha.schunten = su.schnam
+        WHERE (sonderelement = ''Haltung'' OR sonderelement IS NULL)
       ) AS hu
       ON Distance(ho.geom, hu.geom) < 0.5 + (ho.durchm + hu.durchm) / 2.0
       WHERE

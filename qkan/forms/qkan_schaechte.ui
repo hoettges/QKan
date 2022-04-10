@@ -64,6 +64,12 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Eindeutige Schachtbezeichnung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Eindeutige Schachtbezeichnung</string>
+    </property>
    </widget>
    <widget class="QTextEdit" name="kommentar">
     <property name="geometry">

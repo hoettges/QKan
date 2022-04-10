@@ -139,6 +139,7 @@ class LinkFl(QKanPlugin):
             return
 
         self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
+        self.dlg_cl.db_qkan = self.db_qkan
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -260,7 +261,7 @@ class LinkFl(QKanPlugin):
             del self.db_qkan
             return
 
-        self.dlg_cl.count_selection(self.db_qkan)
+        self.dlg_cl.count_selection()
 
         # show the dialog
         self.dlg_cl.show()
@@ -398,6 +399,7 @@ class LinkFl(QKanPlugin):
             return
 
         self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
+        self.dlg_sw.db_qkan = self.db_qkan
 
         # Check, ob alle Teilgebiete in Flächen und Haltungen auch in Tabelle "teilgebiete" enthalten
 
@@ -465,7 +467,7 @@ class LinkFl(QKanPlugin):
         # Haltungen direkt in einleit eintragen. Es kann wegen der längeren Zeitdauer sinnvoll
         # sein, dies erst am Schluss der Bearbeitung in einem eigenen Vorgang zu machen.
 
-        self.dlg_sw.count_selection(self.db_qkan)
+        self.dlg_sw.count_selection()
 
         # show the dialog
         self.dlg_sw.show()
@@ -723,6 +725,7 @@ class LinkFl(QKanPlugin):
             return
 
         self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
+        self.dlg_mg.db_qkan = self.db_qkan
 
         # Anzeige initialisieren
         self.dlg_mg.show_groups()

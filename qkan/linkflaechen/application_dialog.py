@@ -233,15 +233,15 @@ class CreatelineflDialog(QKanDialog, FORM_CLASS_createlinefl):  # type: ignore
             self.lf_warning.setStyleSheet("color: black; font: bold;")
             self.lf_unit_fangradius.setStyleSheet("color: black")
 
-    def count_selection(self, db_qkan) -> None:
+    def count_selection(self) -> None:
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
 
-        if not self.db_qkan:
-            self.db_qkan = db_qkan
-        else:
-            logger.error("self.db_qkan already set")
-            return
+        # if not self.db_qkan:
+        #     self.db_qkan = db_qkan
+        # else:
+        #     logger.error("self.db_qkan already set")
+        #     return
 
         liste_flaechen_abflussparam: List[str] = list_selected_items(
             self.lw_flaechen_abflussparam
@@ -397,15 +397,15 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):  # type: ignore
             # Anzahl in der Anzeige aktualisieren
             self.count_selection()
 
-    def count_selection(self, db_qkan) -> None:
+    def count_selection(self) -> None:
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Haltungen"""
 
-        if not self.db_qkan:
-            self.db_qkan = db_qkan
-        else:
-            logger.error("self.db_qkan already set")
-            return
+        # if not self.db_qkan:
+        #     self.db_qkan = db_qkan
+        # else:
+        #     logger.error("self.db_qkan already set")
+        #     return
 
         liste_hal_entw: List[str] = list_selected_items(self.lw_hal_entw)
         liste_teilgebiete: List[str] = list_selected_items(self.lw_teilgebiete)
@@ -518,6 +518,8 @@ class ManagegroupsDialog(QDialog, FORM_CLASS_managegroups):  # type: ignore
         # noinspection PyArgumentList
         super().__init__(parent)
         self.setupUi(self)
+
+        self.db_qkan: Optional[DBConnection] = None
 
         self.plugin = plugin
 

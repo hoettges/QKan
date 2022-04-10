@@ -76,7 +76,7 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
     tf_KP_template: QLineEdit
 
     def __init__(self, plugin: "DynaPorter", parent: Optional[QWidget] = None):
-        super().__init__(plugin, parent)
+        super().__init__(plugin, parent, readonly=True)
 
         self.iface = QKan.instance.iface
 

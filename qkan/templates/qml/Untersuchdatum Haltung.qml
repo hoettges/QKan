@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis version="3.24.1-Tisler" readOnly="0" simplifyMaxScale="1" maxScale="0" symbologyReferenceScale="-1" minScale="100000000" styleCategories="AllStyleCategories" hasScaleBasedVisibilityFlag="0" simplifyDrawingHints="0" simplifyDrawingTol="1" simplifyLocal="1" simplifyAlgorithm="0" labelsEnabled="1">
+<qgis version="3.24.1-Tisler" readOnly="0" simplifyMaxScale="1" maxScale="0" symbologyReferenceScale="-1" minScale="100000000" styleCategories="AllStyleCategories" hasScaleBasedVisibilityFlag="0" simplifyDrawingHints="1" simplifyDrawingTol="1" simplifyLocal="1" simplifyAlgorithm="0" labelsEnabled="1">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
@@ -14,7 +14,7 @@
   </temporal>
   <renderer-v2 forceraster="0" type="singleSymbol" referencescale="-1" symbollevels="0" enableorderby="0">
     <symbols>
-      <symbol name="0" alpha="1" type="marker" force_rhr="0" clip_to_extent="1">
+      <symbol name="0" alpha="1" type="line" force_rhr="0" clip_to_extent="1">
         <data_defined_properties>
           <Option type="Map">
             <Option value="" name="name" type="QString"/>
@@ -22,47 +22,63 @@
             <Option value="collection" name="type" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer pass="0" enabled="1" class="SimpleMarker" locked="0">
+        <layer pass="0" enabled="1" class="SimpleLine" locked="0">
           <Option type="Map">
-            <Option value="0" name="angle" type="QString"/>
-            <Option value="square" name="cap_style" type="QString"/>
-            <Option value="113,114,113,255" name="color" type="QString"/>
-            <Option value="1" name="horizontal_anchor_point" type="QString"/>
+            <Option value="0" name="align_dash_pattern" type="QString"/>
+            <Option value="square" name="capstyle" type="QString"/>
+            <Option value="5;2" name="customdash" type="QString"/>
+            <Option value="3x:0,0,0,0,0,0" name="customdash_map_unit_scale" type="QString"/>
+            <Option value="MM" name="customdash_unit" type="QString"/>
+            <Option value="0" name="dash_pattern_offset" type="QString"/>
+            <Option value="3x:0,0,0,0,0,0" name="dash_pattern_offset_map_unit_scale" type="QString"/>
+            <Option value="MM" name="dash_pattern_offset_unit" type="QString"/>
+            <Option value="0" name="draw_inside_polygon" type="QString"/>
             <Option value="bevel" name="joinstyle" type="QString"/>
-            <Option value="square" name="name" type="QString"/>
-            <Option value="0,0" name="offset" type="QString"/>
+            <Option value="255,127,0,255" name="line_color" type="QString"/>
+            <Option value="solid" name="line_style" type="QString"/>
+            <Option value="0.26" name="line_width" type="QString"/>
+            <Option value="MM" name="line_width_unit" type="QString"/>
+            <Option value="0" name="offset" type="QString"/>
             <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
             <Option value="MM" name="offset_unit" type="QString"/>
-            <Option value="0,0,0,255" name="outline_color" type="QString"/>
-            <Option value="solid" name="outline_style" type="QString"/>
-            <Option value="0" name="outline_width" type="QString"/>
-            <Option value="3x:0,0,0,0,0,0" name="outline_width_map_unit_scale" type="QString"/>
-            <Option value="MM" name="outline_width_unit" type="QString"/>
-            <Option value="diameter" name="scale_method" type="QString"/>
-            <Option value="6" name="size" type="QString"/>
-            <Option value="3x:0,0,0,0,0,0" name="size_map_unit_scale" type="QString"/>
-            <Option value="MM" name="size_unit" type="QString"/>
-            <Option value="1" name="vertical_anchor_point" type="QString"/>
+            <Option value="0" name="ring_filter" type="QString"/>
+            <Option value="0" name="trim_distance_end" type="QString"/>
+            <Option value="3x:0,0,0,0,0,0" name="trim_distance_end_map_unit_scale" type="QString"/>
+            <Option value="MM" name="trim_distance_end_unit" type="QString"/>
+            <Option value="0" name="trim_distance_start" type="QString"/>
+            <Option value="3x:0,0,0,0,0,0" name="trim_distance_start_map_unit_scale" type="QString"/>
+            <Option value="MM" name="trim_distance_start_unit" type="QString"/>
+            <Option value="0" name="tweak_dash_pattern_on_corners" type="QString"/>
+            <Option value="0" name="use_custom_dash" type="QString"/>
+            <Option value="3x:0,0,0,0,0,0" name="width_map_unit_scale" type="QString"/>
           </Option>
-          <prop v="0" k="angle"/>
-          <prop v="square" k="cap_style"/>
-          <prop v="113,114,113,255" k="color"/>
-          <prop v="1" k="horizontal_anchor_point"/>
+          <prop v="0" k="align_dash_pattern"/>
+          <prop v="square" k="capstyle"/>
+          <prop v="5;2" k="customdash"/>
+          <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
+          <prop v="MM" k="customdash_unit"/>
+          <prop v="0" k="dash_pattern_offset"/>
+          <prop v="3x:0,0,0,0,0,0" k="dash_pattern_offset_map_unit_scale"/>
+          <prop v="MM" k="dash_pattern_offset_unit"/>
+          <prop v="0" k="draw_inside_polygon"/>
           <prop v="bevel" k="joinstyle"/>
-          <prop v="square" k="name"/>
-          <prop v="0,0" k="offset"/>
+          <prop v="255,127,0,255" k="line_color"/>
+          <prop v="solid" k="line_style"/>
+          <prop v="0.26" k="line_width"/>
+          <prop v="MM" k="line_width_unit"/>
+          <prop v="0" k="offset"/>
           <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
           <prop v="MM" k="offset_unit"/>
-          <prop v="0,0,0,255" k="outline_color"/>
-          <prop v="solid" k="outline_style"/>
-          <prop v="0" k="outline_width"/>
-          <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="diameter" k="scale_method"/>
-          <prop v="6" k="size"/>
-          <prop v="3x:0,0,0,0,0,0" k="size_map_unit_scale"/>
-          <prop v="MM" k="size_unit"/>
-          <prop v="1" k="vertical_anchor_point"/>
+          <prop v="0" k="ring_filter"/>
+          <prop v="0" k="trim_distance_end"/>
+          <prop v="3x:0,0,0,0,0,0" k="trim_distance_end_map_unit_scale"/>
+          <prop v="MM" k="trim_distance_end_unit"/>
+          <prop v="0" k="trim_distance_start"/>
+          <prop v="3x:0,0,0,0,0,0" k="trim_distance_start_map_unit_scale"/>
+          <prop v="MM" k="trim_distance_start_unit"/>
+          <prop v="0" k="tweak_dash_pattern_on_corners"/>
+          <prop v="0" k="use_custom_dash"/>
+          <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
           <data_defined_properties>
             <Option type="Map">
               <Option value="" name="name" type="QString"/>
@@ -78,9 +94,9 @@
   </renderer-v2>
   <labeling type="simple">
     <settings calloutType="simple">
-      <text-style fontUnderline="1" fontSizeUnit="Point" fontFamily="MS Shell Dlg 2" fontWeight="75" fontLetterSpacing="0" namedStyle="Bold" fontItalic="0" multilineHeight="1" fontStrikeout="0" previewBkgrdColor="255,255,255,255" textOrientation="horizontal" fontWordSpacing="0" textColor="113,114,113,255" fontKerning="1" useSubstitutions="0" fontSize="10" capitalization="0" textOpacity="1" fontSizeMapUnitScale="3x:0,0,0,0,0,0" legendString="Aa" allowHtml="0" isExpression="0" blendMode="0" fieldName="schnam">
+      <text-style fontUnderline="0" fontSizeUnit="Point" fontFamily="MS Shell Dlg 2" fontWeight="50" fontLetterSpacing="0" namedStyle="Standard" fontItalic="0" multilineHeight="1" fontStrikeout="0" previewBkgrdColor="255,255,255,255" textOrientation="horizontal" fontWordSpacing="0" textColor="0,0,0,255" fontKerning="1" useSubstitutions="0" fontSize="9" capitalization="0" textOpacity="1" fontSizeMapUnitScale="3x:0,0,0,0,0,0" legendString="Aa" allowHtml="0" isExpression="1" blendMode="0" fieldName="&quot;kuerzel&quot;+ ' '+if( &quot;charakt1&quot; &lt;> 'not found',&quot;charakt1&quot;,'') + ' '+ if( &quot;charakt2&quot; &lt;> 'not found',&quot;charakt2&quot;,'')">
         <families/>
-        <text-buffer bufferBlendMode="0" bufferOpacity="1" bufferSize="1" bufferJoinStyle="128" bufferColor="255,255,255,255" bufferNoFill="0" bufferDraw="1" bufferSizeUnits="MM" bufferSizeMapUnitScale="3x:0,0,0,0,0,0"/>
+        <text-buffer bufferBlendMode="0" bufferOpacity="1" bufferSize="1" bufferJoinStyle="128" bufferColor="255,255,255,255" bufferNoFill="1" bufferDraw="0" bufferSizeUnits="MM" bufferSizeMapUnitScale="3x:0,0,0,0,0,0"/>
         <text-mask maskJoinStyle="128" maskEnabled="0" maskType="0" maskOpacity="1" maskSizeUnits="MM" maskSizeMapUnitScale="3x:0,0,0,0,0,0" maskedSymbolLayers="" maskSize="0"/>
         <background shapeSizeMapUnitScale="3x:0,0,0,0,0,0" shapeBorderWidthUnit="MM" shapeRadiiMapUnitScale="3x:0,0,0,0,0,0" shapeOffsetMapUnitScale="3x:0,0,0,0,0,0" shapeOffsetUnit="MM" shapeType="0" shapeRadiiY="0" shapeSizeX="0" shapeSVGFile="" shapeDraw="0" shapeBorderColor="128,128,128,255" shapeOpacity="1" shapeBorderWidth="0" shapeBorderWidthMapUnitScale="3x:0,0,0,0,0,0" shapeOffsetX="0" shapeBlendMode="0" shapeRadiiUnit="MM" shapeRotationType="0" shapeFillColor="255,255,255,255" shapeRotation="0" shapeJoinStyle="64" shapeSizeUnit="MM" shapeSizeType="0" shapeSizeY="0" shapeRadiiX="0" shapeOffsetY="0">
           <symbol name="markerSymbol" alpha="1" type="marker" force_rhr="0" clip_to_extent="1">
@@ -95,7 +111,7 @@
               <Option type="Map">
                 <Option value="0" name="angle" type="QString"/>
                 <Option value="square" name="cap_style" type="QString"/>
-                <Option value="196,60,57,255" name="color" type="QString"/>
+                <Option value="164,113,88,255" name="color" type="QString"/>
                 <Option value="1" name="horizontal_anchor_point" type="QString"/>
                 <Option value="bevel" name="joinstyle" type="QString"/>
                 <Option value="circle" name="name" type="QString"/>
@@ -115,7 +131,7 @@
               </Option>
               <prop v="0" k="angle"/>
               <prop v="square" k="cap_style"/>
-              <prop v="196,60,57,255" k="color"/>
+              <prop v="164,113,88,255" k="color"/>
               <prop v="1" k="horizontal_anchor_point"/>
               <prop v="bevel" k="joinstyle"/>
               <prop v="circle" k="name"/>
@@ -194,9 +210,9 @@
         </dd_properties>
         <substitutions/>
       </text-style>
-      <text-format multilineAlign="3" placeDirectionSymbol="0" autoWrapLength="0" decimals="3" useMaxLineLengthForAutoWrap="1" wrapChar="" formatNumbers="0" leftDirectionSymbol="&lt;" rightDirectionSymbol=">" reverseDirectionSymbol="0" addDirectionSymbol="0" plussign="0"/>
-      <placement fitInPolygonOnly="0" lineAnchorPercent="0" placementFlags="10" polygonPlacementFlags="2" maxCurvedCharAngleOut="-25" preserveRotation="1" maxCurvedCharAngleIn="25" overrunDistanceMapUnitScale="3x:0,0,0,0,0,0" predefinedPositionOrder="TR,TL,BR,BL,R,L,TSR,BSR" rotationUnit="AngleDegrees" placement="6" layerType="PointGeometry" priority="6" rotationAngle="0" quadOffset="4" centroidInside="0" overrunDistance="0" geometryGenerator="" geometryGeneratorEnabled="0" centroidWhole="0" distUnits="MM" repeatDistanceUnits="MM" labelOffsetMapUnitScale="3x:0,0,0,0,0,0" dist="3" offsetUnits="MapUnit" repeatDistanceMapUnitScale="3x:0,0,0,0,0,0" distMapUnitScale="3x:0,0,0,0,0,0" offsetType="0" lineAnchorType="0" yOffset="0" xOffset="0" repeatDistance="0" overrunDistanceUnit="MM" lineAnchorClipping="0" geometryGeneratorType="PointGeometry"/>
-      <rendering obstacleFactor="1" fontMinPixelSize="3" drawLabels="1" limitNumLabels="0" mergeLines="0" minFeatureSize="0" unplacedVisibility="0" fontLimitPixelSize="0" scaleMin="1" upsidedownLabels="0" displayAll="0" scaleMax="10000000" scaleVisibility="0" zIndex="0" obstacle="1" labelPerPart="0" fontMaxPixelSize="10000" obstacleType="0" maxNumLabels="2000"/>
+      <text-format multilineAlign="0" placeDirectionSymbol="0" autoWrapLength="0" decimals="3" useMaxLineLengthForAutoWrap="1" wrapChar="" formatNumbers="0" leftDirectionSymbol="&lt;" rightDirectionSymbol=">" reverseDirectionSymbol="0" addDirectionSymbol="0" plussign="0"/>
+      <placement fitInPolygonOnly="0" lineAnchorPercent="0" placementFlags="10" polygonPlacementFlags="2" maxCurvedCharAngleOut="-25" preserveRotation="1" maxCurvedCharAngleIn="25" overrunDistanceMapUnitScale="3x:0,0,0,0,0,0" predefinedPositionOrder="TR,TL,BR,BL,R,L,TSR,BSR" rotationUnit="AngleDegrees" placement="2" layerType="LineGeometry" priority="5" rotationAngle="0" quadOffset="4" centroidInside="0" overrunDistance="0" geometryGenerator="" geometryGeneratorEnabled="0" centroidWhole="0" distUnits="MM" repeatDistanceUnits="MM" labelOffsetMapUnitScale="3x:0,0,0,0,0,0" dist="0" offsetUnits="MM" repeatDistanceMapUnitScale="3x:0,0,0,0,0,0" distMapUnitScale="3x:0,0,0,0,0,0" offsetType="0" lineAnchorType="0" yOffset="0" xOffset="0" repeatDistance="0" overrunDistanceUnit="MM" lineAnchorClipping="0" geometryGeneratorType="PointGeometry"/>
+      <rendering obstacleFactor="1" fontMinPixelSize="3" drawLabels="1" limitNumLabels="0" mergeLines="0" minFeatureSize="0" unplacedVisibility="0" fontLimitPixelSize="0" scaleMin="1" upsidedownLabels="0" displayAll="0" scaleMax="2500" scaleVisibility="1" zIndex="0" obstacle="1" labelPerPart="0" fontMaxPixelSize="10000" obstacleType="1" maxNumLabels="2000"/>
       <dd_properties>
         <Option type="Map">
           <Option value="" name="name" type="QString"/>
@@ -233,7 +249,7 @@
   <customproperties>
     <Option type="Map">
       <Option name="dualview/previewExpressions" type="List">
-        <Option value="COALESCE( &quot;schnam&quot;, '&lt;NULL>' )" type="QString"/>
+        <Option value="&quot;foto_dateiname&quot;" type="QString"/>
       </Option>
       <Option value="0" name="embeddedWidgets/count" type="QString"/>
       <Option name="variableNames" type="invalid"/>
@@ -244,8 +260,8 @@
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
   <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-    <DiagramCategory labelPlacementMethod="XHeight" scaleDependency="Area" showAxis="0" spacingUnit="MM" opacity="1" barWidth="5" scaleBasedVisibility="0" sizeScale="3x:0,0,0,0,0,0" minScaleDenominator="1000" penWidth="0" direction="1" rotationOffset="270" lineSizeType="MM" penColor="#000000" spacing="0" diagramOrientation="Up" maxScaleDenominator="1e+08" spacingUnitScale="3x:0,0,0,0,0,0" lineSizeScale="3x:0,0,0,0,0,0" height="15" sizeType="MM" minimumSize="0" width="15" penAlpha="255" backgroundAlpha="255" enabled="0" backgroundColor="#ffffff">
-      <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
+    <DiagramCategory labelPlacementMethod="XHeight" scaleDependency="Area" showAxis="1" spacingUnit="MM" opacity="1" barWidth="5" scaleBasedVisibility="0" sizeScale="3x:0,0,0,0,0,0" minScaleDenominator="0" penWidth="0" direction="0" rotationOffset="270" lineSizeType="MM" penColor="#000000" spacing="5" diagramOrientation="Up" maxScaleDenominator="1e+08" spacingUnitScale="3x:0,0,0,0,0,0" lineSizeScale="3x:0,0,0,0,0,0" height="15" sizeType="MM" minimumSize="0" width="15" penAlpha="255" backgroundAlpha="255" enabled="0" backgroundColor="#ffffff">
+      <fontProperties description="MS Shell Dlg 2,8,-1,5,50,0,0,0,0,0" style=""/>
       <attribute color="#000000" field="" label=""/>
       <axisSymbol>
         <symbol name="" alpha="1" type="line" force_rhr="0" clip_to_extent="1">
@@ -325,7 +341,7 @@
       </axisSymbol>
     </DiagramCategory>
   </SingleCategoryDiagramRenderer>
-  <DiagramLayerSettings zIndex="0" priority="0" placement="0" linePlacementFlags="2" dist="0" obstacle="0" showAll="1">
+  <DiagramLayerSettings zIndex="0" priority="0" placement="2" linePlacementFlags="18" dist="0" obstacle="0" showAll="1">
     <properties>
       <Option type="Map">
         <Option value="" name="name" type="QString"/>
@@ -344,14 +360,11 @@
     <field name="pk" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="schnam" configurationFlags="None">
+    <field name="untersuchhal" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -361,7 +374,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="sohlhoehe" configurationFlags="None">
+    <field name="untersuchrichtung" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -371,7 +384,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="deckelhoehe" configurationFlags="None">
+    <field name="schoben" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -381,7 +394,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="durchm" configurationFlags="None">
+    <field name="schunten" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -391,7 +404,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="druckdicht" configurationFlags="None">
+    <field name="id" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -401,7 +414,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="ueberstauflaeche" configurationFlags="None">
+    <field name="videozaehler" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -411,28 +424,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="entwart" configurationFlags="None">
-      <editWidget type="ValueRelation">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="AllowMulti" type="bool"/>
-            <Option value="true" name="AllowNull" type="bool"/>
-            <Option value="" name="Description" type="QString"/>
-            <Option value="" name="FilterExpression" type="QString"/>
-            <Option value="bezeichnung" name="Key" type="QString"/>
-            <Option value="entwaesserungsarten20161018090806784" name="Layer" type="QString"/>
-            <Option value="Entwässerungsarten" name="LayerName" type="QString"/>
-            <Option value="spatialite" name="LayerProviderName" type="QString"/>
-            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;entwaesserungsarten&quot;" name="LayerSource" type="QString"/>
-            <Option value="1" name="NofColumns" type="int"/>
-            <Option value="false" name="OrderByValue" type="bool"/>
-            <Option value="true" name="UseCompleter" type="bool"/>
-            <Option value="bezeichnung" name="Value" type="QString"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="strasse" configurationFlags="None">
+    <field name="inspektionslaenge" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -442,49 +434,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="teilgebiet" configurationFlags="None">
-      <editWidget type="ValueRelation">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="AllowMulti" type="bool"/>
-            <Option value="true" name="AllowNull" type="bool"/>
-            <Option value="" name="Description" type="QString"/>
-            <Option value="" name="FilterExpression" type="QString"/>
-            <Option value="tgnam" name="Key" type="QString"/>
-            <Option value="Teilgebiete_786fa926_704f_4cb1_bc67_eb8571f2f6c0" name="Layer" type="QString"/>
-            <Option value="Teilgebiete" name="LayerName" type="QString"/>
-            <Option value="spatialite" name="LayerProviderName" type="QString"/>
-            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;teilgebiete&quot; (geom)" name="LayerSource" type="QString"/>
-            <Option value="1" name="NofColumns" type="int"/>
-            <Option value="false" name="OrderByValue" type="bool"/>
-            <Option value="true" name="UseCompleter" type="bool"/>
-            <Option value="tgnam" name="Value" type="QString"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="knotentyp" configurationFlags="None">
-      <editWidget type="ValueRelation">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="AllowMulti" type="bool"/>
-            <Option value="true" name="AllowNull" type="bool"/>
-            <Option value="" name="Description" type="QString"/>
-            <Option value="" name="FilterExpression" type="QString"/>
-            <Option value="knotentyp" name="Key" type="QString"/>
-            <Option value="knotentypen_52223d4a_7631_4169_b6e4_0fa742c73d3c" name="Layer" type="QString"/>
-            <Option value="knotentypen" name="LayerName" type="QString"/>
-            <Option value="spatialite" name="LayerProviderName" type="QString"/>
-            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;knotentypen&quot;" name="LayerSource" type="QString"/>
-            <Option value="1" name="NofColumns" type="int"/>
-            <Option value="false" name="OrderByValue" type="bool"/>
-            <Option value="true" name="UseCompleter" type="bool"/>
-            <Option value="knotentyp" name="Value" type="QString"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="auslasstyp" configurationFlags="None">
+    <field name="station" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -494,49 +444,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="schachttyp" configurationFlags="None">
-      <editWidget type="ValueRelation">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="AllowMulti" type="bool"/>
-            <Option value="true" name="AllowNull" type="bool"/>
-            <Option value="" name="Description" type="QString"/>
-            <Option value="" name="FilterExpression" type="QString"/>
-            <Option value="schachttyp" name="Key" type="QString"/>
-            <Option value="schachttypen_4be33fc7_32a2_4f96_b120_4253af1bd597" name="Layer" type="QString"/>
-            <Option value="schachttypen" name="LayerName" type="QString"/>
-            <Option value="spatialite" name="LayerProviderName" type="QString"/>
-            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;schachttypen&quot;" name="LayerSource" type="QString"/>
-            <Option value="1" name="NofColumns" type="int"/>
-            <Option value="false" name="OrderByValue" type="bool"/>
-            <Option value="true" name="UseCompleter" type="bool"/>
-            <Option value="schachttyp" name="Value" type="QString"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="simstatus" configurationFlags="None">
-      <editWidget type="ValueRelation">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="AllowMulti" type="bool"/>
-            <Option value="true" name="AllowNull" type="bool"/>
-            <Option value="" name="Description" type="QString"/>
-            <Option value="" name="FilterExpression" type="QString"/>
-            <Option value="bezeichnung" name="Key" type="QString"/>
-            <Option value="simulationsstatus20161201095050780" name="Layer" type="QString"/>
-            <Option value="Simulationsstatus" name="LayerName" type="QString"/>
-            <Option value="spatialite" name="LayerProviderName" type="QString"/>
-            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;simulationsstatus&quot;" name="LayerSource" type="QString"/>
-            <Option value="1" name="NofColumns" type="int"/>
-            <Option value="false" name="OrderByValue" type="bool"/>
-            <Option value="true" name="UseCompleter" type="bool"/>
-            <Option value="bezeichnung" name="Value" type="QString"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
-    <field name="material" configurationFlags="None">
+    <field name="timecode" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -546,7 +454,135 @@
         </config>
       </editWidget>
     </field>
-    <field name="kommentar" configurationFlags="None">
+    <field name="video_offset" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="kuerzel" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="charakt1" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="charakt2" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="quantnr1" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="quantnr2" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="streckenschaden" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="streckenschaden_lfdnr" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="pos_von" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="pos_bis" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="foto_dateiname" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="film_dateiname" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="ordner_bild" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="ordner_video" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="richtung" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -569,146 +605,160 @@
         </config>
       </editWidget>
     </field>
-    <field name="xsch" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="ysch" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="geom" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
   </fieldConfiguration>
   <aliases>
     <alias name="" field="pk" index="0"/>
-    <alias name="Schachtname" field="schnam" index="1"/>
-    <alias name="Sohlhöhe" field="sohlhoehe" index="2"/>
-    <alias name="Deckelhöhe" field="deckelhoehe" index="3"/>
-    <alias name="Durchmesser" field="durchm" index="4"/>
-    <alias name="Druckdicht" field="druckdicht" index="5"/>
-    <alias name="Überstaufläche" field="ueberstauflaeche" index="6"/>
-    <alias name="Entwässerungssystem" field="entwart" index="7"/>
-    <alias name="Straße" field="strasse" index="8"/>
-    <alias name="Teilgebiet" field="teilgebiet" index="9"/>
-    <alias name="Knotentyp" field="knotentyp" index="10"/>
-    <alias name="Auslasstyp" field="auslasstyp" index="11"/>
-    <alias name="Schachttyp" field="schachttyp" index="12"/>
-    <alias name="Planungsstatus" field="simstatus" index="13"/>
-    <alias name="Material" field="material" index="14"/>
-    <alias name="Kommentar" field="kommentar" index="15"/>
-    <alias name="bearbeitet" field="createdat" index="16"/>
-    <alias name="" field="xsch" index="17"/>
-    <alias name="" field="ysch" index="18"/>
-    <alias name="" field="geom" index="19"/>
+    <alias name="Name" field="untersuchhal" index="1"/>
+    <alias name="Untersuchungsrichtung" field="untersuchrichtung" index="2"/>
+    <alias name="Anfangsschacht" field="schoben" index="3"/>
+    <alias name="Endschacht" field="schunten" index="4"/>
+    <alias name="ID" field="id" index="5"/>
+    <alias name="Videozähler" field="videozaehler" index="6"/>
+    <alias name="Inspektionslänge" field="inspektionslaenge" index="7"/>
+    <alias name="Station" field="station" index="8"/>
+    <alias name="Zeitstempel" field="timecode" index="9"/>
+    <alias name="Video Offset" field="video_offset" index="10"/>
+    <alias name="Kürzel" field="kuerzel" index="11"/>
+    <alias name="" field="charakt1" index="12"/>
+    <alias name="" field="charakt2" index="13"/>
+    <alias name="" field="quantnr1" index="14"/>
+    <alias name="" field="quantnr2" index="15"/>
+    <alias name="Streckenschaden" field="streckenschaden" index="16"/>
+    <alias name="Streckenschaden Laufnummer" field="streckenschaden_lfdnr" index="17"/>
+    <alias name="Position Anfang" field="pos_von" index="18"/>
+    <alias name="Position Ende" field="pos_bis" index="19"/>
+    <alias name="Dateiname Foto" field="foto_dateiname" index="20"/>
+    <alias name="Dateiname Film" field="film_dateiname" index="21"/>
+    <alias name="Ordner Bild" field="ordner_bild" index="22"/>
+    <alias name="Ordner Video" field="ordner_video" index="23"/>
+    <alias name="Richtung" field="richtung" index="24"/>
+    <alias name="bearbeitet" field="createdat" index="25"/>
   </aliases>
   <defaults>
     <default expression="" applyOnUpdate="0" field="pk"/>
-    <default expression="''" applyOnUpdate="0" field="schnam"/>
-    <default expression="" applyOnUpdate="0" field="sohlhoehe"/>
-    <default expression="" applyOnUpdate="0" field="deckelhoehe"/>
-    <default expression="" applyOnUpdate="0" field="durchm"/>
-    <default expression="" applyOnUpdate="0" field="druckdicht"/>
-    <default expression="" applyOnUpdate="0" field="ueberstauflaeche"/>
-    <default expression="" applyOnUpdate="0" field="entwart"/>
-    <default expression="" applyOnUpdate="0" field="strasse"/>
-    <default expression="" applyOnUpdate="0" field="teilgebiet"/>
-    <default expression="'Normalschacht'" applyOnUpdate="0" field="knotentyp"/>
-    <default expression="" applyOnUpdate="0" field="auslasstyp"/>
-    <default expression="'Speicher'" applyOnUpdate="0" field="schachttyp"/>
-    <default expression="'vorhanden'" applyOnUpdate="0" field="simstatus"/>
-    <default expression="" applyOnUpdate="0" field="material"/>
-    <default expression="" applyOnUpdate="0" field="kommentar"/>
-    <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="0" field="createdat"/>
-    <default expression="" applyOnUpdate="0" field="xsch"/>
-    <default expression="" applyOnUpdate="0" field="ysch"/>
-    <default expression="" applyOnUpdate="0" field="geom"/>
+    <default expression="" applyOnUpdate="0" field="untersuchhal"/>
+    <default expression="" applyOnUpdate="0" field="untersuchrichtung"/>
+    <default expression="" applyOnUpdate="0" field="schoben"/>
+    <default expression="" applyOnUpdate="0" field="schunten"/>
+    <default expression="" applyOnUpdate="0" field="id"/>
+    <default expression="" applyOnUpdate="0" field="videozaehler"/>
+    <default expression="" applyOnUpdate="0" field="inspektionslaenge"/>
+    <default expression="" applyOnUpdate="0" field="station"/>
+    <default expression="" applyOnUpdate="0" field="timecode"/>
+    <default expression="" applyOnUpdate="0" field="video_offset"/>
+    <default expression="" applyOnUpdate="0" field="kuerzel"/>
+    <default expression="" applyOnUpdate="0" field="charakt1"/>
+    <default expression="" applyOnUpdate="0" field="charakt2"/>
+    <default expression="" applyOnUpdate="0" field="quantnr1"/>
+    <default expression="" applyOnUpdate="0" field="quantnr2"/>
+    <default expression="" applyOnUpdate="0" field="streckenschaden"/>
+    <default expression="" applyOnUpdate="0" field="streckenschaden_lfdnr"/>
+    <default expression="" applyOnUpdate="0" field="pos_von"/>
+    <default expression="" applyOnUpdate="0" field="pos_bis"/>
+    <default expression="" applyOnUpdate="0" field="foto_dateiname"/>
+    <default expression="" applyOnUpdate="0" field="film_dateiname"/>
+    <default expression="" applyOnUpdate="0" field="ordner_bild"/>
+    <default expression="" applyOnUpdate="0" field="ordner_video"/>
+    <default expression="" applyOnUpdate="0" field="richtung"/>
+    <default expression="" applyOnUpdate="0" field="createdat"/>
   </defaults>
   <constraints>
     <constraint constraints="3" notnull_strength="1" field="pk" exp_strength="0" unique_strength="1"/>
-    <constraint constraints="0" notnull_strength="0" field="schnam" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="sohlhoehe" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="deckelhoehe" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="durchm" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="druckdicht" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="ueberstauflaeche" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="entwart" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="strasse" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="teilgebiet" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="knotentyp" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="auslasstyp" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="schachttyp" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="simstatus" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="material" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="kommentar" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="untersuchhal" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="untersuchrichtung" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="schoben" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="schunten" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="id" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="videozaehler" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="inspektionslaenge" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="station" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="timecode" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="video_offset" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="kuerzel" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="charakt1" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="charakt2" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="quantnr1" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="quantnr2" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="streckenschaden" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="streckenschaden_lfdnr" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="pos_von" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="pos_bis" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="foto_dateiname" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="film_dateiname" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="ordner_bild" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="ordner_video" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="richtung" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="createdat" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="xsch" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="ysch" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="geom" exp_strength="0" unique_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint desc="" exp="" field="pk"/>
-    <constraint desc="" exp="" field="schnam"/>
-    <constraint desc="" exp="" field="sohlhoehe"/>
-    <constraint desc="" exp="" field="deckelhoehe"/>
-    <constraint desc="" exp="" field="durchm"/>
-    <constraint desc="" exp="" field="druckdicht"/>
-    <constraint desc="" exp="" field="ueberstauflaeche"/>
-    <constraint desc="" exp="" field="entwart"/>
-    <constraint desc="" exp="" field="strasse"/>
-    <constraint desc="" exp="" field="teilgebiet"/>
-    <constraint desc="" exp="" field="knotentyp"/>
-    <constraint desc="" exp="" field="auslasstyp"/>
-    <constraint desc="" exp="" field="schachttyp"/>
-    <constraint desc="" exp="" field="simstatus"/>
-    <constraint desc="" exp="" field="material"/>
-    <constraint desc="" exp="" field="kommentar"/>
+    <constraint desc="" exp="" field="untersuchhal"/>
+    <constraint desc="" exp="" field="untersuchrichtung"/>
+    <constraint desc="" exp="" field="schoben"/>
+    <constraint desc="" exp="" field="schunten"/>
+    <constraint desc="" exp="" field="id"/>
+    <constraint desc="" exp="" field="videozaehler"/>
+    <constraint desc="" exp="" field="inspektionslaenge"/>
+    <constraint desc="" exp="" field="station"/>
+    <constraint desc="" exp="" field="timecode"/>
+    <constraint desc="" exp="" field="video_offset"/>
+    <constraint desc="" exp="" field="kuerzel"/>
+    <constraint desc="" exp="" field="charakt1"/>
+    <constraint desc="" exp="" field="charakt2"/>
+    <constraint desc="" exp="" field="quantnr1"/>
+    <constraint desc="" exp="" field="quantnr2"/>
+    <constraint desc="" exp="" field="streckenschaden"/>
+    <constraint desc="" exp="" field="streckenschaden_lfdnr"/>
+    <constraint desc="" exp="" field="pos_von"/>
+    <constraint desc="" exp="" field="pos_bis"/>
+    <constraint desc="" exp="" field="foto_dateiname"/>
+    <constraint desc="" exp="" field="film_dateiname"/>
+    <constraint desc="" exp="" field="ordner_bild"/>
+    <constraint desc="" exp="" field="ordner_video"/>
+    <constraint desc="" exp="" field="richtung"/>
     <constraint desc="" exp="" field="createdat"/>
-    <constraint desc="" exp="" field="xsch"/>
-    <constraint desc="" exp="" field="ysch"/>
-    <constraint desc="" exp="" field="geom"/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
     <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
+    <actionsetting icon="" capture="0" name="Bild öffnen" notificationMessage="" isEnabledOnlyWhenEditable="0" type="5" action="[%ordner_bild %]/[%'Band'+substr(foto_dateiname,0,5)%]/[%foto_dateiname%]" id="{69f0cd70-8fe8-47d9-80db-3115173291ef}" shortTitle="Bild öffnen">
+      <actionScope id="Canvas"/>
+      <actionScope id="Feature"/>
+    </actionsetting>
+    <actionsetting icon="" capture="0" name="Video abspielen" notificationMessage="" isEnabledOnlyWhenEditable="0" type="1" action="from qgis.utils import iface&#xd;&#xa;from qgis.core import *&#xd;&#xa;from qgis.gui import QgsMessageBar&#xd;&#xa;#iface.messageBar().pushMessage(&quot;Error&quot;, str([%video_offset%]), level=Qgis.Critical)&#xa;try:&#xa;    from qkan.tools.videoplayer import Videoplayer&#xd;&#xa;    if [%video_offset%] == 0:&#xd;&#xa;        iface.messageBar().pushMessage(&quot;Error&quot;, &quot;Video offset = 0.00 s, bitte in der Attributtabelle prüfen!&quot;, level=Qgis.Critical)&#xd;&#xa;    y=QgsProject.instance().readPath(&quot;./&quot;)&#xa;    video='[%ordner_video%]'+'/'+'[%film_dateiname%]'&#xa;    timecode=[%timecode%]&#xa;    time_h=int(timecode/1000000) if timecode>1000000 else 0&#xa;    time_m=(int(timecode/10000) if timecode>10000 else 0 )-(time_h*100)&#xa;    time_s=(int(timecode/100) if timecode>100 else 0 )-(time_h*10000)-(time_m*100)&#xa;&#xa;    time = float(time_h/3600+time_m/60+time_s+[%video_offset%])&#xa;    window = Videoplayer(video=video, time=time)&#xa;    window.show()&#xa;    window.open_file()&#xa;    window.exec_()&#xa;        &#xa;except ImportError:&#xa;    raise Exception(&#xa;        &quot;The QKan main plugin has to be installed for this to work.&quot;&#xa;     )&#xa;" id="{ceea4ddf-279c-4e33-8743-0ed569aa1b20}" shortTitle="">
+      <actionScope id="Canvas"/>
+      <actionScope id="Feature"/>
+    </actionsetting>
   </attributeactions>
-  <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;pk&quot;" sortOrder="0">
+  <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;video_offset&quot;" sortOrder="1">
     <columns>
       <column name="pk" type="field" hidden="0" width="-1"/>
-      <column name="schnam" type="field" hidden="0" width="-1"/>
-      <column name="xsch" type="field" hidden="0" width="-1"/>
-      <column name="ysch" type="field" hidden="0" width="-1"/>
-      <column name="sohlhoehe" type="field" hidden="0" width="-1"/>
-      <column name="deckelhoehe" type="field" hidden="0" width="-1"/>
-      <column name="durchm" type="field" hidden="0" width="-1"/>
-      <column name="druckdicht" type="field" hidden="0" width="-1"/>
-      <column name="ueberstauflaeche" type="field" hidden="0" width="-1"/>
-      <column name="entwart" type="field" hidden="0" width="-1"/>
-      <column name="strasse" type="field" hidden="0" width="-1"/>
-      <column name="knotentyp" type="field" hidden="0" width="-1"/>
-      <column name="auslasstyp" type="field" hidden="0" width="-1"/>
-      <column name="schachttyp" type="field" hidden="0" width="-1"/>
-      <column name="simstatus" type="field" hidden="0" width="-1"/>
-      <column name="kommentar" type="field" hidden="0" width="-1"/>
-      <column name="createdat" type="field" hidden="0" width="-1"/>
-      <column name="geom" type="field" hidden="0" width="-1"/>
+      <column name="untersuchhal" type="field" hidden="0" width="-1"/>
+      <column name="untersuchrichtung" type="field" hidden="0" width="-1"/>
+      <column name="schoben" type="field" hidden="0" width="-1"/>
+      <column name="schunten" type="field" hidden="0" width="-1"/>
+      <column name="id" type="field" hidden="0" width="-1"/>
+      <column name="videozaehler" type="field" hidden="0" width="-1"/>
+      <column name="inspektionslaenge" type="field" hidden="0" width="-1"/>
+      <column name="station" type="field" hidden="0" width="-1"/>
+      <column name="timecode" type="field" hidden="0" width="-1"/>
+      <column name="kuerzel" type="field" hidden="0" width="-1"/>
+      <column name="charakt1" type="field" hidden="0" width="-1"/>
+      <column name="charakt2" type="field" hidden="0" width="-1"/>
+      <column name="quantnr1" type="field" hidden="0" width="-1"/>
+      <column name="quantnr2" type="field" hidden="0" width="-1"/>
+      <column name="streckenschaden" type="field" hidden="0" width="-1"/>
+      <column name="pos_von" type="field" hidden="0" width="-1"/>
+      <column name="pos_bis" type="field" hidden="0" width="-1"/>
+      <column name="foto_dateiname" type="field" hidden="0" width="-1"/>
+      <column name="film_dateiname" type="field" hidden="0" width="410"/>
+      <column name="ordner_bild" type="field" hidden="0" width="274"/>
+      <column name="ordner_video" type="field" hidden="0" width="482"/>
+      <column name="richtung" type="field" hidden="0" width="-1"/>
       <column type="actions" hidden="1" width="-1"/>
-      <column name="material" type="field" hidden="0" width="-1"/>
-      <column name="teilgebiet" type="field" hidden="0" width="-1"/>
+      <column name="video_offset" type="field" hidden="0" width="-1"/>
+      <column name="streckenschaden_lfdnr" type="field" hidden="0" width="-1"/>
+      <column name="createdat" type="field" hidden="0" width="-1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -716,7 +766,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:/FHAC/hoettges/Kanalprogramme/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_speicher.ui</editform>
+  <editform tolerant="1">C:/FHAC/hoettges/Kanalprogramme/Nora/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/untersuchdat_haltung.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -740,80 +790,92 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field editable="1" name="auslasstyp"/>
+    <field editable="1" name="charakt1"/>
+    <field editable="1" name="charakt2"/>
     <field editable="1" name="createdat"/>
-    <field editable="1" name="deckelhoehe"/>
-    <field editable="1" name="druckdicht"/>
-    <field editable="1" name="durchm"/>
-    <field editable="1" name="entwart"/>
-    <field editable="1" name="geom"/>
-    <field editable="1" name="istauslass"/>
-    <field editable="1" name="istspeicher"/>
-    <field editable="1" name="knotentyp"/>
-    <field editable="1" name="kommentar"/>
-    <field editable="1" name="material"/>
+    <field editable="1" name="film_dateiname"/>
+    <field editable="1" name="foto_dateiname"/>
+    <field editable="1" name="id"/>
+    <field editable="1" name="inspektionslaenge"/>
+    <field editable="1" name="kuerzel"/>
+    <field editable="1" name="ordner_bild"/>
+    <field editable="1" name="ordner_video"/>
     <field editable="1" name="pk"/>
-    <field editable="1" name="schachttyp"/>
-    <field editable="1" name="schnam"/>
-    <field editable="1" name="simstatus"/>
-    <field editable="1" name="sohlhoehe"/>
-    <field editable="1" name="strasse"/>
-    <field editable="1" name="teilgebiet"/>
-    <field editable="1" name="ueberstauflaeche"/>
-    <field editable="1" name="xsch"/>
-    <field editable="1" name="ysch"/>
+    <field editable="1" name="pos_bis"/>
+    <field editable="1" name="pos_von"/>
+    <field editable="1" name="quantnr1"/>
+    <field editable="1" name="quantnr2"/>
+    <field editable="1" name="richtung"/>
+    <field editable="1" name="schoben"/>
+    <field editable="1" name="schunten"/>
+    <field editable="1" name="station"/>
+    <field editable="1" name="streckenschaden"/>
+    <field editable="1" name="streckenschaden_lfdnr"/>
+    <field editable="1" name="timecode"/>
+    <field editable="1" name="untersuchhal"/>
+    <field editable="1" name="untersuchrichtung"/>
+    <field editable="1" name="video_offset"/>
+    <field editable="1" name="videozaehler"/>
   </editable>
   <labelOnTop>
-    <field name="auslasstyp" labelOnTop="0"/>
+    <field name="charakt1" labelOnTop="0"/>
+    <field name="charakt2" labelOnTop="0"/>
     <field name="createdat" labelOnTop="0"/>
-    <field name="deckelhoehe" labelOnTop="0"/>
-    <field name="druckdicht" labelOnTop="0"/>
-    <field name="durchm" labelOnTop="0"/>
-    <field name="entwart" labelOnTop="0"/>
-    <field name="geom" labelOnTop="0"/>
-    <field name="istauslass" labelOnTop="0"/>
-    <field name="istspeicher" labelOnTop="0"/>
-    <field name="knotentyp" labelOnTop="0"/>
-    <field name="kommentar" labelOnTop="0"/>
-    <field name="material" labelOnTop="0"/>
+    <field name="film_dateiname" labelOnTop="0"/>
+    <field name="foto_dateiname" labelOnTop="0"/>
+    <field name="id" labelOnTop="0"/>
+    <field name="inspektionslaenge" labelOnTop="0"/>
+    <field name="kuerzel" labelOnTop="0"/>
+    <field name="ordner_bild" labelOnTop="0"/>
+    <field name="ordner_video" labelOnTop="0"/>
     <field name="pk" labelOnTop="0"/>
-    <field name="schachttyp" labelOnTop="0"/>
-    <field name="schnam" labelOnTop="0"/>
-    <field name="simstatus" labelOnTop="0"/>
-    <field name="sohlhoehe" labelOnTop="0"/>
-    <field name="strasse" labelOnTop="0"/>
-    <field name="teilgebiet" labelOnTop="0"/>
-    <field name="ueberstauflaeche" labelOnTop="0"/>
-    <field name="xsch" labelOnTop="0"/>
-    <field name="ysch" labelOnTop="0"/>
+    <field name="pos_bis" labelOnTop="0"/>
+    <field name="pos_von" labelOnTop="0"/>
+    <field name="quantnr1" labelOnTop="0"/>
+    <field name="quantnr2" labelOnTop="0"/>
+    <field name="richtung" labelOnTop="0"/>
+    <field name="schoben" labelOnTop="0"/>
+    <field name="schunten" labelOnTop="0"/>
+    <field name="station" labelOnTop="0"/>
+    <field name="streckenschaden" labelOnTop="0"/>
+    <field name="streckenschaden_lfdnr" labelOnTop="0"/>
+    <field name="timecode" labelOnTop="0"/>
+    <field name="untersuchhal" labelOnTop="0"/>
+    <field name="untersuchrichtung" labelOnTop="0"/>
+    <field name="video_offset" labelOnTop="0"/>
+    <field name="videozaehler" labelOnTop="0"/>
   </labelOnTop>
   <reuseLastValue>
-    <field name="auslasstyp" reuseLastValue="0"/>
+    <field name="charakt1" reuseLastValue="0"/>
+    <field name="charakt2" reuseLastValue="0"/>
     <field name="createdat" reuseLastValue="0"/>
-    <field name="deckelhoehe" reuseLastValue="0"/>
-    <field name="druckdicht" reuseLastValue="0"/>
-    <field name="durchm" reuseLastValue="0"/>
-    <field name="entwart" reuseLastValue="0"/>
-    <field name="geom" reuseLastValue="0"/>
-    <field name="istauslass" reuseLastValue="0"/>
-    <field name="istspeicher" reuseLastValue="0"/>
-    <field name="knotentyp" reuseLastValue="0"/>
-    <field name="kommentar" reuseLastValue="0"/>
-    <field name="material" reuseLastValue="0"/>
+    <field name="film_dateiname" reuseLastValue="0"/>
+    <field name="foto_dateiname" reuseLastValue="0"/>
+    <field name="id" reuseLastValue="0"/>
+    <field name="inspektionslaenge" reuseLastValue="0"/>
+    <field name="kuerzel" reuseLastValue="0"/>
+    <field name="ordner_bild" reuseLastValue="0"/>
+    <field name="ordner_video" reuseLastValue="0"/>
     <field name="pk" reuseLastValue="0"/>
-    <field name="schachttyp" reuseLastValue="0"/>
-    <field name="schnam" reuseLastValue="0"/>
-    <field name="simstatus" reuseLastValue="0"/>
-    <field name="sohlhoehe" reuseLastValue="0"/>
-    <field name="strasse" reuseLastValue="0"/>
-    <field name="teilgebiet" reuseLastValue="0"/>
-    <field name="ueberstauflaeche" reuseLastValue="0"/>
-    <field name="xsch" reuseLastValue="0"/>
-    <field name="ysch" reuseLastValue="0"/>
+    <field name="pos_bis" reuseLastValue="0"/>
+    <field name="pos_von" reuseLastValue="0"/>
+    <field name="quantnr1" reuseLastValue="0"/>
+    <field name="quantnr2" reuseLastValue="0"/>
+    <field name="richtung" reuseLastValue="0"/>
+    <field name="schoben" reuseLastValue="0"/>
+    <field name="schunten" reuseLastValue="0"/>
+    <field name="station" reuseLastValue="0"/>
+    <field name="streckenschaden" reuseLastValue="0"/>
+    <field name="streckenschaden_lfdnr" reuseLastValue="0"/>
+    <field name="timecode" reuseLastValue="0"/>
+    <field name="untersuchhal" reuseLastValue="0"/>
+    <field name="untersuchrichtung" reuseLastValue="0"/>
+    <field name="video_offset" reuseLastValue="0"/>
+    <field name="videozaehler" reuseLastValue="0"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>
-  <previewExpression>COALESCE( "schnam", '&lt;NULL>' )</previewExpression>
+  <previewExpression>"foto_dateiname"</previewExpression>
   <mapTip></mapTip>
-  <layerGeometryType>0</layerGeometryType>
+  <layerGeometryType>1</layerGeometryType>
 </qgis>

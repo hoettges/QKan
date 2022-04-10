@@ -167,28 +167,60 @@ class ImportTask:
 
         if QKan.config.check_import.wehre:
             if self.append:
+                # sql = f"""
+                # INSERT INTO wehre (
+                #     wnam, schoben, schunten,
+                #     schwellenhoehe,
+                #     laenge, uebeiwert, simstatus,
+                #     kommentar, createdat, geom)
+                # SELECT
+                #     wu.muid                             AS wnam
+                #   , wu.fromnodeid                       AS schoben
+                #   , wu.tonodeid                         AS schunten
+                #   , wu.crestlevel                       AS schwellenhoehe
+                #   , wu.crestwidth                       AS laenge
+                #   , wu.coeff                            AS uebeiwert
+                #   , 'vorhanden'                         AS simstatus
+                #   , 'Importiert mit QKan'               AS kommentar
+                #   , coalesce(createdat, datetime('now'))
+                #                                         AS createdat
+                #   , SetSRID(wu.geometry, {self.epsg})   AS geom
+                # FROM mu.msm_Weir AS wu
+                # LEFT JOIN wehre AS wq
+                # ON wq.wnam = wu.muid
+                # WHERE wq.pk IS NULL"""
+                #
+                # if not self.db_qkan.sql(sql, "mu_import Wehre"):
+                #     return False
+
                 sql = f"""
-                INSERT INTO wehre (
-                    wnam, schoben, schunten, 
-                    schwellenhoehe, 
-                    laenge, uebeiwert, simstatus, 
-                    kommentar, createdat, geom)
-                SELECT
-                    wu.muid                             AS wnam
-                  , wu.fromnodeid                       AS schoben
-                  , wu.tonodeid                         AS schunten
-                  , wu.crestlevel                       AS schwellenhoehe
-                  , wu.crestwidth                       AS laenge
-                  , wu.coeff                            AS uebeiwert
-                  , 'vorhanden'                         AS simstatus
+                INSERT INTO haltungen (
+                    haltnam, schoben, schunten,
+                    hoehe,
+                    sonderelement, 
+                    simstatus,
+                    kommentar, createdat, 
+                    geom)
+                SELECT 
+                    wu.muid AS haltnam,
+                    wu.fromnodeid AS schoben, 
+                    wu.tonodeid AS schunten,
+                    coalesce(wu.maxcrestlevel - mincrestlevel, 0.3) AS hoehe, 
+                    wu.crestwidth AS breite,
+                    wu.crestlevel AS sohleoben,
+                    wu.crestlevel AS sohleunten,
+                    'Wehr' AS sonderelement, 
+                    'vorhanden' AS simstatus, 
                   , 'Importiert mit QKan'               AS kommentar
                   , coalesce(createdat, datetime('now')) 
                                                         AS createdat
                   , SetSRID(wu.geometry, {self.epsg})   AS geom
+                                FROM mu.msm_Pump AS wu
                 FROM mu.msm_Weir AS wu
-                LEFT JOIN wehre AS wq
-                ON wq.wnam = wu.muid
-                WHERE wq.pk IS NULL"""
+                LEFT JOIN haltungen AS ha
+                ON ha.haltnam = wu.muid
+                WHERE ha.pk IS NULL
+                """
 
                 if not self.db_qkan.sql(sql, "mu_import Wehre"):
                     return False
@@ -202,31 +234,62 @@ class ImportTask:
 
         if QKan.config.check_import.pumpen:
             if self.append:
+                # sql = f"""
+                # INSERT INTO pumpen (
+                #     pnam, schoben, schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe,
+                #     simstatus, kommentar, createdat, geom)
+                # SELECT
+                #     pu.muid                             AS pnam
+                #   , pu.fromnodeid                       AS schoben
+                #   , pu.tonodeid                         AS schunten
+                #   , CASE pu.CapTypeNo
+                #         WHEN 1 THEN 'Online Kennlinie'
+                #         WHEN 2 THEN 'Online Wasserstandsdifferenz' END
+                #                                         AS pumpentyp
+                #   , pu.dutypoint                        AS steuersch
+                #   , pu.startlevel                       AS einschalthoehe
+                #   , pu.stoplevel                        AS ausschalthoehe
+                #   , 'vorhanden'                         AS simstatus
+                #   , 'Importiert mit QKan'               AS kommentar
+                #   , coalesce(createdat, datetime('now'))
+                #                                         AS createdat
+                #   , SetSRID(pu.geometry, {self.epsg})   AS geom
+                # FROM mu.msm_Pump AS pu
+                # LEFT JOIN pumpen AS pq
+                # ON pq.pnam = pu.muid
+                # WHERE pq.pk IS NULL
+                # """
+                #
+                # if not self.db_qkan.sql(sql, "mu_import Pumpen(1)"):
+                #     return False
+
                 sql = f"""
-                INSERT INTO pumpen (
-                    pnam, schoben, schunten, pumpentyp, steuersch, einschalthoehe, ausschalthoehe, 
-                    simstatus, kommentar, createdat, geom)
-                SELECT
-                    pu.muid                             AS pnam
-                  , pu.fromnodeid                       AS schoben
-                  , pu.tonodeid                         AS schunten
-                  , CASE pu.CapTypeNo 
-                        WHEN 1 THEN 'Online Kennlinie'
-                        WHEN 2 THEN 'Online Wasserstandsdifferenz' END
-                                                        AS pumpentyp
-                  , pu.dutypoint                        AS steuersch
-                  , pu.startlevel                       AS einschalthoehe
-                  , pu.stoplevel                        AS ausschalthoehe
-                  , 'vorhanden'                         AS simstatus
+                INSERT INTO haltungen (
+                    haltnam, schoben, schunten,
+                    hoehe,
+                    sonderelement, 
+                    simstatus,
+                    kommentar, createdat, 
+                    geom)
+                SELECT 
+                    pu.muid AS haltnam,
+                    pu.fromnodeid AS schoben, 
+                    pu.tonodeid AS schunten,
+                    0.3 AS hoehe,                   /* nur fuer Laengsschnitt */ 
+                    'Pumpe' AS sonderelement, 
+                    'vorhanden' AS simstatus, 
                   , 'Importiert mit QKan'               AS kommentar
                   , coalesce(createdat, datetime('now')) 
                                                         AS createdat
                   , SetSRID(pu.geometry, {self.epsg})   AS geom
+                                FROM mu.msm_Pump AS pu
                 FROM mu.msm_Pump AS pu
-                LEFT JOIN  pumpen AS pq
-                ON pq.pnam = pu.muid"""
+                LEFT JOIN haltungen AS ha
+                ON ha.haltnam = pu.muid
+                WHERE ha.pk IS NULL
+                """
 
-                if not self.db_qkan.sql(sql, "mu_import Pumpen"):
+                if not self.db_qkan.sql(sql, "mu_import Pumpen(2)"):
                     return False
 
                 self.db_qkan.commit()
