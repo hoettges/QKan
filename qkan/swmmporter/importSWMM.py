@@ -13,7 +13,7 @@ from typing import Dict, List, cast
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.utils import pluginDirectory
 
-from qkan import QKAN_FORMS, QKAN_TABLES, QKan, enums
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
 from qkan.tools.k_qgsadapt import qgsadapt
 
@@ -566,7 +566,7 @@ class SWMM:
                 tag_editform = tag_maplayer.find("./editform")
                 if tag_editform and tag_editform.text:
                     dateiname = os.path.basename(tag_editform.text)
-                    if dateiname in QKAN_FORMS:
+                    if dateiname in QKan.forms:
                         # Nur QKan-Tabellen bearbeiten
                         tag_editform.text = os.path.join(formspath, dateiname)
 

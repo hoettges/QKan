@@ -152,7 +152,7 @@ def exportKanaldaten(
             0.7, 1.8, 0., 
             0., 1./0.015, 0.06*2.54, NULL, 
             'Automatisch ergänzt für SWMM-Export',
-            strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) AS createdat
+            coalesce(createdat, CURRENT_TIMESTAMP)) AS createdat
         FROM tezg AS tg
         LEFT JOIN abflussparameter AS ap
         ON tg.abflussparameter = ap.apnam and (ap.bodenklasse IS NULL OR ap.bodenklasse = '')
@@ -178,7 +178,7 @@ def exportKanaldaten(
             2.0, 5.0, 0., 
             0., 1./0.024, 0.3*2.54, NULL, 
             'Automatisch ergänzt für SWMM-Export',
-            strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) AS createdat
+            coalesce(createdat, CURRENT_TIMESTAMP)) AS createdat
         FROM tezg AS tg
         LEFT JOIN abflussparameter AS ap
         ON tg.abflussparameter = ap.apnam and ap.bodenklasse IS NOT NULL AND ap.bodenklasse <> ''

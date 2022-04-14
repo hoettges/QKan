@@ -466,10 +466,10 @@ class ExportTask:
                       LEFT JOIN profile ON haltungen.profilnam = profile.profilnam
                       LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.bezeichnung
                       LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
-                      WHERE haltungen.haltnam = he.Rohr.Name{auswahl})
+                      WHERE (haltungen.haltungstyp IS NULL or haltungen.haltungstyp = 'Haltung') AND haltungen.haltnam = he.Rohr.Name{auswahl})
                   WHERE he.Rohr.Name IN 
                   ( SELECT haltnam FROM haltungen AND 
-                    (haltungen.sonderelement IS NULL OR haltungen.sonderelement = 'Haltung')){auswahl}
+                    (haltungen.haltungstyp IS NULL OR haltungen.haltungstyp = 'Haltung')){auswahl}
                   """
 
                 if not self.db_qkan.sql(
@@ -550,7 +550,7 @@ class ExportTask:
                         LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.bezeichnung
                         LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
                         WHERE haltungen.haltnam NOT IN (SELECT Name FROM he.Rohr) 
-                        AND (haltungen.sonderelement IS NULL OR haltungen.sonderelement = 'Haltung'){auswahl};
+                        AND (haltungen.haltungstyp IS NULL OR haltungen.haltungstyp = 'Haltung'){auswahl};
                       """
 
                     if not self.db_qkan.sql(
@@ -919,7 +919,7 @@ class ExportTask:
                         WHERE haltungen.haltnam = he.Pumpe.Name
                     )
                     WHERE he.Pumpe.Name IN (
-                        SELECT pnam FROM haltungen WHERE haltungen.sonderelement = 'Pumpe'{auswahl_a}
+                        SELECT pnam FROM haltungen WHERE haltungen.haltungstyp = 'Pumpe'{auswahl_a}
                         )
                     """
 
@@ -966,7 +966,7 @@ class ExportTask:
                     FROM haltungen
                     LEFT JOIN simulationsstatus
                     ON haltungen.simstatus = simulationsstatus.bezeichnung
-                    WHERE sonderelement = 'Pumpe'
+                    WHERE haltungstyp = 'Pumpe'
                     AND haltungen.haltnam NOT IN (SELECT Name FROM he.Pumpe){auswahl_a};
                     """
 
@@ -1021,7 +1021,7 @@ class ExportTask:
                         WHERE haltungen.haltnam = he.Wehr.Name{auswahl_a}
                     )
                     WHERE he.Wehr.Name IN (
-                        SELECT wnam FROM haltungen AND haltungen.sonderelement = 'Wehr'{auswahl_a}
+                        SELECT wnam FROM haltungen AND haltungen.haltungstyp = 'Wehr'{auswahl_a}
                         )
                     """
 
@@ -1070,7 +1070,7 @@ class ExportTask:
                     FROM haltungen
                     LEFT JOIN simulationsstatus
                     ON haltungen.simstatus = simulationsstatus.bezeichnung
-                    WHERE sonderelement = 'Wehr'
+                    WHERE haltungstyp = 'Wehr'
                     AND haltungen.haltnam NOT IN (SELECT Name FROM he.Wehr){auswahl_a};
                     """
 
@@ -1087,6 +1087,206 @@ class ExportTask:
                     self.db_qkan.commit()
 
                     fortschritt(f"{self.nextid - nr0} Wehre eingefügt", 0.90)
+                    self.progress_bar.setValue(90)
+        return True
+
+    def _drosseln(self) -> bool:
+        """Export Drosseln"""
+
+        if QKan.config.check_export.drosseln:
+
+            # Nur Daten fuer ausgewaehlte Teilgebiete
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl_w = f" WHERE haltungen.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND haltungen.teilgebiet in ('{lis}')"
+            else:
+                auswahl_w = ""
+                auswahl_a = ""
+
+            if self.update:
+                sql = f"""
+                    UPDATE he.Drossel SET
+                    (   SchachtOben, SchachtUnten, 
+                        Planungsstatus, 
+                        Kommentar, LastModified 
+                    ) = 
+                    (   SELECT
+                            haltungen.schoben AS schoben,
+                            haltungen.schunten AS schunten,
+                            simulationsstatus.he_nr AS simstatusnr,
+                            haltungen.kommentar AS kommentar,
+                            haltungen.createdat AS createdat
+                        FROM haltungen
+                        LEFT JOIN simulationsstatus
+                        ON haltungen.simstatus = simulationsstatus.bezeichnung
+                        WHERE haltungen.haltnam = he.Drossel.Name{auswahl_a}
+                    )
+                    WHERE he.Drossel.Name IN (
+                        SELECT wnam FROM haltungen AND haltungen.haltungstyp = 'Drossel'{auswahl_a}
+                        )
+                    """
+
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_drosseln (1)"):
+                    return False
+
+            if self.append:
+                # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_drosseln (2)"):
+                    return False
+
+                data = self.db_qkan.fetchone()
+                if len(data) == 2:
+                    idmin, idmax = data
+                else:
+                    fehlermeldung(
+                        "Fehler (37) in QKan_Export",
+                        f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
+                    )
+
+                if idmin is None:
+                    meldung("Einfügen Drosseln", "Keine Drosseln vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
+
+                    sql = f"""
+                    INSERT INTO he.Drossel (
+                        Id,
+                        Name, 
+                        SchachtOben, SchachtUnten,
+                        Planungsstatus,
+                        Kommentar, LastModified 
+                    ) 
+                    SELECT
+                        haltungen.rowid + {id0} AS id, 
+                        haltungen.haltnam AS Name,
+                        haltungen.schoben AS schoben,
+                        haltungen.schunten AS schunten,
+                        simulationsstatus.he_nr AS simstatusnr,
+                        haltungen.kommentar AS kommentar,
+                        haltungen.createdat AS createdat
+                    FROM haltungen
+                    LEFT JOIN simulationsstatus
+                    ON haltungen.simstatus = simulationsstatus.bezeichnung
+                    WHERE haltungstyp = 'Drossel'
+                    AND haltungen.haltnam NOT IN (SELECT Name FROM he.Drossel){auswahl_a};
+                    """
+
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_drosseln (3)"
+                    ):
+                        return False
+
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
+                    )
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} Drosseln eingefügt", 0.90)
+                    self.progress_bar.setValue(90)
+        return True
+
+    def _schieber(self) -> bool:
+        """Export Drosseln"""
+
+        if QKan.config.check_export.drosseln:
+
+            # Nur Daten fuer ausgewaehlte Teilgebiete
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl_w = f" WHERE haltungen.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND haltungen.teilgebiet in ('{lis}')"
+            else:
+                auswahl_w = ""
+                auswahl_a = ""
+
+            if self.update:
+                sql = f"""
+                    UPDATE he.Drossel SET
+                    (   SchachtOben, SchachtUnten, 
+                        Planungsstatus, 
+                        Kommentar, LastModified 
+                    ) = 
+                    (   SELECT
+                            haltungen.schoben AS schoben,
+                            haltungen.schunten AS schunten,
+                            simulationsstatus.he_nr AS simstatusnr,
+                            haltungen.kommentar AS kommentar,
+                            haltungen.createdat AS createdat
+                        FROM haltungen
+                        LEFT JOIN simulationsstatus
+                        ON haltungen.simstatus = simulationsstatus.bezeichnung
+                        WHERE haltungen.haltnam = he.Drossel.Name{auswahl_a}
+                    )
+                    WHERE he.Drossel.Name IN (
+                        SELECT wnam FROM haltungen AND haltungen.haltungstyp = 'Drossel'{auswahl_a}
+                        )
+                    """
+
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_drosseln (1)"):
+                    return False
+
+            if self.append:
+                # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_drosseln (2)"):
+                    return False
+
+                data = self.db_qkan.fetchone()
+                if len(data) == 2:
+                    idmin, idmax = data
+                else:
+                    fehlermeldung(
+                        "Fehler (37) in QKan_Export",
+                        f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
+                    )
+
+                if idmin is None:
+                    meldung("Einfügen Drosseln", "Keine Drosseln vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
+
+                    sql = f"""
+                    INSERT INTO he.Drossel (
+                        Id,
+                        Name, 
+                        SchachtOben, SchachtUnten,
+                        Planungsstatus,
+                        Kommentar, LastModified 
+                    ) 
+                    SELECT
+                        haltungen.rowid + {id0} AS id, 
+                        haltungen.haltnam AS Name,
+                        haltungen.schoben AS schoben,
+                        haltungen.schunten AS schunten,
+                        simulationsstatus.he_nr AS simstatusnr,
+                        haltungen.kommentar AS kommentar,
+                        haltungen.createdat AS createdat
+                    FROM haltungen
+                    LEFT JOIN simulationsstatus
+                    ON haltungen.simstatus = simulationsstatus.bezeichnung
+                    WHERE haltungstyp = 'Drossel'
+                    AND haltungen.haltnam NOT IN (SELECT Name FROM he.Drossel){auswahl_a};
+                    """
+
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_drosseln (3)"
+                    ):
+                        return False
+
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
+                    )
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} Drosseln eingefügt", 0.90)
                     self.progress_bar.setValue(90)
         return True
 

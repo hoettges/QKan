@@ -646,7 +646,7 @@
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="sonderelement">
+    <field configurationFlags="None" name="haltungstyp">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -747,7 +747,7 @@
     <alias field="entwart" index="14" name="Entwässerungssystem"/>
     <alias field="material" index="15" name=""/>
     <alias field="ks" index="16" name=""/>
-    <alias field="sonderelement" index="17" name="Sonderelementttyp"/>
+    <alias field="haltungstyp" index="17" name="Haltungstyp"/>
     <alias field="simstatus" index="18" name="Planungsstatus"/>
     <alias field="kommentar" index="19" name="Kommentar"/>
     <alias field="createdat" index="20" name="erstellt"/>
@@ -774,7 +774,7 @@
     <default expression="" applyOnUpdate="0" field="entwart"/>
     <default expression="" applyOnUpdate="0" field="material"/>
     <default expression="" applyOnUpdate="0" field="ks"/>
-    <default expression="'Pumpe'" applyOnUpdate="1" field="sonderelement"/>
+    <default expression="'Pumpe'" applyOnUpdate="1" field="haltungstyp"/>
     <default expression="" applyOnUpdate="0" field="simstatus"/>
     <default expression="''" applyOnUpdate="0" field="kommentar"/>
     <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" applyOnUpdate="1" field="createdat"/>
@@ -801,7 +801,7 @@
     <constraint exp_strength="0" unique_strength="0" field="entwart" constraints="0" notnull_strength="0"/>
     <constraint exp_strength="0" unique_strength="0" field="material" constraints="0" notnull_strength="0"/>
     <constraint exp_strength="0" unique_strength="0" field="ks" constraints="0" notnull_strength="0"/>
-    <constraint exp_strength="0" unique_strength="0" field="sonderelement" constraints="0" notnull_strength="0"/>
+    <constraint exp_strength="0" unique_strength="0" field="haltungstyp" constraints="0" notnull_strength="0"/>
     <constraint exp_strength="0" unique_strength="0" field="simstatus" constraints="0" notnull_strength="0"/>
     <constraint exp_strength="0" unique_strength="0" field="kommentar" constraints="0" notnull_strength="0"/>
     <constraint exp_strength="0" unique_strength="0" field="createdat" constraints="0" notnull_strength="0"/>
@@ -828,7 +828,7 @@
     <constraint field="entwart" desc="" exp=""/>
     <constraint field="material" desc="" exp=""/>
     <constraint field="ks" desc="" exp=""/>
-    <constraint field="sonderelement" desc="" exp=""/>
+    <constraint field="haltungstyp" desc="" exp=""/>
     <constraint field="simstatus" desc="" exp=""/>
     <constraint field="kommentar" desc="" exp=""/>
     <constraint field="createdat" desc="" exp=""/>
@@ -860,7 +860,7 @@
       <column width="-1" type="field" hidden="1" name="material"/>
       <column width="-1" type="field" hidden="1" name="ks"/>
       <column width="-1" type="field" hidden="0" name="teilgebiet"/>
-      <column width="-1" type="field" hidden="0" name="sonderelement"/>
+      <column width="-1" type="field" hidden="0" name="haltungstyp"/>
       <column width="-1" type="field" hidden="1" name="xschob"/>
       <column width="-1" type="field" hidden="1" name="yschob"/>
       <column width="-1" type="field" hidden="1" name="xschun"/>
@@ -922,7 +922,7 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="sohle"/>
     <field editable="1" name="sohleoben"/>
     <field editable="1" name="sohleunten"/>
-    <field editable="1" name="sonderelement"/>
+    <field editable="1" name="haltungstyp"/>
     <field editable="1" name="steuersch"/>
     <field editable="1" name="teilgebiet"/>
     <field editable="1" name="volanf"/>
@@ -957,7 +957,7 @@ def my_form_open(dialog, layer, feature):
     <field name="sohle" labelOnTop="0"/>
     <field name="sohleoben" labelOnTop="0"/>
     <field name="sohleunten" labelOnTop="0"/>
-    <field name="sonderelement" labelOnTop="0"/>
+    <field name="haltungstyp" labelOnTop="0"/>
     <field name="steuersch" labelOnTop="0"/>
     <field name="teilgebiet" labelOnTop="0"/>
     <field name="volanf" labelOnTop="0"/>
@@ -992,7 +992,7 @@ def my_form_open(dialog, layer, feature):
     <field reuseLastValue="0" name="sohle"/>
     <field reuseLastValue="0" name="sohleoben"/>
     <field reuseLastValue="0" name="sohleunten"/>
-    <field reuseLastValue="0" name="sonderelement"/>
+    <field reuseLastValue="0" name="haltungstyp"/>
     <field reuseLastValue="0" name="steuersch"/>
     <field reuseLastValue="0" name="teilgebiet"/>
     <field reuseLastValue="0" name="volanf"/>

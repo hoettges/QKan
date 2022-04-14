@@ -197,7 +197,7 @@ class ImportTask:
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
                     hoehe,
-                    sonderelement, 
+                    haltungstyp, 
                     simstatus,
                     kommentar, createdat, 
                     geom)
@@ -209,7 +209,7 @@ class ImportTask:
                     wu.crestwidth AS breite,
                     wu.crestlevel AS sohleoben,
                     wu.crestlevel AS sohleunten,
-                    'Wehr' AS sonderelement, 
+                    'Wehr' AS haltungstyp, 
                     'vorhanden' AS simstatus, 
                   , 'Importiert mit QKan'               AS kommentar
                   , coalesce(createdat, datetime('now')) 
@@ -267,7 +267,7 @@ class ImportTask:
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
                     hoehe,
-                    sonderelement, 
+                    haltungstyp, 
                     simstatus,
                     kommentar, createdat, 
                     geom)
@@ -276,7 +276,7 @@ class ImportTask:
                     pu.fromnodeid AS schoben, 
                     pu.tonodeid AS schunten,
                     0.3 AS hoehe,                   /* nur fuer Laengsschnitt */ 
-                    'Pumpe' AS sonderelement, 
+                    'Pumpe' AS haltungstyp, 
                     'vorhanden' AS simstatus, 
                   , 'Importiert mit QKan'               AS kommentar
                   , coalesce(createdat, datetime('now')) 

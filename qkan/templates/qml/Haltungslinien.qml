@@ -493,7 +493,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="sonderelement" configurationFlags="None">
+    <field name="haltungstyp" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -605,7 +605,7 @@
     <alias name="Entwässerungssystem" field="entwart" index="14"/>
     <alias name="Material" field="material" index="15"/>
     <alias name="Rauheitsbeiwert" field="ks" index="16"/>
-    <alias name="Sonderelementtyp" field="sonderelement" index="17"/>
+    <alias name="Haltungstyp" field="haltungstyp" index="17"/>
     <alias name="Planungsstatus" field="simstatus" index="18"/>
     <alias name="Kommentar" field="kommentar" index="19"/>
     <alias name="bearbeitet" field="createdat" index="20"/>
@@ -632,7 +632,7 @@
     <default expression="" applyOnUpdate="0" field="entwart"/>
     <default expression="" applyOnUpdate="0" field="material"/>
     <default expression="" applyOnUpdate="0" field="ks"/>
-    <default expression="" applyOnUpdate="0" field="sonderelement"/>
+    <default expression="" applyOnUpdate="0" field="haltungstyp"/>
     <default expression="" applyOnUpdate="0" field="simstatus"/>
     <default expression="" applyOnUpdate="0" field="kommentar"/>
     <default expression="" applyOnUpdate="0" field="createdat"/>
@@ -659,7 +659,7 @@
     <constraint constraints="0" notnull_strength="0" field="entwart" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="material" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="ks" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="sonderelement" exp_strength="0" unique_strength="0"/>
+    <constraint constraints="0" notnull_strength="0" field="haltungstyp" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="simstatus" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="kommentar" exp_strength="0" unique_strength="0"/>
     <constraint constraints="0" notnull_strength="0" field="createdat" exp_strength="0" unique_strength="0"/>
@@ -686,7 +686,7 @@
     <constraint desc="" exp="" field="entwart"/>
     <constraint desc="" exp="" field="material"/>
     <constraint desc="" exp="" field="ks"/>
-    <constraint desc="" exp="" field="sonderelement"/>
+    <constraint desc="" exp="" field="haltungstyp"/>
     <constraint desc="" exp="" field="simstatus"/>
     <constraint desc="" exp="" field="kommentar"/>
     <constraint desc="" exp="" field="createdat"/>
@@ -725,7 +725,7 @@
       <column name="yschob" type="field" hidden="0" width="-1"/>
       <column name="xschun" type="field" hidden="0" width="-1"/>
       <column name="yschun" type="field" hidden="0" width="-1"/>
-      <column name="sonderelement" type="field" hidden="0" width="-1"/>
+      <column name="haltungstyp" type="field" hidden="0" width="-1"/>
       <column type="actions" hidden="1" width="-1"/>
     </columns>
   </attributetableconfig>
@@ -775,7 +775,7 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="simstatus"/>
     <field editable="1" name="sohleoben"/>
     <field editable="1" name="sohleunten"/>
-    <field editable="1" name="sonderelement"/>
+    <field editable="1" name="haltungstyp"/>
     <field editable="1" name="teilgebiet"/>
     <field editable="1" name="xschob"/>
     <field editable="1" name="xschun"/>
@@ -802,7 +802,7 @@ def my_form_open(dialog, layer, feature):
     <field name="simstatus" labelOnTop="0"/>
     <field name="sohleoben" labelOnTop="0"/>
     <field name="sohleunten" labelOnTop="0"/>
-    <field name="sonderelement" labelOnTop="0"/>
+    <field name="haltungstyp" labelOnTop="0"/>
     <field name="teilgebiet" labelOnTop="0"/>
     <field name="xschob" labelOnTop="0"/>
     <field name="xschun" labelOnTop="0"/>
@@ -829,7 +829,7 @@ def my_form_open(dialog, layer, feature):
     <field name="simstatus" reuseLastValue="0"/>
     <field name="sohleoben" reuseLastValue="0"/>
     <field name="sohleunten" reuseLastValue="0"/>
-    <field name="sonderelement" reuseLastValue="0"/>
+    <field name="haltungstyp" reuseLastValue="0"/>
     <field name="teilgebiet" reuseLastValue="0"/>
     <field name="xschob" reuseLastValue="0"/>
     <field name="xschun" reuseLastValue="0"/>

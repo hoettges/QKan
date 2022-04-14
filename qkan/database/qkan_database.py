@@ -146,10 +146,10 @@ def createdbtables(
             entwart TEXT DEFAULT 'Regenwasser',
             material TEXT,
             ks REAL DEFAULT 1.5,
-            sonderelement TEXT,
+            haltungstyp TEXT DEFAULT 'Haltung',
             simstatus TEXT DEFAULT 'vorhanden',
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP,
             xschob REAL,
             yschob REAL,
             xschun REAL,
@@ -176,7 +176,7 @@ def createdbtables(
             sohleoben, sohleunten, 
             deckeloben, deckelunten, 
             teilgebiet, qzu, profilnam, 
-            entwart, material, ks, klappe, 
+            entwart, material, ks, 
             simstatus, kommentar, createdat, 
             xschob, yschob, xschun, yschun
           FROM haltungen;"""
@@ -199,7 +199,7 @@ def createdbtables(
                sohleoben, sohleunten,
                deckeloben, deckelunten, 
                teilgebiet, qzu, profilnam, 
-               entwart, material, ks, klappe, 
+               entwart, material, ks, 
                simstatus, kommentar, createdat,  
                geom)
             SELECT 
@@ -210,9 +210,9 @@ def createdbtables(
               new.sohleoben, new.sohleunten, 
               new.deckeloben, new.deckelunten, 
               new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
-              coalesce(new.entwart, 'Regenwasser'), new.material, coalesce(new.ks, 1.5), new.klappe,  
+              coalesce(new.entwart, 'Regenwasser'), new.material, coalesce(new.ks, 1.5),  
               coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
-              coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), 
+              coalesce(new.createdat, CURRENT_TIMESTAMP), 
               MakeLine(
                 coalesce(
                   MakePoint(new.xschob, new.yschob, {epsg}),
@@ -252,7 +252,7 @@ def createdbtables(
              breite REAL,
              laenge REAL,
              kommentar TEXT,
-             createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+             createdat TEXT DEFAULT CURRENT_TIMESTAMP,
              baujahr INTEGER,
              untersuchtag TEXT,
              untersucher TEXT,
@@ -307,7 +307,7 @@ def createdbtables(
                   CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
                   CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
                   new.laenge, new.kommentar, 
-                  coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), new.baujahr,
+                  coalesce(new.createdat, CURRENT_TIMESTAMP), new.baujahr,
                   MakeLine(
                     coalesce(
                       MakePoint(new.xschob, new.yschob, {epsg}),
@@ -362,7 +362,7 @@ def createdbtables(
             ordner_bild TEXT,
             ordner_video TEXT,
             richtung TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('Untersuchdat_haltung','geom',{},'LINESTRING',2)".format(epsg),
         "SELECT CreateSpatialIndex('Untersuchdat_haltung','geom')",
     ]
@@ -402,16 +402,16 @@ def createdbtables(
                           new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
                             new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
                             new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung,
-                            coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+                            coalesce(new.createdat, CURRENT_TIMESTAMP),
                             CASE
-                            WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten)
+                            WHEN (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten)
 
                             THEN 
                             MakeLine(
@@ -424,14 +424,14 @@ def createdbtables(
                                     schun.geop
                                 )
                             )
-                            WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten)
+                            WHEN (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten)
 
                             THEN 
                             MakeLine(
@@ -444,14 +444,14 @@ def createdbtables(
                                     schun.geop
                                 )
                             )
-                            WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten)
+                            WHEN (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten)
 
                             THEN 
                             MakeLine(
@@ -464,14 +464,14 @@ def createdbtables(
                                     schun.geop
                                 )
                             )
-                            WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR 
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR 
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten)
+                            WHEN (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR 
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR 
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = haltung.schoben AND new.schunten = haltung.schunten)
 
                             THEN 
                             MakeLine(
@@ -496,16 +496,16 @@ def createdbtables(
                         new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
                             new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
                             new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung,
-                            coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+                            coalesce(new.createdat, CURRENT_TIMESTAMP),
                             CASE
-                            WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten)
+                            WHEN (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten)
 
                             THEN 
                             MakeLine(
@@ -518,14 +518,14 @@ def createdbtables(
                                     schun.geop
                                 )
                             )
-                            WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten)
+                            WHEN (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten)
 
                             THEN 
                             MakeLine(
@@ -538,14 +538,14 @@ def createdbtables(
                                     schun.geop
                                 )
                             )
-                            WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten)
+                            WHEN (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'fließrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten)
 
                             THEN 
                             MakeLine(
@@ -558,14 +558,14 @@ def createdbtables(
                                     schun.geop
                                 )
                             )
-                            WHEN (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR 
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR 
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = "fließrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
-                                    (new.untersuchrichtung = "gegen Fließrichtung" AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = "untersuchungsrichtung" AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten)
+                            WHEN (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR 
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR 
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND new.richtung = 'fließrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten) OR
+                                    (new.untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND new.richtung = 'untersuchungsrichtung' AND new.schoben = leitung.schoben AND new.schunten = leitung.schunten)
 
                             THEN 
                             MakeLine(
@@ -619,7 +619,7 @@ def createdbtables(
             ks REAL DEFAULT 1.5,
             simstatus TEXT DEFAULT 'vorhanden',
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP,
             xschob REAL,
             yschob REAL,
             xschun REAL,
@@ -681,7 +681,7 @@ def createdbtables(
                   new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
                   coalesce(new.entwart, 'Regenwasser'), new.material, coalesce(new.ks, 1.5), 
                   coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
-                  coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), 
+                  coalesce(new.createdat, CURRENT_TIMESTAMP), 
                   MakeLine(
                       MakePoint(new.xschob, new.yschob, {epsg})
                       , 
@@ -722,7 +722,7 @@ def createdbtables(
             simstatus TEXT DEFAULT 'vorhanden',
             material TEXT,
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP,
             xsch REAL, 
             ysch REAL)""",
         """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg),
@@ -783,7 +783,7 @@ def createdbtables(
               coalesce(new.entwart, 'Regenwasser'), new.strasse, new.teilgebiet, 
               new.knotentyp, new.auslasstyp, coalesce(new.schachttyp, 'Schacht'), 
               coalesce(new.simstatus, 'vorhanden'), new.material,
-              new.kommentar, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+              new.kommentar, coalesce(new.createdat, CURRENT_TIMESTAMP),
               MakePoint(new.xsch, new.ysch, {epsg}),
               CastToMultiPolygon(
                 MakePolygon(
@@ -817,7 +817,7 @@ def createdbtables(
             schnam TEXT, 
             durchm REAL,
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP,
             baujahr INTEGER,
             untersuchtag TEXT, 
             untersucher TEXT, 
@@ -864,7 +864,7 @@ def createdbtables(
                     SELECT
                       new.schnam,
                       CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
-                      new.kommentar, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), new.baujahr,
+                      new.kommentar, coalesce(new.createdat, CURRENT_TIMESTAMP), new.baujahr,
                       sch.geop,
                       new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
                     FROM
@@ -906,7 +906,7 @@ def createdbtables(
             bereich TEXT,
             foto_dateiname TEXT,
             ordner TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime'))
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP
             )""",
         """SELECT AddGeometryColumn('Untersuchdat_schacht','geop',{},'POINT',2);""".format(epsg),
         """SELECT CreateSpatialIndex('Untersuchdat_schacht','geop')""",
@@ -946,7 +946,7 @@ def createdbtables(
                 SELECT 
                   new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.vertikale_lage, new.inspektionslaenge,
-                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), sch.geop
+                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, CURRENT_TIMESTAMP), sch.geop
                 FROM
                     schaechte AS sch
                     WHERE sch.schnam = new.untersuchsch;
@@ -1101,7 +1101,7 @@ def createdbtables(
 
     # Sonderelemente Haltungen -------------------------------------------------
 
-    sql = """CREATE TABLE sonderelementehaltungen(
+    sql = """CREATE TABLE haltungstypen(
         pk INTEGER PRIMARY KEY, 
         bezeichnung TEXT, 
         bemerkung TEXT)"""
@@ -1111,13 +1111,14 @@ def createdbtables(
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "sonderelementehaltungen" konnte nicht erstellt werden.',
+            'Tabelle "haltungstypen" konnte nicht erstellt werden.',
         )
         consl.close()
         return False
 
     try:
         daten = [
+            ('Haltung', None),
             ('Drossel', 'HYSTEM-EXTRAN 8'),
             ('H-Regler', 'HYSTEM-EXTRAN 8'),
             ('Q-Regler', 'HYSTEM-EXTRAN 8'),
@@ -1126,13 +1127,13 @@ def createdbtables(
             ('Pumpe', None),
             ('Wehr', None),
         ]
-        sql = "INSERT INTO sonderelementehaltungen (bezeichnung, bemerkung) VALUES (?, ?)"
+        sql = "INSERT INTO haltungstypen (bezeichnung, bemerkung) VALUES (?, ?)"
         for dat in daten:
             cursl.execute(sql, dat)
     except BaseException as err:
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
-            'Tabellendaten "sonderelementehaltungen" konnten nicht hinzugefuegt werden.',
+            'Tabellendaten "haltungstypen" konnten nicht hinzugefuegt werden.',
         )
         consl.close()
         return False
@@ -1367,7 +1368,7 @@ def createdbtables(
             teilgebiet TEXT,
             simstatus TEXT DEFAULT 'vorhanden',
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg),
         "SELECT CreateSpatialIndex('pumpen','geom')",
     ]
@@ -1455,7 +1456,7 @@ def createdbtables(
             teilgebiet TEXT,
             simstatus TEXT DEFAULT 'vorhanden',
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg),
         "SELECT CreateSpatialIndex('wehre','geom')",
     ]
@@ -1543,7 +1544,7 @@ def createdbtables(
             stdmittel REAL,
             fremdwas REAL,
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg),
         "SELECT CreateSpatialIndex('einzugsgebiete','geom')",
     ]
@@ -1571,7 +1572,7 @@ def createdbtables(
             pk INTEGER PRIMARY KEY,
             tgnam TEXT,
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg),
         "SELECT CreateSpatialIndex('teilgebiete','geom')",
     ]
@@ -1611,7 +1612,7 @@ def createdbtables(
     teilgebiet TEXT,
     tabelle TEXT,
     kommentar TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
+    createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
 
     try:
         cursl.execute(sql)
@@ -1639,7 +1640,7 @@ def createdbtables(
             abflussparameter TEXT,
             aufteilen TEXT DEFAULT 'nein',
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         """SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)""".format(epsg),
         """SELECT CreateSpatialIndex('flaechen','geom')""",
     ]
@@ -1742,7 +1743,7 @@ def createdbtables(
             teilgebiet TEXT,
             abflussparameter TEXT,      -- als Vorgabe fuer automatisch erzeugte unbef Flaechen
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg),
         "SELECT CreateSpatialIndex('tezg','geom')",
     ]
@@ -1797,7 +1798,7 @@ def createdbtables(
               new.befgrad, 
               new.schwerpunktlaufzeit, new.regenschreiber, 
               new.teilgebiet, new.abflussparameter, 
-              new.kommentar, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
+              new.kommentar, coalesce(new.createdat, CURRENT_TIMESTAMP),
               CASE WHEN new.x + new.y IS NOT NULL THEN 
                 CastToMultiPolygon(MakePolygon(MakeCircle(new.x, new.y, SQRT(new.flaeche/3), {epsg}, 30)))
               WHEN new.haltnam IS NOT NULL THEN
@@ -1844,7 +1845,7 @@ def createdbtables(
             ew REAL,
             einzugsgebiet TEXT,
             kommentar TEXT,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)".format(epsg),
         "SELECT CreateSpatialIndex('einleit','geom')",
     ]
@@ -1878,7 +1879,7 @@ def createdbtables(
             regenschreiber TEXT, 
             teilgebiet TEXT, 
             kommentar TEXT, 
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))""",
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         """SELECT AddGeometryColumn('aussengebiete','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
         "SELECT CreateSpatialIndex('aussengebiete','geom')",
     ]
@@ -2031,7 +2032,7 @@ def createdbtables(
     bodenklasse TEXT, 
     flaechentyp TEXT, 
     kommentar TEXT, 
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
+    createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
 
     try:
         cursl.execute(sql)
@@ -2124,7 +2125,7 @@ def createdbtables(
     regenerationskonstante REAL,                -- (1/d)
     saettigungswassergehalt REAL,               -- (mm)
     kommentar TEXT, 
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
+    createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
 
     try:
         cursl.execute(sql)
@@ -2272,14 +2273,11 @@ def createdbtables(
         consl.close()
         return False
 
-    daten = ["'Auslass'", "'Schacht'", "'Speicher'"]
+    daten = ["Auslass", "Schacht", "Speicher"]
 
     for ds in daten:
         try:
-            sql = """INSERT INTO schachttypen
-                     ( 'schachttyp') Values ({})""".format(
-                ds
-            )
+            sql = f"""INSERT INTO schachttypen (schachttyp) Values ('{ds}')"""
             cursl.execute(sql)
 
         except BaseException as err:
@@ -2361,7 +2359,7 @@ def createdbtables(
             ZuordnUnabhEZG INTEGER,
             IstPolygonalflaeche SMALLINT, 
             ZuordnungGesperrt SMALLINT, 
-            LastModified TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')), 
+            LastModified TEXT DEFAULT CURRENT_TIMESTAMP, 
             Kommentar TEXT)""",
         """SELECT AddGeometryColumn('flaechen_he8','Geometry', -1,'MULTIPOLYGON',2)""",
         """SELECT CreateSpatialIndex('flaechen_he8', 'Geometry')""",
@@ -2390,7 +2388,7 @@ def createdbtables(
             sql TEXT,
             layername TEXT,                     -- Objektsuche: Layername
             attrname TEXT                       -- Objektsuche: Attribut zur Objektidentifikation,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now')))
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)
     """
 
     try:
@@ -2413,7 +2411,7 @@ def createdbtables(
             layername TEXT,                     -- Objektsuche: Layername
             attrname TEXT,                      -- Objektsuche: Attribut zur Objektidentifikation,
             objname TEXT,                       -- Objektsuche: Objektname
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now')))
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)
     """
 
     try:
@@ -2434,7 +2432,7 @@ def createdbtables(
     pk INTEGER PRIMARY KEY, 
     subject TEXT, 
     value TEXT,
-    createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime')))"""
+    createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
 
     try:
         cursl.execute(sql)
@@ -2468,7 +2466,7 @@ def createdbtables(
                 ON lf.flnam = fl.flnam
                 LEFT JOIN tezg AS tg
                 ON lf.tezgnam = tg.flnam
-                WHERE fl.aufteilen = "ja" and fl.aufteilen IS NOT NULL
+                WHERE fl.aufteilen = 'ja' and fl.aufteilen IS NOT NULL
                 GROUP BY fl.flnam, tg.flnam
                 UNION
                 SELECT 
@@ -2483,7 +2481,7 @@ def createdbtables(
                 FROM linkfl AS lf
                 LEFT JOIN flaechen AS fl
                 ON lf.flnam = fl.flnam
-                WHERE fl.aufteilen <> "ja" OR fl.aufteilen IS NULL
+                WHERE fl.aufteilen <> 'ja' OR fl.aufteilen IS NULL
                 GROUP BY fl.flnam)
             SELECT pk, anzahl, CASE WHEN anzahl > 1 THEN 'mehrfach vorhanden' WHEN flaech_nam IS NULL THEN 'Keine Fläche' WHEN linkfl_haltnam IS NULL THEN  'Keine Haltung' ELSE 'o.k.' END AS fehler
             FROM lfok"""
@@ -2511,9 +2509,9 @@ def createdbtables(
             ON lf.flnam = fl.flnam
             LEFT JOIN tezg AS tg
             ON tg.flnam = lf.tezgnam
-            WHERE ( (fl.aufteilen <> "ja" or fl.aufteilen IS NULL) AND
+            WHERE ( (fl.aufteilen <> 'ja' or fl.aufteilen IS NULL) AND
                      lf.pk IS NULL) OR
-                  (  fl.aufteilen = "ja" AND fl.aufteilen IS NOT NULL AND 
+                  (  fl.aufteilen = 'ja' AND fl.aufteilen IS NOT NULL AND 
                      lf.pk IS NULL)
             UNION
             VALUES

@@ -291,7 +291,7 @@ class ImportTask:
                     haltnam, schoben, schunten,
                     hoehe, breite,
                     sohleoben, sohleunten,
-                    sonderelement,
+                    haltungstyp,
                     simstatus,
                     kommentar, createdat, 
                     geom)
@@ -303,7 +303,7 @@ class ImportTask:
                     we.Geometrie2 AS breite,
                     we.Schwellenhoehe AS sohleoben, 
                     we.Schwellenhoehe AS sohleunten, 
-                    'Wehr' AS sonderelement, 
+                    'Wehr' AS haltungstyp, 
                     si.bezeichnung AS simstatus, 
                     we.Kommentar AS kommentar, 
                     we.Lastmodified AS createdat,
@@ -368,7 +368,7 @@ class ImportTask:
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
                     hoehe,
-                    sonderelement, 
+                    haltungstyp, 
                     simstatus,
                     kommentar, createdat, 
                     geom)
@@ -377,7 +377,7 @@ class ImportTask:
                     pu.Schachtoben AS schoben, 
                     pu.Schachtunten AS schunten,
                     0.3 AS hoehe,                   /* nur fuer Laengsschnitt */ 
-                    'Pumpe' AS sonderelement, 
+                    'Pumpe' AS haltungstyp, 
                     si.bezeichnung AS simstatus, 
                     pu.Kommentar AS kommentar, 
                     pu.Lastmodified AS createdat,
@@ -405,7 +405,7 @@ class ImportTask:
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
                     hoehe,
-                    sonderelement, 
+                    haltungstyp, 
                     simstatus,
                     kommentar, createdat, 
                     geom)
@@ -414,7 +414,7 @@ class ImportTask:
                     dr.Schachtoben AS schoben, 
                     dr.Schachtunten AS schunten, 
                     dr.Sohlabstand AS hoehe, 
-                    'Drossel' AS sonderelement, 
+                    'Drossel' AS haltungstyp, 
                     si.bezeichnung AS simstatus, 
                     dr.Kommentar AS kommentar, 
                     dr.Lastmodified AS createdat,
@@ -442,7 +442,7 @@ class ImportTask:
                     haltnam, schoben, schunten,
                     breite, hoehe,
                     ks,
-                    sonderelement,
+                    haltungstyp,
                     simstatus,
                     kommentar, createdat, 
                     geom)
@@ -453,7 +453,7 @@ class ImportTask:
                     sr.Geometrie2 AS breite, 
                     sr.MaximaleHubHoehe - sr.Anfangsstellung AS hoehe,
                     sr.Verluste AS ks, 
-                    'Schieber' AS sonderelement, 
+                    'Schieber' AS haltungstyp, 
                     si.bezeichnung AS simstatus, 
                     sr.Kommentar AS kommentar, 
                     sr.Lastmodified AS createdat,
@@ -484,7 +484,7 @@ class ImportTask:
                     hoehe, breite, laenge, 
                     sohleoben, sohleunten,
                     profilnam, entwart, ks,
-                    sonderelement, 
+                    haltungstyp, 
                     simstatus,  
                     kommentar, createdat, 
                     geom
@@ -503,7 +503,7 @@ class ImportTask:
                          ELSE pr.profilnam END AS profilnam, 
                     ea.bezeichnung AS entwart, 
                     qr.Rauigkeitsbeiwert AS ks, 
-                    'Q-Regler' AS sonderelement, 
+                    'Q-Regler' AS haltungstyp, 
                     si.bezeichnung AS simstatus,
                     qr.Kommentar AS kommentar, 
                     qr.Lastmodified AS createdat, 
@@ -535,7 +535,7 @@ class ImportTask:
                     hoehe, breite, laenge, 
                     sohleoben, sohleunten,
                     profilnam, entwart, ks,
-                    sonderelement,
+                    haltungstyp,
                     simstatus,
                     kommentar, createdat, 
                     geom
@@ -554,7 +554,7 @@ class ImportTask:
                          ELSE pr.profilnam END AS profilnam,
                     ea.bezeichnung AS entwart,
                     hr.Rauigkeitsbeiwert AS ks,
-                    'H-Regler' AS sonderelement,
+                    'H-Regler' AS haltungstyp,
                     si.bezeichnung AS simstatus,
                     hr.Kommentar AS kommentar,
                     hr.Lastmodified AS createdat,
@@ -586,7 +586,7 @@ class ImportTask:
                     hoehe, breite,
                     sohleoben, sohleunten,
                     profilnam,
-                    sonderelement,
+                    haltungstyp,
                     simstatus,  
                     kommentar, createdat, 
                     geom
@@ -602,7 +602,7 @@ class ImportTask:
                     CASE WHEN gs.Profiltyp = 68 
                          THEN gs.Sonderprofilbezeichnung 
                          ELSE pr.profilnam END AS profilnam,
-                    'GrundSeitenauslass' AS sonderelement, 
+                    'GrundSeitenauslass' AS haltungstyp, 
                     si.bezeichnung AS simstatus,
                     gs.Kommentar AS kommentar, 
                     gs.Lastmodified AS createdat, 

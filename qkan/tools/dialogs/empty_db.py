@@ -10,7 +10,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.utils import pluginDirectory
 
-from qkan import QKAN_FORMS, QKAN_TABLES, QKan
+from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 from qkan.tools.k_qgsadapt import qgsadapt

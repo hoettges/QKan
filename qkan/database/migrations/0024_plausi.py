@@ -21,7 +21,7 @@ def run(dbcon: DBConnection) -> bool:
             sql TEXT,
             layername TEXT,                     -- Objektsuche: Layername
             attrname TEXT                       -- Objektsuche: Attribut zur Objektidentifikation,
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now')))
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)
     """
     if not dbcon.sql(sql):
         logger.debug(f"Fehler bei Migration zu Version {VERSION}")
@@ -37,7 +37,7 @@ def run(dbcon: DBConnection) -> bool:
             layername TEXT,                     -- Objektsuche: Layername
             attrname TEXT,                      -- Objektsuche: Attribut zur Objektidentifikation,
             objname TEXT,                       -- Objektsuche: Objektname
-            createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now')))
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)
     """
     if not dbcon.sql(sql):
         logger.debug(f"Fehler bei Migration zu Version {VERSION}")

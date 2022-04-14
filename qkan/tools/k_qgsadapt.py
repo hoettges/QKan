@@ -35,7 +35,7 @@ from xml.etree import ElementTree as ET
 from qgis.core import Qgis, QgsCoordinateReferenceSystem
 from qgis.utils import pluginDirectory
 
-from qkan import QKAN_FORMS, QKAN_TABLES
+from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, list_qkan_layers
 
@@ -238,20 +238,22 @@ def qgsadapt(
                 ).text = ellipsoid_acronym
 
         # Replace path to forms
+        # logger.debug(f'Liste aller QKan-Formulardateien: \n{QKan.forms}')
         form_path = Path(pluginDirectory("qkan")) / "forms"
         for tag_maplayer in root.findall(".//projectlayers/maplayer"):
             tag_editform = tag_maplayer.find("./editform")
 
             if tag_editform is not None and tag_editform.text:
                 file_name = Path(tag_editform.text).name
-                logger.debug(f'create_project: file_name={file_name}')
+                # logger.debug(f'Formularname in Projektdatei: file_name={file_name}')
 
                 # Ignore non-QKAN forms
-                if file_name not in QKAN_FORMS:
+                if file_name not in QKan.forms:
+                    # logger.debug(f"Formular gehört nicht zu QKan: {file_name}")
                     continue
-
-                tag_editform.text = str(form_path / file_name)
-                logger.debug(f'create_project: tag_editform.text={tag_editform.text}')
+                else:
+                    tag_editform.text = str(form_path / file_name)
+                    # logger.debug(f'Geänderter Formularpfad: {tag_editform.text}')
 
         # Reset zoom
         if len(zoom) == 0 or any([x is None for x in zoom]):

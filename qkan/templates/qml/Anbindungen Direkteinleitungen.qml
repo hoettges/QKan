@@ -246,7 +246,7 @@
             <Option value="haltungen20161016203756230" name="Layer" type="QString"/>
             <Option value="Haltungen nach Typ" name="LayerName" type="QString"/>
             <Option value="spatialite" name="LayerProviderName" type="QString"/>
-            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement IS NULL or sonderelement = 'Haltung'" name="LayerSource" type="QString"/>
+            <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'" name="LayerSource" type="QString"/>
             <Option value="1" name="NofColumns" type="int"/>
             <Option value="false" name="OrderByValue" type="bool"/>
             <Option value="true" name="UseCompleter" type="bool"/>

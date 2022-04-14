@@ -48,6 +48,7 @@ class QKan:
     instance: "QKan"
     config: Config
     template_dir: str
+    forms: str
 
     def __init__(self, iface: qgis.gui.QgisInterface):
         QKan.instance = self
@@ -87,6 +88,12 @@ class QKan:
 
         # Set default template directory
         QKan.template_dir = os.path.join(pluginDirectory("qkan"), "templates")
+
+        # Set list of QKan-Forms
+        forms_dir = os.path.join(pluginDirectory("qkan"), "forms")
+        QKan.forms = [el for el in os.listdir(forms_dir) if os.path.splitext(el)[1] == '.ui']
+        # self.logger.debug(f"forms_dir: {forms_dir}")
+        # self.logger.debug(f"Formularliste: \n{QKan.forms}")
 
         # Plugins
         self.instances: List[_ExternalQKanPlugin] = []
@@ -302,47 +309,3 @@ def list_selected_items(list_widget: QListWidget) -> List[str]:
     """
 
     return [_.text() for _ in list_widget.selectedItems()]
-
-
-# Liste der Geotabellen aus QKan, um andere Tabellen von der Bearbeitung auszuschliessen
-QKAN_TABLES = [
-    "einleit",
-    "einzugsgebiete",
-    "flaechen",
-    "haltungen",
-    "linkfl",
-    "linksw",
-    "pumpen",
-    "schaechte",
-    "teilgebiete",
-    "tezg",
-    "wehre",
-]
-# Liste der QKan-Formulare, um individuell erstellte Formulare von der Bearbeitung auszuschliessen
-QKAN_FORMS = [
-    "qkan_abflussparameter.ui",
-    "qkan_anbindungageb.ui",
-    "qkan_anbindungeinleit.ui",
-    "qkan_anbindungflaechen.ui",
-    "qkan_auslaesse.ui",
-    "qkan_auslasstypen.ui",
-    "qkan_aussengebiete.ui",
-    "qkan_bodenklassen.ui",
-    "qkan_einleit.ui",
-    "qkan_einzugsgebiete.ui",
-    "qkan_entwaesserungsarten.ui",
-    "qkan_flaechen.ui",
-    "qkan_haltungen.ui",
-    "qkan_profildaten.ui",
-    "qkan_profile.ui",
-    "qkan_pumpen.ui",
-    "qkan_pumpentypen.ui",
-    "qkan_schaechte.ui",
-    "qkan_simulationsstatus.ui",
-    "qkan_speicher.ui",
-    "qkan_speicherkennlinien.ui",
-    "qkan_swref.ui",
-    "qkan_teilgebiete.ui",
-    "qkan_tezg.ui",
-    "qkan_wehre.ui",
-]

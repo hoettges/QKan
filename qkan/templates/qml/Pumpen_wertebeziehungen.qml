@@ -204,7 +204,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="sonderelement">
+    <field name="haltungstyp">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
@@ -333,7 +333,7 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="sohle"/>
     <field editable="1" name="sohleoben"/>
     <field editable="1" name="sohleunten"/>
-    <field editable="1" name="sonderelement"/>
+    <field editable="1" name="haltungstyp"/>
     <field editable="1" name="steuersch"/>
     <field editable="1" name="teilgebiet"/>
     <field editable="1" name="volanf"/>
@@ -368,7 +368,7 @@ def my_form_open(dialog, layer, feature):
     <field name="sohle" labelOnTop="0"/>
     <field name="sohleoben" labelOnTop="0"/>
     <field name="sohleunten" labelOnTop="0"/>
-    <field name="sonderelement" labelOnTop="0"/>
+    <field name="haltungstyp" labelOnTop="0"/>
     <field name="steuersch" labelOnTop="0"/>
     <field name="teilgebiet" labelOnTop="0"/>
     <field name="volanf" labelOnTop="0"/>
@@ -403,7 +403,7 @@ def my_form_open(dialog, layer, feature):
     <field reuseLastValue="0" name="sohle"/>
     <field reuseLastValue="0" name="sohleoben"/>
     <field reuseLastValue="0" name="sohleunten"/>
-    <field reuseLastValue="0" name="sonderelement"/>
+    <field reuseLastValue="0" name="haltungstyp"/>
     <field reuseLastValue="0" name="steuersch"/>
     <field reuseLastValue="0" name="teilgebiet"/>
     <field reuseLastValue="0" name="volanf"/>

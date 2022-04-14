@@ -60,7 +60,7 @@
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer patch_size="0,0" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement IS NULL or sonderelement = 'Haltung'" id="haltungen20161016203756230" expanded="0" legend_exp="" checked="Qt::Checked" name="Haltungen nach Typ">
+        <layer-tree-layer patch_size="0,0" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'" id="haltungen20161016203756230" expanded="0" legend_exp="" checked="Qt::Checked" name="Haltungen nach Typ">
           <customproperties>
             <Option/>
           </customproperties>
@@ -80,37 +80,37 @@
         <customproperties>
           <Option/>
         </customproperties>
-        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement = 'Drossel'" id="haltungen_207f9ebd_6ea3_471f_b2d6_f8075b271b18" expanded="1" legend_exp="" checked="Qt::Checked" name="Drosseln">
+        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Drossel'" id="haltungen_207f9ebd_6ea3_471f_b2d6_f8075b271b18" expanded="1" legend_exp="" checked="Qt::Checked" name="Drosseln">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement = 'Schieber'" id="Drosseln_fbf0962b_83f8_4716_9e1d_81e730cc38c8" expanded="1" legend_exp="" checked="Qt::Checked" name="Schieber">
+        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Schieber'" id="Drosseln_fbf0962b_83f8_4716_9e1d_81e730cc38c8" expanded="1" legend_exp="" checked="Qt::Checked" name="Schieber">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement = 'GrundSeitenauslass'" id="Schieber_a55e1f5b_c607_42b6_ac36_7a95ac6d12c2" expanded="1" legend_exp="" checked="Qt::Checked" name="Grund-/Seitenauslässe">
+        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'GrundSeitenauslass'" id="Schieber_a55e1f5b_c607_42b6_ac36_7a95ac6d12c2" expanded="1" legend_exp="" checked="Qt::Checked" name="Grund-/Seitenauslässe">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement = 'H-Regler'" id="Schieber_01cd099d_d829_448e_a928_ffc1040ce5dd" expanded="1" legend_exp="" checked="Qt::Checked" name="H-Regler">
+        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'H-Regler'" id="Schieber_01cd099d_d829_448e_a928_ffc1040ce5dd" expanded="1" legend_exp="" checked="Qt::Checked" name="H-Regler">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement = 'Q-Regler'" id="H_Regler_57813400_9ca1_47b5_a8c4_12a9903c1eb9" expanded="1" legend_exp="" checked="Qt::Checked" name="Q-Regler">
+        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Q-Regler'" id="H_Regler_57813400_9ca1_47b5_a8c4_12a9903c1eb9" expanded="1" legend_exp="" checked="Qt::Checked" name="Q-Regler">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement = 'Pumpe'" id="Q_Regler_583cb538_0769_4e29_854e_673651cf1dc8" expanded="1" legend_exp="" checked="Qt::Checked" name="Pumpen">
+        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Pumpe'" id="Q_Regler_583cb538_0769_4e29_854e_673651cf1dc8" expanded="1" legend_exp="" checked="Qt::Checked" name="Pumpen">
           <customproperties>
             <Option/>
           </customproperties>
         </layer-tree-layer>
-        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement = 'Wehr'" id="Pumpen_ff594268_95b1_4bc1_a517_1fdcbebaf19c" expanded="0" legend_exp="" checked="Qt::Checked" name="Wehre">
+        <layer-tree-layer patch_size="-1,-1" legend_split_behavior="0" providerKey="spatialite" source="dbname='C:/FHAC/hoettges/Kanalprogramme/k_qkan/k_he8qk/beispiele/itwh_845/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp = 'Wehr'" id="Pumpen_ff594268_95b1_4bc1_a517_1fdcbebaf19c" expanded="0" legend_exp="" checked="Qt::Checked" name="Wehre">
           <customproperties>
             <Option/>
           </customproperties>
@@ -2108,7 +2108,7 @@ def my_form_open(dialog, layer, feature):
                 <Option value="haltungen20161016203756230" type="QString" name="Layer"/>
                 <Option value="Haltungen nach Typ" type="QString" name="LayerName"/>
                 <Option value="spatialite" type="QString" name="LayerProviderName"/>
-                <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement IS NULL or sonderelement = 'Haltung'" type="QString" name="LayerSource"/>
+                <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'" type="QString" name="LayerSource"/>
                 <Option value="1" type="int" name="NofColumns"/>
                 <Option value="false" type="bool" name="OrderByValue"/>
                 <Option value="true" type="bool" name="UseCompleter"/>
@@ -2953,7 +2953,7 @@ def my_form_open(dialog, layer, feature):
                 <Option value="haltungen20161016203756230" type="QString" name="Layer"/>
                 <Option value="Haltungen nach Typ" type="QString" name="LayerName"/>
                 <Option value="spatialite" type="QString" name="LayerProviderName"/>
-                <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement IS NULL or sonderelement = 'Haltung'" type="QString" name="LayerSource"/>
+                <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'" type="QString" name="LayerSource"/>
                 <Option value="1" type="int" name="NofColumns"/>
                 <Option value="false" type="bool" name="OrderByValue"/>
                 <Option value="true" type="bool" name="UseCompleter"/>
@@ -3343,7 +3343,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>52.32669152160919879</ymax>
       </wgs84extent>
       <id>Drosseln_fbf0962b_83f8_4716_9e1d_81e730cc38c8</id>
-      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=sonderelement = 'Schieber'</datasource>
+      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=haltungstyp = 'Schieber'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -4033,7 +4033,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="sonderelement">
+        <field configurationFlags="None" name="haltungstyp">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -4131,7 +4131,7 @@ def my_form_open(dialog, layer, feature):
         <alias index="14" field="entwart" name="Entwässerungsart"/>
         <alias index="15" field="material" name="Material"/>
         <alias index="16" field="ks" name="Verlustbeiwert"/>
-        <alias index="17" field="sonderelement" name="Sonderelementtyp"/>
+        <alias index="17" field="haltungstyp" name="Haltungstyp"/>
         <alias index="18" field="simstatus" name="Planungsstatus"/>
         <alias index="19" field="kommentar" name="Kommentar"/>
         <alias index="20" field="createdat" name="bearbeitet"/>
@@ -4158,7 +4158,7 @@ def my_form_open(dialog, layer, feature):
         <default expression="" field="entwart" applyOnUpdate="0"/>
         <default expression="" field="material" applyOnUpdate="0"/>
         <default expression="" field="ks" applyOnUpdate="0"/>
-        <default expression="'Schieber'" field="sonderelement" applyOnUpdate="1"/>
+        <default expression="'Schieber'" field="haltungstyp" applyOnUpdate="1"/>
         <default expression="'vorhanden'" field="simstatus" applyOnUpdate="0"/>
         <default expression="''" field="kommentar" applyOnUpdate="0"/>
         <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" field="createdat" applyOnUpdate="1"/>
@@ -4185,7 +4185,7 @@ def my_form_open(dialog, layer, feature):
         <constraint unique_strength="0" exp_strength="0" field="entwart" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="material" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="ks" notnull_strength="0" constraints="0"/>
-        <constraint unique_strength="0" exp_strength="0" field="sonderelement" notnull_strength="0" constraints="0"/>
+        <constraint unique_strength="0" exp_strength="0" field="haltungstyp" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="simstatus" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="kommentar" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="createdat" notnull_strength="0" constraints="0"/>
@@ -4212,7 +4212,7 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" field="entwart" exp=""/>
         <constraint desc="" field="material" exp=""/>
         <constraint desc="" field="ks" exp=""/>
-        <constraint desc="" field="sonderelement" exp=""/>
+        <constraint desc="" field="haltungstyp" exp=""/>
         <constraint desc="" field="simstatus" exp=""/>
         <constraint desc="" field="kommentar" exp=""/>
         <constraint desc="" field="createdat" exp=""/>
@@ -4244,7 +4244,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="field" name="entwart"/>
           <column width="-1" hidden="1" type="field" name="material"/>
           <column width="-1" hidden="1" type="field" name="ks"/>
-          <column width="-1" hidden="0" type="field" name="sonderelement"/>
+          <column width="-1" hidden="0" type="field" name="haltungstyp"/>
           <column width="-1" hidden="0" type="field" name="simstatus"/>
           <column width="-1" hidden="0" type="field" name="kommentar"/>
           <column width="-1" hidden="0" type="field" name="createdat"/>
@@ -4301,7 +4301,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="simstatus"/>
         <field editable="1" name="sohleoben"/>
         <field editable="1" name="sohleunten"/>
-        <field editable="1" name="sonderelement"/>
+        <field editable="1" name="haltungstyp"/>
         <field editable="1" name="teilgebiet"/>
         <field editable="1" name="xschob"/>
         <field editable="1" name="xschun"/>
@@ -4328,7 +4328,7 @@ def my_form_open(dialog, layer, feature):
         <field labelOnTop="0" name="simstatus"/>
         <field labelOnTop="0" name="sohleoben"/>
         <field labelOnTop="0" name="sohleunten"/>
-        <field labelOnTop="0" name="sonderelement"/>
+        <field labelOnTop="0" name="haltungstyp"/>
         <field labelOnTop="0" name="teilgebiet"/>
         <field labelOnTop="0" name="xschob"/>
         <field labelOnTop="0" name="xschun"/>
@@ -4355,7 +4355,7 @@ def my_form_open(dialog, layer, feature):
         <field reuseLastValue="0" name="simstatus"/>
         <field reuseLastValue="0" name="sohleoben"/>
         <field reuseLastValue="0" name="sohleunten"/>
-        <field reuseLastValue="0" name="sonderelement"/>
+        <field reuseLastValue="0" name="haltungstyp"/>
         <field reuseLastValue="0" name="teilgebiet"/>
         <field reuseLastValue="0" name="xschob"/>
         <field reuseLastValue="0" name="xschun"/>
@@ -5709,7 +5709,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>52.32668269451002629</ymax>
       </wgs84extent>
       <id>H_Regler_57813400_9ca1_47b5_a8c4_12a9903c1eb9</id>
-      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=sonderelement = 'Q-Regler'</datasource>
+      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=haltungstyp = 'Q-Regler'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -6399,7 +6399,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="sonderelement">
+        <field configurationFlags="None" name="haltungstyp">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -6497,7 +6497,7 @@ def my_form_open(dialog, layer, feature):
         <alias index="14" field="entwart" name="Entwässerungsart"/>
         <alias index="15" field="material" name="Material"/>
         <alias index="16" field="ks" name="Verlustbeiwert"/>
-        <alias index="17" field="sonderelement" name="Sonderelementtyp"/>
+        <alias index="17" field="haltungstyp" name="Haltungstyp"/>
         <alias index="18" field="simstatus" name="Planungsstatus"/>
         <alias index="19" field="kommentar" name="Kommentar"/>
         <alias index="20" field="createdat" name="bearbeitet"/>
@@ -6524,7 +6524,7 @@ def my_form_open(dialog, layer, feature):
         <default expression="" field="entwart" applyOnUpdate="0"/>
         <default expression="" field="material" applyOnUpdate="0"/>
         <default expression="" field="ks" applyOnUpdate="0"/>
-        <default expression="'Q-Regler'" field="sonderelement" applyOnUpdate="1"/>
+        <default expression="'Q-Regler'" field="haltungstyp" applyOnUpdate="1"/>
         <default expression="'vorhanden'" field="simstatus" applyOnUpdate="0"/>
         <default expression="''" field="kommentar" applyOnUpdate="0"/>
         <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" field="createdat" applyOnUpdate="1"/>
@@ -6551,7 +6551,7 @@ def my_form_open(dialog, layer, feature):
         <constraint unique_strength="0" exp_strength="0" field="entwart" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="material" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="ks" notnull_strength="0" constraints="0"/>
-        <constraint unique_strength="0" exp_strength="0" field="sonderelement" notnull_strength="0" constraints="0"/>
+        <constraint unique_strength="0" exp_strength="0" field="haltungstyp" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="simstatus" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="kommentar" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="createdat" notnull_strength="0" constraints="0"/>
@@ -6578,7 +6578,7 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" field="entwart" exp=""/>
         <constraint desc="" field="material" exp=""/>
         <constraint desc="" field="ks" exp=""/>
-        <constraint desc="" field="sonderelement" exp=""/>
+        <constraint desc="" field="haltungstyp" exp=""/>
         <constraint desc="" field="simstatus" exp=""/>
         <constraint desc="" field="kommentar" exp=""/>
         <constraint desc="" field="createdat" exp=""/>
@@ -6610,7 +6610,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="entwart"/>
           <column width="-1" hidden="0" type="field" name="material"/>
           <column width="-1" hidden="0" type="field" name="ks"/>
-          <column width="-1" hidden="0" type="field" name="sonderelement"/>
+          <column width="-1" hidden="0" type="field" name="haltungstyp"/>
           <column width="-1" hidden="0" type="field" name="simstatus"/>
           <column width="-1" hidden="0" type="field" name="kommentar"/>
           <column width="-1" hidden="0" type="field" name="createdat"/>
@@ -6667,7 +6667,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="simstatus"/>
         <field editable="1" name="sohleoben"/>
         <field editable="1" name="sohleunten"/>
-        <field editable="1" name="sonderelement"/>
+        <field editable="1" name="haltungstyp"/>
         <field editable="1" name="teilgebiet"/>
         <field editable="1" name="xschob"/>
         <field editable="1" name="xschun"/>
@@ -6694,7 +6694,7 @@ def my_form_open(dialog, layer, feature):
         <field labelOnTop="0" name="simstatus"/>
         <field labelOnTop="0" name="sohleoben"/>
         <field labelOnTop="0" name="sohleunten"/>
-        <field labelOnTop="0" name="sonderelement"/>
+        <field labelOnTop="0" name="haltungstyp"/>
         <field labelOnTop="0" name="teilgebiet"/>
         <field labelOnTop="0" name="xschob"/>
         <field labelOnTop="0" name="xschun"/>
@@ -6721,7 +6721,7 @@ def my_form_open(dialog, layer, feature):
         <field reuseLastValue="0" name="simstatus"/>
         <field reuseLastValue="0" name="sohleoben"/>
         <field reuseLastValue="0" name="sohleunten"/>
-        <field reuseLastValue="0" name="sonderelement"/>
+        <field reuseLastValue="0" name="haltungstyp"/>
         <field reuseLastValue="0" name="teilgebiet"/>
         <field reuseLastValue="0" name="xschob"/>
         <field reuseLastValue="0" name="xschun"/>
@@ -7026,7 +7026,7 @@ def my_form_open(dialog, layer, feature):
                 <Option value="haltungen20161016203756230" type="QString" name="Layer"/>
                 <Option value="Haltungen nach Typ" type="QString" name="LayerName"/>
                 <Option value="spatialite" type="QString" name="LayerProviderName"/>
-                <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement IS NULL or sonderelement = 'Haltung'" type="QString" name="LayerSource"/>
+                <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'" type="QString" name="LayerSource"/>
                 <Option value="1" type="int" name="NofColumns"/>
                 <Option value="false" type="bool" name="OrderByValue"/>
                 <Option value="true" type="bool" name="UseCompleter"/>
@@ -7640,7 +7640,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>52.3281388972745205</ymax>
       </wgs84extent>
       <id>Pumpen_ff594268_95b1_4bc1_a517_1fdcbebaf19c</id>
-      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=sonderelement = 'Wehr'</datasource>
+      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=haltungstyp = 'Wehr'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -8459,7 +8459,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="sonderelement">
+        <field configurationFlags="None" name="haltungstyp">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -8560,7 +8560,7 @@ def my_form_open(dialog, layer, feature):
         <alias index="14" field="entwart" name="Entwässerungssystem"/>
         <alias index="15" field="material" name=""/>
         <alias index="16" field="ks" name="Überfallbeiwert"/>
-        <alias index="17" field="sonderelement" name=""/>
+        <alias index="17" field="haltungstyp" name=""/>
         <alias index="18" field="simstatus" name="Planungsstatus"/>
         <alias index="19" field="kommentar" name="Kommentar"/>
         <alias index="20" field="createdat" name="erstellt"/>
@@ -8587,7 +8587,7 @@ def my_form_open(dialog, layer, feature):
         <default expression="" field="entwart" applyOnUpdate="0"/>
         <default expression="" field="material" applyOnUpdate="0"/>
         <default expression="" field="ks" applyOnUpdate="0"/>
-        <default expression="'Wehr'" field="sonderelement" applyOnUpdate="0"/>
+        <default expression="'Wehr'" field="haltungstyp" applyOnUpdate="0"/>
         <default expression="'vorhanden'" field="simstatus" applyOnUpdate="0"/>
         <default expression="''" field="kommentar" applyOnUpdate="0"/>
         <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" field="createdat" applyOnUpdate="1"/>
@@ -8614,7 +8614,7 @@ def my_form_open(dialog, layer, feature):
         <constraint unique_strength="0" exp_strength="0" field="entwart" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="material" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="ks" notnull_strength="0" constraints="0"/>
-        <constraint unique_strength="0" exp_strength="0" field="sonderelement" notnull_strength="0" constraints="0"/>
+        <constraint unique_strength="0" exp_strength="0" field="haltungstyp" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="simstatus" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="kommentar" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="createdat" notnull_strength="0" constraints="0"/>
@@ -8641,7 +8641,7 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" field="entwart" exp=""/>
         <constraint desc="" field="material" exp=""/>
         <constraint desc="" field="ks" exp=""/>
-        <constraint desc="" field="sonderelement" exp=""/>
+        <constraint desc="" field="haltungstyp" exp=""/>
         <constraint desc="" field="simstatus" exp=""/>
         <constraint desc="" field="kommentar" exp=""/>
         <constraint desc="" field="createdat" exp=""/>
@@ -8673,7 +8673,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="teilgebiet"/>
           <column width="-1" hidden="0" type="field" name="entwart"/>
           <column width="-1" hidden="1" type="field" name="material"/>
-          <column width="-1" hidden="0" type="field" name="sonderelement"/>
+          <column width="-1" hidden="0" type="field" name="haltungstyp"/>
           <column width="-1" hidden="0" type="field" name="simstatus"/>
           <column width="-1" hidden="0" type="field" name="kommentar"/>
           <column width="-1" hidden="0" type="field" name="createdat"/>
@@ -8734,7 +8734,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="simstatus"/>
         <field editable="1" name="sohleoben"/>
         <field editable="1" name="sohleunten"/>
-        <field editable="1" name="sonderelement"/>
+        <field editable="1" name="haltungstyp"/>
         <field editable="1" name="teilgebiet"/>
         <field editable="1" name="uebeiwert"/>
         <field editable="1" name="wehrtyp"/>
@@ -8768,7 +8768,7 @@ def my_form_open(dialog, layer, feature):
         <field labelOnTop="0" name="simstatus"/>
         <field labelOnTop="0" name="sohleoben"/>
         <field labelOnTop="0" name="sohleunten"/>
-        <field labelOnTop="0" name="sonderelement"/>
+        <field labelOnTop="0" name="haltungstyp"/>
         <field labelOnTop="0" name="teilgebiet"/>
         <field labelOnTop="0" name="uebeiwert"/>
         <field labelOnTop="0" name="wehrtyp"/>
@@ -8802,7 +8802,7 @@ def my_form_open(dialog, layer, feature):
         <field reuseLastValue="0" name="simstatus"/>
         <field reuseLastValue="0" name="sohleoben"/>
         <field reuseLastValue="0" name="sohleunten"/>
-        <field reuseLastValue="0" name="sonderelement"/>
+        <field reuseLastValue="0" name="haltungstyp"/>
         <field reuseLastValue="0" name="teilgebiet"/>
         <field reuseLastValue="0" name="uebeiwert"/>
         <field reuseLastValue="0" name="wehrtyp"/>
@@ -8831,7 +8831,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>52.32865950937114974</ymax>
       </wgs84extent>
       <id>Q_Regler_583cb538_0769_4e29_854e_673651cf1dc8</id>
-      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=sonderelement = 'Pumpe'</datasource>
+      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=haltungstyp = 'Pumpe'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -9541,7 +9541,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="sonderelement">
+        <field configurationFlags="None" name="haltungstyp">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -9642,7 +9642,7 @@ def my_form_open(dialog, layer, feature):
         <alias index="14" field="entwart" name="Entwässerungssystem"/>
         <alias index="15" field="material" name=""/>
         <alias index="16" field="ks" name=""/>
-        <alias index="17" field="sonderelement" name="Sonderelementttyp"/>
+        <alias index="17" field="haltungstyp" name="Haltungstyp"/>
         <alias index="18" field="simstatus" name="Planungsstatus"/>
         <alias index="19" field="kommentar" name="Kommentar"/>
         <alias index="20" field="createdat" name="erstellt"/>
@@ -9669,7 +9669,7 @@ def my_form_open(dialog, layer, feature):
         <default expression="" field="entwart" applyOnUpdate="0"/>
         <default expression="" field="material" applyOnUpdate="0"/>
         <default expression="" field="ks" applyOnUpdate="0"/>
-        <default expression="'Pumpe'" field="sonderelement" applyOnUpdate="1"/>
+        <default expression="'Pumpe'" field="haltungstyp" applyOnUpdate="1"/>
         <default expression="" field="simstatus" applyOnUpdate="0"/>
         <default expression="''" field="kommentar" applyOnUpdate="0"/>
         <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" field="createdat" applyOnUpdate="1"/>
@@ -9696,7 +9696,7 @@ def my_form_open(dialog, layer, feature):
         <constraint unique_strength="0" exp_strength="0" field="entwart" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="material" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="ks" notnull_strength="0" constraints="0"/>
-        <constraint unique_strength="0" exp_strength="0" field="sonderelement" notnull_strength="0" constraints="0"/>
+        <constraint unique_strength="0" exp_strength="0" field="haltungstyp" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="simstatus" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="kommentar" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="createdat" notnull_strength="0" constraints="0"/>
@@ -9723,7 +9723,7 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" field="entwart" exp=""/>
         <constraint desc="" field="material" exp=""/>
         <constraint desc="" field="ks" exp=""/>
-        <constraint desc="" field="sonderelement" exp=""/>
+        <constraint desc="" field="haltungstyp" exp=""/>
         <constraint desc="" field="simstatus" exp=""/>
         <constraint desc="" field="kommentar" exp=""/>
         <constraint desc="" field="createdat" exp=""/>
@@ -9755,7 +9755,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="1" type="field" name="material"/>
           <column width="-1" hidden="1" type="field" name="ks"/>
           <column width="-1" hidden="0" type="field" name="teilgebiet"/>
-          <column width="-1" hidden="0" type="field" name="sonderelement"/>
+          <column width="-1" hidden="0" type="field" name="haltungstyp"/>
           <column width="-1" hidden="1" type="field" name="xschob"/>
           <column width="-1" hidden="1" type="field" name="yschob"/>
           <column width="-1" hidden="1" type="field" name="xschun"/>
@@ -9817,7 +9817,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="sohle"/>
         <field editable="1" name="sohleoben"/>
         <field editable="1" name="sohleunten"/>
-        <field editable="1" name="sonderelement"/>
+        <field editable="1" name="haltungstyp"/>
         <field editable="1" name="steuersch"/>
         <field editable="1" name="teilgebiet"/>
         <field editable="1" name="volanf"/>
@@ -9852,7 +9852,7 @@ def my_form_open(dialog, layer, feature):
         <field labelOnTop="0" name="sohle"/>
         <field labelOnTop="0" name="sohleoben"/>
         <field labelOnTop="0" name="sohleunten"/>
-        <field labelOnTop="0" name="sonderelement"/>
+        <field labelOnTop="0" name="haltungstyp"/>
         <field labelOnTop="0" name="steuersch"/>
         <field labelOnTop="0" name="teilgebiet"/>
         <field labelOnTop="0" name="volanf"/>
@@ -9887,7 +9887,7 @@ def my_form_open(dialog, layer, feature):
         <field reuseLastValue="0" name="sohle"/>
         <field reuseLastValue="0" name="sohleoben"/>
         <field reuseLastValue="0" name="sohleunten"/>
-        <field reuseLastValue="0" name="sonderelement"/>
+        <field reuseLastValue="0" name="haltungstyp"/>
         <field reuseLastValue="0" name="steuersch"/>
         <field reuseLastValue="0" name="teilgebiet"/>
         <field reuseLastValue="0" name="volanf"/>
@@ -9916,7 +9916,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>52.3266734864676053</ymax>
       </wgs84extent>
       <id>Schieber_01cd099d_d829_448e_a928_ffc1040ce5dd</id>
-      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=sonderelement = 'H-Regler'</datasource>
+      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=haltungstyp = 'H-Regler'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -10606,7 +10606,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="sonderelement">
+        <field configurationFlags="None" name="haltungstyp">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -10704,7 +10704,7 @@ def my_form_open(dialog, layer, feature):
         <alias index="14" field="entwart" name="Entwässerungsart"/>
         <alias index="15" field="material" name="Material"/>
         <alias index="16" field="ks" name="Verlustbeiwert"/>
-        <alias index="17" field="sonderelement" name="Sonderelementtyp"/>
+        <alias index="17" field="haltungstyp" name="Haltungstyp"/>
         <alias index="18" field="simstatus" name="Planungsstatus"/>
         <alias index="19" field="kommentar" name="Kommentar"/>
         <alias index="20" field="createdat" name="bearbeitet"/>
@@ -10731,7 +10731,7 @@ def my_form_open(dialog, layer, feature):
         <default expression="" field="entwart" applyOnUpdate="0"/>
         <default expression="" field="material" applyOnUpdate="0"/>
         <default expression="" field="ks" applyOnUpdate="0"/>
-        <default expression="'H-Regler'" field="sonderelement" applyOnUpdate="1"/>
+        <default expression="'H-Regler'" field="haltungstyp" applyOnUpdate="1"/>
         <default expression="'vorhanden'" field="simstatus" applyOnUpdate="0"/>
         <default expression="''" field="kommentar" applyOnUpdate="0"/>
         <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" field="createdat" applyOnUpdate="1"/>
@@ -10758,7 +10758,7 @@ def my_form_open(dialog, layer, feature):
         <constraint unique_strength="0" exp_strength="0" field="entwart" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="material" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="ks" notnull_strength="0" constraints="0"/>
-        <constraint unique_strength="0" exp_strength="0" field="sonderelement" notnull_strength="0" constraints="0"/>
+        <constraint unique_strength="0" exp_strength="0" field="haltungstyp" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="simstatus" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="kommentar" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="createdat" notnull_strength="0" constraints="0"/>
@@ -10785,7 +10785,7 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" field="entwart" exp=""/>
         <constraint desc="" field="material" exp=""/>
         <constraint desc="" field="ks" exp=""/>
-        <constraint desc="" field="sonderelement" exp=""/>
+        <constraint desc="" field="haltungstyp" exp=""/>
         <constraint desc="" field="simstatus" exp=""/>
         <constraint desc="" field="kommentar" exp=""/>
         <constraint desc="" field="createdat" exp=""/>
@@ -10817,7 +10817,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="entwart"/>
           <column width="-1" hidden="0" type="field" name="material"/>
           <column width="-1" hidden="0" type="field" name="ks"/>
-          <column width="-1" hidden="0" type="field" name="sonderelement"/>
+          <column width="-1" hidden="0" type="field" name="haltungstyp"/>
           <column width="-1" hidden="0" type="field" name="simstatus"/>
           <column width="-1" hidden="0" type="field" name="kommentar"/>
           <column width="-1" hidden="0" type="field" name="createdat"/>
@@ -10874,7 +10874,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="simstatus"/>
         <field editable="1" name="sohleoben"/>
         <field editable="1" name="sohleunten"/>
-        <field editable="1" name="sonderelement"/>
+        <field editable="1" name="haltungstyp"/>
         <field editable="1" name="teilgebiet"/>
         <field editable="1" name="xschob"/>
         <field editable="1" name="xschun"/>
@@ -10901,7 +10901,7 @@ def my_form_open(dialog, layer, feature):
         <field labelOnTop="0" name="simstatus"/>
         <field labelOnTop="0" name="sohleoben"/>
         <field labelOnTop="0" name="sohleunten"/>
-        <field labelOnTop="0" name="sonderelement"/>
+        <field labelOnTop="0" name="haltungstyp"/>
         <field labelOnTop="0" name="teilgebiet"/>
         <field labelOnTop="0" name="xschob"/>
         <field labelOnTop="0" name="xschun"/>
@@ -10928,7 +10928,7 @@ def my_form_open(dialog, layer, feature):
         <field reuseLastValue="0" name="simstatus"/>
         <field reuseLastValue="0" name="sohleoben"/>
         <field reuseLastValue="0" name="sohleunten"/>
-        <field reuseLastValue="0" name="sonderelement"/>
+        <field reuseLastValue="0" name="haltungstyp"/>
         <field reuseLastValue="0" name="teilgebiet"/>
         <field reuseLastValue="0" name="xschob"/>
         <field reuseLastValue="0" name="xschun"/>
@@ -10954,7 +10954,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>52.32742224387637009</ymax>
       </wgs84extent>
       <id>Schieber_a55e1f5b_c607_42b6_ac36_7a95ac6d12c2</id>
-      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=sonderelement = 'GrundSeitenauslass'</datasource>
+      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=haltungstyp = 'GrundSeitenauslass'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -11644,7 +11644,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="sonderelement">
+        <field configurationFlags="None" name="haltungstyp">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -11742,7 +11742,7 @@ def my_form_open(dialog, layer, feature):
         <alias index="14" field="entwart" name="Entwässerungsart"/>
         <alias index="15" field="material" name="Material"/>
         <alias index="16" field="ks" name="Verlustbeiwert"/>
-        <alias index="17" field="sonderelement" name="Sonderelementtyp"/>
+        <alias index="17" field="haltungstyp" name="Haltungstyp"/>
         <alias index="18" field="simstatus" name="Planungsstatus"/>
         <alias index="19" field="kommentar" name="Kommentar"/>
         <alias index="20" field="createdat" name="bearbeitet"/>
@@ -11769,7 +11769,7 @@ def my_form_open(dialog, layer, feature):
         <default expression="" field="entwart" applyOnUpdate="0"/>
         <default expression="" field="material" applyOnUpdate="0"/>
         <default expression="" field="ks" applyOnUpdate="0"/>
-        <default expression="'GrundSeitenauslass'" field="sonderelement" applyOnUpdate="1"/>
+        <default expression="'GrundSeitenauslass'" field="haltungstyp" applyOnUpdate="1"/>
         <default expression="'vorhanden'" field="simstatus" applyOnUpdate="0"/>
         <default expression="''" field="kommentar" applyOnUpdate="0"/>
         <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" field="createdat" applyOnUpdate="1"/>
@@ -11796,7 +11796,7 @@ def my_form_open(dialog, layer, feature):
         <constraint unique_strength="0" exp_strength="0" field="entwart" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="material" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="ks" notnull_strength="0" constraints="0"/>
-        <constraint unique_strength="0" exp_strength="0" field="sonderelement" notnull_strength="0" constraints="0"/>
+        <constraint unique_strength="0" exp_strength="0" field="haltungstyp" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="simstatus" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="kommentar" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="createdat" notnull_strength="0" constraints="0"/>
@@ -11823,7 +11823,7 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" field="entwart" exp=""/>
         <constraint desc="" field="material" exp=""/>
         <constraint desc="" field="ks" exp=""/>
-        <constraint desc="" field="sonderelement" exp=""/>
+        <constraint desc="" field="haltungstyp" exp=""/>
         <constraint desc="" field="simstatus" exp=""/>
         <constraint desc="" field="kommentar" exp=""/>
         <constraint desc="" field="createdat" exp=""/>
@@ -11855,7 +11855,7 @@ def my_form_open(dialog, layer, feature):
           <column width="129" hidden="0" type="field" name="entwart"/>
           <column width="-1" hidden="1" type="field" name="material"/>
           <column width="-1" hidden="1" type="field" name="ks"/>
-          <column width="-1" hidden="0" type="field" name="sonderelement"/>
+          <column width="-1" hidden="0" type="field" name="haltungstyp"/>
           <column width="-1" hidden="0" type="field" name="simstatus"/>
           <column width="-1" hidden="0" type="field" name="kommentar"/>
           <column width="-1" hidden="0" type="field" name="createdat"/>
@@ -11912,7 +11912,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="simstatus"/>
         <field editable="1" name="sohleoben"/>
         <field editable="1" name="sohleunten"/>
-        <field editable="1" name="sonderelement"/>
+        <field editable="1" name="haltungstyp"/>
         <field editable="1" name="teilgebiet"/>
         <field editable="1" name="xschob"/>
         <field editable="1" name="xschun"/>
@@ -11939,7 +11939,7 @@ def my_form_open(dialog, layer, feature):
         <field labelOnTop="0" name="simstatus"/>
         <field labelOnTop="0" name="sohleoben"/>
         <field labelOnTop="0" name="sohleunten"/>
-        <field labelOnTop="0" name="sonderelement"/>
+        <field labelOnTop="0" name="haltungstyp"/>
         <field labelOnTop="0" name="teilgebiet"/>
         <field labelOnTop="0" name="xschob"/>
         <field labelOnTop="0" name="xschun"/>
@@ -11966,7 +11966,7 @@ def my_form_open(dialog, layer, feature):
         <field reuseLastValue="0" name="simstatus"/>
         <field reuseLastValue="0" name="sohleoben"/>
         <field reuseLastValue="0" name="sohleunten"/>
-        <field reuseLastValue="0" name="sonderelement"/>
+        <field reuseLastValue="0" name="haltungstyp"/>
         <field reuseLastValue="0" name="teilgebiet"/>
         <field reuseLastValue="0" name="xschob"/>
         <field reuseLastValue="0" name="xschun"/>
@@ -17377,7 +17377,7 @@ def my_form_open(dialog, layer, feature):
                 <Option value="haltungen20161016203756230" type="QString" name="Layer"/>
                 <Option value="Haltungen nach Typ" type="QString" name="LayerName"/>
                 <Option value="spatialite" type="QString" name="LayerProviderName"/>
-                <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=sonderelement IS NULL or sonderelement = 'Haltung'" type="QString" name="LayerSource"/>
+                <Option value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'" type="QString" name="LayerSource"/>
                 <Option value="1" type="int" name="NofColumns"/>
                 <Option value="false" type="bool" name="OrderByValue"/>
                 <Option value="true" type="bool" name="UseCompleter"/>
@@ -18093,7 +18093,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>52.33006773715022319</ymax>
       </wgs84extent>
       <id>haltungen20161016203756230</id>
-      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=sonderelement IS NULL or sonderelement = 'Haltung'</datasource>
+      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -19829,7 +19829,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="sonderelement">
+        <field configurationFlags="None" name="haltungstyp">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -19930,7 +19930,7 @@ def my_form_open(dialog, layer, feature):
         <alias index="14" field="entwart" name="Entwässerungssystem"/>
         <alias index="15" field="material" name="Material"/>
         <alias index="16" field="ks" name="Rauheitsbeiwert"/>
-        <alias index="17" field="sonderelement" name="Sonderelementtyp"/>
+        <alias index="17" field="haltungstyp" name="Haltungstyp"/>
         <alias index="18" field="simstatus" name="Planungsstatus"/>
         <alias index="19" field="kommentar" name="Kommentar"/>
         <alias index="20" field="createdat" name="bearbeitet"/>
@@ -19957,7 +19957,7 @@ def my_form_open(dialog, layer, feature):
         <default expression="" field="entwart" applyOnUpdate="0"/>
         <default expression="" field="material" applyOnUpdate="0"/>
         <default expression="" field="ks" applyOnUpdate="0"/>
-        <default expression="" field="sonderelement" applyOnUpdate="0"/>
+        <default expression="" field="haltungstyp" applyOnUpdate="0"/>
         <default expression="'vorhanden'" field="simstatus" applyOnUpdate="0"/>
         <default expression="" field="kommentar" applyOnUpdate="0"/>
         <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" field="createdat" applyOnUpdate="0"/>
@@ -19984,7 +19984,7 @@ def my_form_open(dialog, layer, feature):
         <constraint unique_strength="0" exp_strength="0" field="entwart" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="material" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="ks" notnull_strength="0" constraints="0"/>
-        <constraint unique_strength="0" exp_strength="0" field="sonderelement" notnull_strength="0" constraints="0"/>
+        <constraint unique_strength="0" exp_strength="0" field="haltungstyp" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="simstatus" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="kommentar" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="createdat" notnull_strength="0" constraints="0"/>
@@ -20011,7 +20011,7 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" field="entwart" exp=""/>
         <constraint desc="" field="material" exp=""/>
         <constraint desc="" field="ks" exp=""/>
-        <constraint desc="" field="sonderelement" exp=""/>
+        <constraint desc="" field="haltungstyp" exp=""/>
         <constraint desc="" field="simstatus" exp=""/>
         <constraint desc="" field="kommentar" exp=""/>
         <constraint desc="" field="createdat" exp=""/>
@@ -20050,7 +20050,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="yschob"/>
           <column width="-1" hidden="0" type="field" name="xschun"/>
           <column width="-1" hidden="0" type="field" name="yschun"/>
-          <column width="-1" hidden="0" type="field" name="sonderelement"/>
+          <column width="-1" hidden="0" type="field" name="haltungstyp"/>
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
@@ -20100,7 +20100,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="simstatus"/>
         <field editable="1" name="sohleoben"/>
         <field editable="1" name="sohleunten"/>
-        <field editable="1" name="sonderelement"/>
+        <field editable="1" name="haltungstyp"/>
         <field editable="1" name="teilgebiet"/>
         <field editable="1" name="xschob"/>
         <field editable="1" name="xschun"/>
@@ -20127,7 +20127,7 @@ def my_form_open(dialog, layer, feature):
         <field labelOnTop="0" name="simstatus"/>
         <field labelOnTop="0" name="sohleoben"/>
         <field labelOnTop="0" name="sohleunten"/>
-        <field labelOnTop="0" name="sonderelement"/>
+        <field labelOnTop="0" name="haltungstyp"/>
         <field labelOnTop="0" name="teilgebiet"/>
         <field labelOnTop="0" name="xschob"/>
         <field labelOnTop="0" name="xschun"/>
@@ -20154,7 +20154,7 @@ def my_form_open(dialog, layer, feature):
         <field reuseLastValue="0" name="simstatus"/>
         <field reuseLastValue="0" name="sohleoben"/>
         <field reuseLastValue="0" name="sohleunten"/>
-        <field reuseLastValue="0" name="sonderelement"/>
+        <field reuseLastValue="0" name="haltungstyp"/>
         <field reuseLastValue="0" name="teilgebiet"/>
         <field reuseLastValue="0" name="xschob"/>
         <field reuseLastValue="0" name="xschun"/>
@@ -20180,7 +20180,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>52.3270402352245938</ymax>
       </wgs84extent>
       <id>haltungen_207f9ebd_6ea3_471f_b2d6_f8075b271b18</id>
-      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=sonderelement = 'Drossel'</datasource>
+      <datasource>dbname='./muster.sqlite' table="haltungen" (geom) sql=haltungstyp = 'Drossel'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -20908,7 +20908,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="sonderelement">
+        <field configurationFlags="None" name="haltungstyp">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -21006,7 +21006,7 @@ def my_form_open(dialog, layer, feature):
         <alias index="14" field="entwart" name="Entwässerungssystem"/>
         <alias index="15" field="material" name="Material"/>
         <alias index="16" field="ks" name="Verlustbeiwert"/>
-        <alias index="17" field="sonderelement" name="Sonderelementtyp"/>
+        <alias index="17" field="haltungstyp" name="Haltungstyp"/>
         <alias index="18" field="simstatus" name="Planungsstatus"/>
         <alias index="19" field="kommentar" name="Kommentar"/>
         <alias index="20" field="createdat" name="bearbeitet"/>
@@ -21033,7 +21033,7 @@ def my_form_open(dialog, layer, feature):
         <default expression="" field="entwart" applyOnUpdate="0"/>
         <default expression="" field="material" applyOnUpdate="0"/>
         <default expression="" field="ks" applyOnUpdate="0"/>
-        <default expression="'Drossel'" field="sonderelement" applyOnUpdate="1"/>
+        <default expression="'Drossel'" field="haltungstyp" applyOnUpdate="1"/>
         <default expression="'vorhanden'" field="simstatus" applyOnUpdate="0"/>
         <default expression="''" field="kommentar" applyOnUpdate="0"/>
         <default expression=" format_date( now(), 'yyyy.MM.dd HH:mm:ss')" field="createdat" applyOnUpdate="1"/>
@@ -21060,7 +21060,7 @@ def my_form_open(dialog, layer, feature):
         <constraint unique_strength="0" exp_strength="0" field="entwart" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="material" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="ks" notnull_strength="0" constraints="0"/>
-        <constraint unique_strength="0" exp_strength="0" field="sonderelement" notnull_strength="0" constraints="0"/>
+        <constraint unique_strength="0" exp_strength="0" field="haltungstyp" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="simstatus" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="kommentar" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="createdat" notnull_strength="0" constraints="0"/>
@@ -21087,7 +21087,7 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" field="entwart" exp=""/>
         <constraint desc="" field="material" exp=""/>
         <constraint desc="" field="ks" exp=""/>
-        <constraint desc="" field="sonderelement" exp=""/>
+        <constraint desc="" field="haltungstyp" exp=""/>
         <constraint desc="" field="simstatus" exp=""/>
         <constraint desc="" field="kommentar" exp=""/>
         <constraint desc="" field="createdat" exp=""/>
@@ -21119,7 +21119,7 @@ def my_form_open(dialog, layer, feature):
           <column width="223" hidden="0" type="field" name="entwart"/>
           <column width="-1" hidden="1" type="field" name="material"/>
           <column width="-1" hidden="1" type="field" name="ks"/>
-          <column width="-1" hidden="0" type="field" name="sonderelement"/>
+          <column width="-1" hidden="0" type="field" name="haltungstyp"/>
           <column width="-1" hidden="0" type="field" name="simstatus"/>
           <column width="-1" hidden="0" type="field" name="kommentar"/>
           <column width="-1" hidden="0" type="field" name="createdat"/>
@@ -21176,7 +21176,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="simstatus"/>
         <field editable="1" name="sohleoben"/>
         <field editable="1" name="sohleunten"/>
-        <field editable="1" name="sonderelement"/>
+        <field editable="1" name="haltungstyp"/>
         <field editable="1" name="teilgebiet"/>
         <field editable="1" name="xschob"/>
         <field editable="1" name="xschun"/>
@@ -21203,7 +21203,7 @@ def my_form_open(dialog, layer, feature):
         <field labelOnTop="0" name="simstatus"/>
         <field labelOnTop="0" name="sohleoben"/>
         <field labelOnTop="0" name="sohleunten"/>
-        <field labelOnTop="0" name="sonderelement"/>
+        <field labelOnTop="0" name="haltungstyp"/>
         <field labelOnTop="0" name="teilgebiet"/>
         <field labelOnTop="0" name="xschob"/>
         <field labelOnTop="0" name="xschun"/>
@@ -21230,7 +21230,7 @@ def my_form_open(dialog, layer, feature):
         <field reuseLastValue="0" name="simstatus"/>
         <field reuseLastValue="0" name="sohleoben"/>
         <field reuseLastValue="0" name="sohleunten"/>
-        <field reuseLastValue="0" name="sonderelement"/>
+        <field reuseLastValue="0" name="haltungstyp"/>
         <field reuseLastValue="0" name="teilgebiet"/>
         <field reuseLastValue="0" name="xschob"/>
         <field reuseLastValue="0" name="xschun"/>
@@ -21819,7 +21819,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="sonderelement">
+        <field configurationFlags="None" name="haltungstyp">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -21931,7 +21931,7 @@ def my_form_open(dialog, layer, feature):
         <alias index="14" field="entwart" name="Entwässerungssystem"/>
         <alias index="15" field="material" name="Material"/>
         <alias index="16" field="ks" name="Rauheitsbeiwert"/>
-        <alias index="17" field="sonderelement" name="Sonderelementtyp"/>
+        <alias index="17" field="haltungstyp" name="Haltungstyp"/>
         <alias index="18" field="simstatus" name="Planungsstatus"/>
         <alias index="19" field="kommentar" name="Kommentar"/>
         <alias index="20" field="createdat" name="bearbeitet"/>
@@ -21958,7 +21958,7 @@ def my_form_open(dialog, layer, feature):
         <default expression="" field="entwart" applyOnUpdate="0"/>
         <default expression="" field="material" applyOnUpdate="0"/>
         <default expression="" field="ks" applyOnUpdate="0"/>
-        <default expression="" field="sonderelement" applyOnUpdate="0"/>
+        <default expression="" field="haltungstyp" applyOnUpdate="0"/>
         <default expression="" field="simstatus" applyOnUpdate="0"/>
         <default expression="" field="kommentar" applyOnUpdate="0"/>
         <default expression="" field="createdat" applyOnUpdate="0"/>
@@ -21985,7 +21985,7 @@ def my_form_open(dialog, layer, feature):
         <constraint unique_strength="0" exp_strength="0" field="entwart" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="material" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="ks" notnull_strength="0" constraints="0"/>
-        <constraint unique_strength="0" exp_strength="0" field="sonderelement" notnull_strength="0" constraints="0"/>
+        <constraint unique_strength="0" exp_strength="0" field="haltungstyp" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="simstatus" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="kommentar" notnull_strength="0" constraints="0"/>
         <constraint unique_strength="0" exp_strength="0" field="createdat" notnull_strength="0" constraints="0"/>
@@ -22012,7 +22012,7 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" field="entwart" exp=""/>
         <constraint desc="" field="material" exp=""/>
         <constraint desc="" field="ks" exp=""/>
-        <constraint desc="" field="sonderelement" exp=""/>
+        <constraint desc="" field="haltungstyp" exp=""/>
         <constraint desc="" field="simstatus" exp=""/>
         <constraint desc="" field="kommentar" exp=""/>
         <constraint desc="" field="createdat" exp=""/>
@@ -22051,7 +22051,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="yschob"/>
           <column width="-1" hidden="0" type="field" name="xschun"/>
           <column width="-1" hidden="0" type="field" name="yschun"/>
-          <column width="-1" hidden="0" type="field" name="sonderelement"/>
+          <column width="-1" hidden="0" type="field" name="haltungstyp"/>
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
@@ -22101,7 +22101,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="simstatus"/>
         <field editable="1" name="sohleoben"/>
         <field editable="1" name="sohleunten"/>
-        <field editable="1" name="sonderelement"/>
+        <field editable="1" name="haltungstyp"/>
         <field editable="1" name="teilgebiet"/>
         <field editable="1" name="xschob"/>
         <field editable="1" name="xschun"/>
@@ -22128,7 +22128,7 @@ def my_form_open(dialog, layer, feature):
         <field labelOnTop="0" name="simstatus"/>
         <field labelOnTop="0" name="sohleoben"/>
         <field labelOnTop="0" name="sohleunten"/>
-        <field labelOnTop="0" name="sonderelement"/>
+        <field labelOnTop="0" name="haltungstyp"/>
         <field labelOnTop="0" name="teilgebiet"/>
         <field labelOnTop="0" name="xschob"/>
         <field labelOnTop="0" name="xschun"/>
@@ -22155,7 +22155,7 @@ def my_form_open(dialog, layer, feature):
         <field reuseLastValue="0" name="simstatus"/>
         <field reuseLastValue="0" name="sohleoben"/>
         <field reuseLastValue="0" name="sohleunten"/>
-        <field reuseLastValue="0" name="sonderelement"/>
+        <field reuseLastValue="0" name="haltungstyp"/>
         <field reuseLastValue="0" name="teilgebiet"/>
         <field reuseLastValue="0" name="xschob"/>
         <field reuseLastValue="0" name="xschun"/>

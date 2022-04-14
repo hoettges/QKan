@@ -333,8 +333,6 @@ class He8Porter(QKanPlugin):
         del db_qkan
         self.log.debug("Closed DB")
 
-        # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
-
         return True
 
     def run_results(self):
