@@ -894,8 +894,8 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE haltungen.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND haltungen.teilgebiet in ('{lis}')"
+                auswahl_w = f" WHERE ha.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND ha.teilgebiet in ('{lis}')"
             else:
                 auswahl_w = ""
                 auswahl_a = ""
@@ -908,18 +908,18 @@ class ExportTask:
                         Kommentar, LastModified 
                     ) = 
                     (   SELECT
-                            haltungen.schoben AS schoben,
-                            haltungen.schunten AS schunten,
-                            simulationsstatus.he_nr AS simstatusnr,
-                            haltungen.kommentar AS kommentar,
-                            haltungen.createdat AS createdat
-                        FROM haltungen
-                        LEFT JOIN simulationsstatus
-                        ON haltungen.simstatus = simulationsstatus.bezeichnung
-                        WHERE haltungen.haltnam = he.Pumpe.Name
+                            ha.schoben AS SchachtOben,
+                            ha.schunten AS SchachtUnten,
+                            si.he_nr AS Planungsstatus,
+                            ha.kommentar AS Kommentar,
+                            ha.createdat AS LastModified
+                        FROM haltungen AS ha
+                        LEFT JOIN simulationsstatus AS si
+                        ON ha.simstatus = si.bezeichnung
+                        WHERE ha.haltnam = he.Pumpe.Name
                     )
                     WHERE he.Pumpe.Name IN (
-                        SELECT pnam FROM haltungen WHERE haltungen.haltungstyp = 'Pumpe'{auswahl_a}
+                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Pumpe'{auswahl_a}
                         )
                     """
 
@@ -956,18 +956,18 @@ class ExportTask:
                         Kommentar, LastModified 
                     ) 
                     SELECT
-                        haltungen.rowid + {id0} AS id, 
-                        haltungen.haltnam AS Name,
-                        haltungen.schoben AS schoben,
-                        haltungen.schunten AS schunten,
-                        simulationsstatus.he_nr AS simstatusnr,
-                        haltungen.kommentar AS kommentar,
-                        haltungen.createdat AS createdat
-                    FROM haltungen
-                    LEFT JOIN simulationsstatus
-                    ON haltungen.simstatus = simulationsstatus.bezeichnung
-                    WHERE haltungstyp = 'Pumpe'
-                    AND haltungen.haltnam NOT IN (SELECT Name FROM he.Pumpe){auswahl_a};
+                        ha.rowid + {id0} AS Id, 
+                        ha.haltnam AS Name,
+                        ha.schoben AS SchachtOben,
+                        ha.schunten AS SchachtUnten,
+                        si.he_nr AS Planungsstatus,
+                        ha.kommentar AS Kommentar,
+                        ha.createdat AS LastModified
+                    FROM haltungen AS ha
+                    LEFT JOIN simulationsstatus AS si
+                    ON ha.simstatus = si.bezeichnung
+                    WHERE ha.haltungstyp = 'Pumpe'
+                    AND ha.haltnam NOT IN (SELECT Name FROM he.Pumpe){auswahl_a};
                     """
 
                     if not self.db_qkan.sql(
@@ -994,8 +994,8 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE haltungen.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND haltungen.teilgebiet in ('{lis}')"
+                auswahl_w = f" WHERE ha.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND ha.teilgebiet in ('{lis}')"
             else:
                 auswahl_w = ""
                 auswahl_a = ""
@@ -1009,19 +1009,19 @@ class ExportTask:
                         Kommentar, LastModified 
                     ) = 
                     (   SELECT
-                            haltungen.schoben AS schoben,
-                            haltungen.schunten AS schunten,
-                            wehre.uebeiwert AS uebeiwert,
-                            simulationsstatus.he_nr AS simstatusnr,
-                            haltungen.kommentar AS kommentar,
-                            haltungen.createdat AS createdat
-                        FROM haltungen
-                        LEFT JOIN simulationsstatus
-                        ON haltungen.simstatus = simulationsstatus.bezeichnung
-                        WHERE haltungen.haltnam = he.Wehr.Name{auswahl_a}
+                            ha.schoben AS SchachtOben,
+                            ha.schunten AS SchachtUnten,
+                            wehre.uebeiwert AS Ueberfallbeiwert,
+                            si.he_nr AS Planungsstatus,
+                            ha.kommentar AS Kommentar,
+                            ha.createdat AS LastModified
+                        FROM haltungen AS ha
+                        LEFT JOIN simulationsstatus AS si
+                        ON ha.simstatus = si.bezeichnung
+                        WHERE ha.haltnam = he.Wehr.Name{auswahl_a}
                     )
                     WHERE he.Wehr.Name IN (
-                        SELECT wnam FROM haltungen AND haltungen.haltungstyp = 'Wehr'{auswahl_a}
+                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Wehr'{auswahl_a}
                         )
                     """
 
@@ -1059,19 +1059,19 @@ class ExportTask:
                         Kommentar, LastModified 
                     ) 
                     SELECT
-                        haltungen.rowid + {id0} AS id, 
-                        haltungen.haltnam AS Name,
-                        haltungen.schoben AS schoben,
-                        haltungen.schunten AS schunten,
-                        haltungen.ks AS uebeiwert,
-                        simulationsstatus.he_nr AS simstatusnr,
-                        haltungen.kommentar AS kommentar,
-                        haltungen.createdat AS createdat
-                    FROM haltungen
-                    LEFT JOIN simulationsstatus
-                    ON haltungen.simstatus = simulationsstatus.bezeichnung
-                    WHERE haltungstyp = 'Wehr'
-                    AND haltungen.haltnam NOT IN (SELECT Name FROM he.Wehr){auswahl_a};
+                        ha.rowid + {id0} AS Id, 
+                        ha.haltnam AS Name,
+                        ha.schoben AS SchachtOben,
+                        ha.schunten AS SchachtUnten,
+                        ha.ks AS Ueberfallbeiwert,
+                        si.he_nr AS Planungsstatus,
+                        ha.kommentar AS Kommentar,
+                        ha.createdat AS LastModified
+                    FROM haltungen AS ha
+                    LEFT JOIN simulationsstatus AS si
+                    ON ha.simstatus = si.bezeichnung
+                    WHERE ha.haltungstyp = 'Wehr'
+                    AND ha.haltnam NOT IN (SELECT Name FROM he.Wehr){auswahl_a};
                     """
 
                     if not self.db_qkan.sql(
@@ -1098,8 +1098,8 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE haltungen.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND haltungen.teilgebiet in ('{lis}')"
+                auswahl_w = f" WHERE ha.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND ha.teilgebiet in ('{lis}')"
             else:
                 auswahl_w = ""
                 auswahl_a = ""
@@ -1112,18 +1112,18 @@ class ExportTask:
                         Kommentar, LastModified 
                     ) = 
                     (   SELECT
-                            haltungen.schoben AS schoben,
-                            haltungen.schunten AS schunten,
-                            simulationsstatus.he_nr AS simstatusnr,
-                            haltungen.kommentar AS kommentar,
-                            haltungen.createdat AS createdat
-                        FROM haltungen
-                        LEFT JOIN simulationsstatus
-                        ON haltungen.simstatus = simulationsstatus.bezeichnung
-                        WHERE haltungen.haltnam = he.Drossel.Name{auswahl_a}
+                            ha.schoben AS SchachtOben,
+                            ha.schunten AS SchachtUnten,
+                            si.he_nr AS Planungsstatus,
+                            ha.kommentar AS Kommentar,
+                            ha.createdat AS LastModified
+                        FROM haltungen AS ha
+                        LEFT JOIN simulationsstatus AS si
+                        ON ha.simstatus = si.bezeichnung
+                        WHERE ha.haltnam = he.Drossel.Name{auswahl_a}
                     )
                     WHERE he.Drossel.Name IN (
-                        SELECT wnam FROM haltungen AND haltungen.haltungstyp = 'Drossel'{auswahl_a}
+                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Drossel'{auswahl_a}
                         )
                     """
 
@@ -1160,18 +1160,18 @@ class ExportTask:
                         Kommentar, LastModified 
                     ) 
                     SELECT
-                        haltungen.rowid + {id0} AS id, 
-                        haltungen.haltnam AS Name,
-                        haltungen.schoben AS schoben,
-                        haltungen.schunten AS schunten,
-                        simulationsstatus.he_nr AS simstatusnr,
-                        haltungen.kommentar AS kommentar,
-                        haltungen.createdat AS createdat
-                    FROM haltungen
-                    LEFT JOIN simulationsstatus
-                    ON haltungen.simstatus = simulationsstatus.bezeichnung
-                    WHERE haltungstyp = 'Drossel'
-                    AND haltungen.haltnam NOT IN (SELECT Name FROM he.Drossel){auswahl_a};
+                        ha.rowid + {id0} AS Id, 
+                        ha.haltnam AS Name,
+                        ha.schoben AS SchachtOben,
+                        ha.schunten AS SchachtUnten,
+                        si.he_nr AS Planungsstatus,
+                        ha.kommentar AS Kommentar,
+                        ha.createdat AS LastModified
+                    FROM haltungen AS ha
+                    LEFT JOIN simulationsstatus AS si
+                    ON ha.simstatus = si.bezeichnung
+                    WHERE ha.haltungstyp = 'Drossel'
+                    AND ha.haltnam NOT IN (SELECT Name FROM he.Drossel){auswahl_a};
                     """
 
                     if not self.db_qkan.sql(
@@ -1193,47 +1193,53 @@ class ExportTask:
     def _schieber(self) -> bool:
         """Export Drosseln"""
 
-        if QKan.config.check_export.drosseln:
+        if QKan.config.check_export.schieber:
 
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE haltungen.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND haltungen.teilgebiet in ('{lis}')"
+                auswahl_w = f" WHERE ha.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND ha.teilgebiet in ('{lis}')"
             else:
                 auswahl_w = ""
                 auswahl_a = ""
 
             if self.update:
                 sql = f"""
-                    UPDATE he.Drossel SET
+                    UPDATE he.Schieber SET
                     (   SchachtOben, SchachtUnten, 
+                        Anfangsstellung, 
+                        MaximaleHubhoehe,
+                        Geometrie2,
                         Planungsstatus, 
                         Kommentar, LastModified 
                     ) = 
                     (   SELECT
-                            haltungen.schoben AS schoben,
-                            haltungen.schunten AS schunten,
-                            simulationsstatus.he_nr AS simstatusnr,
-                            haltungen.kommentar AS kommentar,
-                            haltungen.createdat AS createdat
-                        FROM haltungen
-                        LEFT JOIN simulationsstatus
-                        ON haltungen.simstatus = simulationsstatus.bezeichnung
-                        WHERE haltungen.haltnam = he.Drossel.Name{auswahl_a}
+                            ha.schoben AS SchachtOben,
+                            ha.schunten AS SchachtUnten,
+                            ha.sohleoben AS Anfangsstellung,
+                            ha.sohleoben + ha.hoehe AS MaximaleHubhoehe,
+                            ha.breite AS Geometrie2,
+                            si.he_nr AS Planungsstatus,
+                            ha.kommentar AS Kommentar,
+                            ha.createdat AS LastModified
+                        FROM haltungen AS ha
+                        LEFT JOIN simulationsstatus AS si
+                        ON ha.simstatus = si.bezeichnung
+                        WHERE ha.haltnam = he.Schieber.Name{auswahl_a}
                     )
-                    WHERE he.Drossel.Name IN (
-                        SELECT wnam FROM haltungen AND haltungen.haltungstyp = 'Drossel'{auswahl_a}
+                    WHERE he.Schieber.Name IN (
+                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Schieber'{auswahl_a}
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_drosseln (1)"):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_schieber (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_drosseln (2)"):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_schieber (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -1246,36 +1252,42 @@ class ExportTask:
                     )
 
                 if idmin is None:
-                    meldung("Einfügen Drosseln", "Keine Drosseln vorhanden")
+                    meldung("Einfügen Schieber", "Keine Schieber vorhanden")
                 else:
                     nr0 = self.nextid
                     id0 = self.nextid - idmin
 
                     sql = f"""
-                    INSERT INTO he.Drossel (
+                    INSERT INTO he.Schieber (
                         Id,
                         Name, 
                         SchachtOben, SchachtUnten,
+                        Anfangsstellung, 
+                        MaximaleHubhoehe,
+                        Geometrie2,
                         Planungsstatus,
                         Kommentar, LastModified 
                     ) 
                     SELECT
-                        haltungen.rowid + {id0} AS id, 
-                        haltungen.haltnam AS Name,
-                        haltungen.schoben AS schoben,
-                        haltungen.schunten AS schunten,
-                        simulationsstatus.he_nr AS simstatusnr,
-                        haltungen.kommentar AS kommentar,
-                        haltungen.createdat AS createdat
-                    FROM haltungen
-                    LEFT JOIN simulationsstatus
-                    ON haltungen.simstatus = simulationsstatus.bezeichnung
-                    WHERE haltungstyp = 'Drossel'
-                    AND haltungen.haltnam NOT IN (SELECT Name FROM he.Drossel){auswahl_a};
+                        ha.rowid + {id0} AS Id, 
+                        ha.haltnam AS Name,
+                        ha.schoben AS SchachtOben,
+                        ha.schunten AS SchachtUnten,
+                        ha.sohleoben AS Anfangsstellung,
+                        ha.sohleoben + ha.hoehe AS MaximaleHubhoehe,
+                        ha.breite AS Geometrie2,
+                        si.he_nr AS Planungsstatus,
+                        ha.kommentar AS Kommentar,
+                        ha.createdat AS LastModified
+                    FROM haltungen AS ha
+                    LEFT JOIN simulationsstatus AS si
+                    ON ha.simstatus = si.bezeichnung
+                    WHERE ha.haltungstyp = 'Schieber'
+                    AND ha.haltnam NOT IN (SELECT Name FROM he.Schieber){auswahl_a};
                     """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_drosseln (3)"
+                        sql, "dbQK: export_to_he8.export_schieber (3)"
                     ):
                         return False
 
@@ -1286,7 +1298,7 @@ class ExportTask:
                     )
                     self.db_qkan.commit()
 
-                    fortschritt(f"{self.nextid - nr0} Drosseln eingefügt", 0.90)
+                    fortschritt(f"{self.nextid - nr0} Schieber eingefügt", 0.90)
                     self.progress_bar.setValue(90)
         return True
 

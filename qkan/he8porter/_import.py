@@ -440,6 +440,7 @@ class ImportTask:
                 sql = """
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
+                    sohleoben, sohleunten,
                     breite, hoehe,
                     ks,
                     haltungstyp,
@@ -450,8 +451,10 @@ class ImportTask:
                     sr.Name AS haltnam,
                     sr.Schachtoben AS schoben, 
                     sr.Schachtunten AS schunten, 
+                    sr.Anfangsstellung AS sohleoben,
+                    sr.Anfangsstellung AS sohleunten,
                     sr.Geometrie2 AS breite, 
-                    sr.MaximaleHubHoehe - sr.Anfangsstellung AS hoehe,
+                    round(sr.MaximaleHubHoehe - sr.Anfangsstellung, 4) AS hoehe,
                     sr.Verluste AS ks, 
                     'Schieber' AS haltungstyp, 
                     si.bezeichnung AS simstatus, 
