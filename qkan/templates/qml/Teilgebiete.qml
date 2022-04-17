@@ -1,20 +1,20 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis version="3.24.1-Tisler" readOnly="0" simplifyMaxScale="1" maxScale="0" symbologyReferenceScale="-1" minScale="0" styleCategories="AllStyleCategories" hasScaleBasedVisibilityFlag="0" simplifyDrawingHints="1" simplifyDrawingTol="1" simplifyLocal="1" simplifyAlgorithm="0" labelsEnabled="0">
+<qgis hasScaleBasedVisibilityFlag="0" simplifyDrawingTol="1" simplifyAlgorithm="0" labelsEnabled="0" version="3.22.4-Białowieża" minScale="0" symbologyReferenceScale="-1" maxScale="0" simplifyDrawingHints="1" readOnly="0" simplifyMaxScale="1" simplifyLocal="1" styleCategories="AllStyleCategories">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal endExpression="" startExpression="" mode="0" accumulate="0" enabled="0" fixedDuration="0" durationUnit="min" startField="" durationField="" limitMode="0" endField="">
+  <temporal durationField="" enabled="0" startField="" fixedDuration="0" startExpression="" endExpression="" mode="0" accumulate="0" durationUnit="min" limitMode="0" endField="">
     <fixedRange>
       <start></start>
       <end></end>
     </fixedRange>
   </temporal>
-  <renderer-v2 forceraster="0" type="singleSymbol" referencescale="-1" symbollevels="0" enableorderby="0">
+  <renderer-v2 referencescale="-1" symbollevels="0" enableorderby="0" type="singleSymbol" forceraster="0">
     <symbols>
-      <symbol name="0" alpha="1" type="fill" force_rhr="0" clip_to_extent="1">
+      <symbol alpha="1" name="0" clip_to_extent="1" type="fill" force_rhr="0">
         <data_defined_properties>
           <Option type="Map">
             <Option value="" name="name" type="QString"/>
@@ -22,7 +22,7 @@
             <Option value="collection" name="type" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer pass="0" enabled="1" class="SimpleFill" locked="0">
+        <layer pass="0" class="SimpleFill" locked="0" enabled="1">
           <Option type="Map">
             <Option value="3x:0,0,0,0,0,0" name="border_width_map_unit_scale" type="QString"/>
             <Option value="214,205,104,255" name="color" type="QString"/>
@@ -74,11 +74,11 @@
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
   <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-    <DiagramCategory labelPlacementMethod="XHeight" scaleDependency="Area" showAxis="1" spacingUnit="MM" opacity="1" barWidth="5" scaleBasedVisibility="0" sizeScale="3x:0,0,0,0,0,0" minScaleDenominator="0" penWidth="0" direction="0" rotationOffset="270" lineSizeType="MM" penColor="#000000" spacing="5" diagramOrientation="Up" maxScaleDenominator="0" spacingUnitScale="3x:0,0,0,0,0,0" lineSizeScale="3x:0,0,0,0,0,0" height="15" sizeType="MM" minimumSize="0" width="15" penAlpha="255" backgroundAlpha="255" enabled="0" backgroundColor="#ffffff">
-      <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
-      <attribute color="#000000" field="" label=""/>
+    <DiagramCategory scaleDependency="Area" diagramOrientation="Up" minimumSize="0" backgroundColor="#ffffff" spacing="5" opacity="1" penAlpha="255" minScaleDenominator="0" enabled="0" direction="0" labelPlacementMethod="XHeight" scaleBasedVisibility="0" spacingUnit="MM" backgroundAlpha="255" penWidth="0" width="15" maxScaleDenominator="0" spacingUnitScale="3x:0,0,0,0,0,0" rotationOffset="270" lineSizeScale="3x:0,0,0,0,0,0" barWidth="5" sizeScale="3x:0,0,0,0,0,0" penColor="#000000" showAxis="1" sizeType="MM" height="15" lineSizeType="MM">
+      <fontProperties style="" description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0"/>
+      <attribute label="" field="" color="#000000"/>
       <axisSymbol>
-        <symbol name="" alpha="1" type="line" force_rhr="0" clip_to_extent="1">
+        <symbol alpha="1" name="" clip_to_extent="1" type="line" force_rhr="0">
           <data_defined_properties>
             <Option type="Map">
               <Option value="" name="name" type="QString"/>
@@ -86,7 +86,7 @@
               <Option value="collection" name="type" type="QString"/>
             </Option>
           </data_defined_properties>
-          <layer pass="0" enabled="1" class="SimpleLine" locked="0">
+          <layer pass="0" class="SimpleLine" locked="0" enabled="1">
             <Option type="Map">
               <Option value="0" name="align_dash_pattern" type="QString"/>
               <Option value="square" name="capstyle" type="QString"/>
@@ -155,7 +155,7 @@
       </axisSymbol>
     </DiagramCategory>
   </SingleCategoryDiagramRenderer>
-  <DiagramLayerSettings zIndex="0" priority="0" placement="1" linePlacementFlags="18" dist="0" obstacle="0" showAll="1">
+  <DiagramLayerSettings zIndex="0" showAll="1" obstacle="0" dist="0" linePlacementFlags="18" priority="0" placement="1">
     <properties>
       <Option type="Map">
         <Option value="" name="name" type="QString"/>
@@ -222,34 +222,34 @@
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias name="" field="pk" index="0"/>
-    <alias name="Name" field="tgnam" index="1"/>
-    <alias name="Kommentar" field="kommentar" index="2"/>
-    <alias name="bearbeitet" field="createdat" index="3"/>
+    <alias field="pk" name="" index="0"/>
+    <alias field="tgnam" name="Name" index="1"/>
+    <alias field="kommentar" name="Kommentar" index="2"/>
+    <alias field="createdat" name="bearbeitet" index="3"/>
   </aliases>
   <defaults>
-    <default expression="" applyOnUpdate="0" field="pk"/>
-    <default expression="" applyOnUpdate="0" field="tgnam"/>
-    <default expression="" applyOnUpdate="0" field="kommentar"/>
-    <default expression="" applyOnUpdate="0" field="createdat"/>
+    <default field="pk" applyOnUpdate="0" expression=""/>
+    <default field="tgnam" applyOnUpdate="0" expression=""/>
+    <default field="kommentar" applyOnUpdate="0" expression=""/>
+    <default field="createdat" applyOnUpdate="0" expression=""/>
   </defaults>
   <constraints>
-    <constraint constraints="3" notnull_strength="1" field="pk" exp_strength="0" unique_strength="1"/>
-    <constraint constraints="0" notnull_strength="0" field="tgnam" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="kommentar" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="createdat" exp_strength="0" unique_strength="0"/>
+    <constraint field="pk" constraints="3" unique_strength="1" notnull_strength="1" exp_strength="0"/>
+    <constraint field="tgnam" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="kommentar" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="createdat" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint desc="" exp="" field="pk"/>
-    <constraint desc="" exp="" field="tgnam"/>
-    <constraint desc="" exp="" field="kommentar"/>
-    <constraint desc="" exp="" field="createdat"/>
+    <constraint field="pk" exp="" desc=""/>
+    <constraint field="tgnam" exp="" desc=""/>
+    <constraint field="kommentar" exp="" desc=""/>
+    <constraint field="createdat" exp="" desc=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
     <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
   </attributeactions>
-  <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+  <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
     <columns>
       <column name="pk" type="field" hidden="0" width="-1"/>
       <column name="tgnam" type="field" hidden="0" width="-1"/>
@@ -263,7 +263,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:/FHAC/hoettges/Kanalprogramme/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_teilgebiete.ui</editform>
+  <editform tolerant="1">C:\Users\hoettges\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\qkan\forms\qkan_teilgebiete.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -287,15 +287,15 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field editable="1" name="createdat"/>
-    <field editable="1" name="ewdichte"/>
-    <field editable="1" name="flaeche"/>
-    <field editable="1" name="fremdwas"/>
-    <field editable="1" name="kommentar"/>
-    <field editable="1" name="pk"/>
-    <field editable="1" name="stdmittel"/>
-    <field editable="1" name="tgnam"/>
-    <field editable="1" name="wverbrauch"/>
+    <field name="createdat" editable="1"/>
+    <field name="ewdichte" editable="1"/>
+    <field name="flaeche" editable="1"/>
+    <field name="fremdwas" editable="1"/>
+    <field name="kommentar" editable="1"/>
+    <field name="pk" editable="1"/>
+    <field name="stdmittel" editable="1"/>
+    <field name="tgnam" editable="1"/>
+    <field name="wverbrauch" editable="1"/>
   </editable>
   <labelOnTop>
     <field name="createdat" labelOnTop="0"/>

@@ -1,20 +1,20 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis version="3.24.1-Tisler" readOnly="0" simplifyMaxScale="1" maxScale="0" symbologyReferenceScale="-1" minScale="100000000" styleCategories="AllStyleCategories" hasScaleBasedVisibilityFlag="0" simplifyDrawingHints="0" simplifyDrawingTol="1" simplifyLocal="1" simplifyAlgorithm="0" labelsEnabled="0">
+<qgis hasScaleBasedVisibilityFlag="0" simplifyDrawingTol="1" simplifyAlgorithm="0" labelsEnabled="0" version="3.22.4-Białowieża" minScale="100000000" symbologyReferenceScale="-1" maxScale="0" simplifyDrawingHints="0" readOnly="0" simplifyMaxScale="1" simplifyLocal="1" styleCategories="AllStyleCategories">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal endExpression="" startExpression="" mode="0" accumulate="0" enabled="0" fixedDuration="0" durationUnit="min" startField="" durationField="" limitMode="0" endField="">
+  <temporal durationField="" enabled="0" startField="" fixedDuration="0" startExpression="" endExpression="" mode="0" accumulate="0" durationUnit="min" limitMode="0" endField="">
     <fixedRange>
       <start></start>
       <end></end>
     </fixedRange>
   </temporal>
-  <renderer-v2 forceraster="0" type="singleSymbol" referencescale="-1" symbollevels="0" enableorderby="0">
+  <renderer-v2 referencescale="-1" symbollevels="0" enableorderby="0" type="singleSymbol" forceraster="0">
     <symbols>
-      <symbol name="0" alpha="1" type="marker" force_rhr="0" clip_to_extent="1">
+      <symbol alpha="1" name="0" clip_to_extent="1" type="marker" force_rhr="0">
         <data_defined_properties>
           <Option type="Map">
             <Option value="" name="name" type="QString"/>
@@ -22,7 +22,7 @@
             <Option value="collection" name="type" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer pass="0" enabled="1" class="SimpleMarker" locked="0">
+        <layer pass="0" class="SimpleMarker" locked="0" enabled="1">
           <Option type="Map">
             <Option value="0" name="angle" type="QString"/>
             <Option value="square" name="cap_style" type="QString"/>
@@ -89,97 +89,6 @@
   <blendMode>0</blendMode>
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
-  <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-    <DiagramCategory labelPlacementMethod="XHeight" scaleDependency="Area" showAxis="1" spacingUnit="MM" opacity="1" barWidth="5" scaleBasedVisibility="0" sizeScale="3x:0,0,0,0,0,0" minScaleDenominator="0" penWidth="0" direction="0" rotationOffset="270" lineSizeType="MM" penColor="#000000" spacing="5" diagramOrientation="Up" maxScaleDenominator="1e+08" spacingUnitScale="3x:0,0,0,0,0,0" lineSizeScale="3x:0,0,0,0,0,0" height="15" sizeType="MM" minimumSize="0" width="15" penAlpha="255" backgroundAlpha="255" enabled="0" backgroundColor="#ffffff">
-      <fontProperties description="MS Shell Dlg 2,8,-1,5,50,0,0,0,0,0" style=""/>
-      <attribute color="#000000" field="" label=""/>
-      <axisSymbol>
-        <symbol name="" alpha="1" type="line" force_rhr="0" clip_to_extent="1">
-          <data_defined_properties>
-            <Option type="Map">
-              <Option value="" name="name" type="QString"/>
-              <Option name="properties"/>
-              <Option value="collection" name="type" type="QString"/>
-            </Option>
-          </data_defined_properties>
-          <layer pass="0" enabled="1" class="SimpleLine" locked="0">
-            <Option type="Map">
-              <Option value="0" name="align_dash_pattern" type="QString"/>
-              <Option value="square" name="capstyle" type="QString"/>
-              <Option value="5;2" name="customdash" type="QString"/>
-              <Option value="3x:0,0,0,0,0,0" name="customdash_map_unit_scale" type="QString"/>
-              <Option value="MM" name="customdash_unit" type="QString"/>
-              <Option value="0" name="dash_pattern_offset" type="QString"/>
-              <Option value="3x:0,0,0,0,0,0" name="dash_pattern_offset_map_unit_scale" type="QString"/>
-              <Option value="MM" name="dash_pattern_offset_unit" type="QString"/>
-              <Option value="0" name="draw_inside_polygon" type="QString"/>
-              <Option value="bevel" name="joinstyle" type="QString"/>
-              <Option value="35,35,35,255" name="line_color" type="QString"/>
-              <Option value="solid" name="line_style" type="QString"/>
-              <Option value="0.26" name="line_width" type="QString"/>
-              <Option value="MM" name="line_width_unit" type="QString"/>
-              <Option value="0" name="offset" type="QString"/>
-              <Option value="3x:0,0,0,0,0,0" name="offset_map_unit_scale" type="QString"/>
-              <Option value="MM" name="offset_unit" type="QString"/>
-              <Option value="0" name="ring_filter" type="QString"/>
-              <Option value="0" name="trim_distance_end" type="QString"/>
-              <Option value="3x:0,0,0,0,0,0" name="trim_distance_end_map_unit_scale" type="QString"/>
-              <Option value="MM" name="trim_distance_end_unit" type="QString"/>
-              <Option value="0" name="trim_distance_start" type="QString"/>
-              <Option value="3x:0,0,0,0,0,0" name="trim_distance_start_map_unit_scale" type="QString"/>
-              <Option value="MM" name="trim_distance_start_unit" type="QString"/>
-              <Option value="0" name="tweak_dash_pattern_on_corners" type="QString"/>
-              <Option value="0" name="use_custom_dash" type="QString"/>
-              <Option value="3x:0,0,0,0,0,0" name="width_map_unit_scale" type="QString"/>
-            </Option>
-            <prop v="0" k="align_dash_pattern"/>
-            <prop v="square" k="capstyle"/>
-            <prop v="5;2" k="customdash"/>
-            <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-            <prop v="MM" k="customdash_unit"/>
-            <prop v="0" k="dash_pattern_offset"/>
-            <prop v="3x:0,0,0,0,0,0" k="dash_pattern_offset_map_unit_scale"/>
-            <prop v="MM" k="dash_pattern_offset_unit"/>
-            <prop v="0" k="draw_inside_polygon"/>
-            <prop v="bevel" k="joinstyle"/>
-            <prop v="35,35,35,255" k="line_color"/>
-            <prop v="solid" k="line_style"/>
-            <prop v="0.26" k="line_width"/>
-            <prop v="MM" k="line_width_unit"/>
-            <prop v="0" k="offset"/>
-            <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-            <prop v="MM" k="offset_unit"/>
-            <prop v="0" k="ring_filter"/>
-            <prop v="0" k="trim_distance_end"/>
-            <prop v="3x:0,0,0,0,0,0" k="trim_distance_end_map_unit_scale"/>
-            <prop v="MM" k="trim_distance_end_unit"/>
-            <prop v="0" k="trim_distance_start"/>
-            <prop v="3x:0,0,0,0,0,0" k="trim_distance_start_map_unit_scale"/>
-            <prop v="MM" k="trim_distance_start_unit"/>
-            <prop v="0" k="tweak_dash_pattern_on_corners"/>
-            <prop v="0" k="use_custom_dash"/>
-            <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
-            <data_defined_properties>
-              <Option type="Map">
-                <Option value="" name="name" type="QString"/>
-                <Option name="properties"/>
-                <Option value="collection" name="type" type="QString"/>
-              </Option>
-            </data_defined_properties>
-          </layer>
-        </symbol>
-      </axisSymbol>
-    </DiagramCategory>
-  </SingleCategoryDiagramRenderer>
-  <DiagramLayerSettings zIndex="0" priority="0" placement="0" linePlacementFlags="18" dist="0" obstacle="0" showAll="1">
-    <properties>
-      <Option type="Map">
-        <Option value="" name="name" type="QString"/>
-        <Option name="properties"/>
-        <Option value="collection" name="type" type="QString"/>
-      </Option>
-    </properties>
-  </DiagramLayerSettings>
   <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
     <activeChecks/>
     <checkConfiguration/>
@@ -197,30 +106,21 @@
     <field name="schnam" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
     <field name="durchm" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
     <field name="kommentar" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
@@ -240,10 +140,7 @@
     <field name="baujahr" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
@@ -263,101 +160,89 @@
     <field name="untersucher" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
     <field name="wetter" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
     <field name="bewertungsart" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
     <field name="bewertungstag" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias name="" field="pk" index="0"/>
-    <alias name="Name" field="schnam" index="1"/>
-    <alias name="Durchmesser" field="durchm" index="2"/>
-    <alias name="Kommentar" field="kommentar" index="3"/>
-    <alias name="bearbeitet" field="createdat" index="4"/>
-    <alias name="Baujahr" field="baujahr" index="5"/>
-    <alias name="Untersuchungstag" field="untersuchtag" index="6"/>
-    <alias name="durchgeführt von" field="untersucher" index="7"/>
-    <alias name="Wetter" field="wetter" index="8"/>
-    <alias name="Bewertungsart" field="bewertungsart" index="9"/>
-    <alias name="Bewertungstag" field="bewertungstag" index="10"/>
+    <alias field="pk" name="" index="0"/>
+    <alias field="schnam" name="Name" index="1"/>
+    <alias field="durchm" name="Durchmesser" index="2"/>
+    <alias field="kommentar" name="Kommentar" index="3"/>
+    <alias field="createdat" name="bearbeitet" index="4"/>
+    <alias field="baujahr" name="Baujahr" index="5"/>
+    <alias field="untersuchtag" name="Untersuchungstag" index="6"/>
+    <alias field="untersucher" name="durchgeführt von" index="7"/>
+    <alias field="wetter" name="Wetter" index="8"/>
+    <alias field="bewertungsart" name="Bewertungsart" index="9"/>
+    <alias field="bewertungstag" name="Bewertungstag" index="10"/>
   </aliases>
   <defaults>
-    <default expression="" applyOnUpdate="0" field="pk"/>
-    <default expression="" applyOnUpdate="0" field="schnam"/>
-    <default expression="" applyOnUpdate="0" field="durchm"/>
-    <default expression="" applyOnUpdate="0" field="kommentar"/>
-    <default expression="" applyOnUpdate="0" field="createdat"/>
-    <default expression="" applyOnUpdate="0" field="baujahr"/>
-    <default expression="" applyOnUpdate="0" field="untersuchtag"/>
-    <default expression="" applyOnUpdate="0" field="untersucher"/>
-    <default expression="" applyOnUpdate="0" field="wetter"/>
-    <default expression="" applyOnUpdate="0" field="bewertungsart"/>
-    <default expression="" applyOnUpdate="0" field="bewertungstag"/>
+    <default field="pk" applyOnUpdate="0" expression=""/>
+    <default field="schnam" applyOnUpdate="0" expression=""/>
+    <default field="durchm" applyOnUpdate="0" expression=""/>
+    <default field="kommentar" applyOnUpdate="0" expression=""/>
+    <default field="createdat" applyOnUpdate="0" expression=""/>
+    <default field="baujahr" applyOnUpdate="0" expression=""/>
+    <default field="untersuchtag" applyOnUpdate="0" expression=""/>
+    <default field="untersucher" applyOnUpdate="0" expression=""/>
+    <default field="wetter" applyOnUpdate="0" expression=""/>
+    <default field="bewertungsart" applyOnUpdate="0" expression=""/>
+    <default field="bewertungstag" applyOnUpdate="0" expression=""/>
   </defaults>
   <constraints>
-    <constraint constraints="3" notnull_strength="1" field="pk" exp_strength="0" unique_strength="1"/>
-    <constraint constraints="0" notnull_strength="0" field="schnam" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="durchm" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="kommentar" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="createdat" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="baujahr" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="untersuchtag" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="untersucher" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="wetter" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="bewertungsart" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="bewertungstag" exp_strength="0" unique_strength="0"/>
+    <constraint field="pk" constraints="3" unique_strength="1" notnull_strength="1" exp_strength="0"/>
+    <constraint field="schnam" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="durchm" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="kommentar" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="createdat" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="baujahr" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="untersuchtag" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="untersucher" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="wetter" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="bewertungsart" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="bewertungstag" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint desc="" exp="" field="pk"/>
-    <constraint desc="" exp="" field="schnam"/>
-    <constraint desc="" exp="" field="durchm"/>
-    <constraint desc="" exp="" field="kommentar"/>
-    <constraint desc="" exp="" field="createdat"/>
-    <constraint desc="" exp="" field="baujahr"/>
-    <constraint desc="" exp="" field="untersuchtag"/>
-    <constraint desc="" exp="" field="untersucher"/>
-    <constraint desc="" exp="" field="wetter"/>
-    <constraint desc="" exp="" field="bewertungsart"/>
-    <constraint desc="" exp="" field="bewertungstag"/>
+    <constraint field="pk" exp="" desc=""/>
+    <constraint field="schnam" exp="" desc=""/>
+    <constraint field="durchm" exp="" desc=""/>
+    <constraint field="kommentar" exp="" desc=""/>
+    <constraint field="createdat" exp="" desc=""/>
+    <constraint field="baujahr" exp="" desc=""/>
+    <constraint field="untersuchtag" exp="" desc=""/>
+    <constraint field="untersucher" exp="" desc=""/>
+    <constraint field="wetter" exp="" desc=""/>
+    <constraint field="bewertungsart" exp="" desc=""/>
+    <constraint field="bewertungstag" exp="" desc=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
     <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
   </attributeactions>
-  <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+  <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
     <columns>
       <column name="pk" type="field" hidden="0" width="-1"/>
       <column name="schnam" type="field" hidden="0" width="-1"/>
@@ -378,7 +263,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:/FHAC/hoettges/Kanalprogramme/k_qkan/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/schaechte_untersucht.ui</editform>
+  <editform tolerant="1">C:\Users\hoettges\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\qkan\forms\schaechte_untersucht.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -402,17 +287,17 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field editable="1" name="baujahr"/>
-    <field editable="1" name="bewertungsart"/>
-    <field editable="1" name="bewertungstag"/>
-    <field editable="1" name="createdat"/>
-    <field editable="1" name="durchm"/>
-    <field editable="1" name="kommentar"/>
-    <field editable="1" name="pk"/>
-    <field editable="1" name="schnam"/>
-    <field editable="1" name="untersucher"/>
-    <field editable="1" name="untersuchtag"/>
-    <field editable="1" name="wetter"/>
+    <field name="baujahr" editable="1"/>
+    <field name="bewertungsart" editable="1"/>
+    <field name="bewertungstag" editable="1"/>
+    <field name="createdat" editable="1"/>
+    <field name="durchm" editable="1"/>
+    <field name="kommentar" editable="1"/>
+    <field name="pk" editable="1"/>
+    <field name="schnam" editable="1"/>
+    <field name="untersucher" editable="1"/>
+    <field name="untersuchtag" editable="1"/>
+    <field name="wetter" editable="1"/>
   </editable>
   <labelOnTop>
     <field name="baujahr" labelOnTop="0"/>
@@ -427,22 +312,10 @@ def my_form_open(dialog, layer, feature):
     <field name="untersuchtag" labelOnTop="0"/>
     <field name="wetter" labelOnTop="0"/>
   </labelOnTop>
-  <reuseLastValue>
-    <field name="baujahr" reuseLastValue="0"/>
-    <field name="bewertungsart" reuseLastValue="0"/>
-    <field name="bewertungstag" reuseLastValue="0"/>
-    <field name="createdat" reuseLastValue="0"/>
-    <field name="durchm" reuseLastValue="0"/>
-    <field name="kommentar" reuseLastValue="0"/>
-    <field name="pk" reuseLastValue="0"/>
-    <field name="schnam" reuseLastValue="0"/>
-    <field name="untersucher" reuseLastValue="0"/>
-    <field name="untersuchtag" reuseLastValue="0"/>
-    <field name="wetter" reuseLastValue="0"/>
-  </reuseLastValue>
+  <reuseLastValue/>
   <dataDefinedFieldProperties/>
   <widgets/>
-  <previewExpression>"schnam"</previewExpression>
+  <previewExpression></previewExpression>
   <mapTip></mapTip>
   <layerGeometryType>0</layerGeometryType>
 </qgis>

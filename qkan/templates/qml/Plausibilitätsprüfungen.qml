@@ -1,12 +1,12 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis hasScaleBasedVisibilityFlag="0" maxScale="0" styleCategories="AllStyleCategories" version="3.20.1-Odense" minScale="1e+08" readOnly="0">
+<qgis hasScaleBasedVisibilityFlag="0" maxScale="0" minScale="1e+08" version="3.22.4-Białowieża" readOnly="0" styleCategories="AllStyleCategories">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal endField="" endExpression="" mode="0" startExpression="" durationUnit="min" enabled="0" fixedDuration="0" durationField="" accumulate="0" startField="">
+  <temporal endField="" durationUnit="min" accumulate="0" startField="" limitMode="0" startExpression="" fixedDuration="0" mode="0" endExpression="" enabled="0" durationField="">
     <fixedRange>
       <start></start>
       <end></end>
@@ -15,70 +15,70 @@
   <customproperties>
     <Option type="Map">
       <Option type="List" name="dualview/previewExpressions">
-        <Option value="&quot;name&quot;" type="QString"/>
+        <Option type="QString" value="&quot;name&quot;"/>
       </Option>
-      <Option value="0" type="int" name="embeddedWidgets/count"/>
+      <Option type="int" value="0" name="embeddedWidgets/count"/>
       <Option name="variableNames"/>
       <Option name="variableValues"/>
     </Option>
   </customproperties>
-  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+  <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
     <activeChecks/>
     <checkConfiguration/>
   </geometryOptions>
-  <legend showLabelLegend="0" type="default-vector"/>
+  <legend type="default-vector" showLabelLegend="0"/>
   <referencedLayers/>
   <fieldConfiguration>
-    <field name="pk" configurationFlags="None">
+    <field configurationFlags="None" name="pk">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="gruppe" configurationFlags="None">
+    <field configurationFlags="None" name="gruppe">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="warntext" configurationFlags="None">
+    <field configurationFlags="None" name="warntext">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="warntyp" configurationFlags="None">
+    <field configurationFlags="None" name="warntyp">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="warnlevel" configurationFlags="None">
+    <field configurationFlags="None" name="warnlevel">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="sql" configurationFlags="None">
+    <field configurationFlags="None" name="sql">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="layername" configurationFlags="None">
+    <field configurationFlags="None" name="layername">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="attrname" configurationFlags="None">
+    <field configurationFlags="None" name="attrname">
       <editWidget type="TextEdit">
         <config>
           <Option/>
@@ -88,13 +88,13 @@
   </fieldConfiguration>
   <aliases>
     <alias index="0" field="pk" name=""/>
-    <alias index="1" field="gruppe" name=""/>
-    <alias index="2" field="warntext" name=""/>
-    <alias index="3" field="warntyp" name=""/>
-    <alias index="4" field="warnlevel" name=""/>
+    <alias index="1" field="gruppe" name="Gruppe"/>
+    <alias index="2" field="warntext" name="Warntext"/>
+    <alias index="3" field="warntyp" name="Warntyp"/>
+    <alias index="4" field="warnlevel" name="Warnlevel"/>
     <alias index="5" field="sql" name=""/>
-    <alias index="6" field="layername" name=""/>
-    <alias index="7" field="attrname" name=""/>
+    <alias index="6" field="layername" name="Layername"/>
+    <alias index="7" field="attrname" name="Attributname"/>
   </aliases>
   <defaults>
     <default applyOnUpdate="0" field="pk" expression=""/>
@@ -107,14 +107,14 @@
     <default applyOnUpdate="0" field="attrname" expression=""/>
   </defaults>
   <constraints>
-    <constraint notnull_strength="1" unique_strength="1" exp_strength="0" field="pk" constraints="3"/>
-    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="gruppe" constraints="0"/>
-    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="warntext" constraints="0"/>
-    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="warntyp" constraints="0"/>
-    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="warnlevel" constraints="0"/>
-    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="sql" constraints="0"/>
-    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="layername" constraints="0"/>
-    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="attrname" constraints="0"/>
+    <constraint constraints="3" exp_strength="0" unique_strength="1" field="pk" notnull_strength="1"/>
+    <constraint constraints="0" exp_strength="0" unique_strength="0" field="gruppe" notnull_strength="0"/>
+    <constraint constraints="0" exp_strength="0" unique_strength="0" field="warntext" notnull_strength="0"/>
+    <constraint constraints="0" exp_strength="0" unique_strength="0" field="warntyp" notnull_strength="0"/>
+    <constraint constraints="0" exp_strength="0" unique_strength="0" field="warnlevel" notnull_strength="0"/>
+    <constraint constraints="0" exp_strength="0" unique_strength="0" field="sql" notnull_strength="0"/>
+    <constraint constraints="0" exp_strength="0" unique_strength="0" field="layername" notnull_strength="0"/>
+    <constraint constraints="0" exp_strength="0" unique_strength="0" field="attrname" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint exp="" desc="" field="pk"/>
@@ -128,19 +128,19 @@
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
-    <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
+    <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
   </attributeactions>
-  <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
     <columns>
-      <column type="field" hidden="0" name="pk" width="-1"/>
-      <column type="field" hidden="0" name="gruppe" width="-1"/>
-      <column type="field" hidden="0" name="warntext" width="-1"/>
-      <column type="field" hidden="0" name="warnlevel" width="-1"/>
-      <column type="field" hidden="0" name="sql" width="-1"/>
-      <column type="field" hidden="0" name="layername" width="-1"/>
-      <column type="actions" hidden="1" width="-1"/>
-      <column type="field" hidden="0" name="warntyp" width="-1"/>
-      <column type="field" hidden="0" name="attrname" width="-1"/>
+      <column type="field" width="-1" name="pk" hidden="0"/>
+      <column type="field" width="-1" name="gruppe" hidden="0"/>
+      <column type="field" width="-1" name="warntext" hidden="0"/>
+      <column type="field" width="-1" name="warnlevel" hidden="0"/>
+      <column type="field" width="-1" name="sql" hidden="0"/>
+      <column type="field" width="-1" name="layername" hidden="0"/>
+      <column type="actions" width="-1" hidden="1"/>
+      <column type="field" width="-1" name="warntyp" hidden="0"/>
+      <column type="field" width="-1" name="attrname" hidden="0"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -148,7 +148,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:\Users/hoettges/AppData/Roaming/QGIS/QGIS3\profiles\default/python/plugins\qkan\forms\</editform>
+  <editform tolerant="1">C:/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/forms</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -170,7 +170,7 @@ def my_form_open(dialog, layer, feature):
 	control = dialog.findChild(QWidget, "MyLineEdit")
 ]]></editforminitcode>
   <featformsuppress>0</featformsuppress>
-  <editorlayout>generatedlayout</editorlayout>
+  <editorlayout>uifilelayout</editorlayout>
   <editable>
     <field editable="1" name="attrname"/>
     <field editable="1" name="gruppe"/>
@@ -196,16 +196,16 @@ def my_form_open(dialog, layer, feature):
     <field labelOnTop="0" name="warntyp"/>
   </labelOnTop>
   <reuseLastValue>
-    <field name="attrname" reuseLastValue="0"/>
-    <field name="gruppe" reuseLastValue="0"/>
-    <field name="idname" reuseLastValue="0"/>
-    <field name="layername" reuseLastValue="0"/>
-    <field name="name" reuseLastValue="0"/>
-    <field name="pk" reuseLastValue="0"/>
-    <field name="sql" reuseLastValue="0"/>
-    <field name="warnlevel" reuseLastValue="0"/>
-    <field name="warntext" reuseLastValue="0"/>
-    <field name="warntyp" reuseLastValue="0"/>
+    <field reuseLastValue="0" name="attrname"/>
+    <field reuseLastValue="0" name="gruppe"/>
+    <field reuseLastValue="0" name="idname"/>
+    <field reuseLastValue="0" name="layername"/>
+    <field reuseLastValue="0" name="name"/>
+    <field reuseLastValue="0" name="pk"/>
+    <field reuseLastValue="0" name="sql"/>
+    <field reuseLastValue="0" name="warnlevel"/>
+    <field reuseLastValue="0" name="warntext"/>
+    <field reuseLastValue="0" name="warntyp"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>

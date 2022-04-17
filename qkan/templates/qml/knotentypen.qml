@@ -1,12 +1,12 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis hasScaleBasedVisibilityFlag="0" maxScale="0" styleCategories="AllStyleCategories" version="3.20.1-Odense" minScale="0" readOnly="0">
+<qgis hasScaleBasedVisibilityFlag="0" maxScale="0" minScale="0" version="3.22.4-Białowieża" readOnly="0" styleCategories="AllStyleCategories">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal endField="" endExpression="" mode="0" startExpression="" durationUnit="min" enabled="0" fixedDuration="0" durationField="" accumulate="0" startField="">
+  <temporal endField="" durationUnit="min" accumulate="0" startField="" limitMode="0" startExpression="" fixedDuration="0" mode="0" endExpression="" enabled="0" durationField="">
     <fixedRange>
       <start></start>
       <end></end>
@@ -14,34 +14,34 @@
   </temporal>
   <customproperties>
     <Option type="Map">
-      <Option value="0" type="int" name="embeddedWidgets/count"/>
+      <Option type="int" value="0" name="embeddedWidgets/count"/>
       <Option name="variableNames"/>
       <Option name="variableValues"/>
     </Option>
   </customproperties>
-  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+  <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
     <activeChecks/>
     <checkConfiguration/>
   </geometryOptions>
-  <legend showLabelLegend="0" type="default-vector"/>
+  <legend type="default-vector" showLabelLegend="0"/>
   <referencedLayers/>
   <fieldConfiguration>
-    <field name="pk" configurationFlags="None">
+    <field configurationFlags="None" name="pk">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" type="QString" name="IsMultiline"/>
-            <Option value="0" type="QString" name="UseHtml"/>
+            <Option type="QString" value="0" name="IsMultiline"/>
+            <Option type="QString" value="0" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="knotentyp" configurationFlags="None">
+    <field configurationFlags="None" name="knotentyp">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" type="QString" name="IsMultiline"/>
-            <Option value="0" type="QString" name="UseHtml"/>
+            <Option type="QString" value="0" name="IsMultiline"/>
+            <Option type="QString" value="0" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
@@ -49,15 +49,15 @@
   </fieldConfiguration>
   <aliases>
     <alias index="0" field="pk" name=""/>
-    <alias index="1" field="knotentyp" name=""/>
+    <alias index="1" field="knotentyp" name="Name"/>
   </aliases>
   <defaults>
     <default applyOnUpdate="0" field="pk" expression=""/>
     <default applyOnUpdate="0" field="knotentyp" expression=""/>
   </defaults>
   <constraints>
-    <constraint notnull_strength="1" unique_strength="1" exp_strength="0" field="pk" constraints="3"/>
-    <constraint notnull_strength="0" unique_strength="0" exp_strength="0" field="knotentyp" constraints="0"/>
+    <constraint constraints="3" exp_strength="0" unique_strength="1" field="pk" notnull_strength="1"/>
+    <constraint constraints="0" exp_strength="0" unique_strength="0" field="knotentyp" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint exp="" desc="" field="pk"/>
@@ -65,13 +65,13 @@
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
-    <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
+    <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
   </attributeactions>
-  <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
     <columns>
-      <column type="field" hidden="0" name="pk" width="-1"/>
-      <column type="field" hidden="0" name="knotentyp" width="-1"/>
-      <column type="actions" hidden="1" width="-1"/>
+      <column type="field" width="-1" name="pk" hidden="0"/>
+      <column type="field" width="-1" name="knotentyp" hidden="0"/>
+      <column type="actions" width="-1" hidden="1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -79,7 +79,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">../../Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/forms</editform>
+  <editform tolerant="1">C:/Users/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/forms</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -111,8 +111,8 @@ def my_form_open(dialog, layer, feature):
     <field labelOnTop="0" name="pk"/>
   </labelOnTop>
   <reuseLastValue>
-    <field name="knotentyp" reuseLastValue="0"/>
-    <field name="pk" reuseLastValue="0"/>
+    <field reuseLastValue="0" name="knotentyp"/>
+    <field reuseLastValue="0" name="pk"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>

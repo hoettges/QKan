@@ -1,20 +1,20 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis version="3.24.1-Tisler" readOnly="0" simplifyMaxScale="1" maxScale="0" symbologyReferenceScale="-1" minScale="0" styleCategories="AllStyleCategories" hasScaleBasedVisibilityFlag="0" simplifyDrawingHints="1" simplifyDrawingTol="1" simplifyLocal="1" simplifyAlgorithm="0" labelsEnabled="0">
+<qgis hasScaleBasedVisibilityFlag="0" simplifyDrawingTol="1" simplifyAlgorithm="0" labelsEnabled="0" version="3.22.4-Białowieża" minScale="0" symbologyReferenceScale="-1" maxScale="0" simplifyDrawingHints="1" readOnly="0" simplifyMaxScale="1" simplifyLocal="1" styleCategories="AllStyleCategories">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal endExpression="" startExpression="" mode="0" accumulate="0" enabled="0" fixedDuration="0" durationUnit="min" startField="" durationField="" limitMode="0" endField="">
+  <temporal durationField="" enabled="0" startField="" fixedDuration="0" startExpression="" endExpression="" mode="0" accumulate="0" durationUnit="min" limitMode="0" endField="">
     <fixedRange>
       <start></start>
       <end></end>
     </fixedRange>
   </temporal>
-  <renderer-v2 forceraster="0" type="singleSymbol" referencescale="-1" symbollevels="0" enableorderby="0">
+  <renderer-v2 referencescale="-1" symbollevels="0" enableorderby="0" type="singleSymbol" forceraster="0">
     <symbols>
-      <symbol name="0" alpha="1" type="fill" force_rhr="0" clip_to_extent="1">
+      <symbol alpha="1" name="0" clip_to_extent="1" type="fill" force_rhr="0">
         <data_defined_properties>
           <Option type="Map">
             <Option value="" name="name" type="QString"/>
@@ -22,7 +22,7 @@
             <Option value="collection" name="type" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer pass="0" enabled="1" class="SimpleFill" locked="0">
+        <layer pass="0" class="SimpleFill" locked="0" enabled="1">
           <Option type="Map">
             <Option value="3x:0,0,0,0,0,0" name="border_width_map_unit_scale" type="QString"/>
             <Option value="116,161,198,255" name="color" type="QString"/>
@@ -74,11 +74,11 @@
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
   <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-    <DiagramCategory labelPlacementMethod="XHeight" scaleDependency="Area" showAxis="1" spacingUnit="MM" opacity="1" barWidth="5" scaleBasedVisibility="0" sizeScale="3x:0,0,0,0,0,0" minScaleDenominator="0" penWidth="0" direction="0" rotationOffset="270" lineSizeType="MM" penColor="#000000" spacing="5" diagramOrientation="Up" maxScaleDenominator="0" spacingUnitScale="3x:0,0,0,0,0,0" lineSizeScale="3x:0,0,0,0,0,0" height="15" sizeType="MM" minimumSize="0" width="15" penAlpha="255" backgroundAlpha="255" enabled="0" backgroundColor="#ffffff">
-      <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
-      <attribute color="#000000" field="" label=""/>
+    <DiagramCategory scaleDependency="Area" diagramOrientation="Up" minimumSize="0" backgroundColor="#ffffff" spacing="5" opacity="1" penAlpha="255" minScaleDenominator="0" enabled="0" direction="0" labelPlacementMethod="XHeight" scaleBasedVisibility="0" spacingUnit="MM" backgroundAlpha="255" penWidth="0" width="15" maxScaleDenominator="0" spacingUnitScale="3x:0,0,0,0,0,0" rotationOffset="270" lineSizeScale="3x:0,0,0,0,0,0" barWidth="5" sizeScale="3x:0,0,0,0,0,0" penColor="#000000" showAxis="1" sizeType="MM" height="15" lineSizeType="MM">
+      <fontProperties style="" description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0"/>
+      <attribute label="" field="" color="#000000"/>
       <axisSymbol>
-        <symbol name="" alpha="1" type="line" force_rhr="0" clip_to_extent="1">
+        <symbol alpha="1" name="" clip_to_extent="1" type="line" force_rhr="0">
           <data_defined_properties>
             <Option type="Map">
               <Option value="" name="name" type="QString"/>
@@ -86,7 +86,7 @@
               <Option value="collection" name="type" type="QString"/>
             </Option>
           </data_defined_properties>
-          <layer pass="0" enabled="1" class="SimpleLine" locked="0">
+          <layer pass="0" class="SimpleLine" locked="0" enabled="1">
             <Option type="Map">
               <Option value="0" name="align_dash_pattern" type="QString"/>
               <Option value="square" name="capstyle" type="QString"/>
@@ -155,7 +155,7 @@
       </axisSymbol>
     </DiagramCategory>
   </SingleCategoryDiagramRenderer>
-  <DiagramLayerSettings zIndex="0" priority="0" placement="1" linePlacementFlags="18" dist="0" obstacle="0" showAll="1">
+  <DiagramLayerSettings zIndex="0" showAll="1" obstacle="0" dist="0" linePlacementFlags="18" priority="0" placement="1">
     <properties>
       <Option type="Map">
         <Option value="" name="name" type="QString"/>
@@ -345,70 +345,70 @@
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias name="" field="pk" index="0"/>
-    <alias name="Name" field="flnam" index="1"/>
-    <alias name="Haltung" field="haltnam" index="2"/>
-    <alias name="Schacht" field="schnam" index="3"/>
-    <alias name="Neigungsklasse" field="neigkl" index="4"/>
-    <alias name="Neigung" field="neigung" index="5"/>
-    <alias name="Befestigungsgrad" field="befgrad" index="6"/>
-    <alias name="Schwerpunktlaufzeit" field="schwerpunktlaufzeit" index="7"/>
-    <alias name="Regenschreiber" field="regenschreiber" index="8"/>
-    <alias name="Teilgebiet" field="teilgebiet" index="9"/>
-    <alias name="Abflussparameter" field="abflussparameter" index="10"/>
-    <alias name="Kommentar" field="kommentar" index="11"/>
-    <alias name="bearbeitet" field="createdat" index="12"/>
+    <alias field="pk" name="" index="0"/>
+    <alias field="flnam" name="Name" index="1"/>
+    <alias field="haltnam" name="Haltung" index="2"/>
+    <alias field="schnam" name="Schacht" index="3"/>
+    <alias field="neigkl" name="Neigungsklasse" index="4"/>
+    <alias field="neigung" name="Neigung" index="5"/>
+    <alias field="befgrad" name="Befestigungsgrad" index="6"/>
+    <alias field="schwerpunktlaufzeit" name="Schwerpunktlaufzeit" index="7"/>
+    <alias field="regenschreiber" name="Regenschreiber" index="8"/>
+    <alias field="teilgebiet" name="Teilgebiet" index="9"/>
+    <alias field="abflussparameter" name="Abflussparameter" index="10"/>
+    <alias field="kommentar" name="Kommentar" index="11"/>
+    <alias field="createdat" name="bearbeitet" index="12"/>
   </aliases>
   <defaults>
-    <default expression="" applyOnUpdate="0" field="pk"/>
-    <default expression="" applyOnUpdate="0" field="flnam"/>
-    <default expression="" applyOnUpdate="0" field="haltnam"/>
-    <default expression="" applyOnUpdate="0" field="schnam"/>
-    <default expression="" applyOnUpdate="0" field="neigkl"/>
-    <default expression="" applyOnUpdate="0" field="neigung"/>
-    <default expression="" applyOnUpdate="0" field="befgrad"/>
-    <default expression="" applyOnUpdate="0" field="schwerpunktlaufzeit"/>
-    <default expression="" applyOnUpdate="0" field="regenschreiber"/>
-    <default expression="" applyOnUpdate="0" field="teilgebiet"/>
-    <default expression="" applyOnUpdate="0" field="abflussparameter"/>
-    <default expression="" applyOnUpdate="0" field="kommentar"/>
-    <default expression="" applyOnUpdate="0" field="createdat"/>
+    <default field="pk" applyOnUpdate="0" expression=""/>
+    <default field="flnam" applyOnUpdate="0" expression=""/>
+    <default field="haltnam" applyOnUpdate="0" expression=""/>
+    <default field="schnam" applyOnUpdate="0" expression=""/>
+    <default field="neigkl" applyOnUpdate="0" expression=""/>
+    <default field="neigung" applyOnUpdate="0" expression=""/>
+    <default field="befgrad" applyOnUpdate="0" expression=""/>
+    <default field="schwerpunktlaufzeit" applyOnUpdate="0" expression=""/>
+    <default field="regenschreiber" applyOnUpdate="0" expression=""/>
+    <default field="teilgebiet" applyOnUpdate="0" expression=""/>
+    <default field="abflussparameter" applyOnUpdate="0" expression=""/>
+    <default field="kommentar" applyOnUpdate="0" expression=""/>
+    <default field="createdat" applyOnUpdate="0" expression=""/>
   </defaults>
   <constraints>
-    <constraint constraints="3" notnull_strength="1" field="pk" exp_strength="0" unique_strength="1"/>
-    <constraint constraints="0" notnull_strength="0" field="flnam" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="haltnam" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="schnam" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="neigkl" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="neigung" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="befgrad" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="schwerpunktlaufzeit" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="regenschreiber" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="teilgebiet" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="abflussparameter" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="kommentar" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="createdat" exp_strength="0" unique_strength="0"/>
+    <constraint field="pk" constraints="3" unique_strength="1" notnull_strength="1" exp_strength="0"/>
+    <constraint field="flnam" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="haltnam" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="schnam" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="neigkl" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="neigung" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="befgrad" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="schwerpunktlaufzeit" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="regenschreiber" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="teilgebiet" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="abflussparameter" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="kommentar" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="createdat" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint desc="" exp="" field="pk"/>
-    <constraint desc="" exp="" field="flnam"/>
-    <constraint desc="" exp="" field="haltnam"/>
-    <constraint desc="" exp="" field="schnam"/>
-    <constraint desc="" exp="" field="neigkl"/>
-    <constraint desc="" exp="" field="neigung"/>
-    <constraint desc="" exp="" field="befgrad"/>
-    <constraint desc="" exp="" field="schwerpunktlaufzeit"/>
-    <constraint desc="" exp="" field="regenschreiber"/>
-    <constraint desc="" exp="" field="teilgebiet"/>
-    <constraint desc="" exp="" field="abflussparameter"/>
-    <constraint desc="" exp="" field="kommentar"/>
-    <constraint desc="" exp="" field="createdat"/>
+    <constraint field="pk" exp="" desc=""/>
+    <constraint field="flnam" exp="" desc=""/>
+    <constraint field="haltnam" exp="" desc=""/>
+    <constraint field="schnam" exp="" desc=""/>
+    <constraint field="neigkl" exp="" desc=""/>
+    <constraint field="neigung" exp="" desc=""/>
+    <constraint field="befgrad" exp="" desc=""/>
+    <constraint field="schwerpunktlaufzeit" exp="" desc=""/>
+    <constraint field="regenschreiber" exp="" desc=""/>
+    <constraint field="teilgebiet" exp="" desc=""/>
+    <constraint field="abflussparameter" exp="" desc=""/>
+    <constraint field="kommentar" exp="" desc=""/>
+    <constraint field="createdat" exp="" desc=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
     <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
   </attributeactions>
-  <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+  <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
     <columns>
       <column name="pk" type="field" hidden="0" width="-1"/>
       <column name="flnam" type="field" hidden="0" width="-1"/>
@@ -431,7 +431,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:/FHAC/hoettges/Kanalprogramme/hoettges/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_tezg.ui</editform>
+  <editform tolerant="1">C:\Users\hoettges\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\qkan\forms\qkan_tezg.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -455,19 +455,19 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field editable="1" name="abflussparameter"/>
-    <field editable="1" name="befgrad"/>
-    <field editable="1" name="createdat"/>
-    <field editable="1" name="flnam"/>
-    <field editable="1" name="haltnam"/>
-    <field editable="1" name="kommentar"/>
-    <field editable="1" name="neigkl"/>
-    <field editable="1" name="neigung"/>
-    <field editable="1" name="pk"/>
-    <field editable="1" name="regenschreiber"/>
-    <field editable="1" name="schnam"/>
-    <field editable="1" name="schwerpunktlaufzeit"/>
-    <field editable="1" name="teilgebiet"/>
+    <field name="abflussparameter" editable="1"/>
+    <field name="befgrad" editable="1"/>
+    <field name="createdat" editable="1"/>
+    <field name="flnam" editable="1"/>
+    <field name="haltnam" editable="1"/>
+    <field name="kommentar" editable="1"/>
+    <field name="neigkl" editable="1"/>
+    <field name="neigung" editable="1"/>
+    <field name="pk" editable="1"/>
+    <field name="regenschreiber" editable="1"/>
+    <field name="schnam" editable="1"/>
+    <field name="schwerpunktlaufzeit" editable="1"/>
+    <field name="teilgebiet" editable="1"/>
   </editable>
   <labelOnTop>
     <field name="abflussparameter" labelOnTop="0"/>

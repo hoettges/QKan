@@ -2029,8 +2029,8 @@ def createdbtables(
     mulden_startwert REAL, 
     rauheit_kst REAL,                       -- Rauheit Stricklerbeiwert = 1/n
     pctZero REAL,                           -- SWMM: % Zero-Imperv
-    bodenklasse TEXT, 
-    flaechentyp TEXT, 
+    bodenklasse TEXT,                       -- impervious: NULL, pervious: JOIN TO bodenklasse.bknam
+    flaechentyp TEXT,                       -- JOIN TO flaechentypen.bezeichnung
     kommentar TEXT, 
     createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
 

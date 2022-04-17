@@ -14,6 +14,9 @@
   </temporal>
   <customproperties>
     <Option type="Map">
+      <Option name="dualview/previewExpressions" type="List">
+        <Option value="&quot;bezeichnung&quot;" type="QString"/>
+      </Option>
       <Option value="0" name="embeddedWidgets/count" type="QString"/>
       <Option name="variableNames"/>
       <Option name="variableValues"/>
@@ -56,26 +59,54 @@
         </config>
       </editWidget>
     </field>
+    <field name="mu_nr" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="0" name="IsMultiline" type="QString"/>
+            <Option value="0" name="UseHtml" type="QString"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="kp_nr" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="0" name="IsMultiline" type="QString"/>
+            <Option value="0" name="UseHtml" type="QString"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
   </fieldConfiguration>
   <aliases>
     <alias field="pk" name="" index="0"/>
-    <alias field="bezeichnung" name="Bezeichnung" index="1"/>
+    <alias field="bezeichnung" name="Bezeichnug" index="1"/>
     <alias field="he_nr" name="NR (HYSTEM-EXTRAN)" index="2"/>
+    <alias field="mu_nr" name="NR (Mike Urban)" index="3"/>
+    <alias field="kp_nr" name="NR (Kanal++)" index="4"/>
   </aliases>
   <defaults>
     <default field="pk" applyOnUpdate="0" expression=""/>
     <default field="bezeichnung" applyOnUpdate="0" expression=""/>
     <default field="he_nr" applyOnUpdate="0" expression=""/>
+    <default field="mu_nr" applyOnUpdate="0" expression=""/>
+    <default field="kp_nr" applyOnUpdate="0" expression=""/>
   </defaults>
   <constraints>
     <constraint field="pk" constraints="3" unique_strength="1" notnull_strength="1" exp_strength="0"/>
     <constraint field="bezeichnung" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
     <constraint field="he_nr" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="mu_nr" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="kp_nr" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint field="pk" exp="" desc=""/>
     <constraint field="bezeichnung" exp="" desc=""/>
     <constraint field="he_nr" exp="" desc=""/>
+    <constraint field="mu_nr" exp="" desc=""/>
+    <constraint field="kp_nr" exp="" desc=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
@@ -86,6 +117,8 @@
       <column name="pk" type="field" hidden="0" width="-1"/>
       <column name="bezeichnung" type="field" hidden="0" width="-1"/>
       <column name="he_nr" type="field" hidden="0" width="-1"/>
+      <column name="mu_nr" type="field" hidden="0" width="-1"/>
+      <column name="kp_nr" type="field" hidden="0" width="-1"/>
       <column type="actions" hidden="1" width="-1"/>
     </columns>
   </attributetableconfig>
@@ -94,7 +127,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:\Users\hoettges\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\qkan\forms\qkan_pumpentypen.ui</editform>
+  <editform tolerant="1">C:\Users\hoettges\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\qkan\forms\qkan_simulationsstatus.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -120,16 +153,22 @@ def my_form_open(dialog, layer, feature):
   <editable>
     <field name="bezeichnung" editable="1"/>
     <field name="he_nr" editable="1"/>
+    <field name="kp_nr" editable="1"/>
+    <field name="mu_nr" editable="1"/>
     <field name="pk" editable="1"/>
   </editable>
   <labelOnTop>
     <field name="bezeichnung" labelOnTop="0"/>
     <field name="he_nr" labelOnTop="0"/>
+    <field name="kp_nr" labelOnTop="0"/>
+    <field name="mu_nr" labelOnTop="0"/>
     <field name="pk" labelOnTop="0"/>
   </labelOnTop>
   <reuseLastValue>
     <field name="bezeichnung" reuseLastValue="0"/>
     <field name="he_nr" reuseLastValue="0"/>
+    <field name="kp_nr" reuseLastValue="0"/>
+    <field name="mu_nr" reuseLastValue="0"/>
     <field name="pk" reuseLastValue="0"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>

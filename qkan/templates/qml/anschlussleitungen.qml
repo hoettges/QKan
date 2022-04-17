@@ -1,20 +1,20 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis version="3.24.1-Tisler" readOnly="0" simplifyMaxScale="1" maxScale="0" symbologyReferenceScale="-1" minScale="100000000" styleCategories="AllStyleCategories" hasScaleBasedVisibilityFlag="0" simplifyDrawingHints="1" simplifyDrawingTol="1" simplifyLocal="1" simplifyAlgorithm="0" labelsEnabled="0">
+<qgis hasScaleBasedVisibilityFlag="0" simplifyDrawingTol="1" simplifyAlgorithm="0" labelsEnabled="0" version="3.22.4-Białowieża" minScale="100000000" symbologyReferenceScale="-1" maxScale="0" simplifyDrawingHints="1" readOnly="0" simplifyMaxScale="1" simplifyLocal="1" styleCategories="AllStyleCategories">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal endExpression="" startExpression="" mode="0" accumulate="0" enabled="0" fixedDuration="0" durationUnit="min" startField="" durationField="" limitMode="0" endField="">
+  <temporal durationField="" enabled="0" startField="" fixedDuration="0" startExpression="" endExpression="" mode="0" accumulate="0" durationUnit="min" limitMode="0" endField="">
     <fixedRange>
       <start></start>
       <end></end>
     </fixedRange>
   </temporal>
-  <renderer-v2 forceraster="0" type="singleSymbol" referencescale="-1" symbollevels="0" enableorderby="0">
+  <renderer-v2 referencescale="-1" symbollevels="0" enableorderby="0" type="singleSymbol" forceraster="0">
     <symbols>
-      <symbol name="0" alpha="1" type="line" force_rhr="0" clip_to_extent="1">
+      <symbol alpha="1" name="0" clip_to_extent="1" type="line" force_rhr="0">
         <data_defined_properties>
           <Option type="Map">
             <Option value="" name="name" type="QString"/>
@@ -22,7 +22,7 @@
             <Option value="collection" name="type" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer pass="0" enabled="1" class="SimpleLine" locked="0">
+        <layer pass="0" class="SimpleLine" locked="0" enabled="1">
           <Option type="Map">
             <Option value="0" name="align_dash_pattern" type="QString"/>
             <Option value="square" name="capstyle" type="QString"/>
@@ -106,11 +106,11 @@
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
   <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-    <DiagramCategory labelPlacementMethod="XHeight" scaleDependency="Area" showAxis="1" spacingUnit="MM" opacity="1" barWidth="5" scaleBasedVisibility="0" sizeScale="3x:0,0,0,0,0,0" minScaleDenominator="0" penWidth="0" direction="0" rotationOffset="270" lineSizeType="MM" penColor="#000000" spacing="5" diagramOrientation="Up" maxScaleDenominator="1e+08" spacingUnitScale="3x:0,0,0,0,0,0" lineSizeScale="3x:0,0,0,0,0,0" height="15" sizeType="MM" minimumSize="0" width="15" penAlpha="255" backgroundAlpha="255" enabled="0" backgroundColor="#ffffff">
-      <fontProperties description="MS Shell Dlg 2,8,-1,5,50,0,0,0,0,0" style=""/>
-      <attribute color="#000000" field="" label=""/>
+    <DiagramCategory scaleDependency="Area" diagramOrientation="Up" minimumSize="0" backgroundColor="#ffffff" spacing="5" opacity="1" penAlpha="255" minScaleDenominator="0" enabled="0" direction="0" labelPlacementMethod="XHeight" scaleBasedVisibility="0" spacingUnit="MM" backgroundAlpha="255" penWidth="0" width="15" maxScaleDenominator="1e+08" spacingUnitScale="3x:0,0,0,0,0,0" rotationOffset="270" lineSizeScale="3x:0,0,0,0,0,0" barWidth="5" sizeScale="3x:0,0,0,0,0,0" penColor="#000000" showAxis="1" sizeType="MM" height="15" lineSizeType="MM">
+      <fontProperties style="" description="MS Shell Dlg 2,8,-1,5,50,0,0,0,0,0"/>
+      <attribute label="" field="" color="#000000"/>
       <axisSymbol>
-        <symbol name="" alpha="1" type="line" force_rhr="0" clip_to_extent="1">
+        <symbol alpha="1" name="" clip_to_extent="1" type="line" force_rhr="0">
           <data_defined_properties>
             <Option type="Map">
               <Option value="" name="name" type="QString"/>
@@ -118,7 +118,7 @@
               <Option value="collection" name="type" type="QString"/>
             </Option>
           </data_defined_properties>
-          <layer pass="0" enabled="1" class="SimpleLine" locked="0">
+          <layer pass="0" class="SimpleLine" locked="0" enabled="1">
             <Option type="Map">
               <Option value="0" name="align_dash_pattern" type="QString"/>
               <Option value="square" name="capstyle" type="QString"/>
@@ -187,7 +187,7 @@
       </axisSymbol>
     </DiagramCategory>
   </SingleCategoryDiagramRenderer>
-  <DiagramLayerSettings zIndex="0" priority="0" placement="2" linePlacementFlags="18" dist="0" obstacle="0" showAll="1">
+  <DiagramLayerSettings zIndex="0" showAll="1" obstacle="0" dist="0" linePlacementFlags="18" priority="0" placement="2">
     <properties>
       <Option type="Map">
         <Option value="" name="name" type="QString"/>
@@ -430,114 +430,114 @@
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias name="" field="pk" index="0"/>
-    <alias name="Name" field="leitnam" index="1"/>
-    <alias name="Anfangsschacht" field="schoben" index="2"/>
-    <alias name="Endschacht" field="schunten" index="3"/>
-    <alias name="Profilhöhe" field="hoehe" index="4"/>
-    <alias name="Profilbreite" field="breite" index="5"/>
-    <alias name="Haltungslänge" field="laenge" index="6"/>
-    <alias name="Sohlhöhe Anfang" field="sohleoben" index="7"/>
-    <alias name="Sohlhöhe Ende" field="sohleunten" index="8"/>
-    <alias name="" field="deckeloben" index="9"/>
-    <alias name="" field="deckelunten" index="10"/>
-    <alias name="Teilgebiet" field="teilgebiet" index="11"/>
-    <alias name="Zufluss (m³/s)" field="qzu" index="12"/>
-    <alias name="Profilbezeichnung" field="profilnam" index="13"/>
-    <alias name="Entwässerungssystem" field="entwart" index="14"/>
-    <alias name="Material" field="material" index="15"/>
-    <alias name="Rauheitsbeiwert" field="ks" index="16"/>
-    <alias name="Planungsstatus" field="simstatus" index="17"/>
-    <alias name="Kommentar" field="kommentar" index="18"/>
-    <alias name="bearbeitet" field="createdat" index="19"/>
-    <alias name="" field="xschob" index="20"/>
-    <alias name="" field="yschob" index="21"/>
-    <alias name="" field="xschun" index="22"/>
-    <alias name="" field="yschun" index="23"/>
+    <alias field="pk" name="" index="0"/>
+    <alias field="leitnam" name="Name" index="1"/>
+    <alias field="schoben" name="Anfangsschacht" index="2"/>
+    <alias field="schunten" name="Endschacht" index="3"/>
+    <alias field="hoehe" name="Profilhöhe" index="4"/>
+    <alias field="breite" name="Profilbreite" index="5"/>
+    <alias field="laenge" name="Haltungslänge" index="6"/>
+    <alias field="sohleoben" name="Sohlhöhe Anfang" index="7"/>
+    <alias field="sohleunten" name="Sohlhöhe Ende" index="8"/>
+    <alias field="deckeloben" name="" index="9"/>
+    <alias field="deckelunten" name="" index="10"/>
+    <alias field="teilgebiet" name="Teilgebiet" index="11"/>
+    <alias field="qzu" name="Zufluss (m³/s)" index="12"/>
+    <alias field="profilnam" name="Profilbezeichnung" index="13"/>
+    <alias field="entwart" name="Entwässerungssystem" index="14"/>
+    <alias field="material" name="Material" index="15"/>
+    <alias field="ks" name="Rauheitsbeiwert" index="16"/>
+    <alias field="simstatus" name="Planungsstatus" index="17"/>
+    <alias field="kommentar" name="Kommentar" index="18"/>
+    <alias field="createdat" name="bearbeitet" index="19"/>
+    <alias field="xschob" name="" index="20"/>
+    <alias field="yschob" name="" index="21"/>
+    <alias field="xschun" name="" index="22"/>
+    <alias field="yschun" name="" index="23"/>
   </aliases>
   <defaults>
-    <default expression="" applyOnUpdate="0" field="pk"/>
-    <default expression="" applyOnUpdate="0" field="leitnam"/>
-    <default expression="" applyOnUpdate="0" field="schoben"/>
-    <default expression="" applyOnUpdate="0" field="schunten"/>
-    <default expression="" applyOnUpdate="0" field="hoehe"/>
-    <default expression="" applyOnUpdate="0" field="breite"/>
-    <default expression="" applyOnUpdate="0" field="laenge"/>
-    <default expression="" applyOnUpdate="0" field="sohleoben"/>
-    <default expression="" applyOnUpdate="0" field="sohleunten"/>
-    <default expression="" applyOnUpdate="0" field="deckeloben"/>
-    <default expression="" applyOnUpdate="0" field="deckelunten"/>
-    <default expression="" applyOnUpdate="0" field="teilgebiet"/>
-    <default expression="" applyOnUpdate="0" field="qzu"/>
-    <default expression="" applyOnUpdate="0" field="profilnam"/>
-    <default expression="" applyOnUpdate="0" field="entwart"/>
-    <default expression="" applyOnUpdate="0" field="material"/>
-    <default expression="" applyOnUpdate="0" field="ks"/>
-    <default expression="" applyOnUpdate="0" field="simstatus"/>
-    <default expression="" applyOnUpdate="0" field="kommentar"/>
-    <default expression="" applyOnUpdate="0" field="createdat"/>
-    <default expression="" applyOnUpdate="0" field="xschob"/>
-    <default expression="" applyOnUpdate="0" field="yschob"/>
-    <default expression="" applyOnUpdate="0" field="xschun"/>
-    <default expression="" applyOnUpdate="0" field="yschun"/>
+    <default field="pk" applyOnUpdate="0" expression=""/>
+    <default field="leitnam" applyOnUpdate="0" expression=""/>
+    <default field="schoben" applyOnUpdate="0" expression=""/>
+    <default field="schunten" applyOnUpdate="0" expression=""/>
+    <default field="hoehe" applyOnUpdate="0" expression=""/>
+    <default field="breite" applyOnUpdate="0" expression=""/>
+    <default field="laenge" applyOnUpdate="0" expression=""/>
+    <default field="sohleoben" applyOnUpdate="0" expression=""/>
+    <default field="sohleunten" applyOnUpdate="0" expression=""/>
+    <default field="deckeloben" applyOnUpdate="0" expression=""/>
+    <default field="deckelunten" applyOnUpdate="0" expression=""/>
+    <default field="teilgebiet" applyOnUpdate="0" expression=""/>
+    <default field="qzu" applyOnUpdate="0" expression=""/>
+    <default field="profilnam" applyOnUpdate="0" expression=""/>
+    <default field="entwart" applyOnUpdate="0" expression=""/>
+    <default field="material" applyOnUpdate="0" expression=""/>
+    <default field="ks" applyOnUpdate="0" expression=""/>
+    <default field="simstatus" applyOnUpdate="0" expression=""/>
+    <default field="kommentar" applyOnUpdate="0" expression=""/>
+    <default field="createdat" applyOnUpdate="0" expression=""/>
+    <default field="xschob" applyOnUpdate="0" expression=""/>
+    <default field="yschob" applyOnUpdate="0" expression=""/>
+    <default field="xschun" applyOnUpdate="0" expression=""/>
+    <default field="yschun" applyOnUpdate="0" expression=""/>
   </defaults>
   <constraints>
-    <constraint constraints="3" notnull_strength="1" field="pk" exp_strength="0" unique_strength="1"/>
-    <constraint constraints="0" notnull_strength="0" field="leitnam" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="schoben" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="schunten" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="hoehe" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="breite" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="laenge" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="sohleoben" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="sohleunten" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="deckeloben" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="deckelunten" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="teilgebiet" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="qzu" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="profilnam" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="entwart" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="material" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="ks" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="simstatus" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="kommentar" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="createdat" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="xschob" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="yschob" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="xschun" exp_strength="0" unique_strength="0"/>
-    <constraint constraints="0" notnull_strength="0" field="yschun" exp_strength="0" unique_strength="0"/>
+    <constraint field="pk" constraints="3" unique_strength="1" notnull_strength="1" exp_strength="0"/>
+    <constraint field="leitnam" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="schoben" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="schunten" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="hoehe" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="breite" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="laenge" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="sohleoben" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="sohleunten" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="deckeloben" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="deckelunten" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="teilgebiet" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="qzu" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="profilnam" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="entwart" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="material" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="ks" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="simstatus" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="kommentar" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="createdat" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="xschob" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="yschob" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="xschun" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint field="yschun" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint desc="" exp="" field="pk"/>
-    <constraint desc="" exp="" field="leitnam"/>
-    <constraint desc="" exp="" field="schoben"/>
-    <constraint desc="" exp="" field="schunten"/>
-    <constraint desc="" exp="" field="hoehe"/>
-    <constraint desc="" exp="" field="breite"/>
-    <constraint desc="" exp="" field="laenge"/>
-    <constraint desc="" exp="" field="sohleoben"/>
-    <constraint desc="" exp="" field="sohleunten"/>
-    <constraint desc="" exp="" field="deckeloben"/>
-    <constraint desc="" exp="" field="deckelunten"/>
-    <constraint desc="" exp="" field="teilgebiet"/>
-    <constraint desc="" exp="" field="qzu"/>
-    <constraint desc="" exp="" field="profilnam"/>
-    <constraint desc="" exp="" field="entwart"/>
-    <constraint desc="" exp="" field="material"/>
-    <constraint desc="" exp="" field="ks"/>
-    <constraint desc="" exp="" field="simstatus"/>
-    <constraint desc="" exp="" field="kommentar"/>
-    <constraint desc="" exp="" field="createdat"/>
-    <constraint desc="" exp="" field="xschob"/>
-    <constraint desc="" exp="" field="yschob"/>
-    <constraint desc="" exp="" field="xschun"/>
-    <constraint desc="" exp="" field="yschun"/>
+    <constraint field="pk" exp="" desc=""/>
+    <constraint field="leitnam" exp="" desc=""/>
+    <constraint field="schoben" exp="" desc=""/>
+    <constraint field="schunten" exp="" desc=""/>
+    <constraint field="hoehe" exp="" desc=""/>
+    <constraint field="breite" exp="" desc=""/>
+    <constraint field="laenge" exp="" desc=""/>
+    <constraint field="sohleoben" exp="" desc=""/>
+    <constraint field="sohleunten" exp="" desc=""/>
+    <constraint field="deckeloben" exp="" desc=""/>
+    <constraint field="deckelunten" exp="" desc=""/>
+    <constraint field="teilgebiet" exp="" desc=""/>
+    <constraint field="qzu" exp="" desc=""/>
+    <constraint field="profilnam" exp="" desc=""/>
+    <constraint field="entwart" exp="" desc=""/>
+    <constraint field="material" exp="" desc=""/>
+    <constraint field="ks" exp="" desc=""/>
+    <constraint field="simstatus" exp="" desc=""/>
+    <constraint field="kommentar" exp="" desc=""/>
+    <constraint field="createdat" exp="" desc=""/>
+    <constraint field="xschob" exp="" desc=""/>
+    <constraint field="yschob" exp="" desc=""/>
+    <constraint field="xschun" exp="" desc=""/>
+    <constraint field="yschun" exp="" desc=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
     <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
   </attributeactions>
-  <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+  <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
     <columns>
       <column name="pk" type="field" hidden="0" width="-1"/>
       <column name="leitnam" type="field" hidden="0" width="-1"/>
@@ -571,7 +571,7 @@
     <fieldstyles/>
   </conditionalstyles>
   <storedexpressions/>
-  <editform tolerant="1">C:/FHAC/hoettges/Kanalprogramme/Nora/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/anschlussleitungen.ui</editform>
+  <editform tolerant="1">C:\Users\hoettges\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\qkan\forms\anschlussleitungen.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>
@@ -595,30 +595,30 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field editable="1" name="breite"/>
-    <field editable="1" name="createdat"/>
-    <field editable="1" name="deckeloben"/>
-    <field editable="1" name="deckelunten"/>
-    <field editable="1" name="entwart"/>
-    <field editable="1" name="hoehe"/>
-    <field editable="1" name="kommentar"/>
-    <field editable="1" name="ks"/>
-    <field editable="1" name="laenge"/>
-    <field editable="1" name="leitnam"/>
-    <field editable="1" name="material"/>
-    <field editable="1" name="pk"/>
-    <field editable="1" name="profilnam"/>
-    <field editable="1" name="qzu"/>
-    <field editable="1" name="schoben"/>
-    <field editable="1" name="schunten"/>
-    <field editable="1" name="simstatus"/>
-    <field editable="1" name="sohleoben"/>
-    <field editable="1" name="sohleunten"/>
-    <field editable="1" name="teilgebiet"/>
-    <field editable="1" name="xschob"/>
-    <field editable="1" name="xschun"/>
-    <field editable="1" name="yschob"/>
-    <field editable="1" name="yschun"/>
+    <field name="breite" editable="1"/>
+    <field name="createdat" editable="1"/>
+    <field name="deckeloben" editable="1"/>
+    <field name="deckelunten" editable="1"/>
+    <field name="entwart" editable="1"/>
+    <field name="hoehe" editable="1"/>
+    <field name="kommentar" editable="1"/>
+    <field name="ks" editable="1"/>
+    <field name="laenge" editable="1"/>
+    <field name="leitnam" editable="1"/>
+    <field name="material" editable="1"/>
+    <field name="pk" editable="1"/>
+    <field name="profilnam" editable="1"/>
+    <field name="qzu" editable="1"/>
+    <field name="schoben" editable="1"/>
+    <field name="schunten" editable="1"/>
+    <field name="simstatus" editable="1"/>
+    <field name="sohleoben" editable="1"/>
+    <field name="sohleunten" editable="1"/>
+    <field name="teilgebiet" editable="1"/>
+    <field name="xschob" editable="1"/>
+    <field name="xschun" editable="1"/>
+    <field name="yschob" editable="1"/>
+    <field name="yschun" editable="1"/>
   </editable>
   <labelOnTop>
     <field name="breite" labelOnTop="0"/>

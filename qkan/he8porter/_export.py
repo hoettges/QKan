@@ -417,7 +417,7 @@ class ExportTask:
         if QKan.config.check_export.haltungen:
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND haltungen.teilgebiet in ('{lis}')"
+                auswahl = f" AND ha.teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
@@ -440,33 +440,34 @@ class ExportTask:
                     BefestigteFlaeche, 
                     UnbefestigteFlaeche, Geometry) =
                   ( SELECT
-                      haltungen.schoben AS schachtoben, haltungen.schunten AS schachtunten,
-                      coalesce(haltungen.laenge, glength(haltungen.geom)) AS laenge,
-                      coalesce(haltungen.sohleoben,sob.sohlhoehe) AS sohlhoeheoben,
-                      coalesce(haltungen.sohleunten,sun.sohlhoehe) AS sohlhoeheunten,
-                      coalesce(profile.he_nr, 68) AS profiltyp, 
-                      CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN haltungen.profilnam
+                      ha.schoben AS SchachtOben, ha.schunten AS SchachtUnten,
+                      coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
+                      coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
+                      coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
+                      coalesce(profile.he_nr, 68) AS Profiltyp, 
+                      CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN ha.profilnam
                       ELSE NULL
                       END
-                      AS sonderprofilbezeichnung, 
-                      haltungen.hoehe AS geometrie1, haltungen.breite AS geometrie2,
-                      entwaesserungsarten.he_nr AS kanalart,
-                      coalesce(haltungen.ks, 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
-                      coalesce(haltungen.ks, 1.5) AS rauhigkeitanzeige,
-                      coalesce(haltungen.createdat, datetime('now')) AS lastmodified, 
-                      28 AS materialart, 
-                      0 AS einzugsgebiet, 
-                      0 AS konstanterzuflusstezg, 
-                      0 AS befestigteflaeche, 
-                      0 AS unbefestigteflaeche,
-                      SetSrid(haltungen.geom, -1) AS Geometry
+                      AS Sonderprofilbezeichnung, 
+                      ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
+                      entwaesserungsarten.he_nr AS Kanalart,
+                      coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
+                      coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
+                      coalesce(ha.createdat, datetime('now')) AS LastModified, 
+                      28 AS Materialart, 
+                      0 AS Einzugsgebiet, 
+                      0 AS KonstanterZuflussTezg, 
+                      0 AS BefestigteFlaeche, 
+                      0 AS UnbefestigteFlaeche,
+                      SetSrid(ha.geom, -1) AS Geometry
                     FROM
-                      (haltungen JOIN schaechte AS sob ON haltungen.schoben = sob.schnam)
-                      JOIN schaechte AS sun ON haltungen.schunten = sun.schnam
-                      LEFT JOIN profile ON haltungen.profilnam = profile.profilnam
-                      LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.bezeichnung
-                      LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
-                      WHERE (haltungen.haltungstyp IS NULL or haltungen.haltungstyp = 'Haltung') AND haltungen.haltnam = he.Rohr.Name{auswahl})
+                      haltungen AS ha 
+                      JOIN schaechte AS sob ON ha.schoben = sob.schnam
+                      JOIN schaechte AS sun ON ha.schunten = sun.schnam
+                      LEFT JOIN profile ON ha.profilnam = profile.profilnam
+                      LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                      LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
+                      WHERE (ha.haltungstyp IS NULL or ha.haltungstyp = 'Haltung') AND ha.haltnam = he.Rohr.Name{auswahl})
                   WHERE he.Rohr.Name IN 
                   ( SELECT haltnam FROM haltungen AND 
                     (haltungen.haltungstyp IS NULL OR haltungen.haltungstyp = 'Haltung')){auswahl}
@@ -479,10 +480,8 @@ class ExportTask:
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
-                if not self.db_qkan.sql(
-                    "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen",
-                    "dbQK: export_to_he8.export_haltungen (2)",
-                ):
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_haltungen (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -520,37 +519,37 @@ class ExportTask:
                         BefestigteFlaeche, 
                         UnbefestigteFlaeche, Geometry)
                       SELECT
-                        haltungen.rowid + {id0} AS id, 
-                        haltungen.haltnam AS name, haltungen.schoben AS schachtoben, haltungen.schunten AS schachtunten,
-                        coalesce(haltungen.laenge, glength(haltungen.geom)) AS laenge,
-                        coalesce(haltungen.sohleoben,sob.sohlhoehe) AS sohlhoeheoben,
-                        coalesce(haltungen.sohleunten,sun.sohlhoehe) AS sohlhoeheunten,
-                        coalesce(profile.he_nr, 68) AS profiltyp,
-                        CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN haltungen.profilnam
+                        ha.rowid + {id0} AS Id, 
+                        ha.haltnam AS Name, ha.schoben AS SchachtOben, ha.schunten AS SchachtUnten,
+                        coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
+                        coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
+                        coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
+                        coalesce(profile.he_nr, 68) AS Profiltyp,
+                        CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN ha.profilnam
                         ELSE NULL
                         END
-                        AS sonderprofilbezeichnung, 
-                        haltungen.hoehe AS geometrie1, haltungen.breite AS geometrie2,
-                        entwaesserungsarten.he_nr AS kanalart,
-                        coalesce(haltungen.ks, 1.5) AS rauigkeitsbeiwert, 1 AS anzahl, 
-                        1 AS rauigkeitsansatz, 
-                        coalesce(haltungen.ks, 1.5) AS rauigkeitanzeige,
-                        coalesce(haltungen.createdat, datetime('now')) AS lastmodified, 
-                        28 AS materialart,
-                        0 AS einzugsgebiet,
-                        0 AS konstanterzuflusstezg,
-                        0 AS befestigteflaeche,
-                        0 AS unbefestigteflaeche,
-                      SetSrid(haltungen.geom, -1) AS Geometry
+                        AS Sonderprofilbezeichnung, 
+                        ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
+                        entwaesserungsarten.he_nr AS Kanalart,
+                        coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
+                        1 AS Rauigkeitsansatz, 
+                        coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
+                        coalesce(ha.createdat, datetime('now')) AS LastModified, 
+                        28 AS Materialart,
+                        0 AS Einzugsgebiet,
+                        0 AS KonstanterZuflussTezg,
+                        0 AS BefestigteFlaeche,
+                        0 AS UnbefestigteFlaeche,
+                      SetSrid(ha.geom, -1) AS Geometry
                       FROM
-                        haltungen 
-                        JOIN schaechte AS sob ON haltungen.schoben = sob.schnam
-                        JOIN schaechte AS sun ON haltungen.schunten = sun.schnam
-                        LEFT JOIN profile ON haltungen.profilnam = profile.profilnam
-                        LEFT JOIN entwaesserungsarten ON haltungen.entwart = entwaesserungsarten.bezeichnung
-                        LEFT JOIN simulationsstatus AS st ON haltungen.simstatus = st.bezeichnung
-                        WHERE haltungen.haltnam NOT IN (SELECT Name FROM he.Rohr) 
-                        AND (haltungen.haltungstyp IS NULL OR haltungen.haltungstyp = 'Haltung'){auswahl};
+                        haltungen AS ha
+                        JOIN schaechte AS sob ON ha.schoben = sob.schnam
+                        JOIN schaechte AS sun ON ha.schunten = sun.schnam
+                        LEFT JOIN profile ON ha.profilnam = profile.profilnam
+                        LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                        LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
+                        WHERE ha.haltnam NOT IN (SELECT Name FROM he.Rohr) 
+                        AND (ha.haltungstyp IS NULL OR ha.haltungstyp = 'Haltung'){auswahl};
                       """
 
                     if not self.db_qkan.sql(
@@ -1299,6 +1298,163 @@ class ExportTask:
                     self.db_qkan.commit()
 
                     fortschritt(f"{self.nextid - nr0} Schieber eingefügt", 0.90)
+                    self.progress_bar.setValue(90)
+        return True
+
+    def _qregler(self) -> bool:
+        """Export Q-Regler"""
+
+        if QKan.config.check_export.qregler:
+
+            # Nur Daten fuer ausgewaehlte Teilgebiete
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND ha.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
+            if self.update:
+                sql = f"""
+                  UPDATE he.QRegler SET
+                  ( SchachtOben, SchachtUnten,
+                    Laenge, 
+                    SohlhoeheOben,
+                    SohlhoeheUnten, 
+                    Profiltyp, Sonderprofilbezeichnung,
+                    Geometrie1, Geometrie2, 
+                    Kanalart,
+                    Rauigkeitsbeiwert, Anzahl,
+                    RauhigkeitAnzeige,
+                    LastModified, 
+                    Materialart, 
+                    Einzugsgebiet, 
+                    KonstanterZuflussTezg, 
+                    BefestigteFlaeche, 
+                    UnbefestigteFlaeche, Geometry) =
+                  ( SELECT
+                      ha.schoben AS SchachtOben, ha.schunten AS SchachtUnten,
+                      coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
+                      coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
+                      coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
+                      coalesce(profile.he_nr, 68) AS Profiltyp, 
+                      CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN ha.profilnam
+                      ELSE NULL
+                      END
+                      AS Sonderprofilbezeichnung, 
+                      ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
+                      entwaesserungsarten.he_nr AS Kanalart,
+                      coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
+                      coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
+                      coalesce(ha.createdat, datetime('now')) AS LastModified, 
+                      28 AS Materialart, 
+                      0 AS Einzugsgebiet, 
+                      0 AS KonstanterZuflussTezg, 
+                      0 AS BefestigteFlaeche, 
+                      0 AS UnbefestigteFlaeche,
+                      SetSrid(ha.geom, -1) AS Geometry
+                    FROM
+                      haltungen AS ha 
+                      JOIN schaechte AS sob ON ha.schoben = sob.schnam
+                      JOIN schaechte AS sun ON ha.schunten = sun.schnam
+                      LEFT JOIN profile ON ha.profilnam = profile.profilnam
+                      LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                      LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
+                      WHERE ha.haltungstyp = 'Q-Regler' AND ha.haltnam = he.QRegler.Name{auswahl})
+                  WHERE he.Rohr.Name IN 
+                  ( SELECT haltnam FROM haltungen AND 
+                    (haltungen.haltungstyp IS NULL OR haltungen.haltungstyp = 'Q-Regler')){auswahl}
+                    """
+
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_qregler (1)"):
+                    return False
+
+            if self.append:
+                # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_qregler (2)"):
+                    return False
+
+                data = self.db_qkan.fetchone()
+                if len(data) == 2:
+                    idmin, idmax = data
+                else:
+                    fehlermeldung(
+                        "Fehler (37) in QKan_Export",
+                        f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
+                    )
+
+                if idmin is None:
+                    meldung("Einfügen Q-Regler", "Keine Q-Regler vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
+
+                    sql = f"""
+                      INSERT INTO he.QRegler
+                      ( Id, 
+                        Name, SchachtOben, SchachtUnten, 
+                        Laenge, 
+                        SohlhoeheOben,
+                        SohlhoeheUnten, 
+                        Profiltyp, Sonderprofilbezeichnung, 
+                        Geometrie1, Geometrie2, 
+                        Kanalart, 
+                        Rauigkeitsbeiwert, Anzahl, 
+                        Rauigkeitsansatz, 
+                        RauhigkeitAnzeige,
+                        LastModified, 
+                        Materialart, 
+                        Einzugsgebiet, 
+                        KonstanterZuflussTezg, 
+                        BefestigteFlaeche, 
+                        UnbefestigteFlaeche, Geometry)
+                      SELECT
+                        ha.rowid + {id0} AS Id, 
+                        ha.haltnam AS Name, ha.schoben AS SchachtOben, ha.schunten AS SchachtUnten,
+                        coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
+                        coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
+                        coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
+                        coalesce(profile.he_nr, 68) AS Profiltyp,
+                        CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN ha.profilnam
+                        ELSE NULL
+                        END
+                        AS Sonderprofilbezeichnung, 
+                        ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
+                        entwaesserungsarten.he_nr AS Kanalart,
+                        coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
+                        1 AS Rauigkeitsansatz, 
+                        coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
+                        coalesce(ha.createdat, datetime('now')) AS LastModified, 
+                        28 AS Materialart,
+                        0 AS Einzugsgebiet,
+                        0 AS KonstanterZuflussTezg,
+                        0 AS BefestigteFlaeche,
+                        0 AS UnbefestigteFlaeche,
+                      SetSrid(ha.geom, -1) AS Geometry
+                      FROM
+                        haltungen AS ha
+                        JOIN schaechte AS sob ON ha.schoben = sob.schnam
+                        JOIN schaechte AS sun ON ha.schunten = sun.schnam
+                        LEFT JOIN profile ON ha.profilnam = profile.profilnam
+                        LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                        LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
+                        WHERE ha.haltnam NOT IN (SELECT Name FROM he.QRegler) 
+                        AND ha.haltungstyp = 'Q-Regler'{auswahl};
+                    """
+
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_qregler (3)"
+                    ):
+                        return False
+
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
+                    )
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} Q-Regler eingefügt", 0.90)
                     self.progress_bar.setValue(90)
         return True
 
