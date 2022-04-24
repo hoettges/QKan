@@ -732,6 +732,8 @@ def createdbtables(
         """SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg),
         """SELECT CreateSpatialIndex('schaechte','geom')""",
         """SELECT CreateSpatialIndex('schaechte','geop')""",
+        "DROP TRIGGER ggi_schaechte_geom",
+        "DROP TRIGGER ggu_schaechte_geom",
     ]
     for sql in sqls:
         try:
@@ -1556,6 +1558,8 @@ def createdbtables(
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('einzugsgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg),
         "SELECT CreateSpatialIndex('einzugsgebiete','geom')",
+        "DROP TRIGGER ggi_einzugsgebiete_geom",
+        "DROP TRIGGER ggu_einzugsgebiete_geom",
     ]
     for sql in sqls:
         try:
@@ -1584,6 +1588,8 @@ def createdbtables(
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('teilgebiete','geom',{},'MULTIPOLYGON',2)".format(epsg),
         "SELECT CreateSpatialIndex('teilgebiete','geom')",
+        "DROP TRIGGER ggi_teilgebiete_geom",
+        "DROP TRIGGER ggu_teilgebiete_geom",
     ]
     for sql in sqls:
         try:
@@ -1652,6 +1658,8 @@ def createdbtables(
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         """SELECT AddGeometryColumn('flaechen','geom',{},'MULTIPOLYGON',2)""".format(epsg),
         """SELECT CreateSpatialIndex('flaechen','geom')""",
+        "DROP TRIGGER ggi_flaechen_geom",
+        "DROP TRIGGER ggu_flaechen_geom",
     ]
     for sql in sqls:
         try:
@@ -1691,6 +1699,10 @@ def createdbtables(
         """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
         """SELECT AddGeometryColumn('linkfl','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg),
         "SELECT CreateSpatialIndex('linkfl','glink')",
+        "DROP TRIGGER ggi_linkfl_geom",
+        "DROP TRIGGER ggi_linkfl_gbuf",
+        "DROP TRIGGER ggu_linkfl_geom",
+        "DROP TRIGGER ggu_linkfl_gbuf",
     ]
     for sql in sqls:
         try:
@@ -1721,6 +1733,10 @@ def createdbtables(
         """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
         """SELECT AddGeometryColumn('linksw','glink',{epsg},'LINESTRING',2)""".format(epsg=epsg),
         "SELECT CreateSpatialIndex('linksw','geom')",
+        "DROP TRIGGER ggi_linksw_geom",
+        "DROP TRIGGER ggi_linksw_gbuf",
+        "DROP TRIGGER ggu_linksw_geom",
+        "DROP TRIGGER ggu_linksw_gbuf",
     ]
     for sql in sqls:
         try:
@@ -1755,6 +1771,8 @@ def createdbtables(
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('tezg','geom',{},'MULTIPOLYGON',2)".format(epsg),
         "SELECT CreateSpatialIndex('tezg','geom')",
+        "DROP TRIGGER ggi_tezg_geom",
+        "DROP TRIGGER ggu_tezg_geom",
     ]
     for sql in sqls:
         try:
@@ -1891,6 +1909,8 @@ def createdbtables(
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         """SELECT AddGeometryColumn('aussengebiete','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
         "SELECT CreateSpatialIndex('aussengebiete','geom')",
+        "DROP TRIGGER ggi_aussengebiete_geom",
+        "DROP TRIGGER ggu_aussengebiete_geom",
     ]
     for sql in sqls:
         try:
@@ -2372,6 +2392,8 @@ def createdbtables(
             Kommentar TEXT)""",
         """SELECT AddGeometryColumn('flaechen_he8','Geometry', -1,'MULTIPOLYGON',2)""",
         """SELECT CreateSpatialIndex('flaechen_he8', 'Geometry')""",
+        "DROP TRIGGER ggi_flaechen_he8_geometry",
+        "DROP TRIGGER ggu_flaechen_he8_geometry",
     ]
     for sql in sqls:
         try:
