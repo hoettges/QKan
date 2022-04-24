@@ -69,6 +69,11 @@ class ExportTask:
                 self._haltungen(),
                 self._wehre(),
                 self._pumpen(),
+                self._drosseln(),
+                self._schieber(),
+                self._qregler(),
+                self._hregler(),
+                self._grundseitenauslaesse(),
                 self._flaechen(),
                 # self._einleitdirekt(),
                 # self._aussengebiete(),
@@ -148,7 +153,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (30) in QKan_Export",
+                        "Fehler (1) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -249,7 +254,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (31) in QKan_Export",
+                        "Fehler (2) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -331,7 +336,7 @@ class ExportTask:
                         st.he_nr AS planungsstatus, 
                         coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                         kommentar AS kommentar,
-                        SetSrid(schaechte.geop, -1) AS geometry
+                        SetSrid(schaechte.geop, -1) AS Geometry
                       FROM schaechte
                       LEFT JOIN simulationsstatus AS st
                       ON schaechte.simstatus = st.bezeichnung
@@ -360,7 +365,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (32) in QKan_Export",
+                        "Fehler (3) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -389,7 +394,7 @@ class ExportTask:
                           st.he_nr AS planungsstatus, 
                           coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                           kommentar AS kommentar,
-                          SetSrid(schaechte.geop, -1) AS geometry
+                          SetSrid(schaechte.geop, -1) AS Geometry
                         FROM schaechte
                         LEFT JOIN simulationsstatus AS st
                         ON schaechte.simstatus = st.bezeichnung
@@ -433,6 +438,7 @@ class ExportTask:
                     Kanalart,
                     Rauigkeitsbeiwert, Anzahl,
                     RauhigkeitAnzeige,
+                    Kommentar,
                     LastModified, 
                     Materialart, 
                     Einzugsgebiet, 
@@ -453,6 +459,7 @@ class ExportTask:
                       entwaesserungsarten.he_nr AS Kanalart,
                       coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
                       coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
+                      ha.kommentar AS Kommentar,
                       coalesce(ha.createdat, datetime('now')) AS LastModified, 
                       28 AS Materialart, 
                       0 AS Einzugsgebiet, 
@@ -489,7 +496,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (33) in QKan_Export",
+                        "Fehler (4) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -512,6 +519,7 @@ class ExportTask:
                         Rauigkeitsbeiwert, Anzahl, 
                         Rauigkeitsansatz, 
                         RauhigkeitAnzeige,
+                        Kommentar,
                         LastModified, 
                         Materialart, 
                         Einzugsgebiet, 
@@ -534,6 +542,7 @@ class ExportTask:
                         coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
                         1 AS Rauigkeitsansatz, 
                         coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
+                        ha.kommentar AS Kommentar,
                         coalesce(ha.createdat, datetime('now')) AS LastModified, 
                         28 AS Materialart,
                         0 AS Einzugsgebiet,
@@ -681,7 +690,7 @@ class ExportTask:
                         abflussparameter AS Parametersatz, coalesce(neigkl, 1) AS Neigungsklasse, 
                         coalesce(createdat, datetime('now')) AS lastmodified, 
                         kommentar AS Kommentar, 
-                        SetSrid(geom, -1) AS geometry
+                        SetSrid(geom, -1) AS Geometry
                       FROM flintersect AS fi
                       WHERE flnam = he.Flaeche.Name and flaeche*10000 > {mindestflaeche} and flaeche IS NOT NULL
                     ) WHERE he.Flaeche.Name IN (SELECT flnam FROM flupdate)
@@ -706,7 +715,7 @@ class ExportTask:
                     logger.debug(f"idmin = {idmin}\nidmax = {idmax}\n")
                 else:
                     fehlermeldung(
-                        "Fehler (34) in QKan_Export",
+                        "Fehler (5) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -770,7 +779,7 @@ class ExportTask:
                           1 AS IstPolygonalflaeche, 1 AS ZuordnungGesperrt, 0 AS ZuordnUnabhEZG, 
                           coalesce(createdat, datetime('now')) AS lastmodified, 
                           kommentar AS Kommentar, 
-                          SetSrid(geom, -1) AS geometry
+                          SetSrid(geom, -1) AS Geometry
                         FROM flintersect AS fi
                         WHERE flaeche*10000 > {mindestflaeche} and (flnam NOT IN (SELECT Name FROM he.Flaeche))"""
 
@@ -809,7 +818,7 @@ class ExportTask:
                     logger.debug(f"idmin = {idmin}\nidmax = {idmax}\n")
                 else:
                     fehlermeldung(
-                        "Fehler (35) in QKan_Export",
+                        "Fehler (6) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -861,13 +870,14 @@ class ExportTask:
                           1 AS IstPolygonalflaeche, 1 AS ZuordnungGesperrt, 0 AS ZuordnUnabhEZG, 
                           coalesce(tg.createdat, datetime('now')) AS lastmodified, 
                           tg.kommentar AS Kommentar, 
-                          SetSrid(tg.geom, -1) AS geometry
+                          SetSrid(tg.geom, -1) AS Geometry
                         FROM tezg AS tg
                         LEFT JOIN he.Flaeche AS fh
                         ON fh.Name = tg.flnam
                         , (SELECT he_nr FROM flaechentypen WHERE bezeichnung = 'Gebäude') AS ft
                         , (SELECT column1 AS bef FROM (VALUES (0) , (1))) AS tb
-                        WHERE fh.Name IS NULL AND area(tg.geom)*abs(tb.bef - coalesce(tg.befgrad, 0)/100.) > {mindestflaeche}"""
+                        WHERE fh.Name IS NULL AND
+                         area(tg.geom)*abs(tb.bef - coalesce(tg.befgrad, 0)/100.) > {mindestflaeche}"""
 
                     if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg (1)"):
                         return False
@@ -880,8 +890,70 @@ class ExportTask:
 
                     fortschritt("{} Haltungsflaechen eingefuegt".format(self.nextid - nr0), 0.80)
                     self.progress_bar.setValue(80)
+        elif QKan.config.check_export.tezg:
+            if self.append:
+                # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM tezg"
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg"):
+                    return False
 
-            self.db_qkan.commit()
+                data = self.db_qkan.fetchone()
+                if len(data) == 2:
+                    idmin, idmax = data
+                    idanz = idmax - idmin + 1
+                    logger.debug(f"idmin = {idmin}\nidmax = {idmax}\n")
+                else:
+                    fehlermeldung(
+                        "Fehler (7) in QKan_Export",
+                        f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
+                    )
+
+                if idmin is None:
+                    meldung(
+                        "Einfügen tezg als GIPS-TEZG", "Keine Haltungsflächen vorhanden"
+                    )
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
+
+                    mindestflaeche = QKan.config.mindestflaeche
+
+                    sql = f"""
+                        INSERT INTO he.GipsEinzugsflaeche (
+                            id, 
+                            Name, Haltung,
+                            IsEinzugsflaeche,
+                            IsHaltungflaeche,
+                            IsTwEinzugsflaeche, 
+                            LastModified,
+                            Kommentar, 
+                            Geometry)
+                        SELECT 
+                            tg.rowid + {id0} AS id,
+                            tg.flnam AS Name,
+                            tg.haltnam AS Haltung,
+                            0 AS IsEinzugsflaeche,
+                            1 AS IsHaltungflaeche,
+                            0 AS IsTwEinzugsflaeche, 
+                            coalesce(tg.createdat, datetime('now')) AS lastmodified, 
+                            tg.kommentar AS Kommentar, 
+                            SetSrid(tg.geom, -1) AS Geometry
+                        FROM tezg AS tg
+                    """
+
+                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg (2)"):
+                        return False
+
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
+                    )
+
+                    fortschritt("{} Haltungsflaechen eingefuegt".format(self.nextid - nr0), 0.90)
+                    self.progress_bar.setValue(90)
+
+        self.db_qkan.commit()
 
         return True
 
@@ -904,14 +976,16 @@ class ExportTask:
                     UPDATE he.Pumpe SET
                     (   SchachtOben, SchachtUnten, 
                         Planungsstatus, 
-                        Kommentar, LastModified 
+                        Kommentar, LastModified,
+                        Geometry 
                     ) = 
                     (   SELECT
                             ha.schoben AS SchachtOben,
                             ha.schunten AS SchachtUnten,
                             si.he_nr AS Planungsstatus,
                             ha.kommentar AS Kommentar,
-                            ha.createdat AS LastModified
+                            ha.createdat AS LastModified,
+                            SetSrid(ha.geom, -1) AS Geometry
                         FROM haltungen AS ha
                         LEFT JOIN simulationsstatus AS si
                         ON ha.simstatus = si.bezeichnung
@@ -936,7 +1010,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (36) in QKan_Export",
+                        "Fehler (8) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -952,7 +1026,8 @@ class ExportTask:
                         Name, 
                         SchachtOben, SchachtUnten,
                         Planungsstatus, 
-                        Kommentar, LastModified 
+                        Kommentar, LastModified,
+                        Geometry 
                     ) 
                     SELECT
                         ha.rowid + {id0} AS Id, 
@@ -961,7 +1036,8 @@ class ExportTask:
                         ha.schunten AS SchachtUnten,
                         si.he_nr AS Planungsstatus,
                         ha.kommentar AS Kommentar,
-                        ha.createdat AS LastModified
+                        ha.createdat AS LastModified,
+                        SetSrid(ha.geom, -1) AS Geometry
                     FROM haltungen AS ha
                     LEFT JOIN simulationsstatus AS si
                     ON ha.simstatus = si.bezeichnung
@@ -1005,7 +1081,8 @@ class ExportTask:
                     (   SchachtOben, SchachtUnten, 
                         Ueberfallbeiwert, 
                         Planungsstatus, 
-                        Kommentar, LastModified 
+                        Kommentar, LastModified,
+                        Geometry
                     ) = 
                     (   SELECT
                             ha.schoben AS SchachtOben,
@@ -1013,7 +1090,8 @@ class ExportTask:
                             wehre.uebeiwert AS Ueberfallbeiwert,
                             si.he_nr AS Planungsstatus,
                             ha.kommentar AS Kommentar,
-                            ha.createdat AS LastModified
+                            ha.createdat AS LastModified,
+                            SetSrid(ha.geom, -1) AS Geometry
                         FROM haltungen AS ha
                         LEFT JOIN simulationsstatus AS si
                         ON ha.simstatus = si.bezeichnung
@@ -1038,7 +1116,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (37) in QKan_Export",
+                        "Fehler (9) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -1055,7 +1133,8 @@ class ExportTask:
                         SchachtOben, SchachtUnten, 
                         Ueberfallbeiwert, 
                         Planungsstatus, 
-                        Kommentar, LastModified 
+                        Kommentar, LastModified,
+                        Geometry
                     ) 
                     SELECT
                         ha.rowid + {id0} AS Id, 
@@ -1065,7 +1144,8 @@ class ExportTask:
                         ha.ks AS Ueberfallbeiwert,
                         si.he_nr AS Planungsstatus,
                         ha.kommentar AS Kommentar,
-                        ha.createdat AS LastModified
+                        ha.createdat AS LastModified,
+                        SetSrid(ha.geom, -1) AS Geometry
                     FROM haltungen AS ha
                     LEFT JOIN simulationsstatus AS si
                     ON ha.simstatus = si.bezeichnung
@@ -1108,14 +1188,16 @@ class ExportTask:
                     UPDATE he.Drossel SET
                     (   SchachtOben, SchachtUnten, 
                         Planungsstatus, 
-                        Kommentar, LastModified 
+                        Kommentar, LastModified,
+                        Geometry
                     ) = 
                     (   SELECT
                             ha.schoben AS SchachtOben,
                             ha.schunten AS SchachtUnten,
                             si.he_nr AS Planungsstatus,
                             ha.kommentar AS Kommentar,
-                            ha.createdat AS LastModified
+                            ha.createdat AS LastModified,
+                            SetSrid(ha.geom, -1) AS Geometry
                         FROM haltungen AS ha
                         LEFT JOIN simulationsstatus AS si
                         ON ha.simstatus = si.bezeichnung
@@ -1140,7 +1222,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (37) in QKan_Export",
+                        "Fehler (10) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -1156,7 +1238,8 @@ class ExportTask:
                         Name, 
                         SchachtOben, SchachtUnten,
                         Planungsstatus,
-                        Kommentar, LastModified 
+                        Kommentar, LastModified,
+                        Geometry
                     ) 
                     SELECT
                         ha.rowid + {id0} AS Id, 
@@ -1165,7 +1248,8 @@ class ExportTask:
                         ha.schunten AS SchachtUnten,
                         si.he_nr AS Planungsstatus,
                         ha.kommentar AS Kommentar,
-                        ha.createdat AS LastModified
+                        ha.createdat AS LastModified,
+                        SetSrid(ha.geom, -1) AS Geometry
                     FROM haltungen AS ha
                     LEFT JOIN simulationsstatus AS si
                     ON ha.simstatus = si.bezeichnung
@@ -1210,8 +1294,11 @@ class ExportTask:
                         Anfangsstellung, 
                         MaximaleHubhoehe,
                         Geometrie2,
+                        Verluste,
+                        Profiltyp,
                         Planungsstatus, 
-                        Kommentar, LastModified 
+                        Kommentar, LastModified,
+                        Geometry
                     ) = 
                     (   SELECT
                             ha.schoben AS SchachtOben,
@@ -1219,12 +1306,17 @@ class ExportTask:
                             ha.sohleoben AS Anfangsstellung,
                             ha.sohleoben + ha.hoehe AS MaximaleHubhoehe,
                             ha.breite AS Geometrie2,
+                            ha.ks AS Verluste,
+                            profile.he_nr AS Profiltyp,
                             si.he_nr AS Planungsstatus,
                             ha.kommentar AS Kommentar,
-                            ha.createdat AS LastModified
+                            ha.createdat AS LastModified,
+                            SetSrid(ha.geom, -1) AS Geometry
                         FROM haltungen AS ha
                         LEFT JOIN simulationsstatus AS si
                         ON ha.simstatus = si.bezeichnung
+                        LEFT JOIN profile
+                        ON ha.profilnam = profile.profilnam
                         WHERE ha.haltnam = he.Schieber.Name{auswahl_a}
                     )
                     WHERE he.Schieber.Name IN (
@@ -1246,7 +1338,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (37) in QKan_Export",
+                        "Fehler (11) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -1264,8 +1356,11 @@ class ExportTask:
                         Anfangsstellung, 
                         MaximaleHubhoehe,
                         Geometrie2,
+                        Verluste,
+                        Profiltyp,
                         Planungsstatus,
-                        Kommentar, LastModified 
+                        Kommentar, LastModified,
+                        Geometry
                     ) 
                     SELECT
                         ha.rowid + {id0} AS Id, 
@@ -1275,12 +1370,17 @@ class ExportTask:
                         ha.sohleoben AS Anfangsstellung,
                         ha.sohleoben + ha.hoehe AS MaximaleHubhoehe,
                         ha.breite AS Geometrie2,
+                        ha.ks AS Verluste,
+                        profile.he_nr AS Profiltyp,
                         si.he_nr AS Planungsstatus,
                         ha.kommentar AS Kommentar,
-                        ha.createdat AS LastModified
+                        ha.createdat AS LastModified,
+                        SetSrid(ha.geom, -1) AS Geometry
                     FROM haltungen AS ha
                     LEFT JOIN simulationsstatus AS si
                     ON ha.simstatus = si.bezeichnung
+                    LEFT JOIN profile
+                    ON ha.profilnam = profile.profilnam
                     WHERE ha.haltungstyp = 'Schieber'
                     AND ha.haltnam NOT IN (SELECT Name FROM he.Schieber){auswahl_a};
                     """
@@ -1298,6 +1398,130 @@ class ExportTask:
                     self.db_qkan.commit()
 
                     fortschritt(f"{self.nextid - nr0} Schieber eingefügt", 0.90)
+                    self.progress_bar.setValue(90)
+        return True
+
+    def _grundseitenauslaesse(self) -> bool:
+        """Export Grund- und Seitenauslässe"""
+
+        if QKan.config.check_export.grundseitenauslaesse:
+
+            # Nur Daten fuer ausgewaehlte Teilgebiete
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl_w = f" WHERE ha.teilgebiet in ('{lis}')"
+                auswahl_a = f" AND ha.teilgebiet in ('{lis}')"
+            else:
+                auswahl_w = ""
+                auswahl_a = ""
+
+            if self.update:
+                sql = f"""
+                    UPDATE he.GrundSeitenauslass SET
+                    (   SchachtOben, SchachtUnten, 
+                        HoeheUnterkante,
+                        Geometrie2,
+                        Auslassbeiwert,
+                        Profiltyp,
+                        Planungsstatus, 
+                        Kommentar, LastModified,
+                        Geometry
+                    ) = 
+                    (   SELECT
+                            ha.schoben AS SchachtOben,
+                            ha.schunten AS SchachtUnten,
+                            ha.sohleoben AS HoeheUnterkante,
+                            ha.breite AS Geometrie2,
+                            ha.ks AS Auslassbeiwert,
+                            profile.he_nr AS Profiltyp,
+                            si.he_nr AS Planungsstatus,
+                            ha.kommentar AS Kommentar,
+                            ha.createdat AS LastModified,
+                            SetSrid(ha.geom, -1) AS Geometry
+                        FROM haltungen AS ha
+                        LEFT JOIN simulationsstatus AS si
+                        ON ha.simstatus = si.bezeichnung
+                        LEFT JOIN profile
+                        ON ha.profilnam = profile.profilnam
+                        WHERE ha.haltnam = he.GrundSeitenauslass.Name{auswahl_a}
+                    )
+                    WHERE he.GrundSeitenauslass.Name IN (
+                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'GrundSeitenauslass'{auswahl_a}
+                        )
+                    """
+
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_grundseitenauslaesse (1)"):
+                    return False
+
+            if self.append:
+                # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_grundseitenauslaesse (2)"):
+                    return False
+
+                data = self.db_qkan.fetchone()
+                if len(data) == 2:
+                    idmin, idmax = data
+                else:
+                    fehlermeldung(
+                        "Fehler (12) in QKan_Export",
+                        f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
+                    )
+
+                if idmin is None:
+                    meldung("Einfügen Grund- und Seitenauslässe", "Keine Grund- und Seitenauslass vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
+
+                    sql = f"""
+                    INSERT INTO he.GrundSeitenauslass (
+                        Id,
+                        Name, 
+                        SchachtOben, SchachtUnten,
+                        HoeheUnterkante,
+                        Geometrie2,
+                        Auslassbeiwert,
+                        Profiltyp,
+                        Planungsstatus,
+                        Kommentar, LastModified,
+                        Geometry 
+                    ) 
+                    SELECT
+                        ha.rowid + {id0} AS Id, 
+                        ha.haltnam AS Name,
+                        ha.schoben AS SchachtOben,
+                        ha.schunten AS SchachtUnten,
+                        ha.sohleoben AS HoeheUnterkante,
+                        ha.breite AS Geometrie2,
+                        ha.ks AS Auslassbeiwert,
+                        profile.he_nr AS Profiltyp,
+                        si.he_nr AS Planungsstatus,
+                        ha.kommentar AS Kommentar,
+                        ha.createdat AS LastModified,
+                        SetSrid(ha.geom, -1) AS Geometry
+                    FROM haltungen AS ha
+                    LEFT JOIN simulationsstatus AS si
+                    ON ha.simstatus = si.bezeichnung
+                    LEFT JOIN profile
+                    ON ha.profilnam = profile.profilnam
+                    WHERE ha.haltungstyp = 'GrundSeitenauslass'
+                    AND ha.haltnam NOT IN (SELECT Name FROM he.GrundSeitenauslass){auswahl_a};
+                    """
+
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_grundseitenauslaesse (3)"
+                    ):
+                        return False
+
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
+                    )
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} Grund- und Seitenauslässe eingefügt", 0.90)
                     self.progress_bar.setValue(90)
         return True
 
@@ -1320,11 +1544,11 @@ class ExportTask:
                     Laenge, 
                     SohlhoeheOben,
                     SohlhoeheUnten, 
-                    Profiltyp, Sonderprofilbezeichnung,
                     Geometrie1, Geometrie2, 
                     Kanalart,
                     Rauigkeitsbeiwert, Anzahl,
                     RauhigkeitAnzeige,
+                    Profiltyp,
                     LastModified, 
                     Materialart, 
                     Einzugsgebiet, 
@@ -1336,15 +1560,11 @@ class ExportTask:
                       coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
                       coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
                       coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
-                      coalesce(profile.he_nr, 68) AS Profiltyp, 
-                      CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN ha.profilnam
-                      ELSE NULL
-                      END
-                      AS Sonderprofilbezeichnung, 
                       ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
                       entwaesserungsarten.he_nr AS Kanalart,
                       coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
                       coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
+                      profile.he_nr AS Profiltyp,
                       coalesce(ha.createdat, datetime('now')) AS LastModified, 
                       28 AS Materialart, 
                       0 AS Einzugsgebiet, 
@@ -1361,8 +1581,7 @@ class ExportTask:
                       LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                       WHERE ha.haltungstyp = 'Q-Regler' AND ha.haltnam = he.QRegler.Name{auswahl})
                   WHERE he.Rohr.Name IN 
-                  ( SELECT haltnam FROM haltungen AND 
-                    (haltungen.haltungstyp IS NULL OR haltungen.haltungstyp = 'Q-Regler')){auswahl}
+                  ( SELECT haltnam FROM haltungen AND haltungen.haltungstyp = 'Q-Regler'){auswahl}
                     """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_qregler (1)"):
@@ -1379,7 +1598,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (37) in QKan_Export",
+                        "Fehler (13) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -1396,12 +1615,12 @@ class ExportTask:
                         Laenge, 
                         SohlhoeheOben,
                         SohlhoeheUnten, 
-                        Profiltyp, Sonderprofilbezeichnung, 
                         Geometrie1, Geometrie2, 
                         Kanalart, 
                         Rauigkeitsbeiwert, Anzahl, 
                         Rauigkeitsansatz, 
                         RauhigkeitAnzeige,
+                        Profiltyp,
                         LastModified, 
                         Materialart, 
                         Einzugsgebiet, 
@@ -1414,16 +1633,12 @@ class ExportTask:
                         coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
                         coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
                         coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
-                        coalesce(profile.he_nr, 68) AS Profiltyp,
-                        CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN ha.profilnam
-                        ELSE NULL
-                        END
-                        AS Sonderprofilbezeichnung, 
                         ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
                         entwaesserungsarten.he_nr AS Kanalart,
                         coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
                         1 AS Rauigkeitsansatz, 
                         coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
+                        profile.he_nr AS Profiltyp,
                         coalesce(ha.createdat, datetime('now')) AS LastModified, 
                         28 AS Materialart,
                         0 AS Einzugsgebiet,
@@ -1458,6 +1673,154 @@ class ExportTask:
                     self.progress_bar.setValue(90)
         return True
 
+    def _hregler(self) -> bool:
+        """Export H-Regler"""
+
+        if QKan.config.check_export.hregler:
+
+            # Nur Daten fuer ausgewaehlte Teilgebiete
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND ha.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
+            if self.update:
+                sql = f"""
+                  UPDATE he.HRegler SET
+                  ( SchachtOben, SchachtUnten,
+                    Laenge, 
+                    SohlhoeheOben,
+                    SohlhoeheUnten, 
+                    Geometrie1, Geometrie2, 
+                    Kanalart,
+                    Rauigkeitsbeiwert, Anzahl,
+                    RauhigkeitAnzeige,
+                    Profiltyp,
+                    LastModified, 
+                    Materialart, 
+                    Einzugsgebiet, 
+                    KonstanterZuflussTezg, 
+                    BefestigteFlaeche, 
+                    UnbefestigteFlaeche, Geometry) =
+                  ( SELECT
+                      ha.schoben AS SchachtOben, ha.schunten AS SchachtUnten,
+                      coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
+                      coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
+                      coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
+                      ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
+                      entwaesserungsarten.he_nr AS Kanalart,
+                      coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
+                      coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
+                      profile.he_nr AS Profiltyp,
+                      coalesce(ha.createdat, datetime('now')) AS LastModified, 
+                      28 AS Materialart, 
+                      0 AS Einzugsgebiet, 
+                      0 AS KonstanterZuflussTezg, 
+                      0 AS BefestigteFlaeche, 
+                      0 AS UnbefestigteFlaeche,
+                      SetSrid(ha.geom, -1) AS Geometry
+                    FROM
+                      haltungen AS ha 
+                      JOIN schaechte AS sob ON ha.schoben = sob.schnam
+                      JOIN schaechte AS sun ON ha.schunten = sun.schnam
+                      LEFT JOIN profile ON ha.profilnam = profile.profilnam
+                      LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                      LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
+                      WHERE ha.haltungstyp = 'H-Regler' AND ha.haltnam = he.HRegler.Name{auswahl})
+                  WHERE he.Rohr.Name IN 
+                  ( SELECT haltnam FROM haltungen AND haltungen.haltungstyp = 'H-Regler'){auswahl}
+                    """
+
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_hregler (1)"):
+                    return False
+
+            if self.append:
+                # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_hregler (2)"):
+                    return False
+
+                data = self.db_qkan.fetchone()
+                if len(data) == 2:
+                    idmin, idmax = data
+                else:
+                    fehlermeldung(
+                        "Fehler (14) in QKan_Export",
+                        f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
+                    )
+
+                if idmin is None:
+                    meldung("Einfügen H-Regler", "Keine H-Regler vorhanden")
+                else:
+                    nr0 = self.nextid
+                    id0 = self.nextid - idmin
+
+                    sql = f"""
+                      INSERT INTO he.HRegler
+                      ( Id, 
+                        Name, SchachtOben, SchachtUnten, 
+                        Laenge, 
+                        SohlhoeheOben,
+                        SohlhoeheUnten, 
+                        Geometrie1, Geometrie2, 
+                        Kanalart, 
+                        Rauigkeitsbeiwert, Anzahl, 
+                        Rauigkeitsansatz, 
+                        RauhigkeitAnzeige,
+                        Profiltyp,
+                        LastModified, 
+                        Materialart, 
+                        Einzugsgebiet, 
+                        KonstanterZuflussTezg, 
+                        BefestigteFlaeche, 
+                        UnbefestigteFlaeche, Geometry)
+                      SELECT
+                        ha.rowid + {id0} AS Id, 
+                        ha.haltnam AS Name, ha.schoben AS SchachtOben, ha.schunten AS SchachtUnten,
+                        coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
+                        coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
+                        coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
+                        ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
+                        entwaesserungsarten.he_nr AS Kanalart,
+                        coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
+                        1 AS Rauigkeitsansatz, 
+                        coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
+                        profile.he_nr AS Profiltyp,
+                        coalesce(ha.createdat, datetime('now')) AS LastModified, 
+                        28 AS Materialart,
+                        0 AS Einzugsgebiet,
+                        0 AS KonstanterZuflussTezg,
+                        0 AS BefestigteFlaeche,
+                        0 AS UnbefestigteFlaeche,
+                      SetSrid(ha.geom, -1) AS Geometry
+                      FROM
+                        haltungen AS ha
+                        JOIN schaechte AS sob ON ha.schoben = sob.schnam
+                        JOIN schaechte AS sun ON ha.schunten = sun.schnam
+                        LEFT JOIN profile ON ha.profilnam = profile.profilnam
+                        LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                        LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
+                        WHERE ha.haltnam NOT IN (SELECT Name FROM he.HRegler) 
+                        AND ha.haltungstyp = 'H-Regler'{auswahl};
+                    """
+
+                    if not self.db_qkan.sql(
+                        sql, "dbQK: export_to_he8.export_hregler (3)"
+                    ):
+                        return False
+
+                    self.nextid += idmax - idmin + 1
+                    self.db_qkan.sql(
+                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                        parameters=(self.nextid,),
+                    )
+                    self.db_qkan.commit()
+
+                    fortschritt(f"{self.nextid - nr0} H-Regler eingefügt", 0.90)
+                    self.progress_bar.setValue(90)
+        return True
+
     def _abflussparameter(self) -> bool:
         """Export Abflussparameter"""
 
@@ -1475,7 +1838,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (36) in QKan_Export",
+                        "Fehler (15) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 
@@ -1546,7 +1909,7 @@ class ExportTask:
                     idmin, idmax = data
                 else:
                     fehlermeldung(
-                        "Fehler (36) in QKan_Export",
+                        "Fehler (16) in QKan_Export",
                         f"Feststellung min, max zu rowid fehlgeschlagen: {data}",
                     )
 

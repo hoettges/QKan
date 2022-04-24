@@ -119,11 +119,14 @@ class ReadData():  # type: ignore
                             break
                     if found:
                         break
+                    # if nothing found at least identical name
+                    if colUser != 'pk':
+                        head_qk[icol] = colUser
 
             if not self.db_qkan.sql(
                     "SELECT name, type FROM PRAGMA_TABLE_INFO(?);",
                     mute_logger = True,
-                    parameters = (tabnam_db,),
+                    parameters = (table_name,),
             ):
                 del self.db_qkan
                 return
@@ -206,9 +209,15 @@ class ReadData():  # type: ignore
                                 field = self.convert(float, nrow, column, value)
                             elif _type.lower() == "text":
                                 # no conversion necessary
+                                if value:
+                                    field = value
+                                else:
+                                    field = None
+                            elif _type.lower() in ("point", "linestring", "multipolygon"):
+                                logger.debug(f'geo: {value}')
                                 field = value
                             else:
-                            #     logger.error(f'Feldtyp Spalte {column} fehlerhaft: {_type}')
+                                logger.error(f'Feldtyp Spalte {column} fehlerhaft: {_type}')
                             # if not field:
                                 self.iface.messageBar().pushMessage(
                                     "Datenfehler",
@@ -232,7 +241,7 @@ class ReadData():  # type: ignore
                           f"VALUES ({', '.join(['?'] * len(qkan_colnames))})"
                     if not self.db_qkan.sql(
                         sql,
-                        mute_logger=True,
+                        mute_logger=False,
                         parameters=list(parsed_dataset.values()),
                     ):
                         del self.db_qkan

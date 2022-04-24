@@ -527,36 +527,36 @@
       </editWidget>
     </field>
     <field name="sohleoben" configurationFlags="None">
-      <editWidget type="Hidden">
+      <editWidget type="TextEdit">
         <config>
-          <Option/>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
         </config>
       </editWidget>
     </field>
     <field name="sohleunten" configurationFlags="None">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" name="IsMultiline" type="bool"/>
+            <Option value="false" name="UseHtml" type="bool"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="deckeloben" configurationFlags="None">
       <editWidget type="Hidden">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="deckeloben" configurationFlags="None">
-      <editWidget type="TextEdit">
-        <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
-        </config>
-      </editWidget>
-    </field>
     <field name="deckelunten" configurationFlags="None">
-      <editWidget type="TextEdit">
+      <editWidget type="Hidden">
         <config>
-          <Option type="Map">
-            <Option value="false" name="IsMultiline" type="bool"/>
-            <Option value="false" name="UseHtml" type="bool"/>
-          </Option>
+          <Option/>
         </config>
       </editWidget>
     </field>

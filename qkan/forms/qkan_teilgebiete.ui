@@ -147,7 +147,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Enwohnerdichte</string>
+      <string>Einwohnerdichte</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="ewdichte">

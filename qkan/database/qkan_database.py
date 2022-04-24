@@ -178,7 +178,8 @@ def createdbtables(
             teilgebiet, qzu, profilnam, 
             entwart, material, ks, 
             simstatus, kommentar, createdat, 
-            xschob, yschob, xschun, yschun
+            xschob, yschob, xschun, yschun,
+            geom
           FROM haltungen;"""
     try:
         cursl.execute(sql)
@@ -213,14 +214,16 @@ def createdbtables(
               coalesce(new.entwart, 'Regenwasser'), new.material, coalesce(new.ks, 1.5),  
               coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
               coalesce(new.createdat, CURRENT_TIMESTAMP), 
-              MakeLine(
-                coalesce(
-                  MakePoint(new.xschob, new.yschob, {epsg}),
-                  schob.geop
-                ), 
-                coalesce(
-                  MakePoint(new.xschun, new.yschun, {epsg}),
-                  schun.geop
+              coalesce(GeomFromText(new.geom, {epsg}),
+                MakeLine(
+                  coalesce(
+                    MakePoint(new.xschob, new.yschob, {epsg}),
+                    schob.geop
+                  ), 
+                  coalesce(
+                    MakePoint(new.xschun, new.yschun, {epsg}),
+                    schun.geop
+                  )
                 )
               )
             FROM
@@ -751,7 +754,8 @@ def createdbtables(
             entwart, strasse, teilgebiet, 
             knotentyp, auslasstyp, schachttyp, 
             simstatus, material,
-            kommentar, createdat
+            kommentar, createdat,
+            geop, geom
           FROM schaechte;"""
     try:
         cursl.execute(sql)
@@ -784,13 +788,18 @@ def createdbtables(
               new.knotentyp, new.auslasstyp, coalesce(new.schachttyp, 'Schacht'), 
               coalesce(new.simstatus, 'vorhanden'), new.material,
               new.kommentar, coalesce(new.createdat, CURRENT_TIMESTAMP),
-              MakePoint(new.xsch, new.ysch, {epsg}),
-              CastToMultiPolygon(
-                MakePolygon(
-                  MakeCircle(
-                    new.xsch,
-                    new.ysch,
-                    coalesce(new.durchm/2, 0.5), {epsg}
+              coalesce(
+                GeomFromText(new.geop, {epsg}), 
+                MakePoint(new.xsch, new.ysch, {epsg})
+              ),
+              coalesce(GeomFromText(new.geom, {epsg}),
+                CastToMultiPolygon(
+                  MakePolygon(
+                    MakeCircle(
+                      new.xsch,
+                      new.ysch,
+                      coalesce(new.durchm/2, 0.5), {epsg}
+                    )
                   )
                 )
               )

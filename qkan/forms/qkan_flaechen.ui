@@ -9,14 +9,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>610</width>
-    <height>340</height>
+    <width>630</width>
+    <height>310</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>610</width>
-    <height>340</height>
+    <width>630</width>
+    <height>310</height>
    </size>
   </property>
   <property name="font">
@@ -34,8 +34,8 @@
      <rect>
       <x>20</x>
       <y>10</y>
-      <width>46</width>
-      <height>16</height>
+      <width>101</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -45,14 +45,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Name</string>
+     <string>Bezeichnung</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>220</y>
+      <x>320</x>
+      <y>180</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -64,9 +64,9 @@
    <widget class="QLineEdit" name="flnam">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>130</x>
       <y>10</y>
-      <width>221</width>
+      <width>171</width>
       <height>20</height>
      </rect>
     </property>
@@ -80,10 +80,10 @@
    <widget class="QTextEdit" name="kommentar">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>240</y>
-      <width>591</width>
-      <height>71</height>
+      <x>310</x>
+      <y>200</y>
+      <width>311</width>
+      <height>81</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -98,8 +98,8 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>591</width>
-      <height>171</height>
+      <width>611</width>
+      <height>131</height>
      </rect>
     </property>
     <property name="font">
@@ -135,7 +135,7 @@
       <rect>
        <x>130</x>
        <y>30</y>
-       <width>161</width>
+       <width>141</width>
        <height>20</height>
       </rect>
      </property>
@@ -176,7 +176,7 @@
       <rect>
        <x>130</x>
        <y>60</y>
-       <width>161</width>
+       <width>141</width>
        <height>20</height>
       </rect>
      </property>
@@ -193,32 +193,10 @@
       <string>Regenschreiber</string>
      </property>
     </widget>
-    <widget class="QgsDateTimeEdit" name="createdat">
-     <property name="geometry">
-      <rect>
-       <x>420</x>
-       <y>90</y>
-       <width>151</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="currentSection">
-      <enum>QDateTimeEdit::DaySection</enum>
-     </property>
-     <property name="displayFormat">
-      <string>dd.MM.yyyy HH:mm</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_20">
      <property name="geometry">
       <rect>
-       <x>340</x>
+       <x>310</x>
        <y>30</y>
        <width>91</width>
        <height>21</height>
@@ -237,8 +215,8 @@
     <widget class="QComboBox" name="abflussparameter">
      <property name="geometry">
       <rect>
-       <x>130</x>
-       <y>90</y>
+       <x>430</x>
+       <y>60</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -256,31 +234,12 @@
       <string>Abflussparameter gem. HYSTEM-EXTRAN</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_22">
-     <property name="geometry">
-      <rect>
-       <x>340</x>
-       <y>60</y>
-       <width>91</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Teilgebiet</string>
-     </property>
-    </widget>
     <widget class="QComboBox" name="haltnam">
      <property name="geometry">
       <rect>
-       <x>420</x>
+       <x>430</x>
        <y>30</y>
-       <width>151</width>
+       <width>161</width>
        <height>22</height>
       </rect>
      </property>
@@ -300,8 +259,8 @@
     <widget class="QLabel" name="label_21">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>90</y>
+       <x>310</x>
+       <y>60</y>
        <width>111</width>
        <height>21</height>
       </rect>
@@ -320,7 +279,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>130</y>
+       <y>100</y>
        <width>391</width>
        <height>17</height>
       </rect>
@@ -335,12 +294,50 @@
       <string>auf mehrere TEZG-Flächen aufteilen (Verschneidung)</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_70">
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>180</y>
+      <width>281</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Sonstige Daten</string>
+    </property>
+    <widget class="QLabel" name="label_13">
      <property name="geometry">
       <rect>
-       <x>340</x>
-       <y>90</y>
+       <x>20</x>
+       <y>30</y>
        <width>71</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Teilgebiet</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_71">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>151</width>
        <height>21</height>
       </rect>
      </property>
@@ -357,9 +354,9 @@
     <widget class="QComboBox" name="teilgebiet">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>60</y>
-       <width>151</width>
+       <x>120</x>
+       <y>30</y>
+       <width>141</width>
        <height>22</height>
       </rect>
      </property>
@@ -376,6 +373,28 @@
       <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
      </property>
     </widget>
+    <widget class="QgsDateTimeEdit" name="createdat">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>60</y>
+       <width>141</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="currentSection">
+      <enum>QDateTimeEdit::DaySection</enum>
+     </property>
+     <property name="displayFormat">
+      <string>dd.MM.yyyy HH:mm</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -383,7 +402,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>610</width>
+     <width>630</width>
      <height>22</height>
     </rect>
    </property>

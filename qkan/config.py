@@ -376,7 +376,7 @@ class ToolsConfig(ClassObject):
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
                 'geom': ['geom'],
-                'geop': ['wkt_geom', 'geo*'],
+                'geop': ['wkt_geom', 'geop'],
             },
             'haltungen': {
                 'haltnam': ['haltn*', 'haltu*', 'kanaln*', 'nam*', ],

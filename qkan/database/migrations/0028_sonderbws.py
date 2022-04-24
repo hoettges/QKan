@@ -11,15 +11,35 @@ def run(dbcon: DBConnection) -> bool:
     """Ergänze verschiedene Haltungstypen, die alle in der Tabelle haltungen gespeichert werden.
     """
 
-    # Attribute DEFAULT CURRENT_TIMESTAMP und material in Tabelle haltungen ergänzen
+    # Alle Tabellen erneuern, in denen createdat vorkommt
 
-    attrlis = dbcon.attrlist("haltungen")
-    if not attrlis:
-        logger.error(
-            f"Fehler 1 bei Migration zu Version {VERSION}: "
-            "attrlis für pumpen ist leer"
-        )
-        return False
+    views = [
+        "haltungen_data", "haltungen_untersucht_data", "untersuchdat_haltung_data",
+        "anschlussleitungen_data", "schaechte_data", "schaechte_untersucht_data",
+        "untersuchdat_schacht_data", "pumpen_data", "wehre_data", "tezg_data",
+        "v_linkfl_check", "v_flaechen_ohne_linkfl", "v_flaechen_check",
+        "v_tezg_check", "v_linkfl_redundant", "v_linksw_redundant",
+        ]
+    
+    for view in views:
+        sql = "DROP VIEW {view}"
+        if not dbcon.sql(sql):
+            logger.error(f"Fehler bei Migration zu Version {VERSION}: VIEW {view} konnte nicht gelöscht werden.")
+            return False
+        
+    triggers = [
+        "haltungen_insert_clipboard", "haltungen_untersucht_insert_clipboard", 
+        "untersuchdat_haltung_insert_clipboard", "anschlussleitungen_insert_clipboard",
+        "schaechte_insert_clipboard", "schaechte_untersucht_insert_clipboard",
+        "untersuchdat_schacht_insert_clipboard", "pumpen_insert_clipboard",
+        "wehre_insert_clipboard", "tezg_insert_clipboard",
+        ]
+    
+    for trigger in triggers:
+        sql = "DROP TRIGGER {trigger}"
+        if not dbcon.sql(sql):
+            logger.error(f"Fehler bei Migration zu Version {VERSION}: TRIGGER {trigger} konnte nicht gelöscht werden.")
+            return False
 
     if not dbcon.alter_table(
         "haltungen",

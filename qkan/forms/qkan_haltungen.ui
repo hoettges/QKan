@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>660</width>
-    <height>480</height>
+    <width>640</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>660</width>
-    <height>480</height>
+    <width>640</width>
+    <height>450</height>
    </size>
   </property>
   <property name="baseSize">
@@ -62,7 +62,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>311</width>
+      <width>301</width>
       <height>101</height>
      </rect>
     </property>
@@ -116,7 +116,7 @@
     <widget class="QLabel" name="label_14">
      <property name="geometry">
       <rect>
-       <x>280</x>
+       <x>270</x>
        <y>60</y>
        <width>21</width>
        <height>21</height>
@@ -137,7 +137,7 @@
       <rect>
        <x>130</x>
        <y>30</y>
-       <width>170</width>
+       <width>151</width>
        <height>20</height>
       </rect>
      </property>
@@ -180,9 +180,9 @@
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>330</x>
       <y>40</y>
-      <width>311</width>
+      <width>301</width>
       <height>101</height>
      </rect>
     </property>
@@ -258,7 +258,7 @@
     <widget class="QLabel" name="label_15">
      <property name="geometry">
       <rect>
-       <x>280</x>
+       <x>270</x>
        <y>60</y>
        <width>21</width>
        <height>21</height>
@@ -279,7 +279,7 @@
       <rect>
        <x>130</x>
        <y>30</y>
-       <width>170</width>
+       <width>151</width>
        <height>20</height>
       </rect>
      </property>
@@ -300,10 +300,10 @@
    <widget class="QTextEdit" name="kommentar">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>370</y>
-      <width>641</width>
-      <height>71</height>
+      <x>310</x>
+      <y>310</y>
+      <width>321</width>
+      <height>111</height>
      </rect>
     </property>
     <property name="font">
@@ -322,8 +322,8 @@
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>350</y>
+      <x>320</x>
+      <y>290</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -365,8 +365,8 @@
      <rect>
       <x>10</x>
       <y>150</y>
-      <width>641</width>
-      <height>191</height>
+      <width>621</width>
+      <height>131</height>
      </rect>
     </property>
     <property name="font">
@@ -378,34 +378,12 @@
     <property name="title">
      <string>Haltungsdaten</string>
     </property>
-    <widget class="QgsDateTimeEdit" name="createdat">
-     <property name="geometry">
-      <rect>
-       <x>480</x>
-       <y>150</y>
-       <width>140</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="currentSection">
-      <enum>QDateTimeEdit::DaySection</enum>
-     </property>
-     <property name="displayFormat">
-      <string>dd.MM.yyyy HH:mm:ss</string>
-     </property>
-    </widget>
     <widget class="QLineEdit" name="ks">
      <property name="geometry">
       <rect>
-       <x>170</x>
-       <y>120</y>
-       <width>90</width>
+       <x>440</x>
+       <y>60</y>
+       <width>121</width>
        <height>20</height>
       </rect>
      </property>
@@ -441,32 +419,10 @@
       <string>Profilbreite</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="teilgebiet">
-     <property name="geometry">
-      <rect>
-       <x>480</x>
-       <y>90</y>
-       <width>140</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="statusTip">
-      <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_20">
      <property name="geometry">
       <rect>
-       <x>270</x>
+       <x>240</x>
        <y>90</y>
        <width>31</width>
        <height>21</height>
@@ -485,8 +441,8 @@
     <widget class="QLabel" name="label_21">
      <property name="geometry">
       <rect>
-       <x>270</x>
-       <y>150</y>
+       <x>570</x>
+       <y>90</y>
        <width>30</width>
        <height>20</height>
       </rect>
@@ -504,9 +460,9 @@
     <widget class="QLineEdit" name="laenge">
      <property name="geometry">
       <rect>
-       <x>170</x>
-       <y>150</y>
-       <width>90</width>
+       <x>440</x>
+       <y>90</y>
+       <width>121</width>
        <height>20</height>
       </rect>
      </property>
@@ -523,31 +479,12 @@
       <string>vorgegebene Haltungslänge, falls diese nicht automatisch berechnet werden soll</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_71">
-     <property name="geometry">
-      <rect>
-       <x>320</x>
-       <y>150</y>
-       <width>151</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Erstelldatum</string>
-     </property>
-    </widget>
     <widget class="QComboBox" name="entwart">
      <property name="geometry">
       <rect>
-       <x>480</x>
-       <y>60</y>
-       <width>140</width>
+       <x>440</x>
+       <y>30</y>
+       <width>161</width>
        <height>20</height>
       </rect>
      </property>
@@ -567,9 +504,9 @@
     <widget class="QComboBox" name="profilnam">
      <property name="geometry">
       <rect>
-       <x>169</x>
+       <x>100</x>
        <y>30</y>
-       <width>451</width>
+       <width>151</width>
        <height>22</height>
       </rect>
      </property>
@@ -608,8 +545,8 @@
     <widget class="QLabel" name="label_17">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>150</y>
+       <x>290</x>
+       <y>90</y>
        <width>151</width>
        <height>21</height>
       </rect>
@@ -624,33 +561,11 @@
       <string>vorgeg. Haltungslänge</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_11">
-     <property name="geometry">
-      <rect>
-       <x>320</x>
-       <y>90</y>
-       <width>151</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Teilgebiet</string>
-     </property>
-     <property name="buddy">
-      <cstring>simstatus</cstring>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_51">
      <property name="geometry">
       <rect>
-       <x>320</x>
-       <y>60</y>
+       <x>290</x>
+       <y>30</y>
        <width>151</width>
        <height>21</height>
       </rect>
@@ -668,9 +583,9 @@
     <widget class="QLineEdit" name="hoehe">
      <property name="geometry">
       <rect>
-       <x>170</x>
+       <x>101</x>
        <y>60</y>
-       <width>90</width>
+       <width>131</width>
        <height>20</height>
       </rect>
      </property>
@@ -687,32 +602,10 @@
       <string>Bedeutung hängt vom Profiltyp ab</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_10">
-     <property name="geometry">
-      <rect>
-       <x>320</x>
-       <y>120</y>
-       <width>151</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Planungsstatus</string>
-     </property>
-     <property name="buddy">
-      <cstring>simstatus</cstring>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_16">
      <property name="geometry">
       <rect>
-       <x>270</x>
+       <x>240</x>
        <y>60</y>
        <width>31</width>
        <height>21</height>
@@ -731,9 +624,9 @@
     <widget class="QLineEdit" name="breite">
      <property name="geometry">
       <rect>
-       <x>170</x>
+       <x>101</x>
        <y>90</y>
-       <width>90</width>
+       <width>131</width>
        <height>20</height>
       </rect>
      </property>
@@ -772,9 +665,9 @@
     <widget class="QLabel" name="label_70">
      <property name="geometry">
       <rect>
-       <x>270</x>
-       <y>120</y>
-       <width>46</width>
+       <x>570</x>
+       <y>60</y>
+       <width>31</width>
        <height>21</height>
       </rect>
      </property>
@@ -791,8 +684,8 @@
     <widget class="QLabel" name="label_61">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>120</y>
+       <x>290</x>
+       <y>60</y>
        <width>100</width>
        <height>20</height>
       </rect>
@@ -807,11 +700,96 @@
       <string>Rauheit</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>290</y>
+      <width>281</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Sonstige Daten</string>
+    </property>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Teilgebiet</string>
+     </property>
+     <property name="buddy">
+      <cstring>simstatus</cstring>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="teilgebiet">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>30</y>
+       <width>140</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Planungsstatus</string>
+     </property>
+     <property name="buddy">
+      <cstring>simstatus</cstring>
+     </property>
+    </widget>
     <widget class="QComboBox" name="simstatus">
      <property name="geometry">
       <rect>
-       <x>480</x>
-       <y>120</y>
+       <x>120</x>
+       <y>60</y>
        <width>140</width>
        <height>20</height>
       </rect>
@@ -829,6 +807,47 @@
       <string>aktueller Status (z.B. vorhanden, in Planung etc.)</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_71">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Erstelldatum</string>
+     </property>
+    </widget>
+    <widget class="QgsDateTimeEdit" name="createdat">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>90</y>
+       <width>140</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="currentSection">
+      <enum>QDateTimeEdit::DaySection</enum>
+     </property>
+     <property name="displayFormat">
+      <string>dd.MM.yyyy HH:mm:ss</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -836,7 +855,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>660</width>
+     <width>640</width>
      <height>22</height>
     </rect>
    </property>

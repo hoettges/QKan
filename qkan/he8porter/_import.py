@@ -441,21 +441,24 @@ class ImportTask:
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
                     sohleoben, sohleunten,
-                    breite, hoehe,
+                    hoehe, breite,
                     ks,
+                    profilnam,
                     haltungstyp,
                     simstatus,
                     kommentar, createdat, 
-                    geom)
+                    geom
+                )
                 SELECT 
                     sr.Name AS haltnam,
                     sr.Schachtoben AS schoben, 
                     sr.Schachtunten AS schunten, 
                     sr.Anfangsstellung AS sohleoben,
                     sr.Anfangsstellung AS sohleunten,
-                    sr.Geometrie2 AS breite, 
                     round(sr.MaximaleHubHoehe - sr.Anfangsstellung, 4) AS hoehe,
+                    sr.Geometrie2 AS breite, 
                     sr.Verluste AS ks, 
+                    pr.profilnam AS profilnam, 
                     'Schieber' AS haltungstyp, 
                     si.bezeichnung AS simstatus, 
                     sr.Kommentar AS kommentar, 
@@ -501,9 +504,7 @@ class ImportTask:
                     qr.Laenge AS laenge, 
                     qr.SohlhoeheOben AS sohleoben, 
                     qr.SohlhoeheUnten AS sohleunten, 
-                    CASE WHEN qr.Profiltyp = 68 
-                         THEN qr.Sonderprofilbezeichnung 
-                         ELSE pr.profilnam END AS profilnam, 
+                    pr.profilnam AS profilnam, 
                     ea.bezeichnung AS entwart, 
                     qr.Rauigkeitsbeiwert AS ks, 
                     'Q-Regler' AS haltungstyp, 
@@ -552,9 +553,7 @@ class ImportTask:
                     hr.Laenge AS laenge,
                     hr.SohlhoeheOben AS sohleoben,
                     hr.SohlhoeheUnten AS sohleunten,
-                    CASE WHEN hr.Profiltyp = 68 
-                         THEN hr.Sonderprofilbezeichnung 
-                         ELSE pr.profilnam END AS profilnam,
+                    pr.profilnam AS profilnam,
                     ea.bezeichnung AS entwart,
                     hr.Rauigkeitsbeiwert AS ks,
                     'H-Regler' AS haltungstyp,
@@ -586,8 +585,9 @@ class ImportTask:
                 sql = """
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
-                    hoehe, breite,
                     sohleoben, sohleunten,
+                    hoehe, breite,
+                    ks,
                     profilnam,
                     haltungstyp,
                     simstatus,  
@@ -598,13 +598,12 @@ class ImportTask:
                     gs.Name AS haltnam, 
                     gs.Schachtoben AS schoben, 
                     gs.Schachtunten AS schunten,
+                    gs.HoeheUnterkante AS sohleoben, 
+                    gs.HoeheUnterkante AS sohleunten, 
                     gs.Geometrie1 AS hoehe,
                     gs.Geometrie2 AS breite,
-                    gs.SohlhoeheOben AS sohleoben, 
-                    gs.SohlhoeheUnten AS sohleunten, 
-                    CASE WHEN gs.Profiltyp = 68 
-                         THEN gs.Sonderprofilbezeichnung 
-                         ELSE pr.profilnam END AS profilnam,
+                    gs.Auslassbeiwert AS ks,
+                    pr.profilnam AS profilnam,
                     'GrundSeitenauslass' AS haltungstyp, 
                     si.bezeichnung AS simstatus,
                     gs.Kommentar AS kommentar, 
@@ -673,9 +672,12 @@ class ImportTask:
                     CASE fl.BerechnungSpeicherkonstante 
                         WHEN 1 THEN fl.FliesszeitOberflaeche
                         WHEN 2 THEN fl.Schwerpunktlaufzeit
-                        ELSE 0. END           AS fliesszeitflaeche,  
-                    MakeLine(PointOnSurface(Buffer(fl.Geometry, -1.1*{self.fangradius})), Centroid(ro.Geometry)) 
-                                                AS link
+                        ELSE 0. END             AS fliesszeitflaeche,  
+                    SetSrid(MakeLine(
+                        PointOnSurface(Buffer(fl.Geometry, -1.1*{self.fangradius})), 
+                        Centroid(ro.Geometry)
+                        ), {self.epsg}
+                    )                           AS link
                     FROM he.Rohr AS ro
                     INNER JOIN he.Flaeche AS fl
                     ON fl.Haltung = ro.Name
@@ -683,6 +685,11 @@ class ImportTask:
                     ON at.he_nr = fl.BerechnungSpeicherkonstante
                     WHERE fl.Geometry IS NOT NULL AND ro.Geometry IS NOT NULL
                 """
+
+                if not self.db_qkan.sql(sql, "he8_import linkfl"):
+                    return False
+
+                self.db_qkan.commit()
 
         return True
 
@@ -878,7 +885,8 @@ class ImportTask:
                     elnam, haltnam, 
                     zufluss, ew, 
                     einzugsgebiet,
-                    kommentar, createdat
+                    kommentar, createdat,
+                    geom
                 )
                 SELECT
                     el_he.Name AS elnam,
@@ -887,7 +895,8 @@ class ImportTask:
                     el_he.Einwohner AS ew,
                     el_he.Teileinzugsgebiet AS einzugsgebiet,
                     el_he.Kommentar AS kommentar,
-                    el_he.LastModified AS createdat
+                    el_he.LastModified AS createdat,
+                    el_he.Geometry AS geom
                 FROM Einzeleinleiter AS el_he
                 LEFT JOIN einleit AS el_qk
                 ON el_he.Name = el_qk.elnam
@@ -946,13 +955,11 @@ class ImportTask:
         if (
             QKan.config.check_import.tezg_ef
             or QKan.config.check_import.tezg_hf
-            or QKan.config.check_import.tezg_tf
         ):
 
             if self.append:
                 choice_ef = str(QKan.config.check_import.tezg_ef)
                 choice_hf = str(QKan.config.check_import.tezg_hf)
-                choice_tf = str(QKan.config.check_import.tezg_tf)
 
                 sql = f"""
                 INSERT INTO tezg (
@@ -968,18 +975,53 @@ class ImportTask:
                     eg_he.Kommentar AS kommentar, 
                     eg_he.LastModified AS createdat, 
                     SetSRID(eg_he.Geometry, {self.epsg}) AS geom
-                FROM GipsEinzugsflaeche AS eg_he
+                FROM he.GipsEinzugsflaeche AS eg_he
                 LEFT JOIN tezg AS eg_qk
                 ON eg_he.Name = eg_qk.flnam
                 WHERE (
                     (IsEinzugsflaeche and {choice_ef}) or
-                    (IsHaltungsflaeche and {choice_hf}) or
-                    (IsTwEinzugsflaeche and {choice_tf})
+                    (IsHaltungsflaeche and {choice_hf})
                 ) and eg_qk.pk IS NULL 
                 """
                 if not self.db_qkan.sql(sql, "he8_import Haltungsflächen"):
                     return False
+        elif QKan.config.check_import.tezg_tf:
+            if self.append:
+                choice_tf = str(QKan.config.check_import.tezg_tf)
+                sql = f"""
+                INSERT INTO einleit (
+                    elnam, haltnam, 
+                    zufluss, ew, 
+                    einzugsgebiet,
+                    kommentar, createdat,
+                    geom
+                )
+                SELECT
+                    eg_he.Name                              AS elnam, 
+                    eg_he.Haltung                           AS haltnam, 
+                    area(eg_he.Geometry)/10000. 
+                        * coalesce(te_he.Einwohnerdichte, 100)
+                        * coalesce(te_he.Wasserverbrauch, 130)
+                        * ( 24. / coalesce(te_he.Stundenmittel, 12)
+                            + coalesce(te_he.Fremdwasseranteil))
+                                                            AS zufluss,
+                    area(eg_he.Geometry)/10000. * te_he.Einwohnerdichte
+                                                            AS ew,
+                    eg_he.Name                              AS einzugsgebiet,
+                    eg_he.Kommentar                         AS kommentar, 
+                    eg_he.LastModified                      AS createdat, 
+                    SetSRID(eg_he.Geometry, {self.epsg})    AS geom
+                FROM he.GipsEinzugsflaeche      AS eg_he
+                LEFT JOIN he.Teileinzugsgebiet  AS te_he                -- kein JOIN, da alle Datensätze
+                LEFT JOIN tezg                  AS eg_qk
+                ON eg_he.Name = eg_qk.flnam
+                WHERE (IsTwEinzugsflaeche and {choice_tf})
+                    AND eg_qk.pk IS NULL 
+                """
+                if not self.db_qkan.sql(sql, "he8_import Haltungsflächen"):
+                    return False
 
-                self.db_qkan.commit()
+
+        self.db_qkan.commit()
 
         return True

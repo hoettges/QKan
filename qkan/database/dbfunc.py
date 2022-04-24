@@ -552,7 +552,7 @@ class DBConnection:
         attr_text_new = ",\n".join(attr_dict_new.values())
         logger.debug(f"dbfunc.DBConnection.alter_table - attr_text_new:{attr_text_new}")
 
-        # 0. Foreign key constrain deaktivieren
+        # 0. Foreign key constraint deaktivieren
         if not self.sql(
             "PRAGMA foreign_keys=OFF;",
             "dbfunc.DBConnection.alter_table (3)",
@@ -569,16 +569,16 @@ class DBConnection:
             # return False
 
         # 2. Indizes und Trigger speichern
-        sql = """SELECT type, sql 
-                FROM sqlite_master 
-                WHERE tbl_name=? AND (type = 'trigger' OR type = 'index')"""
-        if not self.sql(
-            sql,
-            "dbfunc.DBConnection.alter_table (5)",
-            parameters=(tabnam,),
-            transaction=False,
-        ):
-            return False
+        # sql = """SELECT type, sql
+        #         FROM sqlite_master
+        #         WHERE tbl_name=? AND (type = 'trigger' OR type = 'index')"""
+        # if not self.sql(
+        #     sql,
+        #     "dbfunc.DBConnection.alter_table (5)",
+        #     parameters=(tabnam,),
+        #     transaction=False,
+        # ):
+        #     return False
         # triggers = [el[1] for el in self.fetchall()]
 
         # 2.1. Temporäre Hilfstabelle erstellen

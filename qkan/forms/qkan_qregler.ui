@@ -185,10 +185,10 @@
       </font>
      </property>
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Calibri','sans-serif';&quot;&gt;Manning-Strickler Beiwert (kst)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Absolute Rauheit gemäß Prandtl-Colebrook&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="statusTip">
-      <string>Manning-Strickler Beiwert (kst)</string>
+      <string>Absolute Rauheit gemäß Prandtl-Colebrook</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_7">

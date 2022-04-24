@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>290</width>
+    <width>300</width>
     <height>280</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>290</width>
+    <width>300</width>
     <height>280</height>
    </size>
   </property>
@@ -34,7 +34,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>271</width>
+      <width>281</width>
       <height>161</height>
      </rect>
     </property>
@@ -88,7 +88,7 @@
     <widget class="QgsDateTimeEdit" name="createdat">
      <property name="geometry">
       <rect>
-       <x>110</x>
+       <x>120</x>
        <y>120</y>
        <width>141</width>
        <height>23</height>
@@ -110,7 +110,7 @@
     <widget class="QComboBox" name="teilgebiet">
      <property name="geometry">
       <rect>
-       <x>110</x>
+       <x>120</x>
        <y>90</y>
        <width>141</width>
        <height>22</height>
@@ -154,7 +154,7 @@
     <widget class="QComboBox" name="schnam">
      <property name="geometry">
       <rect>
-       <x>110</x>
+       <x>120</x>
        <y>60</y>
        <width>141</width>
        <height>22</height>
@@ -192,7 +192,7 @@
     <widget class="QComboBox" name="gebnam">
      <property name="geometry">
       <rect>
-       <x>110</x>
+       <x>120</x>
        <y>30</y>
        <width>141</width>
        <height>22</height>
@@ -230,7 +230,7 @@
     <widget class="QLabel" name="label_22">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>110</x>
        <y>30</y>
        <width>16</width>
        <height>21</height>
@@ -255,7 +255,7 @@
      <rect>
       <x>10</x>
       <y>200</y>
-      <width>271</width>
+      <width>281</width>
       <height>71</height>
      </rect>
     </property>
