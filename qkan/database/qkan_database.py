@@ -29,13 +29,14 @@ __qgsVersion__ = "3.2.27"  # Version des Projektes und der Projektdatei. Kann h�
 import logging
 import os
 import traceback
+import csv
 from datetime import datetime
 from sqlite3.dbapi2 import Connection, Cursor
 
 from qgis.core import Qgis, QgsProject
 from qgis.PyQt import Qt
 from qgis.PyQt.QtWidgets import QProgressBar
-from qgis.utils import spatialite_connect
+from qgis.utils import spatialite_connect, pluginDirectory
 
 from .qkan_utils import fehlermeldung, fortschritt, meldung
 from qkan import QKan
@@ -175,6 +176,7 @@ def createdbtables(
     qzu REAL,
     profilnam TEXT DEFAULT 'Kreisquerschnitt',
     entwart TEXT DEFAULT 'Regenwasser',
+    strasse TEXT,
     rohrtyp TEXT,
     ks REAL DEFAULT 1.5,
     simstatus TEXT DEFAULT 'vorhanden',
@@ -215,7 +217,7 @@ def createdbtables(
             sohleoben, sohleunten, 
             deckeloben, deckelunten, 
             teilgebiet, qzu, profilnam, 
-            entwart, rohrtyp, ks,
+            entwart, strasse, rohrtyp, ks,
             simstatus, kommentar, createdat, 
             xschob, yschob, xschun, yschun
           FROM haltungen;"""
@@ -238,7 +240,7 @@ def createdbtables(
                sohleoben, sohleunten,
                deckeloben, deckelunten, 
                teilgebiet, qzu, profilnam, 
-               entwart, rohrtyp, ks,
+               entwart, strasse, rohrtyp, ks,
                simstatus, kommentar, createdat,  
                geom)
             SELECT 
@@ -249,7 +251,7 @@ def createdbtables(
               new.sohleoben, new.sohleunten, 
               new.deckeloben, new.deckelunten, 
               new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
-              coalesce(new.entwart, 'Regenwasser'), new.rohrtyp, coalesce(new.ks, 1.5), 
+              coalesce(new.entwart, 'Regenwasser'),new.strasse, new.rohrtyp, coalesce(new.ks, 1.5), 
               coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
               coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), 
               MakeLine(
@@ -295,8 +297,13 @@ def createdbtables(
          untersuchtag TEXT,
          untersucher TEXT,
          wetter INTEGER DEFAULT 0,
+         strasse TEXT,
          bewertungsart INTEGER DEFAULT 0,
          bewertungstag TEXT,
+         datenart TEXT,
+         max_ZD INTEGER,
+         max_ZB INTEGER,
+         max_ZS INTEGER,
          xschob REAL,
          yschob REAL,
          xschun REAL,
@@ -331,7 +338,7 @@ def createdbtables(
               SELECT 
                 haltnam, schoben, schunten, 
                 hoehe, breite, laenge,
-                kommentar, createdat, baujahr, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag,
+                kommentar, createdat, baujahr, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart,max_ZD, max_ZB, max_ZS,
                 xschob, yschob, xschun, yschun
               FROM haltungen_untersucht;"""
     try:
@@ -351,7 +358,7 @@ def createdbtables(
                   (haltnam, schoben, schunten,
                    hoehe, breite, laenge,
                    kommentar, createdat, baujahr,  
-                   geom, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag)
+                   geom, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
                 SELECT 
                   new.haltnam, new.schoben, new.schunten, 
                   CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
@@ -367,7 +374,7 @@ def createdbtables(
                       MakePoint(new.xschun, new.yschun, {epsg}),
                       schun.geop
                     )
-                  ), new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
+                  ), new.untersuchtag, new.untersucher, new.wetter, new.strasse, new.bewertungsart, new.bewertungstag, new.datenart, new.max_ZD, new.max_ZB, new.max_ZS
                 FROM
                   schaechte AS schob,
                   schaechte AS schun
@@ -411,6 +418,9 @@ def createdbtables(
             ordner_bild TEXT,
             ordner_video TEXT,
             richtung TEXT,
+            ZD INTEGER,
+            ZB INTEGER,
+            ZS INTEGER,
             createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime'))
         )"""
 
@@ -442,7 +452,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_haltung_data AS 
                   SELECT
                     untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
-                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, createdat
+                        charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, ZD, ZB, ZS, createdat
                   FROM Untersuchdat_haltung;"""
     try:
         cursl.execute(sql)
@@ -459,11 +469,11 @@ def createdbtables(
                       BEGIN
                         INSERT INTO untersuchdat_haltung
                           (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
-                            charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, createdat, geom)
+                            charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, ZD, ZB, ZS, createdat, geom)
                         SELECT
                           new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
                             new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
-                            new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung,
+                            new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung, new.ZD, new.ZB, new.ZS,
                             coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
                             CASE
                             WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
@@ -557,7 +567,7 @@ def createdbtables(
                         SELECT
                         new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
                             new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
-                            new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung,
+                            new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung, new.ZD, new.ZB, new.ZS,
                             coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
                             CASE
                             WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
@@ -907,8 +917,13 @@ def createdbtables(
             untersuchtag TEXT, 
             untersucher TEXT, 
             wetter INTEGER DEFAULT 0, 
+            strasse TEXT,
             bewertungsart INTEGER DEFAULT 0, 
-            bewertungstag TEXT
+            bewertungstag TEXT,
+            datenart TEXT,
+            max_ZD INTEGER,
+            max_ZB INTEGER,
+            max_ZS INTEGER
             )"""
 
     try:
@@ -940,7 +955,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS schaechte_untersucht_data AS 
                   SELECT
                     schnam, durchm, 
-                    kommentar, createdat, baujahr, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag
+                    kommentar, createdat, baujahr, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS
                   FROM schaechte_untersucht;"""
     try:
         cursl.execute(sql)
@@ -958,13 +973,13 @@ def createdbtables(
                     INSERT INTO schaechte_untersucht
                       (schnam, durchm,  
                        kommentar, createdat, baujahr,
-                       geop, untersuchtag, untersucher, wetter, bewertungsart, bewertungstag)
+                       geop, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
                     SELECT
                       new.schnam,
                       CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
                       new.kommentar, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), new.baujahr,
                       sch.geop,
-                      new.untersuchtag, new.untersucher, new.wetter, new.bewertungsart, new.bewertungstag
+                      new.untersuchtag, new.untersucher, new.wetter, new.strasse, new.bewertungsart, new.bewertungstag, new.datenart, new.max_ZD, new.max_ZB, new.max_ZS
                     FROM
                       schaechte AS sch
                       WHERE sch.schnam = new.schnam;
@@ -1003,6 +1018,9 @@ def createdbtables(
         bereich TEXT,
         foto_dateiname TEXT,
         ordner TEXT,
+        ZD INTEGER,
+        ZB INTEGER,
+        ZS INTEGER,
         createdat TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now','localtime'))
         )"""
 
@@ -1035,7 +1053,7 @@ def createdbtables(
     sql = f"""CREATE VIEW IF NOT EXISTS untersuchdat_schacht_data AS 
               SELECT
                 untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden,streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, createdat 
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden,streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, ZD, ZB, ZS, createdat 
               FROM Untersuchdat_schacht;"""
     try:
         cursl.execute(sql)
@@ -1052,11 +1070,11 @@ def createdbtables(
               BEGIN
                 INSERT INTO Untersuchdat_schacht
                   (untersuchsch, id, videozaehler, timecode, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, createdat, geop)
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, ZD, ZB, ZS, createdat, geop)
                 SELECT 
                   new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.vertikale_lage, new.inspektionslaenge,
-                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), sch.geop
+                    new.bereich, new.foto_dateiname, new.ordner, new.ZD, new.ZB, new.ZS, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), sch.geop
                 FROM
                     schaechte AS sch
                     WHERE sch.schnam = new.untersuchsch;
@@ -2652,6 +2670,52 @@ def createdbtables(
         return False
 
     consl.commit()
+
+    # Referenztabelle für Plausi Zustandsklassen -----------------------------
+
+    sql = """
+                CREATE TABLE IF NOT EXISTS reflist_zustand (
+                    pk INTEGER PRIMARY KEY,
+                    art TEXT,                      -- 
+                    hauptcode TEXT,                -- 
+                    charakterisierung1 TEXT,        --
+                    charakterisierung2 TEXT,         -- 
+                    bereich TEXT        -- 
+                    )
+            """
+
+    try:
+        cursl.execute(sql)
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Fehler beim Erzeugen der Tabelle "reflist_zustand".',
+        )
+        consl.close()
+        return False
+
+    consl.commit()
+
+    # reflist_zustandfile = os.path.join(pluginDirectory("qkan"), "database", "Plausi_Zustandsklassen.csv")
+    #
+    # with open(reflist_zustandfile, 'r') as fin:
+    #     dr = csv.reader(fin, delimiter=";")
+    #
+    #     to_db = []
+    #
+    #     for a, b, c, d, e in dr:
+    #         c = [c] if c is None else c.split(',')
+    #         d = [d] if d is None else d.split(',')
+    #         e = [e] if e is None else e.split(',')
+    #         for i in c:
+    #             for j in d:
+    #                 for k in e:
+    #                     to_db.append([a, b, i, j, k])
+    #
+    # cursl.executemany(
+    #     "INSERT INTO reflist_zustand (art, hauptcode, charakterisierung1, charakterisierung2, bereich) VALUES (?, ?, ?, ?, ?);",
+    #     to_db)
+    # consl.commit()
 
     # Allgemeine Informationen -----------------------------------------------
 

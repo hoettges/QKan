@@ -15,6 +15,52 @@ class PlausiTask(QKanPlugin):
 
         selected_themes = QKan.config.plausi.themen
 
+        # update damit die Charakterisirungsfehler funktionieren
+        sql = f"""Update Untersuchdat_haltung
+                            Set charakt1 = ''
+                            where charakt1 = 'not found'
+                            """
+        if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1a)"):
+            logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
+            del self.db_qkan
+            return False
+
+        sql = f"""Update Untersuchdat_haltung
+                                    Set charakt2 = ''
+                                    where charakt2 = 'not found'
+                                    """
+        if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1b)"):
+            logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
+            del self.db_qkan
+            return False
+
+        sql = f"""Update Untersuchdat_schacht
+                                    Set charakt1 = ''
+                                    where charakt1 = 'not found'
+                                    """
+        if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1c)"):
+            logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
+            del self.db_qkan
+            return False
+
+        sql = f"""Update Untersuchdat_schacht
+                                            Set charakt2 = ''
+                                            where charakt2 = 'not found'
+                                            """
+        if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1d)"):
+            logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
+            del self.db_qkan
+            return False
+
+        sql = f"""Update Untersuchdat_schacht
+                                                    Set bereich = ''
+                                                    where bereich = 'not found'
+                                                    """
+        if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1e)"):
+            logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
+            del self.db_qkan
+            return False
+
         if not QKan.config.plausi.keepdata:
             sql = """DELETE FROM pruefliste"""
             if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1)"):

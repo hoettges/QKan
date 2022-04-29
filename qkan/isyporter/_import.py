@@ -42,6 +42,10 @@ class Schacht_untersucht(ClassObject):
     wetter: int = 0
     bewertungsart: int = 0
     bewertungstag: str = ""
+    datenart: str = ""
+    max_ZD: int = 5
+    max_ZB: int = 5
+    max_ZS: int = 5
 
 
 class Untersuchdat_schacht(ClassObject):
@@ -63,6 +67,9 @@ class Untersuchdat_schacht(ClassObject):
     inspektionslaenge: float = 0.0
     foto_dateiname: str = ""
     ordner: str = ""
+    ZD: int = 5
+    ZB: int = 5
+    ZS: int = 5
     xsch: float = 0.0
     ysch: float = 0.0
 
@@ -80,6 +87,7 @@ class Haltung(ClassObject):
     deckelunten: float = 0.0
     profilnam: str = ""
     entwart: str = ""
+    strasse: str = ""
     rohrtyp: str = ""
     ks: float = 1.5
     simstatus: int = 0
@@ -102,12 +110,17 @@ class Haltung_untersucht(ClassObject):
     untersuchtag: str = ""
     untersucher: str = ""
     wetter: int = 0
+    strasse: str = ""
     bewertungsart: int = 0
     bewertungstag: str = ""
+    datenart: str = ""
     xschob: float = 0.0
     yschob: float = 0.0
     xschun: float = 0.0
     yschun: float = 0.0
+    max_ZD: int = 5
+    max_ZB: int = 5
+    max_ZS: int = 5
 
 
 class Untersuchdat_haltung(ClassObject):
@@ -134,6 +147,9 @@ class Untersuchdat_haltung(ClassObject):
     ordner_bild: str = ""
     ordner_video: str = ""
     richtung: str = ""
+    ZD: int = 5
+    ZB: int = 5
+    ZS: int = 5
 
 class Anschlussleitung(ClassObject):
     leitnam: str = ""
@@ -278,7 +294,7 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask:
-    def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, ordner_bild: str, ordner_video: str):
+    def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, data_choice: str, ordner_bild: str, ordner_video: str):
         self.db_qkan = db_qkan
         self.ordner_bild = ordner_bild
         self.ordner_video = ordner_video
@@ -289,6 +305,12 @@ class ImportTask:
             self.richtung = "fließrichtung"
         if self.richt_choice == "Anzeigen in Untersuchungsrichtung rechts der Haltung":
             self.richtung = "untersuchungsrichtung"
+
+        self.data_coice = data_choice
+        if data_choice == "ISYBAU Daten":
+            self.datenart = "ISYBAU"
+        if data_choice == "DWA M-150 Daten":
+            self.datenart = "DWA"
 
         # nr (str) => description
         self.mapper_entwart: Dict[str, str] = {}
@@ -544,7 +566,7 @@ class ImportTask:
             #     return None
 
             sql = f"""
-            INSERT INTO schaechte_data (schnam, sohlhoehe, deckelhoehe, durchm,druckdicht, entwart, strasse,
+            INSERT INTO schaechte_data (schnam, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, strasse,
                     schachttyp, simstatus, material, kommentar, xsch, ysch)
             VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?, ?, ?, ?)
             """
@@ -619,12 +641,15 @@ class ImportTask:
             untersuchtag = ""
             untersucher = ""
             wetter = 0
+            strasse = ""
             bewertungsart = 0
             bewertungstag = ""
+            datenart = self.datenart
 
             for block in blocks:
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
                 baujahr = _strip_int(block.findtext("d:Baujahr", 0, self.NS))
+                strasse = block.findtext("d:Lage/d:Strassenname", "not found", self.NS)
 
                 for _schacht in block.findall("d:OptischeInspektion", self.NS):
 
@@ -646,8 +671,10 @@ class ImportTask:
                     untersuchtag=untersuchtag,
                     untersucher=untersucher,
                     wetter=wetter,
+                    strasse=strasse,
                     bewertungsart=bewertungsart,
                     bewertungstag=bewertungstag,
+                    datenart=datenart,
                 )
 
         for schacht_untersucht in _iter():
@@ -710,11 +737,11 @@ class ImportTask:
                     return None
 
             if not self.db_qkan.sql(
-                "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
-                "bewertungstag=? WHERE schnam = ?",
+                "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, strasse=?, bewertungsart=?," 
+                "bewertungstag=?, datenart=? WHERE schnam = ?",
                 "xml_import Schächte_untersucht [4]",
-                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter, bewertungsart, schacht_untersucht.bewertungstag,
-                            schacht_untersucht.schnam),
+                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter, schacht_untersucht.strasse, bewertungsart, schacht_untersucht.bewertungstag,
+                            schacht_untersucht.datenart, schacht_untersucht.schnam),
             ):
                 return None
 
@@ -776,6 +803,10 @@ class ImportTask:
                     bereich = _untersuchdat_schacht.findtext("d:Schachtbereich", "not found", self.NS)
                     foto_dateiname = _untersuchdat_schacht.findtext("d:Fotodatei", "not found", self.NS)
 
+                    ZD = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", "5", self.NS))
+                    ZS = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", "5", self.NS))
+                    ZB = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", "5", self.NS))
+
 
                     yield Untersuchdat_schacht(
                     untersuchsch = name,
@@ -796,14 +827,17 @@ class ImportTask:
                     bereich = bereich,
                     foto_dateiname = foto_dateiname,
                     ordner = ordner,
+                        ZD=ZD,
+                        ZS=ZS,
+                        ZB=ZB,
                     )
 
         for untersuchdat_schacht in _iter():
 
             sql = f"""
             INSERT INTO untersuchdat_schacht_data (untersuchsch, id, videozaehler, timecode, kuerzel, 
-                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, ZD, ZS, ZB)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)
             """
             if not self.db_qkan.sql(
                 sql,
@@ -827,6 +861,9 @@ class ImportTask:
                     untersuchdat_schacht.bereich,
                     untersuchdat_schacht.foto_dateiname,
                     untersuchdat_schacht.ordner,
+                    untersuchdat_schacht.ZD,
+                    untersuchdat_schacht.ZS,
+                    untersuchdat_schacht.ZB,
                 ),
             ):
                 return None
@@ -1133,6 +1170,7 @@ class ImportTask:
                     deckelunten=deckelunten,
                     profilnam=profilnam,
                     entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
+                    strasse=block.findtext("d:Lage/d:Strassenname","not found",self.NS),
                     ks=1.5,  # in Hydraulikdaten enthalten.
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
@@ -1411,11 +1449,14 @@ class ImportTask:
             untersuchtag = ""
             untersucher = ""
             wetter = 0
+            strasse = ""
             bewertungsart = 0
             bewertungstag = ""
+            datenart = self.datenart
 
             for block in blocks:
                 name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                strasse = block.findtext("d:Lage/d:Strassenname", "not found", self.NS)
 
                 for _haltung in block.findall("d:OptischeInspektion", self.NS):
 
@@ -1436,8 +1477,10 @@ class ImportTask:
                     untersuchtag=untersuchtag,
                     untersucher=untersucher,
                     wetter=wetter,
+                    strasse=strasse,
                     bewertungsart=bewertungsart,
                     bewertungstag=bewertungstag,
+                    datenart=datenart,
                 )
 
         # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
@@ -1520,11 +1563,11 @@ class ImportTask:
                     return None
 
             if not self.db_qkan.sql(
-                "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
-                "bewertungstag=? WHERE haltnam = ?",
+                "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, strasse=?, bewertungsart=?," 
+                "bewertungstag=?, datenart=? WHERE haltnam = ?",
                 "xml_import Haltungen_untersucht [5]",
-                parameters=(haltung_untersucht.untersuchtag, haltung_untersucht.untersucher, wetter, bewertungsart, haltung_untersucht.bewertungstag,
-                            haltung_untersucht.haltnam),
+                parameters=(haltung_untersucht.untersuchtag, haltung_untersucht.untersucher, wetter, haltung_untersucht.strasse, bewertungsart, haltung_untersucht.bewertungstag,
+                            haltung_untersucht.datenart, haltung_untersucht.haltnam),
             ):
                 return None
 
@@ -1598,6 +1641,13 @@ class ImportTask:
                         pos_bis = _strip_int(_untersuchdat.findtext("d:PositionBis", 0, self.NS))
                         foto_dateiname = _untersuchdat.findtext("d:Fotodatei", "not found", self.NS)
 
+
+                        ZD = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", "5", self.NS))
+                        ZS = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", "5", self.NS))
+                        ZB = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", "5", self.NS))
+
+
+
                         yield Untersuchdat_haltung(
                         untersuchhal=name,
                         untersuchrichtung=untersuchrichtung,
@@ -1622,6 +1672,9 @@ class ImportTask:
                         ordner_bild=ordner_bild,
                         ordner_video=ordner_video,
                         richtung=richtung,
+                        ZD=ZD,
+                        ZS=ZS,
+                        ZB=ZB,
 
             )
 
@@ -1665,8 +1718,8 @@ class ImportTask:
             sql = f"""
             INSERT INTO untersuchdat_haltung_data (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler,inspektionslaenge, station, timecode, kuerzel, 
                                                     charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname,
-                                                     ordner_bild, ordner_video, richtung)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                                     ordner_bild, ordner_video, richtung, ZD, ZB, ZS)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)
             """
             if not self.db_qkan.sql(
                 sql,
@@ -1694,7 +1747,10 @@ class ImportTask:
                     untersuchdat_haltung.film_dateiname,
                     untersuchdat_haltung.ordner_bild,
                     untersuchdat_haltung.ordner_video,
-                    untersuchdat_haltung.richtung
+                    untersuchdat_haltung.richtung,
+                    untersuchdat_haltung.ZD,
+                    untersuchdat_haltung.ZB,
+                    untersuchdat_haltung.ZS
                 ),
             ):
                 return None

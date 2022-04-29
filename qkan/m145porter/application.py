@@ -113,6 +113,7 @@ class M145Porter(QKanPlugin):
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
             QKan.config.project.file = self.import_dlg.tf_project.text()
             QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
+            QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
             QKan.config.xml.ordner_bilder = self.import_dlg.tf_import_2.text()
             QKan.config.xml.ordner_video = self.import_dlg.tf_import_3.text()
 
@@ -174,6 +175,7 @@ class M145Porter(QKanPlugin):
         Einspringpunkt für Test
         """
         QKan.config.xml.richt_choice = self.import_dlg.comboBox.currentText()
+        QKan.config.xml.data_choice = self.import_dlg.comboBox_2.currentText()
         QKan.config.xml.ordner_bild = self.import_dlg.tf_import_2.text()
         QKan.config.xml.ordner_video = self.import_dlg.tf_import_3.text()
 
@@ -195,7 +197,7 @@ class M145Porter(QKanPlugin):
             return False
 
         self.log.info("DB creation finished, starting importer")
-        imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice, QKan.config.xml.ordner_bild, QKan.config.xml.ordner_video )
+        imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice, QKan.config.xml.data_choice, QKan.config.xml.ordner_bild, QKan.config.xml.ordner_video )
         imp.run()
         del imp
 

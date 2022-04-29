@@ -43,6 +43,10 @@ class Schacht_untersucht(ClassObject):
     wetter: int = 0
     bewertungsart: int = 0
     bewertungstag: str = ""
+    datenart: str = ""
+    max_ZD: int = 5
+    max_ZB: int = 5
+    max_ZS: int = 5
 
 
 class Untersuchdat_schacht(ClassObject):
@@ -64,6 +68,9 @@ class Untersuchdat_schacht(ClassObject):
     inspektionslaenge: float = 0.0
     foto_dateiname: str = ""
     ordner: str = ""
+    ZD: int = 5
+    ZB: int = 5
+    ZS: int = 5
     xsch: float = 0.0
     ysch: float = 0.0
 
@@ -81,6 +88,7 @@ class Haltung(ClassObject):
     deckelunten: float = 0.0
     profilnam: str = ""
     entwart: str = ""
+    strasse: str = ""
     rohrtyp: str = ""
     ks: float = 1.5
     simstatus: int = 0
@@ -103,12 +111,17 @@ class Haltung_untersucht(ClassObject):
     untersuchtag: str = ""
     untersucher: str = ""
     wetter: int = 0
+    strasse: str = ""
     bewertungsart: int = 0
     bewertungstag: str = ""
     xschob: float = 0.0
     yschob: float = 0.0
     xschun: float = 0.0
     yschun: float = 0.0
+    datenart: str = ""
+    max_ZD: int = 5
+    max_ZB: int = 5
+    max_ZS: int = 5
 
 
 class Untersuchdat_haltung(ClassObject):
@@ -135,6 +148,9 @@ class Untersuchdat_haltung(ClassObject):
     ordner_bild: str = ""
     ordner_video: str = ""
     richtung: str = ""
+    ZD: int = 5
+    ZB: int = 5
+    ZS: int = 5
 
 class Anschlussleitung(ClassObject):
     leitnam: str = ""
@@ -282,7 +298,7 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ImportTask:
-    def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, ordner_bild: str, ordner_video: str):
+    def __init__(self, db_qkan: DBConnection, xml_file: str, richt_choice: str, data_choice: str, ordner_bild: str, ordner_video: str):
         self.db_qkan = db_qkan
         self.ordner_bild = ordner_bild
         self.ordner_video = ordner_video
@@ -293,6 +309,12 @@ class ImportTask:
             self.richtung = "fließrichtung"
         if self.richt_choice == "Anzeigen in Untersuchungsrichtung rechts der Haltung":
             self.richtung = "untersuchungsrichtung"
+
+        self.data_coice= data_choice
+        if data_choice == "ISYBAU Daten":
+            self.datenart = "ISYBAU"
+        if data_choice == "DWA M-150 Daten":
+            self.datenart = "DWA"
 
         # nr (str) => description
         self.mapper_entwart: Dict[str, str] = {}
@@ -569,6 +591,7 @@ class ImportTask:
 
             for block in blocks:
                 name = block.findtext("KG001", "not found")
+                strasse = block.findtext("KG102", "not found"),
                 smp = block.find(
                     "GO/GP"
                 )
@@ -594,6 +617,7 @@ class ImportTask:
 
                 yield Schacht_untersucht(
                     schnam=name,
+                    strasse=strasse,
                     xsch=xsch,
                     ysch=ysch,
                     sohlhoehe=sohlhoehe,
@@ -613,6 +637,10 @@ class ImportTask:
             wetter = 0
             bewertungsart = 0
             bewertungstag = ""
+            datenart = self.datenart
+            max_ZD = 5
+            max_ZB = 5
+            max_ZS = 5
 
             for block in blocks:
                 name = block.findtext("KG001", "not found")
@@ -630,6 +658,10 @@ class ImportTask:
 
                     bewertungstag = _schacht.findtext("KI204", "not found")
 
+                    max_ZD = _strip_int(_schacht.findtext("KI206", 0))
+                    max_ZB = _strip_int(_schacht.findtext("KI208", 0))
+                    max_ZS = _strip_int(_schacht.findtext("KI207", 0))
+
                 yield Schacht_untersucht(
                     schnam=name,
                     baujahr=baujahr,
@@ -638,20 +670,25 @@ class ImportTask:
                     wetter=wetter,
                     bewertungsart=bewertungsart,
                     bewertungstag=bewertungstag,
+                    datenart=datenart,
+                    max_ZD=max_ZD,
+                    max_ZB=max_ZB,
+                    max_ZS=max_ZS,
                 )
 
         for schacht_untersucht in _iter():
 
 
             sql = f"""
-            INSERT INTO schaechte_untersucht_data (schnam, baujahr, durchm, kommentar)
-            VALUES (?, ?, ?,?)
+            INSERT INTO schaechte_untersucht_data (schnam, strasse baujahr, durchm, kommentar)
+            VALUES (?, ?, ?,?,?)
             """
             if not self.db_qkan.sql(
                 sql,
                 "xml_import Schächte_untersucht [1]",
                 parameters=(
                     schacht_untersucht.schnam,
+                    schacht_untersucht.strasse,
                     schacht_untersucht.baujahr,
                     schacht_untersucht.durchm,
                     schacht_untersucht.kommentar,
@@ -701,10 +738,10 @@ class ImportTask:
 
             if not self.db_qkan.sql(
                 "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
-                "bewertungstag=? WHERE schnam = ?",
+                "bewertungstag=?, datenart=?, max_ZD=?, max_ZB=?, max_ZS=? WHERE schnam = ?",
                 "xml_import Schächte_untersucht [4]",
-                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter, bewertungsart, schacht_untersucht.bewertungstag,
-                            schacht_untersucht.schnam),
+                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter, bewertungsart, schacht_untersucht.bewertungstag, schacht_untersucht.datenart,
+                            schacht_untersucht.max_ZD, schacht_untersucht.max_ZB, schacht_untersucht.max_ZS, schacht_untersucht.schnam),
             ):
                 return None
 
@@ -736,6 +773,9 @@ class ImportTask:
             pos_bis = 0
             bereich = ""
             foto_dateiname = ""
+            ZD = 5
+            ZB = 5
+            ZS = 5
             xsch= 0.0
             ysch= 0.0
 
@@ -765,6 +805,10 @@ class ImportTask:
                     bereich = _untersuchdat_schacht.findtext("KZ013", "not found")
                     foto_dateiname = _untersuchdat_schacht.findtext("KZ009", "not found")
 
+                    ZD = _untersuchdat_schacht.findtext("KZ206", "not found")
+                    ZB = _untersuchdat_schacht.findtext("KZ208", "not found")
+                    ZS = _untersuchdat_schacht.findtext("KZ207", "not found")
+
 
                     yield Untersuchdat_schacht(
                     untersuchsch = name,
@@ -785,14 +829,17 @@ class ImportTask:
                     bereich = bereich,
                     foto_dateiname = foto_dateiname,
                     ordner = ordner,
+                    ZD=ZD,
+                    ZB=ZB,
+                    ZS=ZS,
                     )
 
         for untersuchdat_schacht in _iter():
 
             sql = f"""
             INSERT INTO untersuchdat_schacht_data (untersuchsch, id, videozaehler, timecode, kuerzel, 
-                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, ZD, ZB, ZS)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)
             """
             if not self.db_qkan.sql(
                 sql,
@@ -816,6 +863,9 @@ class ImportTask:
                     untersuchdat_schacht.bereich,
                     untersuchdat_schacht.foto_dateiname,
                     untersuchdat_schacht.ordner,
+                    untersuchdat_schacht.ZD,
+                    untersuchdat_schacht.ZB,
+                    untersuchdat_schacht.ZS,
                 ),
             ):
                 return None
@@ -1090,29 +1140,89 @@ class ImportTask:
                 yschun = 0.0
                 x=0
 
-                for _gp in block.findall("GO[GO002='H']/GP[1]"):
+                # for _haltung in block.findall(
+                #         "GO/GP[GP999='S']"
+                # ):
+                #     if x == 0:
+                #         xschob = _strip_float(_haltung.findtext("GP003", 0.0))
+                #         if xschob == 0.0:
+                #             xschob = _strip_float(_haltung.findtext("GP005", 0.0))
+                #             print(str(xschob))
+                #         yschob = _strip_float(_haltung.findtext("GP004", 0.0))
+                #         if yschob == 0.0:
+                #             yschob = _strip_float(_haltung.findtext("GP006", 0.0))
+                #         deckeloben = _strip_float(
+                #             _haltung.findtext("GP007", 0.0)
+                #         )
+                #
+                #     if x == 1:
+                #         xschun = _strip_float(_haltung.findtext("GP003", 0.0))
+                #         if xschun == 0.0:
+                #             xschun = _strip_float(_haltung.findtext("GP005", 0.0))
+                #             print(str(xschun))
+                #         yschun = _strip_float(_haltung.findtext("GP004", 0.0))
+                #         if yschun == 0.0:
+                #             yschun = _strip_float(_haltung.findtext("GP006", 0.0))
+                #         deckelunten = _strip_float(
+                #             _haltung.findtext("GP007", 0.0)
+                #         )
+                #     x += 1
+                #
+                # if xschob == 0.0 and yschob == 0.0:
+                #     for _haltung in block.findall(
+                #             "GO/GP[1]"
+                #     ):
+                #         xschob = _strip_float(_haltung.findtext("GP003", 0.0))
+                #         if xschob == 0.0:
+                #             xschob = _strip_float(_haltung.findtext("GP005", 0.0))
+                #         yschob = _strip_float(_haltung.findtext("GP004", 0.0))
+                #         if yschob == 0.0:
+                #             yschob = _strip_float(_haltung.findtext("GP006", 0.0))
+                #         deckeloben = _strip_float(
+                #             _haltung.findtext("GP007", 0.0)
+                #         )
+                #
+                # if xschun == 0.0 and yschun == 0.0:
+                #     for _haltung in block.findall(
+                #             "GO/GP[2]"
+                #     ):
+                #         xschun = _strip_float(_haltung.findtext("GP003", 0.0))
+                #         if xschun == 0.0:
+                #             xschun = _strip_float(_haltung.findtext("GP005", 0.0))
+                #         yschun = _strip_float(_haltung.findtext("GP004", 0.0))
+                #         if yschun == 0.0:
+                #             yschun = _strip_float(_haltung.findtext("GP006", 0.0))
+                #         deckelunten = _strip_float(
+                #             _haltung.findtext("GP007", 0.0)
+                #         )
 
-                    xschob = _strip_float(_gp.findtext("GP003", 0.0))
-                    if xschob == 0.0:
-                        xschob = _strip_float(_gp.findtext("GP005", 0.0))
-                    yschob = _strip_float(_gp.findtext("GP004", 0.0))
-                    if yschob == 0.0:
-                        yschob = _strip_float(_gp.findtext("GP006", 0.0))
-                    deckeloben = _strip_float(
-                        _gp.findtext("GP007", 0.0)
-                    )
+                if block.find("GO[GO002='H']") is not None:
 
-                for _gp in block.findall("GO[GO002='H']/GP[last()]"):
+                    for _gp in block.find("GO[GO002='H']/GP[1]"):
 
-                    xschun = _strip_float(_gp.findtext("GP003", 0.0))
-                    if xschun == 0.0:
-                        xschun = _strip_float(_gp.findtext("GP005", 0.0))
-                    yschun = _strip_float(_gp.findtext("GP004", 0.0))
-                    if yschun == 0.0:
-                        yschun = _strip_float(_gp.findtext("GP006", 0.0))
-                    deckelunten = _strip_float(
-                        _gp.findtext("GP007", 0.0)
-                    )
+                        xschob = _strip_float(_gp.findtext("GP003", 0.0))
+                        if xschob == 0.0:
+                            xschob = _strip_float(_gp.findtext("GP005", 0.0))
+                        yschob = _strip_float(_gp.findtext("GP004", 0.0))
+                        if yschob == 0.0:
+                            yschob = _strip_float(_gp.findtext("GP006", 0.0))
+                        deckeloben = _strip_float(
+                            _gp.findtext("GP007", 0.0)
+                        )
+
+                if block.find("GO[GO002='H']") is not None:
+                    for _gp in block.find("GO[GO002='H']/GP[last()]"):
+
+                        xschun = _strip_float(_gp.findtext("GP003", 0.0))
+                        if xschun == 0.0:
+                            xschun = _strip_float(_gp.findtext("GP005", 0.0))
+                        yschun = _strip_float(_gp.findtext("GP004", 0.0))
+                        if yschun == 0.0:
+                            yschun = _strip_float(_gp.findtext("GP006", 0.0))
+                        deckelunten = _strip_float(
+                            _gp.findtext("GP007", 0.0)
+                        )
+
 
                 yield Haltung(
                     haltnam=name,
@@ -1128,6 +1238,7 @@ class ImportTask:
                     deckelunten=deckelunten,
                     profilnam=profilnam,
                     entwart=block.findtext("HG302", "not found"),
+                    strasse=block.findtext("HG102", "not found"),
                     ks=1.5,  # in Hydraulikdaten enthalten.
                     simstatus= block.findtext("HG407", 0),
                     kommentar=block.findtext("HG999", "-"),
@@ -1215,8 +1326,8 @@ class ImportTask:
                 INSERT INTO haltungen_data 
                     (haltnam, schoben, schunten, 
                     hoehe, breite, laenge, rohrtyp, sohleoben, sohleunten, deckeloben, deckelunten, 
-                    profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    profilnam, entwart, strasse, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
 
             if not self.db_qkan.sql(
@@ -1236,6 +1347,7 @@ class ImportTask:
                     haltung.deckelunten,
                     haltung.profilnam,
                     entwart,
+                    haltung.strasse,
                     haltung.ks,
                     simstatus,
                     haltung.kommentar,
@@ -1340,6 +1452,7 @@ class ImportTask:
 
                 yield Haltung_untersucht(
                     haltnam=name,
+                    strasse=block.findtext("HG102", "not found"),
                     schoben=schoben,
                     schunten=schunten,
                     hoehe=hoehe,
@@ -1389,6 +1502,10 @@ class ImportTask:
             wetter = 0
             bewertungsart = 0
             bewertungstag = ""
+            datenart = self.datenart
+            max_ZD = 5
+            max_ZB = 5
+            max_ZS = 5
 
             for block in blocks:
                 name = block.findtext("HG001", "not found")
@@ -1406,6 +1523,10 @@ class ImportTask:
 
                     bewertungstag = _haltung.findtext("HI204", "not found")
 
+                    max_ZD = _strip_int(_haltung.findtext("HI206", 0))
+                    max_ZB = _strip_int(_haltung.findtext("HI208", 0))
+                    max_ZS = _strip_int(_haltung.findtext("HI207", 0))
+
                 yield Haltung_untersucht(
                     haltnam=name,
                     untersuchtag=untersuchtag,
@@ -1413,6 +1534,10 @@ class ImportTask:
                     wetter=wetter,
                     bewertungsart=bewertungsart,
                     bewertungstag=bewertungstag,
+                    datenart=datenart,
+                    max_ZD=max_ZD,
+                    max_ZB=max_ZB,
+                    max_ZS=max_ZS,
                 )
 
         # 1. Teil: Hier werden die Stammdaten zu den Haltungen in die Datenbank geschrieben
@@ -1421,8 +1546,8 @@ class ImportTask:
             sql = f"""
                 INSERT INTO haltungen_untersucht_data 
                     (haltnam, schoben, schunten, 
-                    hoehe, breite, laenge, kommentar,baujahr, xschob, yschob, xschun, yschun)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    hoehe, breite, laenge, kommentar,baujahr, strasse, xschob, yschob, xschun, yschun)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
 
             if not self.db_qkan.sql(
@@ -1437,6 +1562,7 @@ class ImportTask:
                     haltung_untersucht.laenge,
                     haltung_untersucht.kommentar,
                     haltung_untersucht.baujahr,
+                    haltung_untersucht.strasse,
                     haltung_untersucht.xschob,
                     haltung_untersucht.yschob,
                     haltung_untersucht.xschun,
@@ -1496,10 +1622,10 @@ class ImportTask:
 
             if not self.db_qkan.sql(
                 "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
-                "bewertungstag=? WHERE haltnam = ?",
+                "bewertungstag=?, datenart=? max_ZD=?, max_ZB=?, max_ZS=?, WHERE haltnam = ?",
                 "xml_import Haltungen_untersucht [5]",
                 parameters=(haltung_untersucht.untersuchtag, haltung_untersucht.untersucher, wetter, bewertungsart, haltung_untersucht.bewertungstag,
-                            haltung_untersucht.haltnam),
+                            haltung_untersucht.datenart,haltung_untersucht.max_ZD, haltung_untersucht.max_ZB, haltung_untersucht.max_ZS, haltung_untersucht.haltnam),
             ):
                 return None
 
@@ -1537,6 +1663,9 @@ class ImportTask:
             film_dateiname = ""
             richtung = self.richtung
             streckenschaden_lfdnr=0
+            ZD = 5
+            ZB = 5
+            ZS = 5
 
 
             for block in blocks:
@@ -1574,7 +1703,10 @@ class ImportTask:
                     charakt2 = _untersuchdat.findtext("HZ015", "not found")
                     quantnr1 = _strip_float(_untersuchdat.findtext("HZ003", 0.0))
                     quantnr2 = _strip_float(_untersuchdat.findtext("HZ004", 0.0))
-                    streckenschaden = (_untersuchdat.findtext("HZ005", "not found"))[0]
+                    if len(_untersuchdat.findtext("HZ005", "not found"))<1:
+                        streckenschaden = "not found"
+                    else:
+                        streckenschaden = (_untersuchdat.findtext("HZ005", "not found"))[0]
                     streckenschaden_lfdnra = _untersuchdat.findtext("HZ005", "not found")
                     if any(i.isdigit() for i in streckenschaden_lfdnra) == True:
                         streckenschaden_lfdnr = [int(num) for num in re.findall(r"\d+", streckenschaden_lfdnra)][0]
@@ -1585,6 +1717,10 @@ class ImportTask:
                     pos_von = _strip_int(_untersuchdat.findtext("HZ006", 0))
                     pos_bis = _strip_int(_untersuchdat.findtext("HZ007", 0))
                     foto_dateiname = _untersuchdat.findtext("HZ009", "not found")
+                    ZD = _untersuchdat.findtext("HZ206", "not found")
+                    ZB = _untersuchdat.findtext("HZ208", "not found")
+                    ZS = _untersuchdat.findtext("HZ207", "not found")
+
 
                     yield Untersuchdat_haltung(
                     untersuchhal=name,
@@ -1610,6 +1746,9 @@ class ImportTask:
                     ordner_bild=ordner_bild,
                     ordner_video=ordner_video,
                     richtung=richtung,
+                    ZD=ZD,
+                    ZB=ZB,
+                    ZS=ZS,
 
             )
 
@@ -1653,8 +1792,8 @@ class ImportTask:
             sql = f"""
             INSERT INTO untersuchdat_haltung_data (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler,inspektionslaenge, station, timecode, kuerzel, 
                                                     charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname,
-                                                     ordner_bild, ordner_video, richtung)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                                     ordner_bild, ordner_video, richtung, ZD, ZB, ZS)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)
             """
             if not self.db_qkan.sql(
                 sql,
@@ -1683,6 +1822,9 @@ class ImportTask:
                     untersuchdat_haltung.ordner_bild,
                     untersuchdat_haltung.ordner_video,
                     untersuchdat_haltung.richtung,
+                    untersuchdat_haltung.ZD,
+                    untersuchdat_haltung.ZB,
+                    untersuchdat_haltung.ZS,
                 ),
             ):
                 return None
