@@ -9,7 +9,6 @@ from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 
-
 logger = logging.getLogger("QKan.xml.import")
 
 
@@ -680,7 +679,7 @@ class ImportTask:
 
 
             sql = f"""
-            INSERT INTO schaechte_untersucht_data (schnam, strasse baujahr, durchm, kommentar)
+            INSERT INTO schaechte_untersucht_data (schnam, strasse, baujahr, durchm, kommentar)
             VALUES (?, ?, ?,?,?)
             """
             if not self.db_qkan.sql(
