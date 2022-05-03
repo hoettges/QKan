@@ -657,9 +657,9 @@ class ImportTask:
 
                     bewertungstag = _schacht.findtext("KI204", "not found")
 
-                    max_ZD = _strip_int(_schacht.findtext("KI206", 0))
-                    max_ZB = _strip_int(_schacht.findtext("KI208", 0))
-                    max_ZS = _strip_int(_schacht.findtext("KI207", 0))
+                    max_ZD = _strip_int(_schacht.findtext("KI206", 5))
+                    max_ZB = _strip_int(_schacht.findtext("KI208", 5))
+                    max_ZS = _strip_int(_schacht.findtext("KI207", 5))
 
                 yield Schacht_untersucht(
                     schnam=name,
@@ -804,9 +804,9 @@ class ImportTask:
                     bereich = _untersuchdat_schacht.findtext("KZ013", "not found")
                     foto_dateiname = _untersuchdat_schacht.findtext("KZ009", "not found")
 
-                    ZD = _untersuchdat_schacht.findtext("KZ206", "not found")
-                    ZB = _untersuchdat_schacht.findtext("KZ208", "not found")
-                    ZS = _untersuchdat_schacht.findtext("KZ207", "not found")
+                    ZD = _strip_int(_untersuchdat_schacht.findtext("KZ206", 5))
+                    ZB = _strip_int(_untersuchdat_schacht.findtext("KZ208", 5))
+                    ZS = _strip_int(_untersuchdat_schacht.findtext("KZ207", 5))
 
 
                     yield Untersuchdat_schacht(
@@ -1137,7 +1137,7 @@ class ImportTask:
                 yschob = 0.0
                 xschun = 0.0
                 yschun = 0.0
-                x=0
+                #x=0
 
                 # for _haltung in block.findall(
                 #         "GO/GP[GP999='S']"
@@ -1195,9 +1195,10 @@ class ImportTask:
                 #             _haltung.findtext("GP007", 0.0)
                 #         )
 
-                if block.find("GO[GO002='H']") is not None:
+                #if block.find("GO[GO002='H']") is not None:
+                if block.findall("GO[GO002='H']") is not None:
 
-                    for _gp in block.find("GO[GO002='H']/GP[1]"):
+                    for _gp in block.findall("GO[GO002='H']/GP[1]"):
 
                         xschob = _strip_float(_gp.findtext("GP003", 0.0))
                         if xschob == 0.0:
@@ -1209,8 +1210,9 @@ class ImportTask:
                             _gp.findtext("GP007", 0.0)
                         )
 
-                if block.find("GO[GO002='H']") is not None:
-                    for _gp in block.find("GO[GO002='H']/GP[last()]"):
+
+                if block.findall("GO[GO002='H']") is not None:
+                    for _gp in block.findall("GO[GO002='H']/GP[last()]"):
 
                         xschun = _strip_float(_gp.findtext("GP003", 0.0))
                         if xschun == 0.0:
@@ -1522,9 +1524,9 @@ class ImportTask:
 
                     bewertungstag = _haltung.findtext("HI204", "not found")
 
-                    max_ZD = _strip_int(_haltung.findtext("HI206", 0))
-                    max_ZB = _strip_int(_haltung.findtext("HI208", 0))
-                    max_ZS = _strip_int(_haltung.findtext("HI207", 0))
+                    max_ZD = _strip_int(_haltung.findtext("HI206", 5))
+                    max_ZB = _strip_int(_haltung.findtext("HI208", 5))
+                    max_ZS = _strip_int(_haltung.findtext("HI207", 5))
 
                 yield Haltung_untersucht(
                     haltnam=name,
@@ -1716,9 +1718,9 @@ class ImportTask:
                     pos_von = _strip_int(_untersuchdat.findtext("HZ006", 0))
                     pos_bis = _strip_int(_untersuchdat.findtext("HZ007", 0))
                     foto_dateiname = _untersuchdat.findtext("HZ009", "not found")
-                    ZD = _untersuchdat.findtext("HZ206", "not found")
-                    ZB = _untersuchdat.findtext("HZ208", "not found")
-                    ZS = _untersuchdat.findtext("HZ207", "not found")
+                    ZD = _strip_int(_untersuchdat.findtext("HZ206", 5))
+                    ZB = _strip_int(_untersuchdat.findtext("HZ208", 5))
+                    ZS = _strip_int(_untersuchdat.findtext("HZ207", 5))
 
 
                     yield Untersuchdat_haltung(

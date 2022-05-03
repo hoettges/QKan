@@ -803,9 +803,9 @@ class ImportTask:
                     bereich = _untersuchdat_schacht.findtext("d:Schachtbereich", "not found", self.NS)
                     foto_dateiname = _untersuchdat_schacht.findtext("d:Fotodatei", "not found", self.NS)
 
-                    ZD = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", "5", self.NS))
-                    ZS = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", "5", self.NS))
-                    ZB = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", "5", self.NS))
+                    ZD = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 5, self.NS))
+                    ZS = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 5, self.NS))
+                    ZB = _strip_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", 5, self.NS))
 
 
                     yield Untersuchdat_schacht(
@@ -1642,9 +1642,9 @@ class ImportTask:
                         foto_dateiname = _untersuchdat.findtext("d:Fotodatei", "not found", self.NS)
 
 
-                        ZD = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", "5", self.NS))
-                        ZS = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", "5", self.NS))
-                        ZB = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", "5", self.NS))
+                        ZD = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 5, self.NS))
+                        ZS = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 5, self.NS))
+                        ZB = _strip_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", 5, self.NS))
 
 
 
