@@ -302,7 +302,7 @@ def createdbtables(
          bewertungstag TEXT,
          datenart TEXT,
          max_ZD INTEGER,
-         max_ZB INTEGER,
+         max_ZB INTEGER, 
          max_ZS INTEGER,
          xschob REAL,
          yschob REAL,
@@ -374,7 +374,7 @@ def createdbtables(
                       MakePoint(new.xschun, new.yschun, {epsg}),
                       schun.geop
                     )
-                  ), new.untersuchtag, new.untersucher, new.wetter, new.strasse, new.bewertungsart, new.bewertungstag, new.datenart, new.max_ZD, new.max_ZB, new.max_ZS
+                  ), new.untersuchtag, new.untersucher, new.wetter, new.strasse, new.bewertungsart, new.bewertungstag, new.datenart, coalesce(new.max_ZD, 63), coalesce(new.max_ZB, 63), coalesce(new.max_ZS, 63)
                 FROM
                   schaechte AS schob,
                   schaechte AS schun
@@ -473,7 +473,7 @@ def createdbtables(
                         SELECT
                           new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
                             new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
-                            new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung, new.ZD, new.ZB, new.ZS,
+                            new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung, coalesce(new.ZD, 63), coalesce(new.ZB, 63), coalesce(new.ZS, 63),
                             coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
                             CASE
                             WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> haltung.schoben AND new.schunten <> haltung.schunten) OR
@@ -567,7 +567,7 @@ def createdbtables(
                         SELECT
                         new.untersuchhal, new.untersuchrichtung, new.schoben, new.schunten, 
                             new.id, new.videozaehler, new.inspektionslaenge , new.station, new.timecode, new.video_offset, new.kuerzel, 
-                            new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung, new.ZD, new.ZB, new.ZS,
+                            new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.foto_dateiname, new.film_dateiname, new.ordner_bild, new.ordner_video, new.richtung, coalesce(new.ZD, 63), coalesce(new.ZB, 63), coalesce(new.ZS, 63),
                             coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')),
                             CASE
                             WHEN (new.untersuchrichtung = "in Fließrichtung" AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND new.richtung = "fließrichtung" AND new.schoben <> leitung.schoben AND new.schunten <> leitung.schunten) OR
@@ -921,9 +921,9 @@ def createdbtables(
             bewertungsart INTEGER DEFAULT 0, 
             bewertungstag TEXT,
             datenart TEXT,
-            max_ZD INTEGER,
-            max_ZB INTEGER,
-            max_ZS INTEGER
+            max_ZD INTEGER ,
+            max_ZB INTEGER ,
+            max_ZS INTEGER 
             )"""
 
     try:
@@ -979,7 +979,7 @@ def createdbtables(
                       CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
                       new.kommentar, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), new.baujahr,
                       sch.geop,
-                      new.untersuchtag, new.untersucher, new.wetter, new.strasse, new.bewertungsart, new.bewertungstag, new.datenart, new.max_ZD, new.max_ZB, new.max_ZS
+                      new.untersuchtag, new.untersucher, new.wetter, new.strasse, new.bewertungsart, new.bewertungstag, new.datenart, coalesce(new.max_ZD, 63), coalesce(new.max_ZB, 63), coalesce(new.max_ZS, 63)
                     FROM
                       schaechte AS sch
                       WHERE sch.schnam = new.schnam;
@@ -1074,7 +1074,7 @@ def createdbtables(
                 SELECT 
                   new.untersuchsch, new.id, new.videozaehler, new.timecode, new.kuerzel, 
                     new.charakt1, new.charakt2, new.quantnr1, new.quantnr2, new.streckenschaden, new.streckenschaden_lfdnr, new.pos_von, new.pos_bis, new.vertikale_lage, new.inspektionslaenge,
-                    new.bereich, new.foto_dateiname, new.ordner, new.ZD, new.ZB, new.ZS, coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), sch.geop
+                    new.bereich, new.foto_dateiname, new.ordner, coalesce(new.ZD, 63), coalesce(new.ZB, 63), coalesce(new.ZS, 63), coalesce(new.createdat, strftime('%Y-%m-%d %H:%M:%S','now','localtime')), sch.geop
                 FROM
                     schaechte AS sch
                     WHERE sch.schnam = new.untersuchsch;

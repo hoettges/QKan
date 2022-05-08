@@ -43,9 +43,9 @@ class Schacht_untersucht(ClassObject):
     bewertungsart: int = 0
     bewertungstag: str = ""
     datenart: str = ""
-    max_ZD: int = 5
-    max_ZB: int = 5
-    max_ZS: int = 5
+    max_ZD: int = 63
+    max_ZB: int = 63
+    max_ZS: int = 63
 
 
 class Untersuchdat_schacht(ClassObject):
@@ -67,9 +67,9 @@ class Untersuchdat_schacht(ClassObject):
     inspektionslaenge: float = 0.0
     foto_dateiname: str = ""
     ordner: str = ""
-    ZD: int = 5
-    ZB: int = 5
-    ZS: int = 5
+    ZD: int = 63
+    ZB: int = 63
+    ZS: int = 63
     xsch: float = 0.0
     ysch: float = 0.0
 
@@ -118,9 +118,9 @@ class Haltung_untersucht(ClassObject):
     xschun: float = 0.0
     yschun: float = 0.0
     datenart: str = ""
-    max_ZD: int = 5
-    max_ZB: int = 5
-    max_ZS: int = 5
+    max_ZD: int = 63
+    max_ZB: int = 63
+    max_ZS: int = 63
 
 
 class Untersuchdat_haltung(ClassObject):
@@ -147,9 +147,9 @@ class Untersuchdat_haltung(ClassObject):
     ordner_bild: str = ""
     ordner_video: str = ""
     richtung: str = ""
-    ZD: int = 5
-    ZB: int = 5
-    ZS: int = 5
+    ZD: int = 63
+    ZB: int = 63
+    ZS: int = 63
 
 class Anschlussleitung(ClassObject):
     leitnam: str = ""
@@ -219,6 +219,18 @@ def _strip_float(value: Union[str, float], default: float = 0.0) -> float:
 
 
 def _strip_int(value: Union[str, int], default: int = 0) -> int:
+    if isinstance(value, int):
+        return value
+
+    if isinstance(value, str) and value.strip() != "":
+        try:
+            return int(value)
+        except Exception:
+            print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
+
+    return default
+
+def _strip_int_2(value: Union[str, int], default: int = 63) -> int:
     if isinstance(value, int):
         return value
 
@@ -637,9 +649,9 @@ class ImportTask:
             bewertungsart = 0
             bewertungstag = ""
             datenart = self.datenart
-            max_ZD = 5
-            max_ZB = 5
-            max_ZS = 5
+            max_ZD = 63
+            max_ZB = 63
+            max_ZS = 63
 
             for block in blocks:
                 name = block.findtext("KG001", "not found")
@@ -657,9 +669,9 @@ class ImportTask:
 
                     bewertungstag = _schacht.findtext("KI204", "not found")
 
-                    max_ZD = _strip_int(_schacht.findtext("KI206", 5))
-                    max_ZB = _strip_int(_schacht.findtext("KI208", 5))
-                    max_ZS = _strip_int(_schacht.findtext("KI207", 5))
+                    max_ZD = _strip_int_2(_schacht.findtext("KI206", 63))
+                    max_ZB = _strip_int_2(_schacht.findtext("KI208", 63))
+                    max_ZS = _strip_int_2(_schacht.findtext("KI207", 63))
 
                 yield Schacht_untersucht(
                     schnam=name,
@@ -772,9 +784,9 @@ class ImportTask:
             pos_bis = 0
             bereich = ""
             foto_dateiname = ""
-            ZD = 5
-            ZB = 5
-            ZS = 5
+            ZD = 63
+            ZB = 63
+            ZS = 63
             xsch= 0.0
             ysch= 0.0
 
@@ -804,9 +816,9 @@ class ImportTask:
                     bereich = _untersuchdat_schacht.findtext("KZ013", "not found")
                     foto_dateiname = _untersuchdat_schacht.findtext("KZ009", "not found")
 
-                    ZD = _strip_int(_untersuchdat_schacht.findtext("KZ206", 5))
-                    ZB = _strip_int(_untersuchdat_schacht.findtext("KZ208", 5))
-                    ZS = _strip_int(_untersuchdat_schacht.findtext("KZ207", 5))
+                    ZD = _strip_int_2(_untersuchdat_schacht.findtext("KZ206", 63))
+                    ZB = _strip_int_2(_untersuchdat_schacht.findtext("KZ208", 63))
+                    ZS = _strip_int_2(_untersuchdat_schacht.findtext("KZ207", 63))
 
 
                     yield Untersuchdat_schacht(
@@ -1494,7 +1506,7 @@ class ImportTask:
 
         def _iter3() -> Iterator[Haltung_untersucht]:
             blocks = self.xml.findall(
-                "HR/HI/.."
+                "HG/HI/.."
             )
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
@@ -1504,9 +1516,10 @@ class ImportTask:
             bewertungsart = 0
             bewertungstag = ""
             datenart = self.datenart
-            max_ZD = 5
-            max_ZB = 5
-            max_ZS = 5
+            max_ZD = 63
+            max_ZB = 63
+            max_ZS = 63
+
 
             for block in blocks:
                 name = block.findtext("HG001", "not found")
@@ -1524,9 +1537,9 @@ class ImportTask:
 
                     bewertungstag = _haltung.findtext("HI204", "not found")
 
-                    max_ZD = _strip_int(_haltung.findtext("HI206", 5))
-                    max_ZB = _strip_int(_haltung.findtext("HI208", 5))
-                    max_ZS = _strip_int(_haltung.findtext("HI207", 5))
+                    max_ZD = _strip_int_2(_haltung.findtext("HI206", 63))
+                    max_ZB = _strip_int_2(_haltung.findtext("HI208", 63))
+                    max_ZS = _strip_int_2(_haltung.findtext("HI207", 63))
 
                 yield Haltung_untersucht(
                     haltnam=name,
@@ -1623,7 +1636,7 @@ class ImportTask:
 
             if not self.db_qkan.sql(
                 "UPDATE haltungen_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
-                "bewertungstag=?, datenart=? max_ZD=?, max_ZB=?, max_ZS=?, WHERE haltnam = ?",
+                "bewertungstag=?, datenart=?, max_ZD=?, max_ZB=?, max_ZS=? WHERE haltnam = ?",
                 "xml_import Haltungen_untersucht [5]",
                 parameters=(haltung_untersucht.untersuchtag, haltung_untersucht.untersucher, wetter, bewertungsart, haltung_untersucht.bewertungstag,
                             haltung_untersucht.datenart,haltung_untersucht.max_ZD, haltung_untersucht.max_ZB, haltung_untersucht.max_ZS, haltung_untersucht.haltnam),
@@ -1664,9 +1677,9 @@ class ImportTask:
             film_dateiname = ""
             richtung = self.richtung
             streckenschaden_lfdnr=0
-            ZD = 5
-            ZB = 5
-            ZS = 5
+            ZD = 63
+            ZB = 63
+            ZS = 63
 
 
             for block in blocks:
@@ -1718,9 +1731,9 @@ class ImportTask:
                     pos_von = _strip_int(_untersuchdat.findtext("HZ006", 0))
                     pos_bis = _strip_int(_untersuchdat.findtext("HZ007", 0))
                     foto_dateiname = _untersuchdat.findtext("HZ009", "not found")
-                    ZD = _strip_int(_untersuchdat.findtext("HZ206", 5))
-                    ZB = _strip_int(_untersuchdat.findtext("HZ208", 5))
-                    ZS = _strip_int(_untersuchdat.findtext("HZ207", 5))
+                    ZD = _strip_int_2(_untersuchdat.findtext("HZ206", 63))
+                    ZB = _strip_int_2(_untersuchdat.findtext("HZ208", 63))
+                    ZS = _strip_int_2(_untersuchdat.findtext("HZ207", 63))
 
 
                     yield Untersuchdat_haltung(

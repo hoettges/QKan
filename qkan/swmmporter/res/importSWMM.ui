@@ -90,7 +90,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_qkanDB">
+   <widget class="QLineEdit" name="tf_database">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -112,7 +112,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectqkanDB">
+   <widget class="QPushButton" name="pb_database">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -180,7 +180,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectProjectFile">
+   <widget class="QPushButton" name="pb_project">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -196,7 +196,7 @@
      <string>...</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_projectFile">
+   <widget class="QLineEdit" name="tf_project">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -246,7 +246,7 @@
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <widget class="QPushButton" name="pb_selectSWMMFile">
+   <widget class="QPushButton" name="pb_import">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -285,7 +285,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_SWMMFile">
+   <widget class="QLineEdit" name="tf_import">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -330,7 +330,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QgsProjectionSelectionWidget" name="qsw_epsg">
+   <widget class="QgsProjectionSelectionWidget" name="epsg" native="true">
     <property name="geometry">
      <rect>
       <x>110</x>

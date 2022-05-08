@@ -106,7 +106,7 @@ class QKan:
         from .linkflaechen import LinkFl
         from .muporter import MuPorter
         from .surfaceTools import SurfaceTools
-        from .swmmporter import ImportFromSWMM
+        from .swmmporter import SWMMPorter
         from .tools import QKanTools
         from .isyporter import IsyPorter
         from .m145porter import M145Porter
@@ -122,7 +122,7 @@ class QKan:
             MuPorter(iface),
             LinkFl(iface),
             SurfaceTools(iface),
-            ImportFromSWMM(iface),
+            SWMMPorter(iface),
             QKanTools(iface),
             IsyPorter(iface),
             M145Porter(iface),

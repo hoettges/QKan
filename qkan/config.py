@@ -230,6 +230,7 @@ class SWMMConfig(ClassObject):
     # prof_choice: enums.ProfChoice = enums.ProfChoice.PROFILNAME
     profile_ergaenzen: bool = True
     template: str = ""
+    import_file: str = ""
 
 
 class LinkFlConfig(ClassObject):
