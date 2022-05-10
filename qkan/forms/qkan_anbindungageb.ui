@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>280</height>
+    <width>466</width>
+    <height>250</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>300</width>
-    <height>280</height>
+    <height>250</height>
    </size>
   </property>
   <property name="font">
@@ -23,7 +23,10 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Anbindung Außengebiet</string>
+  </property>
+  <property name="toolTip">
+   <string>Anbindung eine</string>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -35,7 +38,7 @@
       <x>10</x>
       <y>10</y>
       <width>281</width>
-      <height>161</height>
+      <height>131</height>
      </rect>
     </property>
     <property name="font">
@@ -47,30 +50,11 @@
     <property name="title">
      <string>Verknüpfungsdaten</string>
     </property>
-    <widget class="QLabel" name="label_14">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>90</y>
-       <width>71</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Teilgebiet</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_71">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>120</y>
+       <y>90</y>
        <width>151</width>
        <height>21</height>
       </rect>
@@ -89,7 +73,7 @@
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>120</y>
+       <y>90</y>
        <width>141</width>
        <height>23</height>
       </rect>
@@ -105,28 +89,6 @@
      </property>
      <property name="displayFormat">
       <string>dd.MM.yyyy HH:mm</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="teilgebiet">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>90</y>
-       <width>141</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="statusTip">
-      <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_20">
@@ -166,6 +128,12 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schacht, an den das Außengebiet angeschlossen ist&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Schacht, an den das Außengebiet angeschlossen ist</string>
+     </property>
     </widget>
     <widget class="QLabel" name="label_4">
      <property name="geometry">
@@ -183,7 +151,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Haltungsfläche</string>
+      <string>Außengebiet</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -204,49 +172,8 @@
        <pointsize>10</pointsize>
       </font>
      </property>
-    </widget>
-    <widget class="QLabel" name="label_21">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>60</y>
-       <width>16</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>?</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_22">
-     <property name="geometry">
-      <rect>
-       <x>110</x>
-       <y>30</y>
-       <width>16</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>?</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Angebundenes Außengebiet&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </widget>
@@ -254,7 +181,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>200</y>
+      <y>170</y>
       <width>281</width>
       <height>71</height>
      </rect>
@@ -276,7 +203,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>180</y>
+      <y>150</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -298,7 +225,6 @@
  <tabstops>
   <tabstop>gebnam</tabstop>
   <tabstop>schnam</tabstop>
-  <tabstop>teilgebiet</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>674</width>
-    <height>616</height>
+    <width>670</width>
+    <height>590</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>670</width>
+    <height>590</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -24,15 +30,16 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>560</y>
-     <width>251</width>
+     <x>20</x>
+     <y>540</y>
+     <width>631</width>
      <height>32</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -54,7 +61,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
+     <y>20</y>
      <width>630</width>
      <height>71</height>
     </rect>
@@ -62,6 +69,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -90,6 +98,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -109,6 +118,14 @@
       <width>31</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QKan-Datenbank (SpatiaLite) mit Kanalnetzdaten auswählen (Standard: Aktuelle QKan-Datenbank) ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -131,6 +148,8 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -147,7 +166,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>110</y>
+     <y>100</y>
      <width>630</width>
      <height>131</height>
     </rect>
@@ -155,6 +174,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -183,6 +203,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -206,6 +227,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -226,6 +248,14 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;SWMM-Zieldatei angeben ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -244,6 +274,14 @@
       <width>31</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;SWMM-Datei mit vorbereiteten Daten als Vorlage auswählen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -267,6 +305,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -290,6 +329,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -306,14 +346,15 @@
    <property name="geometry">
     <rect>
      <x>310</x>
-     <y>260</y>
+     <y>280</y>
      <width>341</width>
-     <height>71</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -333,6 +374,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -352,7 +394,7 @@
    <property name="geometry">
     <rect>
      <x>310</x>
-     <y>350</y>
+     <y>340</y>
      <width>341</width>
      <height>111</height>
     </rect>
@@ -360,6 +402,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -379,6 +422,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -405,6 +449,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -431,6 +476,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -452,11 +498,17 @@
   <widget class="QListWidget" name="lw_teilgebiete">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>300</y>
-     <width>251</width>
+     <x>20</x>
+     <y>290</y>
+     <width>261</width>
      <height>161</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auswahl Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -472,7 +524,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>510</y>
+     <y>500</y>
      <width>61</width>
      <height>20</height>
     </rect>
@@ -499,7 +551,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>490</y>
+     <y>480</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -520,7 +572,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>490</y>
+     <y>480</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -541,7 +593,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>470</y>
+     <y>460</y>
      <width>181</width>
      <height>20</height>
     </rect>
@@ -549,7 +601,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
-     <pointsize>8</pointsize>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -562,7 +614,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>510</y>
+     <y>500</y>
      <width>61</width>
      <height>20</height>
     </rect>
@@ -589,7 +641,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>510</y>
+     <y>500</y>
      <width>61</width>
      <height>20</height>
     </rect>
@@ -616,7 +668,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>490</y>
+     <y>480</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -636,16 +688,16 @@
   <widget class="QCheckBox" name="cb_selActive">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>260</y>
+     <x>30</x>
+     <y>240</y>
      <width>241</width>
-     <height>31</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
-     <pointsize>9</pointsize>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>

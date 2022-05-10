@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
-    <height>450</height>
+    <width>711</width>
+    <height>596</height>
    </rect>
   </property>
   <property name="font">
@@ -21,9 +21,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>390</y>
-     <width>251</width>
+     <x>20</x>
+     <y>350</y>
+     <width>451</width>
      <height>32</height>
     </rect>
    </property>
@@ -44,12 +44,15 @@
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
    </property>
+   <property name="centerButtons">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>280</y>
+     <y>250</y>
      <width>451</width>
      <height>81</height>
     </rect>
@@ -57,6 +60,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -82,6 +86,14 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Suchfenster öffnen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -95,15 +107,16 @@
    <widget class="QLineEdit" name="tf_projectFile">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>40</y>
-      <width>391</width>
+      <width>381</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -118,15 +131,16 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>20</y>
-      <width>301</width>
+      <width>291</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -145,12 +159,13 @@
      <x>20</x>
      <y>20</y>
      <width>451</width>
-     <height>111</height>
+     <height>101</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -171,7 +186,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>80</y>
+      <y>70</y>
       <width>321</width>
       <height>17</height>
      </rect>
@@ -179,6 +194,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -196,15 +212,16 @@
    <widget class="QLineEdit" name="tf_qkanDB">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>40</y>
-      <width>431</width>
+      <width>421</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -225,15 +242,16 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>20</y>
-      <width>291</width>
+      <width>281</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -250,7 +268,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>140</y>
+     <y>130</y>
      <width>451</width>
      <height>111</height>
     </rect>
@@ -258,6 +276,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -268,15 +287,16 @@
    <widget class="QLineEdit" name="tf_projectTemplate">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>70</y>
-      <width>391</width>
+      <width>381</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -294,15 +314,16 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>50</y>
-      <width>301</width>
+      <width>291</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -326,6 +347,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -348,6 +370,14 @@
       <width>31</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Suchfenster öffnen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

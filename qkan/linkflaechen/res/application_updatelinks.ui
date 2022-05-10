@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>502</width>
-    <height>297</height>
+    <width>500</width>
+    <height>280</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>280</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -21,14 +27,15 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>240</y>
-     <width>251</width>
+     <x>20</x>
+     <y>230</y>
+     <width>461</width>
      <height>32</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -46,6 +53,9 @@
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
    </property>
+   <property name="centerButtons">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
@@ -58,6 +68,8 @@
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -86,6 +98,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -108,6 +121,8 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -127,13 +142,14 @@
      <rect>
       <x>290</x>
       <y>80</y>
-      <width>131</width>
+      <width>161</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -145,13 +161,13 @@
      <string>Fangradius auf Haltungen:</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLineEdit" name="tf_fangradius">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>290</x>
       <y>100</y>
       <width>61</width>
       <height>20</height>
@@ -159,6 +175,8 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -167,7 +185,7 @@
    <widget class="QLabel" name="lf_unit_fangradius">
     <property name="geometry">
      <rect>
-      <x>366</x>
+      <x>360</x>
       <y>100</y>
       <width>21</width>
       <height>21</height>
@@ -176,6 +194,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -193,7 +212,7 @@
    <widget class="QCheckBox" name="cb_linkfl">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>10</x>
       <y>80</y>
       <width>261</width>
       <height>21</height>
@@ -202,6 +221,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -213,7 +233,7 @@
    <widget class="QCheckBox" name="cb_linksw">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>10</x>
       <y>100</y>
       <width>271</width>
       <height>21</height>
@@ -222,6 +242,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -233,15 +254,16 @@
    <widget class="QCheckBox" name="cb_deleteGeomNone">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>10</x>
       <y>140</y>
-      <width>211</width>
+      <width>251</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -259,15 +281,16 @@
    <widget class="QCheckBox" name="cb_geomMakeValid">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>10</x>
       <y>160</y>
-      <width>161</width>
+      <width>191</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -296,6 +319,8 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>

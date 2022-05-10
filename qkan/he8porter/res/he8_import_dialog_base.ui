@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>726</width>
-    <height>487</height>
+    <width>770</width>
+    <height>490</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>770</width>
+    <height>490</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -21,9 +27,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>240</x>
+     <x>20</x>
      <y>440</y>
-     <width>251</width>
+     <width>731</width>
      <height>32</height>
     </rect>
    </property>
@@ -44,6 +50,9 @@
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
    </property>
+   <property name="centerButtons">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QGroupBox" name="gb_db_he">
    <property name="geometry">
@@ -57,6 +66,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -85,6 +95,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -105,6 +116,14 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ITWH-Quelldatenbank mit Kanalnetzdaten auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -124,12 +143,16 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quelldatenbank mit Kanaldaten aus HYSTEM-EXTRAN&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Quelldatenbank mit Kanaldaten aus HYSTEM-EXTRAN</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -140,13 +163,14 @@
      <rect>
       <x>10</x>
       <y>70</y>
-      <width>101</width>
+      <width>121</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -155,7 +179,7 @@
      <string>Projektionssystem:</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QgsProjectionSelectionWidget" name="pw_epsg">
@@ -167,20 +191,29 @@
       <height>27</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
    </widget>
   </widget>
   <widget class="QGroupBox" name="gb_projectfile">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>20</x>
      <y>270</y>
-     <width>411</width>
+     <width>401</width>
      <height>81</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -209,6 +242,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -229,6 +263,14 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad und Name der Projektdatei festlegen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -248,12 +290,16 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad der neu erzeugten Projektdatei (optional)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Pfad der neu erzeugten Projektdatei (optional)</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -272,6 +318,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -300,6 +347,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -320,6 +368,14 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank auswählen und optional erstellen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -339,12 +395,16 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QKan - Zieldatenbank (wird ggfs. neu angelegt)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>QKan - Zieldatenbank (wird ggfs. neu angelegt)</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -356,13 +416,14 @@
     <rect>
      <x>440</x>
      <y>20</y>
-     <width>271</width>
+     <width>311</width>
      <height>211</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -382,7 +443,7 @@
    <widget class="QCheckBox" name="cb_haltungen">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>20</y>
       <width>91</width>
       <height>20</height>
@@ -391,6 +452,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -417,6 +479,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -443,6 +506,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -469,6 +533,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -498,6 +563,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -518,7 +584,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>40</y>
       <width>91</width>
       <height>20</height>
@@ -527,6 +593,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -547,7 +614,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>60</y>
       <width>91</width>
       <height>20</height>
@@ -556,6 +623,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -582,6 +650,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -601,9 +670,17 @@
      <rect>
       <x>10</x>
       <y>140</y>
-      <width>251</width>
+      <width>291</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
@@ -612,7 +689,7 @@
    <widget class="QCheckBox" name="cb_aussengebiete">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>160</y>
       <width>101</width>
       <height>20</height>
@@ -621,6 +698,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -638,15 +716,16 @@
    <widget class="QCheckBox" name="cb_einzugsgebiete">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>180</y>
-      <width>101</width>
+      <width>121</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -673,6 +752,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -690,7 +770,7 @@
    <widget class="QCheckBox" name="cb_schieber">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>80</y>
       <width>81</width>
       <height>20</height>
@@ -699,6 +779,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -716,7 +797,7 @@
    <widget class="QCheckBox" name="cb_hregler">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>150</x>
       <y>100</y>
       <width>81</width>
       <height>20</height>
@@ -725,6 +806,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -751,6 +833,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -777,6 +860,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -795,15 +879,16 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>20</x>
      <y>370</y>
-     <width>411</width>
+     <width>401</width>
      <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -814,7 +899,7 @@
    <widget class="QRadioButton" name="rb_synch">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>200</x>
       <y>20</y>
       <width>101</width>
       <height>21</height>
@@ -823,6 +908,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -840,7 +926,7 @@
    <widget class="QRadioButton" name="rb_update">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>120</x>
       <y>20</y>
       <width>81</width>
       <height>21</height>
@@ -849,6 +935,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -875,6 +962,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -898,13 +986,14 @@
     <rect>
      <x>440</x>
      <y>320</y>
-     <width>271</width>
+     <width>311</width>
      <height>101</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -915,15 +1004,16 @@
    <widget class="QCheckBox" name="cb_bodenklassen">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>150</x>
       <y>20</y>
-      <width>91</width>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -943,13 +1033,14 @@
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>111</width>
+      <width>121</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -967,15 +1058,16 @@
    <widget class="QCheckBox" name="cb_allrefs">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>60</y>
-      <width>141</width>
+      <x>150</x>
+      <y>40</y>
+      <width>161</width>
       <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1003,6 +1095,7 @@ Datensätze importieren</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1023,13 +1116,14 @@ Datensätze importieren</string>
     <rect>
      <x>440</x>
      <y>240</y>
-     <width>271</width>
+     <width>311</width>
      <height>71</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -1049,6 +1143,7 @@ Datensätze importieren</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1075,6 +1170,7 @@ Datensätze importieren</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1092,7 +1188,7 @@ Datensätze importieren</string>
    <widget class="QCheckBox" name="cb_tezg_tf">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>150</x>
       <y>20</y>
       <width>121</width>
       <height>21</height>
@@ -1101,6 +1197,7 @@ Datensätze importieren</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>

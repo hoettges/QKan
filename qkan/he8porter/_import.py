@@ -642,11 +642,11 @@ class ImportTask:
                     false AS aufteilen, 
                     fl.Kommentar AS kommentar, 
                     fl.Lastmodified AS createdat, 
-                    SetSRID(fl.Geometry, {self.epsg}) AS geom
+                    SetSrid(Geometry,?) AS geom
                 FROM he.Flaeche AS fl
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import Flaechen"):
+                if not self.db_qkan.sql(sql, "he8_import Flaechen", (self.epsg,)):
                     return False
 
                 self.db_qkan.commit()
@@ -676,7 +676,7 @@ class ImportTask:
                     SetSrid(MakeLine(
                         PointOnSurface(Buffer(fl.Geometry, -1.1*{self.fangradius})), 
                         Centroid(ro.Geometry)
-                        ), {self.epsg}
+                        ), ?
                     )                           AS link
                     FROM he.Rohr AS ro
                     INNER JOIN he.Flaeche AS fl
@@ -686,7 +686,7 @@ class ImportTask:
                     WHERE fl.Geometry IS NOT NULL AND ro.Geometry IS NOT NULL
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import linkfl"):
+                if not self.db_qkan.sql(sql, "he8_import linkfl", (self.epsg,)):
                     return False
 
                 self.db_qkan.commit()
@@ -889,21 +889,22 @@ class ImportTask:
                     geom
                 )
                 SELECT
-                    el_he.Name AS elnam,
-                    el_he.Rohr AS haltnam,
-                    el_he.Zufluss AS zufluss,
-                    el_he.Einwohner AS ew,
+                    el_he.Name              AS elnam,
+                    el_he.Rohr              AS haltnam,
+                    el_he.Zufluss           AS zufluss,
+                    el_he.Einwohner         AS ew,
                     el_he.Teileinzugsgebiet AS einzugsgebiet,
-                    el_he.Kommentar AS kommentar,
-                    el_he.LastModified AS createdat,
-                    el_he.Geometry AS geom
+                    el_he.Kommentar         AS kommentar,
+                    el_he.LastModified      AS createdat,
+                    SetSrid(el_he.Geometry, ?
+                    )                       AS geom
                 FROM Einzeleinleiter AS el_he
                 LEFT JOIN einleit AS el_qk
                 ON el_he.Name = el_qk.elnam
                 WHERE el_qk.pk IS NULL
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import Direkteinleiter"):
+                if not self.db_qkan.sql(sql, "he8_import Direkteinleiter", (self.epsg,)):
                     return False
 
                 self.db_qkan.commit()

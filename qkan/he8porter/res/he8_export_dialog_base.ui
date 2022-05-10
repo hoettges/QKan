@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>761</width>
-    <height>585</height>
+    <width>720</width>
+    <height>580</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>720</width>
+    <height>580</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -24,9 +30,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>20</x>
      <y>530</y>
-     <width>261</width>
+     <width>681</width>
      <height>32</height>
     </rect>
    </property>
@@ -63,6 +69,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -91,6 +98,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -114,12 +122,16 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quelldatenbank mit Kanaldaten aus dem aktuell geladenen Projekt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Quelldatenbank mit Kanaldaten aus dem aktuell geladenen Projekt.</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -141,6 +153,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -169,6 +182,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -192,12 +206,16 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank mit Kanaldaten für HYSTEM-EXTRAN&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Zieldatenbank mit Kanaldaten für HYSTEM-EXTRAN</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -211,6 +229,14 @@
       <width>31</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ITWH-Zieldatenbank angeben ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -231,6 +257,14 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ITWH-Datenbank mit vorbereiteten Daten als Vorlage auswählen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -246,13 +280,14 @@
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>221</width>
+      <width>301</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -276,12 +311,16 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank mit Kanaldaten für HYSTEM-EXTRAN&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Zieldatenbank mit Kanaldaten für HYSTEM-EXTRAN</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -302,6 +341,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -328,13 +368,14 @@
     <rect>
      <x>480</x>
      <y>20</y>
-     <width>261</width>
+     <width>221</width>
      <height>431</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -363,6 +404,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -389,6 +431,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -418,6 +461,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -437,13 +481,14 @@
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>71</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -463,13 +508,14 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>61</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -499,6 +545,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -525,6 +572,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -551,6 +599,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -574,6 +623,14 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
     </property>
@@ -587,6 +644,14 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
     </property>
@@ -596,13 +661,14 @@
      <rect>
       <x>20</x>
       <y>360</y>
-      <width>111</width>
+      <width>121</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -625,13 +691,14 @@
      <rect>
       <x>130</x>
       <y>60</y>
-      <width>61</width>
+      <width>81</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -658,6 +725,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -684,6 +752,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -707,6 +776,14 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
     </property>
@@ -723,6 +800,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -746,6 +824,14 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
     </property>
@@ -755,13 +841,14 @@
      <rect>
       <x>20</x>
       <y>180</y>
-      <width>121</width>
+      <width>141</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -789,6 +876,7 @@ Befestigungsgraden</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -808,13 +896,14 @@ Befestigungsgraden</string>
      <rect>
       <x>20</x>
       <y>100</y>
-      <width>81</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -841,6 +930,7 @@ Befestigungsgraden</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -860,13 +950,14 @@ Befestigungsgraden</string>
      <rect>
       <x>20</x>
       <y>80</y>
-      <width>81</width>
+      <width>91</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -893,6 +984,7 @@ Befestigungsgraden</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -919,6 +1011,7 @@ Befestigungsgraden</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -937,16 +1030,16 @@ Befestigungsgraden</string>
   <widget class="QGroupBox" name="groupBox_5">
    <property name="geometry">
     <rect>
-     <x>270</x>
+     <x>260</x>
      <y>400</y>
-     <width>191</width>
+     <width>201</width>
      <height>111</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
-     <pointsize>9</pointsize>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -959,14 +1052,14 @@ Befestigungsgraden</string>
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>171</width>
+      <width>181</width>
       <height>30</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
-      <pointsize>8</pointsize>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -997,7 +1090,7 @@ Flächen und Einleitpunkten</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
-      <pointsize>9</pointsize>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1020,16 +1113,16 @@ verschneiden</string>
   <widget class="QCheckBox" name="cb_selActive">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>30</x>
      <y>260</y>
-     <width>311</width>
+     <width>331</width>
      <height>17</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
-     <pointsize>9</pointsize>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -1041,11 +1134,19 @@ verschneiden</string>
   <widget class="QListWidget" name="lw_teilgebiete">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>20</x>
      <y>300</y>
-     <width>201</width>
+     <width>221</width>
      <height>211</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auswahl Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1060,7 +1161,7 @@ verschneiden</string>
   <widget class="QLabel" name="label_10">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>340</x>
      <y>370</y>
      <width>81</width>
      <height>20</height>
@@ -1081,7 +1182,7 @@ verschneiden</string>
   <widget class="QLabel" name="lf_anzahl_flaechen">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>270</x>
      <y>370</y>
      <width>61</width>
      <height>20</height>
@@ -1108,16 +1209,16 @@ verschneiden</string>
   <widget class="QLabel" name="label_12">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>260</x>
      <y>280</y>
-     <width>141</width>
+     <width>181</width>
      <height>20</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
-     <pointsize>8</pointsize>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -1129,7 +1230,7 @@ verschneiden</string>
   <widget class="QLabel" name="lf_anzahl_haltungen">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>270</x>
      <y>340</y>
      <width>61</width>
      <height>20</height>
@@ -1156,7 +1257,7 @@ verschneiden</string>
   <widget class="QLabel" name="label_11">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>340</x>
      <y>340</y>
      <width>71</width>
      <height>20</height>
@@ -1177,7 +1278,7 @@ verschneiden</string>
   <widget class="QLabel" name="lf_anzahl_schaechte">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>270</x>
      <y>310</y>
      <width>61</width>
      <height>20</height>
@@ -1204,7 +1305,7 @@ verschneiden</string>
   <widget class="QLabel" name="label_32">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>340</x>
      <y>310</y>
      <width>71</width>
      <height>20</height>
@@ -1227,13 +1328,14 @@ verschneiden</string>
     <rect>
      <x>480</x>
      <y>460</y>
-     <width>261</width>
+     <width>221</width>
      <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -1253,6 +1355,7 @@ verschneiden</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -1279,6 +1382,7 @@ verschneiden</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>

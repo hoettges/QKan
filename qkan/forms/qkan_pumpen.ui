@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>620</width>
-    <height>340</height>
+    <height>310</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>620</width>
-    <height>340</height>
+    <height>310</height>
    </size>
   </property>
   <property name="font">
@@ -30,7 +30,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>180</y>
+      <y>150</y>
       <width>301</width>
       <height>131</height>
      </rect>
@@ -178,7 +178,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>200</y>
+      <y>170</y>
       <width>281</width>
       <height>111</height>
      </rect>
@@ -221,7 +221,7 @@
       <x>10</x>
       <y>40</y>
       <width>600</width>
-      <height>131</height>
+      <height>101</height>
      </rect>
     </property>
     <property name="font">
@@ -236,8 +236,8 @@
     <widget class="QComboBox" name="entwart">
      <property name="geometry">
       <rect>
-       <x>170</x>
-       <y>90</y>
+       <x>450</x>
+       <y>60</y>
        <width>131</width>
        <height>22</height>
       </rect>
@@ -298,7 +298,7 @@
       <rect>
        <x>130</x>
        <y>60</y>
-       <width>170</width>
+       <width>151</width>
        <height>20</height>
       </rect>
      </property>
@@ -318,7 +318,7 @@
     <widget class="QLabel" name="label_7">
      <property name="geometry">
       <rect>
-       <x>340</x>
+       <x>310</x>
        <y>30</y>
        <width>121</width>
        <height>20</height>
@@ -339,7 +339,7 @@
       <rect>
        <x>130</x>
        <y>30</y>
-       <width>170</width>
+       <width>151</width>
        <height>20</height>
       </rect>
      </property>
@@ -378,9 +378,9 @@
     <widget class="QLineEdit" name="hoehe">
      <property name="geometry">
       <rect>
-       <x>440</x>
+       <x>450</x>
        <y>30</y>
-       <width>121</width>
+       <width>111</width>
        <height>20</height>
       </rect>
      </property>
@@ -400,8 +400,8 @@
     <widget class="QLabel" name="label_51">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>90</y>
+       <x>310</x>
+       <y>60</y>
        <width>140</width>
        <height>20</height>
       </rect>
@@ -437,7 +437,7 @@
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>180</y>
+      <y>150</y>
       <width>81</width>
       <height>16</height>
      </rect>

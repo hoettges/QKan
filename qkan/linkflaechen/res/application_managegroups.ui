@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>675</width>
-    <height>608</height>
+    <width>670</width>
+    <height>580</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>670</width>
+    <height>580</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -21,15 +27,16 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>550</y>
-     <width>91</width>
+     <x>20</x>
+     <y>530</y>
+     <width>631</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -51,13 +58,14 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
+     <y>20</y>
      <width>631</width>
      <height>281</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -77,6 +85,8 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -94,7 +104,7 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>30</y>
       <width>171</width>
       <height>16</height>
@@ -115,6 +125,8 @@
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -147,7 +159,7 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>300</x>
       <y>30</y>
       <width>321</width>
       <height>16</height>
@@ -160,7 +172,7 @@
    <widget class="QPushButton" name="pb_reloadgroup">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>210</x>
       <y>240</y>
       <width>211</width>
       <height>24</height>
@@ -183,13 +195,14 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>330</y>
+     <y>320</y>
      <width>631</width>
      <height>191</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -203,12 +216,14 @@
      <rect>
       <x>120</x>
       <y>30</y>
-      <width>231</width>
+      <width>491</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -261,12 +276,14 @@
      <rect>
       <x>120</x>
       <y>60</y>
-      <width>331</width>
-      <height>41</height>
+      <width>491</width>
+      <height>71</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -275,7 +292,7 @@
    <widget class="QPushButton" name="pb_storegroup">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>220</x>
       <y>150</y>
       <width>181</width>
       <height>24</height>

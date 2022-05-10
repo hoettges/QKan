@@ -22,7 +22,7 @@ from qgis.utils import spatialite_connect
 from qkan import QKan
 
 from .qkan_database import createdbtables, db_version
-from .qkan_utils import fehlermeldung, meldung, get_database_QKan
+from .qkan_utils import fehlermeldung, warnung, meldung, get_database_QKan
 
 __author__ = "Joerg Hoettges"
 __date__ = "September 2016"
@@ -282,6 +282,7 @@ class DBConnection:
         parameters: Optional[Iterable] = (),
         mute_logger: bool = False,
         transaction: bool = False,  # Unused, for compatibility only
+        ignore: bool = False,      # ignore error and continue
     ) -> bool:
         try:
             self.cursl.execute(sql, parameters)
@@ -310,11 +311,17 @@ class DBConnection:
             self.sqlcount = 0
             return True
         except sqlite3.Error as e:
-            fehlermeldung(
-                "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=stmt_category),
-                "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=parameters),
-            )
-            self.__del__()
+            if ignore:
+                warnung(
+                    "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=stmt_category),
+                    "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=parameters),
+                )
+            else:
+                fehlermeldung(
+                    "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=stmt_category),
+                    "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=parameters),
+                )
+                self.__del__()
             return False
 
     def executefile(self, filenam):
@@ -426,8 +433,10 @@ class DBConnection:
         """Changes attribute columns in QKan tables except geom columns.
 
         :tabnam:                Name der Tabelle
-        :attributes_new:         zukünftige Attribute, Syntax wie in Create-Befehl, ohne Primärschlüssel
-        :attributes_del:         zu entfernende Attribute
+        :attributes_new:        bestehende und neue Attribute, Syntax wie in Create-Befehl, ohne Primärschlüssel.
+                                Alle übrigen Attribute aus der alten Tabelle, die nicht entfernt werden sollen,
+                                werden zufällig sortiert dahinter angeordnet übernommen.
+        :attributes_del:        zu entfernende Attribute
 
         Ändert die Tabelle so, dass sie die Attribute aus attributesNew in der gegebenen
         Reihenfolge sowie die in der bestehenden Tabelle vom Benutzer hinzugefügten Attribute
@@ -435,12 +444,12 @@ class DBConnection:
 
         example:
         alter_table('flaechen',
-            [   'flnam TEXT',
-                'haltnam TEXT',
-                'ueberfluessig1 REAL',
-                'ueberfluessig2 TEXT',
-                "simstatus TEXT DEFAULT 'vorhanden'",
-                'teilgebiet TEXT',
+            [   'flnam TEXT,                       -- eindeutiger Flächenname',
+                'haltnam TEXT,',
+                'ueberfluessig1 REAL,              -- nur so...',
+                'ueberfluessig2 TEXT,              /* nur so...*/',
+                "simstatus TEXT DEFAULT 'vorhanden',",
+                'teilgebiet TEXT,',
                 "createdat TEXT DEFAULT (datetime('now'))"],
             ['ueberfluessig1', 'ueberfluessig2'])
         """
@@ -529,7 +538,7 @@ class DBConnection:
         attr_set_both |= attr_set_geo
 
         # Zusammenstellen aller Attribute. Begonnen wird mit dem Primärschlüssel
-        attr_dict_new = {attr_pk: f"{attr_pk} INTEGER PRIMARY KEY"}
+        attr_dict_new = {attr_pk: f"{attr_pk} INTEGER PRIMARY KEY, "}
         # Zusammenstellen aller Attribute in der neuen Tabelle inkl. Benutzerattributen
         for el in attributes_new:
             attr = el.strip().split(" ")[0].strip()
@@ -549,7 +558,7 @@ class DBConnection:
                 del attr_dict_new[attr]
 
         # Attribute der neuen Tabelle als String für SQL-Anweisung
-        attr_text_new = ",\n".join(attr_dict_new.values())
+        attr_text_new = "\n".join(attr_dict_new.values())
         logger.debug(f"dbfunc.DBConnection.alter_table - attr_text_new:{attr_text_new}")
 
         # 0. Foreign key constraint deaktivieren

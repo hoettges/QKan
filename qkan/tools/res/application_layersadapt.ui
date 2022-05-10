@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
-    <height>568</height>
+    <width>460</width>
+    <height>560</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>460</width>
+    <height>560</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -21,9 +27,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>20</x>
      <y>510</y>
-     <width>251</width>
+     <width>421</width>
      <height>32</height>
     </rect>
    </property>
@@ -46,6 +52,9 @@
    </property>
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+   </property>
+   <property name="centerButtons">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QGroupBox" name="gb_selectLayers">
@@ -282,9 +291,9 @@ Layer hinzuladen</string>
    <widget class="QLineEdit" name="tf_qkanDB">
     <property name="geometry">
      <rect>
-      <x>9</x>
+      <x>19</x>
       <y>50</y>
-      <width>401</width>
+      <width>391</width>
       <height>20</height>
      </rect>
     </property>
@@ -399,7 +408,7 @@ Layer hinzuladen</string>
    <widget class="QLabel" name="lb_projectTemplate">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>40</y>
       <width>301</width>
       <height>21</height>
@@ -442,11 +451,17 @@ Layer hinzuladen</string>
    <widget class="QLineEdit" name="tf_projectTemplate">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>60</y>
-      <width>361</width>
+      <width>351</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>350</width>
+      <height>0</height>
+     </size>
     </property>
     <property name="font">
      <font>

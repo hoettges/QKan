@@ -824,7 +824,7 @@ def import_kanaldaten(
     # --------------------------------------------------------------------------
 
     sql = """
-        INSERT INTO tezg_data
+        INSERT INTO tezg
             (flnam, haltnam, schnam, neigkl, 
             schwerpunktlaufzeit, regenschreiber, 
             teilgebiet, abflussparameter, 

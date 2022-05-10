@@ -133,8 +133,8 @@ def createdbtables(
             haltnam TEXT,
             schoben TEXT,
             schunten TEXT,
-            hoehe REAL,
-            breite REAL,
+            hoehe REAL,             -- Profilhoehe (m)
+            breite REAL,            -- Profilbreite (m)
             laenge REAL,
             sohleoben REAL,
             sohleunten REAL,
@@ -1784,76 +1784,6 @@ def createdbtables(
             )
             consl.close()
             return False
-
-    sql = f"""CREATE VIEW IF NOT EXISTS tezg_data AS
-          SELECT
-            flnam, haltnam, schnam,
-            NULL AS x, NULL AS y,
-            neigkl, neigung, NULL AS flaeche, befgrad,
-            NULL AS schwerpunktlaufzeit, NULL AS regenschreiber, 
-            NULL AS teilgebiet, '$Default_Unbef' AS abflussparameter, 
-            kommentar, createdat
-          FROM tezg
-        """
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'View "tezg_data" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = f"""CREATE TRIGGER IF NOT EXISTS tezg_insert_clipboard
-            INSTEAD OF INSERT ON tezg_data FOR EACH ROW
-          BEGIN
-            INSERT INTO tezg (
-              flnam, haltnam, schnam,
-              neigkl, neigung, befgrad,
-              schwerpunktlaufzeit, regenschreiber,
-              teilgebiet, abflussparameter, 
-              kommentar, createdat, 
-              geom)
-            SELECT
-              new.flnam, new.haltnam, new.schnam, 
-              new.neigkl, 
-              CASE WHEN new.neigkl = 1 THEN 0.005
-                WHEN new.neigkl = 2 THEN 0.025
-                WHEN new.neigkl = 3 THEN 0.07
-                ELSE 0.12 END AS neigung, 
-              new.befgrad, 
-              new.schwerpunktlaufzeit, new.regenschreiber, 
-              new.teilgebiet, new.abflussparameter, 
-              new.kommentar, coalesce(new.createdat, CURRENT_TIMESTAMP),
-              CASE WHEN new.x + new.y IS NOT NULL THEN 
-                CastToMultiPolygon(MakePolygon(MakeCircle(new.x, new.y, SQRT(new.flaeche/3), {epsg}, 30)))
-              WHEN new.haltnam IS NOT NULL THEN
-                CastToMultiPolygon(MakePolygon(MakeCircle(
-                  (x(PointN(haltungen.geom,1)) + x(PointN(haltungen.geom,-1)))/2.0, 
-                  (y(PointN(haltungen.geom,1)) + y(PointN(haltungen.geom,-1)))/2.0, 
-                  SQRT(new.flaeche/3), {epsg},
-                  30)))
-              WHEN new.schnam IS NOT NULL THEN
-                CastToMultiPolygon(MakePolygon(MakeCircle(
-                  x(schaechte.geop) + x(schaechte.geop), 
-                  SQRT(new.flaeche/3), {epsg}, 
-                  30)))
-              ELSE
-                NULL
-              END AS geom
-            FROM haltungen, schaechte
-            WHERE haltungen.haltnam = new.haltnam AND schaechte.schnam = new.schnam;
-          END"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "tezg_data" konnte ein Trigger nicht angelegt werden.',
-        )
-        consl.close()
-        return False
 
     consl.commit()
 

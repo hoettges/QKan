@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>924</width>
-    <height>515</height>
+    <width>920</width>
+    <height>500</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>920</width>
+    <height>500</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -24,9 +30,9 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>350</x>
-     <y>460</y>
-     <width>251</width>
+     <x>20</x>
+     <y>450</y>
+     <width>881</width>
      <height>32</height>
     </rect>
    </property>
@@ -55,14 +61,15 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
-     <width>591</width>
+     <y>20</y>
+     <width>881</width>
      <height>71</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -91,6 +98,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -114,6 +122,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -133,14 +142,14 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>110</y>
+     <y>100</y>
      <width>881</width>
      <height>331</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>FreeSans</family>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -461,6 +470,14 @@ berücksichtigen:</string>
       <width>251</width>
       <height>61</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="title">
      <string>Aktuell berücksichtigt: </string>

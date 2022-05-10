@@ -6,13 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>330</width>
-    <height>411</height>
+    <width>290</width>
+    <height>380</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>290</width>
+    <height>380</height>
+   </size>
   </property>
   <property name="font">
    <font>
     <family>Tahoma</family>
+    <pointsize>10</pointsize>
+    <weight>75</weight>
+    <bold>true</bold>
    </font>
   </property>
   <property name="windowTitle">
@@ -21,8 +30,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>360</y>
+     <x>20</x>
+     <y>340</y>
      <width>251</width>
      <height>23</height>
     </rect>
@@ -48,10 +57,10 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>30</y>
-     <width>171</width>
-     <height>16</height>
+     <x>30</x>
+     <y>20</y>
+     <width>161</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
@@ -69,8 +78,8 @@
   <widget class="QListWidget" name="lw_themen">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>50</y>
+     <x>20</x>
+     <y>40</y>
      <width>251</width>
      <height>201</height>
     </rect>
@@ -99,8 +108,8 @@
   <widget class="QLineEdit" name="le_anzahl">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>270</y>
+     <x>20</x>
+     <y>260</y>
      <width>51</width>
      <height>20</height>
     </rect>
@@ -108,12 +117,15 @@
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anzahl auszuführender Plausibilitätsabfragen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
+   <property name="statusTip">
+    <string>Anzahl auszuführender Plausibilitätsabfragen</string>
+   </property>
   </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>270</y>
+     <x>80</x>
+     <y>260</y>
      <width>201</width>
      <height>20</height>
     </rect>
@@ -122,6 +134,8 @@
     <font>
      <family>Tahoma</family>
      <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="text">
@@ -131,16 +145,18 @@
   <widget class="QCheckBox" name="cb_keepdata">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>20</x>
      <y>300</y>
      <width>261</width>
-     <height>41</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
      <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="toolTip">

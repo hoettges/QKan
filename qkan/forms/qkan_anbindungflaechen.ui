@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>570</width>
-    <height>390</height>
+    <height>360</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>570</width>
-    <height>390</height>
+    <height>360</height>
    </size>
   </property>
   <property name="font">
@@ -23,57 +23,19 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Anbindung Flächen</string>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QComboBox" name="teilgebiet">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>60</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>zur Zuordnung auf ein selbstständig festgelegtes Teilgebiet</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_22">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>60</y>
-      <width>61</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Teilgebiet</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>301</width>
-      <height>131</height>
+      <width>551</width>
+      <height>101</height>
      </rect>
     </property>
     <property name="font">
@@ -90,8 +52,8 @@
     <widget class="QLabel" name="label_23">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>90</y>
+       <x>260</x>
+       <y>30</y>
        <width>131</width>
        <height>21</height>
       </rect>
@@ -114,17 +76,17 @@
     <widget class="QComboBox" name="haltnam">
      <property name="geometry">
       <rect>
-       <x>160</x>
+       <x>90</x>
        <y>60</y>
-       <width>111</width>
+       <width>131</width>
        <height>22</height>
       </rect>
      </property>
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Name der Haltung, der die Fläche zugeordnet ist&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Name der angebundenen Haltung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="statusTip">
-      <string>Name der Haltung, der die Fläche zugeordnet ist</string>
+      <string>Name der angebundenen Haltung</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_20">
@@ -154,11 +116,17 @@
     <widget class="QComboBox" name="flnam">
      <property name="geometry">
       <rect>
-       <x>160</x>
+       <x>90</x>
        <y>30</y>
-       <width>111</width>
+       <width>131</width>
        <height>22</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Name der angebundenen Fläche&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Name der angebundenen Fläche</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_4">
@@ -188,19 +156,41 @@
     <widget class="QComboBox" name="tezgnam">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>90</y>
-       <width>111</width>
+       <x>400</x>
+       <y>30</y>
+       <width>131</width>
        <height>22</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Name der angebundenen Haltungsfläche (für aufzuteilende Flächen)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Name der angebundenen Haltungsfläche (für aufzuteilende Flächen)</string>
+     </property>
     </widget>
-    <widget class="QLabel" name="label_12">
+    <widget class="QComboBox" name="teilgebiet">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>30</y>
-       <width>16</width>
+       <x>400</x>
+       <y>60</y>
+       <width>131</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zuordnung zu einem benutzerdefinierten Teilgebiet&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Zuordnung zu einem benutzerdefinierten Teilgebiet</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_22">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>60</y>
+       <width>61</width>
        <height>21</height>
       </rect>
      </property>
@@ -213,31 +203,7 @@
       </font>
      </property>
      <property name="text">
-      <string>?</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_14">
-     <property name="geometry">
-      <rect>
-       <x>150</x>
-       <y>90</y>
-       <width>16</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>?</string>
+      <string>Teilgebiet</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -248,7 +214,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>290</y>
+      <y>260</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -267,7 +233,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>310</y>
+      <y>280</y>
       <width>551</width>
       <height>71</height>
      </rect>
@@ -289,7 +255,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>150</y>
+      <y>120</y>
       <width>551</width>
       <height>131</height>
      </rect>
@@ -365,6 +331,12 @@
        <height>22</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auswahl aus Tabelle &lt;span style=&quot; font-style:italic;&quot;&gt;Abflusstypen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Auswahl aus Tabelle &quot;Abflusstypen&quot;</string>
+     </property>
     </widget>
     <widget class="QLineEdit" name="fliesszeitflaeche">
      <property name="geometry">
@@ -375,13 +347,19 @@
        <height>20</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mittlere Fließzeit für den Oberflächenabfluss / Schwerpunktlaufzeit&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Mittlere Fließzeit für den Oberflächenabfluss / Schwerpunktlaufzeit</string>
+     </property>
     </widget>
     <widget class="QLineEdit" name="speicherzahl">
      <property name="geometry">
       <rect>
        <x>140</x>
        <y>60</y>
-       <width>101</width>
+       <width>141</width>
        <height>20</height>
       </rect>
      </property>
@@ -483,6 +461,12 @@
        <height>20</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mittlere Fließzeit des Oberflächenabflusses im Anschlusskanal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Mittlere Fließzeit des Oberflächenabflusses im Anschlusskanal</string>
+     </property>
     </widget>
     <widget class="QLabel" name="label_9">
      <property name="geometry">
@@ -548,78 +532,6 @@
      </property>
      <property name="text">
       <string>Fließzeit Fläche</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_16">
-     <property name="geometry">
-      <rect>
-       <x>110</x>
-       <y>30</y>
-       <width>16</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>?</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_17">
-     <property name="geometry">
-      <rect>
-       <x>400</x>
-       <y>30</y>
-       <width>16</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>?</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_18">
-     <property name="geometry">
-      <rect>
-       <x>400</x>
-       <y>60</y>
-       <width>16</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>10</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>?</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

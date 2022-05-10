@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>674</width>
-    <height>616</height>
+    <width>700</width>
+    <height>590</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>700</width>
+    <height>590</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -24,16 +30,16 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>560</y>
-     <width>251</width>
+     <x>40</x>
+     <y>550</y>
+     <width>641</width>
      <height>32</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
-     <pointsize>12</pointsize>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -55,14 +61,15 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
-     <width>630</width>
+     <y>20</y>
+     <width>661</width>
      <height>71</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -91,6 +98,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -110,19 +118,23 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>591</width>
+      <width>621</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quelldatenbank mit Kanaldaten. Hier wird automatisch das aktuelle geladene Projekt eingetragen. Zum Ändern neue SpatiaLite-Datenbank auswählen...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Quelldatenbank mit Kanaldaten. Hier wird automatisch das aktuelle geladene Projekt eingetragen. Zum Ändern neue SpatiaLite-Datenbank auswählen...</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -136,14 +148,15 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>110</y>
-     <width>630</width>
+     <y>100</y>
+     <width>661</width>
      <height>131</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -172,6 +185,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -188,19 +202,23 @@
      <rect>
       <x>20</x>
       <y>90</y>
-      <width>550</width>
+      <width>581</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatei mit Kanaldaten für DYNA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Zieldatei mit Kanaldaten für DYNA</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -209,7 +227,7 @@
    <widget class="QPushButton" name="pb_select_KP_dest">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>610</x>
       <y>90</y>
       <width>31</width>
       <height>21</height>
@@ -228,7 +246,7 @@
    <widget class="QPushButton" name="pb_select_KP_template">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>610</x>
       <y>40</y>
       <width>31</width>
       <height>21</height>
@@ -256,6 +274,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -272,19 +291,23 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>550</width>
+      <width>581</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vorlagedatei für DYNA-Export, kann schon Daten enthalten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Vorlagedatei für DYNA-Export, kann schon Daten enthalten</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -295,14 +318,15 @@
    <property name="geometry">
     <rect>
      <x>310</x>
-     <y>260</y>
-     <width>341</width>
+     <y>250</y>
+     <width>371</width>
      <height>71</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -322,6 +346,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -341,13 +366,14 @@
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>321</width>
+      <width>351</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -367,14 +393,15 @@
    <property name="geometry">
     <rect>
      <x>310</x>
-     <y>340</y>
-     <width>341</width>
+     <y>330</y>
+     <width>371</width>
      <height>71</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -394,6 +421,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -420,6 +448,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -439,14 +468,15 @@
    <property name="geometry">
     <rect>
      <x>310</x>
-     <y>420</y>
-     <width>341</width>
+     <y>410</y>
+     <width>371</width>
      <height>111</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -466,6 +496,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -492,6 +523,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -518,6 +550,7 @@
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -540,7 +573,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>300</y>
+     <y>290</y>
      <width>251</width>
      <height>161</height>
     </rect>
@@ -559,7 +592,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>510</y>
+     <y>500</y>
      <width>61</width>
      <height>20</height>
     </rect>
@@ -586,7 +619,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>490</y>
+     <y>480</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -607,7 +640,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>490</y>
+     <y>480</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -628,7 +661,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>470</y>
+     <y>460</y>
      <width>181</width>
      <height>20</height>
     </rect>
@@ -636,7 +669,7 @@
    <property name="font">
     <font>
      <family>Tahoma</family>
-     <pointsize>8</pointsize>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -649,7 +682,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>510</y>
+     <y>500</y>
      <width>61</width>
      <height>20</height>
     </rect>
@@ -676,7 +709,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>510</y>
+     <y>500</y>
      <width>61</width>
      <height>20</height>
     </rect>
@@ -703,7 +736,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>490</y>
+     <y>480</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -724,7 +757,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>260</y>
+     <y>250</y>
      <width>241</width>
      <height>31</height>
     </rect>

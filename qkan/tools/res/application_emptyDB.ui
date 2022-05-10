@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>534</width>
-    <height>291</height>
+    <width>530</width>
+    <height>270</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>530</width>
+    <height>270</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -21,14 +27,15 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>240</y>
-     <width>251</width>
+     <x>20</x>
+     <y>220</y>
+     <width>491</width>
      <height>32</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -43,18 +50,23 @@
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
    </property>
+   <property name="centerButtons">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
+     <y>20</y>
      <width>491</width>
-     <height>191</height>
+     <height>181</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -74,14 +86,16 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>20</y>
-      <width>291</width>
+      <width>281</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -102,6 +116,14 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad und Dateinamen der QKan-Datenbank festlegen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -115,14 +137,16 @@
    <widget class="QLineEdit" name="tf_qkanDB">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>40</y>
-      <width>421</width>
+      <width>411</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -140,11 +164,19 @@
    <widget class="QgsProjectionSelectionWidget" name="epsg">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>140</x>
       <y>80</y>
-      <width>321</width>
+      <width>311</width>
       <height>27</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>Auswahl der Projektionssystems</string>
@@ -156,14 +188,16 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>80</y>
-      <width>101</width>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -172,17 +206,25 @@
      <string>Projektionssystem:</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="pb_selectProjectFile">
     <property name="geometry">
      <rect>
-      <x>441</x>
-      <y>150</y>
+      <x>440</x>
+      <y>140</y>
       <width>30</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad und Name der Projektdatei festlegen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -194,14 +236,16 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>11</x>
-      <y>130</y>
-      <width>301</width>
+      <x>20</x>
+      <y>120</y>
+      <width>291</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -216,14 +260,16 @@
    <widget class="QLineEdit" name="tf_projectFile">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>150</y>
-      <width>421</width>
+      <x>19</x>
+      <y>140</y>
+      <width>411</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>

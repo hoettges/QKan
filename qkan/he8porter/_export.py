@@ -923,7 +923,7 @@ class ExportTask:
                             id, 
                             Name, Haltung,
                             IsEinzugsflaeche,
-                            IsHaltungflaeche,
+                            IsHaltungsflaeche,
                             IsTwEinzugsflaeche, 
                             LastModified,
                             Kommentar, 

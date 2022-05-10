@@ -19,6 +19,12 @@
     <height>310</height>
    </size>
   </property>
+  <property name="baseSize">
+   <size>
+    <width>630</width>
+    <height>310</height>
+   </size>
+  </property>
   <property name="font">
    <font>
     <family>Tahoma</family>

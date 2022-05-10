@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>693</width>
-    <height>416</height>
+    <width>690</width>
+    <height>400</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>690</width>
+    <height>400</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>QKan Erzeugen von unbefestigten Flächen</string>
@@ -17,13 +23,14 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>360</y>
+     <y>350</y>
      <width>281</width>
      <height>32</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -46,7 +53,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>90</y>
+     <y>80</y>
      <width>651</width>
      <height>131</height>
     </rect>
@@ -80,7 +87,10 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>16</pointsize>
+     <family>Tahoma</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
@@ -97,13 +107,14 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>270</y>
-     <width>601</width>
+     <y>260</y>
+     <width>651</width>
      <height>61</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -117,13 +128,14 @@
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>301</width>
+      <width>381</width>
       <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -135,14 +147,14 @@
      <string>Automatische Korrektur von Datenfehlern in der Tabelle &quot;tezg&quot;</string>
     </property>
     <property name="text">
-     <string>Autokorrektur von Namen und Abflussfaktoren
-in den TEZG-Flächen</string>
+     <string>Autokorrektur von Namen und Abflussfaktoren in den
+ TEZG-Flächen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_geomMakeValid">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>410</x>
       <y>20</y>
       <width>191</width>
       <height>30</height>
@@ -151,6 +163,7 @@ in den TEZG-Flächen</string>
     <property name="font">
      <font>
       <family>Tahoma</family>
+      <pointsize>10</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -172,17 +185,18 @@ in den TEZG-Flächen</string>
   <widget class="QCheckBox" name="cb_selActive">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>70</y>
+     <x>20</x>
+     <y>50</y>
      <width>481</width>
-     <height>17</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="layoutDirection">
@@ -196,7 +210,7 @@ in den TEZG-Flächen</string>
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>230</y>
+     <y>220</y>
      <width>71</width>
      <height>20</height>
     </rect>
@@ -227,14 +241,15 @@ in den TEZG-Flächen</string>
   <widget class="QLabel" name="label_10">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>230</y>
-     <width>171</width>
+     <x>20</x>
+     <y>220</y>
+     <width>181</width>
      <height>20</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Tahoma</family>
      <pointsize>10</pointsize>
      <weight>50</weight>
      <bold>false</bold>

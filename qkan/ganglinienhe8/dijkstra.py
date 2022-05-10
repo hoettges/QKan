@@ -30,6 +30,8 @@ class Netz:
             if Netz.links == {}:
                 # Nur beim ersten Aufruf
                 for (name, schob, schun, laenge) in self.netz:
+                    if not laenge:
+                        laenge = 2.
                     # In Fließrichtung
                     if schob in Netz.links:
                         Netz.links[schob][schun]=laenge
@@ -183,31 +185,7 @@ def get_info(qkan_db: DBConnection, schaechte: List[str], haltungen: List[str]) 
             FROM
                 haltungen
                 LEFT JOIN ( SELECT sohlhoehe, schnam FROM schaechte ) AS SO ON haltungen.schoben = SO.schnam
-                LEFT JOIN ( SELECT sohlhoehe, schnam FROM schaechte ) AS SU ON haltungen.schunten = SU.schnam UNION
-            SELECT
-                wnam AS name,
-                schoben,
-                schunten,
-                laenge,
-                SO.sohlhoehe AS sohleoben,
-                SU.sohlhoehe AS sohleunten,
-                0.5 AS hoehe 
-            FROM
-                wehre
-                LEFT JOIN ( SELECT sohlhoehe, schnam FROM schaechte ) AS SO ON wehre.schoben = SO.schnam
-                LEFT JOIN ( SELECT sohlhoehe, schnam FROM schaechte ) AS SU ON wehre.schunten = SU.schnam UNION
-            SELECT
-                pnam AS name,
-                schoben,
-                schunten,
-                5 AS laenge,
-                SO.sohlhoehe AS sohleoben,
-                SU.sohlhoehe AS sohleunten,
-                0.5 AS hoehe 
-            FROM
-                pumpen
-                LEFT JOIN ( SELECT sohlhoehe, schnam FROM schaechte ) AS SO ON pumpen.schoben = SO.schnam
-                LEFT JOIN ( SELECT sohlhoehe, schnam FROM schaechte ) AS SU ON pumpen.schunten = SU.schnam 
+                LEFT JOIN ( SELECT sohlhoehe, schnam FROM schaechte ) AS SU ON haltungen.schunten = SU.schnam 
             ) 
         WHERE
             name IN ('{}')
@@ -264,12 +242,6 @@ def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[Hal
     sql = """
             SELECT haltnam, schoben, schunten, laenge
             FROM haltungen
-        UNION
-            SELECT wnam AS haltnam, schoben, schunten, 10.0 AS laenge
-            FROM wehre
-        UNION
-            SELECT pnam AS haltnam, schoben, schunten, 10.0 AS laenge
-            FROM pumpen
         """
     qkan_db.sql(sql)
     data = qkan_db.fetchall()

@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>350</width>
-    <height>250</height>
+    <height>280</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>350</width>
-    <height>250</height>
+    <height>280</height>
    </size>
   </property>
   <property name="font">
@@ -23,7 +23,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Entwässerungssysteme</string>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -74,7 +74,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>150</y>
+      <y>180</y>
       <width>100</width>
       <height>21</height>
      </rect>
@@ -90,7 +90,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>170</y>
+      <y>200</y>
       <width>331</width>
       <height>71</height>
      </rect>
@@ -108,7 +108,7 @@
       <x>10</x>
       <y>40</y>
       <width>331</width>
-      <height>101</height>
+      <height>131</height>
      </rect>
     </property>
     <property name="font">
@@ -135,6 +135,12 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="toolTip">
+      <string>optional: Kürzel</string>
+     </property>
+     <property name="statusTip">
+      <string>optional: Kürzel</string>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -156,6 +162,12 @@
        <family>Tahoma</family>
        <pointsize>10</pointsize>
       </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interne Nr., siehe HE-Editor: Hilfe &amp;gt; Aufzählungen: &amp;quot;Kanalart&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Interne Nr., siehe HE-Editor: Hilfe &gt; Aufzählungen: &quot;Kanalart&quot;</string>
      </property>
      <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
@@ -214,12 +226,12 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
     </widget>
-    <widget class="QLabel" name="label_21">
+    <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>140</x>
-       <y>60</y>
-       <width>16</width>
+       <x>20</x>
+       <y>90</y>
+       <width>121</width>
        <height>21</height>
       </rect>
      </property>
@@ -230,19 +242,22 @@
       </font>
      </property>
      <property name="text">
-      <string>?</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kanal++ -Nr.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
     </widget>
-    <widget class="QLabel" name="label_22">
+    <widget class="QLineEdit" name="kp_nr">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>30</y>
-       <width>16</width>
-       <height>21</height>
+       <x>160</x>
+       <y>90</y>
+       <width>31</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="font">
@@ -251,11 +266,23 @@
        <pointsize>10</pointsize>
       </font>
      </property>
-     <property name="text">
-      <string>?</string>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nr. des Entwässerungssystems entspr. Kanal++&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     <property name="statusTip">
+      <string>Nr. des Entwässerungssystems entspr. Kanal++</string>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="frame">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
