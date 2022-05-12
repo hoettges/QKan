@@ -182,7 +182,7 @@ class SanierungDialog(_Dialog, SANIERUNG_CLASS):  # type: ignore
 
 
     def select_date(self):
-        #hier wenn untersuchdat_haltung_bewertung nicht da, dann untersuchdat_shacht!!!
+        #hier wenn untersuchdat_haltung_bewertung nicht da, dann untersuchdat_schacht!!!
         #anpassen je nachdem welche cb angeklickt wurde?
 
         try:
@@ -191,10 +191,10 @@ class SanierungDialog(_Dialog, SANIERUNG_CLASS):  # type: ignore
             uri = QgsDataSourceUri()
             uri.setDatabase(db_x)
             schema = ''
-            table = 'Untersuchdat_haltung_bewertung'
+            table = 'untersuchdat_haltung_bewertung'
             geom_column = 'geom'
             uri.setDataSource(schema, table, geom_column)
-            vlayer = QgsVectorLayer(uri.uri(), 'Untersuchdat_haltung_bewertung', 'spatialite')
+            vlayer = QgsVectorLayer(uri.uri(), 'untersuchdat_haltung_bewertung', 'spatialite')
             list = []
             for feature in vlayer.getFeatures():
                 name = feature["createdat"]

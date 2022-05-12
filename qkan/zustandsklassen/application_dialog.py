@@ -160,10 +160,10 @@ class ZustandDialog(_Dialog, ZUSTAND_CLASS):  # type: ignore
             uri = QgsDataSourceUri()
             uri.setDatabase(db_x)
             schema = ''
-            table = 'Untersuchdat_haltung'
+            table = 'untersuchdat_haltung'
             geom_column = 'geom'
             uri.setDataSource(schema, table, geom_column)
-            vlayer = QgsVectorLayer(uri.uri(), 'Untersuchdat_haltung', 'spatialite')
+            vlayer = QgsVectorLayer(uri.uri(), 'untersuchdat_haltung', 'spatialite')
             list = []
             for feature in vlayer.getFeatures():
                 name = feature["createdat"]

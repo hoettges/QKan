@@ -9,7 +9,7 @@ from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
-from .zustandsklassen_funkt import zustandsklassen_funkt
+from .zustandsklassen_funkt import Zustandsklassen_funkt
 from .application_dialog import ZustandDialog
 
 # noinspection PyUnresolvedReferences
@@ -148,7 +148,7 @@ class zustandsklassen(QKanPlugin):
             return False
 
         self.log.info("DB creation finished, starting Zustandsklassen")
-        zustand = zustandsklassen_funkt(check_cb, QKan.config.database.qkan, QKan.config.zustand.date, QKan.config.epsg )
+        zustand = Zustandsklassen_funkt(check_cb, QKan.config.database.qkan, QKan.config.zustand.date, QKan.config.epsg )
         zustand.run()
         del zustand
 

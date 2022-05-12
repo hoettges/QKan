@@ -95,7 +95,7 @@ def run(dbcon: DBConnection) -> bool:
         logger.debug(f"Fehler bei Migration zu Version {VERSION}")
         return False
 
-    sql = """CREATE TABLE IF NOT EXISTS Untersuchdat_haltung (
+    sql = """CREATE TABLE IF NOT EXISTS untersuchdat_haltung (
             pk INTEGER PRIMARY KEY,
             untersuchhal TEXT,
             untersuchrichtung TEXT,
@@ -128,13 +128,13 @@ def run(dbcon: DBConnection) -> bool:
         logger.debug(f"Fehler bei Migration zu Version {VERSION}")
         return False
 
-    sql = "SELECT AddGeometryColumn('Untersuchdat_haltung','geom',{},'LINESTRING',2)".format(dbcon.epsg)
+    sql = "SELECT AddGeometryColumn('untersuchdat_haltung','geom',{},'LINESTRING',2)".format(dbcon.epsg)
     if not dbcon.sql(sql):
         logger.debug(f"Fehler bei Migration zu Version {VERSION}")
         return False
     dbcon.commit()
 
-    sqlindex = "SELECT CreateSpatialIndex('Untersuchdat_haltung','geom')"
+    sqlindex = "SELECT CreateSpatialIndex('untersuchdat_haltung','geom')"
     if not dbcon.sql(sqlindex):
         logger.debug(f"Fehler bei Migration zu Version {VERSION}")
         return False
@@ -144,7 +144,7 @@ def run(dbcon: DBConnection) -> bool:
                   SELECT
                     untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
                         charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, createdat
-                  FROM Untersuchdat_haltung;"""
+                  FROM untersuchdat_haltung;"""
 
     if not dbcon.sql(sql):
         logger.debug(f"Fehler bei Migration zu Version {VERSION}")

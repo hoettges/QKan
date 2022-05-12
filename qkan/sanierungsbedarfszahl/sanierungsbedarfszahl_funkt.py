@@ -96,7 +96,7 @@ class sanierungsbedarfszahl_funkt:
         haltung = self.haltung
 
         try:
-            curs.execute("""ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN Schadenslaenge INTEGER ;""")
+            curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Schadenslaenge INTEGER ;""")
             db.commit()
         except:
             pass
@@ -107,29 +107,29 @@ class sanierungsbedarfszahl_funkt:
         if haltung == True:
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
-                    Untersuchdat_haltung_bewertung.richtung,
-                    Untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.createdat,
                     haltungen_untersucht_bewertung.haltnam,
                     haltungen_untersucht_bewertung.laenge,
                     haltungen_untersucht_bewertung.untersuchtag,
@@ -139,37 +139,37 @@ class sanierungsbedarfszahl_funkt:
                     haltungen_untersucht_bewertung.bewertungstag,
                     haltungen_untersucht_bewertung.createdat,
                     haltungen.haltnam
-                FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen
-                WHERE haltungen.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ?  AND  substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? 
+                FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen
+                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ?  AND  substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? 
             """
             data = (date, date)
 
         if leitung == True:
             sql = """
                         SELECT
-                            Untersuchdat_haltung_bewertung.pk,
-                            Untersuchdat_haltung_bewertung.untersuchhal,
-                            Untersuchdat_haltung_bewertung.untersuchrichtung,
-                            Untersuchdat_haltung_bewertung.schoben,
-                            Untersuchdat_haltung_bewertung.schunten,
-                            Untersuchdat_haltung_bewertung.id,
-                            Untersuchdat_haltung_bewertung.videozaehler,
-                            Untersuchdat_haltung_bewertung.inspektionslaenge,
-                            Untersuchdat_haltung_bewertung.station,
-                            Untersuchdat_haltung_bewertung.timecode,
-                            Untersuchdat_haltung_bewertung.kuerzel,
-                            Untersuchdat_haltung_bewertung.charakt1,
-                            Untersuchdat_haltung_bewertung.charakt2,
-                            Untersuchdat_haltung_bewertung.quantnr1,
-                            Untersuchdat_haltung_bewertung.quantnr2,
-                            Untersuchdat_haltung_bewertung.streckenschaden,
-                            Untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
-                            Untersuchdat_haltung_bewertung.pos_von,
-                            Untersuchdat_haltung_bewertung.pos_bis,
-                            Untersuchdat_haltung_bewertung.foto_dateiname,
-                            Untersuchdat_haltung_bewertung.film_dateiname,
-                            Untersuchdat_haltung_bewertung.richtung,
-                            Untersuchdat_haltung_bewertung.createdat,
+                            untersuchdat_haltung_bewertung.pk,
+                            untersuchdat_haltung_bewertung.untersuchhal,
+                            untersuchdat_haltung_bewertung.untersuchrichtung,
+                            untersuchdat_haltung_bewertung.schoben,
+                            untersuchdat_haltung_bewertung.schunten,
+                            untersuchdat_haltung_bewertung.id,
+                            untersuchdat_haltung_bewertung.videozaehler,
+                            untersuchdat_haltung_bewertung.inspektionslaenge,
+                            untersuchdat_haltung_bewertung.station,
+                            untersuchdat_haltung_bewertung.timecode,
+                            untersuchdat_haltung_bewertung.kuerzel,
+                            untersuchdat_haltung_bewertung.charakt1,
+                            untersuchdat_haltung_bewertung.charakt2,
+                            untersuchdat_haltung_bewertung.quantnr1,
+                            untersuchdat_haltung_bewertung.quantnr2,
+                            untersuchdat_haltung_bewertung.streckenschaden,
+                            untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
+                            untersuchdat_haltung_bewertung.pos_von,
+                            untersuchdat_haltung_bewertung.pos_bis,
+                            untersuchdat_haltung_bewertung.foto_dateiname,
+                            untersuchdat_haltung_bewertung.film_dateiname,
+                            untersuchdat_haltung_bewertung.richtung,
+                            untersuchdat_haltung_bewertung.createdat,
                             haltungen_untersucht_bewertung.haltnam,
                             haltungen_untersucht_bewertung.laenge,
                             haltungen_untersucht_bewertung.untersuchtag,
@@ -179,8 +179,8 @@ class sanierungsbedarfszahl_funkt:
                             haltungen_untersucht_bewertung.bewertungstag,
                             haltungen_untersucht_bewertung.createdat,
                             anschlussleitungen.leitnam
-                        FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung,anschlussleitungen
-                        WHERE anschlussleitungen.leitnam= Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ?  AND  substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? 
+                        FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung,anschlussleitungen
+                        WHERE anschlussleitungen.leitnam= untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ?  AND  substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? 
                     """
             data = (date, date)
 
@@ -219,9 +219,9 @@ class sanierungsbedarfszahl_funkt:
                             l = l_2 - l_1
 
                             sql = f"""
-                                UPDATE Untersuchdat_haltung_bewertung
+                                UPDATE untersuchdat_haltung_bewertung
                                     SET Schadenslaenge = ?
-                                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                                    WHERE untersuchdat_haltung_bewertung.pk = ?
                                     """
                             data = (l, id)
                             try:
@@ -355,32 +355,32 @@ class sanierungsbedarfszahl_funkt:
 
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.Schadenslaenge,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
-                    Untersuchdat_haltung_bewertung.richtung,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_D,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_S,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_B,
-                    Untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.Schadenslaenge,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_D,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_S,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_B,
+                    untersuchdat_haltung_bewertung.createdat,
     
                     haltungen_untersucht_bewertung.haltnam,
                     haltungen_untersucht_bewertung.laenge,
@@ -400,39 +400,39 @@ class sanierungsbedarfszahl_funkt:
                     haltungen_untersucht_bewertung.bodengruppe,
                     haltungen_untersucht_bewertung.createdat,
                     haltungen.haltnam
-                FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen
-                WHERE haltungen.haltnam=Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ? AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ?
+                FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen
+                WHERE haltungen.haltnam=untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ?
             """
 
         if leitung == True:
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.Schadenslaenge,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
-                    Untersuchdat_haltung_bewertung.richtung,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_D,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_S,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_B,
-                    Untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.Schadenslaenge,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_D,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_S,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_B,
+                    untersuchdat_haltung_bewertung.createdat,
 
                     haltungen_untersucht_bewertung.haltnam,
                     haltungen_untersucht_bewertung.laenge,
@@ -452,8 +452,8 @@ class sanierungsbedarfszahl_funkt:
                     haltungen_untersucht_bewertung.bodengruppe,
                     haltungen_untersucht_bewertung.createdat,
                     anschlussleitungen.leitnam
-                FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, anschlussleitungen
-                WHERE anschlussleitungen.leitnam=Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ? AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ?
+                FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, anschlussleitungen
+                WHERE anschlussleitungen.leitnam=untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ?
             """
 
         data = (date, date)
@@ -735,7 +735,7 @@ class sanierungsbedarfszahl_funkt:
         except:
             pass
 
-        sql = """SELECT RecoverGeometryColumn('Untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
         data = (crs,)
         try:
             curs.execute(sql, data)
@@ -746,14 +746,14 @@ class sanierungsbedarfszahl_funkt:
         uri = QgsDataSourceUri()
         uri.setDatabase(db_x)
         schema = ''
-        table = 'Untersuchdat_haltung_bewertung'
+        table = 'untersuchdat_haltung_bewertung'
         geom_column = 'geom'
         uri.setDataSource(schema, table, geom_column)
-        Untersuchdat_haltung_bewertung = 'Untersuchdat_haltung_bewertung'
-        vlayer = QgsVectorLayer(uri.uri(), Untersuchdat_haltung_bewertung, 'spatialite')
+        untersuchdat_haltung_bewertung = 'untersuchdat_haltung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_haltung_bewertung, 'spatialite')
         x = QgsProject.instance()
         try:
-            x.removeMapLayer(x.mapLayersByName(Untersuchdat_haltung_bewertung)[0].id())
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_haltung_bewertung)[0].id())
         except:
             pass
 
@@ -1151,32 +1151,32 @@ class sanierungsbedarfszahl_funkt:
             sql = """
                     SELECT
                         haltungen_untersucht_bewertung.pk,
-                        Untersuchdat_haltung_bewertung.untersuchhal,
-                        Untersuchdat_haltung_bewertung.untersuchrichtung,
-                        Untersuchdat_haltung_bewertung.schoben,
-                        Untersuchdat_haltung_bewertung.schunten,
-                        Untersuchdat_haltung_bewertung.id,
-                        Untersuchdat_haltung_bewertung.videozaehler,
-                        Untersuchdat_haltung_bewertung.inspektionslaenge,
-                        Untersuchdat_haltung_bewertung.station,
-                        Untersuchdat_haltung_bewertung.timecode,
-                        Untersuchdat_haltung_bewertung.kuerzel,
-                        Untersuchdat_haltung_bewertung.charakt1,
-                        Untersuchdat_haltung_bewertung.charakt2,
-                        Untersuchdat_haltung_bewertung.quantnr1,
-                        Untersuchdat_haltung_bewertung.quantnr2,
-                        Untersuchdat_haltung_bewertung.streckenschaden,
-                        Untersuchdat_haltung_bewertung.Schadenslaenge,
-                        Untersuchdat_haltung_bewertung.pos_von,
-                        Untersuchdat_haltung_bewertung.pos_bis,
-                        Untersuchdat_haltung_bewertung.foto_dateiname,
-                        Untersuchdat_haltung_bewertung.film_dateiname,
-                        Untersuchdat_haltung_bewertung.richtung,
-                        Untersuchdat_haltung_bewertung.bw_bs,
-                        Untersuchdat_haltung_bewertung.createdat,
-                        Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_D,
-                        Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_S,
-                        Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_B,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        untersuchdat_haltung_bewertung.untersuchrichtung,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.Schadenslaenge,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        untersuchdat_haltung_bewertung.richtung,
+                        untersuchdat_haltung_bewertung.bw_bs,
+                        untersuchdat_haltung_bewertung.createdat,
+                        untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_D,
+                        untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_S,
+                        untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_B,
                         
                         haltungen_untersucht_bewertung.haltnam,
                         haltungen_untersucht_bewertung.laenge,
@@ -1194,8 +1194,8 @@ class sanierungsbedarfszahl_funkt:
                         haltungen_untersucht_bewertung.Lage_an_Bauteilverbindung,
                         haltungen_untersucht_bewertung.createdat,
                         haltungen.haltnam
-                    FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen
-                    WHERE haltungen.haltnam=Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ? AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? 
+                    FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen
+                    WHERE haltungen.haltnam=untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? 
                 """
             data = (date, date)
 
@@ -1203,32 +1203,32 @@ class sanierungsbedarfszahl_funkt:
             sql = """
                     SELECT
                         haltungen_untersucht_bewertung.pk,
-                        Untersuchdat_haltung_bewertung.untersuchhal,
-                        Untersuchdat_haltung_bewertung.untersuchrichtung,
-                        Untersuchdat_haltung_bewertung.schoben,
-                        Untersuchdat_haltung_bewertung.schunten,
-                        Untersuchdat_haltung_bewertung.id,
-                        Untersuchdat_haltung_bewertung.videozaehler,
-                        Untersuchdat_haltung_bewertung.inspektionslaenge,
-                        Untersuchdat_haltung_bewertung.station,
-                        Untersuchdat_haltung_bewertung.timecode,
-                        Untersuchdat_haltung_bewertung.kuerzel,
-                        Untersuchdat_haltung_bewertung.charakt1,
-                        Untersuchdat_haltung_bewertung.charakt2,
-                        Untersuchdat_haltung_bewertung.quantnr1,
-                        Untersuchdat_haltung_bewertung.quantnr2,
-                        Untersuchdat_haltung_bewertung.streckenschaden,
-                        Untersuchdat_haltung_bewertung.Schadenslaenge,
-                        Untersuchdat_haltung_bewertung.pos_von,
-                        Untersuchdat_haltung_bewertung.pos_bis,
-                        Untersuchdat_haltung_bewertung.foto_dateiname,
-                        Untersuchdat_haltung_bewertung.film_dateiname,
-                        Untersuchdat_haltung_bewertung.richtung,
-                        Untersuchdat_haltung_bewertung.bw_bs,
-                        Untersuchdat_haltung_bewertung.createdat,
-                        Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_D,
-                        Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_S,
-                        Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_B,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        untersuchdat_haltung_bewertung.untersuchrichtung,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.Schadenslaenge,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        untersuchdat_haltung_bewertung.richtung,
+                        untersuchdat_haltung_bewertung.bw_bs,
+                        untersuchdat_haltung_bewertung.createdat,
+                        untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_D,
+                        untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_S,
+                        untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_B,
 
                         haltungen_untersucht_bewertung.haltnam,
                         haltungen_untersucht_bewertung.laenge,
@@ -1246,8 +1246,8 @@ class sanierungsbedarfszahl_funkt:
                         haltungen_untersucht_bewertung.Lage_an_Bauteilverbindung,
                         haltungen_untersucht_bewertung.createdat,
                         anschlussleitungen.leitnam
-                    FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, anschlussleitungen
-                    WHERE anschlussleitungen.leitnam=Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ? AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? 
+                    FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam=untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? 
                 """
             data = (date, date)
 
@@ -1507,7 +1507,7 @@ class sanierungsbedarfszahl_funkt:
         except:
             pass
 
-        sql = """SELECT RecoverGeometryColumn('Untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
         data = (crs,)
         try:
             curs.execute(sql, data)
@@ -1518,14 +1518,14 @@ class sanierungsbedarfszahl_funkt:
         uri = QgsDataSourceUri()
         uri.setDatabase(db_x)
         schema = ''
-        table = 'Untersuchdat_haltung_bewertung'
+        table = 'untersuchdat_haltung_bewertung'
         geom_column = 'geom'
         uri.setDataSource(schema, table, geom_column)
-        Untersuchdat_haltung_bewertung = 'Untersuchdat_haltung_bewertung'
-        vlayer = QgsVectorLayer(uri.uri(), Untersuchdat_haltung_bewertung, 'spatialite')
+        untersuchdat_haltung_bewertung = 'untersuchdat_haltung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_haltung_bewertung, 'spatialite')
         x = QgsProject.instance()
         try:
-            x.removeMapLayer(x.mapLayersByName(Untersuchdat_haltung_bewertung)[0].id())
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_haltung_bewertung)[0].id())
         except:
             pass
 
@@ -2075,34 +2075,34 @@ class sanierungsbedarfszahl_funkt:
 
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
                     haltungen.material,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_D,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_S,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_B,
-                    Untersuchdat_haltung_bewertung.Schadenslaenge,
-                    Untersuchdat_haltung_bewertung.bw_bs,
-                    Untersuchdat_haltung_bewertung.createdat,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_D,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_S,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_B,
+                    untersuchdat_haltung_bewertung.Schadenslaenge,
+                    untersuchdat_haltung_bewertung.bw_bs,
+                    untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
     
                     haltungen_untersucht_bewertung.haltnam,
                     haltungen_untersucht_bewertung.hoehe,
@@ -2126,44 +2126,44 @@ class sanierungsbedarfszahl_funkt:
                     haltungen_untersucht_bewertung.Handlungsbedarf,
                     haltungen_untersucht_bewertung.createdat,
                     haltungen.haltnam
-                FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen
-                WHERE haltungen.haltnam=Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
+                FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen
+                WHERE haltungen.haltnam=untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
                 """
 
         if db_format == "Datenbank mit ISYBAU Daten":
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
                     haltungen.material,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.Schadensklasse_D,
-                    Untersuchdat_haltung_bewertung.Schadensklasse_S,
-                    Untersuchdat_haltung_bewertung.Schadensklasse_B,
-                    Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_D,
-                    Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_S,
-                    Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_B,
-                    Untersuchdat_haltung_bewertung.Schadenslaenge,
-                    Untersuchdat_haltung_bewertung.bw_bs,
-                    Untersuchdat_haltung_bewertung.createdat,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.Schadensklasse_D,
+                    untersuchdat_haltung_bewertung.Schadensklasse_S,
+                    untersuchdat_haltung_bewertung.Schadensklasse_B,
+                    untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_D,
+                    untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_S,
+                    untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_B,
+                    untersuchdat_haltung_bewertung.Schadenslaenge,
+                    untersuchdat_haltung_bewertung.bw_bs,
+                    untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
 
                     haltungen_untersucht_bewertung.haltnam,
                     haltungen_untersucht_bewertung.hoehe,
@@ -2185,8 +2185,8 @@ class sanierungsbedarfszahl_funkt:
                     haltungen_untersucht_bewertung.Objektklasse,
                     haltungen_untersucht_bewertung.createdat,
                     haltungen.haltnam
-                FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen
-                WHERE haltungen.haltnam=Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
+                FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen
+                WHERE haltungen.haltnam=untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
                 """
 
 
@@ -2229,7 +2229,7 @@ class sanierungsbedarfszahl_funkt:
             for table_name in dft['untersuchhal']:
                 sheet_name = table_name
 
-                sql = "select *  FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen WHERE haltungen.haltnam=Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = '" + sheet_name + "' AND Untersuchdat_haltung_bewertung.untersuchhal = '" + sheet_name +"' AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17)= '" + date +"' AND substr(haltungen_untersucht_bewertung.createdat, 0, 17)= '" + date +"'"
+                sql = "select *  FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, haltungen WHERE haltungen.haltnam=untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = '" + sheet_name + "' AND untersuchdat_haltung_bewertung.untersuchhal = '" + sheet_name +"' AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17)= '" + date +"' AND substr(haltungen_untersucht_bewertung.createdat, 0, 17)= '" + date +"'"
 
                 dft = pd.read_sql(sql, db)
 
@@ -2256,34 +2256,34 @@ class sanierungsbedarfszahl_funkt:
         if db_format == "Datenbank mit DWA-M 149 Daten":
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
                     anschlussleitungen.material,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_D,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_S,
-                    Untersuchdat_haltung_bewertung.Zustandsklasse_B,
-                    Untersuchdat_haltung_bewertung.Schadenslaenge,
-                    Untersuchdat_haltung_bewertung.bw_bs,
-                    Untersuchdat_haltung_bewertung.createdat,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_D,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_S,
+                    untersuchdat_haltung_bewertung.Zustandsklasse_B,
+                    untersuchdat_haltung_bewertung.Schadenslaenge,
+                    untersuchdat_haltung_bewertung.bw_bs,
+                    untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
 
                     haltungen_untersucht_bewertung.haltnam,
                     haltungen_untersucht_bewertung.hoehe,
@@ -2307,44 +2307,44 @@ class sanierungsbedarfszahl_funkt:
                     haltungen_untersucht_bewertung.Handlungsbedarf,
                     haltungen_untersucht_bewertung.createdat,
                     anschlussleitungen.leitnam
-                    FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, anschlussleitungen
-                    WHERE anschlussleitungen.leitnam=Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
+                    FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam=untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
                     """
 
         if db_format == "Datenbank mit ISYBAU Daten":
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
                     anschlussleitungen.material,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.Schadensklasse_D,
-                    Untersuchdat_haltung_bewertung.Schadensklasse_S,
-                    Untersuchdat_haltung_bewertung.Schadensklasse_B,
-                    Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_D,
-                    Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_S,
-                    Untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_B,
-                    Untersuchdat_haltung_bewertung.Schadenslaenge,
-                    Untersuchdat_haltung_bewertung.bw_bs,
-                    Untersuchdat_haltung_bewertung.createdat,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.streckenschaden_lfdnr,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.Schadensklasse_D,
+                    untersuchdat_haltung_bewertung.Schadensklasse_S,
+                    untersuchdat_haltung_bewertung.Schadensklasse_B,
+                    untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_D,
+                    untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_S,
+                    untersuchdat_haltung_bewertung.vorlaufige_Schadenszahl_B,
+                    untersuchdat_haltung_bewertung.Schadenslaenge,
+                    untersuchdat_haltung_bewertung.bw_bs,
+                    untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
 
                     haltungen_untersucht_bewertung.haltnam,
                     haltungen_untersucht_bewertung.hoehe,
@@ -2366,8 +2366,8 @@ class sanierungsbedarfszahl_funkt:
                     haltungen_untersucht_bewertung.Objektklasse,
                     haltungen_untersucht_bewertung.createdat,
                     anschlussleitungen.leitnam
-                    FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, anschlussleitungen
-                    WHERE anschlussleitungen.leitnam=Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
+                    FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam=untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(haltungen_untersucht_bewertung.createdat, 0, 17) = ? AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
                     """
 
 
@@ -2411,7 +2411,7 @@ class sanierungsbedarfszahl_funkt:
             for table_name in dft['untersuchhal']:
                 sheet_name = table_name
 
-                SQL = "select *  FROM Untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, anschlussleitungen WHERE anschlussleitungen.leitnam=Untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = '" + sheet_name + "' AND Untersuchdat_haltung_bewertung.untersuchhal ='" + sheet_name +"' AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17)='"+date+"' AND substr(haltungen_untersucht_bewertung.createdat, 0, 17)='"+date+"'"
+                SQL = "select *  FROM untersuchdat_haltung_bewertung, haltungen_untersucht_bewertung, anschlussleitungen WHERE anschlussleitungen.leitnam=untersuchdat_haltung_bewertung.untersuchhal AND haltungen_untersucht_bewertung.haltnam = '" + sheet_name + "' AND untersuchdat_haltung_bewertung.untersuchhal ='" + sheet_name +"' AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17)='"+date+"' AND substr(haltungen_untersucht_bewertung.createdat, 0, 17)='"+date+"'"
 
                 dft = pd.read_sql(SQL, db)
 

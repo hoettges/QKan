@@ -15,7 +15,7 @@ import sqlite3
 
 
 
-class zustandsklassen_funkt:
+class Zustandsklassen_funkt:
     def __init__(self, check_cb, db, date, epsg):
 
         self.check_cb = check_cb
@@ -101,41 +101,41 @@ class zustandsklassen_funkt:
         db = spatialite_connect(data)
         curs = db.cursor()
 
-        sql = """CREATE TABLE IF NOT EXISTS Untersuchdat_haltung_bewertung AS SELECT * FROM Untersuchdat_haltung"""
+        sql = """CREATE TABLE IF NOT EXISTS untersuchdat_haltung_bewertung AS SELECT * FROM untersuchdat_haltung"""
         curs.execute(sql)
 
         if haltung == True:
 
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
-                    Untersuchdat_haltung_bewertung.richtung,
-                    Untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.createdat,
                     haltungen.haltnam,
                     haltungen.material,
                     haltungen.hoehe,
                     haltungen.createdat
-                FROM Untersuchdat_haltung_bewertung, haltungen
-                WHERE haltungen.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
+                FROM untersuchdat_haltung_bewertung, haltungen
+                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
             """
             data = (date, )
 
@@ -143,34 +143,34 @@ class zustandsklassen_funkt:
 
             sql = """
                     SELECT
-                        Untersuchdat_haltung_bewertung.pk,
-                        Untersuchdat_haltung_bewertung.untersuchhal,
-                        Untersuchdat_haltung_bewertung.untersuchrichtung,
-                        Untersuchdat_haltung_bewertung.schoben,
-                        Untersuchdat_haltung_bewertung.schunten,
-                        Untersuchdat_haltung_bewertung.id,
-                        Untersuchdat_haltung_bewertung.videozaehler,
-                        Untersuchdat_haltung_bewertung.inspektionslaenge,
-                        Untersuchdat_haltung_bewertung.station,
-                        Untersuchdat_haltung_bewertung.timecode,
-                        Untersuchdat_haltung_bewertung.kuerzel,
-                        Untersuchdat_haltung_bewertung.charakt1,
-                        Untersuchdat_haltung_bewertung.charakt2,
-                        Untersuchdat_haltung_bewertung.quantnr1,
-                        Untersuchdat_haltung_bewertung.quantnr2,
-                        Untersuchdat_haltung_bewertung.streckenschaden,
-                        Untersuchdat_haltung_bewertung.pos_von,
-                        Untersuchdat_haltung_bewertung.pos_bis,
-                        Untersuchdat_haltung_bewertung.foto_dateiname,
-                        Untersuchdat_haltung_bewertung.film_dateiname,
-                        Untersuchdat_haltung_bewertung.richtung,
-                        Untersuchdat_haltung_bewertung.createdat,
+                        untersuchdat_haltung_bewertung.pk,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        untersuchdat_haltung_bewertung.untersuchrichtung,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        untersuchdat_haltung_bewertung.richtung,
+                        untersuchdat_haltung_bewertung.createdat,
                         anschlussleitungen.leitnam,
                         anschlussleitungen.material,
                         anschlussleitungen.hoehe,
                         anschlussleitungen.createdat
-                    FROM Untersuchdat_haltung_bewertung, anschlussleitungen
-                    WHERE anschlussleitungen.leitnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
+                    FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
                 """
             data = (date,)
 
@@ -183,7 +183,7 @@ class zustandsklassen_funkt:
 
         for attr in curs.fetchall():
             try:
-                curs.execute("""ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN Beschreibung TEXT ;""")
+                curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Beschreibung TEXT ;""")
             except:
                 pass
 
@@ -191,9 +191,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAA":
                 z = 'Verformung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Beschreibung = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -207,9 +207,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAB":
                 z = 'Rissbildung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Beschreibung = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -222,9 +222,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAC":
                 z = 'Rohrbruch/Einsturz'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Beschreibung = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -237,9 +237,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAD":
                 z = 'Defektes Mauerwerk'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Beschreibung = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -252,9 +252,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAE":
                 z = 'Fehlender Mörtel'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Beschreibung = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -267,9 +267,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAF":
                 z = 'Oberflächenschäden'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Beschreibung = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -282,9 +282,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAG":
                 z = 'Einragender Anschluss'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Beschreibung = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -297,9 +297,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAH":
                 z = 'Schadhafter Anschluss'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Beschreibung = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -311,9 +311,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAI":
                 z = 'Einragendes Dichtungsmaterial'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Beschreibung = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -325,9 +325,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAJ":
                 z = 'Verschobene Verbindung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -339,9 +339,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "A":
                 z = 'Feststellung der Innenauskleidung: Innenauskleidung abgelöst'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -353,9 +353,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "B":
                 z = 'Feststellung der Innenauskleidung: Innenauskleidung verfärbt'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -367,9 +367,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "C":
                 z = 'Feststellung der Innenauskleidung: Endstelle der Auskleidung schadhaft'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -381,9 +381,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "D":
                 z = 'Feststellung der Innenauskleidung: Faten in der Auskleidung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -395,9 +395,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "E":
                 z = 'Feststellung der Innenauskleidung: Blasen oder Beulen in der Auskleidung nach innen'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -409,9 +409,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "F":
                 z = 'Feststellung der Innenauskleidung: Beulen aussen'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -423,9 +423,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "G":
                 z = 'Feststellung der Innenauskleidung: Ablösen der Innenhaut/Beschichtung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -437,9 +437,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "H":
                 z = 'Feststellung der Innenauskleidung: Ablösen der Abdeckung der Verbindungsnaht'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -451,9 +451,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "I":
                 z = 'Feststellung der Innenauskleidung: Riss oder Spalt (einschließlich schadhafter Schweissnaht)'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -465,9 +465,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "J":
                 z = 'Feststellung der Innenauskleidung: Loch in der Auskleidung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -479,9 +479,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "K":
                 z = 'Feststellung der Innenauskleidung: Auskleidungsverbindung defekt'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -493,9 +493,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "L":
                 z = 'Feststellung der Innenauskleidung: Auskleidungswerkstoff erscheint weich'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -507,9 +507,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "M":
                 z = 'Feststellung der Innenauskleidung: Harz fehlt im Laminat'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -521,9 +521,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "N":
                 z = 'Feststellung der Innenauskleidung: Ende der Auskleidung ist nicht abgedichtet, um das Rohr oder den Schacht aufzunehmen.'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -535,9 +535,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "Z":
                 z = 'Feststellung der Innenauskleidung: Anderer Auskleidungsschaden'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -549,9 +549,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "A":
                 z = 'Schadhafte Reperatur: Wand fehlt teilweise'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -563,9 +563,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "B":
                 z = 'Schadhafte Reperatur: Reperatur zur Abdichtung eines Lochs ist schadhaft'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -577,9 +577,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "C":
                 z = 'Schadhafte Reperatur: Ablösen des Reperaturwerkstofes vom Basisrohr'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -591,9 +591,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "D":
                 z = 'Schadhafte Reperatur: fehlender Reperaturwerkstoff an der Kontaktfläche'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -605,9 +605,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "E":
                 z = 'Schadhafte Reperatur: überschüssiger Reperaturwerkstoff, der ein Hindernis darstellt'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -619,9 +619,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "P":
                 z = 'Schadhafte Reperatur: Loch im Reperaturwerkstoff'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -633,9 +633,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "G":
                 z = 'Schadhafte Reperatur: Riss im Reperaturwerkstoff'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -647,9 +647,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "Z":
                 z = 'Schadhafte Reperatur: Andere'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -661,9 +661,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAM":
                 z = 'Schadhafte Schweissnaht'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -675,9 +675,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAN":
                 z = 'Poroeses Rohr'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -689,9 +689,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAO":
                 z = 'Boden sichtbar'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -703,9 +703,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAP":
                 z = 'Hohlraum sichtbar'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -717,9 +717,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBA":
                 z = 'Wurzeln'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -731,9 +731,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBB":
                 z = 'Anhaftende Stoffe'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -745,9 +745,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBC":
                 z = 'Ablagerungen'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -759,9 +759,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBD":
                 z = 'Eindringen von Bodenmaterial'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -773,9 +773,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBE":
                 z = 'Andere Hindernisse'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -787,9 +787,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBF":
                 z = 'Infiltration'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -801,9 +801,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBG":
                 z = 'Exfiltration'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -815,9 +815,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBH":
                 z = 'Ungeziefer'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -829,9 +829,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCA":
                 z = 'Anschluss'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -843,9 +843,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCB" and attr[11] == "A":
                 z = 'Punktuelle Reperatur: Reperatur mit Injektionstechnik'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -857,9 +857,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCB" and attr[11] == "B":
                 z = 'Punktuelle Reperatur: Reperatur mit Roboter'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -871,9 +871,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCB" and attr[11] == "C":
                 z = 'Punktuelle Reperatur: Reperatur mit partieller Auskleidungs-/Manchettentechnik'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -885,9 +885,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCB" and attr[11] == "D":
                 z = 'Punktuelle Reperatur: Zulaufeinbindung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -899,9 +899,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCB" and attr[11] == "E":
                 z = 'Punktuelle Reperatur: Reperatur Rohrwand manuell'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -913,9 +913,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCB" and attr[11] == "F":
                 z = 'Punktuelle Reperatur: Reperatur Rohrverbindung manuell'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -927,9 +927,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCB" and attr[11] == "G":
                 z = 'Punktuelle Reperatur: Ringspalt-/-raumdichtung (der Auskleidung) zum Anschluss an Schacht/Inspektionsöffnung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -941,9 +941,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCB" and attr[11] == "H":
                 z = 'Punktuelle Reperatur: Zulauföffnung ohne Einbindung (Auskleidung)'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -955,9 +955,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCB" and attr[11] == "I":
                 z = 'Punktuelle Reperatur: Rohr ausgetauscht'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -969,9 +969,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCB" and attr[11] == "Z":
                 z = 'Punktuelle Reperatur: sonstige Technink'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -983,9 +983,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCC":
                 z = 'Krümmung der Leitung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -997,9 +997,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCD":
                 z = 'Anfangsknoten'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1011,9 +1011,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BCE":
                 z = 'Endknoten'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1025,9 +1025,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDA":
                 z = 'Allgemeines Foto'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1039,9 +1039,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and attr[11] == "AA":
                 z = 'Allgemeine Anmerkung: Verbindung zweier Rohre ohne Fomrstück, eingesteckt, gerade'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1053,9 +1053,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and attr[11] == "AB":
                 z = 'Allgemeine Anmerkung: Verbindung zweier Rohre ohne Fomrstück, uebergestuelpt, gerade'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1067,9 +1067,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and attr[11] == "AC":
                 z = 'Allgemeine Anmerkung: Verbindung zweier Rohre ohne Fomrstück, eingesteckt, abgewinkelt'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1081,9 +1081,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and attr[11] == "AD":
                 z = 'Allgemeine Anmerkung: Verbindung zweier Rohre ohne Fomrstück, uebergestuelpt, abgewinkelt'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1095,9 +1095,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and attr[11] == "AE":
                 z = 'Allgemeine Anmerkung: Verbindung zweier Rohre ohne Fomrstück, stumpf aneinandergestossen'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1109,9 +1109,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and attr[11] == "BA":
                 z = 'Allgemeine Anmerkung: Verschluss eines Rohrs durch Abmauerung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1123,9 +1123,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and attr[11] == "BB":
                 z = 'Allgemeine Anmerkung: Verschluss eines Rohrs durch Moertel'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1137,9 +1137,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and attr[11] == "BC":
                 z = 'Allgemeine Anmerkung: Verschluss eines Rohrs durch Deckel (Muffenstopfen)'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1151,9 +1151,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDC":
                 z = 'Inspektion endet vor dem Endknoten'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1165,9 +1165,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDD":
                 z = 'Wasserspiegel'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1179,9 +1179,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDE":
                 z = 'Zufluss aus einem Anschluss'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1193,9 +1193,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDF":
                 z = 'Atmosphäre in der Leitung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1207,9 +1207,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDG":
                 z = 'Keine Sicht'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Beschreibung = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -1219,7 +1219,7 @@ class zustandsklassen_funkt:
                 except:
                     pass
 
-        sql = """SELECT RecoverGeometryColumn('Untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
         data = (crs,)
         try:
             curs.execute(sql, data)
@@ -1230,14 +1230,14 @@ class zustandsklassen_funkt:
         uri = QgsDataSourceUri()
         uri.setDatabase(db_x)
         schema = ''
-        table = 'Untersuchdat_haltung_bewertung'
+        table = 'untersuchdat_haltung_bewertung'
         geom_column = 'geom'
         uri.setDataSource(schema, table, geom_column)
-        Untersuchdat_haltung_bewertung = 'Untersuchdat_haltung_bewertung'
-        vlayer = QgsVectorLayer(uri.uri(), Untersuchdat_haltung_bewertung, 'spatialite')
+        untersuchdat_haltung_bewertung = 'untersuchdat_haltung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_haltung_bewertung, 'spatialite')
         x = QgsProject.instance()
         try:
-            x.removeMapLayer(x.mapLayersByName(Untersuchdat_haltung_bewertung)[0].id())
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_haltung_bewertung)[0].id())
         except:
             pass
 
@@ -2346,35 +2346,35 @@ class zustandsklassen_funkt:
         if haltung == True:
             sql = """
                         SELECT
-                            Untersuchdat_haltung_bewertung.pk,
-                            Untersuchdat_haltung_bewertung.untersuchhal,
-                            Untersuchdat_haltung_bewertung.untersuchrichtung,
-                            Untersuchdat_haltung_bewertung.schoben,
-                            Untersuchdat_haltung_bewertung.schunten,
-                            Untersuchdat_haltung_bewertung.id,
-                            Untersuchdat_haltung_bewertung.videozaehler,
-                            Untersuchdat_haltung_bewertung.inspektionslaenge,
-                            Untersuchdat_haltung_bewertung.station,
-                            Untersuchdat_haltung_bewertung.timecode,
-                            Untersuchdat_haltung_bewertung.kuerzel,
-                            Untersuchdat_haltung_bewertung.charakt1,
-                            Untersuchdat_haltung_bewertung.charakt2,
-                            Untersuchdat_haltung_bewertung.quantnr1,
-                            Untersuchdat_haltung_bewertung.quantnr2,
-                            Untersuchdat_haltung_bewertung.streckenschaden,
-                            Untersuchdat_haltung_bewertung.pos_von,
-                            Untersuchdat_haltung_bewertung.pos_bis,
-                            Untersuchdat_haltung_bewertung.foto_dateiname,
-                            Untersuchdat_haltung_bewertung.film_dateiname,
-                            Untersuchdat_haltung_bewertung.richtung,
-                            Untersuchdat_haltung_bewertung.bw_bs,
-                            Untersuchdat_haltung_bewertung.createdat,
+                            untersuchdat_haltung_bewertung.pk,
+                            untersuchdat_haltung_bewertung.untersuchhal,
+                            untersuchdat_haltung_bewertung.untersuchrichtung,
+                            untersuchdat_haltung_bewertung.schoben,
+                            untersuchdat_haltung_bewertung.schunten,
+                            untersuchdat_haltung_bewertung.id,
+                            untersuchdat_haltung_bewertung.videozaehler,
+                            untersuchdat_haltung_bewertung.inspektionslaenge,
+                            untersuchdat_haltung_bewertung.station,
+                            untersuchdat_haltung_bewertung.timecode,
+                            untersuchdat_haltung_bewertung.kuerzel,
+                            untersuchdat_haltung_bewertung.charakt1,
+                            untersuchdat_haltung_bewertung.charakt2,
+                            untersuchdat_haltung_bewertung.quantnr1,
+                            untersuchdat_haltung_bewertung.quantnr2,
+                            untersuchdat_haltung_bewertung.streckenschaden,
+                            untersuchdat_haltung_bewertung.pos_von,
+                            untersuchdat_haltung_bewertung.pos_bis,
+                            untersuchdat_haltung_bewertung.foto_dateiname,
+                            untersuchdat_haltung_bewertung.film_dateiname,
+                            untersuchdat_haltung_bewertung.richtung,
+                            untersuchdat_haltung_bewertung.bw_bs,
+                            untersuchdat_haltung_bewertung.createdat,
                             haltungen.haltnam,
                             haltungen.material,
                             haltungen.hoehe,
                             haltungen.createdat
-                        FROM Untersuchdat_haltung_bewertung, haltungen
-                        WHERE haltungen.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
+                        FROM untersuchdat_haltung_bewertung, haltungen
+                        WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
                     """
             data = (date,)
 
@@ -2383,35 +2383,35 @@ class zustandsklassen_funkt:
         if leitung == True:
             sql = """
                         SELECT
-                            Untersuchdat_haltung_bewertung.pk,
-                            Untersuchdat_haltung_bewertung.untersuchhal,
-                            Untersuchdat_haltung_bewertung.untersuchrichtung,
-                            Untersuchdat_haltung_bewertung.schoben,
-                            Untersuchdat_haltung_bewertung.schunten,
-                            Untersuchdat_haltung_bewertung.id,
-                            Untersuchdat_haltung_bewertung.videozaehler,
-                            Untersuchdat_haltung_bewertung.inspektionslaenge,
-                            Untersuchdat_haltung_bewertung.station,
-                            Untersuchdat_haltung_bewertung.timecode,
-                            Untersuchdat_haltung_bewertung.kuerzel,
-                            Untersuchdat_haltung_bewertung.charakt1,
-                            Untersuchdat_haltung_bewertung.charakt2,
-                            Untersuchdat_haltung_bewertung.quantnr1,
-                            Untersuchdat_haltung_bewertung.quantnr2,
-                            Untersuchdat_haltung_bewertung.streckenschaden,
-                            Untersuchdat_haltung_bewertung.pos_von,
-                            Untersuchdat_haltung_bewertung.pos_bis,
-                            Untersuchdat_haltung_bewertung.foto_dateiname,
-                            Untersuchdat_haltung_bewertung.film_dateiname,
-                            Untersuchdat_haltung_bewertung.richtung,
-                            Untersuchdat_haltung_bewertung.bw_bs,
-                            Untersuchdat_haltung_bewertung.createdat,
+                            untersuchdat_haltung_bewertung.pk,
+                            untersuchdat_haltung_bewertung.untersuchhal,
+                            untersuchdat_haltung_bewertung.untersuchrichtung,
+                            untersuchdat_haltung_bewertung.schoben,
+                            untersuchdat_haltung_bewertung.schunten,
+                            untersuchdat_haltung_bewertung.id,
+                            untersuchdat_haltung_bewertung.videozaehler,
+                            untersuchdat_haltung_bewertung.inspektionslaenge,
+                            untersuchdat_haltung_bewertung.station,
+                            untersuchdat_haltung_bewertung.timecode,
+                            untersuchdat_haltung_bewertung.kuerzel,
+                            untersuchdat_haltung_bewertung.charakt1,
+                            untersuchdat_haltung_bewertung.charakt2,
+                            untersuchdat_haltung_bewertung.quantnr1,
+                            untersuchdat_haltung_bewertung.quantnr2,
+                            untersuchdat_haltung_bewertung.streckenschaden,
+                            untersuchdat_haltung_bewertung.pos_von,
+                            untersuchdat_haltung_bewertung.pos_bis,
+                            untersuchdat_haltung_bewertung.foto_dateiname,
+                            untersuchdat_haltung_bewertung.film_dateiname,
+                            untersuchdat_haltung_bewertung.richtung,
+                            untersuchdat_haltung_bewertung.bw_bs,
+                            untersuchdat_haltung_bewertung.createdat,
                             anschlussleitungen.leitnam,
                             anschlussleitungen.material,
                             anschlussleitungen.hoehe,
                             anschlussleitungen.createdat
-                        FROM Untersuchdat_haltung_bewertung, anschlussleitungen
-                        WHERE anschlussleitungen.leitnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
+                        FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                        WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
                     """
             data = (date, )
 
@@ -2422,9 +2422,9 @@ class zustandsklassen_funkt:
             curs.execute("""UPDATE haltungen_untersucht_bewertung 
                                 SET objektklasse_dichtheit =
                                 (SELECT min(Zustandsklasse_D) 
-                                FROM Untersuchdat_haltung_bewertung
-                                WHERE Untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_D <> '-'
-                                GROUP BY Untersuchdat_haltung_bewertung.untersuchhal);""")
+                                FROM untersuchdat_haltung_bewertung
+                                WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_D <> '-'
+                                GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
             db.commit()
         except:
             pass
@@ -2433,9 +2433,9 @@ class zustandsklassen_funkt:
             curs.execute("""UPDATE haltungen_untersucht_bewertung 
                                 SET objektklasse_standsicherheit =
                                 (SELECT min(Zustandsklasse_S) 
-                                FROM Untersuchdat_haltung_bewertung
-                                WHERE Untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_S <> '-'
-                                GROUP BY Untersuchdat_haltung_bewertung.untersuchhal);""")
+                                FROM untersuchdat_haltung_bewertung
+                                WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_S <> '-'
+                                GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
             db.commit()
         except:
             pass
@@ -2444,9 +2444,9 @@ class zustandsklassen_funkt:
             curs.execute("""UPDATE haltungen_untersucht_bewertung 
                                 SET objektklasse_betriebssicherheit =
                                 (SELECT min(Zustandsklasse_B) 
-                                FROM Untersuchdat_haltung_bewertung
-                                WHERE Untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_B <> '-'
-                                GROUP BY Untersuchdat_haltung_bewertung.untersuchhal);""")
+                                FROM untersuchdat_haltung_bewertung
+                                WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_B <> '-'
+                                GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
             db.commit()
         except:
             pass
@@ -2491,7 +2491,7 @@ class zustandsklassen_funkt:
         except:
             pass
 
-        sql = """SELECT RecoverGeometryColumn('Untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
         data = (crs,)
         try:
             curs.execute(sql, data)
@@ -2510,14 +2510,14 @@ class zustandsklassen_funkt:
         uri = QgsDataSourceUri()
         uri.setDatabase(db_x)
         schema = ''
-        table = 'Untersuchdat_haltung_bewertung'
+        table = 'untersuchdat_haltung_bewertung'
         geom_column = 'geom'
         uri.setDataSource(schema, table, geom_column)
-        Untersuchdat_haltung_bewertung = 'Untersuchdat_haltung_bewertung'
-        vlayer = QgsVectorLayer(uri.uri(), Untersuchdat_haltung_bewertung, 'spatialite')
+        untersuchdat_haltung_bewertung = 'untersuchdat_haltung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_haltung_bewertung, 'spatialite')
         x = QgsProject.instance()
         try:
-            x.removeMapLayer(x.mapLayersByName(Untersuchdat_haltung_bewertung)[0].id())
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_haltung_bewertung)[0].id())
         except:
             pass
 
@@ -2719,7 +2719,7 @@ class zustandsklassen_funkt:
 
         # nach DWA
 
-        sql = """CREATE TABLE IF NOT EXISTS Untersuchdat_haltung_bewertung AS SELECT * FROM Untersuchdat_haltung"""
+        sql = """CREATE TABLE IF NOT EXISTS untersuchdat_haltung_bewertung AS SELECT * FROM untersuchdat_haltung"""
         curs1.execute(sql)
 
         if haltung == True:
@@ -2728,8 +2728,8 @@ class zustandsklassen_funkt:
                     haltungen.haltnam,
                     haltungen.material,
                     haltungen.hoehe,
-                    Untersuchdat_haltung_bewertung.untersuchhal
-                FROM haltungen, Untersuchdat_haltung_bewertung
+                    untersuchdat_haltung_bewertung.untersuchhal
+                FROM haltungen, untersuchdat_haltung_bewertung
             """
 
         if leitung == True:
@@ -2738,8 +2738,8 @@ class zustandsklassen_funkt:
                         anschlussleitungen.leitnam,
                         anschlussleitungen.material,
                         anschlussleitungen.hoehe,
-                        Untersuchdat_haltung_bewertung.untersuchhal
-                    FROM anschlussleitungen, Untersuchdat_haltung_bewertung
+                        untersuchdat_haltung_bewertung.untersuchhal
+                    FROM anschlussleitungen, untersuchdat_haltung_bewertung
                 """
 
         try:
@@ -2753,7 +2753,7 @@ class zustandsklassen_funkt:
 
             untersuchhalt = attr1[0]
             try:
-                curs1.execute("""ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN bw_bs TEXT;""")
+                curs1.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN bw_bs TEXT;""")
             except:
                 pass
 
@@ -2763,9 +2763,9 @@ class zustandsklassen_funkt:
                 x = attr1[0]
 
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                         SET bw_bs = ?
-                        WHERE Untersuchdat_haltung_bewertung.untersuchhal = ?
+                        WHERE untersuchdat_haltung_bewertung.untersuchhal = ?
                         """
                 data = (bw_bs, x)
                 try:
@@ -2778,9 +2778,9 @@ class zustandsklassen_funkt:
                 x = attr1[0]
 
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET bw_bs = ?
-                        WHERE Untersuchdat_haltung_bewertung.untersuchhal = ?
+                        WHERE untersuchdat_haltung_bewertung.untersuchhal = ?
                         """
                 data = (bw_bs, x)
                 try:
@@ -2796,35 +2796,35 @@ class zustandsklassen_funkt:
         if haltung == True:
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
-                    Untersuchdat_haltung_bewertung.richtung,
-                    Untersuchdat_haltung_bewertung.bw_bs,
-                    Untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.bw_bs,
+                    untersuchdat_haltung_bewertung.createdat,
                     haltungen.haltnam,
                     haltungen.material,
                     haltungen.hoehe,
                     haltungen.createdat
-                FROM Untersuchdat_haltung_bewertung, haltungen
-                WHERE haltungen.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat , 0, 17) = ? 
+                FROM untersuchdat_haltung_bewertung, haltungen
+                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat , 0, 17) = ? 
             """
             data = (date, )
 
@@ -2833,35 +2833,35 @@ class zustandsklassen_funkt:
         if leitung == True:
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
-                    Untersuchdat_haltung_bewertung.richtung,
-                    Untersuchdat_haltung_bewertung.bw_bs,
-                    Untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.bw_bs,
+                    untersuchdat_haltung_bewertung.createdat,
                     anschlussleitungen.leitnam,
                     anschlussleitungen.material,
                     anschlussleitungen.hoehe,
                     anschlussleitungen.createdat
-                FROM Untersuchdat_haltung_bewertung, anschlussleitungen
-                WHERE anschlussleitungen.leitnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat , 0, 17) = ? 
+                FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat , 0, 17) = ? 
             """
             data = (date, )
 
@@ -2870,15 +2870,15 @@ class zustandsklassen_funkt:
 
         for attr in curs.fetchall():
             try:
-                curs.execute("""ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_D TEXT ;""")
+                curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_D TEXT ;""")
             except:
                 pass
             try:
-                curs.execute("""ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_S TEXT ;""")
+                curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_S TEXT ;""")
             except:
                 pass
             try:
-                curs.execute("""ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_B TEXT ;""")
+                curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_B TEXT ;""")
             except:
                 pass
 
@@ -2898,9 +2898,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -2921,9 +2921,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ? 
+                        WHERE untersuchdat_haltung_bewertung.pk = ? 
                         """
                 data = (z, attr[0])
                 try:
@@ -2947,9 +2947,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ? 
+                        WHERE untersuchdat_haltung_bewertung.pk = ? 
                         """
                 data = (z, attr[0])
                 try:
@@ -2970,9 +2970,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ? 
+                        WHERE untersuchdat_haltung_bewertung.pk = ? 
                         """
                 data = (z, attr[0])
                 try:
@@ -2986,9 +2986,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAB" and attr[11] == "A" and (attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3008,9 +3008,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3033,9 +3033,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3056,9 +3056,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3081,9 +3081,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3106,9 +3106,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3120,9 +3120,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and attr[12] == "B":
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3134,9 +3134,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and (attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3148,9 +3148,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAC" and attr[11] == "A":
                 z = '1'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3160,9 +3160,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3172,9 +3172,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3186,9 +3186,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAC" and attr[11] == "B":
                 z = '1'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3198,9 +3198,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3212,9 +3212,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAC" and attr[11] == "C":
                 z = '0'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3223,9 +3223,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3234,9 +3234,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3248,9 +3248,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAD" and attr[11] == "A":
                 z = '2'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3259,9 +3259,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3271,9 +3271,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3285,9 +3285,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAD" and attr[11] == "B" and attr[12] == "A":
                 z = '2'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3296,9 +3296,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3310,9 +3310,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAD" and attr[11] == "B" and attr[12] == "B":
                 z = '1'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3321,9 +3321,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3335,9 +3335,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAD" and attr[11] == "C":
                 z = '0'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3346,9 +3346,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3358,9 +3358,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3372,9 +3372,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAD" and attr[11] == "D":
                 z = '0'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3383,9 +3383,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3394,9 +3394,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3413,9 +3413,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3432,9 +3432,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3447,9 +3447,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3458,9 +3458,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3472,9 +3472,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAF" and attr[11] == "B" and (attr[12] == "A" or attr[12] == "E" or attr[12] == "Z"):
                 z = '3'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3484,9 +3484,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3499,9 +3499,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A"  or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = '3'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3511,9 +3511,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3526,9 +3526,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = '2'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3538,9 +3538,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3553,9 +3553,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = '1'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3565,9 +3565,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3580,9 +3580,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = '3'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3592,9 +3592,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3607,9 +3607,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = '2'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3619,9 +3619,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3634,9 +3634,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = '1'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3646,9 +3646,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3661,9 +3661,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = '1'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3673,9 +3673,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3685,9 +3685,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3699,9 +3699,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAF" and attr[11] == "J" and (attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3711,9 +3711,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3726,9 +3726,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = '3'
                 sql = f"""
-                                      UPDATE Untersuchdat_haltung_bewertung
+                                      UPDATE untersuchdat_haltung_bewertung
                                         SET Zustandsklasse_B = ?
-                                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                                        WHERE untersuchdat_haltung_bewertung.pk = ?
                                         """
                 data = (z, attr[0])
                 try:
@@ -3741,9 +3741,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3753,9 +3753,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3765,9 +3765,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3820,9 +3820,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '5'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3834,9 +3834,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAH" and (attr[11] == "B" or attr[11] == "C" or attr[11] == "D"):
                 z = '2'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3848,9 +3848,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAH" and attr[11] == "E":
                 z = '-'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3862,9 +3862,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAH" and attr[11] == "Z":
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3873,9 +3873,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3887,9 +3887,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAI" and attr[11] == "A" and attr[12] == "A":
                 z = '2'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3899,9 +3899,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3913,9 +3913,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAI" and attr[11] == "A" and (attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
                 z = '2'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3925,9 +3925,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '3'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3950,9 +3950,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -3976,9 +3976,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '5'
                     sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                     data = (z, attr[0])
                     try:
@@ -4000,9 +4000,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '5'
                     sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                     data = (z, attr[0])
                     try:
@@ -4024,9 +4024,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '5'
                     sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                     data = (z, attr[0])
                     try:
@@ -4036,9 +4036,9 @@ class zustandsklassen_funkt:
                         pass
                 z = '4'
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -4061,9 +4061,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4073,9 +4073,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4085,9 +4085,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4111,9 +4111,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '5'
                     sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                     data = (z, attr[0])
                     try:
@@ -4135,9 +4135,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '5'
                     sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                     data = (z, attr[0])
                     try:
@@ -4159,9 +4159,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '5'
                     sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                     data = (z, attr[0])
                     try:
@@ -4171,9 +4171,9 @@ class zustandsklassen_funkt:
                         pass
                 z = '4'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4196,9 +4196,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4210,9 +4210,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "B":
                 z = '4'
                 sql = f"""
-                                    UPDATE Untersuchdat_haltung_bewertung
+                                    UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
-                                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                                    WHERE untersuchdat_haltung_bewertung.pk = ?
                                     """
                 data = (z, attr[0])
                 try:
@@ -4224,9 +4224,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and (attr[11] == "C"):
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -4235,9 +4235,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4249,9 +4249,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "D" and (attr[12] == "A" or attr[12] == "B" or attr[12] == "D"):
                 z = 'Einzelfalletrachtung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4263,9 +4263,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "D" and (attr[12] == "C"):
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Zustandsklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -4274,9 +4274,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4288,9 +4288,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "E":
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4311,9 +4311,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4325,9 +4325,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "F":
                 z = '4'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4339,9 +4339,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "G":
                 z = '4'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4353,9 +4353,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "H":
                 z = '4'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4367,9 +4367,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "I":
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4381,9 +4381,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "J":
                 z = '1'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4395,9 +4395,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "K":
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4407,9 +4407,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4421,9 +4421,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "L":
                 z = '3'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4433,9 +4433,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                                    UPDATE Untersuchdat_haltung_bewertung
+                                    UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_S = ?
-                                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                                    WHERE untersuchdat_haltung_bewertung.pk = ?
                                     """
                 data = (z, attr[0])
                 try:
@@ -4447,9 +4447,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "M":
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4461,9 +4461,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "N":
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4475,9 +4475,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "Z":
                 z = 'Einzelfalletrachtung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4486,9 +4486,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4497,9 +4497,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4511,9 +4511,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "A" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
                 z = '1'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4525,9 +4525,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "B" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4539,9 +4539,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "C" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4553,9 +4553,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "D" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4578,9 +4578,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4592,9 +4592,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "F" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
                 z = '1'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4606,9 +4606,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "G" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
                 z = '3'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4620,9 +4620,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAL" and attr[11] == "Z" and (attr[12]=="A" or attr[12]=="B" or attr[12]=="C" or attr[12]=="D"):
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4631,9 +4631,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4645,9 +4645,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAM" and (attr[11] == "A" or attr[11] == "C"):
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4657,9 +4657,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4671,9 +4671,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAM" and attr[11] == "B":
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4683,9 +4683,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '3'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4697,9 +4697,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAN":
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4708,9 +4708,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4722,9 +4722,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAO":
                 z = '1'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4733,9 +4733,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4747,9 +4747,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAP":
                 z = '1'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4759,9 +4759,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '0'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4773,9 +4773,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBA" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C"):
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4794,9 +4794,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4808,9 +4808,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBB" and attr[11] == "A":
                 z = '3'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4833,9 +4833,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4847,9 +4847,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBC" and (attr[11] == "A" or attr[11] == "B"):
                 z = '4'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4872,9 +4872,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4887,9 +4887,9 @@ class zustandsklassen_funkt:
                     attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "D" or attr[11] == "Z"):
                 z = '1'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4899,9 +4899,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '0'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4920,9 +4920,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4934,9 +4934,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBE" and (attr[11] == "D" or attr[11] == "G"):
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4961,9 +4961,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '5'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4975,9 +4975,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBF" and attr[11] == "A":
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4987,9 +4987,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '3'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -4999,9 +4999,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '4'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5013,9 +5013,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBF" and (attr[11] == "B" or attr[11] == "C"):
                 z = '1'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5025,9 +5025,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5037,9 +5037,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '3'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5051,9 +5051,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBF" and attr[11] == "D":
                 z = '1'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5062,9 +5062,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5074,9 +5074,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '3'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5088,9 +5088,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBG":
                 z = '1'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5100,9 +5100,9 @@ class zustandsklassen_funkt:
                     pass
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5115,9 +5115,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "Z"):
                 z = '-'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5129,9 +5129,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and (attr[11] == "AA" or attr[11] == "AB" or attr[11] == "AC" or attr[11] == "AD" or attr[11] == "AE"):
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                                    UPDATE Untersuchdat_haltung_bewertung
+                                    UPDATE untersuchdat_haltung_bewertung
                                     SET Zustandsklasse_D = ?
-                                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                                    WHERE untersuchdat_haltung_bewertung.pk = ?
                                     """
                 data = (z, attr[0])
                 try:
@@ -5140,9 +5140,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5154,9 +5154,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and (attr[11] == "BA" or attr[11] == "BB" or attr[11] == "BC"):
                 z = 'Einzelfallbetrachtung'
                 sql = f"""
-                            UPDATE Untersuchdat_haltung_bewertung
+                            UPDATE untersuchdat_haltung_bewertung
                             SET Zustandsklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                 data = (z, attr[0])
                 try:
@@ -5165,9 +5165,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5179,9 +5179,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDE" and (attr[11] == "A" or attr[11] == "C" or attr[11] == "D" or attr[11] == "E") and attr[12] == "A":
                 z = '1'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5193,9 +5193,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDE" and (attr[11] == "A" or attr[11] == "C" or attr[11] == "D" or attr[11] == "E") and attr[12] == "B":
                 z = '2'
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
                 data = (z, attr[0])
                 try:
@@ -5207,9 +5207,9 @@ class zustandsklassen_funkt:
 
             z = '-'
             sql = f"""
-                UPDATE Untersuchdat_haltung_bewertung
+                UPDATE untersuchdat_haltung_bewertung
                 SET Zustandsklasse_D = ?
-                WHERE Untersuchdat_haltung_bewertung.pk = ?
+                WHERE untersuchdat_haltung_bewertung.pk = ?
                 """
             data = (z, attr[0])
             try:
@@ -5218,9 +5218,9 @@ class zustandsklassen_funkt:
             except:
                 pass
             sql = f"""
-                UPDATE Untersuchdat_haltung_bewertung
+                UPDATE untersuchdat_haltung_bewertung
                 SET Zustandsklasse_B = ?
-                WHERE Untersuchdat_haltung_bewertung.pk = ?
+                WHERE untersuchdat_haltung_bewertung.pk = ?
                 """
             data = (z, attr[0])
             try:
@@ -5229,9 +5229,9 @@ class zustandsklassen_funkt:
             except:
                 pass
             sql = f"""
-                UPDATE Untersuchdat_haltung_bewertung
+                UPDATE untersuchdat_haltung_bewertung
                 SET Zustandsklasse_S = ?
-                WHERE Untersuchdat_haltung_bewertung.pk = ?
+                WHERE untersuchdat_haltung_bewertung.pk = ?
                 """
             data = (z, attr[0])
             try:
@@ -5241,7 +5241,7 @@ class zustandsklassen_funkt:
                 pass
             z = '5'
             sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_D = ?
                     WHERE Zustandsklasse_D is Null
                     """
@@ -5252,7 +5252,7 @@ class zustandsklassen_funkt:
             except:
                 pass
             sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_B = ?
                     WHERE Zustandsklasse_B is Null
                     """
@@ -5263,7 +5263,7 @@ class zustandsklassen_funkt:
             except:
                 pass
             sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Zustandsklasse_S = ?
                     WHERE Zustandsklasse_S is Null
                     """
@@ -5325,9 +5325,9 @@ class zustandsklassen_funkt:
                 curs.execute("""UPDATE haltungen_untersucht_bewertung 
                                 SET objektklasse_dichtheit =
                                 (SELECT min(Zustandsklasse_D) 
-                                FROM Untersuchdat_haltung_bewertung
-                                WHERE Untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_D <> '-'
-                                GROUP BY Untersuchdat_haltung_bewertung.untersuchhal);""")
+                                FROM untersuchdat_haltung_bewertung
+                                WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_D <> '-'
+                                GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
                 db.commit()
             except:
                 pass
@@ -5336,9 +5336,9 @@ class zustandsklassen_funkt:
                 curs.execute("""UPDATE haltungen_untersucht_bewertung 
                                 SET objektklasse_standsicherheit =
                                 (SELECT min(Zustandsklasse_S) 
-                                FROM Untersuchdat_haltung_bewertung
-                                WHERE Untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_S <> '-'
-                                GROUP BY Untersuchdat_haltung_bewertung.untersuchhal);""")
+                                FROM untersuchdat_haltung_bewertung
+                                WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_S <> '-'
+                                GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
                 db.commit()
             except:
                 pass
@@ -5347,9 +5347,9 @@ class zustandsklassen_funkt:
                 curs.execute("""UPDATE haltungen_untersucht_bewertung 
                                 SET objektklasse_betriebssicherheit =
                                 (SELECT min(Zustandsklasse_B) 
-                                FROM Untersuchdat_haltung_bewertung
-                                WHERE Untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_B <> '-'
-                                GROUP BY Untersuchdat_haltung_bewertung.untersuchhal);""")
+                                FROM untersuchdat_haltung_bewertung
+                                WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_B <> '-'
+                                GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
                 db.commit()
             except:
                 pass
@@ -5394,7 +5394,7 @@ class zustandsklassen_funkt:
             except:
                 pass
 
-        sql = """SELECT RecoverGeometryColumn('Untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
         data = (crs,)
         try:
             curs.execute(sql, data)
@@ -5413,14 +5413,14 @@ class zustandsklassen_funkt:
         uri = QgsDataSourceUri()
         uri.setDatabase(db_x)
         schema = ''
-        table = 'Untersuchdat_haltung_bewertung'
+        table = 'untersuchdat_haltung_bewertung'
         geom_column = 'geom'
         uri.setDataSource(schema, table, geom_column)
-        Untersuchdat_haltung_bewertung = 'Untersuchdat_haltung_bewertung'
-        vlayer = QgsVectorLayer(uri.uri(), Untersuchdat_haltung_bewertung, 'spatialite')
+        untersuchdat_haltung_bewertung = 'untersuchdat_haltung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_haltung_bewertung, 'spatialite')
         x = QgsProject.instance()
         try:
-            x.removeMapLayer(x.mapLayersByName(Untersuchdat_haltung_bewertung)[0].id())
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_haltung_bewertung)[0].id())
         except:
             pass
 
@@ -8702,7 +8702,7 @@ class zustandsklassen_funkt:
 
         # nach Isybau
 
-        sql = """CREATE TABLE IF NOT EXISTS Untersuchdat_haltung_bewertung AS SELECT * FROM Untersuchdat_haltung"""
+        sql = """CREATE TABLE IF NOT EXISTS untersuchdat_haltung_bewertung AS SELECT * FROM untersuchdat_haltung"""
         curs1.execute(sql)
 
         if haltung == True:
@@ -8711,8 +8711,8 @@ class zustandsklassen_funkt:
                     haltungen.haltnam,
                     haltungen.material,
                     haltungen.hoehe,
-                    Untersuchdat_haltung_bewertung.untersuchhal
-                FROM haltungen, Untersuchdat_haltung_bewertung
+                    untersuchdat_haltung_bewertung.untersuchhal
+                FROM haltungen, untersuchdat_haltung_bewertung
             """
 
         if leitung == True:
@@ -8721,8 +8721,8 @@ class zustandsklassen_funkt:
                     anschlussleitungen.leitnam,
                     anschlussleitungen.material,
                     anschlussleitungen.hoehe,
-                    Untersuchdat_haltung_bewertung.untersuchhal
-                FROM anschlussleitungen, Untersuchdat_haltung_bewertung
+                    untersuchdat_haltung_bewertung.untersuchhal
+                FROM anschlussleitungen, untersuchdat_haltung_bewertung
             """
 
         try:
@@ -8735,7 +8735,7 @@ class zustandsklassen_funkt:
         for attr1 in curs1.fetchall():
             untersuchhalt = attr1[0]
             try:
-                curs1.execute("""ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN bw_bs TEXT;""")
+                curs1.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN bw_bs TEXT;""")
             except:
                 pass
 
@@ -8745,9 +8745,9 @@ class zustandsklassen_funkt:
                 x = attr1[0]
 
                 sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                         SET bw_bs = ?
-                        WHERE Untersuchdat_haltung_bewertung.untersuchhal = ?
+                        WHERE untersuchdat_haltung_bewertung.untersuchhal = ?
                         """
                 data = (bw_bs, x)
                 try:
@@ -8760,9 +8760,9 @@ class zustandsklassen_funkt:
                 x = attr1[0]
 
                 sql = f"""
-                      UPDATE Untersuchdat_haltung_bewertung
+                      UPDATE untersuchdat_haltung_bewertung
                         SET bw_bs = ?
-                        WHERE Untersuchdat_haltung_bewertung.untersuchhal = ?
+                        WHERE untersuchdat_haltung_bewertung.untersuchhal = ?
                         """
                 data = (bw_bs, x)
                 try:
@@ -8778,35 +8778,35 @@ class zustandsklassen_funkt:
         if haltung == True:
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
-                    Untersuchdat_haltung_bewertung.richtung,
-                    Untersuchdat_haltung_bewertung.bw_bs,
-                    Untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.bw_bs,
+                    untersuchdat_haltung_bewertung.createdat,
                     haltungen.haltnam,
                     haltungen.material,
                     haltungen.hoehe,
                     haltungen.createdat
-                FROM Untersuchdat_haltung_bewertung, Haltungen
-                WHERE haltungen.haltnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
+                FROM untersuchdat_haltung_bewertung, Haltungen
+                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ?
             """
             data = (date, )
             curs.execute(sql, data)
@@ -8814,35 +8814,35 @@ class zustandsklassen_funkt:
         if leitung == True:
             sql = """
                 SELECT
-                    Untersuchdat_haltung_bewertung.pk,
-                    Untersuchdat_haltung_bewertung.untersuchhal,
-                    Untersuchdat_haltung_bewertung.untersuchrichtung,
-                    Untersuchdat_haltung_bewertung.schoben,
-                    Untersuchdat_haltung_bewertung.schunten,
-                    Untersuchdat_haltung_bewertung.id,
-                    Untersuchdat_haltung_bewertung.videozaehler,
-                    Untersuchdat_haltung_bewertung.inspektionslaenge,
-                    Untersuchdat_haltung_bewertung.station,
-                    Untersuchdat_haltung_bewertung.timecode,
-                    Untersuchdat_haltung_bewertung.kuerzel,
-                    Untersuchdat_haltung_bewertung.charakt1,
-                    Untersuchdat_haltung_bewertung.charakt2,
-                    Untersuchdat_haltung_bewertung.quantnr1,
-                    Untersuchdat_haltung_bewertung.quantnr2,
-                    Untersuchdat_haltung_bewertung.streckenschaden,
-                    Untersuchdat_haltung_bewertung.pos_von,
-                    Untersuchdat_haltung_bewertung.pos_bis,
-                    Untersuchdat_haltung_bewertung.foto_dateiname,
-                    Untersuchdat_haltung_bewertung.film_dateiname,
-                    Untersuchdat_haltung_bewertung.richtung,
-                    Untersuchdat_haltung_bewertung.bw_bs,
-                    Untersuchdat_haltung_bewertung.createdat,
+                    untersuchdat_haltung_bewertung.pk,
+                    untersuchdat_haltung_bewertung.untersuchhal,
+                    untersuchdat_haltung_bewertung.untersuchrichtung,
+                    untersuchdat_haltung_bewertung.schoben,
+                    untersuchdat_haltung_bewertung.schunten,
+                    untersuchdat_haltung_bewertung.id,
+                    untersuchdat_haltung_bewertung.videozaehler,
+                    untersuchdat_haltung_bewertung.inspektionslaenge,
+                    untersuchdat_haltung_bewertung.station,
+                    untersuchdat_haltung_bewertung.timecode,
+                    untersuchdat_haltung_bewertung.kuerzel,
+                    untersuchdat_haltung_bewertung.charakt1,
+                    untersuchdat_haltung_bewertung.charakt2,
+                    untersuchdat_haltung_bewertung.quantnr1,
+                    untersuchdat_haltung_bewertung.quantnr2,
+                    untersuchdat_haltung_bewertung.streckenschaden,
+                    untersuchdat_haltung_bewertung.pos_von,
+                    untersuchdat_haltung_bewertung.pos_bis,
+                    untersuchdat_haltung_bewertung.foto_dateiname,
+                    untersuchdat_haltung_bewertung.film_dateiname,
+                    untersuchdat_haltung_bewertung.richtung,
+                    untersuchdat_haltung_bewertung.bw_bs,
+                    untersuchdat_haltung_bewertung.createdat,
                     anschlussleitungen.leitnam,
                     anschlussleitungen.material,
                     anschlussleitungen.hoehe,
                     anschlussleitungen.createdat
-                FROM Untersuchdat_haltung_bewertung, anschlussleitungen
-                WHERE anschlussleitungen.leitnam = Untersuchdat_haltung_bewertung.untersuchhal AND substr(Untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
+                FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND substr(untersuchdat_haltung_bewertung.createdat, 0, 17) = ? 
             """
             data = (date, )
             curs.execute(sql, data)
@@ -8850,15 +8850,15 @@ class zustandsklassen_funkt:
 
         for attr in curs.fetchall():
             try:
-                curs.execute("""ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN Schadensklasse_D TEXT ;""")
+                curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Schadensklasse_D TEXT ;""")
             except:
                 pass
             try:
-                curs.execute("""ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN Schadensklasse_S TEXT ;""")
+                curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Schadensklasse_S TEXT ;""")
             except:
                 pass
             try:
-                curs.execute("""ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN Schadensklasse_B TEXT ;""")
+                curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Schadensklasse_B TEXT ;""")
             except:
                 pass
 
@@ -8872,9 +8872,9 @@ class zustandsklassen_funkt:
                 else:
                     z='0'
                 sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                 data=(z, attr[0])
                 try:
@@ -8895,9 +8895,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ? 
+                            WHERE untersuchdat_haltung_bewertung.pk = ? 
                             """
                 data = (z, attr[0])
                 try:
@@ -8920,9 +8920,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ? 
+                            WHERE untersuchdat_haltung_bewertung.pk = ? 
                             """
                 data = (z, attr[0])
                 try:
@@ -8944,9 +8944,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ? 
+                            WHERE untersuchdat_haltung_bewertung.pk = ? 
                             """
                 data = (z, attr[0])
                 try:
@@ -8962,9 +8962,9 @@ class zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -8973,9 +8973,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -8988,9 +8988,9 @@ class zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
                     z = '3'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9011,9 +9011,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '0'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9024,9 +9024,9 @@ class zustandsklassen_funkt:
                 if (attr[11] == "B" or attr[11] == "C") and attr[12] == "B":
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9039,9 +9039,9 @@ class zustandsklassen_funkt:
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
                     z = '4'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9055,9 +9055,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "A":
                     z = '3'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9068,9 +9068,9 @@ class zustandsklassen_funkt:
                 if (attr[11] == "A" or attr[11] == "B"):
                     z = '4'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9080,9 +9080,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '3'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9094,9 +9094,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "C":
                     z = '5'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9105,9 +9105,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9116,9 +9116,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9131,9 +9131,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "A":
                     z = '3'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9142,9 +9142,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9154,9 +9154,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '2'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9168,9 +9168,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "B" and (attr[12] == "A" or attr[12] == "B"):
                     z = '3'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9179,9 +9179,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9193,9 +9193,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "C":
                     z = '5'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9204,9 +9204,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9215,9 +9215,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9229,9 +9229,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "D":
                     z = '5'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9240,9 +9240,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9251,9 +9251,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9271,9 +9271,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                 data = (z, attr[0])
                 try:
@@ -9290,9 +9290,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                 data = (z, attr[0])
                 try:
@@ -9305,9 +9305,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "A" and (attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9316,9 +9316,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9330,9 +9330,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "B" and (attr[12] == "A" or attr[12] == "E" or attr[12] == "Z"):
                     z = '2'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9342,9 +9342,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9358,9 +9358,9 @@ class zustandsklassen_funkt:
                     12] == "Z"):
                     z = '2'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9370,9 +9370,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9386,9 +9386,9 @@ class zustandsklassen_funkt:
                     12] == "Z"):
                     z = '3'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9398,9 +9398,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9414,9 +9414,9 @@ class zustandsklassen_funkt:
                     12] == "Z"):
                     z = '4'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9426,9 +9426,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9442,9 +9442,9 @@ class zustandsklassen_funkt:
                     12] == "Z"):
                     z = '2'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9454,9 +9454,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9470,9 +9470,9 @@ class zustandsklassen_funkt:
                     12] == "Z"):
                     z = '3'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9482,9 +9482,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9498,9 +9498,9 @@ class zustandsklassen_funkt:
                     12] == "Z"):
                     z = '4'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9510,9 +9510,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9526,9 +9526,9 @@ class zustandsklassen_funkt:
                     12] == "Z"):
                     z = '5'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9538,9 +9538,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '4'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9550,9 +9550,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9565,9 +9565,9 @@ class zustandsklassen_funkt:
                         attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or attr[12] == "Z"):
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9577,9 +9577,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9593,9 +9593,9 @@ class zustandsklassen_funkt:
                     12] == "Z"):
                     z = '2'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9609,9 +9609,9 @@ class zustandsklassen_funkt:
                     12] == "Z"):
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9620,9 +9620,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9631,9 +9631,9 @@ class zustandsklassen_funkt:
                     except:
                         pass
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9656,9 +9656,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                            UPDATE Untersuchdat_haltung_bewertung
+                            UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                 data = (z, attr[0])
                 try:
@@ -9671,9 +9671,9 @@ class zustandsklassen_funkt:
                 if (attr[11] == "B" or attr[11] == "C" or attr[11] == "D"):
                     z = '3'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9685,9 +9685,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "Z":
                     z = '2'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9700,9 +9700,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "A" and attr[12] == "A":
                     z = '3'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9712,9 +9712,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '1'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9726,9 +9726,9 @@ class zustandsklassen_funkt:
                 if attr[11] == "A" and (attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
                     z = '3'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9738,9 +9738,9 @@ class zustandsklassen_funkt:
                         pass
                     z = '2'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9763,9 +9763,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '0'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9789,9 +9789,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '0'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9813,9 +9813,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '0'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9837,9 +9837,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '0'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9849,9 +9849,9 @@ class zustandsklassen_funkt:
                         pass
                 z = '1'
                 sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                 data = (z, attr[0])
                 try:
@@ -9874,9 +9874,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -9886,9 +9886,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '1'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -9903,9 +9903,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -9929,9 +9929,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '0'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9953,9 +9953,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '0'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9977,9 +9977,9 @@ class zustandsklassen_funkt:
                     else:
                         z = '0'
                     sql = f"""
-                          UPDATE Untersuchdat_haltung_bewertung
+                          UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_D = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -9989,9 +9989,9 @@ class zustandsklassen_funkt:
                         pass
                 z = '1'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10014,9 +10014,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10028,9 +10028,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "B":
                 z = '1'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10042,9 +10042,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "C":
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10053,9 +10053,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10068,9 +10068,9 @@ class zustandsklassen_funkt:
                 if (attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
                     z = '2'
                     sql = f"""
-                            UPDATE Untersuchdat_haltung_bewertung
+                            UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_B = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -10081,9 +10081,9 @@ class zustandsklassen_funkt:
                 if attr[12] == "C":
                     z = '3'
                     sql = f"""
-                            UPDATE Untersuchdat_haltung_bewertung
+                            UPDATE untersuchdat_haltung_bewertung
                             SET Schadensklasse_S = ?
-                            WHERE Untersuchdat_haltung_bewertung.pk = ?
+                            WHERE untersuchdat_haltung_bewertung.pk = ?
                             """
                     data = (z, attr[0])
                     try:
@@ -10096,9 +10096,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "E":
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10119,9 +10119,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10133,9 +10133,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "F":
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10147,9 +10147,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "G":
                 z = '1'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10161,9 +10161,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "H":
                 z = '1'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10175,9 +10175,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "I":
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10189,9 +10189,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "J":
                 z = '4'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10203,9 +10203,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "K":
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10217,9 +10217,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "L":
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10228,9 +10228,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10242,9 +10242,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "M":
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10256,9 +10256,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "N":
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10270,9 +10270,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAK" and attr[11] == "Z":
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10281,9 +10281,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10293,9 +10293,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10308,9 +10308,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
                 z = '4'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10323,9 +10323,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10349,9 +10349,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10364,9 +10364,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
                 z = '4'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10379,9 +10379,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10394,9 +10394,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D"):
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10405,9 +10405,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10419,9 +10419,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAM" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C"):
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10432,9 +10432,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAM" and (attr[11] == "A" or attr[11] == "C"):
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10446,9 +10446,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAM" and attr[11] == "B":
                 z = '1'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10460,9 +10460,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAN":
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10471,9 +10471,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10485,9 +10485,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAO":
                 z = '4'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10496,9 +10496,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10510,9 +10510,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BAP":
                 z = '4'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10522,9 +10522,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '5'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10536,9 +10536,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBA" and (attr[11] == "A" or attr[11] == "B" or attr[11] == "C"):
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10557,9 +10557,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10580,9 +10580,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10605,9 +10605,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10620,9 +10620,9 @@ class zustandsklassen_funkt:
                     attr[11] == "A" or attr[11] == "B" or attr[11] == "C" or attr[11] == "D" or attr[11] == "Z"):
                 z = '4'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10632,9 +10632,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '5'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10653,9 +10653,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10667,9 +10667,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBE" and (attr[11] == "D" or attr[11] == "G"):
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10694,9 +10694,9 @@ class zustandsklassen_funkt:
                 else:
                     z = '0'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10708,9 +10708,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBF" and (attr[11] == "A" or attr[11] == "B"):
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10720,9 +10720,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10732,9 +10732,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '1'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10746,9 +10746,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBF" and (attr[11] == "C"):
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10759,9 +10759,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBF" and (attr[11] == "D"):
                 z = '4'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10772,9 +10772,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBF" and (attr[11] == "C" or attr[11] == "D"):
                 z = '4'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10784,9 +10784,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10798,9 +10798,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BBG":
                 z = '4'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10810,9 +10810,9 @@ class zustandsklassen_funkt:
                     pass
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10825,9 +10825,9 @@ class zustandsklassen_funkt:
                     attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "Z"):
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10839,9 +10839,9 @@ class zustandsklassen_funkt:
             if attr[10] == "BDB" and attr[11] == "A":
                 z = '2'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10850,9 +10850,9 @@ class zustandsklassen_funkt:
                 except:
                     pass
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10865,9 +10865,9 @@ class zustandsklassen_funkt:
                 12] == "A":
                 z = '4'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10880,9 +10880,9 @@ class zustandsklassen_funkt:
                 12] == "B":
                 z = '3'
                 sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
-                        WHERE Untersuchdat_haltung_bewertung.pk = ?
+                        WHERE untersuchdat_haltung_bewertung.pk = ?
                         """
                 data = (z, attr[0])
                 try:
@@ -10894,9 +10894,9 @@ class zustandsklassen_funkt:
 
             z = '-'
             sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Schadensklasse_D = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
             data = (z, attr[0])
             try:
@@ -10905,9 +10905,9 @@ class zustandsklassen_funkt:
             except:
                 pass
             sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Schadensklasse_B = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
             data = (z, attr[0])
             try:
@@ -10916,9 +10916,9 @@ class zustandsklassen_funkt:
             except:
                 pass
             sql = f"""
-                    UPDATE Untersuchdat_haltung_bewertung
+                    UPDATE untersuchdat_haltung_bewertung
                     SET Schadensklasse_S = ?
-                    WHERE Untersuchdat_haltung_bewertung.pk = ?
+                    WHERE untersuchdat_haltung_bewertung.pk = ?
                     """
             data = (z, attr[0])
             try:
@@ -10928,7 +10928,7 @@ class zustandsklassen_funkt:
                 pass
             z = '-'
             sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_D = ?
                         WHERE Schadensklasse_D is Null
                         """
@@ -10939,7 +10939,7 @@ class zustandsklassen_funkt:
             except:
                 pass
             sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_B = ?
                         WHERE Schadensklasse_B is Null
                         """
@@ -10950,7 +10950,7 @@ class zustandsklassen_funkt:
             except:
                 pass
             sql = f"""
-                        UPDATE Untersuchdat_haltung_bewertung
+                        UPDATE untersuchdat_haltung_bewertung
                         SET Schadensklasse_S = ?
                         WHERE Schadensklasse_S is Null
                         """
@@ -10965,25 +10965,25 @@ class zustandsklassen_funkt:
 
         try:
             curs.execute(
-                """ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN vorlaufige_Schadenszahl_D INTEGER ;""")
+                """ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN vorlaufige_Schadenszahl_D INTEGER ;""")
         except:
             pass
 
         try:
             curs.execute(
-                """ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN vorlaufige_Schadenszahl_B INTEGER ;""")
+                """ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN vorlaufige_Schadenszahl_B INTEGER ;""")
         except:
             pass
 
         try:
             curs.execute(
-                """ALTER TABLE Untersuchdat_haltung_bewertung ADD COLUMN vorlaufige_Schadenszahl_S INTEGER ;""")
+                """ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN vorlaufige_Schadenszahl_S INTEGER ;""")
         except:
             pass
 
         try:
             curs.execute(
-                """UPDATE Untersuchdat_haltung_bewertung
+                """UPDATE untersuchdat_haltung_bewertung
                     SET vorlaufige_Schadenszahl_D = (Case 
                     WHEN Schadensklasse_D = 1  THEN 10
                     WHEN Schadensklasse_D = 2  THEN 100
@@ -10998,7 +10998,7 @@ class zustandsklassen_funkt:
 
         try:
             curs.execute(
-                """UPDATE Untersuchdat_haltung_bewertung
+                """UPDATE untersuchdat_haltung_bewertung
                     SET vorlaufige_Schadenszahl_B = (Case 
                     WHEN Schadensklasse_B = 1  THEN 10
                     WHEN Schadensklasse_B = 2  THEN 100
@@ -11013,7 +11013,7 @@ class zustandsklassen_funkt:
 
         try:
             curs.execute(
-                """UPDATE Untersuchdat_haltung_bewertung
+                """UPDATE untersuchdat_haltung_bewertung
                     SET vorlaufige_Schadenszahl_S = (Case 
                     WHEN Schadensklasse_S = 1  THEN 10
                     WHEN Schadensklasse_S = 2  THEN 100
@@ -11026,7 +11026,7 @@ class zustandsklassen_funkt:
         except:
             pass
 
-        sql = """SELECT RecoverGeometryColumn('Untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+        sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
         data=(crs,)
         try:
             curs.execute(sql, data)
@@ -11038,14 +11038,14 @@ class zustandsklassen_funkt:
         uri = QgsDataSourceUri()
         uri.setDatabase(db_x)
         schema = ''
-        table = 'Untersuchdat_haltung_bewertung'
+        table = 'untersuchdat_haltung_bewertung'
         geom_column = 'geom'
         uri.setDataSource(schema, table, geom_column)
-        Untersuchdat_haltung_bewertung = 'Untersuchdat_haltung_bewertung'
-        vlayer = QgsVectorLayer(uri.uri(), Untersuchdat_haltung_bewertung, 'spatialite')
+        untersuchdat_haltung_bewertung = 'untersuchdat_haltung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), untersuchdat_haltung_bewertung, 'spatialite')
         x = QgsProject.instance()
         try:
-            x.removeMapLayer(x.mapLayersByName(Untersuchdat_haltung_bewertung)[0].id())
+            x.removeMapLayer(x.mapLayersByName(untersuchdat_haltung_bewertung)[0].id())
         except:
             pass
 

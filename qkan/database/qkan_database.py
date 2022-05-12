@@ -131,29 +131,26 @@ def createdbtables(
         """CREATE TABLE haltungen (
             pk INTEGER PRIMARY KEY,
             haltnam TEXT,
-            schoben TEXT,
-            schunten TEXT,
-            hoehe REAL,             -- Profilhoehe (m)
-            breite REAL,            -- Profilbreite (m)
-            laenge REAL,
-            sohleoben REAL,
-            sohleunten REAL,
-            deckeloben REAL,
-            deckelunten REAL,
-            teilgebiet TEXT,
-            qzu REAL,
-            profilnam TEXT DEFAULT 'Kreisquerschnitt',
-            entwart TEXT DEFAULT 'Regenwasser',
+            schoben TEXT,                                   -- join schaechte.schnam
+            schunten TEXT,                                  -- join schaechte.schnam
+            hoehe REAL,                                     -- Profilhoehe (m)
+            breite REAL,                                    -- Profilbreite (m)
+            laenge REAL,                                    -- abweichende Haltungslänge (m)
+            sohleoben REAL,                                 -- abweichende Sohlhöhe oben (m)
+            sohleunten REAL,                                -- abweichende Sohlhöhe unten (m)
+            teilgebiet TEXT,                                -- join teilgebiet.tgnam
+            profilnam TEXT DEFAULT 'Kreisquerschnitt',      -- join profile.profilnam
+            entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             material TEXT,
-            ks REAL DEFAULT 1.5,
-            haltungstyp TEXT DEFAULT 'Haltung',
-            simstatus TEXT DEFAULT 'vorhanden',
-            kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP,
+            ks REAL DEFAULT 1.5,                            -- abs. Rauheit (Prandtl-Colebrook)
+            haltungstyp TEXT DEFAULT 'Haltung',             -- join haltungstypen.bezeichnung
+            simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
             xschob REAL,
             yschob REAL,
             xschun REAL,
-            yschun REAL)""",
+            yschun REAL,
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg),
         "SELECT CreateSpatialIndex('haltungen','geom')",
     ]
@@ -247,25 +244,25 @@ def createdbtables(
 
     sqls = [
         """CREATE TABLE haltungen_untersucht(
-             pk INTEGER PRIMARY KEY,
-             haltnam TEXT,
-             schoben TEXT,
-             schunten TEXT,
-             hoehe REAL,
-             breite REAL,
-             laenge REAL,
-             kommentar TEXT,
-             createdat TEXT DEFAULT CURRENT_TIMESTAMP,
-             baujahr INTEGER,
-             untersuchtag TEXT,
-             untersucher TEXT,
-             wetter INTEGER DEFAULT 0,
-             bewertungsart INTEGER DEFAULT 0,
-             bewertungstag TEXT,
-             xschob REAL,
-             yschob REAL,
-             xschun REAL,
-             yschun REAL)""",
+            pk INTEGER PRIMARY KEY,
+            haltnam TEXT,
+            schoben TEXT,                                   -- join schaechte.schnam
+            schunten TEXT,                                  -- join schaechte.schnam
+            hoehe REAL,                                     -- Profilhoehe (m)
+            breite REAL,                                    -- Profilbreite (m)
+            laenge REAL,                                    -- abweichende Haltungslänge (m)
+            baujahr INTEGER,
+            untersuchtag TEXT,
+            untersucher TEXT,
+            wetter INTEGER DEFAULT 0,
+            bewertungsart INTEGER DEFAULT 0,
+            bewertungstag TEXT,
+            xschob REAL,
+            yschob REAL,
+            xschun REAL,
+            yschun REAL,
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('haltungen_untersucht','geom',{},'LINESTRING',2)".format(epsg),
         "SELECT CreateSpatialIndex('haltungen_untersucht','geom')"
     ]
@@ -339,12 +336,12 @@ def createdbtables(
     # untersuchungsdaten Haltung
 
     sqls = [
-        """CREATE TABLE Untersuchdat_haltung (
+        """CREATE TABLE untersuchdat_haltung (
             pk INTEGER PRIMARY KEY,
             untersuchhal TEXT,
             untersuchrichtung TEXT,
-            schoben TEXT, 
-            schunten TEXT,
+            schoben TEXT,                                   -- join schaechte.schnam 
+            schunten TEXT,                                  -- join schaechte.schnam
             id INTEGER,
             videozaehler INTEGER,
             inspektionslaenge REAL,
@@ -366,8 +363,8 @@ def createdbtables(
             ordner_video TEXT,
             richtung TEXT,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
-        "SELECT AddGeometryColumn('Untersuchdat_haltung','geom',{},'LINESTRING',2)".format(epsg),
-        "SELECT CreateSpatialIndex('Untersuchdat_haltung','geom')",
+        "SELECT AddGeometryColumn('untersuchdat_haltung','geom',{},'LINESTRING',2)".format(epsg),
+        "SELECT CreateSpatialIndex('untersuchdat_haltung','geom')",
     ]
     for sql in sqls:
         try:
@@ -375,7 +372,7 @@ def createdbtables(
         except BaseException as err:
             fehlermeldung(
                 "qkan_database.createdbtables: {}".format(err),
-                'Tabelle "Untersuchdat_Haltungen" konnte nicht erstellt werden.',
+                'Tabelle "untersuchdat_haltungen" konnte nicht erstellt werden.',
             )
             consl.close()
             return False
@@ -384,7 +381,7 @@ def createdbtables(
                   SELECT
                     untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
                         charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, createdat
-                  FROM Untersuchdat_haltung;"""
+                  FROM untersuchdat_haltung;"""
     try:
         cursl.execute(sql)
     except BaseException as err:
@@ -605,28 +602,28 @@ def createdbtables(
         """CREATE TABLE anschlussleitungen (
             pk INTEGER PRIMARY KEY,
             leitnam TEXT,
-            schoben TEXT,
-            schunten TEXT,
-            hoehe REAL,
-            breite REAL,
-            laenge REAL,
-            sohleoben REAL,
-            sohleunten REAL,
+            schoben TEXT,                                   -- join schaechte.schnam
+            schunten TEXT,                                  -- join schaechte.schnam
+            hoehe REAL,                                     -- Profilhoehe (m)
+            breite REAL,                                    -- Profilbreite (m)
+            laenge REAL,                                    -- abweichende Haltungslänge (m)
+            sohleoben REAL,                                 -- abweichende Sohlhöhe oben (m)
+            sohleunten REAL,                                -- abweichende Sohlhöhe unten (m)
             deckeloben REAL,
             deckelunten REAL,
-            teilgebiet TEXT,
+            teilgebiet TEXT,                                -- join teilgebiet.tgnam
             qzu REAL,
             profilnam TEXT DEFAULT 'Kreisquerschnitt',
-            entwart TEXT DEFAULT 'Regenwasser',
+            entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             material TEXT,
             ks REAL DEFAULT 1.5,
-            simstatus TEXT DEFAULT 'vorhanden',
-            kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP,
+            simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
             xschob REAL,
             yschob REAL,
             xschun REAL,
-            yschun REAL)""",
+            yschun REAL,
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('anschlussleitungen','geom',{},'LINESTRING',2)".format(epsg),
         "SELECT CreateSpatialIndex('anschlussleitungen','geom')",
     ]
@@ -716,18 +713,18 @@ def createdbtables(
             durchm REAL,
             druckdicht INTEGER, 
             ueberstauflaeche REAL DEFAULT 0,
-            entwart TEXT DEFAULT 'Regenwasser',
+            entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             strasse TEXT,
-            teilgebiet TEXT,
-            knotentyp TEXT,
-            auslasstyp TEXT,
-            schachttyp TEXT DEFAULT 'Schacht', 
-            simstatus TEXT DEFAULT 'vorhanden',
+            teilgebiet TEXT,                                -- join teilgebiet.tgnam
+            knotentyp TEXT,                                 -- join knotentypen.knotentyp
+            auslasstyp TEXT,                                -- join auslasstypen.bezeichnung
+            schachttyp TEXT DEFAULT 'Schacht',              -- join schachttypen.schachttyp
+            simstatus TEXT DEFAULT 'vorhanden',             -- join simulationsstatus.bezeichnung
             material TEXT,
-            kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP,
             xsch REAL, 
-            ysch REAL)""",
+            ysch REAL,
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         """SELECT AddGeometryColumn('schaechte','geop',{},'POINT',2);""".format(epsg),
         """SELECT AddGeometryColumn('schaechte','geom',{},'MULTIPOLYGON',2);""".format(epsg),
         """SELECT CreateSpatialIndex('schaechte','geom')""",
@@ -827,14 +824,14 @@ def createdbtables(
             pk INTEGER PRIMARY KEY,
             schnam TEXT, 
             durchm REAL,
-            kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP,
             baujahr INTEGER,
             untersuchtag TEXT, 
             untersucher TEXT, 
             wetter INTEGER DEFAULT 0, 
             bewertungsart INTEGER DEFAULT 0, 
-            bewertungstag TEXT
+            bewertungstag TEXT,
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP
             )""",
         """SELECT AddGeometryColumn('schaechte_untersucht','geop',{},'POINT',2);""".format(epsg),
         """SELECT CreateSpatialIndex('schaechte_untersucht','geop')""",
@@ -897,7 +894,7 @@ def createdbtables(
     # untersuchungsdaten Schaechte
 
     sqls = [
-        """CREATE TABLE Untersuchdat_schacht (
+        """CREATE TABLE untersuchdat_schacht (
             pk INTEGER PRIMARY KEY,
             untersuchsch TEXT,
             id INTEGER,
@@ -977,11 +974,11 @@ def createdbtables(
     # Profile ------------------------------------------------------------------
 
     sql = """CREATE TABLE profile (
-    pk INTEGER PRIMARY KEY,
-    profilnam TEXT,
-    he_nr INTEGER,
-    mu_nr INTEGER,
-    kp_key TEXT)"""
+            pk INTEGER PRIMARY KEY,
+            profilnam TEXT,
+            he_nr INTEGER,
+            mu_nr INTEGER,
+            kp_key TEXT)"""
 
     try:
         cursl.execute(sql)
@@ -1047,34 +1044,15 @@ def createdbtables(
 
     consl.commit()
 
-    # Geometrie Sonderprofile --------------------------------------------------
-
-    sql = """CREATE TABLE profildaten (
-    pk INTEGER PRIMARY KEY, 
-    profilnam TEXT, 
-    wspiegel REAL, 
-    wbreite REAL)"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabelle "profildaten" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-    consl.commit()
-
     # Entwaesserungssysteme ----------------------------------------------------
 
     sql = """CREATE TABLE entwaesserungsarten (
-    pk INTEGER PRIMARY KEY, 
-    kuerzel TEXT, 
-    bezeichnung TEXT, 
-    bemerkung TEXT, 
-    he_nr INTEGER, 
-    kp_nr INTEGER)"""
+            pk INTEGER PRIMARY KEY, 
+            kuerzel TEXT, 
+            bezeichnung TEXT, 
+            bemerkung TEXT, 
+            he_nr INTEGER, 
+            kp_nr INTEGER)"""
 
     try:
         cursl.execute(sql)
@@ -1113,9 +1091,9 @@ def createdbtables(
     # Sonderelemente Haltungen -------------------------------------------------
 
     sql = """CREATE TABLE haltungstypen(
-        pk INTEGER PRIMARY KEY, 
-        bezeichnung TEXT, 
-        bemerkung TEXT)"""
+            pk INTEGER PRIMARY KEY, 
+            bezeichnung TEXT, 
+            bemerkung TEXT)"""
 
     try:
         cursl.execute(sql)
@@ -1361,179 +1339,6 @@ def createdbtables(
 
     consl.commit()
 
-    # Pumpen -------------------------------------------------------------------
-
-    sqls = [
-        """CREATE TABLE pumpen (
-            pk INTEGER PRIMARY KEY,
-            pnam TEXT,
-            schoben TEXT,
-            schunten TEXT,
-            pumpentyp TEXT,
-            volanf REAL,
-            volges REAL,
-            sohle REAL,
-            steuersch TEXT,
-            einschalthoehe REAL,
-            ausschalthoehe REAL,
-            teilgebiet TEXT,
-            simstatus TEXT DEFAULT 'vorhanden',
-            kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
-        "SELECT AddGeometryColumn('pumpen','geom',{},'LINESTRING',2)".format(epsg),
-        "SELECT CreateSpatialIndex('pumpen','geom')",
-    ]
-    for sql in sqls:
-        try:
-            cursl.execute(sql)
-        except BaseException as err:
-            fehlermeldung(
-                "qkan_database.createdbtables: {}".format(err),
-                'Tabelle "pumpen" konnte nicht erstellt werden.',
-            )
-            consl.close()
-            return False
-
-    sql = f"""CREATE VIEW IF NOT EXISTS pumpen_data AS
-          SELECT 
-            pnam, schoben, schunten, 
-            pumpentyp, volanf, volges, 
-            sohle, steuersch, 
-            einschalthoehe, ausschalthoehe,
-            teilgebiet, simstatus, 
-            kommentar, createdat
-          FROM pumpen;"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'View "pumpen_data" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = f"""CREATE TRIGGER IF NOT EXISTS pumpen_insert_clipboard
-            INSTEAD OF INSERT ON pumpen_data FOR EACH ROW
-          BEGIN
-            INSERT INTO pumpen
-              (pnam, schoben, schunten, 
-               pumpentyp, volanf, volges, 
-               sohle, steuersch, 
-               einschalthoehe, ausschalthoehe,
-               teilgebiet, simstatus, 
-               kommentar, createdat, 
-               geom)
-            SELECT 
-              new.pnam, new.schoben, new.schunten, 
-              new.pumpentyp, new.volanf, new.volges, 
-              new.sohle, new.steuersch, 
-              new.einschalthoehe, new.ausschalthoehe,
-              new.teilgebiet, coalesce(new.simstatus, 'vorhanden'), 
-              new.kommentar, new.createdat,
-              MakeLine(schob.geop, schun.geop)
-            FROM
-              schaechte AS schob,
-              schaechte AS schun
-            WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
-          END;"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Trigger "pumpen_insert_clipboard" konnte nicht erstellt werden',
-        )
-        consl.close()
-        return False
-
-    consl.commit()
-
-    # Wehre --------------------------------------------------------------------
-
-    sqls = [
-        """CREATE TABLE wehre (
-            pk INTEGER PRIMARY KEY,
-            wnam TEXT,
-            schoben TEXT,
-            schunten TEXT,
-            wehrtyp TEXT,
-            schwellenhoehe REAL,
-            kammerhoehe REAL,
-            laenge REAL,
-            uebeiwert REAL,
-            aussentyp TEXT,
-            aussenwsp REAL,
-            teilgebiet TEXT,
-            simstatus TEXT DEFAULT 'vorhanden',
-            kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
-        "SELECT AddGeometryColumn('wehre','geom',{},'LINESTRING',2)".format(epsg),
-        "SELECT CreateSpatialIndex('wehre','geom')",
-    ]
-    for sql in sqls:
-        try:
-            cursl.execute(sql)
-        except BaseException as err:
-            fehlermeldung(
-                "qkan_database.createdbtables: {}".format(err),
-                'Tabelle "wehre" konnte nicht erstellt werden.',
-            )
-            consl.close()
-            return False
-
-    sql = f"""CREATE VIEW IF NOT EXISTS wehre_data AS
-          SELECT 
-            wnam, schoben, schunten, 
-            wehrtyp, schwellenhoehe, kammerhoehe, 
-            laenge, uebeiwert, aussentyp, aussenwsp, 
-            teilgebiet, simstatus, 
-            kommentar, createdat
-          FROM wehre;"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'View "wehre_data" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = f"""CREATE TRIGGER IF NOT EXISTS wehre_insert_clipboard
-            INSTEAD OF INSERT ON wehre_data FOR EACH ROW
-          BEGIN
-            INSERT INTO wehre
-              (wnam, schoben, schunten, 
-               wehrtyp, schwellenhoehe, kammerhoehe, 
-               laenge, uebeiwert, aussentyp, aussenwsp, 
-               teilgebiet, simstatus, 
-               kommentar, createdat, 
-               geom)
-            SELECT 
-              new.wnam, new.schoben, new.schunten, 
-              new.wehrtyp, new.schwellenhoehe, new.kammerhoehe, 
-              new.laenge, new.uebeiwert, new.aussentyp, new.aussenwsp, 
-              new.teilgebiet, coalesce(new.simstatus, 'vorhanden'), 
-              new.kommentar, new.createdat,
-              MakeLine(schob.geop, schun.geop)
-            FROM
-              schaechte AS schob,
-              schaechte AS schun
-            WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
-          END;"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Trigger "wehre_insert_clipboard" konnte nicht erstellt werden',
-        )
-        consl.close()
-        return False
-
-    consl.commit()
-
     # Einzugsgebiete ------------------------------------------------------------------
     # Entsprechen in HYSTEM-EXTRAN 7.x den Siedlungstypen
     # "flaeche" wird nur für den Import benötigt, wenn keine Flächenobjekte vorhanden sind
@@ -1580,8 +1385,7 @@ def createdbtables(
     # automatische Verknüpfung von befestigten Flächen und direkten Einleitungen).
 
     sqls = [
-        """CREATE TABLE
-            teilgebiete (
+        """CREATE TABLE teilgebiete (
             pk INTEGER PRIMARY KEY,
             tgnam TEXT,
             kommentar TEXT,
@@ -1621,13 +1425,13 @@ def createdbtables(
     #  - "swgebaeude"
 
     sql = """CREATE TABLE gruppen (
-    pk INTEGER PRIMARY KEY,
-    pktab INTEGER,
-    grnam TEXT,
-    teilgebiet TEXT,
-    tabelle TEXT,
-    kommentar TEXT,
-    createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
+            pk INTEGER PRIMARY KEY,
+            pktab INTEGER,
+            grnam TEXT,
+            teilgebiet TEXT,                               -- join teilgebiet.tgnam
+            tabelle TEXT,
+            kommentar TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
 
     try:
         cursl.execute(sql)
@@ -1646,13 +1450,13 @@ def createdbtables(
         """CREATE TABLE flaechen (
             pk INTEGER PRIMARY KEY,
             flnam TEXT,
-            haltnam TEXT,
-            schnam TEXT,
-            neigkl INTEGER DEFAULT 1,
-            neigung REAL,               -- absolute Neigung (%)
-            teilgebiet TEXT,
+            haltnam TEXT,                           -- join haltungen.haltnam
+            schnam TEXT,                            -- join schaechte.schnam
+            neigkl INTEGER DEFAULT 1,               -- Neigungsklasse (1-4)
+            neigung REAL,                           -- absolute Neigung (%)
+            teilgebiet TEXT,                        -- join teilgebiet.tgnam
             regenschreiber TEXT,
-            abflussparameter TEXT,
+            abflussparameter TEXT,                  -- join abflussparameter.apnam
             aufteilen TEXT DEFAULT 'nein',
             kommentar TEXT,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
@@ -1685,15 +1489,16 @@ def createdbtables(
         """CREATE TABLE linkfl (
             pk INTEGER PRIMARY KEY,
             flnam TEXT,
-            haltnam TEXT,
-            schnam TEXT,
-            tezgnam TEXT,
-            teilgebiet TEXT,
+            haltnam TEXT,               -- join haltungen.haltnam
+            schnam TEXT,                -- join schaechte.schnam
+            tezgnam TEXT,               -- join tezg.flnam
+            teilgebiet TEXT,            -- join teilgebiet.tgnam
             abflusstyp TEXT,            -- JOIN abflusstypen.abflusstyp
             speicherzahl INTEGER,       -- HE8: AnzahlSpeicher
             speicherkonst REAL,         -- HE8: Speicherkonstante (Typ 0)
             fliesszeitkanal REAL,       -- HE8: LaengsteFliesszeitKanal (Typ 1)
-            fliesszeitflaeche REAL      -- HE8: FliesszeitOberflaeche (Typ 1) oder Schwerpunktlaufzeit (Typ 2)
+            fliesszeitflaeche REAL      -- HE8: FliesszeitOberflaeche (Typ 1) oder
+                                        -- Schwerpunktlaufzeit (Typ 2)
             )""",
         """SELECT AddGeometryColumn('linkfl','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
         """SELECT AddGeometryColumn('linkfl','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
@@ -1726,8 +1531,8 @@ def createdbtables(
         """CREATE TABLE linksw (
             pk INTEGER PRIMARY KEY,
             elnam TEXT,
-            haltnam TEXT,
-            schnam TEXT,
+            haltnam TEXT,               -- join haltungen.haltnam
+            schnam TEXT,                -- join schaechte.schnam
             teilgebiet TEXT)""",
         """SELECT AddGeometryColumn('linksw','geom',{epsg},'POLYGON',2)""".format(epsg=epsg),
         """SELECT AddGeometryColumn('linksw','gbuf',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
@@ -1758,14 +1563,14 @@ def createdbtables(
             CREATE TABLE tezg (
             pk INTEGER PRIMARY KEY,
             flnam TEXT,
-            haltnam TEXT,
-            schnam TEXT,
+            haltnam TEXT,               -- join haltungen.haltnam
+            schnam TEXT,                -- join schaechte.schnam
             neigkl INTEGER DEFAULT 1,   -- Werte [1-5], als Vorgabe fuer automatisch erzeugte unbef Flaechen
             neigung REAL,               -- absolute Neigung (%)
             befgrad REAL,               -- (-) Befestigungsgrad absolut, nur optional fuer SWMM und HE6
             schwerpunktlaufzeit REAL,   -- nur, wenn nur Haltungsflächen aber keine Flächen eingelesen werden
             regenschreiber TEXT,        -- Regenschreiber beziehen sich auf Zieldaten
-            teilgebiet TEXT,
+            teilgebiet TEXT,            -- join teilgebiet.tgnam
             abflussparameter TEXT,      -- als Vorgabe fuer automatisch erzeugte unbef Flaechen
             kommentar TEXT,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
@@ -1795,12 +1600,12 @@ def createdbtables(
         """CREATE TABLE einleit (
             pk INTEGER PRIMARY KEY,
             elnam TEXT,
-            haltnam TEXT,
-            schnam TEXT,
-            teilgebiet TEXT, 
+            haltnam TEXT,               -- join haltungen.haltnam
+            schnam TEXT,                -- join schaechte.schnam
+            teilgebiet TEXT,            -- join teilgebiet.tgnam 
             zufluss REAL,
             ew REAL,
-            einzugsgebiet TEXT,
+            einzugsgebiet TEXT,         -- join einzugsgebiete.tgnam
             kommentar TEXT,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('einleit','geom',{},'POINT',2)".format(epsg),
@@ -1827,14 +1632,14 @@ def createdbtables(
         """CREATE TABLE aussengebiete (
             pk INTEGER PRIMARY KEY, 
             gebnam TEXT, 
-            schnam TEXT, 
+            schnam TEXT,                -- join schaechte.schnam 
             hoeheob REAL, 
             hoeheun REAL, 
             fliessweg REAL, 
             basisabfluss REAL, 
             cn REAL, 
             regenschreiber TEXT, 
-            teilgebiet TEXT, 
+            teilgebiet TEXT,            -- join teilgebiet.tgnam 
             kommentar TEXT, 
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         """SELECT AddGeometryColumn('aussengebiete','geom',{epsg},'MULTIPOLYGON',2)""".format(epsg=epsg),
@@ -1978,20 +1783,20 @@ def createdbtables(
     # Abflussparameter -------------------------------------------------------------
 
     sql = """CREATE TABLE abflussparameter (
-    pk INTEGER PRIMARY KEY, 
-    apnam TEXT, 
-    anfangsabflussbeiwert REAL, 
-    endabflussbeiwert REAL, 
-    benetzungsverlust REAL, 
-    muldenverlust REAL, 
-    benetzung_startwert REAL, 
-    mulden_startwert REAL, 
-    rauheit_kst REAL,                       -- Rauheit Stricklerbeiwert = 1/n
-    pctZero REAL,                           -- SWMM: % Zero-Imperv
-    bodenklasse TEXT,                       -- impervious: NULL, pervious: JOIN TO bodenklasse.bknam
-    flaechentyp TEXT,                       -- JOIN TO flaechentypen.bezeichnung
-    kommentar TEXT, 
-    createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
+            pk INTEGER PRIMARY KEY, 
+            apnam TEXT, 
+            anfangsabflussbeiwert REAL, 
+            endabflussbeiwert REAL, 
+            benetzungsverlust REAL, 
+            muldenverlust REAL, 
+            benetzung_startwert REAL, 
+            mulden_startwert REAL, 
+            rauheit_kst REAL,                       -- Rauheit Stricklerbeiwert = 1/n
+            pctZero REAL,                           -- SWMM: % Zero-Imperv
+            bodenklasse TEXT,                       -- impervious: NULL, pervious: JOIN TO bodenklasse.bknam
+            flaechentyp TEXT,                       -- JOIN TO flaechentypen.bezeichnung
+            kommentar TEXT, 
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
 
     try:
         cursl.execute(sql)
@@ -2075,16 +1880,16 @@ def createdbtables(
     # Bodenklasse -------------------------------------------------------------
 
     sql = """CREATE TABLE bodenklassen (
-    pk INTEGER PRIMARY KEY, 
-    bknam TEXT, 
-    infiltrationsrateanfang REAL,               -- (mm/min)
-    infiltrationsrateende REAL,                 -- (mm/min)
-    infiltrationsratestart REAL,                -- (mm/min)
-    rueckgangskonstante REAL,                   -- (1/d)
-    regenerationskonstante REAL,                -- (1/d)
-    saettigungswassergehalt REAL,               -- (mm)
-    kommentar TEXT, 
-    createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
+            pk INTEGER PRIMARY KEY, 
+            bknam TEXT, 
+            infiltrationsrateanfang REAL,               -- (mm/min)
+            infiltrationsrateende REAL,                 -- (mm/min)
+            infiltrationsratestart REAL,                -- (mm/min)
+            rueckgangskonstante REAL,                   -- (1/d)
+            regenerationskonstante REAL,                -- (1/d)
+            saettigungswassergehalt REAL,               -- (mm)
+            kommentar TEXT, 
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
 
     try:
         cursl.execute(sql)
@@ -2250,34 +2055,15 @@ def createdbtables(
             return False
     consl.commit()
 
-    # Kennlinie Speicherbauwerke -----------------------------------------------
-
-    sql = """CREATE TABLE speicherkennlinien (
-    pk INTEGER PRIMARY KEY, 
-    schnam TEXT, 
-    wspiegel REAL, 
-    oberfl REAL)"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Fehler beim Erzeugen der Tabelle "Speicherkennlinien".',
-        )
-        consl.close()
-        return False
-    consl.commit()
-
     # Hilfstabelle für den DYNA-Export -----------------------------------------
 
     sql = """
         CREATE TABLE IF NOT EXISTS dynahal (
             pk INTEGER PRIMARY KEY,
             haltnam TEXT,
-            schoben TEXT,
-            schunten TEXT,
-            teilgebiet TEXT,
+            schoben TEXT,                                   -- join schaechte.schnam
+            schunten TEXT,                                  -- join schaechte.schnam
+            teilgebiet TEXT,                                -- join teilgebiet.tgnam
             kanalnummer TEXT,
             haltungsnummer TEXT,
             anzobob INTEGER,
@@ -2348,7 +2134,7 @@ def createdbtables(
             warnlevel INTEGER,                  -- zur Sortierung, 1-3: Info, 4-7: Warnung, 8-10: Fehler
             sql TEXT,
             layername TEXT,                     -- Objektsuche: Layername
-            attrname TEXT                       -- Objektsuche: Attribut zur Objektidentifikation,
+            attrname TEXT,                      -- Objektsuche: Attribut zur Objektidentifikation,
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)
     """
 
@@ -2390,10 +2176,10 @@ def createdbtables(
     # Allgemeine Informationen -----------------------------------------------
 
     sql = """CREATE TABLE info (
-    pk INTEGER PRIMARY KEY, 
-    subject TEXT, 
-    value TEXT,
-    createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
+            pk INTEGER PRIMARY KEY, 
+            subject TEXT, 
+            value TEXT,
+            createdat TEXT DEFAULT CURRENT_TIMESTAMP)"""
 
     try:
         cursl.execute(sql)
@@ -2401,207 +2187,6 @@ def createdbtables(
         fehlermeldung(
             "qkan_database.createviews: Fehler {}".format(err),
             'Fehler beim Erzeugen der Tabelle "Info".',
-        )
-        consl.close()
-        return False
-
-    consl.commit()
-
-    # Plausibilitätskontrollen --------------------------------------------------
-
-    # Prüfung der Anbindungen in "linkfl" auf eindeutige Zuordnung zu Flächen und Haltungen
-
-    sql = """CREATE VIEW IF NOT EXISTS "v_linkfl_check" AS 
-            WITH lfok AS
-            (   SELECT 
-                    lf.pk AS "pk",
-                    lf.flnam AS "linkfl_nam", 
-                    lf.haltnam AS "linkfl_haltnam", 
-                    fl.flnam AS "flaech_nam",
-                    tg.flnam AS "tezg_nam",
-                    min(lf.pk) AS pkmin, 
-                    max(lf.pk) AS pkmax,
-                    count(*) AS anzahl
-                FROM linkfl AS lf
-                LEFT JOIN flaechen AS fl
-                ON lf.flnam = fl.flnam
-                LEFT JOIN tezg AS tg
-                ON lf.tezgnam = tg.flnam
-                WHERE fl.aufteilen = 'ja' and fl.aufteilen IS NOT NULL
-                GROUP BY fl.flnam, tg.flnam
-                UNION
-                SELECT 
-                    lf.pk AS "pk",
-                    lf.flnam AS "linkfl_nam", 
-                    lf.haltnam AS "linkfl_haltnam", 
-                    fl.flnam AS "flaech_nam",
-                    NULL AS "tezg_nam",
-                    min(lf.pk) AS pkmin, 
-                    max(lf.pk) AS pkmax,
-                    count(*) AS anzahl
-                FROM linkfl AS lf
-                LEFT JOIN flaechen AS fl
-                ON lf.flnam = fl.flnam
-                WHERE fl.aufteilen <> 'ja' OR fl.aufteilen IS NULL
-                GROUP BY fl.flnam)
-            SELECT pk, anzahl, CASE WHEN anzahl > 1 THEN 'mehrfach vorhanden' WHEN flaech_nam IS NULL THEN 'Keine Fläche' WHEN linkfl_haltnam IS NULL THEN  'Keine Haltung' ELSE 'o.k.' END AS fehler
-            FROM lfok"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createviews: Fehler {}".format(err),
-            'Fehler beim Erzeugen der Plausibilitätskontrolle "v_linkfl_check".',
-        )
-        consl.close()
-        return False
-
-    # Feststellen der Flächen ohne Anbindung
-
-    sql = """CREATE VIEW IF NOT EXISTS "v_flaechen_ohne_linkfl" AS 
-            SELECT 
-                fl.pk, 
-                fl.flnam AS "flaech_nam",
-                fl.aufteilen AS "flaech_aufteilen", 
-                'Verbindung fehlt' AS "Fehler"
-            FROM flaechen AS fl
-            LEFT JOIN linkfl AS lf
-            ON lf.flnam = fl.flnam
-            LEFT JOIN tezg AS tg
-            ON tg.flnam = lf.tezgnam
-            WHERE ( (fl.aufteilen <> 'ja' or fl.aufteilen IS NULL) AND
-                     lf.pk IS NULL) OR
-                  (  fl.aufteilen = 'ja' AND fl.aufteilen IS NOT NULL AND 
-                     lf.pk IS NULL)
-            UNION
-            VALUES
-                (0, '', '', 'o.k.') """
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createviews: Fehler {}".format(err),
-            'Fehler beim Erzeugen der Plausibilitätskontrolle "v_flaechen_ohne_linkfl".',
-        )
-        consl.close()
-        return False
-
-    # Vergleich der Flächengröße mit der Summe der verschnittenen Teile
-
-    sql = """CREATE VIEW IF NOT EXISTS "v_flaechen_check" AS 
-            WITH flintersect AS (
-                SELECT fl.flnam AS finam, 
-                       CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
-                       ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
-                       END AS flaeche
-                FROM linkfl AS lf
-                INNER JOIN flaechen AS fl
-                ON lf.flnam = fl.flnam
-                LEFT JOIN tezg AS tg
-                ON lf.tezgnam = tg.flnam)
-            SELECT fa.flnam, 
-                   AREA(fa.geom) AS flaeche, 
-                   sum(fi.flaeche) AS "summe_flaechen_stuecke", 
-                   sum(fi.flaeche) - AREA(fa.geom) AS differenz
-            FROM flaechen AS fa
-            LEFT JOIN flintersect AS fi
-            ON fa.flnam = fi.finam
-            GROUP BY fa.flnam
-            HAVING ABS(sum(fi.flaeche) - AREA(fa.geom)) > 2"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createviews: Fehler {}".format(err),
-            'Fehler beim Erzeugen der Plausibilitätskontrolle "v_flaechen_check".',
-        )
-        consl.close()
-        return False
-
-    # Vergleich der Haltungsflächengrößen mit der Summe der verschnittenen Teile
-
-    sql = """CREATE VIEW IF NOT EXISTS "v_tezg_check" AS 
-            WITH flintersect AS (
-                SELECT tg.flnam AS finam, 
-                       CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
-                       ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
-                       END AS flaeche
-                FROM linkfl AS lf
-                INNER JOIN flaechen AS fl
-                ON lf.flnam = fl.flnam
-                LEFT JOIN tezg AS tg
-                ON lf.tezgnam = tg.flnam)
-            SELECT tg.flnam, 
-                   AREA(tg.geom) AS haltungsflaeche, 
-                   sum(fi.flaeche) AS summe_flaechen_stuecke, 
-                   sum(fi.flaeche) - AREA(tg.geom) AS differenz
-            FROM tezg AS tg
-            LEFT JOIN flintersect AS fi
-            ON tg.flnam = fi.finam
-            GROUP BY tg.flnam
-            HAVING ABS(sum(fi.flaeche) - AREA(tg.geom)) > 2"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createviews: Fehler {}".format(err),
-            'Fehler beim Erzeugen der Plausibilitätskontrolle "v_tezg_check".',
-        )
-        consl.close()
-        return False
-
-    consl.commit()
-
-    # Doppelte Verbindungslinien an Flächen prüfen
-
-    sql = """CREATE VIEW IF NOT EXISTS "v_linkfl_redundant" AS 
-            WITH lfm AS (
-                SELECT flnam, tezgnam, count(*) AS anz
-                FROM linkfl AS lf
-                GROUP BY flnam, tezgnam)
-            SELECT lf.pk, lf.flnam, lf.tezgnam, lfm.anz
-            FROM linkfl AS lf
-            LEFT JOIN lfm
-            ON lf.flnam = lfm.flnam and lf.tezgnam = lfm.tezgnam
-            WHERE anz <> 1 or lf.flnam IS NULL
-            ORDER BY lf.flnam"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createviews: Fehler {}".format(err),
-            'Fehler beim Erzeugen der Plausibilitätskontrolle "v_linkfl_redundant".',
-        )
-        consl.close()
-        return False
-
-    consl.commit()
-
-    # Doppelte Verbindungslinien an Direkteinleitungen prüfen
-
-    sql = """CREATE VIEW IF NOT EXISTS "v_linksw_redundant" AS 
-            WITH lsm AS (
-                SELECT elnam, count(*) AS anz
-                FROM linksw AS ls
-                GROUP BY elnam)
-            SELECT ls.pk, ls.elnam, lsm.anz
-            FROM linksw AS ls
-            LEFT JOIN lsm
-            ON ls.elnam = lsm.elnam
-            WHERE anz <> 1 or ls.elnam IS NULL
-            ORDER BY ls.elnam"""
-
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createviews: Fehler {}".format(err),
-            'Fehler beim Erzeugen der Plausibilitätskontrolle "v_linksw_redundant".',
         )
         consl.close()
         return False
