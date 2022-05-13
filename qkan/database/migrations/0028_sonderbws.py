@@ -200,9 +200,13 @@ def run(dbcon: DBConnection) -> bool:
             "xsch REAL,",
             "ysch REAL,",
             "kommentar TEXT,",
+            "istauslass",
+            "istspeicher"
             "createdat TEXT DEFAULT CURRENT_TIMESTAMP"
         ],
-        []
+        ["istauslass",
+         "istspeicher"
+        ]
     ):
         logger.error(
             f"Fehler 2 bei Migration zu Version {VERSION}: "
