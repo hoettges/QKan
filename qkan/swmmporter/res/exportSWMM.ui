@@ -110,7 +110,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_selectQKanDB">
+   <widget class="QPushButton" name="pb_database">
     <property name="geometry">
      <rect>
       <x>580</x>
@@ -137,7 +137,7 @@
      <string>...</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tf_qkanDB">
+   <widget class="QLineEdit" name="tf_database">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -239,7 +239,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_select_SWMM_dest">
+   <widget class="QPushButton" name="pb_SWMM_dest">
     <property name="geometry">
      <rect>
       <x>580</x>
@@ -266,7 +266,7 @@
      <string>...</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_select_SWMM_template">
+   <widget class="QPushButton" name="pb_SWMM_template">
     <property name="geometry">
      <rect>
       <x>580</x>

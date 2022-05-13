@@ -128,7 +128,87 @@ CASE WHEN d1 IS NOT NULL AND d1 <= 0 AND d2 <= 0
 WHEN d1 IS NULL AND d3 <= 0
     THEN abstpar <= (hoehob + hoehun) / 2.0 + 0.5
 ELSE FALSE END)
-', 'Haltungen nach Typ', 'haltnam'))) AS pn
+', 'Haltungen nach Typ', 'haltnam'),
+                        ('Zustandsklassen', 'Der Schadenskode hat mehr als 3 Zeichen', 'Fehler', 9, 'SELECT pk , ''Der Schadenskode hat mehr als 3 Zeichen'' AS bemerkung FROM Untersuchdat_haltung WHERE LENGTH(kuerzel) IS NOT 3', 'Untersuchdat_haltung', 'pk'),
+			('Zustandsklassen', 'Der Schadenskode hat mehr als 3 Zeichen', 'Fehler', 9, 'SELECT pk , ''Der Schadenskode hat mehr als 3 Zeichen'' AS bemerkung FROM Untersuchdat_schacht WHERE LENGTH(kuerzel) IS NOT 3', 'Untersuchdat_schacht', 'pk'),
+                        ('Zustandsklassen', 'Fehlende Angabe der Streckenschadensnummer', 'Fehler', 9, 'SELECT pk , ''Fehlende Angabe der Streckenschadensnummer'' AS bemerkung FROM Untersuchdat_haltung WHERE streckenschaden IS NOT "not found" and streckenschaden_lfdnr IS 0', 'Untersuchdat_haltung', 'pk'),
+                        ('Zustandsklassen', 'Fehlende Angabe des Streckenschadens', 'Fehler', 9, 'SELECT pk , ''Fehlende Angabe des Streckenschadens'' AS bemerkung FROM Untersuchdat_haltung WHERE (streckenschaden IS "not found" or streckenschaden IS NULL) and streckenschaden_lfdnr IS NOT 0', 'Untersuchdat_haltung', 'pk'), 
+						('Zustandsklassen', 'Das vergebene Schadenskürzel prüfen', 'Fehler', 9, 'SELECT pk , ''Das vergebene Schadenskürzel prüfen'' AS bemerkung FROM Untersuchdat_haltung WHERE  Untersuchdat_haltung.kuerzel
+							not in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Haltung DWA")
+							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "DWA")
+							', 'Untersuchdat_haltung', 'pk'), 
+							('Zustandsklassen', 'Das vergebene Schadenskürzel prüfen', 'Fehler', 9, 'SELECT pk , ''Das vergebene Schadenskürzel prüfen'' AS bemerkung FROM Untersuchdat_haltung WHERE  Untersuchdat_haltung.kuerzel
+							not in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Haltung ISYBAU")
+							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "ISYBAU")
+							', 'Untersuchdat_haltung', 'pk'), 
+							('Zustandsklassen', 'Das vergebene Schadenskürzel prüfen', 'Fehler', 9, 'SELECT pk , ''Das vergebene Schadenskürzel prüfen'' AS bemerkung FROM Untersuchdat_schacht WHERE  Untersuchdat_schacht.kuerzel
+							not in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Schacht DWA")
+							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "DWA")
+							', 'Untersuchdat_schacht', 'pk'), 
+							('Zustandsklassen', 'Das vergebene Schadenskürzel prüfen', 'Fehler', 9, 'SELECT pk , ''Das vergebene Schadenskürzel prüfen'' AS bemerkung FROM Untersuchdat_schacht WHERE Untersuchdat_schacht.kuerzel
+							not in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Schacht ISYBAU")
+							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "ISYBAU")
+							', 'Untersuchdat_schacht', 'pk'), 
+							('Zustandsklassen', 'Die Charakteriserung 1 prüfen', 'Fehler', 9, 'SELECT pk , ''Die Charakteriserung 1 prüfen'' AS bemerkung FROM Untersuchdat_haltung WHERE Untersuchdat_haltung.kuerzel
+							in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Haltung DWA")
+							AND Untersuchdat_haltung.charakt1
+							not in (select reflist_zustand.charakterisierung1 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_haltung.charakt1 AND Untersuchdat_haltung.kuerzel = reflist_zustand.hauptcode)
+							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "DWA")
+							', 'Untersuchdat_haltung', 'pk'), 
+							('Zustandsklassen', 'Die Charakteriserung 1 prüfen', 'Fehler', 9, 'SELECT pk , ''Die Charakteriserung 1 prüfen'' AS bemerkung FROM Untersuchdat_haltung WHERE Untersuchdat_haltung.kuerzel
+							in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Haltung ISYBAU")
+							AND Untersuchdat_haltung.charakt1
+							not in (select reflist_zustand.charakterisierung1 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_haltung.charakt1 AND Untersuchdat_haltung.kuerzel = reflist_zustand.hauptcode)
+							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "ISYBAU")
+							', 'Untersuchdat_haltung', 'pk'), 
+							('Zustandsklassen', 'Die Charakteriserung 1 prüfen', 'Fehler', 9, 'SELECT pk , ''Die Charakteriserung 1 prüfen'' AS bemerkung FROM Untersuchdat_schacht WHERE Untersuchdat_schacht.kuerzel
+							in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Schacht DWA")
+							AND Untersuchdat_schacht.charakt1
+							not in (select reflist_zustand.charakterisierung1 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
+							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "DWA")
+							', 'Untersuchdat_schacht', 'pk'), 
+							('Zustandsklassen', 'Die Charakteriserung 1 prüfen', 'Fehler', 9, 'SELECT pk , ''Die Charakteriserung 1 prüfen'' AS bemerkung FROM Untersuchdat_schacht WHERE Untersuchdat_schacht.kuerzel
+							in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Schacht ISYBAU")
+							AND Untersuchdat_schacht.charakt1
+							not in (select reflist_zustand.charakterisierung1 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
+							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "ISYBAU")
+							', 'Untersuchdat_schacht', 'pk'), 
+							('Zustandsklassen', 'Die Charakteriserung 2 prüfen', 'Fehler', 9, 'SELECT pk , ''Die Charakteriserung 2 prüfen'' AS bemerkung FROM Untersuchdat_haltung WHERE Untersuchdat_haltung.kuerzel
+							in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Haltung DWA")
+							AND Untersuchdat_haltung.charakt2
+							not in (select reflist_zustand.charakterisierung2 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_haltung.charakt1 AND Untersuchdat_haltung.kuerzel = reflist_zustand.hauptcode)
+							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "DWA")
+							', 'Untersuchdat_haltung', 'pk'), 
+							('Zustandsklassen', 'Die Charakteriserung 2 prüfen', 'Fehler', 9, 'SELECT pk , ''Die Charakteriserung 2 prüfen'' AS bemerkung FROM Untersuchdat_haltung WHERE Untersuchdat_haltung.kuerzel
+							in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Haltung ISYBAU")
+							AND Untersuchdat_haltung.charakt2
+							not in (select reflist_zustand.charakterisierung2 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_haltung.charakt1 AND Untersuchdat_haltung.kuerzel = reflist_zustand.hauptcode)
+							AND  Untersuchdat_haltung.untersuchhal in (select haltungen_untersucht.haltnam from haltungen_untersucht WHERE datenart = "ISYBAU")
+							', 'Untersuchdat_haltung', 'pk'), 
+							('Zustandsklassen', 'Die Charakteriserung 2 prüfen', 'Fehler', 9, 'SELECT pk , ''Die Charakteriserung 2 prüfen'' AS bemerkung FROM Untersuchdat_schacht WHERE Untersuchdat_schacht.kuerzel
+							in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Schacht DWA")
+							AND Untersuchdat_schacht.charakt2
+							not in (select reflist_zustand.charakterisierung2 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
+							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "DWA")
+							', 'Untersuchdat_schacht', 'pk'), 
+							('Zustandsklassen', 'Die Charakteriserung 2 prüfen', 'Fehler', 9, 'SELECT pk , ''Die Charakteriserung 2 prüfen'' AS bemerkung FROM Untersuchdat_schacht WHERE Untersuchdat_schacht.kuerzel
+							in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Schacht ISYBAU")
+							AND Untersuchdat_schacht.charakt2
+							not in (select reflist_zustand.charakterisierung2 from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
+							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "ISYBAU")
+							', 'Untersuchdat_schacht', 'pk'), 
+							('Zustandsklassen', 'Die Angabe vom Bereich prüfen', 'Fehler', 9, 'SELECT pk , ''Die Angabe vom Bereich prüfen'' AS bemerkung FROM Untersuchdat_schacht WHERE Untersuchdat_schacht.kuerzel
+							in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Schacht DWA")
+							AND Untersuchdat_schacht.bereich
+							not in (select reflist_zustand.bereich from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
+							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "DWA")
+							', 'Untersuchdat_schacht', 'pk'), 
+							('Zustandsklassen', 'Die Angabe vom Bereich prüfen', 'Fehler', 9, 'SELECT pk , ''Die Angabe vom Bereich prüfen'' AS bemerkung FROM Untersuchdat_schacht WHERE Untersuchdat_schacht.kuerzel
+							in (select reflist_zustand.hauptcode from reflist_zustand WHERE art = "Schacht ISYBAU")
+							AND Untersuchdat_schacht.bereich
+							not in (select reflist_zustand.bereich from reflist_zustand WHERE reflist_zustand.charakterisierung1 like Untersuchdat_schacht.charakt1 AND Untersuchdat_schacht.kuerzel = reflist_zustand.hauptcode)
+							AND  Untersuchdat_schacht.untersuchsch in (select schaechte_untersucht.schnam from schaechte_untersucht WHERE datenart = "ISYBAU")
+							', 'Untersuchdat_schacht', 'pk'))) AS pn
 LEFT JOIN pruefsql AS ps
 ON (pn.gruppe = ps.gruppe AND pn.warntext = ps.warntext)
 WHERE ps.warntext IS NULL;

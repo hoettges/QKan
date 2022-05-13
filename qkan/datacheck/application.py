@@ -1,4 +1,5 @@
 import os
+import csv
 from qgis.utils import pluginDirectory
 from qgis.gui import QgisInterface
 from qgis.core import QgsProject
@@ -53,6 +54,35 @@ class Plausi(QKanPlugin):
 
         if not self.plausi_dlg.prepareDialog(self.db_qkan):
             return False
+
+        #Laden der Referenzliste
+
+        self.db_qkan.cursl.execute(
+            "DELETE FROM reflist_zustand")
+        self.db_qkan.commit()
+
+        reflist_zustandfile = os.path.join(pluginDirectory("qkan"), "datacheck", "Plausi_Zustandsklassen.csv")
+
+        with open(reflist_zustandfile, 'r') as fin:
+            dr = csv.reader(fin, delimiter=";")
+
+            to_db = []
+
+            for a, b, c, d, e in dr:
+                c = [c] if c is None else c.split(',')
+                d = [d] if d is None else d.split(',')
+                e = [e] if e is None else e.split(',')
+                for i in c:
+                    for j in d:
+                        for k in e:
+                            to_db.append([a, b, i, j, k])
+
+            # to_db = [(i[0], i[1], i[2], i[3], i[4]) for i in dr]
+
+        self.db_qkan.cursl.executemany(
+            "INSERT INTO reflist_zustand (art, hauptcode, charakterisierung1, charakterisierung2, bereich) VALUES (?, ?, ?, ?, ?);",
+            to_db)
+        self.db_qkan.commit()
 
         self.plausi_dlg.show()
 
