@@ -12,7 +12,7 @@ from typing import Dict, List, cast
 from lxml import etree
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.utils import pluginDirectory
-from qkan import QKAN_FORMS, QKAN_TABLES, QKan, enums
+from qkan import QKan, enums
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
