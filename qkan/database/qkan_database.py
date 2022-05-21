@@ -22,8 +22,8 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.2.29"  # Version der QKan-Datenbank
-__qgsVersion__ = "3.2.29"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = "3.2.30"  # Version der QKan-Datenbank
+__qgsVersion__ = "3.2.30"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -381,7 +381,7 @@ def createdbtables(
         except BaseException as err:
             fehlermeldung(
                 "qkan_database.createdbtables: {}".format(err),
-                'Tabelle "untersuchdat_haltungen" konnte nicht erstellt werden.',
+                'Tabelle "untersuchdat_haltung" konnte nicht erstellt werden.',
             )
             consl.close()
             return False
