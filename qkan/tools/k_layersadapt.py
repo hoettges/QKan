@@ -198,10 +198,10 @@ def layersadapt(
             )  # Test, ob Vorlage-Layer spatial ist
             if not isVector or fehlende_layer_ergaenzen:
                 # Referenzlisten werden auf jeden Fall ergänzt.
-                table, geom_column, sql, group = qkanLayers[layername]
+                table, geom, sql, group = qkanLayers[layername]
                 uri = QgsDataSourceUri()
                 uri.setDatabase(database_QKan)
-                uri.setDataSource(sql, table, geom_column)
+                uri.setDataSource(sql, table, geom)
                 try:
                     layer = QgsVectorLayer(
                         uri.uri(), layername, enums.QKanDBChoice.SPATIALITE.value
@@ -223,25 +223,6 @@ def layersadapt(
                 logger.debug("k_layersadapt: Layer ergänzt: {}".format(layername))
             else:
                 logger.debug("k_layersadapt: Layer nicht ergänzt: {}".format(layername))
-        else:
-            layer = project.mapLayersByName(layername)[0]
-
-        # Stildatei laden, falls vorhanden
-        if layer:
-            qlsnam = os.path.join(templateDir, "qml",
-                                  "{}.qml".format(layername.replace('/', '_')))
-            if os.path.exists(qlsnam):
-                layer.loadNamedStyle(qlsnam)
-                logger.debug("Layerstil geladen (1): {}".format(qlsnam))
-
-            if layer.name() == 'Plausibilitätsprüfungen':
-                load_plausisql(dbQK)
-                logger.debug("Plausibilitätsprüfungen mit Datei 'Plausibilitaetspruefungen.sql' ergänzt.")
-            elif layer.name() == 'Fehlerliste':
-                load_plausiaction(layer)
-                logger.debug("Aktion 'Zoom zum Objekt' für Layer 'Fehlerliste' ergänzt")
-        else:
-            logger.debug(f"k_layersadapt.Stildatei: Layer schon vorhanden: {layername}")
 
     # Dictionary, das alle LayerIDs aus der Template-Projektdatei den entsprechenden (QKan-) LayerIDs
     # des aktuell geladenen Projekts zuordnet. Diese Liste wird bei der Korrektur der Wertelisten
@@ -320,33 +301,11 @@ def layersadapt(
                 f"QKan-Fehler: Projektlayer {layername} konnte im Projekt nicht gefunden werden"
             )
             return
-        else:
-            layer = layerobjects[0]
 
-        tagLayer = (
-            "projectlayers/maplayer[layername='{}'][provider='spatialite']".format(
-                layername
-            )
-        )
-        qgsLayers = qgsxml.findall(tagLayer)
-        if len(qgsLayers) > 1:
-            fehlermeldung(
-                "DateifFehler!",
-                "In der Vorlage-Projektdatei wurden mehrere Layer {} gefunden".format(
-                    layername
-                ),
-            )
-            del dbQK
-            return
-        elif len(qgsLayers) == 0:
-            logger.info(
-                "In der Vorlage-Projektdatei wurden kein Layer {} gefunden".format(
-                    layername
-                )
-            )
-            continue  # Layer ist in Projekt-Templatenicht vorhanden...
-        else:
-            logger.debug(f"In Vorlage-Projektdatei gefundener Layer: {layername}")
+        layer = layerobjects[0]
+
+        # Nachfolgende Variable werden an verschiedenen Stellen benötigt
+        table, geom, sql, _ = qkanLayers[layername]
 
         if anpassen_Wertebeziehungen_in_Tabellen:
             qlsnam = os.path.join(templateDir, "qml",
@@ -354,6 +313,12 @@ def layersadapt(
             if os.path.exists(qlsnam):
                 layer.loadNamedStyle(qlsnam)
                 logger.debug("Layerstil geladen (2): {}".format(qlsnam))
+            if layer.name() == 'Plausibilitätsprüfungen':
+                load_plausisql(dbQK)
+                logger.debug("Plausibilitätsprüfungen mit Datei 'Plausibilitaetspruefungen.sql' ergänzt.")
+            elif layer.name() == 'Fehlerliste':
+                load_plausiaction(layer)
+                logger.debug("Aktion 'Zoom zum Objekt' für Layer 'Fehlerliste' ergänzt")
 
         if anpassen_ProjektMakros:
             nodes = qgsxml.findall("properties/Macros")
@@ -362,10 +327,6 @@ def layersadapt(
             project.writeEntry("Macros", "/pythonCode", macros)
 
         if anpassen_Datenbankanbindung:
-            datasource = layer.source()
-            dbname, table, geom, sql = get_qkanlayer_attributes(datasource)
-            # logger.debug(f"datasource: {datasource}")
-            # logger.debug(f"\nDatenbankanbindung\n  dbname: {dbname}\n  table: {table}\n  geom: {geom}\n  sql: {sql}")
             if geom != "":
                 # Vektorlayer
                 newdatasource = (
@@ -386,10 +347,6 @@ def layersadapt(
         if anpassen_Projektionssystem:
             # epsg-Code des Layers an angebundene Tabelle anpassen
             logger.debug("anpassen_Projektionssystem...")
-            datasource = layer.source()
-            dbname, table, geom, sql = get_qkanlayer_attributes(datasource)
-            # logger.debug(f"datasource: {datasource}")
-            # logger.debug(f"\nDatenbankanbindung\n  dbname: {dbname}\n  table: {table}\n  geom: {geom}\n  sql: {sql}")
             logger.debug("Prüfe KBS von Tabelle {}".format(table))
             if geom != "":
                 # Nur für Vektorlayer
@@ -424,6 +381,29 @@ def layersadapt(
                     )
 
         if anpassen_Formulare:
+            tagLayer = (
+                f"projectlayers/maplayer[layername='{layername}'][provider='spatialite']"
+            )
+            qgsLayers = qgsxml.findall(tagLayer)
+            if len(qgsLayers) > 1:
+                fehlermeldung(
+                    "DateifFehler!",
+                    "In der Vorlage-Projektdatei wurden mehrere Layer {} gefunden".format(
+                        layername
+                    ),
+                )
+                del dbQK
+                return
+            elif len(qgsLayers) == 0:
+                logger.info(
+                    "In der Vorlage-Projektdatei wurden kein Layer {} gefunden".format(
+                        layername
+                    )
+                )
+                continue  # Layer ist in Projekt-Templatenicht vorhanden...
+            else:
+                logger.debug(f"In Vorlage-Projektdatei gefundener Layer: {layername}")
+
             formpath = qgsLayers[0].findtext("./editform") or ""
             form = cast(str, os.path.basename(formpath))
             editFormConfig = layer.editFormConfig()
