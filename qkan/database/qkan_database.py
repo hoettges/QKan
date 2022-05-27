@@ -381,7 +381,7 @@ def createdbtables(
         except BaseException as err:
             fehlermeldung(
                 "qkan_database.createdbtables: {}".format(err),
-                'Tabelle "untersuchdat_haltungen" konnte nicht erstellt werden.',
+                'Tabelle "untersuchdat_haltung" konnte nicht erstellt werden.',
             )
             consl.close()
             return False

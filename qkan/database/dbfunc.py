@@ -444,14 +444,14 @@ class DBConnection:
 
         example:
         alter_table('flaechen',
-            [   'flnam TEXT,                       -- eindeutiger Flächenname',
-                'haltnam TEXT,',
-                'ueberfluessig1 REAL,              -- nur so...',
-                'ueberfluessig2 TEXT,              /* nur so...*/',
-                "simstatus TEXT DEFAULT 'vorhanden',",
-                'teilgebiet TEXT,',
-                "createdat TEXT DEFAULT (datetime('now'))"],
-            ['ueberfluessig1', 'ueberfluessig2'])
+            [   'flnam TEXT                       -- eindeutiger Flächenname',
+                'haltnam TEXT',
+                'entfernen1 REAL              -- nur so...',
+                'entfernen2 TEXT              /* nur so...*/',
+                "simstatus TEXT DEFAULT 'vorhanden'",
+                'teilgebiet TEXT',
+                "createdat TEXT DEFAULT (datetime('now'))"]
+            ['entfernen1', 'entfernen2'])
         """
 
         # Attributlisten
@@ -538,7 +538,7 @@ class DBConnection:
         attr_set_both |= attr_set_geo
 
         # Zusammenstellen aller Attribute. Begonnen wird mit dem Primärschlüssel
-        attr_dict_new = {attr_pk: f"{attr_pk} INTEGER PRIMARY KEY, "}
+        attr_dict_new = {attr_pk: f"{attr_pk} INTEGER PRIMARY KEY"}
         # Zusammenstellen aller Attribute in der neuen Tabelle inkl. Benutzerattributen
         for el in attributes_new:
             attr = el.strip().split(" ")[0].strip()
@@ -558,7 +558,7 @@ class DBConnection:
                 del attr_dict_new[attr]
 
         # Attribute der neuen Tabelle als String für SQL-Anweisung
-        attr_text_new = "\n".join(attr_dict_new.values())
+        attr_text_new = "\n,".join(attr_dict_new.values())
         logger.debug(f"dbfunc.DBConnection.alter_table - attr_text_new:{attr_text_new}")
 
         # 0. Foreign key constraint deaktivieren
