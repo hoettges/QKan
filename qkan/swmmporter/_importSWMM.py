@@ -12,7 +12,7 @@ from typing import Dict, List, cast
 from lxml import etree
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.utils import pluginDirectory
-from qkan import QKAN_FORMS, QKAN_TABLES, QKan, enums
+from qkan import QKan, enums
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
@@ -82,7 +82,7 @@ class ImportTask:
             fehlermeldung(
                 "Fehler in import_from_swmm:\n",
                 "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_qkan
+                    db_qkan
                 ),
             )
 
@@ -230,7 +230,6 @@ class ImportTask:
        #             ),
        #         )
 
-            du = 1.0
 
             sql = f"""
                 UPDATE schaechte SET (xsch, ysch) =
@@ -526,7 +525,7 @@ class ImportTask:
                     os.path.dirname(self.dbQK), "."
                 )
             else:
-                datasource = self.database_QKan
+                datasource = self.db_qkan
 
             # Lesen der Projektdatei ------------------------------------------------------------------
             qgsxml = ET.parse(projecttemplate)
@@ -578,9 +577,9 @@ class ImportTask:
                 tag_editform = tag_maplayer.find("./editform")
                 if tag_editform and tag_editform.text:
                     dateiname = os.path.basename(tag_editform.text)
-                    if dateiname in QKAN_FORMS:
+                    #if dateiname in QKAN_FORMS:
                         # Nur QKan-Tabellen bearbeiten
-                        tag_editform.text = os.path.join(formspath, dateiname)
+                    #    tag_editform.text = os.path.join(formspath, dateiname)
 
             # Zoom für Kartenfenster einstellen -------------------------------------------------------
             if len(zoom) == 0 or any([x is None for x in zoom]):
