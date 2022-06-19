@@ -46,6 +46,8 @@ class Schacht_untersucht(ClassObject):
     max_ZD: int = 63
     max_ZB: int = 63
     max_ZS: int = 63
+    xsch: float = 0.0
+    ysch: float = 0.0
 
 
 class Untersuchdat_schacht(ClassObject):
@@ -70,8 +72,6 @@ class Untersuchdat_schacht(ClassObject):
     ZD: int = 63
     ZB: int = 63
     ZS: int = 63
-    xsch: float = 0.0
-    ysch: float = 0.0
 
 
 class Haltung(ClassObject):
@@ -150,6 +150,10 @@ class Untersuchdat_haltung(ClassObject):
     ZD: int = 63
     ZB: int = 63
     ZS: int = 63
+    xschob: float = 0.0
+    yschob: float = 0.0
+    xschun: float = 0.0
+    yschun: float = 0.0
 
 class Anschlussleitung(ClassObject):
     leitnam: str = ""
@@ -540,28 +544,12 @@ class ImportTask:
                 if not self.db_qkan.sql(sql, "xml_import Schächte [3]"):
                     return None
 
-            # Geo-Objekte
-            # db_type = QKan.config.database.type
-            # if db_type == enums.QKanDBChoice.SPATIALITE:
-            #     geop = f"MakePoint({schacht.xsch}, {schacht.ysch}, {QKan.config.epsg})"
-            #     geom = (
-            #         "CastToMultiPolygon(MakePolygon("
-            #         f"MakeCircle({schacht.xsch}, {schacht.ysch}, {schacht.durchm / 1000}, {QKan.config.epsg})"
-            #         "))"
-            #     )
-            # elif db_type == enums.QKanDBChoice.POSTGIS:
-            #     geop = f"ST_SetSRID(ST_MakePoint({schacht.xsch},{schacht.ysch}),{QKan.config.epsg})"
-            #     geom = ""  # TODO: GEOM is missing
-            # else:
-            #     fehlermeldung(
-            #         "Programmfehler!", "Datenbanktyp ist fehlerhaft.\nAbbruch!",
-            #     )
-            #     return None
-
             sql = f"""
-            INSERT INTO schaechte_data (schnam, sohlhoehe, deckelhoehe, durchm,druckdicht, entwart, strasse,
-                    schachttyp, simstatus, kommentar, xsch, ysch)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?, ?, ?)
+            INSERT INTO schaechte (schnam, sohlhoehe, deckelhoehe, durchm,druckdicht, entwart, strasse,
+                    schachttyp, simstatus, kommentar, xsch, ysch, geop, geom)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?, ?, ?, MakePoint(?, ?, ?), CastToMultiPolygon(MakePolygon(
+            MakeCircle(?, ?, ?, ?)
+                )))
             """
             if not self.db_qkan.sql(
                 sql,
@@ -578,15 +566,11 @@ class ImportTask:
                     schacht.kommentar,
                     schacht.xsch,
                     schacht.ysch,
+                    schacht.xsch, schacht.ysch, QKan.config.epsg,
+                    schacht.xsch, schacht.ysch, schacht.durchm, QKan.config.epsg,
                 ),
             ):
                 return None
-
-        if not self.db_qkan.sql(
-            "UPDATE schaechte SET (geom, geop) = (geom, geop)",
-            "xml_import Schächte [4a]",
-        ):
-            return None
 
         self.db_qkan.commit()
 
@@ -689,10 +673,9 @@ class ImportTask:
 
         for schacht_untersucht in _iter():
 
-
             sql = f"""
-            INSERT INTO schaechte_untersucht_data (schnam, strasse, baujahr, durchm, kommentar)
-            VALUES (?, ?, ?,?,?)
+            INSERT INTO schaechte_untersucht (schnam, strasse, durchm, kommentar, geop)
+            VALUES (?, ?, ?, ?, MakePoint(?, ?, ?))
             """
             if not self.db_qkan.sql(
                 sql,
@@ -700,18 +683,12 @@ class ImportTask:
                 parameters=(
                     schacht_untersucht.schnam,
                     schacht_untersucht.strasse,
-                    schacht_untersucht.baujahr,
                     schacht_untersucht.durchm,
                     schacht_untersucht.kommentar,
+                    schacht_untersucht.xsch, schacht_untersucht.ysch, QKan.config.epsg,
                 ),
             ):
                 return None
-
-        if not self.db_qkan.sql(
-            "UPDATE schaechte_untersucht SET ( geop) = ( geop)",
-            "xml_import Schächte_untersucht [1a]",
-        ):
-            return None
 
         self.db_qkan.commit()
 
@@ -748,10 +725,10 @@ class ImportTask:
                     return None
 
             if not self.db_qkan.sql(
-                "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, bewertungsart=?," 
+                "UPDATE schaechte_untersucht SET untersuchtag=?, untersucher=?, wetter=?, baujahr=?, bewertungsart=?," 
                 "bewertungstag=?, datenart=?, max_ZD=?, max_ZB=?, max_ZS=? WHERE schnam = ?",
                 "xml_import Schächte_untersucht [4]",
-                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter, bewertungsart, schacht_untersucht.bewertungstag, schacht_untersucht.datenart,
+                parameters=(schacht_untersucht.untersuchtag, schacht_untersucht.untersucher, wetter, schacht_untersucht.baujahr, bewertungsart, schacht_untersucht.bewertungstag, schacht_untersucht.datenart,
                             schacht_untersucht.max_ZD, schacht_untersucht.max_ZB, schacht_untersucht.max_ZS, schacht_untersucht.schnam),
             ):
                 return None
@@ -848,7 +825,7 @@ class ImportTask:
         for untersuchdat_schacht in _iter():
 
             sql = f"""
-            INSERT INTO untersuchdat_schacht_data (untersuchsch, id, videozaehler, timecode, kuerzel, 
+            INSERT INTO untersuchdat_schacht (untersuchsch, id, videozaehler, timecode, kuerzel, 
                                                     charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, ZD, ZB, ZS)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)
             """
@@ -880,6 +857,15 @@ class ImportTask:
                 ),
             ):
                 return None
+
+        sql = """UPDATE untersuchdat_schacht SET geop = schaechte.geop FROM
+                                        schaechte
+                                        WHERE schaechte.schnam = untersuchdat_schacht.untersuchsch"""
+        if not self.db_qkan.sql(
+                sql,
+                "xml_import untersuchdat_schacht [2]",
+        ):
+            return None
 
         self.db_qkan.commit()
 
@@ -958,15 +944,12 @@ class ImportTask:
                 if not self.db_qkan.sql(sql, "xml_import Auslässe [1]"):
                     return None
 
-            # Geo-Objekte
-            # geop, geom = geo_smp(auslass)
-
             sql = f"""
-            INSERT INTO schaechte_data (
+            INSERT INTO schaechte (
                 schnam, xsch, ysch, 
                 sohlhoehe, deckelhoehe, durchm, entwart, 
-                schachttyp, simstatus, kommentar)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Auslass', ?, ?)
+                schachttyp, simstatus, kommentar, geop)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Auslass', ?, ?, MakePoint(?, ?, ?))
             """
             if not self.db_qkan.sql(
                 sql,
@@ -981,15 +964,11 @@ class ImportTask:
                     auslass.entwart,
                     simstatus,
                     auslass.kommentar,
+                    auslass.xsch, auslass.ysch, QKan.config.epsg,
                 ),
             ):
                 return None
 
-        if not self.db_qkan.sql(
-            "UPDATE schaechte SET (geom, geop) = (geom, geop)",
-            "xml_import Auslässe [2a]",
-        ):
-            return None
 
         self.db_qkan.commit()
 
@@ -1335,12 +1314,14 @@ class ImportTask:
                 ):
                     return None
 
+
             sql = f"""
-                INSERT INTO haltungen_data 
+                INSERT INTO haltungen
                     (haltnam, schoben, schunten, 
-                    hoehe, breite, laenge, material, sohleoben, sohleunten, deckeloben, deckelunten, 
-                    profilnam, entwart, strasse, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    hoehe, breite, laenge, material, sohleoben, sohleunten,
+                    profilnam, entwart, strasse, ks, simstatus, kommentar, xschob, xschun, yschob, yschun, geom)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)
+            ))
                 """
 
             if not self.db_qkan.sql(
@@ -1356,8 +1337,6 @@ class ImportTask:
                     haltung.material,
                     haltung.sohleoben,
                     haltung.sohleunten,
-                    haltung.deckeloben,
-                    haltung.deckelunten,
                     haltung.profilnam,
                     entwart,
                     haltung.strasse,
@@ -1368,14 +1347,12 @@ class ImportTask:
                     haltung.xschun,
                     haltung.yschob,
                     haltung.yschun,
+                    haltung.xschob, haltung.yschob, QKan.config.epsg,
+                    haltung.xschun, haltung.yschun, QKan.config.epsg,
                 ),
             ):
                 return None
 
-        if not self.db_qkan.sql(
-            "UPDATE haltungen SET geom = geom", "xml_import Haltungen [3a]"
-        ):
-            return None
 
         self.db_qkan.commit()
 
@@ -1532,7 +1509,6 @@ class ImportTask:
 
                     wetter = _strip_int(_haltung.findtext("HI106", 0))
 
-
                     bewertungsart = _strip_int(_haltung.findtext("HI005", "0"))
 
                     bewertungstag = _haltung.findtext("HI204", "not found")
@@ -1558,10 +1534,10 @@ class ImportTask:
         for haltung_untersucht in _iter():
 
             sql = f"""
-                INSERT INTO haltungen_untersucht_data 
+                INSERT INTO haltungen_untersucht 
                     (haltnam, schoben, schunten, 
-                    hoehe, breite, laenge, kommentar,baujahr, strasse, xschob, yschob, xschun, yschun)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    hoehe, breite, laenge, kommentar,baujahr, strasse, xschob, yschob, xschun, yschun, geom)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)))
                 """
 
             if not self.db_qkan.sql(
@@ -1581,14 +1557,12 @@ class ImportTask:
                     haltung_untersucht.yschob,
                     haltung_untersucht.xschun,
                     haltung_untersucht.yschun,
+                    haltung_untersucht.xschob, haltung_untersucht.yschob, QKan.config.epsg,
+                    haltung_untersucht.xschun, haltung_untersucht.yschun, QKan.config.epsg,
                 ),
             ):
                 return None
 
-        if not self.db_qkan.sql(
-            "UPDATE haltungen_untersucht SET geom = geom", "xml_import Haltungen_untersucht [1a]"
-        ):
-            return None
 
         self.db_qkan.commit()
 
@@ -1804,7 +1778,7 @@ class ImportTask:
                     return None
 
             sql = f"""
-            INSERT INTO untersuchdat_haltung_data (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler,inspektionslaenge, station, timecode, kuerzel, 
+            INSERT INTO untersuchdat_haltung (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler,inspektionslaenge, station, timecode, kuerzel, 
                                                     charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname,
                                                      ordner_bild, ordner_video, richtung, ZD, ZB, ZS)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)
@@ -1842,6 +1816,8 @@ class ImportTask:
                 ),
             ):
                 return None
+
+        #geomobjekt ergänzen
 
         self.db_qkan.commit()
 
@@ -1986,11 +1962,11 @@ class ImportTask:
                     return None
 
             sql = f"""
-                INSERT INTO anschlussleitungen_data 
+                INSERT INTO anschlussleitungen 
                     (leitnam, schoben, schunten, 
                     hoehe, breite, laenge, material, sohleoben, sohleunten, deckeloben, deckelunten, 
-                    profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun, geom)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)))
                 """
 
             if not self.db_qkan.sql(
@@ -2017,14 +1993,12 @@ class ImportTask:
                     anschlussleitung.xschun,
                     anschlussleitung.yschob,
                     anschlussleitung.yschun,
+                    anschlussleitung.xschob, anschlussleitung.yschob, QKan.config.epsg,
+                    anschlussleitung.xschun, anschlussleitung.yschun, QKan.config.epsg,
                 ),
             ):
                 return None
 
-        if not self.db_qkan.sql(
-            "UPDATE anschlussleitungen SET geom = geom", "xml_import anschlussleitung [3a]"
-        ):
-            return None
 
         self.db_qkan.commit()
 
@@ -2191,20 +2165,14 @@ class ImportTask:
             # Dies ist in QKan einfach, da auch Auslaesse und Speicher
             # in der Tabelle "schaechte" gespeichert werden.
             sql = f"""
-                INSERT INTO pumpen_data 
-                    (pnam, volanf, volges, sohle, schoben, schunten, pumpentyp, steuersch)
-                SELECT '{pumpe.pnam}', {pumpe.volanf}, {pumpe.volges}, {pumpe.sohle}, '{pumpe.schoben}', 
-                        '{pumpe.schunten}', '{pumpentyp}', '{pumpe.steuersch}'
-                FROM schaechte AS SCHOB, schaechte AS SCHUN
-                WHERE SCHOB.schnam = '{pumpe.schoben}' AND SCHUN.schnam = '{pumpe.schunten}'"""
+                           INSERT INTO haltungen 
+                               (haltnam, schoben, schunten, hoehe, haltungstyp, simstatus, kommentar, geom)
+                           SELECT '{pumpe.haltnam}', '{pumpe.schoben}', '{pumpe.schunten}', '{pumpe.hoehe}', '{pumpentyp}', '{pumpe.simstatus}'
+                           FROM schaechte AS SCHOB, schaechte AS SCHUN
+                           WHERE SCHOB.schnam = '{pumpe.schoben}' AND SCHUN.schnam = '{pumpe.schunten}'"""
 
             if not self.db_qkan.sql(sql, "xml_import Pumpen [2]"):
                 return None
-
-        if not self.db_qkan.sql(
-            "UPDATE pumpen SET geom = geom", "xml_import Pumpen [2a]"
-        ):
-            return None
 
         self.db_qkan.commit()
 

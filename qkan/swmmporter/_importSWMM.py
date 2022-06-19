@@ -157,7 +157,7 @@ class ImportTask:
             areaPonded = line[61:72].strip()  # ueberstauflaeche
 
             sql = f"""
-                INSERT into schaechte_data (
+                INSERT into schaechte (
                     schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
                 VALUES (?, ?, ?, ?, 'Schacht')
                 """
@@ -194,7 +194,7 @@ class ImportTask:
                 auslasstyp = "frei"
 
             sql = f"""
-                INSERT into schaechte_data (
+                INSERT into schaechte (
                     schnam, sohlhoehe, auslasstyp, schachttyp)
                 VALUES (?, ?, ?, 'Auslass')
                 """
@@ -215,36 +215,19 @@ class ImportTask:
             ysch = fzahl(line[36:54].strip(), 3, self.yoffset) + self.yoffset  # ysch
             du = 1.0
 
-            # Geo-Objekte erzeugen
-
-       #     if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
-       #         geop = f"MakePoint({xsch},{ysch},{self.epsg})"
-       #         geom = f"CastToMultiPolygon(MakePolygon(MakeCircle({xsch}, {ysch}, {du}, {self.epsg})))"
-       #     elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
-       #         geop = f"ST_SetSRID(ST_MakePoint({xsch}, {ysch}), {self.epsg})"
-       #     else:
-       #         fehlermeldung(
-       #             "Programmfehler!",
-       #             "Datenbanktyp ist fehlerhaft {}!\nAbbruch!".format(
-       #                 QKan.config.database.type
-       #             ),
-       #         )
-
-
             sql = f"""
-                UPDATE schaechte SET (xsch, ysch) =
-                (?, ?)
+                UPDATE schaechte SET (xsch, ysch, geop ,geom) =
+                (?, ?, MakePoint(?, ?, ?), 
+                     CastToMultiPolygon(MakePolygon(MakeCircle(?, ?, ?, ?))
+                 ))
                 WHERE schnam = ?
                 """
-            if not self.dbQK.sql(sql, parameters=(xsch, ysch, name)):
+            if not self.dbQK.sql(sql, parameters=(xsch, ysch,
+                                                  xsch, ysch, QKan.config.epsg,
+                                                  xsch, ysch, du, QKan.config.epsg,
+                                                  name)):
                 del self.dbQK
                 return False
-
-            if not self.dbQK.sql(
-                    "UPDATE schaechte SET (geom, geop) = (geom, geop)",
-                    "swmm_import Schächte [4a]",
-            ):
-                return None
 
         self.dbQK.commit()
 
@@ -262,7 +245,7 @@ class ImportTask:
 
             sql = f"""
                 INSERT into tezg (
-                    flnam, regenschreiber, schnam,befgrad, neigung)
+                    flnam, regenschreiber, schnam, befgrad, neigung)
                 VALUES (?, ?, ?, ?, ?)
                 """
             if not self.dbQK.sql(
@@ -298,14 +281,17 @@ class ImportTask:
 
                     # Polygon schreiben
                     coords = ", ".join([f"{x} {y}" for x, y in zip(xlis, ylis)])
-                    geom = f"GeomFromText('MULTIPOLYGON((({coords})))', {self.epsg})"
-                    #if not self.dbQK.sql(
-                   #     "UPDATE tezg SET geom = ? WHERE flnam = ?",
-                   #     mute_logger=True,
-                   #     parameters=(geom, nampoly),
-                   # ):
-                   #     del self.dbQK
-                   #     return False
+                    #geom = f"GeomFromText('MULTIPOLYGON((({coords})))', {self.epsg})"
+
+                    #TODO: abändern, damit das Geoobjekt richtig erzeugt wird
+
+                    if not self.dbQK.sql(
+                        "UPDATE tezg SET geom = CastToMultiPolygon('MULTIPOLYGON(((?)))', ?) WHERE flnam = ?",
+                        mute_logger=True,
+                        parameters=(coords, QKan.config.epsg, nampoly)
+                    ):
+                        del self.dbQK
+                        return False
                 nampoly = name
 
                 # Listen zurücksetzen
@@ -338,7 +324,7 @@ class ImportTask:
             # ks = ksFromKst(kst)
 
             sql = f"""
-                INSERT into haltungen_data (
+                INSERT into haltungen (
                     haltnam, schoben, schunten, laenge, ks, entwart, simstatus)
                 VALUES (?, ?, ?, ?, ?, 'Regenwasser', 'vorhanden')
                 """
@@ -348,30 +334,25 @@ class ImportTask:
                 del self.dbQK
                 return False
 
-            if not self.dbQK.sql(
-                    "UPDATE haltungen SET geom = geom", "xml_import Haltungen [3a]"
-            ):
-                return None
-
         self.dbQK.commit()
 
         # Haltungsobjekte mithilfe der Schachtkoordinaten erzeugen
-        # sql = f"""
-        # UPDATE haltungen
-        # SET geom = (
-        # SELECT
-        # MakeLine(schob.geop, schun.geop)
-        # FROM
-        # schaechte AS schob,
-        # schaechte AS schun
-        # WHERE schob.schnam = haltungen.schoben AND schun.schnam = haltungen.schunten
-        # )
-        # """
-        # if not self.dbQK.sql(sql):
-        # del self.dbQK
-        # return False
+        sql = f"""
+        UPDATE haltungen
+         SET geom = (
+         SELECT
+         MakeLine(schob.geop, schun.geop)
+         FROM
+         schaechte AS schob,
+         schaechte AS schun
+         WHERE schob.schnam = haltungen.schoben AND schun.schnam = haltungen.schunten
+         )
+         """
+        if not self.dbQK.sql(sql):
+            del self.dbQK
+            return False
 
-        #self.dbQK.commit()
+        self.dbQK.commit()
 
 
     def _vertices(self) -> bool:
