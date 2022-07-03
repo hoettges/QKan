@@ -241,6 +241,7 @@ class SWMMConfig(ClassObject):
     profile_ergaenzen: bool = True
     template: str = ""
     import_file: str = ""
+    export_file: str = ""
 
 
 class LinkFlConfig(ClassObject):

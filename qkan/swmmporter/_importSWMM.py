@@ -17,6 +17,8 @@ from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 from qkan.tools.k_qgsadapt import qgsadapt
+from qgis.core import Qgis
+from qgis.utils import iface
 
 logger = logging.getLogger("QKan.importswmm")
 
@@ -72,7 +74,7 @@ class ImportTask:
         self.db_qkan = db_qkan
         self.projectfile = projectfile
         #self.xoffset, self.yoffset = offset
-        self.xoffset, self.yoffset = [100.0,100.0]
+        self.xoffset, self.yoffset = [0.0,0.0]
 
         self.dbQK = db_qkan
 
@@ -126,7 +128,8 @@ class ImportTask:
         self._conduits()
         self._xsections()
         self._subcatchments()
-        self._polygons()
+        #self._polygons()
+        self._vertices()
 
         return True
 
@@ -270,8 +273,8 @@ class ImportTask:
         ylis: List[float] = []  # y-Koordinaten zum Polygon
         for line in data:
             name = line[0:17].strip()  # schnam
-            xsch = fzahl(line[17:36].strip(), 3, self.xoffset) + self.xoffset  # xsch
-            ysch = fzahl(line[36:54].strip(), 3, self.yoffset) + self.yoffset  # ysch
+            xsch = fzahl(line[17:37].strip(), 3, self.xoffset) + self.xoffset  # xsch
+            ysch = fzahl(line[36:56].strip(), 3, self.yoffset) + self.yoffset  # ysch
 
             if nampoly != name:
                 if nampoly != "":
@@ -361,28 +364,86 @@ class ImportTask:
 
         namvor = ""  # Solange der Name gleich bleibt, gehören
         # die Eckpunkte zur selben Haltung
-        npt = 2  # Punkt, der eingefügt werden muss
+        #npt = 2  # Punkt, der eingefügt werden muss
+        npt=1
+
+        list=[]
 
         for line in data:
             name = line[0:17].strip()  # schnam
-            xsch = fzahl(line[17:37].strip(), 3, self.xoffset) + self.xoffset  # xsch
-            ysch = fzahl(line[36:56].strip(), 3, self.yoffset) + self.yoffset  # ysch
+            xsch = fzahl(line[17:36].strip(), 3, self.xoffset) + self.xoffset  # xsch
+            ysch = fzahl(line[36:54].strip(), 3, self.yoffset) + self.yoffset  # ysch
 
             if name == namvor:
                 npt += 1
+
             else:
-                npt = 2
+                npt = 1
 
-            sql = f"""
-                UPDATE haltungen SET geom = AddPoint(geom, MakePoint(?, ?, ?), ?)
-                WHERE halnam = ?
-                """
+            if npt==1:
+                # Start und Endpunkt der Haltung ausgeben
+                sql1 = f"""Select ST_X(StartPoint(geom)) from haltungen WHERE haltnam =?"""
+                sql2 = f"""Select ST_Y(StartPoint(geom)) from haltungen WHERE haltnam =?"""
 
-            if not self.dbQK.sql(
-                sql, mute_logger=True, parameters=(xsch, ysch, self.epsg, npt, name)
-            ):
-                del self.dbQK
-                return False
+                sql3 = f"""Select ST_X(EndPoint(geom)) from haltungen WHERE haltnam =?"""
+                sql4 = f"""Select ST_Y(EndPoint(geom)) from haltungen WHERE haltnam =?"""
+
+                self.dbQK.sql(sql1, parameters=(name,))
+                for attr in self.dbQK.fetchall():
+                    x_start = attr[0]
+
+                self.dbQK.sql(sql2, parameters=(name,))
+                for attr in self.dbQK.fetchall():
+                    y_start = attr[0]
+
+                self.dbQK.sql(sql3, parameters=(name,))
+                for attr in self.dbQK.fetchall():
+                    x_end = attr[0]
+
+                self.dbQK.sql(sql4, parameters=(name,))
+                for attr in self.dbQK.fetchall():
+                    y_end = attr[0]
+
+                #altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
+                sql = f"""
+                                         UPDATE haltungen SET geom = NULL
+                                         WHERE haltnam = ?
+                                         """
+
+                if not self.dbQK.sql(
+                        sql, parameters=(name,)
+                ):
+                    del self.dbQK
+                    return False
+
+                sql = f"""
+                            UPDATE haltungen SET geom = AddPoint(MakeLine(MakePoint(?, ?, ?), MakePoint(?, ?, ?)),
+                                            MakePoint(?, ?, ?), ?)
+                            WHERE haltnam = ?
+                         """
+
+                paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch, QKan.config.epsg, npt, name]
+
+                if not self.dbQK.sql(
+                        sql, parameters=paralist
+                ):
+                    del self.dbQK
+                    return False
+
+            if npt>1:
+                #weitere punkte ergänzen
+                sql = f"""
+                                UPDATE haltungen SET geom = AddPoint(geom,MakePoint(?, ?, ?), ?)
+                                WHERE haltnam = ?
+                             """
+
+                paralist = [xsch, ysch, QKan.config.epsg, npt, name]
+
+                if not self.dbQK.sql(
+                        sql, parameters=paralist
+                ):
+                    del self.dbQK
+                    return False
 
             namvor = name
 

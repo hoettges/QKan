@@ -53,7 +53,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     tf_SWMM_template: QLineEdit
     tf_SWMM_dest: QLineEdit
 
-    cb_use_templatedir: QCheckBox
+    #cb_use_templatedir: QCheckBox
 
     pb_database: QPushButton
     pb_SWMM_template: QPushButton
@@ -77,8 +77,8 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.default_dir = default_dir
 
         # Attach events
-        # self.pb_database.clicked.connect(self.select_database)    # ergibt sich aus Projekt
-        self.pb_database.clicked.connect(self.select_exportdb)
+        #self.pb_database.clicked.connect(self.select_database)    # ergibt sich aus Projekt
+        self.pb_SWMM_dest.clicked.connect(self.select_exportdb)
         self.pb_SWMM_template.clicked.connect(self.select_template)
         #self.cb_flaechen.clicked.connect(self.check_flaechen)
         #self.cb_tezg_hf.clicked.connect(self.check_tezg_hf)
@@ -100,34 +100,34 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
     def select_template(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
-        if self.cb_use_templatedir.isChecked():
+        #if self.cb_use_templatedir.isChecked():
 
             # TODO: Replace with QKan.config.project.template?
-            searchdir = str(Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs")
-        else:
-            searchdir = self.default_dir
+         #   searchdir = str(Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs")
+        #else:
+        searchdir = self.default_dir
 
         # noinspection PyCallByClass,PyArgumentList
         filename, _ = QFileDialog.getOpenFileName(
             self,
-            self.tr("Vorlage für die zu erstellende HE8-Datei"),
+            self.tr("Vorlage für die zu erstellende SWMM-Datei"),
             searchdir,
-            "*.idbm",
+            "*.INP",
         )
         if filename:
-            self.tf_template.setText(filename)
+            self.tf_SWMM_template.setText(filename)
             # self.default_dir = os.path.dirname(filename)
 
     def select_exportdb(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
             self,
-            self.tr("Zu erstellende HE8-Datei"),
+            self.tr("Zu erstellende SWMM-Datei"),
             self.default_dir,
-            "*.idbm",
+            "*.INP",
         )
         if filename:
-            self.tf_exportdb.setText(filename)
+            self.tf_SWMM_dest.setText(filename)
             # self.default_dir = os.path.dirname(filename)
 
     def click_selection(self) -> None:
@@ -192,7 +192,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
             )
 
         sql = f"SELECT count(*) AS anzahl FROM schaechte {auswahl}"
-        if not self.db_qkan.sql(sql, "QKan_ExportHE.application.countselection (2) "):
+        if not self.db_qkan.sql(sql, "QKan_ExportSWMM.application.countselection (2) "):
             return False
         daten = self.db_qkan.fetchone()
         if not (daten is None):
@@ -208,7 +208,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
             )
 
         sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
-        if not self.db_qkan.sql(sql, "QKan_ExportHE.application.countselection (3) "):
+        if not self.db_qkan.sql(sql, "QKan_ExportSWMM.application.countselection (3) "):
             return False
         daten = self.db_qkan.fetchone()
         if not (daten is None):

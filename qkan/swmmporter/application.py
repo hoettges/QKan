@@ -22,6 +22,7 @@
 import os
 
 from pathlib import Path
+import shutil
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
@@ -86,9 +87,12 @@ class SWMMPorter(QKanPlugin):
     def run_export (self) -> None:
 
         # Fill dialog with current info
-        self.database_qkan, _ = get_database_QKan()
-        if self.database_qkan:
-            self.export_dlg.tf_database.setText(self.database_qkan)
+        self.db_qkan = DBConnection()
+        dbname = self.db_qkan.dbname
+
+        #self.database_qkan, _ = get_database_QKan()
+        if self.db_qkan:
+            self.export_dlg.tf_database.setText(dbname)
 
         self.export_dlg.show()
 
@@ -96,45 +100,45 @@ class SWMMPorter(QKanPlugin):
         if self.export_dlg.exec_():
             # Read from form and save to config
             QKan.config.database.qkan = self.export_dlg.tf_database.text()
-            QKan.config.he8.export_file = self.export_dlg.tf_exportdb.text()
-            QKan.config.he8.template = self.export_dlg.tf_template.text()
+            QKan.config.swmm.export_file = self.export_dlg.tf_SWMM_dest.text()
+            QKan.config.swmm.template = self.export_dlg.tf_SWMM_template.text()
 
-            QKan.config.check_export.haltungen = (
-                self.export_dlg.cb_haltungen.isChecked()
-            )
-            QKan.config.check_export.schaechte = (
-                self.export_dlg.cb_schaechte.isChecked()
-            )
-            QKan.config.check_export.auslaesse = (
-                self.export_dlg.cb_auslaesse.isChecked()
-            )
-            QKan.config.check_export.speicher = self.export_dlg.cb_speicher.isChecked()
-            QKan.config.check_export.pumpen = self.export_dlg.cb_pumpen.isChecked()
-            QKan.config.check_export.wehre = self.export_dlg.cb_wehre.isChecked()
-            QKan.config.check_export.flaechen = self.export_dlg.cb_flaechen.isChecked()
-            QKan.config.check_export.rohrprofile = (
-                self.export_dlg.cb_rohrprofile.isChecked()
-            )
-            QKan.config.check_export.abflussparameter = (
-                self.export_dlg.cb_abflussparameter.isChecked()
-            )
-            QKan.config.check_export.bodenklassen = (
-                self.export_dlg.cb_bodenklassen.isChecked()
-            )
-            QKan.config.check_export.einleitdirekt = (
-                self.export_dlg.cb_einleitdirekt.isChecked()
-            )
-            QKan.config.check_export.aussengebiete = (
-                self.export_dlg.cb_aussengebiete.isChecked()
-            )
-            QKan.config.check_export.einzugsgebiete = (
-                self.export_dlg.cb_einzugsgebiete.isChecked()
-            )
-            QKan.config.check_export.tezg = self.export_dlg.cb_tezg.isChecked()
-            QKan.config.check_export.tezg_hf = self.export_dlg.cb_tezg_hf.isChecked()
+            # QKan.config.check_export.haltungen = (
+            #     self.export_dlg.cb_haltungen.isChecked()
+            # )
+            # QKan.config.check_export.schaechte = (
+            #     self.export_dlg.cb_schaechte.isChecked()
+            # )
+            # QKan.config.check_export.auslaesse = (
+            #     self.export_dlg.cb_auslaesse.isChecked()
+            # )
+            # QKan.config.check_export.speicher = self.export_dlg.cb_speicher.isChecked()
+            # QKan.config.check_export.pumpen = self.export_dlg.cb_pumpen.isChecked()
+            # QKan.config.check_export.wehre = self.export_dlg.cb_wehre.isChecked()
+            # QKan.config.check_export.flaechen = self.export_dlg.cb_flaechen.isChecked()
+            # QKan.config.check_export.rohrprofile = (
+            #     self.export_dlg.cb_rohrprofile.isChecked()
+            # )
+            # QKan.config.check_export.abflussparameter = (
+            #     self.export_dlg.cb_abflussparameter.isChecked()
+            # )
+            # QKan.config.check_export.bodenklassen = (
+            #     self.export_dlg.cb_bodenklassen.isChecked()
+            # )
+            # QKan.config.check_export.einleitdirekt = (
+            #     self.export_dlg.cb_einleitdirekt.isChecked()
+            # )
+            # QKan.config.check_export.aussengebiete = (
+            #     self.export_dlg.cb_aussengebiete.isChecked()
+            # )
+            # QKan.config.check_export.einzugsgebiete = (
+            #     self.export_dlg.cb_einzugsgebiete.isChecked()
+            #)
+            QKan.config.check_export.tezg = self.export_dlg.rb_flaechen.isChecked()
+            QKan.config.check_export.tezg_hf = self.export_dlg.rb_tezg.isChecked()
 
-            QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
-            QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
+            #QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
+            #QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
 
             teilgebiete = [
                 _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
@@ -156,27 +160,27 @@ class SWMMPorter(QKanPlugin):
             self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
         # Zieldatenbank aus Vorlage kopieren
-        if os.path.exists(QKan.config.he8.template):
+        if os.path.exists(QKan.config.swmm.template):
             try:
-                shutil.copyfile(QKan.config.he8.template, QKan.config.he8.export_file)
+                shutil.copyfile(QKan.config.swmm.template, QKan.config.swmm.export_file)
             except BaseException:
                 fehlermeldung(
-                    "Fehler in Export nach HE8",
-                    "Fehler beim Kopieren der Vorlage: \n   {QKan.config.he8.template}\n"
-                    + "nach Ziel: {QKan.config.he8.export_file}\n",
+                    "Fehler in Export nach SWMM",
+                    "Fehler beim Kopieren der Vorlage: \n   {QKan.config.swmm.template}\n"
+                    + "nach Ziel: {QKan.config.swmm.export_file}\n",
                 )
 
-        """Attach SQLite-Database with HE8 Data"""
-        sql = f'ATTACH DATABASE "{QKan.config.he8.export_file}" AS he'
+        #"""Attach SQLite-Database with SWMM Data"""
+        #sql = f'ATTACH DATABASE "{QKan.config.swmm.export_file}" AS he'
 
-        if not self.db_qkan.sql(sql, "He8Porter.run_export_to_he8 Attach HE8"):
-            logger.error(
-                f"Fehler in He8Porter._doexport(): Attach fehlgeschlagen: {QKan.config.he8.export_file}"
-            )
-            return False
+        #if not self.db_qkan.sql(sql, "SWMMPorter.run_export_to_swmm Attach SWMM"):
+        #    logger.error(
+        #        f"Fehler in SWMMPorter._doexport(): Attach fehlgeschlagen: {QKan.config.swmm.export_file}"
+        #    )
+        #    return False
 
         # Run export
-        ExportTask(self.db_qkan, QKan.config.selections.teilgebiete).run()
+        ExportTask( QKan.config.swmm.template, self.db_qkan, QKan.config.swmm.export_file, QKan.config.selections.teilgebiete, (100,100)).run()
 
         # Close connection
         del self.db_qkan
@@ -185,7 +189,7 @@ class SWMMPorter(QKanPlugin):
         return True
 
     def run_import(self) -> None:
-        """Anzeigen des Importformulars HE8 und anschließender Start des Import aus einer HE8-Datenbank"""
+        """Anzeigen des Importformulars SWMM und anschließender Start des Import aus einer SWMM-Datei"""
 
         # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
         #self.import_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
