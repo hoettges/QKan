@@ -31,6 +31,7 @@ class ReadData():  # type: ignore
 
         self.required_fields = QKan.config.tools.Clipboard.required_fields
         self.schacht_types = QKan.config.tools.Clipboard.schacht_types
+        self.haltung_types = QKan.config.tools.Clipboard.haltung_types
         self.qkan_patterns = QKan.config.tools.Clipboard.qkan_patterns
 
         self.proceed = proceed
@@ -111,23 +112,20 @@ class ReadData():  # type: ignore
                 self.iface.openMessageLog()
                 return False
 
-            # target table replaced by view (+ '_data') if in required_fields
-            if 'wkt_geom' in head_clipboard or 'geom' in head_clipboard or 'geop' in head_clipboard:
-                # geometry column exists
-                tabnam_db = self.table_name
-            elif self.required_fields.get(self.table_name, None):
-                if self.schacht_types.get(self.layer_name, None):
-                    # "Schächte", "Auslauf" and "Speicher" data stored in table "schaechte"
-                    tabnam_db = 'schaechte_data'
-                else:
-                    tabnam_db = self.table_name + '_data'
+            if self.schacht_types.get(self.layer_name, None):
+                # "Schächte", "Auslauf" and "Speicher" data stored in table "schaechte"
+                tabnam_db = 'schaechte'
+            elif self.haltung_types.get(self.layer_name, None):
+                # "Haltungen", "Pumpen", "Wehre", "Drosseln", "Schieber", "Grund-/Seitenauslässe",
+                # "H-Regler", "Q-Regler" data stored in table "haltungen"
+                tabnam_db = 'haltungen'
             else:
                 tabnam_db = self.table_name
 
             if not self.db_qkan.sql(
                     "SELECT name, type FROM PRAGMA_TABLE_INFO(?);",
                     mute_logger = True,
-                    parameters = (table_name,),
+                    parameters = (tabnam_db,),
             ):
                 del self.db_qkan
                 return
@@ -136,26 +134,34 @@ class ReadData():  # type: ignore
 
             # look for matches
             for icol, colClip in enumerate(head_clipboard):
-                if colClip in ('pk'):
+                if colClip == 'pk':
                     continue
-                if colClip in head_qkan:
+                elif colClip in head_qkan:
                     # 1. test if full match found
                     head_match[icol] = colClip
+                elif colClip == 'wkt_geom':
+                    if (self.layer_name in self.schacht_types
+                            and (self.layer_name != 'Knotenpunkte')):
+                        head_match[icol] = 'geop'
+                    else:
+                        head_match[icol] = 'geom'
                 else:
                     # 2. test if match in patternLis (see: config.py)
                     found = False                                   # Suche kann beendet werden
                     for colnamQKan in patternLis.keys():
                         for patt in patternLis[colnamQKan]:
                             if fnmatch(colClip, patt):
-                                head_match[icol] = colnamQKan
+                                if not head_match[icol]:
+                                    # only if not just matched
+                                    head_match[icol] = colnamQKan
                                 found = True
                                 break
                         if found:
                             break
 
             # Dict mit relevanten Spalten, name: Spaltenindex
-            qkan_columntypes: dict[str, str] = {}
-            qkan_cols: dict[str, int] = {}
+            qkan_columntypes: Dict[str, str] = {}
+            qkan_cols: Dict[str, int] = {}
             for (name, _type) in qkan_tableinfo:
                 if name in head_match:
                     qkan_cols[name] = head_match.index(name)  # Spaltennamen der einzufügenden Daten
@@ -187,13 +193,24 @@ class ReadData():  # type: ignore
             # Schaechte, Speicher und Auslaesse werden in der Tabelle "schaechte" gespeichert,
             # aber durch "schachttyp" unterschieden
             schtyp_added: bool = False                    # Spalte 'schachttyp' wurde hinzugefügt. Default: falsch
+            haltyp_added: bool = False                    # Spalte 'haltungstyp' wurde hinzugefügt. Default: falsch
             logger.debug(f'tabnam_db: {tabnam_db}')
-            if tabnam_db == 'schaechte_data':
+            if tabnam_db == 'schaechte':
                 if 'schachttyp' not in qkan_cols:
                     col_schachttyp: int = len(head_match)
                     qkan_cols['schachttyp'] = col_schachttyp  # dazu gibt es keine Spalte in den Clipboard-Daten
                     schtyp_added = True
                     logger.debug(f'Spalte "schachttyp" hinzugefügt.')
+                else:
+                    logger.debug(f'Spalte "schachttyp" schon vorhanden.')
+            elif tabnam_db == 'haltungen':
+                if 'haltungstyp' not in qkan_cols:
+                    col_haltungstyp: int = len(head_match)
+                    qkan_cols['haltungstyp'] = col_haltungstyp  # dazu gibt es keine Spalte in den Clipboard-Daten
+                    haltyp_added = True
+                    logger.debug(f'Spalte "haltungstyp" hinzugefügt.')
+                else:
+                    logger.debug(f'Spalte "haltungstyp" schon vorhanden.')
 
             # parse all data lines
             qkan_colnames: list[str] = list(qkan_cols.keys())
@@ -203,7 +220,7 @@ class ReadData():  # type: ignore
                 logger.info(f'{qkan_cols[column]} -> {column}')
             logger.info(f'Umgewandelte Spaltennamen: {head_match}')
 
-            if schtyp_added:
+            if schtyp_added or haltyp_added:
                 meldung = " | ".join([f'{head_clipboard[col]} > {head_match[col]}' for col in list(qkan_cols.values())[:-1]])
             else:
                 meldung = " | ".join([f'{head_clipboard[col]} > {head_match[col]}' for col in list(qkan_cols.values())])
@@ -216,7 +233,7 @@ class ReadData():  # type: ignore
 
             # decision: datacheck only or start paste procedure
             if not self.proceed:
-                QgsMessageLog.logMessage( f'Folgende Spalten konnten erkannt werden: {meldung}', 'QKan Clipboard',
+                QgsMessageLog.logMessage( f'\nFolgende Spalten konnten erkannt werden: {meldung}', 'QKan',
                                          level=Qgis.Info, notifyUser=True)
                 self.iface.openMessageLog()
 
@@ -230,46 +247,61 @@ class ReadData():  # type: ignore
                             line)
                         continue
                     for column in qkan_colnames:
-                        if (not schtyp_added) or column != 'schachttyp':
-                            value = values[qkan_cols.get(column, None)]
+                        if (
+                                (column == 'schachttyp' and schtyp_added) or
+                                (column == 'haltungstyp' and haltyp_added) or
+                                (column == 'wkt_geom')
+                        ):
+                            pass                                        # Typerkennung überspringen
+                        else:
+                            try:
+                                _value = values[qkan_cols.get(column, None)]
+                            except BaseException as err:
+                                fehlermeldung('Programmfehler',
+                                              f'schtyp_added: {schtyp_added}\n'
+                                              f'haltyp_added: {haltyp_added}\n'
+                                              f'_value:       {_value}\n'
+                                              f'column:       {column}\n')
+                                return
                             _type = qkan_columntypes.get(column, None)          # Typ aus DB-Tabelle
+
+                            logger.debug(f'column: {column}'
+                                         f'\n_value: {_value}')
+
                             if not _type:
                                 continue
                             if _type.lower() == "integer":
-                                field = f"{self.convert(int, nrow, column, value)}"
+                                field = self.convert(int, nrow, column, _value)
                             elif _type.lower() == "real":
-                                field = f"{self.convert(float, nrow, column, value)}"
+                                field = self.convert(float, nrow, column, _value)
                             elif _type.lower() == "text":
                                 # no conversion necessary
-                                field = f"'{value}'"
+                                field = _value
                             elif _type.lower() in ('point', 'linestring', 'polygon', 'multipolygon'):
-                                field = f"GeomFromText('{value}',{self.epsg})"
+                                field = _value
+                                # field = f"GeomFromText('{_value}',{self.epsg})"
                             else:
-                                logger.error(f'Feldtyp Spalte {column} fehlerhaft: {_type}')
-                            # if not field:
-                                self.iface.messageBar().pushMessage(
-                                    "Datenfehler",
-                                    'Datentyp konnte nicht erkannt werden. '
-                                    f'Spalte: {column}, Wert: {value}'
-                                    f'Typ: {type(value)}',
-                                    level=Qgis.Critical, )
-                                # return
+                                fehlermeldung('Fehler in Clipboard-Daten',
+                                              'Datentyp konnte nicht erkannt werden. '
+                                              f'Spalte: {column}, Wert: {_value}'
+                                              f'Typ: {type(_value)}'
+                                              )
                             parsed_dataset[column] = field
 
-                    # Falls Spalte 'schachttyp' ergänzt wurde (s.o.)
+                    # Falls Spalte 'schachttyp' oder 'haltungstyp' ergänzt wurde (s.o.)
                     if schtyp_added:
                         parsed_dataset['schachttyp'] = self.schacht_types[self.layer_name]
+                    elif haltyp_added:
+                        parsed_dataset['haltungstyp'] = self.haltung_types[self.layer_name]
+                    parsed_dataset['epsg'] = self.epsg
 
-                    if self.schacht_types.get(self.layer_name, None):
-                        if 'durchm' in qkan_cols:
-                            if float(parsed_dataset['durchm']) > 10.:
-                                parsed_dataset['durchm'] = "{erg}".format(erg=float(parsed_dataset['durchm'])/1000.)
+                    logger.debug(f'insertgeo:\ntabnam_db: {tabnam_db}\n'
+                                 f'parsed_dataset: {parsed_dataset}')
 
-                    sql = f"INSERT INTO {tabnam_db} ({', '.join(qkan_colnames)}) " \
-                          f"VALUES ({', '.join(list(parsed_dataset.values()))})"
-                    if not self.db_qkan.sql(
-                        sql,
-                        mute_logger=True,
+                    if not self.db_qkan.insertdata(
+                        tabnam_db,
+                        mute_logger=False,
+                        **parsed_dataset
                     ):
                         del self.db_qkan
                         return

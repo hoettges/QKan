@@ -340,12 +340,11 @@ class ToolsConfig(ClassObject):
         """Patterns for replacing column names with the QKan database names"""
 
         # 1. required fields,
-        # 2. triggered table '*_data' instead, except [auslaesse, speicher]
         required_fields = {
             "schaechte": ["schnam", "sohlhoehe"],
             "auslaesse": ["schnam", "sohlhoehe"],
             "speicher": ["schnam", "sohlhoehe"],
-            "haltungen": ["haltnam", "schoben", "schunten"],
+            "haltungen": ["haltnam"],
             "pumpen": ["pnam", "schoben", "schunten"],
             "wehre": ["wnam", "schoben", "schunten"],
             "drosseln": ["wnam", "schoben", "schunten"],
@@ -366,6 +365,19 @@ class ToolsConfig(ClassObject):
             "Auslässe": "Auslass",
         }
 
+        # Layer names with data source table 'haltungen'
+        haltung_types = {
+            "Haltungen nach Typ": "Haltung",
+            "Haltungslinien": "Haltung",
+            "Pumpen": "Pumpe",
+            "Wehre": "Wehr",
+            "Drosseln": "Drossel",
+            "Schieber": "Schieber",
+            "Grund-/Seitenauslässe": "GrundSeitenauslass",
+            "H-Regler": "H-Regler",
+            "Q-Regler": "Q-Regler",
+        }
+
         qkan_patterns = {
             'schaechte': {
                 'schnam': ['schna*', 'nam*'],
@@ -377,12 +389,16 @@ class ToolsConfig(ClassObject):
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
                 'geom': ['geom'],
-                'geop': ['wkt_geom', 'geop'],
+                'geop': ['geop'],
             },
             'haltungen': {
                 'haltnam': ['haltn*', 'haltu*', 'kanaln*', 'nam*', ],
                 'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
                 'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                'xschob': ['xob*', 'xschob*'],
+                'yschob': ['yob*', 'yschob*'],
+                'xschun': ['xun*', 'xschun*'],
+                'yschun': ['yun*', 'yschun*'],
                 'breite': ['brei*', 'rohrbrei*', 'prof*brei*', ],
                 'hoehe': ['hoe*', 'höh*', 'h\xf6h*',
                           'rohrhoe*', 'rohrhöh*', 'rohrh\xf6h*',

@@ -23,7 +23,7 @@ logger = logging.getLogger("QKan.database.qkan_utils")
 def meldung(title: str, text: str) -> None:
     logger.info("{:s} {:s}".format(title, text))
     # noinspection PyArgumentList
-    QgsMessageLog.logMessage(message="{:s} {:s}".format(title, text), level=Qgis.Info)
+    QgsMessageLog.logMessage(message="{:s} {:s}".format(title, text), tag='QKan', level=Qgis.Info)
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Info)
 
 
@@ -31,8 +31,9 @@ def warnung(title: str, text: str) -> None:
     logger.warning("{:s} {:s}".format(title, text))
     # noinspection PyArgumentList
     QgsMessageLog.logMessage(
-        message="{:s} {:s}".format(title, text), level=Qgis.Warning
+        message="{:s} {:s}".format(title, text), tag='QKan', level=Qgis.Warning
     )
+    self.iface.openMessageLog()
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Warning)
 
 
@@ -41,7 +42,7 @@ def fortschritt(text: str, prozent: float = 0) -> None:
     # noinspection PyArgumentList
     QgsMessageLog.logMessage(
         message="{:s} ({:.0f}%)".format(text, prozent * 100),
-        tag="Link Flächen: ",
+        tag="QKan",
         level=Qgis.Info,
     )
 
@@ -50,8 +51,7 @@ def fehlermeldung(title: str, text: str = "") -> None:
     logger.error("{:s} {:s}".format(title, text))
     # noinspection PyArgumentList
     QgsMessageLog.logMessage(
-        message="{:s} {:s}".format(title, text), level=Qgis.Critical
-    )
+        message="{:s} {:s}".format(title, text), tag='QKan', level=Qgis.Critical)
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Critical)
 
     # Protokolldatei anzeigen
