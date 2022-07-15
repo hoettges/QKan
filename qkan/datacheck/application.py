@@ -61,7 +61,7 @@ class Plausi(QKanPlugin):
             "DELETE FROM reflist_zustand")
         self.db_qkan.commit()
 
-        reflist_zustandfile = os.path.join(pluginDirectory("qkan"), "datacheck", "Plausi_Zustandsklassen.csv")
+        reflist_zustandfile = os.path.join(pluginDirectory("qkan"), "templates", "Plausi_Zustandsklassen.csv")
 
         with open(reflist_zustandfile, 'r') as fin:
             dr = csv.reader(fin, delimiter=";")

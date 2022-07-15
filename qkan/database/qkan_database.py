@@ -172,8 +172,7 @@ def createdbtables(
             haltnam, schoben, schunten, 
             hoehe, breite, laenge, 
             sohleoben, sohleunten, 
-            deckeloben, deckelunten, 
-            teilgebiet, qzu, profilnam, 
+            teilgebiet, profilnam, 
             entwart, strasse, material, ks,
             simstatus, kommentar, createdat, 
             xschob, yschob, xschun, yschun,
@@ -196,8 +195,7 @@ def createdbtables(
               (haltnam, schoben, schunten,
                hoehe, breite, laenge,
                sohleoben, sohleunten,
-               deckeloben, deckelunten, 
-               teilgebiet, qzu, profilnam, 
+               teilgebiet, profilnam, 
                entwart, strasse, material, ks,
                simstatus, kommentar, createdat,  
                geom)
@@ -206,9 +204,8 @@ def createdbtables(
               CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
               CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
               new.laenge, 
-              new.sohleoben, new.sohleunten, 
-              new.deckeloben, new.deckelunten, 
-              new.teilgebiet, new.qzu, coalesce(new.profilnam, 'Kreisquerschnitt'), 
+              new.sohleoben, new.sohleunten,  
+              new.teilgebiet, coalesce(new.profilnam, 'Kreisquerschnitt'), 
               coalesce(new.entwart, 'Regenwasser'),new.strasse, new.material, coalesce(new.ks, 1.5), 
               coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
               coalesce(new.createdat, CURRENT_TIMESTAMP), 
@@ -2214,27 +2211,6 @@ def createdbtables(
         return False
 
     consl.commit()
-
-    # reflist_zustandfile = os.path.join(pluginDirectory("qkan"), "database", "Plausi_Zustandsklassen.csv")
-    #
-    # with open(reflist_zustandfile, 'r') as fin:
-    #     dr = csv.reader(fin, delimiter=";")
-    #
-    #     to_db = []
-    #
-    #     for a, b, c, d, e in dr:
-    #         c = [c] if c is None else c.split(',')
-    #         d = [d] if d is None else d.split(',')
-    #         e = [e] if e is None else e.split(',')
-    #         for i in c:
-    #             for j in d:
-    #                 for k in e:
-    #                     to_db.append([a, b, i, j, k])
-    #
-    # cursl.executemany(
-    #     "INSERT INTO reflist_zustand (art, hauptcode, charakterisierung1, charakterisierung2, bereich) VALUES (?, ?, ?, ?, ?);",
-    #     to_db)
-    # consl.commit()
 
     # Allgemeine Informationen -----------------------------------------------
 
