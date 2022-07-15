@@ -279,13 +279,11 @@ class DBConnection:
         self,
         sql: str,
         stmt_category: str = "allgemein",
-        parameters: Optional[Iterable] = (),
+        parameters = (),              # : Optional[Iterable, dict[str, str]]   "Iterable" is deprecated
         mute_logger: bool = False,
         transaction: bool = False,  # Unused, for compatibility only
         ignore: bool = False,      # ignore error and continue
     ) -> bool:
-        logger.debug(f'dbfunc.sql: \nsql: {sql}\n'
-                     f'parameters: {list(parameters)}')
         try:
             self.cursl.execute(sql, parameters)
 
@@ -342,7 +340,7 @@ class DBConnection:
             parlis = ['schnam', 'sohlhoehe', 'deckelhoehe', 'durchm', 'druckdicht',
                     'ueberstauflaeche', 'entwart', 'strasse', 'teilgebiet',
                     'knotentyp', 'auslasstyp', 'schachttyp', 'simstatus',
-                    'material', 'kommentar', 'createdat', 'xsch', 'ysch', 'epsg']
+                    'material', 'kommentar', 'createdat', 'xsch', 'ysch', 'geom', 'geop', 'epsg']
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
@@ -366,21 +364,21 @@ class DBConnection:
                     :knotentyp, :auslasstyp, coalesce(:schachttyp, 'Schacht'), 
                     coalesce(:simstatus, 'vorhanden'), :material,
                     :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP),
-                    CASE WHEN :wkt_geom IS NULL
+                    CASE WHEN :geom IS NULL
                         THEN MakePoint(:xsch, :ysch, :epsg)
-                        ELSE GeomFromText(:wkt_geom)
-                        END,
-                    CASE WHEN geom IS NULL
+                        ELSE GeomFromText(:geop, :epsg)
+                    END,
+                    CASE WHEN :geom IS NULL
                         THEN CastToMultiPolygon(MakePolygon(
                             MakeCircle(:xsch,:ysch,coalesce(:durchm, 1.0)/2.0, :epsg)))
-                        ELSE GeomFromText(:geom)
+                        ELSE GeomFromText(:geom, :epsg)
                     END);"""
 
         elif tabnam == 'haltungen':
             parlis = ['haltnam', 'schoben', 'schunten', 'hoehe', 'breite',
                       'laenge', 'sohleoben', 'sohleunten', 'teilgebiet', 'profilnam',
                       'entwart', 'ks', 'simstatus', 'kommentar',
-                      'createdat', 'xschob', 'yschob', 'xschun', 'yschun', 'epsg']
+                      'createdat', 'xschob', 'yschob', 'xschun', 'yschun', 'geom', 'epsg']
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
@@ -403,23 +401,28 @@ class DBConnection:
                   coalesce(:entwart, 'Regenwasser'), coalesce(:ks, 1.5),
                   coalesce(:simstatus, 'vorhanden'), :kommentar,
                   coalesce(:createdat, CURRENT_TIMESTAMP),
-                  MakeLine(
-                    coalesce(
-                      (SELECT geom FROM schaechte WHERE schnam = :schoben LIMIT 1),
-                      MakePoint(:xschob, :yschob, :epsg)
-                    ),
-                    coalesce(
-                      (SELECT geom FROM schaechte WHERE schnam = :schunten LIMIT 1),
-                      MakePoint(:xschun, :yschun, :epsg)
-                    )
-                  );"""
+                  CASE WHEN :geom IS NULL
+                    THEN
+                      MakeLine(
+                        coalesce(
+                          (SELECT geop FROM schaechte WHERE schnam = :schoben LIMIT 1),
+                          MakePoint(:xschob, :yschob, :epsg)
+                        ),
+                        coalesce(
+                          (SELECT geop FROM schaechte WHERE schnam = :schunten LIMIT 1),
+                          MakePoint(:xschun, :yschun, :epsg)
+                        )
+                      )
+                    ELSE GeomFromText(:geom, :epsg)
+                  END
+                  ;"""
 
         elif tabnam == 'haltungen_untersucht':
             parlis = ['haltnam', 'schoben', 'schunten', 'hoehe', 'breite', 'laenge',
                       'kommentar', 'createdat', 'baujahr', 'xschob', 'yschob',
                       'xschun', 'yschun', 'untersuchtag', 'untersucher', 'wetter',
                       'strasse', 'bewertungsart', 'bewertungstag', 'datenart',
-                      'max_ZD', 'max_ZB', 'max_ZS', 'epsg']
+                      'max_ZD', 'max_ZB', 'max_ZS', 'geom', 'epsg']
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
@@ -457,100 +460,41 @@ class DBConnection:
                       'quantnr2', 'streckenschaden', 'streckenschaden_lfdnr',
                       'pos_von', 'pos_bis', 'foto_dateiname', 'film_dateiname',
                       'ordner_bild', 'ordner_video', 'richtung',
-                      'ZD', 'ZB', 'ZS', 'createdat', 'epsg']
+                      'ZD', 'ZB', 'ZS', 'createdat', 'geom', 'epsg']
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
             sql = f"""  
                 INSERT INTO untersuchdat_haltung
                   (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler, inspektionslaenge, station, timecode, video_offset, kuerzel, 
-                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, ordner_bild, ordner_video, richtung, ZD, ZB, ZS, createdat, geom)
+                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname, 
+                    ordner_bild, ordner_video, richtung, ZD, ZB, ZS, createdat, geom)
                 SELECT
                   :untersuchhal, :untersuchrichtung, :schoben, :schunten, 
                     :id, :videozaehler, :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, 
-                    :charakt1, :charakt2, :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video, :richtung, coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63),
+                    :charakt1, :charakt2, :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, :foto_dateiname, :film_dateiname,
+                    :ordner_bild, :ordner_video, :richtung, coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63),
                     coalesce(:createdat, CURRENT_TIMESTAMP),
                     CASE
-                    WHEN (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten)
-
-                    THEN 
-                    MakeLine(
-                        coalesce(
-                        MakePoint((ST_X(schob.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), :epsg),
-                            schob.geop
-                        ), 
-                        coalesce(
-                        MakePoint((ST_X(schob.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))+2*((-1)/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))+2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), :epsg),
-                            schun.geop
+                    WHEN :untersuchrichtung = 'in Fließrichtung' AND ((ST_Y(schun.geop)-ST_Y(schob.geop) >= 0) <> (:schoben  = haltung.schoben)) THEN 
+                        MakeLine(coalesce(Line_Interpolate_Point(haltung.geom, min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),haltung.laenge), 1.0)),schob.geop), 
+                                 coalesce(Line_Interpolate_Point(OffsetCurve(haltung.geom, 2.0), min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),haltung.laenge), 1.0)),schun.geop)                       -- Station in Haltungsrichtung, nach links
                         )
-                    )
-                    WHEN (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten)
-
-                    THEN 
-                    MakeLine(
-                        coalesce(
-                        MakePoint((ST_X(schob.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge)),(ST_Y(schob.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge)), :epsg),
-                            schob.geop
-                        ), 
-                        coalesce(
-                        MakePoint((ST_X(schob.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schun.geop)-ST_X(schob.geop))/haltung.laenge))-2*((-1)/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/haltung.laenge))-2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), :epsg),
-                            schun.geop
+                    WHEN :untersuchrichtung = 'in Fließrichtung' AND ((ST_Y(schun.geop)-ST_Y(schob.geop) >= 0) = (:schoben = haltung.schoben AND :schunten = haltung.schunten)) THEN 
+                        MakeLine(
+                            coalesce(Line_Interpolate_Point(haltung.geom, min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),haltung.laenge), 1.0)),schob.geop), 
+                            coalesce(Line_Interpolate_Point(OffsetCurve(haltung.geom, -2.0), 1.0 - min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),haltung.laenge), 1.0)),schun.geop)                     -- Station in Haltungsrichtung, nach rechts
                         )
-                    )
-                    WHEN (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten)
-
-                    THEN 
-                    MakeLine(
-                        coalesce(
-                        MakePoint((ST_X(schun.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), :epsg),
-                            schob.geop
-                        ), 
-                        coalesce(
-                        MakePoint((ST_X(schun.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))-2*((-1)/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))-2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), :epsg),
-                            schun.geop
+                    WHEN :untersuchrichtung = 'gegen Fließrichtung' AND ((ST_Y(schob.geop)-ST_Y(schun.geop)  < 0) = (:richtung = 'untersuchungsrichtung')) THEN 
+                        MakeLine(
+                            coalesce(Line_Interpolate_Point(haltung.geom, 1.0 - min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),haltung.laenge), 1.0)),schob.geop), 
+                            coalesce(Line_Interpolate_Point(OffsetCurve(haltung.geom, 2.0), 1.0 - min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),haltung.laenge), 1.0)),schun.geop)                      -- Station gegen Haltungsrichtung, bezogen auf Haltungsobjekt nach links
                         )
-                    )
-                    WHEN (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR 
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> haltung.schoben AND :schunten <> haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR 
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = haltung.schoben AND :schunten = haltung.schunten)
-
-                    THEN 
-                    MakeLine(
-                        coalesce(
-                        MakePoint((ST_X(schun.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge)), (ST_Y(schun.geop)+(:station*COALESCE(haltung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge)), :epsg),
-                            schob.geop
-                        ), 
-                        coalesce(
-                        MakePoint((ST_X(schun.geop)+(:station*MAX(haltung.laenge/:inspektionslaenge,1)*(ST_X(schob.geop)-ST_X(schun.geop))/haltung.laenge))+2*((-1)/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(:station*MAX(haltung.laenge/:inspektionslaenge,1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/haltung.laenge))+2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), :epsg),
-                            schun.geop
+                    WHEN :untersuchrichtung = 'gegen Fließrichtung' AND ((ST_Y(schob.geop)-ST_Y(schun.geop) >= 0) = (:richtung = 'untersuchungsrichtung')) THEN 
+                        MakeLine(
+                            coalesce(Line_Interpolate_Point(haltung.geom, 1.0 - min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),haltung.laenge), 1.0)),schob.geop), 
+                            coalesce(Line_Interpolate_Point(OffsetCurve(haltung.geom, -2.0), min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),haltung.laenge), 1.0)),schun.geop)                           -- Station gegen Haltungsrichtung, bezogen auf Haltungsobjekt nach rechts
                         )
-                    )
                     ELSE NULL
                     END
                 FROM
@@ -560,91 +504,31 @@ class DBConnection:
                 WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND haltung.haltnam = :untersuchhal 
                 UNION
                 SELECT
-                :untersuchhal, :untersuchrichtung, :schoben, :schunten, 
+                  :untersuchhal, :untersuchrichtung, :schoben, :schunten, 
                     :id, :videozaehler, :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, 
-                    :charakt1, :charakt2, :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video, :richtung, coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63),
+                    :charakt1, :charakt2, :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, :foto_dateiname, :film_dateiname,
+                    :ordner_bild, :ordner_video, :richtung, coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63),
                     coalesce(:createdat, CURRENT_TIMESTAMP),
                     CASE
-                    WHEN (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten)
-
-                    THEN 
-                    MakeLine(
-                        coalesce(
-                        MakePoint((ST_X(schob.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schun.geop)-ST_X(schob.geop))/leitung.laenge)),(ST_Y(schob.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/leitung.laenge)), :epsg),
-                            schob.geop
-                        ), 
-                        coalesce(
-                        MakePoint((ST_X(schob.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schun.geop)-ST_X(schob.geop))/leitung.laenge))+2*((-1)/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/leitung.laenge))+2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), :epsg),
-                            schun.geop
+                    WHEN :untersuchrichtung = 'in Fließrichtung' AND ((ST_Y(schun.geop)-ST_Y(schob.geop) >= 0) <> (:schoben  = leitung.schoben)) THEN 
+                        MakeLine(coalesce(Line_Interpolate_Point(leitung.geom, min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),leitung.laenge), 1)),schob.geop), 
+                                 coalesce(Line_Interpolate_Point(OffsetCurve(leitung.geom, 2.0), min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),leitung.laenge), 1)),schun.geop)                       -- Station in Anschlussleitungsrichtung, nach links
                         )
-                    )
-                    WHEN (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) >=0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'in Fließrichtung' AND ST_X(schun.geop)-ST_X(schob.geop) < 0 AND ST_Y(schun.geop)-ST_Y(schob.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten)
-
-                    THEN 
-                    MakeLine(
-                        coalesce(
-                        MakePoint((ST_X(schob.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schun.geop)-ST_X(schob.geop))/leitung.laenge)),(ST_Y(schob.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/leitung.laenge)), :epsg),
-                            schob.geop
-                        ), 
-                        coalesce(
-                        MakePoint((ST_X(schob.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schun.geop)-ST_X(schob.geop))/leitung.laenge))-2*((-1)/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), (ST_Y(schob.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schun.geop)-ST_Y(schob.geop))/leitung.laenge))-2*(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop)))/sqrt(1+(((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))*((ST_X(schun.geop)-ST_X(schob.geop))/(ST_Y(schun.geop)-ST_Y(schob.geop))))), :epsg),
-                            schun.geop
+                    WHEN :untersuchrichtung = 'in Fließrichtung' AND ((ST_Y(schun.geop)-ST_Y(schob.geop) >= 0) = (:schoben = leitung.schoben AND :schunten = leitung.schunten)) THEN 
+                        MakeLine(
+                            coalesce(Line_Interpolate_Point(leitung.geom, min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),leitung.laenge), 1)),schob.geop), 
+                            coalesce(Line_Interpolate_Point(OffsetCurve(leitung.geom, -2.0), 1.0 - min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),leitung.laenge), 1)),schun.geop)                     -- Station in Anschlussleitungsrichtung, nach rechts
                         )
-                    )
-                    WHEN (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'fließrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten)
-
-                    THEN 
-                    MakeLine(
-                        coalesce(
-                        MakePoint((ST_X(schun.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schob.geop)-ST_X(schun.geop))/leitung.laenge)), (ST_Y(schun.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/leitung.laenge)), :epsg),
-                            schob.geop
-                        ), 
-                        coalesce(
-                        MakePoint((ST_X(schun.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schob.geop)-ST_X(schun.geop))/leitung.laenge))-2*((-1)/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/leitung.laenge))-2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), :epsg),
-                            schun.geop
+                    WHEN :untersuchrichtung = 'gegen Fließrichtung' AND ((ST_Y(schob.geop)-ST_Y(schun.geop)  < 0) = (:richtung = 'untersuchungsrichtung')) THEN 
+                        MakeLine(
+                            coalesce(Line_Interpolate_Point(leitung.geom, 1.0 - min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),leitung.laenge), 1)),schob.geop), 
+                            coalesce(Line_Interpolate_Point(OffsetCurve(leitung.geom, 2.0), 1.0 - min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),leitung.laenge), 1)),schun.geop)                      -- Station gegen Anschlussleitungsrichtung, bezogen auf Geo-Objekt nach links
                         )
-                    )
-                    WHEN (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR 
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben <> leitung.schoben AND :schunten <> leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) < 0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR 
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) < 0 AND :richtung = 'fließrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop)  >=0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten) OR
-                            (:untersuchrichtung = 'gegen Fließrichtung' AND ST_X(schob.geop)-ST_X(schun.geop) <0 AND ST_Y(schob.geop)-ST_Y(schun.geop) >= 0 AND :richtung = 'untersuchungsrichtung' AND :schoben = leitung.schoben AND :schunten = leitung.schunten)
-
-                    THEN 
-                    MakeLine(
-                        coalesce(
-                        MakePoint((ST_X(schun.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schob.geop)-ST_X(schun.geop))/leitung.laenge)), (ST_Y(schun.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/leitung.laenge)), :epsg),
-                            schob.geop
-                        ), 
-                        coalesce(
-                        MakePoint((ST_X(schun.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_X(schob.geop)-ST_X(schun.geop))/leitung.laenge))+2*((-1)/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), (ST_Y(schun.geop)+(:station*COALESCE(leitung.laenge/NULLIF(:inspektionslaenge, 0),1)*(ST_Y(schob.geop)-ST_Y(schun.geop))/leitung.laenge))+2*(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop)))/sqrt(1+(((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))*((ST_X(schob.geop)-ST_X(schun.geop))/(ST_Y(schob.geop)-ST_Y(schun.geop))))), :epsg),
-                            schun.geop
+                    WHEN :untersuchrichtung = 'gegen Fließrichtung' AND ((ST_Y(schob.geop)-ST_Y(schun.geop) >= 0) = (:richtung = 'untersuchungsrichtung')) THEN 
+                        MakeLine(
+                            coalesce(Line_Interpolate_Point(leitung.geom, 1.0 - min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),leitung.laenge), 1)),schob.geop), 
+                            coalesce(Line_Interpolate_Point(OffsetCurve(leitung.geom, -2.0), min(:station/COALESCE(NULLIF(:inspektionslaenge, 0),leitung.laenge), 1)),schun.geop)                           -- Station gegen Anschlussleitungsrichtung, bezogen auf Geo-Objekt nach rechts
                         )
-                    )
                     ELSE NULL
                     END
                 FROM
@@ -659,7 +543,7 @@ class DBConnection:
                       'sohleoben', 'sohleunten', 'deckeloben', 'deckelunten',
                       'teilgebiet', 'qzu', 'profilnam', 'entwart', 'material', 'ks',
                       'simstatus', 'kommentar', 'createdat',
-                      'xschob', 'yschob', 'xschun', 'yschun', 'epsg']
+                      'xschob', 'yschob', 'xschun', 'yschun', 'geom', 'epsg']
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
@@ -684,9 +568,13 @@ class DBConnection:
                   coalesce(:entwart, 'Regenwasser'), :material, coalesce(:ks, 1.5), 
                   coalesce(:simstatus, 'vorhanden'), :kommentar, 
                   coalesce(:createdat, CURRENT_TIMESTAMP), 
-                  MakeLine(
-                      MakePoint(:xschob, :yschob, :epsg), 
-                      MakePoint(:xschun, :yschun, :epsg)));
+                  CASE WHEN :geom IS NULL
+                      THEN MakeLine(
+                          MakePoint(:xschob, :yschob, :epsg), 
+                          MakePoint(:xschun, :yschun, :epsg))
+                      ELSE GeomFromText(:geom, :epsg)
+                  END
+                );
             """
         elif tabnam == 'schaechte_untersucht':
             parlis = ['schnam', 'durchm', 'kommentar', 'createdat', 'baujahr',

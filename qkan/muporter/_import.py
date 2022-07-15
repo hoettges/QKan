@@ -47,11 +47,11 @@ class ImportTask:
 
         if self.append:
             sql = f"""
-            INSERT INTO schaechte_data (
+            INSERT INTO schaechte (
                 schnam, xsch, ysch, simstatus, 
                 sohlhoehe, deckelhoehe, 
                 durchm, druckdicht, schachttyp,
-                kommentar, createdat
+                kommentar, createdat, geop, geom
             )
             SELECT
                 sm.muid AS schnam
@@ -70,6 +70,8 @@ class ImportTask:
               , 'Importiert mit QKan'           AS kommentar
               , coalesce(createdat, datetime('now')) 
                                                 AS createdat
+              , SetSrid(sm.geometry, :epsg)     AS geop
+              , CastToMultiPolygon(MakePolygon(MakeCircle(x(sm.geometry), y(sm.geometry), sm.diameter, :epsg))) 
             FROM mu.msm_Node    AS sm
             LEFT JOIN schaechte AS sq
             ON sm.muid = sq.schnam 
@@ -77,7 +79,8 @@ class ImportTask:
               AND sm.typeno IN {selectedtypes}
             """
 
-            if not self.db_qkan.sql(sql, "mu_import Schächte"):
+            params = {'epsg': self.epsg}
+            if not self.db_qkan.sql(sql, "mu_import Schächte", params):
                 return False
 
             self.db_qkan.commit()
@@ -144,7 +147,7 @@ class ImportTask:
                   , 'Importiert mit QKan'               AS kommentar
                   , coalesce(createdat, datetime('now')) 
                                                         AS createdat
-                  , SetSRID(ro.geometry, {self.epsg})    AS geom
+                  , SetSRID(ro.geometry, :epsg)    AS geom
                 FROM mu.msm_Link AS ro
                 LEFT JOIN mu.ms_Material AS mt
                 ON ro.materialid = mt.muid
@@ -155,7 +158,8 @@ class ImportTask:
                 WHERE ha.pk IS NULL AND ro.active
                 """
 
-                if not self.db_qkan.sql(sql, "mu_import Haltungen"):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "mu_import Haltungen", params):
                     return False
 
                 self.db_qkan.commit()
@@ -184,7 +188,7 @@ class ImportTask:
                 #   , 'Importiert mit QKan'               AS kommentar
                 #   , coalesce(createdat, datetime('now'))
                 #                                         AS createdat
-                #   , SetSRID(wu.geometry, {self.epsg})   AS geom
+                #   , SetSRID(wu.geometry, :epsg)   AS geom
                 # FROM mu.msm_Weir AS wu
                 # LEFT JOIN wehre AS wq
                 # ON wq.wnam = wu.muid
@@ -214,7 +218,7 @@ class ImportTask:
                   , 'Importiert mit QKan'               AS kommentar
                   , coalesce(createdat, datetime('now')) 
                                                         AS createdat
-                  , SetSRID(wu.geometry, {self.epsg})   AS geom
+                  , SetSRID(wu.geometry, :epsg)   AS geom
                                 FROM mu.msm_Pump AS wu
                 FROM mu.msm_Weir AS wu
                 LEFT JOIN haltungen AS ha
@@ -222,7 +226,8 @@ class ImportTask:
                 WHERE ha.pk IS NULL
                 """
 
-                if not self.db_qkan.sql(sql, "mu_import Wehre"):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "mu_import Wehre", params):
                     return False
 
                 self.db_qkan.commit()
@@ -253,7 +258,7 @@ class ImportTask:
                 #   , 'Importiert mit QKan'               AS kommentar
                 #   , coalesce(createdat, datetime('now'))
                 #                                         AS createdat
-                #   , SetSRID(pu.geometry, {self.epsg})   AS geom
+                #   , SetSRID(pu.geometry, :epsg)   AS geom
                 # FROM mu.msm_Pump AS pu
                 # LEFT JOIN pumpen AS pq
                 # ON pq.pnam = pu.muid
@@ -281,7 +286,7 @@ class ImportTask:
                   , 'Importiert mit QKan'               AS kommentar
                   , coalesce(createdat, datetime('now')) 
                                                         AS createdat
-                  , SetSRID(pu.geometry, {self.epsg})   AS geom
+                  , SetSRID(pu.geometry, :epsg)   AS geom
                                 FROM mu.msm_Pump AS pu
                 FROM mu.msm_Pump AS pu
                 LEFT JOIN haltungen AS ha
@@ -289,7 +294,8 @@ class ImportTask:
                 WHERE ha.pk IS NULL
                 """
 
-                if not self.db_qkan.sql(sql, "mu_import Pumpen(2)"):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "mu_import Pumpen(2)", params):
                     return False
 
                 self.db_qkan.commit()
@@ -323,7 +329,7 @@ class ImportTask:
                   , 'Importiert mit QKan'               AS kommentar
                   , coalesce(createdat, datetime('now')) 
                                                         AS createdat
-                  , CastToMultiPolygon(SetSRID(fm.geometry, {self.epsg}))
+                  , CastToMultiPolygon(SetSRID(fm.geometry, :epsg))
                                                         AS geom
                 FROM mu.msm_Catchment AS fm
                 JOIN mu.msm_CatchCon AS fl
@@ -348,7 +354,8 @@ class ImportTask:
                 WHERE fq.pk IS NULL
                 """
 
-                if not self.db_qkan.sql(sql, "mu_import Flaechen (1)"):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "mu_import Flaechen (1), params"):
                     return False
 
                 sql = """
@@ -398,7 +405,7 @@ class ImportTask:
                   , 'Importiert mit QKan'               AS kommentar
                   , coalesce(createdat, datetime('now')) 
                                                         AS createdat
-                  , CastToMultiPolygon(SetSRID(fm.geometry, {self.epsg}))
+                  , CastToMultiPolygon(SetSRID(fm.geometry, :epsg))
                                                         AS geom
                 FROM mu.msm_Catchment AS fm
                 JOIN mu.msm_CatchCon AS fl
@@ -423,7 +430,8 @@ class ImportTask:
                 WHERE tg.pk IS NULL
                 """
 
-            if not self.db_qkan.sql(sql, "mu_import Haltungsflaechen"):
+            params = {'epsg': self.epsg}
+            if not self.db_qkan.sql(sql, "mu_import Haltungsflaechen", params):
                 return False
 
             self.db_qkan.commit()

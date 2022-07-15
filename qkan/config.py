@@ -354,6 +354,8 @@ class ToolsConfig(ClassObject):
             "hregler": ["wnam", "schoben", "schunten"],
             "tezg": [],
             "flaechen": [],
+            "anschlussleitungen": ["leitnam"],
+            "untersuchdat_haltung": ["untersuchhal", "schoben", "schunten", "station"],
         }
 
         # Layer names with data source table 'schaechte'
@@ -543,6 +545,42 @@ class ToolsConfig(ClassObject):
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
                 'geom': ['wkt_geom', 'geo*'],
             },
+            'anschlussleitungen': {
+                'leitnam': ['leit*', 'haltn*', 'haltu*', 'bez*', 'kanaln*', 'nam*', ],
+                'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
+                'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                'xschob': ['xob*', 'xschob*'],
+                'yschob': ['yob*', 'yschob*'],
+                'xschun': ['xun*', 'xschun*'],
+                'yschun': ['yun*', 'yschun*'],
+                'breite': ['brei*', 'rohrbrei*', 'prof*brei*', ],
+                'hoehe': ['hoe*', 'höh*', 'h\xf6h*',
+                          'rohrhoe*', 'rohrhöh*', 'rohrh\xf6h*',
+                          'prof*hoe*', 'prof*höh*', 'prof*h\xf6*',
+                          'durchm*'],
+                'laenge': ['laen*', 'läng*'],
+                'sohleoben': ['sohl*ob*', 'sohl*anf'],
+                'sohleunten': ['sohl*un*', 'sohl*end*'],
+                'deckeloben': ['deckel*ob*', 'deckel*anf'],
+                'deckelunten': ['deckel*un*', 'deckel*end*'],
+                'profilnam': ['profil*', ],
+                'ks': ['ks*', 'rauh*'],
+                'entwart': ['entw*art', 'entw*typ*', 'kanalart*'],
+                'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
+                'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
+                'geom': ['wkt_geom', 'geo*'],
+            },
+            "untersuchdat_haltung": {
+                "untersuchhal": ['untersuchh*', 'hal*'],
+                'schoben': ['sch*ob*', 'sch*anf', 'anf*sch*', ],
+                'schunten': ['sch*un*', 'sch*end', 'end*sch*', ],
+                "station": ['stati*'],
+                "videozaehler": ['zaehl*', 'z\xe4hl*', 'videozaehl*', 'videoz\xe4hl*'],
+                "timecode": ['timec*', 'zeit*'],
+                "kuerzel": ['scha*kuerz*', 'kuerz', 'scha*k\xfcrz*', 'k\xfcrz'],
+                "charact1": ['Cara*1', 'chara*1'],
+                "charact2": ['Cara*2', 'chara*2'],
+            }
         }
 
         def __str__(self) -> str:

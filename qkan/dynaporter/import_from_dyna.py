@@ -706,7 +706,7 @@ def import_kanaldaten(
 
     # Daten aus temporären DYNA-Tabellen abfragen
     sql = """
-        INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
+        INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
                                     schachttyp, simstatus, kommentar)
         SELECT 
             dyna12.schoben as schnam,
@@ -719,7 +719,9 @@ def import_kanaldaten(
             entwaesserungsarten.bezeichnung as entwart, 
             'Schacht' AS schachttyp, 
             simulationsstatus.bezeichnung AS simstatus, 
-            'Importiert mit QKan' AS kommentar
+            'Importiert mit QKan' AS kommentar,
+            MakePoint(dyna41.xkoor, dyna41.ykoor, :epsg) AS geop,
+            CastToMultiPolygon(MakePolygon(MakeCircle(dyna41.xkoor, dyna41.ykoor, 1.0, :epsg)))
         FROM dyna12
         LEFT JOIN simulationsstatus
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
@@ -727,7 +729,8 @@ def import_kanaldaten(
         ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
         GROUP BY dyna12.schoben"""
 
-    if not db_qkan.sql(sql, "importkanaldaten_dyna (11)"):
+    params = {'epsg': epsg}
+    if not db_qkan.sql(sql, "importkanaldaten_dyna (11)", parameters=params):
         del db_qkan
         return False
 
@@ -738,8 +741,8 @@ def import_kanaldaten(
 
     # Daten aus temporären DYNA-Tabellen abfragen
     sql = """
-        INSERT INTO schaechte_data (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
-                                    schachttyp, simstatus, kommentar)
+        INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
+                                    schachttyp, simstatus, kommentar, geop, geom)
         SELECT
             dyna41.schnam as schnam,
             dyna41.xkoor as xsch, 
@@ -751,7 +754,9 @@ def import_kanaldaten(
             entwaesserungsarten.bezeichnung as entwart,
             'Auslass' AS schachttyp, 
             simulationsstatus.bezeichnung AS simstatus, 
-            'Importiert mit QKan' AS kommentar
+            'Importiert mit QKan' AS kommentar,
+            MakePoint(dyna41.xkoor, dyna41.ykoor, :epsg) AS geop,
+            CastToMultiPolygon(MakePolygon(MakeCircle(dyna41.xkoor, dyna41.ykoor, 1.0, :epsg)))
         FROM dyna41
         LEFT JOIN dyna12
         ON dyna41.schnam = dyna12.schunten
@@ -761,7 +766,8 @@ def import_kanaldaten(
         ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
         GROUP BY dyna41.schnam"""
 
-    if not db_qkan.sql(sql, "importkanaldaten_dyna (14)"):
+    params = {'epsg': epsg}
+    if not db_qkan.sql(sql, "importkanaldaten_dyna (14)", parameters=params):
         del db_qkan
         return False
 
@@ -779,7 +785,7 @@ def import_kanaldaten(
     # Daten aus temporären DYNA-Tabellen abfragen
 
     sql = """
-        INSERT INTO haltungen_data 
+        INSERT INTO haltungen 
             (haltnam, schoben, schunten, 
             hoehe, breite, laenge, sohleoben, sohleunten, 
             deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus, kommentar)
@@ -799,7 +805,11 @@ def import_kanaldaten(
             entwaesserungsarten.bezeichnung as entwart, 
             dynarauheit.ks as ks, 
             simulationsstatus.bezeichnung as simstatus, 
-            'DYNA-Import' AS kommentar
+            'DYNA-Import' AS kommentar,
+            MakeLine(MakePoint(dyna12.xob,dyna12.yob,:epsg),
+                     MakePoint(coalesce(dy12un.xob, dyna41.xkoor),
+                               coalesce(dy12un.yob, dyna41.ykoor),
+                               :epsg))
         FROM dyna12
         LEFT JOIN dyna12 AS dy12un
         ON dyna12.schunten = dy12un.schoben

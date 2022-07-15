@@ -51,13 +51,13 @@ class ImportTask:
         if QKan.config.check_import.schaechte:
             if self.append:
                 sql = """
-                INSERT INTO schaechte_data (
+                INSERT INTO schaechte (
                     schnam, xsch, ysch, 
                     sohlhoehe, deckelhoehe, 
                     durchm, 
                     druckdicht, 
                     entwart, schachttyp, simstatus, 
-                    kommentar, createdat
+                    kommentar, createdat, geop, geom
                 )
                 SELECT 
                     sh.Name AS schnam,
@@ -71,7 +71,14 @@ class ImportTask:
                     'Schacht' AS schachttyp,
                     si.bezeichnung AS simstatus, 
                     sh.Kommentar AS kommentar, 
-                    sh.Lastmodified AS createdat
+                    sh.Lastmodified AS createdat,
+                    SetSrid(sh.Geometry, :epsg) AS geop,
+                    CastToMultiPolygon(MakePolygon(MakeCircle(x(sh.Geometry),
+                                                              y(sh.Geometry),
+                                                              sm.diameter,
+                                                              :epsg)
+                                       )
+                    ) AS geom
                 FROM he.Schacht AS sh
                 LEFT JOIN entwaesserungsarten AS ea 
                 ON ea.he_nr = sh.Kanalart
@@ -82,7 +89,8 @@ class ImportTask:
                 WHERE sq.pk IS NULL
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import Schächte"):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Schächte", params):
                     return False
 
                 self.db_qkan.commit()
@@ -95,11 +103,11 @@ class ImportTask:
         if QKan.config.check_import.auslaesse:
             if self.append:
                 sql = """
-                INSERT INTO schaechte_data (
+                INSERT INTO schaechte (
                     schnam, xsch, ysch, 
                     sohlhoehe, deckelhoehe, 
                     schachttyp, simstatus, 
-                    kommentar, createdat
+                    kommentar, createdat, geop, geom
                 )
                 SELECT 
                     al.Name AS schnam,
@@ -110,7 +118,14 @@ class ImportTask:
                     'Auslass' AS schachttyp,
                     si.bezeichnung AS simstatus,
                     al.Kommentar AS kommentar, 
-                    al.Lastmodified AS createdat
+                    al.Lastmodified AS createdat,
+                    SetSrid(sh.Geometry, :epsg) AS geop,
+                    CastToMultiPolygon(MakePolygon(MakeCircle(x(sh.Geometry),
+                                                              y(sh.Geometry),
+                                                              sm.diameter,
+                                                              :epsg)
+                                       )
+                    ) AS geom
                 FROM he.Auslass AS al
                 LEFT JOIN simulationsstatus AS si
                 ON si.he_nr = al.Planungsstatus
@@ -119,7 +134,8 @@ class ImportTask:
                 WHERE sq.pk IS NULL
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import Auslässe"):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Auslässe", params):
                     return False
 
                 self.db_qkan.commit()
@@ -132,11 +148,11 @@ class ImportTask:
         if QKan.config.check_import.speicher:
             if self.append:
                 sql = """
-                INSERT INTO schaechte_data (
+                INSERT INTO schaechte (
                     schnam, xsch, ysch, 
                     sohlhoehe, deckelhoehe, 
                     schachttyp, simstatus, 
-                    kommentar, createdat
+                    kommentar, createdat, geop, geom
                 )
                 SELECT 
                     sp.Name AS schnam,
@@ -147,7 +163,14 @@ class ImportTask:
                     'Speicher' AS schachttyp,
                     si.bezeichnung AS simstatus,
                     sp.Kommentar AS kommentar, 
-                    sp.Lastmodified AS createdat
+                    sp.Lastmodified AS createdat,
+                    SetSrid(sh.Geometry, :epsg) AS geop,
+                    CastToMultiPolygon(MakePolygon(MakeCircle(x(sh.Geometry),
+                                                              y(sh.Geometry),
+                                                              sm.diameter,
+                                                              :epsg)
+                                       )
+                    ) AS geom
                 FROM he.Speicherschacht AS sp
                 LEFT JOIN simulationsstatus AS si
                 ON si.he_nr = sp.Planungsstatus
@@ -156,7 +179,8 @@ class ImportTask:
                 WHERE sq.pk IS NULL
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import Speicher"):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Speicher", params):
                     return False
 
                 self.db_qkan.commit()
@@ -225,7 +249,7 @@ class ImportTask:
                     si.bezeichnung AS simstatus,
                     ro.Kommentar AS kommentar, 
                     ro.Lastmodified AS createdat, 
-                    SetSrid(Geometry,?) AS geom
+                    SetSrid(Geometry,:epsg) AS geom
                 FROM he.Rohr AS ro
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON ro.Profiltyp = pr.he_nr
@@ -238,7 +262,8 @@ class ImportTask:
                 WHERE ha.pk IS NULL
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import Haltungen", (self.epsg,)):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Haltungen", params):
                     return False
 
                 self.db_qkan.commit()
@@ -307,7 +332,7 @@ class ImportTask:
                     si.bezeichnung AS simstatus, 
                     we.Kommentar AS kommentar, 
                     we.Lastmodified AS createdat,
-                    SetSrid(Geometry,?) AS geom
+                    SetSrid(Geometry, :epsg) AS geom
                 FROM he.Wehr AS we
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON we.Profiltyp = pr.he_nr
@@ -317,7 +342,9 @@ class ImportTask:
                 ON ha.haltnam = we.Name
                 WHERE ha.pk IS NULL
                 """
-                if not self.db_qkan.sql(sql, "he8_import Wehre", (self.epsg,)):
+
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Wehre", params):
                     return False
 
                 self.db_qkan.commit()
@@ -381,7 +408,7 @@ class ImportTask:
                     si.bezeichnung AS simstatus, 
                     pu.Kommentar AS kommentar, 
                     pu.Lastmodified AS createdat,
-                    SetSrid(Geometry,?) AS geom
+                    SetSrid(Geometry, :epsg) AS geom
                 FROM he.Pumpe AS pu
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = pu.Planungsstatus
@@ -389,7 +416,9 @@ class ImportTask:
                 ON ha.haltnam = pu.Name
                 WHERE ha.pk IS NULL
                 """
-                if not self.db_qkan.sql(sql, "he8_import Pumpen", (self.epsg,)):
+
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Pumpen", params):
                     return False
 
                 self.db_qkan.commit()
@@ -418,7 +447,7 @@ class ImportTask:
                     si.bezeichnung AS simstatus, 
                     dr.Kommentar AS kommentar, 
                     dr.Lastmodified AS createdat,
-                    SetSrid(Geometry,?) AS geom
+                    SetSrid(Geometry, :epsg) AS geom
                 FROM he.Drossel AS dr
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = dr.Planungsstatus
@@ -426,7 +455,9 @@ class ImportTask:
                 ON ha.haltnam = dr.Name
                 WHERE ha.pk IS NULL
                 """
-                if not self.db_qkan.sql(sql, "he8_import Drosseln", (self.epsg,)):
+
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Drosseln", params):
                     return False
 
                 self.db_qkan.commit()
@@ -463,7 +494,7 @@ class ImportTask:
                     si.bezeichnung AS simstatus, 
                     sr.Kommentar AS kommentar, 
                     sr.Lastmodified AS createdat,
-                    SetSrid(Geometry,?) AS geom
+                    SetSrid(Geometry, :epsg) AS geom
                 FROM he.Schieber AS sr
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON sr.Profiltyp = pr.he_nr
@@ -473,7 +504,9 @@ class ImportTask:
                 ON ha.haltnam = sr.Name
                 WHERE ha.pk IS NULL
                 """
-                if not self.db_qkan.sql(sql, "he8_import Schieber", (self.epsg,)):
+
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Schieber", params):
                     return False
 
                 self.db_qkan.commit()
@@ -511,7 +544,7 @@ class ImportTask:
                     si.bezeichnung AS simstatus,
                     qr.Kommentar AS kommentar, 
                     qr.Lastmodified AS createdat, 
-                    SetSrid(Geometry,?) AS geom
+                    SetSrid(Geometry, :epsg) AS geom
                 FROM he.qRegler AS qr
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON qr.Profiltyp = pr.he_nr
@@ -523,7 +556,9 @@ class ImportTask:
                 ON ha.haltnam = qr.Name
                 WHERE ha.pk IS NULL
                 """
-                if not self.db_qkan.sql(sql, "he8_import Q-Regler", (self.epsg,)):
+
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Q-Regler", params):
                     return False
                 self.db_qkan.commit()
         return True
@@ -560,7 +595,7 @@ class ImportTask:
                     si.bezeichnung AS simstatus,
                     hr.Kommentar AS kommentar,
                     hr.Lastmodified AS createdat,
-                    SetSrid(Geometry,?) AS geom
+                    SetSrid(Geometry, :epsg) AS geom
                 FROM he.hRegler AS hr
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON hr.Profiltyp = pr.he_nr
@@ -572,7 +607,9 @@ class ImportTask:
                 ON ha.haltnam = hr.Name
                 WHERE ha.pk IS NULL
                 """
-                if not self.db_qkan.sql(sql, "he8_import H-Regler", (self.epsg,)):
+
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import H-Regler", params):
                     return False
                 self.db_qkan.commit()
         return True
@@ -608,7 +645,7 @@ class ImportTask:
                     si.bezeichnung AS simstatus,
                     gs.Kommentar AS kommentar, 
                     gs.Lastmodified AS createdat, 
-                    SetSrid(Geometry,?) AS geom
+                    SetSrid(Geometry, :epsg) AS geom
                 FROM he.grundseitenauslass AS gs
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON gs.Profiltyp = pr.he_nr
@@ -618,7 +655,9 @@ class ImportTask:
                 ON ha.haltnam = gs.Name
                 WHERE ha.pk IS NULL
                 """
-                if not self.db_qkan.sql(sql, "he8_import Grund- und Seitenauslässe", (self.epsg,)):
+
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Grund- und Seitenauslässe", params):
                     return False
                 self.db_qkan.commit()
         return True
@@ -642,11 +681,12 @@ class ImportTask:
                     false AS aufteilen, 
                     fl.Kommentar AS kommentar, 
                     fl.Lastmodified AS createdat, 
-                    SetSrid(Geometry,?) AS geom
+                    SetSrid(Geometry, :epsg) AS geom
                 FROM he.Flaeche AS fl
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import Flaechen", (self.epsg,)):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Flaechen", params):
                     return False
 
                 self.db_qkan.commit()
@@ -676,7 +716,7 @@ class ImportTask:
                     SetSrid(MakeLine(
                         PointOnSurface(Buffer(fl.Geometry, -1.1*{self.fangradius})), 
                         Centroid(ro.Geometry)
-                        ), ?
+                        ),  :epsg
                     )                           AS link
                     FROM he.Rohr AS ro
                     INNER JOIN he.Flaeche AS fl
@@ -686,7 +726,8 @@ class ImportTask:
                     WHERE fl.Geometry IS NOT NULL AND ro.Geometry IS NOT NULL
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import linkfl", (self.epsg,)):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import linkfl", params):
                     return False
 
                 self.db_qkan.commit()
@@ -896,7 +937,7 @@ class ImportTask:
                     el_he.Teileinzugsgebiet AS einzugsgebiet,
                     el_he.Kommentar         AS kommentar,
                     el_he.LastModified      AS createdat,
-                    SetSrid(el_he.Geometry, ?
+                    SetSrid(el_he.Geometry,  :epsg
                     )                       AS geom
                 FROM Einzeleinleiter AS el_he
                 LEFT JOIN einleit AS el_qk
@@ -904,7 +945,8 @@ class ImportTask:
                 WHERE el_qk.pk IS NULL
                 """
 
-                if not self.db_qkan.sql(sql, "he8_import Direkteinleiter", (self.epsg,)):
+                params = {'epsg': self.epsg}
+                if not self.db_qkan.sql(sql, "he8_import Direkteinleiter", params):
                     return False
 
                 self.db_qkan.commit()

@@ -33,7 +33,7 @@ def warnung(title: str, text: str) -> None:
     QgsMessageLog.logMessage(
         message="{:s} {:s}".format(title, text), tag='QKan', level=Qgis.Warning
     )
-    self.iface.openMessageLog()
+    QKan.instance.iface.openMessageLog()
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Warning)
 
 
