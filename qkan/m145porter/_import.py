@@ -2166,12 +2166,15 @@ class ImportTask:
             # in der Tabelle "schaechte" gespeichert werden.
             sql = f"""
                            INSERT INTO haltungen 
-                               (haltnam, schoben, schunten, hoehe, haltungstyp, simstatus, kommentar, geom)
-                           SELECT '{pumpe.haltnam}', '{pumpe.schoben}', '{pumpe.schunten}', '{pumpe.hoehe}', '{pumpentyp}', '{pumpe.simstatus}'
+                               (haltnam, schoben, schunten, hoehe, haltungstyp, simstatus, kommentar)
+                           SELECT :pnam, :schoben, :schunten, :sohle, :pumpentyp, :simstatus, :kommentar
                            FROM schaechte AS SCHOB, schaechte AS SCHUN
-                           WHERE SCHOB.schnam = '{pumpe.schoben}' AND SCHUN.schnam = '{pumpe.schunten}'"""
+                           WHERE SCHOB.schnam = :schoben AND SCHUN.schnam = :schunten"""
 
-            if not self.db_qkan.sql(sql, "xml_import Pumpen [2]"):
+            params = {'pnam': pumpe.pnam, 'schoben': pumpe.schoben, 'schunten': pumpe.schunten,
+                      'sohle': pumpe.sohle, 'pumpentyp': pumpe.pumpentyp,
+                      'simstatus': pumpe.simstatus, 'kommentar': pumpe.kommentar}
+            if not self.db_qkan.sql(sql, "xml_import Pumpen [2]", params):
                 return None
 
         self.db_qkan.commit()
