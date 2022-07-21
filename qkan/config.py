@@ -242,6 +242,7 @@ class SWMMConfig(ClassObject):
     template: str = ""
     import_file: str = ""
     export_file: str = ""
+    liste_teilgebiete: list = []
 
 
 class LinkFlConfig(ClassObject):

@@ -85,8 +85,8 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # self.button_box.helpRequested.connect(self.click_help)
 
         # Aktionen zu lw_teilgebiete: QListWidget
-        #self.cb_selActive.stateChanged.connect(self.click_selection)
-        # self.lw_teilgebiete.itemClicked.connect(self.count_selection)      # ist schon in click_lw_teilgebiete enthalten
+        self.cb_selActive.stateChanged.connect(self.click_selection)
+        #self.lw_teilgebiete.itemClicked.connect(self.count_selection)      # ist schon in click_lw_teilgebiete enthalten
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
 
         # Init fields
@@ -159,6 +159,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen
         """
+        self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
         if not self.db_qkan:
             logger.error("db_qkan is not initialized.")
@@ -176,7 +177,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
         sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
 
-        if not self.db_qkan.sql(sql, "QKan_ExportHE.application.countselection (1)"):
+        if not self.db_qkan.sql(sql, "QKan_ExportSWMM.application.countselection (1)"):
             return False
         daten = self.db_qkan.fetchone()
         if not (daten is None):
@@ -220,7 +221,8 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     def prepareDialog(self, db_qkan) -> bool:
         """Füllt Auswahllisten im Export-Dialog"""
 
-        self.db_qkan = db_qkan
+        self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
+        #self.db_qkan = db_qkan
         # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
 
         sql = """INSERT INTO teilgebiete (tgnam)

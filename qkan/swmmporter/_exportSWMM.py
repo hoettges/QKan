@@ -32,6 +32,7 @@ from typing import Dict, List, cast
 from lxml import etree
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.utils import pluginDirectory
+from qgis.PyQt.QtWidgets import QProgressBar
 from qkan import QKan, enums
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
@@ -57,13 +58,11 @@ class ExportTask:
         inpfile: str,
         db_qkan: DBConnection,
         projectfile: str,
-        offset: List[float],
         liste_teilgebiete: List[str],
         epsg: int = 25832,
-        dbtyp: str = "SpatiaLite",
     ):
         self.epsg = epsg
-        self.dbtyp = dbtyp
+        #self.dbtyp = dbtyp
         self.inpobject = Path(inpfile)
         self.data: Dict[str, List[str]] = {}
         self.db_qkan = db_qkan
@@ -92,17 +91,13 @@ class ExportTask:
         del self.dbQK
 
     def run(self) -> bool:
-        self.exportKanaldaten(self.db_qkan, self.inpobject, self.projectfile, self.liste_teilgebiete )
+        self.exportKanaldaten()
 
         return True
 
 
     def exportKanaldaten(
-        #iface: QgisInterface,
-        databaseQKan: str,
-        templateSwmm: str,
-        ergfileSwmm: str,
-        liste_teilgebiete: List[str],
+        self
     ) -> None:
         """
         :iface:                 QGIS-Interface zur GUI
@@ -128,17 +123,22 @@ class ExportTask:
         # Roaming-Verzeichnis befindet (abrufbar mit site.getuserbase()
         # Andere Tabellen sind in diesem Quellcode integriert, wie z. B. ref_typen
 
+        databaseQKan=self.db_qkan
+        templateSwmm=self.inpobject
+        ergfileSwmm=self.projectfile
+        liste_teilgebiete=self.liste_teilgebiete
+
         iface = QKan.instance.iface
 
         # Create progress bar
         progress_bar = QProgressBar(iface.messageBar())
         progress_bar.setRange(0, 100)
 
-        status_message = iface.messageBar().createMessage(
-            "", "Export in Arbeit. Bitte warten..."
-        )
-        status_message.layout().addWidget(progress_bar)
-        iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
+        #status_message = iface.messageBar().createMessage(
+        #    "", "Export in Arbeit. Bitte warten..."
+        #)
+        #status_message.layout().addWidget(progress_bar)
+        #iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
         # Einlesen der Vorlagedatei
 
@@ -147,9 +147,10 @@ class ExportTask:
 
         # Verbindung zur Spatialite-Datenbank mit den Kanaldaten
 
-        dbQK = DBConnection(
-            dbname=databaseQKan
-        )  # Datenbankobjekt der QKan-Datenbank zum Lesen
+        #dbQK = DBConnection(
+        #    dbname=databaseQKan
+        #)  # Datenbankobjekt der QKan-Datenbank zum Lesen
+        dbQK=self.dbQK
         if not dbQK.connected:
             logger.error(
                 """Fehler in exportSwmm:
@@ -198,7 +199,7 @@ class ExportTask:
                 0.7, 1.8, 0., 
                 0., 1./0.015, 0.06*2.54, NULL, 
                 'Automatisch ergänzt für SWMM-Export',
-                strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) AS createdat
+                strftime('%Y-%m-%d %H:%M:%S', coalesce(tg.createdat, 'now')) AS createdat
             FROM tezg AS tg
             LEFT JOIN abflussparameter AS ap
             ON tg.abflussparameter = ap.apnam and (ap.bodenklasse IS NULL OR ap.bodenklasse = '')
@@ -224,7 +225,7 @@ class ExportTask:
                 2.0, 5.0, 0., 
                 0., 1./0.024, 0.3*2.54, NULL, 
                 'Automatisch ergänzt für SWMM-Export',
-                strftime('%Y-%m-%d %H:%M:%S', coalesce(createdat, 'now')) AS createdat
+                strftime('%Y-%m-%d %H:%M:%S', coalesce(tg.createdat, 'now')) AS createdat
             FROM tezg AS tg
             LEFT JOIN abflussparameter AS ap
             ON tg.abflussparameter = ap.apnam and ap.bodenklasse IS NOT NULL AND ap.bodenklasse <> ''
@@ -237,8 +238,8 @@ class ExportTask:
 
         numChanged += dbQK.rowcount()
 
-        if numChanged > 0:
-            status_message.setText(f"Es wurden {numChanged} Abflussparameter hinzugefügt!")
+        #if numChanged > 0:
+        #    status_message.setText(f"Es wurden {numChanged} Abflussparameter hinzugefügt!")
 
         sql = f"""
             SELECT
@@ -323,7 +324,7 @@ class ExportTask:
         # [DWF]
 
         # fortschritt('Flaechen...',0.08)
-        progress_bar.setValue(20)
+        #progress_bar.setValue(20)
 
         sql = """SELECT
             e.schnam AS node,
