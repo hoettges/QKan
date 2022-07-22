@@ -96,6 +96,9 @@ class SWMMPorter(QKanPlugin):
 
         self.export_dlg.show()
 
+        if not self.export_dlg.prepareDialog(self.db_qkan):
+            return False
+
         # Im Formular wurde [OK] geklickt
         if self.export_dlg.exec_():
             # Read from form and save to config
@@ -143,7 +146,7 @@ class SWMMPorter(QKanPlugin):
             teilgebiete = [
                 _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
             ]
-            QKan.config.selections.teilgebiete = teilgebiete
+            QKan.config.swmm.teilgebiete = teilgebiete
 
             QKan.config.save()
 
@@ -180,7 +183,7 @@ class SWMMPorter(QKanPlugin):
         #    return False
 
         # Run export
-        ExportTask( QKan.config.swmm.template, self.db_qkan, QKan.config.swmm.export_file, QKan.config.selections.teilgebiete, (100,100)).run()
+        ExportTask(QKan.config.swmm.template, self.db_qkan, QKan.config.swmm.export_file, QKan.config.swmm.liste_teilgebiete).run()
 
         # Close connection
         del self.db_qkan
