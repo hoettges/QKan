@@ -304,7 +304,7 @@ class ReadData():  # type: ignore
                         parsed_dataset['haltungstyp'] = self.haltung_types[self.layer_name]
                     parsed_dataset['epsg'] = self.epsg
 
-                    logger.debug(f'insertgeo:\ntabnam_db: {tabnam_db}\n'
+                    logger.debug(f'read_data - insertdata:\ntabnam_db: {tabnam_db}\n'
                                  f'parsed_dataset: {parsed_dataset}')
 
                     if not self.db_qkan.insertdata(

@@ -377,7 +377,7 @@ class DBConnection:
         elif tabnam == 'haltungen':
             parlis = ['haltnam', 'schoben', 'schunten', 'hoehe', 'breite',
                       'laenge', 'sohleoben', 'sohleunten', 'teilgebiet', 'profilnam',
-                      'entwart', 'ks', 'simstatus', 'kommentar',
+                      'entwart', 'strasse', 'material', 'ks', 'haltungstyp', 'simstatus', 'kommentar',
                       'createdat', 'xschob', 'yschob', 'xschun', 'yschun', 'geom', 'epsg']
             for el in parlis:
                 if not parameters.get(el, None):

@@ -2103,9 +2103,9 @@ class ImportTask:
             ysch = 0.0
 
             for block in blocks:
-                # name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
+                # pnam, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
 
-                name = block.findtext("KG001", "not found")
+                pnam = block.findtext("KG001", "not found")
                 knoten_typ = 0
 
                 knoten_typ = block.findtext("KG305", -1)
@@ -2117,7 +2117,7 @@ class ImportTask:
                 if not smp:
                     fehlermeldung(
                         "Fehler beim XML-Import: Schächte",
-                        f'Keine Geometrie "SMP" für Schacht {name}',
+                        f'Keine Geometrie "SMP" für Schacht {pnam}',
                     )
                     xsch, ysch, sohlhoehe = (0.0,) * 3
                 else:
@@ -2134,14 +2134,14 @@ class ImportTask:
                     sohlhoehe = _strip_float(smp.findtext("GP007", 0.0))
 
                 yield Pumpe(
-                    pnam=name,
-                    schoben=name,
+                    pnam=pnam,
+                    schoben=pnam,
                     schunten=schunten,
                     pumpentyp=pumpentyp,
                     volanf=volanf,
                     volges=volges,
                     sohle=sohlhoehe,
-                    steuersch=steuersch
+                    steuersch=steuersch,
                 )
 
 
@@ -2164,18 +2164,31 @@ class ImportTask:
             # Koordinaten aus den Schachtdaten entnommen werden.
             # Dies ist in QKan einfach, da auch Auslaesse und Speicher
             # in der Tabelle "schaechte" gespeichert werden.
-            sql = f"""
-                           INSERT INTO haltungen 
-                               (haltnam, schoben, schunten, hoehe, haltungstyp, simstatus, kommentar)
-                           SELECT :pnam, :schoben, :schunten, :sohle, :pumpentyp, :simstatus, :kommentar
-                           FROM schaechte AS SCHOB, schaechte AS SCHUN
-                           WHERE SCHOB.schnam = :schoben AND SCHUN.schnam = :schunten"""
+
+            # sql = f"""
+            #                INSERT INTO haltungen
+            #                    (haltnam, schoben, schunten, hoehe, haltungstyp, simstatus, kommentar)
+            #                SELECT :pnam, :schoben, :schunten, :sohle, :pumpentyp, :simstatus, :kommentar
+            #                FROM schaechte AS SCHOB, schaechte AS SCHUN
+            #                WHERE SCHOB.schnam = :schoben AND SCHUN.schnam = :schunten"""
 
             params = {'pnam': pumpe.pnam, 'schoben': pumpe.schoben, 'schunten': pumpe.schunten,
                       'sohle': pumpe.sohle, 'pumpentyp': pumpe.pumpentyp,
+                      'haltungtyp': 'Pumpe',                        # dient dazu, das Verbindungselement als Pumpe zu klassifizieren
                       'simstatus': pumpe.simstatus, 'kommentar': pumpe.kommentar}
-            if not self.db_qkan.sql(sql, "xml_import Pumpen [2]", params):
-                return None
+            # if not self.db_qkan.sql(sql, "xml_import Pumpen [2]", params):
+            #     return None
+
+            logger.debug(f'm145porter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                tabnam="haltungen",
+                mute_logger=False,
+                **params
+            ):
+                del self.db_qkan
+                return
 
         self.db_qkan.commit()
 
