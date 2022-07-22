@@ -2903,10 +2903,10 @@ def my_form_open(dialog, layer, feature):
         <alias name="Sohlhöhe Ende" field="sohleunten" index="8"/>
         <alias name="Teilgebiet" field="teilgebiet" index="9"/>
         <alias name="Profilbezeichnung" field="profilnam" index="10"/>
-        <alias name="Entwässerungsart" field="entwart" index="11"/>
+        <alias name="Entwässerungssystem" field="entwart" index="11"/>
         <alias name="Material" field="material" index="12"/>
         <alias name="Verlustbeiwert" field="ks" index="13"/>
-        <alias name="Haltungstyp" field="haltungstyp" index="14"/>
+        <alias name="Elementtyp" field="haltungstyp" index="14"/>
         <alias name="Planungsstatus" field="simstatus" index="15"/>
         <alias name="x_anf" field="xschob" index="16"/>
         <alias name="y_anf" field="yschob" index="17"/>
@@ -4665,10 +4665,10 @@ def my_form_open(dialog, layer, feature):
         <alias name="Sohlhöhe Ende" field="sohleunten" index="8"/>
         <alias name="Teilgebiet" field="teilgebiet" index="9"/>
         <alias name="Profilbezeichnung" field="profilnam" index="10"/>
-        <alias name="Entwässerungsart" field="entwart" index="11"/>
+        <alias name="Entwässerungssystem" field="entwart" index="11"/>
         <alias name="Material" field="material" index="12"/>
         <alias name="Verlustbeiwert" field="ks" index="13"/>
-        <alias name="Haltungstyp" field="haltungstyp" index="14"/>
+        <alias name="Elementtyp" field="haltungstyp" index="14"/>
         <alias name="Planungsstatus" field="simstatus" index="15"/>
         <alias name="x_anf" field="xschob" index="16"/>
         <alias name="y_anf" field="yschob" index="17"/>
@@ -6274,7 +6274,7 @@ def my_form_open(dialog, layer, feature):
         <alias name="Entwässerungssystem" field="entwart" index="11"/>
         <alias name="Material" field="material" index="12"/>
         <alias name="Überfallbeiwert" field="ks" index="13"/>
-        <alias name="Sonderelementtyp" field="haltungstyp" index="14"/>
+        <alias name="Elementtyp" field="haltungstyp" index="14"/>
         <alias name="Planungsstatus" field="simstatus" index="15"/>
         <alias name="" field="xschob" index="16"/>
         <alias name="" field="yschob" index="17"/>
@@ -7031,7 +7031,7 @@ def my_form_open(dialog, layer, feature):
         <alias name="Entwässerungssystem" field="entwart" index="11"/>
         <alias name="Material" field="material" index="12"/>
         <alias name="Verlustbeiwert" field="ks" index="13"/>
-        <alias name="Sonderelementtyp" field="haltungstyp" index="14"/>
+        <alias name="Elementtyp" field="haltungstyp" index="14"/>
         <alias name="Planungsstatus" field="simstatus" index="15"/>
         <alias name="" field="xschob" index="16"/>
         <alias name="" field="yschob" index="17"/>
@@ -7792,10 +7792,10 @@ def my_form_open(dialog, layer, feature):
         <alias name="Sohlhöhe Ende" field="sohleunten" index="8"/>
         <alias name="Teilgebiet" field="teilgebiet" index="9"/>
         <alias name="Profilbezeichnung" field="profilnam" index="10"/>
-        <alias name="Entwässerungsart" field="entwart" index="11"/>
+        <alias name="Entwässerungssystem" field="entwart" index="11"/>
         <alias name="Material" field="material" index="12"/>
         <alias name="Verlustbeiwert" field="ks" index="13"/>
-        <alias name="Haltungstyp" field="haltungstyp" index="14"/>
+        <alias name="Elementtyp" field="haltungstyp" index="14"/>
         <alias name="Planungsstatus" field="simstatus" index="15"/>
         <alias name="x_anf" field="xschob" index="16"/>
         <alias name="y_anf" field="yschob" index="17"/>
@@ -8561,10 +8561,10 @@ def my_form_open(dialog, layer, feature):
         <alias name="Sohlhöhe Ende" field="sohleunten" index="8"/>
         <alias name="Teilgebiet" field="teilgebiet" index="9"/>
         <alias name="Profilbezeichnung" field="profilnam" index="10"/>
-        <alias name="Entwässerungsart" field="entwart" index="11"/>
+        <alias name="Entwässerungssystem" field="entwart" index="11"/>
         <alias name="Material" field="material" index="12"/>
         <alias name="Verlustbeiwert" field="ks" index="13"/>
-        <alias name="Haltungstyp" field="haltungstyp" index="14"/>
+        <alias name="Elementtyp" field="haltungstyp" index="14"/>
         <alias name="Planungsstatus" field="simstatus" index="15"/>
         <alias name="x_anf" field="xschob" index="16"/>
         <alias name="y_anf" field="yschob" index="17"/>
@@ -14839,13 +14839,13 @@ def my_form_open(dialog, layer, feature):
         <alias name="Profilbreite" field="breite" index="5"/>
         <alias name="Haltungslänge" field="laenge" index="6"/>
         <alias name="Sohlhöhe Anfang" field="sohleoben" index="7"/>
-        <alias name="Solhöhe Ende" field="sohleunten" index="8"/>
+        <alias name="Sohlhöhe Ende" field="sohleunten" index="8"/>
         <alias name="Teilgebiet" field="teilgebiet" index="9"/>
         <alias name="Profilbezeichnung" field="profilnam" index="10"/>
         <alias name="Entwässerungssystem" field="entwart" index="11"/>
         <alias name="Material" field="material" index="12"/>
         <alias name="Rauheitsbeiwert" field="ks" index="13"/>
-        <alias name="Haltungstyp" field="haltungstyp" index="14"/>
+        <alias name="Elementtyp" field="haltungstyp" index="14"/>
         <alias name="Planungsstatus" field="simstatus" index="15"/>
         <alias name="" field="xschob" index="16"/>
         <alias name="" field="yschob" index="17"/>
@@ -15626,7 +15626,7 @@ def my_form_open(dialog, layer, feature):
         <alias name="Entwässerungssystem" field="entwart" index="11"/>
         <alias name="Material" field="material" index="12"/>
         <alias name="Verlustbeiwert" field="ks" index="13"/>
-        <alias name="Haltungstyp" field="haltungstyp" index="14"/>
+        <alias name="Elementtyp" field="haltungstyp" index="14"/>
         <alias name="Planungsstatus" field="simstatus" index="15"/>
         <alias name="x_anf" field="xschob" index="16"/>
         <alias name="y_anf" field="yschob" index="17"/>
@@ -16346,7 +16346,7 @@ def my_form_open(dialog, layer, feature):
         <alias name="Entwässerungssystem" field="entwart" index="11"/>
         <alias name="Material" field="material" index="12"/>
         <alias name="Rauheitsbeiwert" field="ks" index="13"/>
-        <alias name="Haltungstyp" field="haltungstyp" index="14"/>
+        <alias name="Elementtyp" field="haltungstyp" index="14"/>
         <alias name="Planungsstatus" field="simstatus" index="15"/>
         <alias name="" field="xschob" index="16"/>
         <alias name="" field="yschob" index="17"/>

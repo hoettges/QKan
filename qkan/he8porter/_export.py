@@ -965,11 +965,9 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE ha.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND ha.teilgebiet in ('{lis}')"
+                auswahl = f" AND ha.teilgebiet in ('{lis}')"
             else:
-                auswahl_w = ""
-                auswahl_a = ""
+                auswahl = ""
 
             if self.update:
                 sql = f"""
@@ -992,7 +990,7 @@ class ExportTask:
                         WHERE ha.haltnam = he.Pumpe.Name
                     )
                     WHERE he.Pumpe.Name IN (
-                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Pumpe'{auswahl_a}
+                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Pumpe'{auswahl}
                         )
                     """
 
@@ -1042,7 +1040,7 @@ class ExportTask:
                     LEFT JOIN simulationsstatus AS si
                     ON ha.simstatus = si.bezeichnung
                     WHERE ha.haltungstyp = 'Pumpe'
-                    AND ha.haltnam NOT IN (SELECT Name FROM he.Pumpe){auswahl_a};
+                    AND ha.haltnam NOT IN (SELECT Name FROM he.Pumpe){auswahl};
                     """
 
                     if not self.db_qkan.sql(
@@ -1069,11 +1067,9 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE ha.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND ha.teilgebiet in ('{lis}')"
+                auswahl = f" AND ha.teilgebiet in ('{lis}')"
             else:
-                auswahl_w = ""
-                auswahl_a = ""
+                auswahl = ""
 
             if self.update:
                 sql = f"""
@@ -1095,10 +1091,10 @@ class ExportTask:
                         FROM haltungen AS ha
                         LEFT JOIN simulationsstatus AS si
                         ON ha.simstatus = si.bezeichnung
-                        WHERE ha.haltnam = he.Wehr.Name{auswahl_a}
+                        WHERE ha.haltnam = he.Wehr.Name{auswahl}
                     )
                     WHERE he.Wehr.Name IN (
-                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Wehr'{auswahl_a}
+                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Wehr'{auswahl}
                         )
                     """
 
@@ -1150,7 +1146,7 @@ class ExportTask:
                     LEFT JOIN simulationsstatus AS si
                     ON ha.simstatus = si.bezeichnung
                     WHERE ha.haltungstyp = 'Wehr'
-                    AND ha.haltnam NOT IN (SELECT Name FROM he.Wehr){auswahl_a};
+                    AND ha.haltnam NOT IN (SELECT Name FROM he.Wehr){auswahl};
                     """
 
                     if not self.db_qkan.sql(
@@ -1177,11 +1173,9 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE ha.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND ha.teilgebiet in ('{lis}')"
+                auswahl = f" AND ha.teilgebiet in ('{lis}')"
             else:
-                auswahl_w = ""
-                auswahl_a = ""
+                auswahl = ""
 
             if self.update:
                 sql = f"""
@@ -1201,10 +1195,10 @@ class ExportTask:
                         FROM haltungen AS ha
                         LEFT JOIN simulationsstatus AS si
                         ON ha.simstatus = si.bezeichnung
-                        WHERE ha.haltnam = he.Drossel.Name{auswahl_a}
+                        WHERE ha.haltnam = he.Drossel.Name{auswahl}
                     )
                     WHERE he.Drossel.Name IN (
-                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Drossel'{auswahl_a}
+                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Drossel'{auswahl}
                         )
                     """
 
@@ -1254,7 +1248,7 @@ class ExportTask:
                     LEFT JOIN simulationsstatus AS si
                     ON ha.simstatus = si.bezeichnung
                     WHERE ha.haltungstyp = 'Drossel'
-                    AND ha.haltnam NOT IN (SELECT Name FROM he.Drossel){auswahl_a};
+                    AND ha.haltnam NOT IN (SELECT Name FROM he.Drossel){auswahl};
                     """
 
                     if not self.db_qkan.sql(
@@ -1281,11 +1275,9 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE ha.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND ha.teilgebiet in ('{lis}')"
+                auswahl = f" AND ha.teilgebiet in ('{lis}')"
             else:
-                auswahl_w = ""
-                auswahl_a = ""
+                auswahl = ""
 
             if self.update:
                 sql = f"""
@@ -1317,10 +1309,10 @@ class ExportTask:
                         ON ha.simstatus = si.bezeichnung
                         LEFT JOIN profile
                         ON ha.profilnam = profile.profilnam
-                        WHERE ha.haltnam = he.Schieber.Name{auswahl_a}
+                        WHERE ha.haltnam = he.Schieber.Name{auswahl}
                     )
                     WHERE he.Schieber.Name IN (
-                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Schieber'{auswahl_a}
+                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Schieber'{auswahl}
                         )
                     """
 
@@ -1382,7 +1374,7 @@ class ExportTask:
                     LEFT JOIN profile
                     ON ha.profilnam = profile.profilnam
                     WHERE ha.haltungstyp = 'Schieber'
-                    AND ha.haltnam NOT IN (SELECT Name FROM he.Schieber){auswahl_a};
+                    AND ha.haltnam NOT IN (SELECT Name FROM he.Schieber){auswahl};
                     """
 
                     if not self.db_qkan.sql(
@@ -1409,11 +1401,9 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl_w = f" WHERE ha.teilgebiet in ('{lis}')"
-                auswahl_a = f" AND ha.teilgebiet in ('{lis}')"
+                auswahl = f" AND ha.teilgebiet in ('{lis}')"
             else:
-                auswahl_w = ""
-                auswahl_a = ""
+                auswahl = ""
 
             if self.update:
                 sql = f"""
@@ -1443,10 +1433,10 @@ class ExportTask:
                         ON ha.simstatus = si.bezeichnung
                         LEFT JOIN profile
                         ON ha.profilnam = profile.profilnam
-                        WHERE ha.haltnam = he.GrundSeitenauslass.Name{auswahl_a}
+                        WHERE ha.haltnam = he.GrundSeitenauslass.Name{auswahl}
                     )
                     WHERE he.GrundSeitenauslass.Name IN (
-                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'GrundSeitenauslass'{auswahl_a}
+                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'GrundSeitenauslass'{auswahl}
                         )
                     """
 
@@ -1485,7 +1475,7 @@ class ExportTask:
                         Profiltyp,
                         Planungsstatus,
                         Kommentar, LastModified,
-                        Geometry 
+                        Geometry
                     ) 
                     SELECT
                         ha.rowid + {id0} AS Id, 
@@ -1506,7 +1496,7 @@ class ExportTask:
                     LEFT JOIN profile
                     ON ha.profilnam = profile.profilnam
                     WHERE ha.haltungstyp = 'GrundSeitenauslass'
-                    AND ha.haltnam NOT IN (SELECT Name FROM he.GrundSeitenauslass){auswahl_a};
+                    AND ha.haltnam NOT IN (SELECT Name FROM he.GrundSeitenauslass){auswahl};
                     """
 
                     if not self.db_qkan.sql(

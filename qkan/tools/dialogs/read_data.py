@@ -93,13 +93,18 @@ class ReadData():  # type: ignore
         """Reads QKan data from clipboard and inserts proper columns into table 'table_name'"""
         # Fetch data from clipboard
         data = QgsApplication.clipboard().text()
-
         if data:
             # read data from clipboard
             lines = data.splitlines()
             if len(lines) <= 1:
                 return
-            head_clipboard = lines[0].split("\t")                   # attribute name from Clipboard
+
+            # find separator.
+            clip_selis = ['\t', ';']                                        # allowed separators for clipboard data. 
+            for clip_sep in clip_selis:                            
+                head_clipboard = [el.strip() for el in lines[0].split(clip_sep)]                   # attribute name from Clipboard
+                if len(head_clipboard) > 1:
+                    break
             head_match: List[str] = [None] * len(head_clipboard)     # attribute names from QKan table
                                                                     # corresponding to head_clipboard
             # replace column names by QKan-names using qkan_patterns
@@ -187,6 +192,10 @@ class ReadData():  # type: ignore
                                           'QKan Clipboard',
                                           level=Qgis.Info,
                                           notifyUser=True)
+                # vorab auch Info über erkannte Spalten
+                meldung = " | ".join([f'{head_clipboard[col]} > {head_match[col]}' for col in list(qkan_cols.values())])
+                QgsMessageLog.logMessage( f'\nFolgende Spalten konnten erkannt werden: {meldung}', 'QKan',
+                                         level=Qgis.Info, notifyUser=True)
                 self.iface.openMessageLog()
                 return
 
@@ -224,7 +233,6 @@ class ReadData():  # type: ignore
                 meldung = " | ".join([f'{head_clipboard[col]} > {head_match[col]}' for col in list(qkan_cols.values())[:-1]])
             else:
                 meldung = " | ".join([f'{head_clipboard[col]} > {head_match[col]}' for col in list(qkan_cols.values())])
-            # meldung = f'\nhead_match: {head_match}\nhead_clipboard: {head_clipboard}\nqkan_cols: {qkan_cols}\nqkan_colnames: {qkan_colnames}'
             self.iface.messageBar().pushMessage(
                 "Info",
                 f'Folgende Spalten konnten erkannt werden: {meldung}',
@@ -240,11 +248,12 @@ class ReadData():  # type: ignore
             else:
                 for nrow, line in enumerate(lines[1:]):
                     parsed_dataset = {}
-                    values = line.split("\t")
+                    values = line.split(clip_sep)
                     if len(values) != len(head_match):
                         fehlermeldung(
-                            "Fehler in den einzufügenden Daten: Spaltenzahl stimmt nicht mit Kopfzeile überein",
-                            line)
+                            f"Fehler in den einzufügenden Daten: Spaltenzahl {len(values)}"
+                            f" stimmt nicht mit Kopfzeile {len(head_match)} überein",
+                            f"Datenzeile: {line}")
                         continue
                     for column in qkan_colnames:
                         if (

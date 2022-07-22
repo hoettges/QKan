@@ -55,6 +55,16 @@ QKan - Funktionen
     Qkan_Formulare
 
 
+QKan - Tabellen
+===============
+
+.. toctree::
+    :maxdepth: 2
+    :numbered:
+
+    Qkan_Tabellen
+
+
 Register und Tabellen
 =====================
 

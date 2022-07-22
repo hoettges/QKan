@@ -1,103 +1,67 @@
-Import von Kanaldaten aus einfachen Tabellen (Excel, TXT, CSV)
-==============================================================
+Import von Kanaldaten aus einfachen Tabellen (Excel, ACCESS, TXT, CSV)
+======================================================================
 
 Der Import von Daten aus einfachen Tabellen ist prinzipiell mit allen Methoden möglich, die QGIS zur Verfügung 
 stellt. Leider funktioniert das Einfügen aus der Zwischenablage nur dann, wenn alle Attribute einer Tabelle 
-einschließlich der Geometrieattribute vorhanden sind. Deshalb wird an dieser Stelle eine Vorgehensweise 
-empfohlen, die sich mit Excel oder Open Office Writer leicht realisieren lässt und damit auch für einfache 
-Textdateien oder CSV-Dateien verwendet werden kann, da sich diese leicht in diese Programme importieren 
-lassen. 
+einschließlich der Geometrieattribute vorhanden sind, die Namen exakt mit denen der Tabelle übereinstimmen 
+und in der gleichen Reihenfolge stehen. Da dies nicht besonders praktikabel ist, wurde in QKan eine 
+intelligente Clipboard-Einfügefunktion implementiert. 
 
-.. _importasciidata:
+Die Bedienung ist denkbar einfach: Um Daten mit Copy&Paste aus einer Tabelle (Excel, Textdatei, 
+ACCESS-Datenbank, etc.) einzufügen, muss der entsprechende Layer in der Layerkontrolle aktiviert sein. Er darf 
+sich dabei nicht im Bearbeitungsmodus befinden. Dabei gelten folgende Anforderungen: 
+ - bestimmte Pflichtattribute müssen vorhanden sein
+ - Die Reihenfolge der Daten ist beliebig
+ - Für die meisten Attributnamen werden zahlreiche Synonyme akzeptiert (z. B. "schnam", "schachtname" oder 
+   "Schachtbezeichnung"). Die Synonyme werden anhand vorgegebener "regulärer Ausdrücke" den Attributnamen der 
+   QKan-Tabellen zugeordnet, die gegebenenfalls erweitert werden können. 
 
-Importieren von Tabellendaten aus Excel, CSV- oder Textdateien
---------------------------------------------------------------
+Zum Einfügen der Daten muss nur noch die Schaltfläche "Tabellendaten aus Clipboard einfügen" angeklickt werden (siehe nachfolgende Abbildung)
 
-Das Prinzip beruht darauf, aus den tabellarischen Daten eine SQL-Anweisung zu erstellen. Zur Ausführung 
-ist es lediglich notwendig, im Kontextmenü eines Layers in der Layerkontrolle mit "SQL-Layer aktualisieren..." 
-das Datenbankfenster "DB-Verwaltung" aufzurufen. 
+.. image:: ./QKan_Bilder/clipboard_einfuegen.png
 
-.. image:: ./QKan_Bilder/qgis_dbDialog.png
-    :name: Datenbankfenster zur Ausführung von SQL-Befehlen
+Abbildung: Schaltfläche zum Einfügen von Tabellendaten aus dem Clipboard
 
-Abbildung: Datenbankfenster zur Ausführung von SQL-Befehlen
+Um vorab zu überprüfen, welche Spaltennamen erkannt werden, kann vorab die Schaltfläche "Tabellen aus Clipboard: Zuordnung anzeigen" (siehe nachfolgende Abbildung) angeklickt werden.
 
-In einer zusätzlichen Spalte des Tabellenkalkulations-Arbeitsblattes werden folgende Zeilen erzeugt, wobei 
-zusätzlich am Anfang eine sowie am Schluss zwei Zeilen hinzu kommen:
+.. image:: ./QKan_Bilder/clipboard_testen.png
 
-#. Erste Zeile (zusätzlich): Insert-Anweisung zusammen mit einer Liste von Attributnamen
-#. Je Datenzeile: Liste der Attributwerte
-#. Vorletzte Zeile (zusätzlich): Ende der Insert-Anweisung
-#. Letzte Zeile (zusätzlich): Befehl zur Aktualisierung des Räumlichen Index
+Abbildung: Überprüfen der automatischen Spaltennamenerkennung
 
-Beispiel: 
+Bei Tabellen mit Geometrien (Schächte, Haltungen, Fläche, etc.) werden in den Fällen, wo Punktkoordinaten 
+oder Paare davon ausreichen (z. B. Schächte: Punktkoordinate, Haltungen und Wehre: 2 Punktkoordinaten für 
+Anfangs- und Endpunkt) diese aus den eingefügten Koordinatenwerten erzeugt. 
 
+Es ist aber auch möglich, Geometrien als WKT-Text einzufügen. Die Schreibweise entspricht der von QGIS, 
+wenn Datensätze mit Geometrien kopiert und in eine Textdatei eingefügt werden. 
 
-  +-----+-------+-----------+-----------+---------+-----------+
-  |     |A      |B          |C          |D        |E          |
-  +=====+=======+===========+===========+=========+===========+
-  |1    |schnam |xsch       |ysch       |sohlhoehe|deckelhoehe|
-  +-----+-------+-----------+-----------+---------+-----------+
-  |2    |D110036|388798.8302|5709945.165|79.51    |82.56      |
-  +-----+-------+-----------+-----------+---------+-----------+
-  |3    |D110073|388749.989 |5709812.893|82.77    |85.47      |
-  +-----+-------+-----------+-----------+---------+-----------+
-  |4    |D110074|388709.6162|5709930.665|80.82    |83.49      |
-  +-----+-------+-----------+-----------+---------+-----------+
-  |5    |D110075|388813.9783|5709854.593|81.16    |84.09      |
-  +-----+-------+-----------+-----------+---------+-----------+
-  |...  |...    |...        |...        |...      |...        |
-  +-----+-------+-----------+-----------+---------+-----------+
-  |62   |D110076|388809.4738|5709888.006|80.49    |83.61      |
-  +-----+-------+-----------+-----------+---------+-----------+
+Beispiel zum Ausprobieren: 
 
-Die SQL-Anweisungen, um diese Daten in die QKan-Tabelle einzufügen, lauten: 
+| 1. Leere QKan-Datenbank anlegen (Schaltfläche "Neue QKan-Datenbank erstellen")
 
-:: 
+| 2. Schachtdaten (in Layer "Schächte" einfügen):
+|
+| Schacht;x;y;Sohle;Deckel                   
+| D110076;388809.4738;5709888.006;80.49;83.61
+| D110077;388806.8219;5709900.202;80.34;83.71
+| D110075;388813.9783;5709854.593;81.16;84.09
+| D110073;388749.989;5709812.893;82.77;85.47
+| D110074;388709.6162;5709930.665;80.82;83.49
+| D110801;388806.4423;5709907.041;80.22;83.28
+| D110036;388798.8302;5709945.165;79.51;82.56
+| D119801;388784.1633;5709985.519;78.84;81.86
 
-    INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe) VALUES
-    ('D110036', 388798.830197, 5709945.16474, 79.51, 82.56), 
-    ('D110073', 388749.988968, 5709812.89315, 82.77, 85.47), 
-    ('D110074', 388709.61619, 5709930.66496, 80.82, 83.49), 
-    ...
-    ('B110001', 388860.048099, 5709747.15311, 82.37, 84.58);
-    
-    SELECT RecoverSpatialIndex();
+| 3. Haltungsdaten (in Layer "Haltungen nach Typ" einfügen): 
+|
+| Haltung;Schacht_oben;Schacht_unten;Höhe;Breite;Länge;Sohleoben;Sohleunten;Profilname
+| 410;D110076;D110077;0.3;0.3;12.55;80.5;80.32;Kreisquerschnitt
+| 409;D110075;D110076;0.3;0.3;34.04;81.16;80.52;Kreisquerschnitt
+| 408;D110073;D110074;0.2;0.2;124.28;82.8;80.85;Kreisquerschnitt
+| 407;D110801;D110036;0.3;0.3;40.14;80.2;79.49;Kreisquerschnitt
+| 443;D110036;D119801;0.3;0.3;42.4;79.49;78.88;Kreisquerschnitt
+| 1364;D110077;D110801;0.3;0.3;5.5;80.3;80.2;Kreisquerschnitt
 
 
-Diese Zeilen können im Tabellenkalkulationsprogramm mit folgenden Befehlen erzeugt werden: 
+.. image:: ./QKan_Bilder/netz_aus_clipboard.png
 
-Erste Zeile:
-
-:: 
-
-  ="INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe) VALUES"
-
-Falls die Spaltennamen in der Tabelle mit denen der entsprechenden QKan-Tabelle übereinstimmen, 
-können die Spaltennamen auch einfach übernommen werden:
-
-:: 
-
-  ="INSERT INTO schaechte ("&C1&", "&D1&", "&E1&", "&F1&", "&G1&") VALUES"
-
-Folgende Zeilen mit Attributdaten: 
-
-:: 
-
-  ="('"&C2&"', "&D2&", "&E2&", "&F2&", "&G2&"), "
-  ="('"&C3&"', "&D3&", "&E3&", "&F3&", "&G3&"), "
-  ="('"&C4&"', "&D4&", "&E4&", "&F4&", "&G4&"), "
-  ...
-  ="('"&C62&"', "&D62&", "&E62&", "&F62&", "&G62&");"
-
-
-Man beachte, dass die letzte Zeile ohne Komma enden muss. Das Semikolon (;) am Schluss kann 
-weggelassen werden, wenn die SQL-Befehle einzeln nacheinander ausgeführt werden. 
-
-Abschließende SQL-Anweisung zur Aktualisierung des Räumlichen Index:
-
-::
-
-  ="SELECT RecoverSpatialIndex()"
-
-  
+Abbildung: Eingefügtes Kanalnetz in QKan

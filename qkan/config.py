@@ -383,11 +383,11 @@ class ToolsConfig(ClassObject):
 
         qkan_patterns = {
             'schaechte': {
-                'schnam': ['schna*', 'nam*'],
+                'schnam': ['scha*', 'schna*', 'nam*'],
                 'xsch': ['x*', 'laengs*', 'breit*'],
                 'ysch': ['y*', 'hoch*', 'hoeh*'],
                 'deckelhoehe': ['deckel*'],
-                'sohlhoehe': ['sohl*h*'],
+                'sohlhoehe': ['sohl*', 'sohl*h*'],
                 'durchm': ['durchm*', 'diam*'],
                 'kommentar': ['kommen*', 'zusatzt*', 'bemerk*', ],
                 'createdat': ['crea*da*', 'erst*', '*änder*', '*\xe4nder*'],
