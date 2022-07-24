@@ -128,7 +128,7 @@ class ImportTask:
         self._conduits()
         self._xsections()
         self._subcatchments()
-        #self._polygons()
+        self._polygons()
         self._vertices()
 
         return True
@@ -159,20 +159,35 @@ class ImportTask:
             surDepth = line[50:61].strip()  # entfällt
             areaPonded = line[61:72].strip()  # ueberstauflaeche
 
-            sql = f"""
-                INSERT into schaechte (
-                    schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
-                VALUES (?, ?, ?, ?, 'Schacht')
-                """
-            if not self.dbQK.sql(
-                sql,
-                mute_logger=True,
-                parameters=(name, elevation, elevation + maxdepth, areaPonded),
+            # sql = f"""
+            #     INSERT into schaechte (
+            #         schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
+            #     VALUES (?, ?, ?, ?, 'Schacht')
+            #     """
+            # if not self.dbQK.sql(
+            #     sql,
+            #     mute_logger=True,
+            #     parameters=(name, elevation, elevation + maxdepth, areaPonded),
+            # ):
+            #     del self.dbQK
+            #     return False
+
+            params = {'schnam': name,
+                      'sohlhoehe': elevation, 'deckelhoehe': elevation + maxdepth,
+                       'schachttyp': 'Schacht'}
+
+            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="schaechte",
+                    mute_logger=False,
+                    **params
             ):
                 del self.dbQK
-                return False
+                return
 
-        self.db_qkan.commit()
+        self.dbQK.commit()
 
 
     def _outfalls(self) -> bool:
@@ -196,16 +211,30 @@ class ImportTask:
             else:
                 auslasstyp = "frei"
 
-            sql = f"""
-                INSERT into schaechte (
-                    schnam, sohlhoehe, auslasstyp, schachttyp)
-                VALUES (?, ?, ?, 'Auslass')
-                """
-            if not self.dbQK.sql(sql, parameters=(name, elevation, auslasstyp)):
-                del self.dbQK
-                return False
+            # sql = f"""
+            #     INSERT into schaechte (
+            #         schnam, sohlhoehe, auslasstyp, schachttyp)
+            #     VALUES (?, ?, ?, 'Auslass')
+            #     """
+            # if not self.dbQK.sql(sql, parameters=(name, elevation, auslasstyp)):
+            #     del self.dbQK
+            #     return False
 
-        self.db_qkan.commit()
+            params = {'schnam': name,
+                      'sohlhoehe': elevation, 'schachttyp': 'Auslass'}
+
+            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="schaechte",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.dbQK
+                return
+
+        self.dbQK.commit()
 
 
 
@@ -240,24 +269,38 @@ class ImportTask:
         data = self.data.get("subcatchments", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            name = line[0:16].strip()
-            regenschreiber = line[17:33].strip()
-            schnam = line[34:50].strip()
-            befgrad = fzahl(line[61:69].strip())
-            neigung = fzahl(line[78:86].strip())
+            name = line[0:17].strip()
+            regenschreiber = line[17:34].strip()
+            schnam = line[34:51].strip()
+            befgrad = fzahl(line[60:69].strip())
+            neigung = fzahl(line[78:85].strip())
 
-            sql = f"""
-                INSERT into tezg (
-                    flnam, regenschreiber, schnam, befgrad, neigung)
-                VALUES (?, ?, ?, ?, ?)
-                """
-            if not self.dbQK.sql(
-                sql, parameters=(name, regenschreiber, schnam, befgrad, neigung)
+            # sql = f"""
+            #     INSERT into tezg (
+            #          flnam, regenschreiber, schnam, befgrad, neigung)
+            #     VALUES (?, ?, ?, ?, ?)
+            #     """
+            # if not self.dbQK.sql(
+            #     sql, parameters=(name, regenschreiber, schnam, befgrad, neigung)
+            # ):
+            #     del self.dbQK
+            #     return False
+
+            params = {'flnam': name, 'regenschreiber': regenschreiber, 'schnam': schnam,
+                       'befgrad': befgrad, 'neigung': neigung}
+
+            logger.debug(f'm145porter.import - insertdata:\ntabnam: tezg\n'
+                          f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                     tabnam="tezg",
+                     mute_logger=False,
+                     **params
             ):
-                del self.dbQK
-                return False
+                del self.db_qkan
+                return
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
 
     def _polygons(self) -> bool:
@@ -273,8 +316,8 @@ class ImportTask:
         ylis: List[float] = []  # y-Koordinaten zum Polygon
         for line in data:
             name = line[0:17].strip()  # schnam
-            xsch = fzahl(line[17:37].strip(), 3, self.xoffset) + self.xoffset  # xsch
-            ysch = fzahl(line[36:56].strip(), 3, self.yoffset) + self.yoffset  # ysch
+            xsch = fzahl(line[17:36].strip(), 3, self.xoffset) + self.xoffset  # xsch
+            ysch = fzahl(line[36:55].strip(), 3, self.yoffset) + self.yoffset  # ysch
 
             if nampoly != name:
                 if nampoly != "":
@@ -284,17 +327,16 @@ class ImportTask:
 
                     # Polygon schreiben
                     coords = ", ".join([f"{x} {y}" for x, y in zip(xlis, ylis)])
-                    #geom = f"GeomFromText('MULTIPOLYGON((({coords})))', {self.epsg})"
 
-                    #TODO: abändern, damit das Geoobjekt richtig erzeugt wird
+
+                    sql = "UPDATE tezg SET geom = GeomFromText('MULTIPOLYGON((("+str(coords)+")))',?) WHERE flnam = ? "
 
                     if not self.dbQK.sql(
-                        "UPDATE tezg SET geom = CastToMultiPolygon('MULTIPOLYGON(((?)))', ?) WHERE flnam = ?",
-                        mute_logger=True,
-                        parameters=(coords, QKan.config.epsg, nampoly)
+                            sql, parameters=(QKan.config.epsg, nampoly)
                     ):
                         del self.dbQK
                         return False
+
                 nampoly = name
 
                 # Listen zurücksetzen
@@ -326,16 +368,31 @@ class ImportTask:
             # kst = 1/mannings_n                      # interessant: die Einheit von mannings_n ist s/m**(1/3)!
             # ks = ksFromKst(kst)
 
-            sql = f"""
-                INSERT into haltungen (
-                    haltnam, schoben, schunten, laenge, ks, entwart, simstatus)
-                VALUES (?, ?, ?, ?, ?, 'Regenwasser', 'vorhanden')
-                """
-            if not self.dbQK.sql(
-                sql, parameters=(haltnam, schoben, schunten, laenge, mannings_n)
+            # sql = f"""
+            #     INSERT into haltungen (
+            #         haltnam, schoben, schunten, laenge, ks, entwart, simstatus)
+            #     VALUES (?, ?, ?, ?, ?, 'Regenwasser', 'vorhanden')
+            #     """
+            # if not self.dbQK.sql(
+            #     sql, parameters=(haltnam, schoben, schunten, laenge, mannings_n)
+            # ):
+            #     del self.dbQK
+            #     return False
+
+            params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
+                      'laenge': laenge, 'ks': mannings_n, 'entwart': 'Regenwasser',
+                      'simstatus': 'vorhanden'}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="haltungen",
+                    mute_logger=False,
+                    **params
             ):
                 del self.dbQK
-                return False
+                return
 
         self.dbQK.commit()
 

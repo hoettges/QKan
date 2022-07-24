@@ -501,40 +501,56 @@ class ImportTask:
                     return None
 
 
-            sql = f"""
-            INSERT INTO schaechte (schnam, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, strasse,
-                    schachttyp, simstatus, material, kommentar, xsch, ysch, geop, geom)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?, ?, ?, ?, MakePoint(?, ?, ?), 
-                     CastToMultiPolygon(MakePolygon(MakeCircle(?, ?, ?, ?))
-                 ))
-            """
-            if not self.db_qkan.sql(
-                sql,
-                "xml_import Schächte [4]",
-                parameters=(
-                    schacht.schnam,
-                    schacht.sohlhoehe,
-                    schacht.deckelhoehe,
-                    schacht.durchm,
-                    druckdicht,
-                    entwart,
-                    schacht.strasse,
-                    simstatus,
-                    schacht.material,
-                    schacht.kommentar,
-                    schacht.xsch,
-                    schacht.ysch,
-                    schacht.xsch,
-                    schacht.ysch,
-                    QKan.config.epsg,
-                    schacht.xsch,
-                    schacht.ysch,
-                    schacht.durchm,
-                    QKan.config.epsg,
-                ),
-            ):
-                return None
+            # sql = f"""
+            # INSERT INTO schaechte (schnam, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, strasse,
+            #         schachttyp, simstatus, material, kommentar, xsch, ysch, geop, geom)
+            # VALUES (?, ?, ?, ?, ?, ?, ?, 'Schacht', ?, ?, ?, ?, ?, MakePoint(?, ?, ?),
+            #          CastToMultiPolygon(MakePolygon(MakeCircle(?, ?, ?, ?))
+            #      ))
+            # """
+            # if not self.db_qkan.sql(
+            #     sql,
+            #     "xml_import Schächte [4]",
+            #     parameters=(
+            #         schacht.schnam,
+            #         schacht.sohlhoehe,
+            #         schacht.deckelhoehe,
+            #         schacht.durchm,
+            #         druckdicht,
+            #         entwart,
+            #         schacht.strasse,
+            #         simstatus,
+            #         schacht.material,
+            #         schacht.kommentar,
+            #         schacht.xsch,
+            #         schacht.ysch,
+            #         schacht.xsch,
+            #         schacht.ysch,
+            #         QKan.config.epsg,
+            #         schacht.xsch,
+            #         schacht.ysch,
+            #         schacht.durchm,
+            #         QKan.config.epsg,
+            #     ),
+            # ):
+            #     return None
 
+            params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
+                      'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe,
+                      'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': schacht.entwart,
+                      'strasse': schacht.strasse,
+                      'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': 'Schacht', 'epsg': QKan.config.epsg}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="schaechte",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.db_qkan
+                return
 
         self.db_qkan.commit()
 
@@ -621,21 +637,36 @@ class ImportTask:
 
         for schacht_untersucht in _iter():
 
-            sql = f"""
-            INSERT INTO schaechte_untersucht (schnam, durchm, kommentar, geop)
-            VALUES (?, ?, ?, MakePoint(?,?,?))
-            """
-            if not self.db_qkan.sql(
-                sql,
-                "xml_import Schächte_untersucht [1]",
-                parameters=(
-                    schacht_untersucht.schnam,
-                    schacht_untersucht.durchm,
-                    schacht_untersucht.kommentar,
-                    schacht_untersucht.xsch, schacht_untersucht.ysch, QKan.config.epsg,
-                ),
+            # sql = f"""
+            # INSERT INTO schaechte_untersucht (schnam, durchm, kommentar, geop)
+            # VALUES (?, ?, ?, MakePoint(?,?,?))
+            # """
+            # if not self.db_qkan.sql(
+            #     sql,
+            #     "xml_import Schächte_untersucht [1]",
+            #     parameters=(
+            #         schacht_untersucht.schnam,
+            #         schacht_untersucht.durchm,
+            #         schacht_untersucht.kommentar,
+            #         schacht_untersucht.xsch, schacht_untersucht.ysch, QKan.config.epsg,
+            #     ),
+            # ):
+            #     return None
+
+            params = {'schnam': schacht_untersucht.schnam, 'xsch': schacht_untersucht.xsch,
+                      'ysch': schacht_untersucht.ysch,
+                      'durchm': schacht_untersucht.durchm, 'kommentar': schacht_untersucht.kommentar, 'epsg': QKan.config.epsg}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte_untersucht\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="schaechte_untersucht",
+                    mute_logger=False,
+                    **params
             ):
-                return None
+                del self.db_qkan
+                return
 
 
         self.db_qkan.commit()
@@ -770,48 +801,73 @@ class ImportTask:
 
         for untersuchdat_schacht in _iter():
 
-            sql = f"""
-            INSERT INTO untersuchdat_schacht(untersuchsch, id, videozaehler, timecode, kuerzel, 
-                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, ZD, ZS, ZB)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)
-            """
-            if not self.db_qkan.sql(
-                sql,
-                "xml_import untersuchdat_schacht [1]",
-                parameters=(
-                    untersuchdat_schacht.untersuchsch,
-                    untersuchdat_schacht.id,
-                    untersuchdat_schacht.videozaehler,
-                    untersuchdat_schacht.timecode,
-                    untersuchdat_schacht.kuerzel,
-                    untersuchdat_schacht.charakt1,
-                    untersuchdat_schacht.charakt2,
-                    untersuchdat_schacht.quantnr1,
-                    untersuchdat_schacht.quantnr2,
-                    untersuchdat_schacht.streckenschaden,
-                    untersuchdat_schacht.streckenschaden_lfdnr,
-                    untersuchdat_schacht.pos_von,
-                    untersuchdat_schacht.pos_bis,
-                    untersuchdat_schacht.vertikale_lage,
-                    untersuchdat_schacht.inspektionslaenge,
-                    untersuchdat_schacht.bereich,
-                    untersuchdat_schacht.foto_dateiname,
-                    untersuchdat_schacht.ordner,
-                    untersuchdat_schacht.ZD,
-                    untersuchdat_schacht.ZS,
-                    untersuchdat_schacht.ZB,
-                ),
-            ):
-                return None
+            # sql = f"""
+            # INSERT INTO untersuchdat_schacht(untersuchsch, id, videozaehler, timecode, kuerzel,
+            #                                         charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, vertikale_lage, inspektionslaenge, bereich, foto_dateiname, ordner, ZD, ZS, ZB)
+            # VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)
+            # """
+            # if not self.db_qkan.sql(
+            #     sql,
+            #     "xml_import untersuchdat_schacht [1]",
+            #     parameters=(
+            #         untersuchdat_schacht.untersuchsch,
+            #         untersuchdat_schacht.id,
+            #         untersuchdat_schacht.videozaehler,
+            #         untersuchdat_schacht.timecode,
+            #         untersuchdat_schacht.kuerzel,
+            #         untersuchdat_schacht.charakt1,
+            #         untersuchdat_schacht.charakt2,
+            #         untersuchdat_schacht.quantnr1,
+            #         untersuchdat_schacht.quantnr2,
+            #         untersuchdat_schacht.streckenschaden,
+            #         untersuchdat_schacht.streckenschaden_lfdnr,
+            #         untersuchdat_schacht.pos_von,
+            #         untersuchdat_schacht.pos_bis,
+            #         untersuchdat_schacht.vertikale_lage,
+            #         untersuchdat_schacht.inspektionslaenge,
+            #         untersuchdat_schacht.bereich,
+            #         untersuchdat_schacht.foto_dateiname,
+            #         untersuchdat_schacht.ordner,
+            #         untersuchdat_schacht.ZD,
+            #         untersuchdat_schacht.ZS,
+            #         untersuchdat_schacht.ZB,
+            #     ),
+            # ):
+            #     return None
+            #
+            # sql = """UPDATE untersuchdat_schacht SET geop = schaechte.geop FROM
+            #                     schaechte
+            #                     WHERE schaechte.schnam = untersuchdat_schacht.untersuchsch"""
+            # if not self.db_qkan.sql(
+            #         sql,
+            #         "xml_import Schächte_untersucht [2]",
+            # ):
+            #     return None
 
-            sql = """UPDATE untersuchdat_schacht SET geop = schaechte.geop FROM
-                                schaechte
-                                WHERE schaechte.schnam = untersuchdat_schacht.untersuchsch"""
-            if not self.db_qkan.sql(
-                    sql,
-                    "xml_import Schächte_untersucht [2]",
+            params = {'untersuchsch': untersuchdat_schacht.untersuchsch, 'id': untersuchdat_schacht.id,
+                      'videozaehler': untersuchdat_schacht.videozaehler, 'timecode': untersuchdat_schacht.timecode,
+                      'kuerzel': untersuchdat_schacht.kuerzel, 'charakt1': untersuchdat_schacht.charakt1,
+                      'charakt2': untersuchdat_schacht.charakt2, 'quantnr1': untersuchdat_schacht.quantnr1,
+                      'quantnr2': untersuchdat_schacht.quantnr2,
+                      'streckenschaden': untersuchdat_schacht.streckenschaden,
+                      'streckenschaden_lfdnr': untersuchdat_schacht.streckenschaden_lfdnr,
+                      'pos_von': untersuchdat_schacht.pos_von,
+                      'pos_bis': untersuchdat_schacht.pos_bis, 'vertikale_lage': untersuchdat_schacht.vertikale_lage,
+                      'inspektionslage': untersuchdat_schacht.inspektionslaenge,
+                      'bereich': untersuchdat_schacht.bereich,
+                      'foto_dateiname': untersuchdat_schacht.foto_dateiname, 'ordner': untersuchdat_schacht.ordner,
+                      'ZD': untersuchdat_schacht.ZD, 'ZB': untersuchdat_schacht.ZB, 'ZS': untersuchdat_schacht.ZS, 'epsg': QKan.config.epsg}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: untersuchdat_schacht\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="untersuchdat_schacht",
+                    mute_logger=False,
+                    **params
             ):
-                return None
+                del self.db_qkan
+                return
 
         self.db_qkan.commit()
 
@@ -867,39 +923,55 @@ class ImportTask:
 
             # Geo-Objekte
 
-            geop = f"MakePoint({auslass.xsch}, {auslass.ysch}, {QKan.config.epsg})"
-            geom = (
-                "CastToMultiPolygon(MakePolygon("
-                f"MakeCircle({auslass.xsch}, {auslass.ysch}, {auslass.durchm / 1000}, {QKan.config.epsg})"
-                "))"
-            )
+            # geop = f"MakePoint({auslass.xsch}, {auslass.ysch}, {QKan.config.epsg})"
+            # geom = (
+            #     "CastToMultiPolygon(MakePolygon("
+            #     f"MakeCircle({auslass.xsch}, {auslass.ysch}, {auslass.durchm / 1000}, {QKan.config.epsg})"
+            #     "))"
+            # )
+            #
+            # sql = f"""
+            # INSERT INTO schaechte (
+            #     schnam, xsch, ysch,
+            #     sohlhoehe, deckelhoehe, durchm, entwart,
+            #     schachttyp, simstatus, kommentar, geop, geom)
+            # VALUES (?, ?, ?, ?, ?, ?, ?, 'Auslass', ?, ?, MakePoint(?, ?, ?), CastToMultiPolygon(MakePolygon(
+            # MakeCircle(?, ?, ?, ?))))
+            # """
+            # if not self.db_qkan.sql(
+            #     sql,
+            #     "xml_import Auslässe [2]",
+            #     parameters=(
+            #         auslass.schnam,
+            #         auslass.xsch,
+            #         auslass.ysch,
+            #         auslass.sohlhoehe,
+            #         auslass.deckelhoehe,
+            #         auslass.durchm,
+            #         auslass.entwart,
+            #         simstatus,
+            #         auslass.kommentar,
+            #         auslass.xsch, auslass.ysch, QKan.config.epsg,
+            #         auslass.xsch, auslass.ysch, auslass.durchm, QKan.config.epsg,
+            #     ),
+            # ):
+            #     return None
 
-            sql = f"""
-            INSERT INTO schaechte (
-                schnam, xsch, ysch, 
-                sohlhoehe, deckelhoehe, durchm, entwart, 
-                schachttyp, simstatus, kommentar, geop, geom)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Auslass', ?, ?, MakePoint(?, ?, ?), CastToMultiPolygon(MakePolygon(
-            MakeCircle(?, ?, ?, ?))))
-            """
-            if not self.db_qkan.sql(
-                sql,
-                "xml_import Auslässe [2]",
-                parameters=(
-                    auslass.schnam,
-                    auslass.xsch,
-                    auslass.ysch,
-                    auslass.sohlhoehe,
-                    auslass.deckelhoehe,
-                    auslass.durchm,
-                    auslass.entwart,
-                    simstatus,
-                    auslass.kommentar,
-                    auslass.xsch, auslass.ysch, QKan.config.epsg,
-                    auslass.xsch, auslass.ysch, auslass.durchm, QKan.config.epsg,
-                ),
+            params = {'schnam': auslass.schnam, 'xsch': auslass.xsch, 'ysch': auslass.ysch,
+                      'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe,
+                      'durchm': auslass.durchm, 'entwart': auslass.entwart, 'simstatus': simstatus,
+                      'kommentar': auslass.kommentar, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="schaechte",
+                    mute_logger=False,
+                    **params
             ):
-                return None
+                del self.db_qkan
+                return
 
         self.db_qkan.commit()
 
@@ -972,31 +1044,47 @@ class ImportTask:
                 ):
                     return None
 
-            sql = f"""
-            INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart, 
-                    schachttyp, simstatus, kommentar, geop, geom)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Speicher', ?, ?, MakePoint(?, ?, ?), CastToMultiPolygon(MakePolygon(
-                MakeCircle(?, ?, ?, ?))
-                ))
-            """
-            if not self.db_qkan.sql(
-                sql,
-                "xml_import Speicher [2]",
-                parameters=(
-                    speicher.schnam,
-                    speicher.xsch,
-                    speicher.ysch,
-                    speicher.sohlhoehe,
-                    speicher.deckelhoehe,
-                    speicher.durchm,
-                    speicher.entwart,
-                    simstatus,
-                    speicher.kommentar,
-                    speicher.xsch, speicher.ysch, QKan.config.epsg,
-                    speicher.xsch, speicher.ysch, speicher.durchm, QKan.config.epsg,
-                ),
+            # sql = f"""
+            # INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, entwart,
+            #         schachttyp, simstatus, kommentar, geop, geom)
+            # VALUES (?, ?, ?, ?, ?, ?, ?, 'Speicher', ?, ?, MakePoint(?, ?, ?), CastToMultiPolygon(MakePolygon(
+            #     MakeCircle(?, ?, ?, ?))
+            #     ))
+            # """
+            # if not self.db_qkan.sql(
+            #     sql,
+            #     "xml_import Speicher [2]",
+            #     parameters=(
+            #         speicher.schnam,
+            #         speicher.xsch,
+            #         speicher.ysch,
+            #         speicher.sohlhoehe,
+            #         speicher.deckelhoehe,
+            #         speicher.durchm,
+            #         speicher.entwart,
+            #         simstatus,
+            #         speicher.kommentar,
+            #         speicher.xsch, speicher.ysch, QKan.config.epsg,
+            #         speicher.xsch, speicher.ysch, speicher.durchm, QKan.config.epsg,
+            #     ),
+            # ):
+            #     return None
+
+            params = {'schnam': speicher.schnam, 'xsch': speicher.xsch, 'ysch': speicher.ysch,
+                      'sohlhoehe': speicher.sohlhoehe, 'deckelhoehe': speicher.deckelhoehe,
+                      'durchm': speicher.durchm, 'entwart': speicher.entwart, 'simstatus': simstatus,
+                      'kommentar': speicher.kommentar, 'schachttyp': 'Speicher', 'epsg': QKan.config.epsg}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="schaechte",
+                    mute_logger=False,
+                    **params
             ):
-                return None
+                del self.db_qkan
+                return
 
         self.db_qkan.commit()
 
@@ -1195,44 +1283,64 @@ class ImportTask:
                     return None
 
 
-            sql = f"""
-                INSERT INTO haltungen
-                    (haltnam, schoben, schunten, 
-                    hoehe, breite, laenge, material, sohleoben, sohleunten, 
-                    profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun, geom)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)
-            ))
-                """
+            # sql = f"""
+            #     INSERT INTO haltungen
+            #         (haltnam, schoben, schunten,
+            #         hoehe, breite, laenge, material, sohleoben, sohleunten,
+            #         profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun, geom)
+            #     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)
+            # ))
+            #     """
+            #
+            # if not self.db_qkan.sql(
+            #     sql,
+            #     "xml_import Haltungen [3]",
+            #     parameters=(
+            #         haltung.haltnam,
+            #         haltung.schoben,
+            #         haltung.schunten,
+            #         haltung.hoehe,
+            #         haltung.breite,
+            #         haltung.laenge,
+            #         haltung.material,
+            #         haltung.sohleoben,
+            #         haltung.sohleunten,
+            #         haltung.profilnam,
+            #         entwart,
+            #         haltung.ks,
+            #         simstatus,
+            #         haltung.kommentar,
+            #         haltung.xschob,
+            #         haltung.xschun,
+            #         haltung.yschob,
+            #         haltung.yschun,
+            #         haltung.xschob, haltung.yschob, QKan.config.epsg,
+            #         haltung.xschun, haltung.yschun, QKan.config.epsg,
+            #     ),
+            # ):
+            #     return None
 
-            if not self.db_qkan.sql(
-                sql,
-                "xml_import Haltungen [3]",
-                parameters=(
-                    haltung.haltnam,
-                    haltung.schoben,
-                    haltung.schunten,
-                    haltung.hoehe,
-                    haltung.breite,
-                    haltung.laenge,
-                    haltung.material,
-                    haltung.sohleoben,
-                    haltung.sohleunten,
-                    haltung.profilnam,
-                    entwart,
-                    haltung.ks,
-                    simstatus,
-                    haltung.kommentar,
-                    haltung.xschob,
-                    haltung.xschun,
-                    haltung.yschob,
-                    haltung.yschun,
-                    haltung.xschob, haltung.yschob, QKan.config.epsg,
-                    haltung.xschun, haltung.yschun, QKan.config.epsg,
-                ),
+            params = {'haltnam': haltung.haltnam, 'schoben': haltung.schoben, 'schunten': haltung.schunten,
+                      'hoehe': haltung.hoehe,
+                      'breite': haltung.breite, 'laenge': haltung.laenge, 'material': haltung.material,
+                      'sohleoben': haltung.sohleoben,
+                      'sohleunten': haltung.sohleunten, 'profilnam': haltung.profilnam, 'entwart': entwart,
+                      'strasse': haltung.strasse,
+                      'ks': haltung.ks, 'simstatus': simstatus, 'kommentar': haltung.kommentar, 'epsg': QKan.config.epsg}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="haltungen",
+                    mute_logger=False,
+                    **params
             ):
-                return None
+                del self.db_qkan
+                return
 
         self.db_qkan.commit()
+
 
         # 2. Teil: Hier werden die hydraulischen Haltungsdaten in die Datenbank geschrieben
         for haltung in _iter2():
@@ -1430,34 +1538,53 @@ class ImportTask:
             #    haltung_untersucht.xschob, haltung_untersucht.yschob, haltung_untersucht.xschun, haltung_untersucht.yschun, int(QKan.config.epsg)
             #)
 
-            sql = f"""
-                INSERT INTO haltungen_untersucht 
-                    (haltnam, schoben, schunten, 
-                    hoehe, breite, laenge, kommentar,baujahr, xschob, yschob, xschun, yschun, geom)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)))
-                """
+            # sql = f"""
+            #     INSERT INTO haltungen_untersucht
+            #         (haltnam, schoben, schunten,
+            #         hoehe, breite, laenge, kommentar,baujahr, xschob, yschob, xschun, yschun, geom)
+            #     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)))
+            #     """
+            #
+            # if not self.db_qkan.sql(
+            #     sql,
+            #     "xml_import Haltungen_untersucht [1]",
+            #     parameters=(
+            #         haltung_untersucht.haltnam,
+            #         haltung_untersucht.schoben,
+            #         haltung_untersucht.schunten,
+            #         haltung_untersucht.hoehe,
+            #         haltung_untersucht.breite,
+            #         haltung_untersucht.laenge,
+            #         haltung_untersucht.kommentar,
+            #         haltung_untersucht.baujahr,
+            #         haltung_untersucht.xschob,
+            #         haltung_untersucht.yschob,
+            #         haltung_untersucht.xschun,
+            #         haltung_untersucht.yschun,
+            #         haltung_untersucht.xschob, haltung_untersucht.yschob, QKan.config.epsg,
+            #         haltung_untersucht.xschun, haltung_untersucht.yschun, QKan.config.epsg,
+            #     ),
+            # ):
+            #     return None
 
-            if not self.db_qkan.sql(
-                sql,
-                "xml_import Haltungen_untersucht [1]",
-                parameters=(
-                    haltung_untersucht.haltnam,
-                    haltung_untersucht.schoben,
-                    haltung_untersucht.schunten,
-                    haltung_untersucht.hoehe,
-                    haltung_untersucht.breite,
-                    haltung_untersucht.laenge,
-                    haltung_untersucht.kommentar,
-                    haltung_untersucht.baujahr,
-                    haltung_untersucht.xschob,
-                    haltung_untersucht.yschob,
-                    haltung_untersucht.xschun,
-                    haltung_untersucht.yschun,
-                    haltung_untersucht.xschob, haltung_untersucht.yschob, QKan.config.epsg,
-                    haltung_untersucht.xschun, haltung_untersucht.yschun, QKan.config.epsg,
-                ),
+            params = {'haltnam': haltung_untersucht.haltnam, 'schoben': haltung_untersucht.schoben,
+                      'schunten': haltung_untersucht.schunten, 'hoehe': haltung_untersucht.hoehe,
+                      'breite': haltung_untersucht.breite, 'laenge': haltung_untersucht.laenge,
+                      'kommentar': haltung_untersucht.kommentar, 'baujahr': haltung_untersucht.baujahr,
+                      'strasse': haltung_untersucht.strasse, 'xschob': haltung_untersucht.xschob,
+                      'yschob': haltung_untersucht.yschob, 'xschub': haltung_untersucht.xschun,
+                      'yschun': haltung_untersucht.yschun, 'epsg': QKan.config.epsg}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen_untersucht\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="haltungen_untersucht",
+                    mute_logger=False,
+                    **params
             ):
-                return None
+                del self.db_qkan
+                return
 
         self.db_qkan.commit()
 
@@ -1656,61 +1783,75 @@ class ImportTask:
                 if not self.db_qkan.sql(sql, "xml_import untersuchdat_haltung [1]"):
                     return None
 
-            # Geometrie-Objekt
-            # dafür die Koordinaten von den Schächten und so weiter aus der Datenbank wählen
-            # mit mehreren if- anweisungen die Fälle unterteilen
-            # koordinaten aus schächte holen!
-            # oder einfach die Anweisung aus der database nutzen?
-            sql = f""" SELECT schun.geop, schob.geop FROM
-                        schaechte AS schob,
-                        schaechte AS schun,
-                        haltungen AS haltung
-                        WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten AND haltung.haltnam = new.untersuchhal 
-                    """
-            if untersuchrichtung == 'in Fließrichtung':
-                pass
 
-            # geom =
+            # sql = f"""
+            # INSERT INTO untersuchdat_haltung (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler,inspektionslaenge, station, timecode, kuerzel,
+            #                                         charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname,
+            #                                          ordner_bild, ordner_video, richtung, ZD, ZB, ZS)
+            # VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)
+            # """
+            # if not self.db_qkan.sql(
+            #     sql,
+            #     "xml_import untersuchdat_haltung [2]",
+            #     parameters=(
+            #         untersuchdat_haltung.untersuchhal,
+            #         untersuchrichtung,
+            #         untersuchdat_haltung.schoben,
+            #         untersuchdat_haltung.schunten,
+            #         untersuchdat_haltung.id,
+            #         untersuchdat_haltung.videozaehler,
+            #         untersuchdat_haltung.inspektionslaenge,
+            #         untersuchdat_haltung.station,
+            #         untersuchdat_haltung.timecode,
+            #         untersuchdat_haltung.kuerzel,
+            #         untersuchdat_haltung.charakt1,
+            #         untersuchdat_haltung.charakt2,
+            #         untersuchdat_haltung.quantnr1,
+            #         untersuchdat_haltung.quantnr2,
+            #         untersuchdat_haltung.streckenschaden,
+            #         untersuchdat_haltung.streckenschaden_lfdnr,
+            #         untersuchdat_haltung.pos_von,
+            #         untersuchdat_haltung.pos_bis,
+            #         untersuchdat_haltung.foto_dateiname,
+            #         untersuchdat_haltung.film_dateiname,
+            #         untersuchdat_haltung.ordner_bild,
+            #         untersuchdat_haltung.ordner_video,
+            #         untersuchdat_haltung.richtung,
+            #         untersuchdat_haltung.ZD,
+            #         untersuchdat_haltung.ZB,
+            #         untersuchdat_haltung.ZS
+            #     ),
+            # ):
+            #     return None
 
-            sql = f"""
-            INSERT INTO untersuchdat_haltung (untersuchhal, untersuchrichtung, schoben, schunten, id, videozaehler,inspektionslaenge, station, timecode, kuerzel, 
-                                                    charakt1, charakt2, quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, film_dateiname,
-                                                     ordner_bild, ordner_video, richtung, ZD, ZB, ZS)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)
-            """
-            if not self.db_qkan.sql(
-                sql,
-                "xml_import untersuchdat_haltung [2]",
-                parameters=(
-                    untersuchdat_haltung.untersuchhal,
-                    untersuchrichtung,
-                    untersuchdat_haltung.schoben,
-                    untersuchdat_haltung.schunten,
-                    untersuchdat_haltung.id,
-                    untersuchdat_haltung.videozaehler,
-                    untersuchdat_haltung.inspektionslaenge,
-                    untersuchdat_haltung.station,
-                    untersuchdat_haltung.timecode,
-                    untersuchdat_haltung.kuerzel,
-                    untersuchdat_haltung.charakt1,
-                    untersuchdat_haltung.charakt2,
-                    untersuchdat_haltung.quantnr1,
-                    untersuchdat_haltung.quantnr2,
-                    untersuchdat_haltung.streckenschaden,
-                    untersuchdat_haltung.streckenschaden_lfdnr,
-                    untersuchdat_haltung.pos_von,
-                    untersuchdat_haltung.pos_bis,
-                    untersuchdat_haltung.foto_dateiname,
-                    untersuchdat_haltung.film_dateiname,
-                    untersuchdat_haltung.ordner_bild,
-                    untersuchdat_haltung.ordner_video,
-                    untersuchdat_haltung.richtung,
-                    untersuchdat_haltung.ZD,
-                    untersuchdat_haltung.ZB,
-                    untersuchdat_haltung.ZS
-                ),
+            params = {'untersuchhal': untersuchdat_haltung.untersuchhal, 'untersuchrichtung': untersuchrichtung,
+                      'schoben': untersuchdat_haltung.schoben, 'schunten': untersuchdat_haltung.schunten,
+                      'id': untersuchdat_haltung.id, 'videozaehler': untersuchdat_haltung.videozaehler,
+                      'inspektionslaenge': untersuchdat_haltung.inspektionslaenge,
+                      'station': untersuchdat_haltung.station,
+                      'timecode': untersuchdat_haltung.timecode, 'kuerzel': untersuchdat_haltung.kuerzel,
+                      'charakt1': untersuchdat_haltung.charakt1, 'charakt2': untersuchdat_haltung.charakt2,
+                      'quantnr1': untersuchdat_haltung.quantnr1, 'quantnr2': untersuchdat_haltung.quantnr2,
+                      'streckenschaden': untersuchdat_haltung.streckenschaden,
+                      'streckenschaden_lfdnr': untersuchdat_haltung.streckenschaden_lfdnr,
+                      'pos_von': untersuchdat_haltung.pos_von, 'pos_bis': untersuchdat_haltung.pos_bis,
+                      'foto_dateiname': untersuchdat_haltung.foto_dateiname,
+                      'film_dateiname': untersuchdat_haltung.film_dateiname,
+                      'ordner_bild': untersuchdat_haltung.ordner_bild,
+                      'ordner_video': untersuchdat_haltung.ordner_video,
+                      'richtung': untersuchdat_haltung.richtung, 'ZD': untersuchdat_haltung.ZD,
+                      'ZB': untersuchdat_haltung.ZB, 'ZS': untersuchdat_haltung.ZS, 'epsg': QKan.config.epsg}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: untersuchdat_haltung\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="untersuchdat_haltung",
+                    mute_logger=False,
+                    **params
             ):
-                return None
+                del self.db_qkan
+                return
 
         self.db_qkan.commit()
 
@@ -1829,8 +1970,6 @@ class ImportTask:
                     else:
                         pass
 
-
-
                 yield Anschlussleitung(
                     leitnam=name,
                     schoben=schoben,
@@ -1925,44 +2064,67 @@ class ImportTask:
                     return None
 
 
+            # sql = f"""
+            #     INSERT INTO anschlussleitungen
+            #         (leitnam, schoben, schunten,
+            #         hoehe, breite, laenge, material, sohleoben, sohleunten, deckeloben, deckelunten,
+            #         profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun, geom)
+            #     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)))
+            #     """
+            #
+            # if not self.db_qkan.sql(
+            #     sql,
+            #     "xml_import anschlussleitung [3]",
+            #     parameters=(
+            #         anschlussleitung.leitnam,
+            #         anschlussleitung.schoben,
+            #         anschlussleitung.schunten,
+            #         anschlussleitung.hoehe,
+            #         anschlussleitung.breite,
+            #         anschlussleitung.laenge,
+            #         anschlussleitung.material,
+            #         anschlussleitung.sohleoben,
+            #         anschlussleitung.sohleunten,
+            #         anschlussleitung.deckeloben,
+            #         anschlussleitung.deckelunten,
+            #         anschlussleitung.profilnam,
+            #         entwart,
+            #         anschlussleitung.ks,
+            #         simstatus,
+            #         anschlussleitung.kommentar,
+            #         anschlussleitung.xschob,
+            #         anschlussleitung.xschun,
+            #         anschlussleitung.yschob,
+            #         anschlussleitung.yschun,
+            #         anschlussleitung.xschob, anschlussleitung.yschob, QKan.config.epsg,
+            #         anschlussleitung.xschun, anschlussleitung.yschun, QKan.config.epsg,
+            #     ),
+            # ):
+            #     return None
 
-            sql = f"""
-                INSERT INTO anschlussleitungen
-                    (leitnam, schoben, schunten, 
-                    hoehe, breite, laenge, material, sohleoben, sohleunten, deckeloben, deckelunten, 
-                    profilnam, entwart, ks, simstatus, kommentar, xschob, xschun, yschob, yschun, geom)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, MakeLine(MakePoint(?,?,?),MakePoint(?,?,?)))
-                """
+            params = {'leitnam': anschlussleitung.leitnam,
+                      'schoben': anschlussleitung.schoben, 'schunten': anschlussleitung.schunten,
+                      'hoehe': anschlussleitung.hoehe, 'breite': anschlussleitung.breite,
+                      'laenge': anschlussleitung.laenge, 'material': anschlussleitung.material,
+                      'sohleoben': anschlussleitung.sohleoben, 'sohleunten': anschlussleitung.sohleunten,
+                      'deckeloben': anschlussleitung.deckeloben, 'deckelunten': anschlussleitung.deckelunten,
+                      'profilnam': anschlussleitung.profilnam, 'entwart': entwart,
+                      'ks': anschlussleitung.ks, 'simstatus': anschlussleitung.simstatus,
+                      'kommentar': anschlussleitung.kommentar, 'xschob': anschlussleitung.xschob,
+                      'xschun': anschlussleitung.xschun, 'yschob': anschlussleitung.yschob,
+                      'yschun': anschlussleitung.yschun, 'epsg': QKan.config.epsg}
 
-            if not self.db_qkan.sql(
-                sql,
-                "xml_import anschlussleitung [3]",
-                parameters=(
-                    anschlussleitung.leitnam,
-                    anschlussleitung.schoben,
-                    anschlussleitung.schunten,
-                    anschlussleitung.hoehe,
-                    anschlussleitung.breite,
-                    anschlussleitung.laenge,
-                    anschlussleitung.material,
-                    anschlussleitung.sohleoben,
-                    anschlussleitung.sohleunten,
-                    anschlussleitung.deckeloben,
-                    anschlussleitung.deckelunten,
-                    anschlussleitung.profilnam,
-                    entwart,
-                    anschlussleitung.ks,
-                    simstatus,
-                    anschlussleitung.kommentar,
-                    anschlussleitung.xschob,
-                    anschlussleitung.xschun,
-                    anschlussleitung.yschob,
-                    anschlussleitung.yschun,
-                    anschlussleitung.xschob, anschlussleitung.yschob, QKan.config.epsg,
-                    anschlussleitung.xschun, anschlussleitung.yschun, QKan.config.epsg,
-                ),
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: anschlussleitungen\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="anschlussleitungen",
+                    mute_logger=False,
+                    **params
             ):
-                return None
+                del self.db_qkan
+                return
+
 
         self.db_qkan.commit()
 
@@ -2031,19 +2193,33 @@ class ImportTask:
             # Dies ist in QKan einfach, da auch Auslaesse und Speicher in der
             # Tabelle "schaechte" gespeichert werden.
 
-            sql = f"""
-                INSERT INTO haltungen 
-                                (haltnam, schoben, schunten, haltungstyp, laenge, geom)
-                SELECT '{wehr.wnam}', '{wehr.schoben}', '{wehr.schunten}', '{wehr.wehrtyp}', {wehr.laenge},{wehr.geom}
-                """
+            # sql = f"""
+            #     INSERT INTO haltungen
+            #                     (haltnam, schoben, schunten, haltungstyp, laenge, geom)
+            #     SELECT '{wehr.wnam}', '{wehr.schoben}', '{wehr.schunten}', '{wehr.wehrtyp}', {wehr.laenge},{wehr.geom}
+            #     """
+            #
+            # if not self.db_qkan.sql(sql, "xml_import Wehre [1]"):
+            #     return None
 
-            if not self.db_qkan.sql(sql, "xml_import Wehre [1]"):
-                return None
 
-        #if not self.db_qkan.sql(
-        #    "UPDATE wehre SET geom = geom", "xml_import Wehre [1a]"
-        #):
-        #    return None
+            params = {'haltnam': wehr.wnam, 'schoben': wehr.schoben, 'schunten': wehr.schunten,
+                      'sohle': wehr.sohle,
+                      'haltungtyp': 'Wehr',  # dient dazu, das Verbindungselement als Pumpe zu klassifizieren
+                      'simstatus': wehr.simstatus, 'kommentar': wehr.kommentar, 'epsg': QKan.config.epsg}
+            # if not self.db_qkan.sql(sql, "xml_import Pumpen [2]", params):
+            #     return None
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="haltungen",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.db_qkan
+                return
 
         self.db_qkan.commit()
 
@@ -2117,15 +2293,33 @@ class ImportTask:
             # Koordinaten aus den Schachtdaten entnommen werden.
             # Dies ist in QKan einfach, da auch Auslaesse und Speicher
             # in der Tabelle "schaechte" gespeichert werden.
-            sql = f"""
-                INSERT INTO haltungen 
-                    (haltnam, schoben, schunten, hoehe, haltungstyp, simstatus, kommentar, geom)
-                SELECT '{pumpe.haltnam}', '{pumpe.schoben}', '{pumpe.schunten}', '{pumpe.hoehe}', '{pumpentyp}', '{pumpe.simstatus}'
-                FROM schaechte AS SCHOB, schaechte AS SCHUN
-                WHERE SCHOB.schnam = '{pumpe.schoben}' AND SCHUN.schnam = '{pumpe.schunten}'"""
+            # sql = f"""
+            #     INSERT INTO haltungen
+            #         (haltnam, schoben, schunten, hoehe, haltungstyp, simstatus, kommentar, geom)
+            #     SELECT '{pumpe.haltnam}', '{pumpe.schoben}', '{pumpe.schunten}', '{pumpe.hoehe}', '{pumpentyp}', '{pumpe.simstatus}'
+            #     FROM schaechte AS SCHOB, schaechte AS SCHUN
+            #     WHERE SCHOB.schnam = '{pumpe.schoben}' AND SCHUN.schnam = '{pumpe.schunten}'"""
+            #
+            # if not self.db_qkan.sql(sql, "xml_import Pumpen [2]"):
+            #     return None
 
-            if not self.db_qkan.sql(sql, "xml_import Pumpen [2]"):
-                return None
+            params = {'haltnam': pumpe.pnam, 'schoben': pumpe.schoben, 'schunten': pumpe.schunten,
+                     'sohle': pumpe.sohle,
+                     'haltungtyp': 'Pumpe',  # dient dazu, das Verbindungselement als Pumpe zu klassifizieren
+                     'simstatus': pumpe.simstatus, 'kommentar': pumpe.kommentar, 'epsg': QKan.config.epsg}
+            # if not self.db_qkan.sql(sql, "xml_import Pumpen [2]", params):
+            #     return None
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.db_qkan.insertdata(
+                    tabnam="haltungen",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.db_qkan
+                return
 
 
         self.db_qkan.commit()
@@ -2144,7 +2338,7 @@ class ImportTask:
                     return None
 
             if not self.db_qkan.sql(
-                "UPDATE pumpen SET simstatus = ?, kommentar = ? WHERE pnam = ?",
+                "UPDATE haltungen SET simstatus = ?, kommentar = ? WHERE haltnam = ?",
                 "xml_import (22)",
                 parameters=(simstatus, pumpe.kommentar, pumpe.pnam),
             ):
