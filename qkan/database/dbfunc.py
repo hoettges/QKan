@@ -364,7 +364,7 @@ class DBConnection:
                     :knotentyp, :auslasstyp, coalesce(:schachttyp, 'Schacht'), 
                     coalesce(:simstatus, 'vorhanden'), :material,
                     :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP),
-                    CASE WHEN :geom IS NULL
+                    CASE WHEN :geop IS NULL
                         THEN MakePoint(:xsch, :ysch, :epsg)
                         ELSE GeomFromText(:geop, :epsg)
                     END,
@@ -641,6 +641,24 @@ class DBConnection:
                 FROM
                     schaechte AS sch
                     WHERE sch.schnam = :untersuchsch;"""
+
+        elif tabnam == 'tezg':
+            parlis = ['flnam', 'regenschreiber', 'schnam', 'befgrad', 'neigung',
+                       'createdat', 'haltnam', 'neigkl', 'schwerpunktlaufzeit', 'teilgebiet', 'abflussparameter',
+                      'kommentar']
+            for el in parlis:
+                if not parameters.get(el, None):
+                    parameters[el] = None
+            sql = """
+                    INSERT INTO tezg
+                      (flnam, regenschreiber, schnam, befgrad, neigung, 
+                        createdat, haltnam, neigkl, schwerpunktlaufzeit, teilgebiet, abflussparameter,
+                      kommentar)
+                    VALUES (
+                    :flnam, :regenschreiber, :schnam, :befgrad, :neigung, 
+                        coalesce(:createdat, CURRENT_TIMESTAMP), :haltnam, :neigkl, :schwerpunktlaufzeit, :teilgebiet, 
+                        :abflussparameter, :kommentar
+                    );"""
 
         result = self.sql(sql, stmt_category, parameters, mute_logger,
                           transaction, ignore)
