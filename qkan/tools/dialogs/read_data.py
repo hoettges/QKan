@@ -75,17 +75,18 @@ class ReadData():  # type: ignore
                 value: str
                 ) -> Any:
         """Typkonvertierung mit Fehlermeldung"""
-        if not value:
+        if value is None:
             logger.error(f'Zeile {nrow}, Spalte {column}: Feldwert ist leer')
             return None
         try:
-            if isinstance(func(), float):
+            if isinstance(func(), float) and isinstance(value, str):
                 result = float(value.replace(',', '.'))
             else:
                 result = func(value)
         except:
             _type = func.__name__
-            logger.error(f'read_data: Zeile {nrow}, Spalte {column}: {value} entspricht nicht Datentyp ({_type})')
+            logger.error(f'read_data: Zeile {nrow}, Spalte {column}: {value} entspricht nicht Datentyp ({_type}), \n'
+                         f'sondern ist {type(value)}')
             result = None
         return result
 
@@ -177,7 +178,7 @@ class ReadData():  # type: ignore
                 #     qkan_columntypes[name] = _type
 
             # Check required column[ name]s
-            for column in self.required_fields[self.table_name]:
+            for column in self.required_fields.get(self.table_name, []):
                 if column in qkan_cols:
                     continue
                 logger.warning(f'self.table_name: {self.table_name}')
