@@ -11140,7 +11140,7 @@ class Zustandsklassen_funkt:
         sql = """
             SELECT
                 haltungen.haltnam,
-                haltungen.rohrtyp,
+                haltungen.haltungstyp,
                 haltungen.hoehe,
                 Untersuchdat_schacht_bewertung.untersuchsch
             FROM Haltungen, Untersuchdat_schacht_bewertung
