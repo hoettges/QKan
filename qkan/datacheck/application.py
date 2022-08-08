@@ -48,10 +48,10 @@ class Plausi(QKanPlugin):
         if not self.db_qkan:            # Setzt self.db_qkan und self.database_qkan
             return False
 
-        plausisqlfile = os.path.join(pluginDirectory("qkan"), "templates", "plausibilitaetspruefungen.sql")
-        if not self.db_qkan.executefile(plausisqlfile):
-            self.log.error(f'Plausibilitätsabfragen konnten nicht gelesen oder ausgeführt werden:\n{plausisqlfile}\n')
-
+        # plausisqlfile = os.path.join(pluginDirectory("qkan"), "templates", "plausibilitaetspruefungen.sql")
+        # if not self.db_qkan.executefile(plausisqlfile):
+        #     self.log.error(f'Plausibilitätsabfragen konnten nicht gelesen oder ausgeführt werden:\n{plausisqlfile}\n')
+        #
         if not self.plausi_dlg.prepareDialog(self.db_qkan):
             return False
 
@@ -106,10 +106,10 @@ class Plausi(QKanPlugin):
         # Nur für Test: Datenbankverbindung zur Testdatenbank herstellen
         if db_test:
             self.db_qkan = db_test
-            plausisqlfile = os.path.join(pluginDirectory("qkan"), "templates", "plausibilitaetspruefungen.sql")
-            if not self.db_qkan.executefile(plausisqlfile):
-                self.log.error(f'Plausibilitätsabfragen konnten nicht gelesen oder '
-                               f'ausgeführt werden:\n{plausisqlfile}\n')
+            # plausisqlfile = os.path.join(pluginDirectory("qkan"), "templates", "plausibilitaetspruefungen.sql")
+            # if not self.db_qkan.executefile(plausisqlfile):
+            #     self.log.error(f'Plausibilitätsabfragen konnten nicht gelesen oder '
+            #                    f'ausgeführt werden:\n{plausisqlfile}\n')
 
         plau = PlausiTask(self.db_qkan)
         plau.run()

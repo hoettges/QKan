@@ -333,7 +333,7 @@ class DBConnection:
             mute_logger: bool = False,
             transaction: bool = False,  # Unused, for compatibility only
             ignore: bool = False,  # ignore error and continue
-            **parameters: dict[str, str]) -> bool:
+            **parameters: dict) -> bool:
         """Fügt einen Datensatz mit Geo-Objekt hinzu"""
 
         if tabnam == 'schaechte':

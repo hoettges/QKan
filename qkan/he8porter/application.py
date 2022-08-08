@@ -304,6 +304,13 @@ class He8Porter(QKanPlugin):
             )
             return False
 
+        #
+        # sql = 'SELECT count(*) AS anz FROM he.Rohr'
+        # db_qkan.sql(sql)
+        # datatest = db_qkan.fetchone()
+        # self.log.debug(f"Testdaten:\n{datatest}")
+        #
+        #
         self.log.info("DB creation finished, starting importer")
         imp = ImportTask(db_qkan)
         imp.run()

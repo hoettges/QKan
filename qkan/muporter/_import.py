@@ -200,26 +200,28 @@ class ImportTask:
                 sql = f"""
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten,
-                    hoehe,
+                    hoehe, breite,
+                    sohleoben, sohleunten, 
                     haltungstyp, 
                     simstatus,
                     kommentar, createdat, 
                     geom)
                 SELECT 
-                    wu.muid AS haltnam,
-                    wu.fromnodeid AS schoben, 
-                    wu.tonodeid AS schunten,
-                    coalesce(wu.maxcrestlevel - mincrestlevel, 0.3) AS hoehe, 
-                    wu.crestwidth AS breite,
-                    wu.crestlevel AS sohleoben,
-                    wu.crestlevel AS sohleunten,
-                    'Wehr' AS haltungstyp, 
-                    'vorhanden' AS simstatus, 
-                  , 'Importiert mit QKan'               AS kommentar
+                    wu.muid                 AS haltnam,
+                    wu.fromnodeid           AS schoben, 
+                    wu.tonodeid             AS schunten,
+                    coalesce(wu.maxcrestlevel - mincrestlevel, 0.3)
+                                            AS hoehe, 
+                    wu.crestwidth           AS breite,
+                    wu.crestlevel           AS sohleoben,
+                    wu.crestlevel           AS sohleunten,
+                    'Wehr'                  AS haltungstyp, 
+                    'vorhanden'             AS simstatus 
+                  , 'Importiert mit QKan'   AS kommentar
                   , coalesce(createdat, datetime('now')) 
-                                                        AS createdat
-                  , SetSRID(wu.geometry, :epsg)   AS geom
-                                FROM mu.msm_Pump AS wu
+                                            AS createdat
+                  , SetSRID(wu.geometry, :epsg)
+                                            AS geom
                 FROM mu.msm_Weir AS wu
                 LEFT JOIN haltungen AS ha
                 ON ha.haltnam = wu.muid
@@ -277,17 +279,16 @@ class ImportTask:
                     kommentar, createdat, 
                     geom)
                 SELECT 
-                    pu.muid AS haltnam,
-                    pu.fromnodeid AS schoben, 
-                    pu.tonodeid AS schunten,
-                    0.3 AS hoehe,                   /* nur fuer Laengsschnitt */ 
-                    'Pumpe' AS haltungstyp, 
-                    'vorhanden' AS simstatus, 
+                    pu.muid                             AS haltnam
+                  , pu.fromnodeid                       AS schoben 
+                  , pu.tonodeid                         AS schunten
+                  , 0.3                                 AS hoehe             /* nur fuer Laengsschnitt */ 
+                  , 'Pumpe'                             AS haltungstyp 
+                  , 'vorhanden'                         AS simstatus 
                   , 'Importiert mit QKan'               AS kommentar
                   , coalesce(createdat, datetime('now')) 
                                                         AS createdat
-                  , SetSRID(pu.geometry, :epsg)   AS geom
-                                FROM mu.msm_Pump AS pu
+                  , SetSRID(pu.geometry, :epsg)         AS geom
                 FROM mu.msm_Pump AS pu
                 LEFT JOIN haltungen AS ha
                 ON ha.haltnam = pu.muid
@@ -355,7 +356,7 @@ class ImportTask:
                 """
 
                 params = {'epsg': self.epsg}
-                if not self.db_qkan.sql(sql, "mu_import Flaechen (1), params"):
+                if not self.db_qkan.sql(sql, "mu_import Flaechen (1)", params):
                     return False
 
                 sql = """

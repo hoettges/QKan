@@ -538,7 +538,26 @@ def check_flaechenbilanz(db_qkan: "DBConnection") -> bool:
     :param db_qkan:     Typ der Datenbank (spatialite, postgis)
     """
 
-    sql = """SELECT * FROM v_flaechen_check"""
+    # sql = """SELECT * FROM v_flaechen_check"""
+    sql = """WITH flintersect AS (
+                SELECT fl.flnam AS finam, 
+                       CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
+                       ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
+                       END AS flaeche
+                FROM linkfl AS lf
+                INNER JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                LEFT JOIN tezg AS tg
+                ON lf.tezgnam = tg.flnam)
+            SELECT fa.flnam, 
+                   AREA(fa.geom) AS flaeche, 
+                   sum(fi.flaeche) AS "summe_flaechen_stuecke", 
+                   sum(fi.flaeche) - AREA(fa.geom) AS differenz
+            FROM flaechen AS fa
+            LEFT JOIN flintersect AS fi
+            ON fa.flnam = fi.finam
+            GROUP BY fa.flnam
+            HAVING ABS(sum(fi.flaeche) - AREA(fa.geom)) > 2"""
 
     if not db_qkan.sql(sql, "qkan_utils.check_flaechenbilanz (1)"):
         return False
@@ -547,10 +566,29 @@ def check_flaechenbilanz(db_qkan: "DBConnection") -> bool:
     if daten is not None:
         meldung(
             "Differenz in Flächenbilanz!",
-            'Öffnen Sie den Layer "Prüfung Flächenbilanz"',
+            'Daten:\n{daten}',
         )
 
-    sql = """SELECT * FROM v_tezg_check"""
+    # sql = """SELECT * FROM v_tezg_check"""
+    sql = """WITH flintersect AS (
+                SELECT tg.flnam AS finam, 
+                       CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
+                       ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
+                       END AS flaeche
+                FROM linkfl AS lf
+                INNER JOIN flaechen AS fl
+                ON lf.flnam = fl.flnam
+                LEFT JOIN tezg AS tg
+                ON lf.tezgnam = tg.flnam)
+            SELECT tg.flnam, 
+                   AREA(tg.geom) AS haltungsflaeche, 
+                   sum(fi.flaeche) AS summe_flaechen_stuecke, 
+                   sum(fi.flaeche) - AREA(tg.geom) AS differenz
+            FROM tezg AS tg
+            LEFT JOIN flintersect AS fi
+            ON tg.flnam = fi.finam
+            GROUP BY tg.flnam
+            HAVING ABS(sum(fi.flaeche) - AREA(tg.geom)) > 2"""
 
     if not db_qkan.sql(sql, "qkan_utils.check_flaechenbilanz (2)"):
         return False
@@ -559,7 +597,7 @@ def check_flaechenbilanz(db_qkan: "DBConnection") -> bool:
     if daten is not None:
         meldung(
             "Differenz in Bilanz der Haltungsflächen!",
-            'Öffnen Sie den Layer "Prüfung Haltungsflächenbilanz"',
+            'Daten:\n{daten}',
         )
     return True
 

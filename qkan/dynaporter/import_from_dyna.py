@@ -720,8 +720,8 @@ def import_kanaldaten(
             'Schacht' AS schachttyp, 
             simulationsstatus.bezeichnung AS simstatus, 
             'Importiert mit QKan' AS kommentar,
-            MakePoint(dyna41.xkoor, dyna41.ykoor, :epsg) AS geop,
-            CastToMultiPolygon(MakePolygon(MakeCircle(dyna41.xkoor, dyna41.ykoor, 1.0, :epsg)))
+            MakePoint(dyna12.xsch, dyna12.ysch, :epsg) AS geop,
+            CastToMultiPolygon(MakePolygon(MakeCircle(dyna12.xsch, dyna12.ysch, 1.0, :epsg)))
         FROM dyna12
         LEFT JOIN simulationsstatus
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr

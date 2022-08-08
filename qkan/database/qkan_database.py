@@ -22,8 +22,8 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.2.29"  # Version der QKan-Datenbank
-__qgsVersion__ = "3.2.30"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = "3.2.31"  # Version der QKan-Datenbank
+__qgsVersion__ = "3.2.31"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -2158,6 +2158,19 @@ def createdbtables(
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'Fehler beim Erzeugen der Tabelle "pruefsql".',
+        )
+        consl.close()
+        return False
+
+    plausisqlfile = os.path.join(pluginDirectory("qkan"), "templates", "plausibilitaetspruefungen.sql")
+    try:
+        with open(plausisqlfile) as fr:
+            sqlfile = fr.read()
+        cursl.executescript(sqlfile)
+    except BaseException as err:
+        fehlermeldung(
+            "dbfunc.DBConnection.sql: SQL-Fehler beim Lesen der Plausibilitätsabfragen",
+            "{err}\n{f}".format(err=repr(err), f=plausisqlfile),
         )
         consl.close()
         return False

@@ -75,7 +75,7 @@ class ImportTask:
                     SetSrid(sh.Geometry, :epsg) AS geop,
                     CastToMultiPolygon(MakePolygon(MakeCircle(x(sh.Geometry),
                                                               y(sh.Geometry),
-                                                              sm.diameter,
+                                                              coalesce(sh.Durchmesser, 1.0),
                                                               :epsg)
                                        )
                     ) AS geom
@@ -110,27 +110,27 @@ class ImportTask:
                     kommentar, createdat, geop, geom
                 )
                 SELECT 
-                    al.Name AS schnam,
-                    x(al.Geometry) AS xsch, 
-                    y(al.Geometry) AS ysch, 
-                    al.Sohlhoehe AS sohlhoehe, 
-                    al.Gelaendehoehe AS deckelhoehe, 
+                    sh.Name AS schnam,
+                    x(sh.Geometry) AS xsch, 
+                    y(sh.Geometry) AS ysch, 
+                    sh.Sohlhoehe AS sohlhoehe, 
+                    sh.Gelaendehoehe AS deckelhoehe, 
                     'Auslass' AS schachttyp,
                     si.bezeichnung AS simstatus,
-                    al.Kommentar AS kommentar, 
-                    al.Lastmodified AS createdat,
+                    sh.Kommentar AS kommentar, 
+                    sh.Lastmodified AS createdat,
                     SetSrid(sh.Geometry, :epsg) AS geop,
                     CastToMultiPolygon(MakePolygon(MakeCircle(x(sh.Geometry),
                                                               y(sh.Geometry),
-                                                              sm.diameter,
+                                                              1.0,
                                                               :epsg)
                                        )
                     ) AS geom
-                FROM he.Auslass AS al
+                FROM he.Auslass AS sh
                 LEFT JOIN simulationsstatus AS si
-                ON si.he_nr = al.Planungsstatus
+                ON si.he_nr = sh.Planungsstatus
                 LEFT JOIN schaechte AS sq
-                ON al.Name = sq.schnam
+                ON sh.Name = sq.schnam
                 WHERE sq.pk IS NULL
                 """
 
@@ -155,27 +155,27 @@ class ImportTask:
                     kommentar, createdat, geop, geom
                 )
                 SELECT 
-                    sp.Name AS schnam,
-                    x(sp.Geometry) AS xsch, 
-                    y(sp.Geometry) AS ysch, 
-                    sp.Sohlhoehe AS sohlhoehe, 
-                    sp.Gelaendehoehe AS deckelhoehe, 
+                    sh.Name AS schnam,
+                    x(sh.Geometry) AS xsch, 
+                    y(sh.Geometry) AS ysch, 
+                    sh.Sohlhoehe AS sohlhoehe, 
+                    sh.Gelaendehoehe AS deckelhoehe, 
                     'Speicher' AS schachttyp,
                     si.bezeichnung AS simstatus,
-                    sp.Kommentar AS kommentar, 
-                    sp.Lastmodified AS createdat,
+                    sh.Kommentar AS kommentar, 
+                    sh.Lastmodified AS createdat,
                     SetSrid(sh.Geometry, :epsg) AS geop,
                     CastToMultiPolygon(MakePolygon(MakeCircle(x(sh.Geometry),
                                                               y(sh.Geometry),
-                                                              sm.diameter,
+                                                              1.0,
                                                               :epsg)
                                        )
                     ) AS geom
-                FROM he.Speicherschacht AS sp
+                FROM he.Speicherschacht AS sh
                 LEFT JOIN simulationsstatus AS si
-                ON si.he_nr = sp.Planungsstatus
+                ON si.he_nr = sh.Planungsstatus
                 LEFT JOIN schaechte AS sq
-                ON sp.Name = sq.schnam
+                ON sh.Name = sq.schnam
                 WHERE sq.pk IS NULL
                 """
 
@@ -821,8 +821,7 @@ class ImportTask:
                     bk_he.LastModified AS createdat
                 FROM he.Bodenklasse AS bk_he
                 LEFT JOIN bodenklassen AS bk_qk
-                ON bk_he.Name = bk_qk.bknam
-                {filter}
+                ON bk_he.Name = bk_qk.bknam{filter}
                 WHERE bk_qk.pk IS NULL
                 GROUP BY bk_he.Name
                 """

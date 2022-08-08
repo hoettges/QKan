@@ -267,6 +267,8 @@ def qgsadapt(
         # Set path to database
         for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
             text = tag_datasource.text or ""
+            if not text or text[:6] != "dbname":
+                continue
             tag_datasource.text = (
                 "dbname='" + datasource + "' " + text[text.find("table=") :]
             )
