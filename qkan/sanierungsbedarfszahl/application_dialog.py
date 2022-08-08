@@ -216,7 +216,7 @@ class SanierungDialog(_Dialog, SANIERUNG_CLASS):  # type: ignore
                     table = 'Untersuchdat_schacht_bewertung'
                     geom_column = 'geop'
                     uri.setDataSource(schema, table, geom_column)
-                    vlayer = QgsVectorLayer(uri.uri(), 'Untersuchdat_schacht_bewwertung', 'spatialite')
+                    vlayer = QgsVectorLayer(uri.uri(), 'Untersuchdat_schacht_bewertung', 'spatialite')
                     list = []
                     for feature in vlayer.getFeatures():
                         name = feature["createdat"]

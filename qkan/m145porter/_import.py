@@ -476,9 +476,11 @@ class ImportTask:
 
                 smpD = block.find("GO[GO002='D']/GP")
 
-                deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
-                if name == '13358032':
-                    print(f"Deckelhöhe von Schacht 13358032: {deckelhoehe}")
+                if smpD == None:
+                    deckelhoehe = 0.0
+
+                else:
+                    deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
 
 
                 yield Schacht(
@@ -952,9 +954,11 @@ class ImportTask:
 
                 smpD = block.find("GO[GO002='D']/GP")
 
-                deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
-                if name == '13358032':
-                    print(f"Deckelhöhe von Schacht 13358032: {deckelhoehe}")
+                if smpD == None:
+                    deckelhoehe = 0.0
+
+                else:
+                    deckelhoehe = _strip_float(smpD.findtext("GP007", 0.0))
 
 
                 yield Schacht(

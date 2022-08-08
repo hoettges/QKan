@@ -2202,10 +2202,12 @@ class sanierungsbedarfszahl_funkt:
                                                level=Qgis.Critical)
                 return
 
+
+
             dft.to_excel(writer, sheet_name="Haltungen", index=False)
             writer.save()
 
-            df = pd.read_excel(file)
+            df = pd.read_excel(file, decimal=',')
 
             df_styled = df.style.apply(lambda x: ["background-color: blue" if x == 1 else "background-color: white" for x in df.id])
 
@@ -2235,7 +2237,17 @@ class sanierungsbedarfszahl_funkt:
 
                 dft.to_excel(writer, sheet_name=sheet_name, index=False)
 
-            writer.save()
+                writer.save()
+
+                df = pd.read_excel(file, decimal=',')
+
+                df_styled = df.style.apply(
+                    lambda x: ["background-color: blue" if x == 1 else "background-color: white" for x in df.id])
+
+                writer = pd.ExcelWriter(file, engine='xlsxwriter')
+
+                df_styled.to_excel(writer, sheet_name=sheet_name, index=False)
+                writer.save()
 
         else:
             pass
@@ -2387,7 +2399,7 @@ class sanierungsbedarfszahl_funkt:
 
             writer.save()
 
-            df = pd.read_excel(file)
+            df = pd.read_excel(file, decimal=',')
 
             df_styled = df.style.apply(lambda x: ["background-color: blue" if x == 1 else "background-color: white" for x in df.id])
 
@@ -2417,7 +2429,17 @@ class sanierungsbedarfszahl_funkt:
 
                 dft.to_excel(writer, sheet_name=sheet_name, index=False)
 
-            writer.save()
+                writer.save()
+
+                df = pd.read_excel(file, decimal=',')
+
+                df_styled = df.style.apply(
+                    lambda x: ["background-color: blue" if x == 1 else "background-color: white" for x in df.id])
+
+                writer = pd.ExcelWriter(file, engine='xlsxwriter')
+
+                df_styled.to_excel(writer, sheet_name=sheet_name, index=False)
+                writer.save()
 
         else:
             pass
@@ -2548,7 +2570,7 @@ class sanierungsbedarfszahl_funkt:
 
             writer.save()
 
-            df = pd.read_excel(file)
+            df = pd.read_excel(file, decimal=',')
 
             df_styled = df.style.apply(lambda x: ["background-color: blue" if x == 1 else "background-color: white" for x in df.id])
 
@@ -2577,7 +2599,17 @@ class sanierungsbedarfszahl_funkt:
 
                 dft.to_excel(writer, sheet_name=sheet_name, index=False)
 
-            writer.save()
+                writer.save()
+
+                df = pd.read_excel(file, decimal=',')
+
+                df_styled = df.style.apply(
+                    lambda x: ["background-color: blue" if x == 1 else "background-color: white" for x in df.id])
+
+                writer = pd.ExcelWriter(file, engine='xlsxwriter')
+
+                df_styled.to_excel(writer, sheet_name=sheet_name, index=False)
+                writer.save()
 
         else:
             pass

@@ -61,25 +61,21 @@ class ExportTask:
             return
         sql = """
         SELECT
-            wnam,
+            haltnam,
             schoben,
             schunten,
-            wehrtyp,
-            schwellenhoehe,
-            kammerhoehe,
+            sohleunten,
+            sohleoben,
             laenge,
-            uebeiwert,
-            aussentyp,
-            aussenwsp,
             simstatus,
             kommentar
-        FROM wehre
+        FROM haltungen WHERE haltungstyp = 'Wehr'
         """
 
         if not self.db_qkan.sql(sql, "db_qkan: export_wehre"):
             return
 
-        fortschritt("Export Wehre...", 0.35)
+        fortschritt("Export Wehre...", 0.5)
 
         for attr in self.db_qkan.fetchall():
             obj = SubElement(self.hydraulik_objekte, "Hydraulikobjekt")
@@ -92,11 +88,9 @@ class ExportTask:
                 {
                     "SchachtZulauf": attr[1],
                     "SchachtAblauf": attr[2],
-                    "Wehrtyp": attr[3],
                     "Schwellenhoehe": attr[4],
                     "Kammerhoehe": attr[5],
                     "LaengeWehrschwelle": attr[6],
-                    "Ueberfallbeiwert": attr[7],
                 },
             )
 
@@ -108,10 +102,10 @@ class ExportTask:
                 SubElement(
                     SubElement(SubElement(abw, "Knoten"), "Bauwerk"), "Wehr_Ueberlauf"
                 ),
-                {"Wehrtyp": attr[3], "LaengeWehrschwelle": attr[6]},
+                {"LaengeWehrschwelle": attr[6]},
             )
 
-        fortschritt("Wehre eingefügt")
+        fortschritt("Wehre eingefügt", 0.10)
 
     def _export_pumpen(self) -> None:
         if (
@@ -123,25 +117,19 @@ class ExportTask:
 
         sql = """
         SELECT
-            pnam,
-            volanf,
-            volges,
-            sohle,
+            haltnam,
+            sohleoben,
             schunten,
             schoben,
-            steuersch,
-            einschalthoehe,
-            ausschalthoehe,
             simstatus,
-            kommentar,
-            pumpentyp
-        FROM pumpen
+            kommentar
+        FROM haltungen WHERE haltungstyp = 'Pumpe'
         """
 
         if not self.db_qkan.sql(sql, "db_qkan: export_pumpen"):
             return
 
-        fortschritt("Export Pumpen...", 0.35)
+        fortschritt("Export Pumpen...", 0.15)
 
         for attr in self.db_qkan.fetchall():
             obj = SubElement(self.hydraulik_objekte, "Hydraulikobjekt")
@@ -150,15 +138,9 @@ class ExportTask:
                 SubElement(obj, "Pumpe"),
                 {
                     "HydObjektTyp": None,
-                    "Anfangsvolumen": attr[1],
-                    "Gesamtvolumen": attr[2],
-                    "Sohlhoehe": attr[3],
-                    "SchachtAblauf": attr[4],
-                    "SchachtZulauf": attr[5],
-                    "Steuerschacht": attr[6],
-                    "Schaltpunkt1-2": attr[7],
-                    "Schaltpunkt2-1": attr[8],
-                    "PumpenTyp": attr[11],
+                    "Sohlhoehe": attr[1],
+                    "SchachtAblauf": attr[2],
+                    "SchachtZulauf": attr[3],
                 },
             )
 
@@ -167,13 +149,13 @@ class ExportTask:
                 abw,
                 {
                     "Objektbezeichnung": attr[0],
-                    "Status": self.mapper_simstatus.get(attr[9], -1),
+                    "Status": self.mapper_simstatus.get(attr[4], -1),
                     "Objektart": None,
                 },
             )
             SubElement(SubElement(abw, "Knoten"), "Bauwerk")
 
-        fortschritt("Pumpen eingefügt")
+        fortschritt("Pumpen eingefügt", 0.20)
 
     def _export_auslaesse(self) -> None:
         if (
@@ -203,7 +185,7 @@ class ExportTask:
         if not self.db_qkan.sql(sql, u"db_qkan: export_auslaesse"):
             return
 
-        fortschritt("Export Auslässe...", 0.20)
+        fortschritt("Export Auslässe...", 0.25)
         for attr in self.db_qkan.fetchall():
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
             _create_children_text(
@@ -229,7 +211,7 @@ class ExportTask:
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
-                    "PunktattributAbwasser": "GOK",
+                    "PunktattributAbwasser": "DMP",
                     "Punkthoehe": attr[1],
                     "Rechtswert": attr[4],
                     "Hochwert": attr[5],
@@ -248,7 +230,7 @@ class ExportTask:
                     "Hochwert": attr[5],
                 },
             )
-        fortschritt("Auslässe eingefügt")
+        fortschritt("Auslässe eingefügt", 0.3)
 
     def _export_schaechte(self) -> None:
         if (
@@ -303,16 +285,16 @@ class ExportTask:
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
-                    "PunktattributAbwasser": "GOK",
+                    "PunktattributAbwasser": "DMP",
                     "Punkthoehe": attr[1],
                     "Rechtswert": attr[8],
                     "Hochwert": attr[9],
                 },
             )
-            _create_children_text(
-                SubElement(geom_knoten, "Punkt"),
-                {"PunktattributAbwasser": "HP", "Punkthoehe": attr[2]},
-            )
+            #_create_children_text(
+            #    SubElement(geom_knoten, "Punkt"),
+            #    {"PunktattributAbwasser": "HP", "Punkthoehe": attr[2]},
+            #)
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
@@ -323,7 +305,7 @@ class ExportTask:
                 },
             )
 
-        fortschritt("Schächte eingefügt")
+        fortschritt("Schächte eingefügt", 0.4)
 
     def _export_speicher(self) -> None:
         if (
@@ -353,7 +335,7 @@ class ExportTask:
         if not self.db_qkan.sql(sql, "db_qkan: export_speicher"):
             return
 
-        fortschritt("Export Speicherschächte...", 0.35)
+        fortschritt("Export Speicherschächte...", 0.45)
         for attr in self.db_qkan.fetchall():
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
             _create_children_text(
@@ -389,10 +371,6 @@ class ExportTask:
             )
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
-                {"PunktattributAbwasser": "HP", "Punkthoehe": attr[2]},
-            )
-            _create_children_text(
-                SubElement(geom_knoten, "Punkt"),
                 {
                     "PunktattributAbwasser": "SMP",
                     "Punkthoehe": attr[2],
@@ -400,7 +378,7 @@ class ExportTask:
                     "Hochwert": attr[6],
                 },
             )
-        fortschritt("Speicher eingefügt")
+        fortschritt("Speicher eingefügt", 0.5)
 
     def _export_haltungen(self) -> None:
         if (
@@ -420,8 +398,6 @@ class ExportTask:
             haltungen.laenge,
             haltungen.sohleoben,
             haltungen.sohleunten,
-            haltungen.deckeloben,
-            haltungen.deckelunten,
             haltungen.profilnam,
             ea.he_nr,
             haltungen.ks,
@@ -439,14 +415,14 @@ class ExportTask:
         if not self.db_qkan.sql(sql, "db_qkan: export_haltungen"):
             return
 
-        fortschritt("Export Haltungen...", 0.35)
+        fortschritt("Export Haltungen...", 0.55)
 
         for attr in self.db_qkan.fetchall():
             obj = SubElement(self.hydraulik_objekte, "HydraulikObjekt")
             _create_children(obj, ["HydObjektTyp", "Objektbezeichnung"])
             _create_children_text(
                 SubElement(obj, "Haltung"),
-                {"Berechnungslaenge": attr[5], "RauigkeitsbeiwertKb": attr[12]},
+                {"Objektbezeichnung": attr[0], "Berechnungslaenge": attr[5],"Rauigkeitsansatz": 1, "RauigkeitsbeiwertKb": attr[10]},
             )
 
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
@@ -455,8 +431,8 @@ class ExportTask:
                 {
                     "Objektart": None,
                     "Objektbezeichnung": attr[0],
-                    "Entwaesserungsart": attr[11],
-                    "Status": self.mapper_simstatus.get(attr[13], -1),
+                    "Entwaesserungsart": attr[9],
+                    "Status": self.mapper_simstatus.get(attr[11], -1),
                 },
             )
 
@@ -481,9 +457,9 @@ class ExportTask:
                 {
                     "ProfilID": None,
                     "SonderprofilVorhanden": None,
-                    "Profilart": attr[10],
-                    "Profilbreite": attr[4],
-                    "Profilhoehe": attr[3],
+                    "Profilart": attr[8],
+                    "Profilbreite": (attr[4]*1000),
+                    "Profilhoehe": (attr[3]*1000),
                 },
             )
 
@@ -499,22 +475,20 @@ class ExportTask:
                 SubElement(kante, "Start"),
                 {
                     "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[15],
-                    "Hochwert": attr[16],
-                    "Punkthoehe": attr[8],
+                    "Rechtswert": attr[13],
+                    "Hochwert": attr[14],
                 },
             )
             _create_children_text(
                 SubElement(kante, "Ende"),
                 {
                     "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[17],
-                    "Hochwert": attr[18],
-                    "Punkthoehe": attr[9],
+                    "Rechtswert": attr[15],
+                    "Hochwert": attr[16],
                 },
             )
 
-        fortschritt("Haltungen eingefügt")
+        fortschritt("Haltungen eingefügt", 0.60)
 
     def _export_anschlussleitungen(self) -> None:
         if (
@@ -534,8 +508,6 @@ class ExportTask:
             anschlussleitungen.laenge,
             anschlussleitungen.sohleoben,
             anschlussleitungen.sohleunten,
-            anschlussleitungen.deckeloben,
-            anschlussleitungen.deckelunten,
             anschlussleitungen.profilnam,
             ea.he_nr,
             anschlussleitungen.ks,
@@ -553,14 +525,14 @@ class ExportTask:
         if not self.db_qkan.sql(sql, "db_qkan: export_anschlussleitungen"):
             return
 
-        fortschritt("Export Anschlussleitungen...", 0.35)
+        fortschritt("Export Anschlussleitungen...", 0.65)
 
         for attr in self.db_qkan.fetchall():
             obj = SubElement(self.hydraulik_objekte, "HydraulikObjekt")
             _create_children(obj, ["HydObjektTyp", "Objektbezeichnung"])
             _create_children_text(
                 SubElement(obj, "Leitung"),
-                {"Berechnungslaenge": attr[5], "RauigkeitsbeiwertKb": attr[12]},
+                {"Objektbezeichnung": attr[0], "Berechnungslaenge": attr[5], "Rauigkeitsansatz": 1,  "RauigkeitsbeiwertKb": attr[10]},
             )
 
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
@@ -569,8 +541,8 @@ class ExportTask:
                 {
                     "Objektart": None,
                     "Objektbezeichnung": attr[0],
-                    "Entwaesserungsart": attr[11],
-                    "Status": self.mapper_simstatus.get(attr[13], -1),
+                    "Entwaesserungsart": attr[9],
+                    "Status": self.mapper_simstatus.get(attr[11], -1),
                 },
             )
 
@@ -595,9 +567,9 @@ class ExportTask:
                 {
                     "ProfilID": None,
                     "SonderprofilVorhanden": None,
-                    "Profilart": attr[10],
-                    "Profilbreite": attr[4],
-                    "Profilhoehe": attr[3],
+                    "Profilart": attr[8],
+                    "Profilbreite": (attr[4]*1000),
+                    "Profilhoehe": (attr[3]*1000),
                 },
             )
 
@@ -613,22 +585,20 @@ class ExportTask:
                 SubElement(kante, "Start"),
                 {
                     "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[15],
-                    "Hochwert": attr[16],
-                    "Punkthoehe": attr[8],
+                    "Rechtswert": attr[13],
+                    "Hochwert": attr[14],
                 },
             )
             _create_children_text(
                 SubElement(kante, "Ende"),
                 {
                     "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[17],
-                    "Hochwert": attr[18],
-                    "Punkthoehe": attr[9],
+                    "Rechtswert": attr[15],
+                    "Hochwert": attr[16],
                 },
             )
 
-        fortschritt("Leitung eingefügt")
+        fortschritt("Leitung eingefügt", 0.7)
 
     def run(self) -> None:
         """
