@@ -217,7 +217,10 @@ def _strip_float(value: Union[str, float], default: float = 0.0) -> float:
          return value
 
      if isinstance(value, str) and value.strip() != "":
-         return float(value)
+         try:
+            return float(value)
+         except ValueError:
+             return default
 
      return default
 
@@ -229,8 +232,9 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
     if isinstance(value, str) and value.strip() != "":
         try:
             return int(value)
-        except Exception:
+        except ValueError:
             print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
+            return default
 
     return default
 

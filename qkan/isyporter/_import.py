@@ -214,13 +214,16 @@ class Pumpe(ClassObject):
 
 
 def _strip_float(value: Union[str, float], default: float = 0.0) -> float:
-     if isinstance(value, float):
-         return value
+    if isinstance(value, float):
+        return value
 
-     if isinstance(value, str) and value.strip() != "":
-         return float(value)
+    if isinstance(value, str) and value.strip() != "":
+        try:
+            return float(value)
+        except ValueError:
+            return default
 
-     return default
+    return default
 
 
 def _strip_int(value: Union[str, int], default: int = 0) -> int:
@@ -228,19 +231,25 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
         return value
 
     if isinstance(value, str) and value.strip() != "":
-        return int(value)
+        try:
+            return int(value)
+        except ValueError:
+            return default
 
     return default
 
 def _strip_int_2(value: Union[str, int], default: int = 63) -> int:
+    if value is not int:
+        pass
     if isinstance(value, int):
         return value
 
     if isinstance(value, str) and value.strip() != "":
         try:
             return int(value)
-        except Exception:
+        except ValueError:
             print("_m145porter._import.py._strip_int: %s" % sys.exc_info()[1])
+            return default
 
     return default
 
