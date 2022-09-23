@@ -584,6 +584,9 @@ class DBConnection:
                   END
                 );"""
 
+            logger.debug(f'insert anschlussleitung - sql: {sql}\n'
+                         f'parameter: {parameters}')
+
         elif tabnam == 'schaechte_untersucht':
             parlis = ['schnam', 'durchm', 'kommentar', 'createdat', 'baujahr',
                       'untersuchtag', 'untersucher', 'wetter', 'strasse',

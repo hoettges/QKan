@@ -29,7 +29,7 @@ __copyright__ = "(C) 2016, Joerg Hoettges"
 
 import logging
 import os
-from pathlib import Path
+from pathlib import Path, PurePath
 from xml.etree import ElementTree as ET
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem
@@ -237,7 +237,7 @@ def qgsadapt(
                     tag_spatialrefsys, "ellipsoidacronym"
                 ).text = ellipsoid_acronym
 
-        # Replace path to forms
+        # Adapt path to forms
         # logger.debug(f'Liste aller QKan-Formulardateien: \n{QKan.forms}')
         form_path = Path(pluginDirectory("qkan")) / "forms"
         for tag_maplayer in root.findall(".//projectlayers/maplayer"):
@@ -254,6 +254,21 @@ def qgsadapt(
                 else:
                     tag_editform.text = str(form_path / file_name)
                     # logger.debug(f'Geänderter Formularpfad: {tag_editform.text}')
+
+        # Adapt path to symbols, 2* for each layer
+        symbols_path = Path(pluginDirectory("qkan")) / "symbols"
+        for tag_option in root.findall(
+                ".//projectlayers/maplayer/renderer-v2/symbols/symbol/"
+                "layer/symbol/layer[@class='SvgMarker']/Option/Option[@name='name']"):
+            svg_path = Path(tag_option.attrib['value'])
+            if PurePath(svg_path).match('plugins/qkan/symbols/*.svg'):
+                tag_option.attrib['value'] = str(symbols_path / svg_path.name)
+        for tag_option in root.findall(
+                ".//projectlayers/maplayer/renderer-v2/symbols/symbol/"
+                "layer/symbol/layer[@class='SvgMarker']/prop[@k='name']"):
+            svg_path = Path(tag_option.attrib['v'])
+            if PurePath(svg_path).match('plugins/qkan/symbols/*.svg'):
+                tag_option.attrib['v'] = str(symbols_path / svg_path.name)
 
         # Reset zoom
         if len(zoom) == 0 or any([x is None for x in zoom]):
@@ -274,7 +289,11 @@ def qgsadapt(
             )
 
         # writing modified project file
-        qgsxml.write(projectfile)
+        try:
+            qgsxml.write(projectfile)
+        except BaseException as e:
+            fehlermeldung('\nFehler beim Schreiben der Projektdatei"', str(e))
+
         logger.debug("Projektdatei: {}".format(projectfile))
 
     # ------------------------------------------------------------------------------

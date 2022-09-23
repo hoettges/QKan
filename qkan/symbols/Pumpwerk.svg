@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="22mm"
+   height="42mm"
+   viewBox="0 0 22 42"
+   version="1.1"
+   id="svg6810"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="Pumpwerk_neu.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview6812"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#727272"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="3.9710672"
+     inkscape:cx="37.395489"
+     inkscape:cy="52.127045"
+     inkscape:window-width="1920"
+     inkscape:window-height="986"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs6807" />
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;stroke:#050505;stroke-width:2;stroke-dasharray:none"
+       id="rect9835"
+       width="19.935141"
+       height="39.935139"
+       x="1.0324291"
+       y="1.0324291" />
+    <path
+       style="fill:#ffffff;stroke:#050505;stroke-width:2;stroke-dasharray:none"
+       d="M 10.999999,1.0324291 V 40.967567"
+       id="path12745" />
+    <path
+       style="fill:#ffffff;stroke:#050505;stroke-width:2;stroke-dasharray:none"
+       d="M 21.054373,6.0243209 H 10.999999"
+       id="path14211" />
+    <path
+       style="fill:#ffffff;stroke:#050505;stroke-width:2;stroke-dasharray:none"
+       d="M 10.999999,35.975673 H 1.0324291"
+       id="path14951" />
+  </g>
+</svg>
