@@ -274,6 +274,7 @@ class ImportTask:
             schnam = line[34:51].strip()
             befgrad = fzahl(line[60:69].strip())
             neigung = fzahl(line[78:85].strip())
+            abnam = '$Default_Unbef'
 
             # sql = f"""
             #     INSERT into tezg (
@@ -287,7 +288,7 @@ class ImportTask:
             #     return False
 
             params = {'flnam': name, 'regenschreiber': regenschreiber, 'schnam': schnam,
-                       'befgrad': befgrad, 'neigung': neigung}
+                       'befgrad': befgrad, 'neigung': neigung , 'abflussparameter': abnam}
 
             logger.debug(f'm145porter.import - insertdata:\ntabnam: tezg\n'
                           f'params: {params}')

@@ -175,6 +175,8 @@ class ExportTask:
             schaechte.kommentar,
             schaechte.simstatus,
             ea.he_nr,
+            schaechte.entwart,
+            schaechte.strasse,
             schaechte.knotentyp
         FROM schaechte
         LEFT JOIN Entwaesserungsarten AS ea
@@ -195,12 +197,13 @@ class ExportTask:
                     "Objektbezeichnung": attr[0],
                     "Kommentar": attr[6],
                     "Status": self.mapper_simstatus.get(attr[7], -1),
-                    "Entwaesserungsart": attr[8],
+                    "Entwaesserungsart": attr[9],
                 },
             )
-
+            strasse = SubElement(abw, "Lage")
+            SubElementText(strasse, "Strassenname", attr[10])
             knoten = SubElement(abw, "Knoten")
-            SubElementText(knoten, "KnotenTyp", attr[9])  # TODO: Is None sometimes
+            SubElementText(knoten, "KnotenTyp", attr[12])  # TODO: Is None sometimes
             _create_children(
                 SubElement(knoten, "Bauwerk"), ["Bauwerktyp", "Auslaufbauwerk"]
             )
@@ -219,8 +222,9 @@ class ExportTask:
             )
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
-                {"PunktattributAbwasser": "HP", "Punkthoehe": attr[2]},
+                {"PunktattributAbwasser": "GOK", "Punkthoehe": attr[2]},
             )
+            #TODO: prüfen ob GOK oder HP
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
@@ -245,7 +249,10 @@ class ExportTask:
             schaechte.deckelhoehe,
             schaechte.sohlhoehe,
             schaechte.durchm,
+            schaechte.druckdicht,
             ea.he_nr,
+            schaechte.entwart,
+            schaechte.strasse,
             schaechte.knotentyp,
             schaechte.kommentar,
             schaechte.simstatus,
@@ -267,14 +274,14 @@ class ExportTask:
                 {
                     "Objektart": None,
                     "Objektbezeichnung": attr[0],
-                    "Entwaesserungsart": attr[4],
-                    "Kommentar": attr[6],
-                    "Status": self.mapper_simstatus.get(attr[7], -1),
+                    "Entwaesserungsart": attr[6],
+                    "Kommentar": attr[9],
+                    "Status": self.mapper_simstatus.get(attr[10], -1),
                 },
             )
 
             knoten = SubElement(abw, "Knoten")
-            SubElementText(knoten, "KnotenTyp", attr[5])
+            SubElementText(knoten, "KnotenTyp", attr[8])
             _create_children(
                 SubElement(knoten, "Schacht"), ["Schachttiefe", "AnzahlAnschluesse"]
             )
@@ -287,8 +294,8 @@ class ExportTask:
                 {
                     "PunktattributAbwasser": "DMP",
                     "Punkthoehe": attr[1],
-                    "Rechtswert": attr[8],
-                    "Hochwert": attr[9],
+                    "Rechtswert": attr[11],
+                    "Hochwert": attr[12],
                 },
             )
             #_create_children_text(
@@ -300,8 +307,8 @@ class ExportTask:
                 {
                     "PunktattributAbwasser": "SMP",
                     "Punkthoehe": attr[2],
-                    "Rechtswert": attr[8],
-                    "Hochwert": attr[9],
+                    "Rechtswert": attr[11],
+                    "Hochwert": attr[12],
                 },
             )
 
@@ -321,6 +328,8 @@ class ExportTask:
             schaechte.sohlhoehe,
             schaechte.durchm,
             ea.he_nr,
+            schaechte.entwart,
+            schaechte.strasse,
             x(schaechte.geop) AS xsch,
             y(schaechte.geop) AS ysch,
             schaechte.kommentar,
@@ -343,14 +352,14 @@ class ExportTask:
                 {
                     "Objektart": None,
                     "Objektbezeichnung": attr[0],
-                    "Entwaesserungsart": attr[4],
-                    "Kommentar": attr[7],
-                    "Status": self.mapper_simstatus.get(attr[8], -1),
+                    "Entwaesserungsart": attr[5],
+                    "Kommentar": attr[9],
+                    "Status": self.mapper_simstatus.get(attr[10], -1),
                 },
             )
 
             knoten = SubElement(abw, "Knoten")
-            SubElementText(knoten, "KnotenTyp", attr[9])  # TODO: Is None sometimes
+            SubElementText(knoten, "KnotenTyp", attr[11])  # TODO: Is None sometimes
             bauwerk = SubElement(knoten, "Bauwerk")
             SubElement(bauwerk, "Bauwerkstyp")
             _create_children(
@@ -365,8 +374,8 @@ class ExportTask:
                 {
                     "PunktattributAbwasser": "DMP",
                     "Punkthoehe": attr[1],
-                    "Rechtswert": attr[5],
-                    "Hochwert": attr[6],
+                    "Rechtswert": attr[7],
+                    "Hochwert": attr[8],
                 },
             )
             _create_children_text(
@@ -374,8 +383,8 @@ class ExportTask:
                 {
                     "PunktattributAbwasser": "SMP",
                     "Punkthoehe": attr[2],
-                    "Rechtswert": attr[5],
-                    "Hochwert": attr[6],
+                    "Rechtswert": attr[7],
+                    "Hochwert": attr[8],
                 },
             )
         fortschritt("Speicher eingefügt", 0.5)
@@ -399,7 +408,10 @@ class ExportTask:
             haltungen.sohleoben,
             haltungen.sohleunten,
             haltungen.profilnam,
+            haltungen.strasse,
+            haltungen.material,
             ea.he_nr,
+            haltungen.entwart,
             haltungen.ks,
             haltungen.simstatus,
             haltungen.kommentar,
@@ -422,7 +434,7 @@ class ExportTask:
             _create_children(obj, ["HydObjektTyp", "Objektbezeichnung"])
             _create_children_text(
                 SubElement(obj, "Haltung"),
-                {"Objektbezeichnung": attr[0], "Berechnungslaenge": attr[5],"Rauigkeitsansatz": 1, "RauigkeitsbeiwertKb": attr[10]},
+                {"Objektbezeichnung": attr[0], "Berechnungslaenge": attr[5],"Rauigkeitsansatz": 1, "RauigkeitsbeiwertKb": attr[13]},
             )
 
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
@@ -431,8 +443,16 @@ class ExportTask:
                 {
                     "Objektart": None,
                     "Objektbezeichnung": attr[0],
-                    "Entwaesserungsart": attr[9],
-                    "Status": self.mapper_simstatus.get(attr[11], -1),
+                    "Entwaesserungsart": attr[12],
+                    "Status": self.mapper_simstatus.get(attr[14], -1),
+                },
+            )
+
+            strasse = SubElement(abw, "Lage")
+            _create_children_text(
+                strasse,
+                {
+                    "Strassenname": attr[9],
                 },
             )
 
@@ -443,7 +463,7 @@ class ExportTask:
                     "KantenTyp": None,
                     "KnotenAblaufTyp": None,
                     "KnotenZulaufTyp": None,
-                    "Material": None,
+                    "Material": attr[10],
                     "KnotenZulauf": attr[1],
                     "KnotenAblauf": attr[2],
                     "SohlhoeheZulauf": attr[6],
@@ -475,16 +495,16 @@ class ExportTask:
                 SubElement(kante, "Start"),
                 {
                     "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[13],
-                    "Hochwert": attr[14],
+                    "Rechtswert": attr[16],
+                    "Hochwert": attr[17],
                 },
             )
             _create_children_text(
                 SubElement(kante, "Ende"),
                 {
                     "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[15],
-                    "Hochwert": attr[16],
+                    "Rechtswert": attr[18],
+                    "Hochwert": attr[19],
                 },
             )
 
@@ -508,8 +528,12 @@ class ExportTask:
             anschlussleitungen.laenge,
             anschlussleitungen.sohleoben,
             anschlussleitungen.sohleunten,
+            anschlussleitungen.deckeloben,
+            anschlussleitungen.deckelunten,
             anschlussleitungen.profilnam,
+            anschlussleitungen.material,
             ea.he_nr,
+            anschlussleitungen.entwart,
             anschlussleitungen.ks,
             anschlussleitungen.simstatus,
             anschlussleitungen.kommentar,
@@ -532,7 +556,7 @@ class ExportTask:
             _create_children(obj, ["HydObjektTyp", "Objektbezeichnung"])
             _create_children_text(
                 SubElement(obj, "Leitung"),
-                {"Objektbezeichnung": attr[0], "Berechnungslaenge": attr[5], "Rauigkeitsansatz": 1,  "RauigkeitsbeiwertKb": attr[10]},
+                {"Objektbezeichnung": attr[0], "Berechnungslaenge": attr[5], "Rauigkeitsansatz": 1,  "RauigkeitsbeiwertKb": attr[14]},
             )
 
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
@@ -541,8 +565,8 @@ class ExportTask:
                 {
                     "Objektart": None,
                     "Objektbezeichnung": attr[0],
-                    "Entwaesserungsart": attr[9],
-                    "Status": self.mapper_simstatus.get(attr[11], -1),
+                    "Entwaesserungsart": attr[13],
+                    "Status": self.mapper_simstatus.get(attr[15], -1),
                 },
             )
 
@@ -553,7 +577,7 @@ class ExportTask:
                     "KantenTyp": None,
                     "KnotenAblaufTyp": None,
                     "KnotenZulaufTyp": None,
-                    "Material": None,
+                    "Material": attr[11],
                     "KnotenZulauf": attr[1],
                     "KnotenAblauf": attr[2],
                     "SohlhoeheZulauf": attr[6],
@@ -567,7 +591,7 @@ class ExportTask:
                 {
                     "ProfilID": None,
                     "SonderprofilVorhanden": None,
-                    "Profilart": attr[8],
+                    "Profilart": attr[10],
                     "Profilbreite": (attr[4]*1000),
                     "Profilhoehe": (attr[3]*1000),
                 },
@@ -585,16 +609,16 @@ class ExportTask:
                 SubElement(kante, "Start"),
                 {
                     "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[13],
-                    "Hochwert": attr[14],
+                    "Rechtswert": attr[17],
+                    "Hochwert": attr[18],
                 },
             )
             _create_children_text(
                 SubElement(kante, "Ende"),
                 {
                     "PunktattributAbwasser": "DMP",
-                    "Rechtswert": attr[15],
-                    "Hochwert": attr[16],
+                    "Rechtswert": attr[19],
+                    "Hochwert": attr[20],
                 },
             )
 
