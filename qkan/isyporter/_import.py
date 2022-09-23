@@ -23,7 +23,7 @@ class Schacht(ClassObject):
     entwart: str = ""
     strasse: str = ""
     knotentyp: int = 0
-    material: str= ""
+    material: str = ""
     simstatus: int = 0
     kommentar: str = ""
 
@@ -236,11 +236,11 @@ def _strip_int(value: Union[str, int], default: int = 0) -> int:
         except ValueError:
             return default
 
+
     return default
 
+
 def _strip_int_2(value: Union[str, int], default: int = 63) -> int:
-    if value is not int:
-        pass
     if isinstance(value, int):
         return value
 
@@ -303,6 +303,7 @@ class ImportTask:
 
         for _schacht in _block.findall("d:Knoten", self.NS):
             knoten_typ = _strip_int(_schacht.findtext("d:KnotenTyp", -1, self.NS))
+
 
         smp = _block.find(
             "d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt[d:PunktattributAbwasser='SMP']",
@@ -417,6 +418,7 @@ class ImportTask:
 
             for block in blocks:
                 name, knoten_typ, xsch, ysch, sohlhoehe = self._consume_smp_block(block)
+
 
                 yield Schacht(
                     schnam=name,
@@ -547,7 +549,7 @@ class ImportTask:
             params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
                       'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe,
                       'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': schacht.entwart,
-                      'strasse': schacht.strasse,
+                      'strasse': schacht.strasse, 'knotentyp': schacht.knotentyp,
                       'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': 'Schacht', 'epsg': QKan.config.epsg}
 
             logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte\n'
@@ -909,6 +911,7 @@ class ImportTask:
                     ),
                     durchm=0.5,
                     entwart="",
+                    strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
                     knotentyp=knoten_typ,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
@@ -968,7 +971,7 @@ class ImportTask:
 
             params = {'schnam': auslass.schnam, 'xsch': auslass.xsch, 'ysch': auslass.ysch,
                       'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe,
-                      'durchm': auslass.durchm, 'entwart': auslass.entwart, 'simstatus': simstatus,
+                      'durchm': auslass.durchm, 'entwart': auslass.entwart, 'strasse': auslass.strasse, 'simstatus': simstatus,
                       'kommentar': auslass.kommentar, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
 
             logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte\n'
@@ -1035,6 +1038,7 @@ class ImportTask:
                     ),
                     durchm=0.5,
                     entwart="",
+                    strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
                     knotentyp=knoten_typ,
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
@@ -1081,7 +1085,7 @@ class ImportTask:
 
             params = {'schnam': speicher.schnam, 'xsch': speicher.xsch, 'ysch': speicher.ysch,
                       'sohlhoehe': speicher.sohlhoehe, 'deckelhoehe': speicher.deckelhoehe,
-                      'durchm': speicher.durchm, 'entwart': speicher.entwart, 'simstatus': simstatus,
+                      'durchm': speicher.durchm, 'strasse': speicher.strasse,  'entwart': speicher.entwart, 'simstatus': simstatus,
                       'kommentar': speicher.kommentar, 'schachttyp': 'Speicher', 'epsg': QKan.config.epsg}
 
             logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte\n'
@@ -1210,7 +1214,7 @@ class ImportTask:
                     deckelunten=deckelunten,
                     profilnam=profilnam,
                     entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
-                    strasse=block.findtext("d:Lage/d:Strassenname","not found",self.NS),
+                    strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
                     ks=1.5,  # in Hydraulikdaten enthalten.
                     simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
                     kommentar=block.findtext("d:Kommentar", "-", self.NS),
@@ -1331,9 +1335,9 @@ class ImportTask:
 
             params = {'haltnam': haltung.haltnam, 'schoben': haltung.schoben, 'schunten': haltung.schunten,
                       'hoehe': haltung.hoehe,
-                      'breite': haltung.breite, 'laenge': haltung.laenge, 'material': haltung.material,
-                      'sohleoben': haltung.sohleoben,
-                      'sohleunten': haltung.sohleunten, 'profilnam': haltung.profilnam, 'entwart': entwart,
+                      'breite': haltung.breite, 'laenge': haltung.laenge,
+                      'sohleoben': haltung.sohleoben, 'sohleunten': haltung.sohleunten,
+                      'material': haltung.material, 'profilnam': haltung.profilnam, 'entwart': entwart,
                       'strasse': haltung.strasse,
                       'ks': haltung.ks, 'simstatus': simstatus, 'kommentar': haltung.kommentar, 'epsg': QKan.config.epsg}
 

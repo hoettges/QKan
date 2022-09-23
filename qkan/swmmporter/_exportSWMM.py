@@ -1,29 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""----------------------------------------------------------------------------------
-/***************************************************************************
- k_qgsw
-                                 A QGIS plugin
- Transfer von Kanaldaten aus QKan nach SWMM 5.0.1
-                              -------------------
-                            begin                : 2015-08-10
-                            git sha              : $Format:%H$
-                            copyright            : (C) 2015 by Jörg Höttges / FH Aachen
-                            email                : hoettges@fh-aachen.de
- ***************************************************************************/
-
- Tool Name:   k_qgsw.py
- Source Name: k_qgsw.py
- Version:     1.0.0
- Date:        29.05.2016
- Author:      Joerg Hoettges
- Required Arguments:
-
-Transfer von Kanaldaten aus QKan nach SWMM 5.0.1
-
-
-----------------------------------------------------------------------------------"""
-
 import os
 import logging
 import xml.etree.ElementTree as ET
@@ -31,7 +7,7 @@ from pathlib import Path
 from typing import Dict, List, cast
 from lxml import etree
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
-from qgis.utils import pluginDirectory
+from qgis.utils import pluginDirectory, iface
 from qgis.PyQt.QtWidgets import QProgressBar
 from qkan import QKan, enums
 from qkan.config import ClassObject
@@ -194,8 +170,8 @@ class ExportTask:
         self.file = open(ergfileSwmm, 'a')
 
         allgemein = (
-            "\n[TITLE]"
-            "\nExample 7"
+            "[TITLE]"
+            "\nExample"
             "\nDual Drainage System"
             "\nFinal Design"
             "\n"
@@ -203,14 +179,14 @@ class ExportTask:
             "\nFLOW_UNITS           CFS"
             "\nINFILTRATION         HORTON"
             "\nFLOW_ROUTING         DYNWAVE"
-            "\nSTART_DATE           01 / 01 / 2007"
+            "\nSTART_DATE           01/01/2007"
             "\nSTART_TIME           00:00:00"
-            "\nREPORT_START_DATE    01 / 01 / 2007"
+            "\nREPORT_START_DATE    01/01/2007"
             "\nREPORT_START_TIME    00:00:00"
-            "\nEND_DATE             01 / 01 / 2007"
+            "\nEND_DATE             01/01/2007"
             "\nEND_TIME             12:00:00"
-            "\nSWEEP_START          01 / 01"
-            "\nSWEEP_END            12 / 31"
+            "\nSWEEP_START          01/01"
+            "\nSWEEP_END            12/31"
             "\nDRY_DAYS             0"
             "\nREPORT_STEP          00:01:00"
             "\nWET_STEP             00:01:00"
@@ -242,7 +218,7 @@ class ExportTask:
                 "\n;;               Rain      Time   Snow   Data"
                 "\n;;Name           Type      Intrvl Catch  Source"
                 "\n;;-------------- --------- ------ ------ ----------"
-                "\nRainGage         INTENSITY 0:05   1.0    TIMESERIES 100-yr"
+                "\n"
                 )
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
@@ -253,6 +229,7 @@ class ExportTask:
                 "\n;;                                                 Total    Pcnt.             Pcnt.    Curb     Snow"
                 "\n;;Name           Raingage         Outlet           Area     Imperv   Width    Slope    Length   Pack"
                 "\n;;-------------- ---------------- ---------------- -------- -------- -------- -------- -------- --------"
+                "\n"
                 )
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
@@ -265,25 +242,8 @@ class ExportTask:
                       area(tg.geom)/10000 AS area,
                       pow(area(tg.geom), 0.5)*1.3 AS width,
                       tg.befgrad AS imperv,
-                      tg.neigung AS neigung,
-                      tg.abflussparameter AS abflussparameter, 
-                      apbef.rauheit_kst AS nImperv, 
-                      apdur.rauheit_kst AS nPerv,
-                      apbef.muldenverlust AS sImperv, 
-                      apdur.muldenverlust AS sPerv,
-                      apbef.pctZero AS pctZero, 
-                      bk.infiltrationsrateende*60 AS maxRate, -- mm/min -> mm/h
-                      bk.infiltrationsrateanfang*60 AS minRate,
-                      bk.rueckgangskonstante/24. AS decay, -- 1/d -> 1/h 
-                      1/(coalesce(bk.regenerationskonstante, 1./7.)) AS dryTime, -- 1/d -> d , Standardwert aus SWMM-Testdaten
-                      bk.saettigungswassergehalt AS maxInfil
+                      tg.neigung AS neigung
                       FROM tezg AS tg
-                      JOIN abflussparameter AS apbef
-                      ON tg.abflussparameter = apbef.apnam and (apbef.bodenklasse IS NULL OR apbef.bodenklasse = '')
-                      JOIN abflussparameter AS apdur
-                      ON tg.abflussparameter = apdur.apnam and apdur.bodenklasse IS NOT NULL AND apdur.bodenklasse = ''
-                      JOIN bodenklassen AS bk
-                      ON apdur.bodenklasse = bk.bknam
                     {self.auswahlw}"""
 
         if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
@@ -291,6 +251,75 @@ class ExportTask:
             return
 
         datasc = ""  # Datenzeilen [subcatchments]
+
+        for b in self.dbQK.fetchall():
+            # In allen Feldern None durch NULL ersetzen
+            (
+                name_1,
+                rain_gage,
+                outlet_1,
+                area,
+                width,
+                imperv,
+                neigung,
+            ) = [0 if el is None else el for el in b]
+
+            # In allen Namen Leerzeichen durch '_' ersetzen
+            name = name_1.replace(" ", "_")
+            outlet = outlet_1.replace(" ", "_")
+
+            datasc += (
+                f"{name:<16s} {rain_gage:<16s} {outlet:<16s} {area:<8.2f} "
+                f"{imperv:<8.1f} {width:<8.0f} {neigung:<8.1f} 0                        \n"
+            )
+
+        self.file.write(datasc)
+
+        self.file.close()
+
+
+    def subareas(self):
+        text = ("\n[SUBAREAS]"
+                "\n;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     PctZero    RouteTo    PctRouted"
+                "\n;;-------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
+                "\n")
+        self.file = open(self.ergfileSwmm, 'a')
+        self.file.write(text)
+
+        sql = f"""
+                    SELECT
+                        tg.flnam AS name,
+                        tg.regenschreiber AS rain_gage,
+                        tg.schnam AS outlet,
+                        area(tg.geom)/10000. AS area,
+                        pow(area(tg.geom), 0.5)*1.3 AS width,                        -- 1.3: pauschaler Faktor für SWMM
+                        tg.befgrad AS imperv,
+                        tg.neigung AS neigung,
+                        tg.abflussparameter AS abflussparameter, 
+                        apbef.rauheit_kst AS nImperv, 
+                        apdur.rauheit_kst AS nPerv,
+                        apbef.muldenverlust AS sImperv, 
+                        apdur.muldenverlust AS sPerv,
+                        apbef.pctZero AS pctZero, 
+                        bk.infiltrationsrateende*60 AS maxRate,                     -- mm/min -> mm/h
+                        bk.infiltrationsrateanfang*60 AS minRate,
+                        bk.rueckgangskonstante/24. AS decay,                        -- 1/d -> 1/h 
+                        1/(coalesce(bk.regenerationskonstante, 1./7.)) AS dryTime,   -- 1/d -> d , Standardwert aus SWMM-Testdaten
+                        bk.saettigungswassergehalt AS maxInfil
+                    FROM tezg AS tg
+                    LEFT JOIN abflussparameter AS apbef
+                    ON tg.abflussparameter = apbef.apnam and (apbef.bodenklasse IS NULL OR apbef.bodenklasse = '')
+                    LEFT JOIN abflussparameter AS apdur
+                    ON tg.abflussparameter = apdur.apnam and apdur.bodenklasse IS NOT NULL AND apdur.bodenklasse <> ''
+                    LEFT JOIN bodenklassen AS bk
+                    ON apdur.bodenklasse = bk.bknam
+                    {self.auswahlw}"""
+
+        if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
+            del self.dbQK
+            return
+
+        datasa = ""  # Datenzeilen [subareas]
 
         for b in self.dbQK.fetchall():
             # In allen Feldern None durch NULL ersetzen
@@ -313,29 +342,18 @@ class ExportTask:
                 decay,
                 dryTime,
                 maxInfil,
-            ) = ["NULL" if el is None else el for el in b]
+            ) = [0 if el is None else el for el in b]
 
             # In allen Namen Leerzeichen durch '_' ersetzen
             name = name_1.replace(" ", "_")
             outlet = outlet_1.replace(" ", "_")
 
-            datasc += (
-                f"{name:<16s} {rain_gage:<16s} {outlet:<16s} {area:<8.2f} "
-                f"{imperv:<8.1f} {width:<8.0f} {neigung:<8.1f} 0                        \n"
+            datasa += (
+                f"{name:<16s} {nImperv:<10.3f} {nPerv:<10.2f} {sImperv:<10.2f} {sPerv:<10.1f} "
+                f"{pctZero:<10.0f} OUTLET    \n"
             )
-            self.file = open(self.ergfileSwmm, 'a')
-            self.file.write(datasc)
 
-        self.file.close()
-
-
-    def subareas(self):
-        text = ("\n[SUBAREAS]"
-                "\n;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     PctZero    RouteTo    PctRouted"
-                "\n;;-------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
-                "\nS1               0.015      0.24       0.06       0.3        25         OUTLET")
-        self.file = open(self.ergfileSwmm, 'a')
-        self.file.write(text)
+        self.file.write(datasa)
         self.file.close()
 
 
@@ -343,9 +361,74 @@ class ExportTask:
         text = ("\n[INFILTRATION]"
                 "\n;;Subcatchment   MaxRate    MinRate    Decay      DryTime    MaxInfil"
                 "\n;;-------------- ---------- ---------- ---------- ---------- ----------"
-                "\nS1               4.5        0.2        6.5        7          0")
+                "\n")
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
+
+        sql = f"""
+                            SELECT
+                                tg.flnam AS name,
+                                tg.regenschreiber AS rain_gage,
+                                tg.schnam AS outlet,
+                                area(tg.geom)/10000. AS area,
+                                pow(area(tg.geom), 0.5)*1.3 AS width,                        -- 1.3: pauschaler Faktor für SWMM
+                                tg.befgrad AS imperv,
+                                tg.neigung AS neigung,
+                                tg.abflussparameter AS abflussparameter, 
+                                apbef.rauheit_kst AS nImperv, 
+                                apdur.rauheit_kst AS nPerv,
+                                apbef.muldenverlust AS sImperv, 
+                                apdur.muldenverlust AS sPerv,
+                                apbef.pctZero AS pctZero, 
+                                bk.infiltrationsrateende*60 AS maxRate,                     -- mm/min -> mm/h
+                                bk.infiltrationsrateanfang*60 AS minRate,
+                                bk.rueckgangskonstante/24. AS decay,                        -- 1/d -> 1/h 
+                                1/(coalesce(bk.regenerationskonstante, 1./7.)) AS dryTime,   -- 1/d -> d , Standardwert aus SWMM-Testdaten
+                                bk.saettigungswassergehalt AS maxInfil
+                            FROM tezg AS tg
+                            LEFT JOIN abflussparameter AS apbef
+                            ON tg.abflussparameter = apbef.apnam and (apbef.bodenklasse IS NULL OR apbef.bodenklasse = '')
+                            LEFT JOIN abflussparameter AS apdur
+                            ON tg.abflussparameter = apdur.apnam and apdur.bodenklasse IS NOT NULL AND apdur.bodenklasse <> ''
+                            LEFT JOIN bodenklassen AS bk
+                            ON apdur.bodenklasse = bk.bknam
+                            {self.auswahlw}"""
+
+        if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
+            del self.dbQK
+            return
+
+        datain = ""  # Datenzeilen [infiltration]
+
+        for b in self.dbQK.fetchall():
+            # In allen Feldern None durch NULL ersetzen
+            (
+                name_1,
+                rain_gage,
+                outlet_1,
+                area,
+                width,
+                imperv,
+                neigung,
+                abflussparameter,
+                nImperv,
+                nPerv,
+                sImperv,
+                sPerv,
+                pctZero,
+                maxRate,
+                minRate,
+                decay,
+                dryTime,
+                maxInfil,
+            ) = [0 if el is None else el for el in b]
+
+            # In allen Namen Leerzeichen durch '_' ersetzen
+            name = name_1.replace(" ", "_")
+
+            datain += f"{name:<16s} {maxRate:<10.1f} {minRate:<10.1f} {decay:<10.1f} {dryTime:<10.0f} {maxInfil}\n"
+
+        self.file.write(datain)
         self.file.close()
 
 
@@ -354,9 +437,51 @@ class ExportTask:
                 "\n;;               Invert     Max.       Init.      Surcharge  Ponded"
                 "\n;;Name           Elev.      Depth      Depth      Depth      Area"
                 "\n;;-------------- ---------- ---------- ---------- ---------- ----------"
-                "\nJ1               4969       0          0          0          0")
+                "\n")
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
+
+        sql = """SELECT
+                    s.schnam AS name, 
+                    s.sohlhoehe AS invertElevation, 
+                    s.deckelhoehe - s.sohlhoehe AS maxDepth, 
+                    0 AS initDepth, 
+                    0 AS surchargeDepth,
+                    0 AS pondedArea,   
+                    X(geop) AS xsch, Y(geop) AS ysch 
+                FROM schaechte AS s
+                WHERE s.schachttyp = 'Schacht'
+                """
+
+        if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
+            del self.dbQK
+            return
+
+        dataju = ""  # Datenzeilen [JUNCTIONS]
+
+        for b in self.dbQK.fetchall():
+            # In allen Feldern None durch NULL ersetzen
+            (
+                name_t,
+                invertElevation,
+                maxDepth,
+                initDepth,
+                surchargeDepth,
+                pondedArea,
+                xsch,
+                ysch,
+            ) = [0 if el is None else el for el in b]
+
+            # In allen Namen Leerzeichen durch '_' ersetzen
+            name = name_t.replace(" ", "_")
+
+            # [JUNCTIONS]
+            dataju += (
+                f"{name:<16s} {invertElevation:<10.3f} {maxDepth:<10.3f} {initDepth:<10.3f} "
+                f"{surchargeDepth:<10.3f} {pondedArea:<10.1f}\n"
+            )
+
+        self.file.write(dataju)
         self.file.close()
 
 
@@ -365,39 +490,148 @@ class ExportTask:
                 "\n;;               Invert     Outfall    Stage/Table      Tide"
                 "\n;;Name           Elev.      Type       Time Series      Gate"
                 "\n;;-------------- ---------- ---------- ---------------- ----"
-                "\nO1               4956       FREE                        NO")
+                "\n")
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
+
+        sql = """SELECT
+                            s.schnam AS name, 
+                            s.sohlhoehe AS invertElevation, 
+                            s.deckelhoehe - s.sohlhoehe AS maxDepth, 
+                            0 AS initDepth, 
+                            0 AS surchargeDepth,
+                            0 AS pondedArea,   
+                            X(geop) AS xsch, Y(geop) AS ysch 
+                        FROM schaechte AS s
+                        WHERE s.schachttyp = 'Auslass'
+                        """
+
+        if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
+            del self.dbQK
+            return
+        dataou = ""  # Datenzeilen [OUTFALLS]
+
+        for b in self.dbQK.fetchall():
+            # In allen Feldern None durch NULL ersetzen
+            (
+                name_t,
+                invertElevation,
+                maxDepth,
+                initDepth,
+                surchargeDepth,
+                pondedArea,
+                xsch,
+                ysch,
+            ) = [0 if el is None else el for el in b]
+
+            name = name_t.replace(" ", "_")
+
+            dataou += (
+                f"{name:<16s} {invertElevation:<10.3f} FREE                        NO                       \n"
+            )
+
+
+        self.file.write(dataou)
         self.file.close()
+
 
     def conduits(self):
         text = ("\n[CONDUITS]"
                 "\n;;               Inlet            Outlet                      Manning    Inlet      Outlet     Init.      Max."
                 "\n;;Name           Node             Node             Length     N          Offset     Offset     Flow       Flow"
                 "\n;;-------------- ---------------- ---------------- ---------- ---------- ---------- ---------- ---------- ----------"
-                "\nC2a              J2a              J2               157.48     0.016      4          4          0          0")
+                "\n")
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
+
+        sql = """SELECT
+                    h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, h.haltungstyp
+                FROM
+                    haltungen AS h
+                WHERE h.haltungstyp IS 'Haltung'
+                """
+        if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
+            del self.dbQK
+            return
+
+        datacd = ""  # Datenzeilen
+
+        for b in self.dbQK.fetchall():
+            # In allen Feldern None durch NULL ersetzen
+            (
+                name_t,
+                schoben,
+                schunten,
+                laenge,
+                ks,
+                haltungstyp,
+            ) = [0 if el is None else el for el in b]
+
+            name = name_t.replace(" ", "_")
+
+            datacd += (
+                f"{name:<16s} {schoben:<17s}{schunten:<17s}{laenge:<11.3f}{ks:<10.3f} 0          0          0          0         \n"
+            )
+
+        self.file.write(datacd)
         self.file.close()
+
 
     def xsection(self):
         text = ("\n[XSECTIONS]"
                 "\n;;Link           Shape        Geom1            Geom2      Geom3      Geom4      Barrels"
                 "\n;;-------------- ------------ ---------------- ---------- ---------- ---------- ----------"
-                "\nC2a              IRREGULAR    Half_Street      3          5          5          1"
+                "\n"
                 )
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
+
+        sql = """SELECT
+                    h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, h.haltungstyp
+                FROM
+                    haltungen AS h
+                JOIN
+                    teilgebiete AS g
+                ON 
+                    Intersects(h.geom,g.geom) and h.haltungstyp IS 'Haltung'
+                GROUP BY h.haltnam"""
+        if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
+            del self.dbQK
+            return
+
+        dataxs = ""  # Datenzeilen
+
+        for b in self.dbQK.fetchall():
+            # In allen Feldern None durch NULL ersetzen
+
+            (
+                name_t,
+                schoben,
+                schunten,
+                laenge,
+                ks,
+                haltungstyp,
+            ) = [0 if el is None else el for el in b]
+
+            name = name_t.replace(" ", "_")
+
+            dataxs += (
+                f"{name:<16s} {schoben:<16s}{schunten:<<16s}{laenge:<10.3f}{ks:<10.3f}  0          0          1                    \n"
+            )
+
+        self.file.write(dataxs)
         self.file.close()
 
+
     def transects(self):
-        text = ("\n[TRANSECTS]")
+        text = ("\n[TRANSECTS]"
+                "\n")
 
     def losses(self):
         text = ("\n[LOSSES]"
                 "\n;;Link           Inlet      Outlet     Average    Flap Gate"
                 "\n;;-------------- ---------- ---------- ---------- ----------"
-                )
+                "\n")
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
         self.file.close()
@@ -406,7 +640,7 @@ class ExportTask:
         text = ("\n[TIMESERIES]"
                 "\n;;Name           Date       Time       Value"
                 "\n;;-------------- ---------- ---------- ----------"
-                "\n2-yr                        0:00       0.29"
+                "\n"
                 )
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
@@ -419,81 +653,218 @@ class ExportTask:
                 "\nSUBCATCHMENTS ALL"
                 "\nNODES ALL"
                 "\nLINKS ALL"
+                "\n"
                 )
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
         self.file.close()
 
     def tags(self):
+        #sind die Infos enthalten in QKan?
+
         text = ("\n[TAGS]"
-                "\nLink       C2a              Half_Street"
-                )
+                "\n")
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
         self.file.close()
 
     def map(self):
         text = ("\n[MAP]"
-                "\nDIMENSIONS -0.123 0.000 1423.123 1475.000i"
+                "\nDIMENSIONS -0.123 0.000 1423.123 1475.000"
                 "\nUnits      Feet"
-                )
+                "\n")
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
+        dataco=''
+        list=''
+
+        extent = iface.mapCanvas().extent()
+        ext = str(extent)
+        list = ext.replace('QgsRectangle:', '')
+        list = list.replace(',', '')
+
+        dataco += f"DIMENSIONS{list} \n"
+        self.file.write(dataco)
+
+        text = ("\nUnits      Feet"
+                "\n")
+
+        self.file.write(text)
         self.file.close()
+
 
     def coordinates(self):
         text = ("\n[COORDINATES]"
                 "\n;;Node           X-Coord            Y-Coord"
                 "\n;;-------------- ------------------ ------------------"
-                "\nJ1               648.532            1043.713"
+                "\n"
                 )
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
+        dataco = ""  # Datenzeilen [COORDINATES]
+
+        sql = """SELECT
+                    s.schnam AS name,   
+                    X(geop) AS xsch, 
+                    Y(geop) AS ysch 
+                FROM schaechte AS s
+                WHERE s.schachttyp = 'Schacht'
+                """
+        self.dbQK.sql(sql)
+
+        for b in self.dbQK.fetchall():
+            # In allen Feldern None durch NULL ersetzen
+            (
+                name_t,
+                xsch,
+                ysch,
+            ) = [0 if el is None else el for el in b]
+
+            # In allen Namen Leerzeichen durch '_' ersetzen
+            name = name_t.replace(" ", "_")
+
+            # [COORDINATES]
+            dataco += f"{name:<16s} {xsch:<18.3f} {ysch:<18.3f}\n"
+
+        self.file.write(dataco)
         self.file.close()
 
     def vertices(self):
         text = ("\n[VERTICES]"
                 "\n;;Link           X-Coord            Y-Coord"
                 "\n;;-------------- ------------------ ------------------"
-                "\nC2               1321.339           774.591"
-                )
+                "\n")
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
+
+
+        sql = """SELECT
+                h.haltnam, h.schoben, h.schunten, ST_AsText(h.geom)
+                from haltungen AS h
+                WHERE h.haltungstyp IS 'Haltung'
+                """
+        self.dbQK.sql(sql)
+
+        dataver=""
+
+        for b in self.dbQK.fetchall():
+            # In allen Feldern None durch NULL ersetzen
+            (
+                name_t,
+                schoben,
+                schunten,
+                list,
+            ) = [0 if el is None else el for el in b]
+
+            # In allen Namen Leerzeichen durch '_' ersetzen
+            name = name_t.replace(" ", "_")
+
+            list = list.replace('LINESTRING(', '')
+            list = list.replace(')', '')
+            list = list.replace(',', '')
+            x = 2
+            liste = list.split()
+            for i in liste:
+                while x + 2 <= len(liste) and x<len(liste)-2:
+                    xsch = float(liste[x])
+                    ysch = float(liste[x + 1])
+                    x += 2
+
+                    dataver += f"{name:<16s} {xsch:<18.3f} {ysch:<18.3f}\n"
+
+        self.file.write(dataver)
         self.file.close()
 
     def polygons(self):
+        #Koordinaten fehlen die Nachkommerstellen!!!
+
         text = ("\n[Polygons]"
                 "\n;;Subcatchment   X-Coord            Y-Coord"
                 "\n;;-------------- ------------------ ------------------"
-                "\nS1               282.657            1334.810"
+                "\n"
                 )
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
+        dataver = ""
+
+        sql = """SELECT
+                tg.flnam, tg.schnam, st_astext(tg.geom)
+                from tezg AS tg"""
+        self.dbQK.sql(sql)
+
+        for b in self.dbQK.fetchall():
+            # In allen Feldern None durch NULL ersetzen
+            (
+                name_t,
+                schoben,
+                list,
+            ) = [0 if el is None else el for el in b]
+
+            # In allen Namen Leerzeichen durch '_' ersetzen
+            name = name_t.replace(" ", "_")
+
+            list = list.replace('MULTIPOLYGON(((', '')
+            list = list.replace(')))', '')
+            list = list.replace(',', '')
+            x = 0
+            liste = list.split()
+            for i in liste:
+                while x + 2 <= len(liste) and x<len(liste)-2:
+                    xsch = float(liste[x])
+                    ysch = float(liste[x + 1])
+                    x += 2
+
+                    dataver += f"{name:<16s} {xsch:<18.3f} {ysch:<18.3f}\n"
+
+        self.file.write(dataver)
         self.file.close()
+
 
     def symbols(self):
         text = ("\n[SYMBOLS]"
                 "\n;;Gage           X-Coord            Y-Coord"
                 "\n;;-------------- ------------------ ------------------"
-                "\nRainGage         -175.841           1212.778"
+                "\n"
                 )
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
         self.file.close()
 
+        # sql = """SELECT f.regnr FROM flaechen AS f
+        # JOIN
+        #     teilgebiete AS g
+        # ON
+        #     Intersects(f.geom,g.geom)
+        # GROUP BY f.regnr"""
+        #
+        # self.dbQK.sql(sql)
+        #
+        # datarm = ""  # Datenzeilen
+        # datasy = ""  # Datenzeilen
+        #
+        # for c in self.dbQK.fetchall():
+        #
+        #     datarm += (
+        #         "{:<16d} INTENSITY 1:00     1.0      TIMESERIES TS1             \n".format(
+        #             c[0]
+        #         )
+        #     )
+        #     datasy += "{:<16d} 9999.999           9999.999          \n".format(c[0])
+        #
+        # swdaten = swdaten.replace("{RAINGAGES}\n", datarm)
+        # swdaten = swdaten.replace("{SYMBOLS}\n", datasy)
+
     def labels(self):
         text = ('\n[LABELS]'
             '\n;;X-Coord          Y-Coord            Label'
-            '\n145.274            1129.896           "S1" "" "Arial" 14 0 0'
-              )
+              "\n")
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)
         self.file.close()
 
     def backdrop(self):
         text = ("\n[BACKDROP]"
-            "\nFILE       'Site-Post.jpg'"
-            "\nDIMENSIONS -0.123 0.000 1423.123 1475.000"
+            "\n"
                 )
         self.file = open(self.ergfileSwmm, 'a')
         self.file.write(text)

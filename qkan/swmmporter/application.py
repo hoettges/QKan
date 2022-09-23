@@ -96,15 +96,15 @@ class SWMMPorter(QKanPlugin):
 
         self.export_dlg.show()
 
-        if not self.export_dlg.prepareDialog(self.db_qkan):
-            return False
+        #if not self.export_dlg.prepareDialog(self.db_qkan):
+        #    return False
 
         # Im Formular wurde [OK] geklickt
         if self.export_dlg.exec_():
             # Read from form and save to config
             QKan.config.database.qkan = self.export_dlg.tf_database.text()
             QKan.config.swmm.export_file = self.export_dlg.tf_SWMM_dest.text()
-            QKan.config.swmm.template = self.export_dlg.tf_SWMM_template.text()
+            #QKan.config.swmm.template = self.export_dlg.tf_SWMM_template.text()
 
             # QKan.config.check_export.haltungen = (
             #     self.export_dlg.cb_haltungen.isChecked()
@@ -137,16 +137,16 @@ class SWMMPorter(QKanPlugin):
             # QKan.config.check_export.einzugsgebiete = (
             #     self.export_dlg.cb_einzugsgebiete.isChecked()
             #)
-            QKan.config.check_export.tezg = self.export_dlg.rb_flaechen.isChecked()
-            QKan.config.check_export.tezg_hf = self.export_dlg.rb_tezg.isChecked()
+           # QKan.config.check_export.tezg = self.export_dlg.rb_flaechen.isChecked()
+           # QKan.config.check_export.tezg_hf = self.export_dlg.rb_tezg.isChecked()
 
             #QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
             #QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
 
-            teilgebiete = [
-                _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
-            ]
-            QKan.config.swmm.teilgebiete = teilgebiete
+           # teilgebiete = [
+           #     _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
+            #]
+            #QKan.config.swmm.teilgebiete = teilgebiete
 
             QKan.config.save()
 
@@ -163,15 +163,15 @@ class SWMMPorter(QKanPlugin):
             self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
         # Zieldatenbank aus Vorlage kopieren
-        if os.path.exists(QKan.config.swmm.template):
-            try:
-                shutil.copyfile(QKan.config.swmm.template, QKan.config.swmm.export_file)
-            except BaseException:
-                fehlermeldung(
-                    "Fehler in Export nach SWMM",
-                    "Fehler beim Kopieren der Vorlage: \n   {QKan.config.swmm.template}\n"
-                    + "nach Ziel: {QKan.config.swmm.export_file}\n",
-                )
+        #if os.path.exists(QKan.config.swmm.template):
+        #    try:
+         #       shutil.copyfile(QKan.config.swmm.template, QKan.config.swmm.export_file)
+          #  except BaseException:
+           #     fehlermeldung(
+            #        "Fehler in Export nach SWMM",
+             #       "Fehler beim Kopieren der Vorlage: \n   {QKan.config.swmm.template}\n"
+              #      + "nach Ziel: {QKan.config.swmm.export_file}\n",
+               # )
 
         #"""Attach SQLite-Database with SWMM Data"""
         #sql = f'ATTACH DATABASE "{QKan.config.swmm.export_file}" AS he'
@@ -202,8 +202,7 @@ class SWMMPorter(QKanPlugin):
         if self.import_dlg.exec_():
             # Read from form and save to config
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
-            QKan.config.project.file = self.import_dlg.tf_project.text()
-            QKan.config.swmm.import_file = self.import_dlg.tf_import.text()
+           # QKan.config.project.file = self.import_dlg.tf_project.text()
 
             QKan.config.save()
 
@@ -252,6 +251,7 @@ class SWMMPorter(QKanPlugin):
         """
         QKan.config.swmm.import_file = self.import_dlg.tf_import.text()
         QKan.config.project.file = self.import_dlg.tf_project.text()
+        QKan.config.project.template = ''
 
         self.log.info("Creating DB")
         db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)

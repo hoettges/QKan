@@ -579,7 +579,7 @@ class ImportTask:
             #     return None
 
             params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
-                      'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe,
+                      'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe, 'knotentyp': schacht.knotentyp,
                       'durchm': schacht.durchm, 'druckdicht': druckdicht, 'entwart': schacht.entwart, 'strasse': schacht.strasse,
                       'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': 'Schacht', 'epsg': QKan.config.epsg}
 
@@ -1022,7 +1022,7 @@ class ImportTask:
 
             params = {'schnam': auslass.schnam, 'xsch': auslass.xsch, 'ysch': auslass.ysch,
                       'sohlhoehe': auslass.sohlhoehe, 'deckelhoehe': auslass.deckelhoehe,
-                      'durchm': auslass.durchm, 'entwart': auslass.entwart, 'simstatus': simstatus,
+                      'durchm': auslass.durchm, 'entwart': auslass.entwart, 'strasse':auslass.strasse, 'simstatus': simstatus,
                       'kommentar': auslass.kommentar, 'schachttyp': 'Auslass', 'epsg': QKan.config.epsg}
 
             logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
@@ -1169,12 +1169,6 @@ class ImportTask:
                 schoben = block.findtext("HG003", "not found")
                 schunten = block.findtext("HG004", "not found")
 
-                sohleoben = _strip_float(
-                    block.findtext("SohlhoeheZulauf", 0.0)
-                )
-                sohleunten = _strip_float(
-                    block.findtext("SohlhoeheAblauf", 0.0)
-                )
                 laenge = _strip_float(block.findtext("HG310", 0.0))
 
                 material = block.findtext("HG304", "not found")
@@ -1252,9 +1246,20 @@ class ImportTask:
                 #             _haltung.findtext("GP007", 0.0)
                 #         )
 
-                #if block.find("GO[GO002='H']") is not None:
-                if block.findall("GO[GO002='H']") is not None:
+                if block.findall("GO[GO002='L']") is not None:
+                    for _gp in block.findall("GO[GO002='L']/GP[1]"):
 
+                        xschob = _strip_float(_gp.findtext("GP003", 0.0))
+                        if xschob == 0.0:
+                            xschob = _strip_float(_gp.findtext("GP005", 0.0))
+                        yschob = _strip_float(_gp.findtext("GP004", 0.0))
+                        if yschob == 0.0:
+                            yschob = _strip_float(_gp.findtext("GP006", 0.0))
+                        sohleoben = _strip_float(
+                            _gp.findtext("GP007", 0.0)
+                        )
+
+                if block.findall("GO[GO002='H']") is not None:
                     for _gp in block.findall("GO[GO002='H']/GP[1]"):
 
                         xschob = _strip_float(_gp.findtext("GP003", 0.0))
@@ -1263,10 +1268,22 @@ class ImportTask:
                         yschob = _strip_float(_gp.findtext("GP004", 0.0))
                         if yschob == 0.0:
                             yschob = _strip_float(_gp.findtext("GP006", 0.0))
-                        deckeloben = _strip_float(
+                        sohleoben = _strip_float(
                             _gp.findtext("GP007", 0.0)
                         )
 
+                if block.findall("GO[GO002='L']") is not None:
+                    for _gp in block.findall("GO[GO002='L']/GP[last()]"):
+
+                        xschun = _strip_float(_gp.findtext("GP003", 0.0))
+                        if xschun == 0.0:
+                            xschun = _strip_float(_gp.findtext("GP005", 0.0))
+                        yschun = _strip_float(_gp.findtext("GP004", 0.0))
+                        if yschun == 0.0:
+                            yschun = _strip_float(_gp.findtext("GP006", 0.0))
+                        sohleunten = _strip_float(
+                            _gp.findtext("GP007", 0.0)
+                        )
 
                 if block.findall("GO[GO002='H']") is not None:
                     for _gp in block.findall("GO[GO002='H']/GP[last()]"):
@@ -1277,7 +1294,7 @@ class ImportTask:
                         yschun = _strip_float(_gp.findtext("GP004", 0.0))
                         if yschun == 0.0:
                             yschun = _strip_float(_gp.findtext("GP006", 0.0))
-                        deckelunten = _strip_float(
+                        sohleunten = _strip_float(
                             _gp.findtext("GP007", 0.0)
                         )
 
@@ -1292,8 +1309,6 @@ class ImportTask:
                     material=material,
                     sohleoben=sohleoben,
                     sohleunten=sohleunten,
-                    deckeloben=deckeloben,
-                    deckelunten=deckelunten,
                     profilnam=profilnam,
                     entwart=block.findtext("HG302", "not found"),
                     strasse=block.findtext("HG102", "not found"),

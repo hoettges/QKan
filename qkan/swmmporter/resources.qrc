@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/plugins/qkan/swmmporter" >
         <file>res/icon_importSWMM.png</file>
+		<file>res/icon_exportSWMM.png</file>
     </qresource>
 </RCC>

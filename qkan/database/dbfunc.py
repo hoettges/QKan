@@ -333,7 +333,7 @@ class DBConnection:
             mute_logger: bool = False,
             transaction: bool = False,  # Unused, for compatibility only
             ignore: bool = False,  # ignore error and continue
-            **parameters: dict) -> bool:
+            **parameters: dict[str, str]) -> bool:
         """Fügt einen Datensatz mit Geo-Objekt hinzu"""
 
         if tabnam == 'schaechte':
@@ -388,7 +388,7 @@ class DBConnection:
                    hoehe, breite, laenge,
                    sohleoben, sohleunten, 
                    teilgebiet, profilnam, 
-                   entwart, ks,
+                   entwart, strasse, material, ks,
                    simstatus, kommentar, createdat,  
                    geom)
                 SELECT 
@@ -398,7 +398,7 @@ class DBConnection:
                   :laenge,
                   :sohleoben, :sohleunten,
                   :teilgebiet, coalesce(:profilnam, 'Kreisquerschnitt'),
-                  coalesce(:entwart, 'Regenwasser'), coalesce(:ks, 1.5),
+                  coalesce(:entwart, 'Regenwasser'), :strasse, :material, coalesce(:ks, 1.5),
                   coalesce(:simstatus, 'vorhanden'), :kommentar,
                   coalesce(:createdat, CURRENT_TIMESTAMP),
                   CASE WHEN :geom IS NULL
@@ -548,7 +548,7 @@ class DBConnection:
 
         elif tabnam == 'anschlussleitungen':
             parlis = ['leitnam', 'schoben', 'schunten', 'hoehe', 'breite', 'laenge',
-                      'sohleoben', 'sohleunten', 'deckeloben', 'deckelunten',
+                      'sohleoben', 'sohleunten',
                       'teilgebiet', 'qzu', 'profilnam', 'entwart', 'material', 'ks',
                       'simstatus', 'kommentar', 'createdat',
                       'xschob', 'yschob', 'xschun', 'yschun', 'geom', 'epsg']
@@ -560,7 +560,6 @@ class DBConnection:
                   (leitnam, schoben, schunten,
                    hoehe, breite, laenge,
                    sohleoben, sohleunten,
-                   deckeloben, deckelunten, 
                    teilgebiet, qzu, profilnam, 
                    entwart, material, ks,
                    simstatus, kommentar, createdat,  
@@ -571,7 +570,6 @@ class DBConnection:
                   CASE WHEN :breite > 20 THEN :breite/1000 ELSE :breite END,
                   :laenge, 
                   :sohleoben, :sohleunten, 
-                  :deckeloben, :deckelunten, 
                   :teilgebiet, :qzu, coalesce(:profilnam, 'Kreisquerschnitt'), 
                   coalesce(:entwart, 'Regenwasser'), :material, coalesce(:ks, 1.5), 
                   coalesce(:simstatus, 'vorhanden'), :kommentar, 
