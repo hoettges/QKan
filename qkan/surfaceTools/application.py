@@ -26,7 +26,7 @@ from qkan import QKan
 from qkan.database.qkan_utils import get_database_QKan
 from qkan.plugin import QKanPlugin
 
-from .application_dialog import SurfaceToolDialog
+from .application_dialog import SurfaceToolDialog, VoronoiDialog
 from .surfaceTool import AccessAttr, FlaechenVerarbeitung
 
 # noinspection PyUnresolvedReferences
@@ -36,24 +36,32 @@ from . import resources  # isort:skip
 class SurfaceTools(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
-        self.dlg = SurfaceToolDialog()
+        self.surface_dlg = SurfaceToolDialog()
+        self.voronoi_dlg = VoronoiDialog()
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
-        icon_path = ":/plugins/qkan/surfaceTools/icon_surfaceTool.png"
+        icon_path = ":/plugins/qkan/surfaceTools/res/icon_surfaceTool.png"
         QKan.instance.add_action(
             icon_path,
-            text=self.tr("Solve Overlap of Layers"),
-            callback=self.run,
+            text=self.tr("Entferne Überlappungen"),
+            callback=self.run_cut,
+            parent=self.iface.mainWindow(),
+        )
+        icon_path = ":/plugins/qkan/surfaceTools/res/icon_voronoiTool.png"
+        QKan.instance.add_action(
+            icon_path,
+            text=self.tr("Erzeuge Voronoiflächen zu Haltungen"),
+            callback=self.run_voronoi,
             parent=self.iface.mainWindow(),
         )
 
     def unload(self) -> None:
-        self.dlg.close()
+        self.surface_dlg.close()
 
-    def run(self) -> None:
+    def run_cut(self) -> None:
         # database_qkan, _ = get_database_QKan()
-        # self.dlg.tf_qkanDB.setText(QKan.config.database.qkan)
+        # self.surface_dlg.tf_qkanDB.setText(QKan.config.database.qkan)
         # Fetch the currently loaded layers
         # Fetch the currently loaded layers
 
@@ -62,24 +70,24 @@ class SurfaceTools(QKanPlugin):
             self.log.error("database_qkan is undefined")
             return
 
-        self.dlg.cb_haupt.clear()
-        self.dlg.cb_geschnitten.clear()
+        self.surface_dlg.cb_haupt.clear()
+        self.surface_dlg.cb_geschnitten.clear()
         obj = AccessAttr(database_qkan)
         temp_list = obj.accessAttribute()
         abflussparameter = list(set(temp_list))
         for tempAttr in abflussparameter:
             attr = str(tempAttr).lstrip("('").rstrip(",')")
-            self.dlg.cb_haupt.addItem(attr)
-            self.dlg.cb_geschnitten.addItem(attr)
+            self.surface_dlg.cb_haupt.addItem(attr)
+            self.surface_dlg.cb_geschnitten.addItem(attr)
 
         # show the dialog
-        self.dlg.show()
+        self.surface_dlg.show()
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = self.surface_dlg.exec_()
         # See if OK was pressed
         if result:
-            schneiden = self.dlg.cb_haupt.currentText()
-            geschnitten = self.dlg.cb_geschnitten.currentText()
+            schneiden = self.surface_dlg.cb_haupt.currentText()
+            geschnitten = self.surface_dlg.cb_geschnitten.currentText()
             QKan.config.database.qkan = str(database_qkan)
 
             QKan.config.save()
@@ -95,3 +103,7 @@ class SurfaceTools(QKanPlugin):
 
             FlaechenVerarbeitung(str(database_qkan), schneiden, geschnitten)
             del obj
+
+    def run_voronoi(self) -> None:
+        """Erzeugt Voronoi-Flächen zu ausgewählten Haltungen"""
+        pass

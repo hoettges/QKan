@@ -333,7 +333,8 @@ class DBConnection:
             mute_logger: bool = False,
             transaction: bool = False,  # Unused, for compatibility only
             ignore: bool = False,  # ignore error and continue
-            **parameters: dict[str, str]) -> bool:
+            **parameters: dict              # [str, str] not yet allowed for QGIS = 3.16
+    ) -> bool:
         """Fügt einen Datensatz mit Geo-Objekt hinzu"""
 
         if tabnam == 'schaechte':

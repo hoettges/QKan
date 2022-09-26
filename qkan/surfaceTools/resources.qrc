@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/plugins/qkan/surfaceTools" >
-        <file>icon_surfaceTool.png</file>
+        <file>res/icon_surfaceTool.png</file>
+        <file>res/icon_voronoiTool.png</file>
     </qresource>
 </RCC>
