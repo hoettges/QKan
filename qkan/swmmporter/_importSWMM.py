@@ -329,6 +329,9 @@ class ImportTask:
                     # Polygon schreiben
                     coords = ", ".join([f"{x} {y}" for x, y in zip(xlis, ylis)])
 
+                    iface.messageBar().pushMessage("Error", str(coords),
+                                                   level=Qgis.Critical)
+
 
                     sql = "UPDATE tezg SET geom = GeomFromText('MULTIPOLYGON((("+str(coords)+")))',?) WHERE flnam = ? "
 

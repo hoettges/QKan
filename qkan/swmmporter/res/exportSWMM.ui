@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>300</height>
+    <width>720</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>670</width>
-    <height>300</height>
+    <width>720</width>
+    <height>580</height>
    </size>
   </property>
   <property name="font">
@@ -22,17 +22,17 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Export in eine SWMM-Datei</string>
+   <string>Export to SWMM</string>
   </property>
   <property name="toolTip">
-   <string>Export der aktuell geladenen Kanaldaten in eine SWMM-Datei</string>
+   <string>Export der aktuell geladenen Kanaldaten in eine Hystem-Extran-Datenbank</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>210</y>
-     <width>631</width>
+     <y>530</y>
+     <width>681</width>
      <height>32</height>
     </rect>
    </property>
@@ -62,7 +62,7 @@
     <rect>
      <x>20</x>
      <y>20</y>
-     <width>630</width>
+     <width>441</width>
      <height>71</height>
     </rect>
    </property>
@@ -110,39 +110,12 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_database">
-    <property name="geometry">
-     <rect>
-      <x>580</x>
-      <y>40</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Tahoma</family>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QKan-Datenbank (SpatiaLite) mit Kanalnetzdaten auswählen (Standard: Aktuelle QKan-Datenbank) ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="statusTip">
-     <string>QKan-Datenbank (SpatiaLite) mit Kanalnetzdaten auswählen (Standard: Aktuelle QKan-Datenbank) ...</string>
-    </property>
-    <property name="text">
-     <string>...</string>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="tf_database">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>550</width>
+      <width>411</width>
       <height>21</height>
      </rect>
     </property>
@@ -155,10 +128,16 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quelldatenbank mit Kanaldaten. Hier wird automatisch das aktuelle geladene Projekt eingetragen. Zum Ändern neue SpatiaLite-Datenbank auswählen...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quelldatenbank mit Kanaldaten aus dem aktuell geladenen Projekt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Quelldatenbank mit Kanaldaten aus dem aktuell geladenen Projekt.</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
@@ -167,8 +146,8 @@
     <rect>
      <x>20</x>
      <y>100</y>
-     <width>630</width>
-     <height>81</height>
+     <width>441</width>
+     <height>151</height>
     </rect>
    </property>
    <property name="font">
@@ -183,7 +162,7 @@
     <string comment="Pfad der Zieldatenbank"/>
    </property>
    <property name="title">
-    <string>Ziel: SWMM-Datei</string>
+    <string>Zieldatenbank: HYSTEM-EXTRAN-Datenbank</string>
    </property>
    <property name="flat">
     <bool>false</bool>
@@ -195,7 +174,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>30</y>
+      <y>100</y>
       <width>301</width>
       <height>21</height>
      </rect>
@@ -209,7 +188,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Datenziel: SWMM-Datei (*.INP):</string>
+     <string>Datenziel: Hystem-Extran-Datenbank (*.INP):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -219,8 +198,8 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>50</y>
-      <width>550</width>
+      <y>120</y>
+      <width>371</width>
       <height>21</height>
      </rect>
     </property>
@@ -233,7 +212,10 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatei mit Kanaldaten für SWMM&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank mit Kanaldaten für HYSTEM-EXTRAN&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Zieldatenbank mit Kanaldaten für HYSTEM-EXTRAN</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -242,8 +224,8 @@
    <widget class="QPushButton" name="pb_SWMM_dest">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>50</y>
+      <x>400</x>
+      <y>120</y>
       <width>31</width>
       <height>21</height>
      </rect>
@@ -252,18 +234,690 @@
      <font>
       <family>Tahoma</family>
       <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;SWMM-Zieldatei angeben ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ITWH-Zieldatenbank angeben ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>SWMM-Zieldatei angeben ...</string>
+     <string>ITWH-Zieldatenbank angeben ...</string>
     </property>
     <property name="text">
      <string>...</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_SWMM_template">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>40</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ITWH-Datenbank mit vorbereiteten Daten als Vorlage auswählen ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>ITWH-Datenbank mit vorbereiteten Daten als Vorlage auswählen ...</string>
+    </property>
+    <property name="text">
+     <string>...</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>301</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Vorlage: Hystem-Extran-Datenbank (*.INP):</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tf_SWMM_template">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>371</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank mit Kanaldaten für HYSTEM-EXTRAN&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Zieldatenbank mit Kanaldaten für HYSTEM-EXTRAN</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>20</y>
+     <width>221</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string comment="Pfad der Zieldatenbank"/>
+   </property>
+   <property name="title">
+    <string>Tabellen exportieren</string>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <widget class="QCheckBox" name="cb_pumpen">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>40</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pumpen exportieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Pumpen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_schaechte">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>91</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schächte exportieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Schächte</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_auslaesse">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>91</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auslässe exportieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Auslässe</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_speicher">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Speicherbauwerke exportieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Speicher</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_flaechen">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flächenobjekte und Daten exportieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Flächen (RW)</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_haltungen">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>20</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Haltungen exportieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Haltungen</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>140</y>
+      <width>201</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_wehre">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>60</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wehre exportieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Wehre</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_einzugsgebiete">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>120</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsgebiete exportieren (umfasst nur Tabellendaten)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>aktiviert</string>
+    </property>
+    <property name="text">
+     <string>Einzugsgebiete</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QCheckBox" name="cb_selActive">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>260</y>
+     <width>331</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Nur ausgewählte Teilgebiete berücksichtigen:</string>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="lw_teilgebiete">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>300</y>
+     <width>221</width>
+     <height>211</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auswahl Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="statusTip">
+    <string>Auswahl Teilgebiete. Strg + Klick ändert Auswahlstatus, Shift + Klick erweitert Auswahlbereich</string>
+   </property>
+   <property name="selectionMode">
+    <enum>QAbstractItemView::ExtendedSelection</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_10">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>370</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Flächen</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lf_anzahl_flaechen">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>370</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Panel</enum>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_12">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>280</y>
+     <width>181</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Aktuell berücksichtigt: </string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lf_anzahl_haltungen">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>340</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Panel</enum>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_11">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>340</y>
+     <width>71</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Haltungen</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lf_anzahl_schaechte">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>310</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Panel</enum>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_32">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>310</y>
+     <width>71</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Schächte</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>230</y>
+     <width>221</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Aktionen beim Export</string>
+   </property>
+   <widget class="QRadioButton" name="rb_update">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>20</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Überschreiben aller Attribute von bereits vorhandenen Datensätzen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Aktualisieren bereits vorhandenen Datensätzen. </string>
+    </property>
+    <property name="text">
+     <string>ändern</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_append">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hinzufügen noch nicht vorhandene Datensätze&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Hinzufügen noch nicht vorhandene Datensätze</string>
+    </property>
+    <property name="text">
+     <string>hinzufügen</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_new">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>151</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Tahoma</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Überschreiben aller Attribute von bereits vorhandenen Datensätzen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Aktualisieren bereits vorhandenen Datensätzen. </string>
+    </property>
+    <property name="text">
+     <string>neue Datei erstellen</string>
     </property>
    </widget>
   </widget>

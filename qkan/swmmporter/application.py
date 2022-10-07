@@ -104,49 +104,50 @@ class SWMMPorter(QKanPlugin):
             # Read from form and save to config
             QKan.config.database.qkan = self.export_dlg.tf_database.text()
             QKan.config.swmm.export_file = self.export_dlg.tf_SWMM_dest.text()
-            #QKan.config.swmm.template = self.export_dlg.tf_SWMM_template.text()
+            QKan.config.swmm.template = self.export_dlg.tf_SWMM_template.text()
 
-            # QKan.config.check_export.haltungen = (
-            #     self.export_dlg.cb_haltungen.isChecked()
-            # )
-            # QKan.config.check_export.schaechte = (
-            #     self.export_dlg.cb_schaechte.isChecked()
-            # )
-            # QKan.config.check_export.auslaesse = (
-            #     self.export_dlg.cb_auslaesse.isChecked()
-            # )
-            # QKan.config.check_export.speicher = self.export_dlg.cb_speicher.isChecked()
-            # QKan.config.check_export.pumpen = self.export_dlg.cb_pumpen.isChecked()
-            # QKan.config.check_export.wehre = self.export_dlg.cb_wehre.isChecked()
-            # QKan.config.check_export.flaechen = self.export_dlg.cb_flaechen.isChecked()
-            # QKan.config.check_export.rohrprofile = (
-            #     self.export_dlg.cb_rohrprofile.isChecked()
-            # )
-            # QKan.config.check_export.abflussparameter = (
-            #     self.export_dlg.cb_abflussparameter.isChecked()
-            # )
-            # QKan.config.check_export.bodenklassen = (
-            #     self.export_dlg.cb_bodenklassen.isChecked()
-            # )
-            # QKan.config.check_export.einleitdirekt = (
-            #     self.export_dlg.cb_einleitdirekt.isChecked()
-            # )
-            # QKan.config.check_export.aussengebiete = (
-            #     self.export_dlg.cb_aussengebiete.isChecked()
-            # )
-            # QKan.config.check_export.einzugsgebiete = (
-            #     self.export_dlg.cb_einzugsgebiete.isChecked()
+            QKan.config.check_export.haltungen = (
+                self.export_dlg.cb_haltungen.isChecked()
+            )
+            QKan.config.check_export.schaechte = (
+                self.export_dlg.cb_schaechte.isChecked()
+            )
+            QKan.config.check_export.auslaesse = (
+                self.export_dlg.cb_auslaesse.isChecked()
+            )
+            QKan.config.check_export.speicher = self.export_dlg.cb_speicher.isChecked()
+            QKan.config.check_export.pumpen = self.export_dlg.cb_pumpen.isChecked()
+            QKan.config.check_export.wehre = self.export_dlg.cb_wehre.isChecked()
+            QKan.config.check_export.flaechen = self.export_dlg.cb_flaechen.isChecked()
+            #QKan.config.check_export.rohrprofile = (
+            #    self.export_dlg.cb_rohrprofile.isChecked()
             #)
-           # QKan.config.check_export.tezg = self.export_dlg.rb_flaechen.isChecked()
-           # QKan.config.check_export.tezg_hf = self.export_dlg.rb_tezg.isChecked()
+            #QKan.config.check_export.abflussparameter = (
+            #    self.export_dlg.cb_abflussparameter.isChecked()
+            #)
+            #QKan.config.check_export.bodenklassen = (
+            #    self.export_dlg.cb_bodenklassen.isChecked()
+            #)
+            #QKan.config.check_export.einleitdirekt = (
+            #    self.export_dlg.cb_einleitdirekt.isChecked()
+            #)
+            #QKan.config.check_export.aussengebiete = (
+            #    self.export_dlg.cb_aussengebiete.isChecked()
+            #)
+            QKan.config.check_export.einzugsgebiete = (
+                self.export_dlg.cb_einzugsgebiete.isChecked()
+            )
+            #QKan.config.check_export.tezg = self.export_dlg.rb_flaechen.isChecked()
+            #QKan.config.check_export.tezg_hf = self.export_dlg.rb_tezg.isChecked()
 
-            #QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
-            #QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
+            QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
+            QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
+            QKan.config.check_export.new = self.export_dlg.rb_new.isChecked()
 
-           # teilgebiete = [
-           #     _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
-            #]
-            #QKan.config.swmm.teilgebiete = teilgebiete
+            teilgebiete = [
+                _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
+            ]
+            QKan.config.swmm.teilgebiete = teilgebiete
 
             QKan.config.save()
 
@@ -157,6 +158,14 @@ class SWMMPorter(QKanPlugin):
 
         Einspringpunkt für Test
         """
+
+        if self.export_dlg.rb_update.isChecked():
+            status = 'update'
+        elif self.export_dlg.rb_append.isChecked():
+            status = 'append'
+        else:
+            status = 'new'
+
 
         # Für Test muss noch die Datenbankverbindung hergestellt werden
         if not self.db_qkan:
@@ -183,7 +192,7 @@ class SWMMPorter(QKanPlugin):
         #    return False
 
         # Run export
-        ExportTask(QKan.config.swmm.template, self.db_qkan, QKan.config.swmm.export_file, QKan.config.swmm.liste_teilgebiete).run()
+        ExportTask(QKan.config.swmm.template, self.db_qkan, QKan.config.swmm.export_file, QKan.config.swmm.template, QKan.config.swmm.liste_teilgebiete, status).run()
 
         # Close connection
         del self.db_qkan
@@ -202,7 +211,7 @@ class SWMMPorter(QKanPlugin):
         if self.import_dlg.exec_():
             # Read from form and save to config
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
-           # QKan.config.project.file = self.import_dlg.tf_project.text()
+            QKan.config.project.file = self.import_dlg.tf_project.text()
 
             QKan.config.save()
 
@@ -251,7 +260,6 @@ class SWMMPorter(QKanPlugin):
         """
         QKan.config.swmm.import_file = self.import_dlg.tf_import.text()
         QKan.config.project.file = self.import_dlg.tf_project.text()
-        QKan.config.project.template = ''
 
         self.log.info("Creating DB")
         db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
