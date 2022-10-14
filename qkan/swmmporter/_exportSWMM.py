@@ -69,20 +69,11 @@ class ExportTask:
                 ),
             )
 
-        if len(liste_teilgebiete) != 0:
-            self.auswahlw = " WHERE teilgebiet in ('{}')".format("', '".join(liste_teilgebiete))
-        else:
-            self.auswahlw = ""
-        self.auswahlw.replace(" WHERE teilgebiet ", " AND teilgebiet ")
-
-
     def __del__(self) -> None:
         self.dbQK.sql("SELECT RecoverSpatialIndex()")
         del self.dbQK
 
     def insertfunk(self, search_phrase, value):
-
-        #linenum1 und linenum2 sind momentan gleich + suche nach richtiger stelle einfügen!
 
         line_num = 0
         line_num2 = 0
@@ -128,7 +119,10 @@ class ExportTask:
         self.infiltration()
         self.junctions()
         self.outfalls()
+        self.storage()
         self.conduits()
+        self.pumps()
+        self.weirs()
         self.xsection()
         self.transects()
         self.losses()
@@ -189,16 +183,9 @@ class ExportTask:
         #status_message.layout().addWidget(progress_bar)
         #iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
 
-        # Einlesen der Vorlagedatei
-
-        with open(templateSwmm) as swvorlage:
-            swdaten = swvorlage.read()
 
         # Verbindung zur Spatialite-Datenbank mit den Kanaldaten
 
-        #dbQK = DBConnection(
-        #    dbname=databaseQKan
-        #)  # Datenbankobjekt der QKan-Datenbank zum Lesen
         dbQK=self.dbQK
         if not dbQK.connected:
             logger.error(
@@ -286,6 +273,12 @@ class ExportTask:
 
         if QKan.config.check_export.flaechen:
 
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND tg.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
             sql = f"""
                                         SELECT
                                           tg.flnam AS name,
@@ -296,7 +289,7 @@ class ExportTask:
                                           tg.befgrad AS imperv,
                                           tg.neigung AS neigung
                                           FROM tezg AS tg
-                                        {self.auswahlw}"""
+                                        {auswahl}"""
 
             if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
                 del self.dbQK
@@ -351,6 +344,12 @@ class ExportTask:
 
         if QKan.config.check_export.flaechen:
 
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND tg.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
             sql = f"""
                                         SELECT
                                             tg.flnam AS name,
@@ -378,7 +377,7 @@ class ExportTask:
                                         ON tg.abflussparameter = apdur.apnam and apdur.bodenklasse IS NOT NULL AND apdur.bodenklasse <> ''
                                         LEFT JOIN bodenklassen AS bk
                                         ON apdur.bodenklasse = bk.bknam
-                                        {self.auswahlw}"""
+                                        {auswahl}"""
 
             if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
                 del self.dbQK
@@ -441,6 +440,12 @@ class ExportTask:
 
         if QKan.config.check_export.flaechen:
 
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND tg.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
             sql = f"""
                                                 SELECT
                                                     tg.flnam AS name,
@@ -468,7 +473,7 @@ class ExportTask:
                                                 ON tg.abflussparameter = apdur.apnam and apdur.bodenklasse IS NOT NULL AND apdur.bodenklasse <> ''
                                                 LEFT JOIN bodenklassen AS bk
                                                 ON apdur.bodenklasse = bk.bknam
-                                                {self.auswahlw}"""
+                                                {auswahl}"""
 
             if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
                 del self.dbQK
@@ -527,7 +532,13 @@ class ExportTask:
 
         if QKan.config.check_export.schaechte:
 
-            sql = """SELECT
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
+            sql = f"""SELECT
                                         s.schnam AS name, 
                                         s.sohlhoehe AS invertElevation, 
                                         s.deckelhoehe - s.sohlhoehe AS maxDepth, 
@@ -537,7 +548,7 @@ class ExportTask:
                                         X(geop) AS xsch, Y(geop) AS ysch 
                                     FROM schaechte AS s
                                     WHERE s.schachttyp = 'Schacht'
-                                    """
+                                    {auswahl}"""
 
             if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
                 del self.dbQK
@@ -591,7 +602,13 @@ class ExportTask:
 
         if QKan.config.check_export.auslaesse:
 
-            sql = """SELECT
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
+            sql = f"""SELECT
                                                 s.schnam AS name, 
                                                 s.sohlhoehe AS invertElevation, 
                                                 s.deckelhoehe - s.sohlhoehe AS maxDepth, 
@@ -601,7 +618,7 @@ class ExportTask:
                                                 X(geop) AS xsch, Y(geop) AS ysch 
                                             FROM schaechte AS s
                                             WHERE s.schachttyp = 'Auslass'
-                                            """
+                                            {auswahl}"""
 
             if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
                 del self.dbQK
@@ -646,17 +663,86 @@ class ExportTask:
             else:
                 pass
 
+    def storage(self):
+
+        if QKan.config.check_export.speicher:
+
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
+            sql = f"""SELECT
+                                                s.schnam AS name, 
+                                                s.sohlhoehe AS invertElevation, 
+                                                s.deckelhoehe - s.sohlhoehe AS maxDepth, 
+                                                0 AS initDepth, 
+                                                0 AS surchargeDepth,
+                                                0 AS pondedArea,   
+                                                X(geop) AS xsch, Y(geop) AS ysch 
+                                            FROM schaechte AS s
+                                            WHERE s.schachttyp = 'Speicher'
+                                            {auswahl}"""
+
+            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
+                del self.dbQK
+                return
+            dataou = ""  # Datenzeilen [OUTFALLS]
+
+            for b in self.dbQK.fetchall():
+                # In allen Feldern None durch NULL ersetzen
+                (
+                    name_t,
+                    invertElevation,
+                    maxDepth,
+                    initDepth,
+                    surchargeDepth,
+                    pondedArea,
+                    xsch,
+                    ysch,
+                ) = [0 if el is None else el for el in b]
+
+                name = name_t.replace(" ", "_")
+
+                dataou += (
+                    f"{name:<16s} {invertElevation:<8.1f} {maxDepth:<10.3f} {initDepth:<10.3f} FUNCTIONAL 1000      0         0        0        0\n"
+                )
+
+            if self.status == 'append' or self.status == 'update':
+                self.insertfunk("[STORAGE]", dataou)
+
+            if self.status == 'new' or (self.status == 'append' and self.insertfunk("[STORAGE]", dataou) is False):
+
+                text = ("\n[STORAGE]"
+                        "\n;;Name           Elev.    MaxDepth   InitDepth  Shape      Curve Name/Params            N/A      Fevap    Psi      Ksat     IMD "
+                        "\n;;-------------- -------- ---------- ----------- ---------- ---------------------------- -------- --------          -------- --------"
+                        "\n")
+                self.file = open(self.ergfileSwmm, 'a')
+                self.file.write(text)
+
+                self.file.write(dataou)
+                self.file.close()
+
+            else:
+                pass
 
     def conduits(self):
 
         if QKan.config.check_export.haltungen:
 
-            sql = """SELECT
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND haltungen.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
+            sql = f"""SELECT
                                         h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, h.haltungstyp
                                     FROM
                                         haltungen AS h
                                     WHERE h.haltungstyp IS 'Haltung'
-                                    """
+                                    {auswahl}"""
             if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
                 del self.dbQK
                 return
@@ -699,12 +785,132 @@ class ExportTask:
             else:
                 pass
 
+    def pumps(self):
+
+        if QKan.config.check_export.pumpen:
+
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND haltungen.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
+            sql = f"""SELECT
+                                        h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, h.haltungstyp
+                                    FROM
+                                        haltungen AS h
+                                    WHERE h.haltungstyp IS 'Pumpe'
+                                    {auswahl}"""
+            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
+                del self.dbQK
+                return
+
+            datacd = ""  # Datenzeilen
+
+            for b in self.dbQK.fetchall():
+                # In allen Feldern None durch NULL ersetzen
+                (
+                    name_t,
+                    schoben,
+                    schunten,
+                    laenge,
+                    ks,
+                    haltungstyp,
+                ) = [0 if el is None else el for el in b]
+
+                name = name_t.replace(" ", "_")
+
+                datacd += (
+                    f"{name:<16s} {schoben:<17s}{schunten:<17s} *                ON       0        0     \n"
+                )
+
+            if self.status == 'append' or self.status == 'update':
+                self.insertfunk("[PUMPS]", datacd)
+
+            if self.status == 'new' or (self.status == 'append' and self.insertfunk("[PUMPS]", datacd) is False):
+
+                text = ("\n[PUMPS]"
+                        "\n;;Name           From Node        To Node          Pump Curve       Status   Sartup Shutoff "
+                        "\n;;-------------- ---------------- ---------------- ---------------- ------ -------- --------"
+                        "\n")
+                self.file = open(self.ergfileSwmm, 'a')
+                self.file.write(text)
+
+                self.file.write(datacd)
+                self.file.close()
+
+            else:
+                pass
+
+
+    def weirs(self):
+
+        if QKan.config.check_export.wehre:
+
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
+            sql = f"""SELECT
+                                        h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, h.haltungstyp
+                                    FROM
+                                        haltungen AS h
+                                    WHERE h.haltungstyp IS 'Wehr'
+                                    {auswahl}"""
+            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
+                del self.dbQK
+                return
+
+            datacd = ""  # Datenzeilen
+
+            for b in self.dbQK.fetchall():
+                # In allen Feldern None durch NULL ersetzen
+                (
+                    name_t,
+                    schoben,
+                    schunten,
+                    laenge,
+                    ks,
+                    haltungstyp,
+                ) = [0 if el is None else el for el in b]
+
+                name = name_t.replace(" ", "_")
+
+                datacd += (
+                    f"{name:<16s} {schoben:<17s}{schunten:<17s} TRANSVERSE   0          3.33       NO       0        0          YES   \n"
+                )
+
+            if self.status == 'append' or self.status == 'update':
+                self.insertfunk("[WEIRS]", datacd)
+
+            if self.status == 'new' or (self.status == 'append' and self.insertfunk("[WEIRS]", datacd) is False):
+
+                text = ("\n[WEIRS]"
+                        "\n;;Name           From Node        To Node          Type         CrestHt    Qcoeff     Gated    EndCon   EndCoeff   Surcharge  RoadWidth  RoadSurf   Coeff. Curve"
+                        "\n;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- -------- ---------- ---------- ---------- ---------- ----------------"
+                        "\n")
+                self.file = open(self.ergfileSwmm, 'a')
+                self.file.write(text)
+
+                self.file.write(datacd)
+                self.file.close()
+
+            else:
+                pass
 
     def xsection(self):
 
         if QKan.config.check_export.haltungen:
 
-            sql = """SELECT
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" WHERE h.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
+            sql = f"""SELECT
                                         h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, h.haltungstyp
                                     FROM
                                         haltungen AS h
@@ -712,7 +918,8 @@ class ExportTask:
                                         teilgebiete AS g
                                     ON 
                                         Intersects(h.geom,g.geom) and h.haltungstyp IS 'Haltung'
-                                    GROUP BY h.haltnam"""
+                                    GROUP BY h.haltnam
+                                    {auswahl}"""
             if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
                 del self.dbQK
                 return
@@ -865,15 +1072,23 @@ class ExportTask:
         if QKan.config.check_export.schaechte:
 
             dataco = ""  # Datenzeilen [COORDINATES]
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
 
-            sql = """SELECT
+            sql = f"""SELECT
                                         s.schnam AS name,   
-                                        X(geop) AS xsch, 
-                                        Y(geop) AS ysch 
+                                        X(s.geop) AS xsch, 
+                                        Y(s.geop) AS ysch 
                                     FROM schaechte AS s
                                     WHERE s.schachttyp = 'Schacht'
-                                    """
-            self.dbQK.sql(sql)
+                                    {auswahl}"""
+
+            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
+                del self.dbQK
+                return
 
             for b in self.dbQK.fetchall():
                 # In allen Feldern None durch NULL ersetzen
@@ -911,12 +1126,17 @@ class ExportTask:
     def vertices(self):
 
         if QKan.config.check_export.haltungen:
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" AND haltungen.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
 
-            sql = """SELECT
+            sql = f"""SELECT
                                     h.haltnam, h.schoben, h.schunten, ST_AsText(h.geom)
                                     from haltungen AS h
                                     WHERE h.haltungstyp IS 'Haltung'
-                                    """
+                                    {auswahl}"""
             self.dbQK.sql(sql)
 
             dataver = ""
@@ -990,9 +1210,16 @@ class ExportTask:
 
             dataver = ""
 
-            sql = """SELECT
+            if len(self.liste_teilgebiete) != 0:
+                lis = "', '".join(self.liste_teilgebiete)
+                auswahl = f" WHERE tg.teilgebiet in ('{lis}')"
+            else:
+                auswahl = ""
+
+            sql = f"""SELECT
                                     tg.flnam, tg.schnam, st_astext(tg.geom)
-                                    from tezg AS tg"""
+                                    from tezg AS tg
+                                    {auswahl}"""
             self.dbQK.sql(sql)
 
             for b in self.dbQK.fetchall():

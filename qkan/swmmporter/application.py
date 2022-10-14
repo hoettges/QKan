@@ -119,26 +119,10 @@ class SWMMPorter(QKanPlugin):
             QKan.config.check_export.pumpen = self.export_dlg.cb_pumpen.isChecked()
             QKan.config.check_export.wehre = self.export_dlg.cb_wehre.isChecked()
             QKan.config.check_export.flaechen = self.export_dlg.cb_flaechen.isChecked()
-            #QKan.config.check_export.rohrprofile = (
-            #    self.export_dlg.cb_rohrprofile.isChecked()
-            #)
-            #QKan.config.check_export.abflussparameter = (
-            #    self.export_dlg.cb_abflussparameter.isChecked()
-            #)
-            #QKan.config.check_export.bodenklassen = (
-            #    self.export_dlg.cb_bodenklassen.isChecked()
-            #)
-            #QKan.config.check_export.einleitdirekt = (
-            #    self.export_dlg.cb_einleitdirekt.isChecked()
-            #)
-            #QKan.config.check_export.aussengebiete = (
-            #    self.export_dlg.cb_aussengebiete.isChecked()
-            #)
+
             QKan.config.check_export.einzugsgebiete = (
                 self.export_dlg.cb_einzugsgebiete.isChecked()
             )
-            #QKan.config.check_export.tezg = self.export_dlg.rb_flaechen.isChecked()
-            #QKan.config.check_export.tezg_hf = self.export_dlg.rb_tezg.isChecked()
 
             QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
             QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
@@ -147,7 +131,7 @@ class SWMMPorter(QKanPlugin):
             teilgebiete = [
                 _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
             ]
-            QKan.config.swmm.teilgebiete = teilgebiete
+            QKan.config.selections.teilgebiete = teilgebiete
 
             QKan.config.save()
 

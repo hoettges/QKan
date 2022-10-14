@@ -80,13 +80,10 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         #self.pb_database.clicked.connect(self.select_database)    # ergibt sich aus Projekt
         self.pb_SWMM_dest.clicked.connect(self.select_exportdb)
         self.pb_SWMM_template.clicked.connect(self.select_template)
-        self.cb_flaechen.clicked.connect(self.check_flaechen)
-        self.cb_tezg_hf.clicked.connect(self.check_tezg_hf)
-        #self.button_box.helpRequested.connect(self.click_help)
 
         # Aktionen zu lw_teilgebiete: QListWidget
         self.cb_selActive.stateChanged.connect(self.click_selection)
-        self.lw_teilgebiete.itemClicked.connect(self.count_selection)      # ist schon in click_lw_teilgebiete enthalten
+        #self.lw_teilgebiete.itemClicked.connect(self.count_selection)      # ist schon in click_lw_teilgebiete enthalten
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
 
         # Init fields
@@ -282,17 +279,17 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
          return True
 
-    def check_flaechen(self) -> None:
-        # noinspection PyArgumentList,PyCallByClass
-        if self.cb_flaechen.isChecked():
-            QKan.config.check_export.tezg_hf = False
-            self.cb_tezg_hf.setChecked(False)
+    #def check_flaechen(self) -> None:
+    #    # noinspection PyArgumentList,PyCallByClass
+    #    if self.cb_flaechen.isChecked():
+    #        QKan.config.check_export.tezg_hf = False
+    #        self.cb_tezg_hf.setChecked(False)
 
-    def check_tezg_hf(self) -> None:
-        # noinspection PyArgumentList,PyCallByClass
-        if self.cb_tezg_hf.isChecked():
-            QKan.config.check_export.flaechen = False
-            self.cb_flaechen.setChecked(False)
+    #def check_tezg_hf(self) -> None:
+    #    # noinspection PyArgumentList,PyCallByClass
+    #    if self.cb_tezg_hf.isChecked():
+    #        QKan.config.check_export.flaechen = False
+    #        self.cb_flaechen.setChecked(False)
 
 
 IMPORT_CLASS, _ = uic.loadUiType(
@@ -322,6 +319,7 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         # Attach events
         self.pb_import.clicked.connect(self.select_import)
         self.pb_project.clicked.connect(self.select_project)
+        self.pb_database.clicked.connect(self.select_database)
 
         # Init fields
         self.tf_database.setText(QKan.config.database.qkan)
@@ -342,6 +340,18 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         )
         if filename:
             self.tf_import.setText(filename)
+            self.default_dir = os.path.dirname(filename)
+
+    def select_database(self) -> None:
+        # noinspection PyArgumentList,PyCallByClass
+        filename, _ = QFileDialog.getSaveFileName(
+            self,
+            self.tr("Zu erstellende SQLite-Datei"),
+            self.default_dir,
+            "*.sqlite",
+        )
+        if filename:
+            self.tf_database.setText(filename)
             self.default_dir = os.path.dirname(filename)
 
     def select_project(self) -> None:

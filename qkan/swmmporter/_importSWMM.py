@@ -124,8 +124,11 @@ class ImportTask:
         self.read()
         self._junctions()
         self._outfalls()
+        self._storage()
         self._coordinates()
         self._conduits()
+        self._pumps()
+        self._weirs()
         self._xsections()
         self._subcatchments()
         self._polygons()
@@ -236,6 +239,45 @@ class ImportTask:
 
         self.dbQK.commit()
 
+    def _storage(self):
+        #speicherschächte
+
+        data = self.data.get("storage", [])
+        for line in data:
+            name = line[0:17].strip()  # schnam
+            elevation = line[17:26].strip()  # sohlhoehe
+            maxdepth = line[26:37].strip()  # = deckelhoehe - sohlhoehe
+            #initdepth = line[38:50].strip()  # entfällt
+
+            # sql = f"""
+            #     INSERT into schaechte (
+            #         schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
+            #     VALUES (?, ?, ?, ?, 'Schacht')
+            #     """
+            # if not self.dbQK.sql(
+            #     sql,
+            #     mute_logger=True,
+            #     parameters=(name, elevation, elevation + maxdepth, areaPonded),
+            # ):
+            #     del self.dbQK
+            #     return False
+
+            params = {'schnam': name,
+                      'sohlhoehe': elevation, 'deckelhoehe': elevation + maxdepth,
+                      'schachttyp': 'Speicher'}
+
+            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="schaechte",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.dbQK
+                return
+
+        self.dbQK.commit()
 
 
     def _coordinates(self) -> bool:
@@ -329,8 +371,8 @@ class ImportTask:
                     # Polygon schreiben
                     coords = ", ".join([f"{x} {y}" for x, y in zip(xlis, ylis)])
 
-                    iface.messageBar().pushMessage("Error", str(coords),
-                                                   level=Qgis.Critical)
+                    #iface.messageBar().pushMessage("Error", str(coords),
+                    #                               level=Qgis.Critical)
 
 
                     sql = "UPDATE tezg SET geom = GeomFromText('MULTIPOLYGON((("+str(coords)+")))',?) WHERE flnam = ? "
@@ -384,7 +426,7 @@ class ImportTask:
             #     return False
 
             params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
-                      'laenge': laenge, 'ks': mannings_n, 'entwart': 'Regenwasser',
+                      'laenge': laenge, 'ks': mannings_n, 'entwart': 'Regenwasser', 'haltungstyp': 'Haltung',
                       'simstatus': 'vorhanden'}
 
             logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
@@ -417,6 +459,90 @@ class ImportTask:
             return False
 
         self.dbQK.commit()
+
+    def _pumps(self):
+
+        data = self.data.get("pumps", [])
+        for line in data:
+            # Attribute bitte aus qkan.database.qkan_database.py entnehmen
+            haltnam = line[0:17].strip()
+            schoben = line[17:34].strip()
+            schunten = line[34:51].strip()
+
+            params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
+                       'entwart': 'Regenwasser', 'haltungstyp': 'Pumpe',
+                      'simstatus': 'vorhanden'}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="haltungen",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.dbQK
+                return
+
+        self.dbQK.commit()
+
+        # Haltungsobjekte mithilfe der Schachtkoordinaten erzeugen
+        sql = f"""
+                UPDATE haltungen
+                 SET geom = (
+                 SELECT
+                 MakeLine(schob.geop, schun.geop)
+                 FROM
+                 schaechte AS schob,
+                 schaechte AS schun
+                 WHERE schob.schnam = haltungen.schoben AND schun.schnam = haltungen.schunten
+                 )
+                 """
+        if not self.dbQK.sql(sql):
+            del self.dbQK
+            return False
+
+    def _weirs(self):
+
+        data = self.data.get("weirs", [])
+        for line in data:
+            # Attribute bitte aus qkan.database.qkan_database.py entnehmen
+            haltnam = line[0:17].strip()
+            schoben = line[17:34].strip()
+            schunten = line[34:51].strip()
+
+            params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
+                      'entwart': 'Regenwasser', 'haltungstyp': 'Wehr',
+                      'simstatus': 'vorhanden'}
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="haltungen",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.dbQK
+                return
+
+        self.dbQK.commit()
+
+        # Haltungsobjekte mithilfe der Schachtkoordinaten erzeugen
+        sql = f"""
+                        UPDATE haltungen
+                         SET geom = (
+                         SELECT
+                         MakeLine(schob.geop, schun.geop)
+                         FROM
+                         schaechte AS schob,
+                         schaechte AS schun
+                         WHERE schob.schnam = haltungen.schoben AND schun.schnam = haltungen.schunten
+                         )
+                         """
+        if not self.dbQK.sql(sql):
+            del self.dbQK
+            return False
 
 
     def _vertices(self) -> bool:
