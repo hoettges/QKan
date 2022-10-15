@@ -389,7 +389,7 @@ class DBConnection:
                    hoehe, breite, laenge,
                    sohleoben, sohleunten, 
                    teilgebiet, profilnam, 
-                   entwart, strasse, material, ks,
+                   entwart, strasse, material, ks, haltungstyp,
                    simstatus, kommentar, createdat,  
                    geom)
                 SELECT 
@@ -399,7 +399,7 @@ class DBConnection:
                   :laenge,
                   :sohleoben, :sohleunten,
                   :teilgebiet, coalesce(:profilnam, 'Kreisquerschnitt'),
-                  coalesce(:entwart, 'Regenwasser'), :strasse, :material, coalesce(:ks, 1.5),
+                  coalesce(:entwart, 'Regenwasser'), :strasse, :material, coalesce(:ks, 1.5), coalesce(:haltungstyp, 'Haltung'),
                   coalesce(:simstatus, 'vorhanden'), :kommentar,
                   coalesce(:createdat, CURRENT_TIMESTAMP),
                   CASE WHEN :geom IS NULL
