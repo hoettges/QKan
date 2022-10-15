@@ -173,6 +173,7 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
             "QKan.CreateUnbefFlaechen (5)",
         ):
             del self.db_qkan
+            logger.info("CreateUnbefFlDialog.count_selection: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
             return
 
         data = self.db_qkan.fetchone()

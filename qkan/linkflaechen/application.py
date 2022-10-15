@@ -358,6 +358,8 @@ class LinkFl(QKanPlugin):
                 bezug_abstand,
             ):
                 del self.db_qkan
+                logger.info("run_createlinefl: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
+                return False
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
             project = QgsProject.instance()
@@ -382,6 +384,7 @@ class LinkFl(QKanPlugin):
         # Datenbankverbindungen schliessen
 
         del self.db_qkan
+        logger.info("run_createlinefl: QKan-Datenbank wurde am Ende geschlossen")
 
     # -------------------------------------------------------------------------
     # Öffnen des Formulars zur Erstellung der Verknüpfungen
@@ -410,6 +413,7 @@ class LinkFl(QKanPlugin):
                 GROUP BY teilgebiet"""
         if not self.db_qkan.sql(sql, "LinkFl.run_createlinesw (1)"):
             del self.db_qkan
+            logger.info("run_createlinesw: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
             return
 
         sql = """INSERT INTO teilgebiete (tgnam)
@@ -419,6 +423,7 @@ class LinkFl(QKanPlugin):
                 GROUP BY teilgebiet"""
         if not self.db_qkan.sql(sql, "LinkFl.run_createlinesw (2)"):
             del self.db_qkan
+            logger.info("run_createlinesw: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
             return
 
         self.db_qkan.commit()
@@ -427,6 +432,7 @@ class LinkFl(QKanPlugin):
         sql = 'SELECT "entwart" FROM "haltungen" GROUP BY "entwart"'
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.run_createlinesw (1)"):
             del self.db_qkan
+            logger.info("run_createlinesw: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
             return
         daten = self.db_qkan.fetchall()
         self.dlg_sw.lw_hal_entw.clear()
@@ -445,6 +451,7 @@ class LinkFl(QKanPlugin):
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.run_createlinesw (2)"):
             del self.db_qkan
+            logger.info("run_createlinesw: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
             return
         daten = self.db_qkan.fetchall()
         self.dlg_sw.lw_teilgebiete.clear()
@@ -517,6 +524,7 @@ class LinkFl(QKanPlugin):
                 QKan.config.epsg,
             ):
                 del self.db_qkan
+                logger.info("run_createlinesw: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
                 return
 
             # Einfügen der Verbindungslinien in die Layerliste, wenn nicht schon geladen
@@ -543,6 +551,7 @@ class LinkFl(QKanPlugin):
         # Datenbankverbindungen schliessen
 
         del self.db_qkan
+        logger.info("run_createlinesw: QKan-Datenbank wurde am Ende geschlossen")
 
     # Zuordnen der Haltungs- etc. -objekte zu (ausgewählten) Teilgebieten
 
@@ -584,6 +593,7 @@ class LinkFl(QKanPlugin):
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.run_assigntgeb (1)"):
             del self.db_qkan
+            logger.info("run_assigntgb: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
             return
         daten = self.db_qkan.fetchall()
         self.dlg_at.lw_teilgebiete.clear()
@@ -604,6 +614,7 @@ class LinkFl(QKanPlugin):
         else:
             fehlermeldung("Fehler im Programmcode (3)", "Nicht definierte Option")
             del self.db_qkan
+            logger.info("run_assigntgb: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
             return
 
         # Festlegung des Pufferradius
@@ -629,6 +640,7 @@ class LinkFl(QKanPlugin):
             else:
                 fehlermeldung("Fehler im Programmcode (4)", "Nicht definierte Option")
                 del self.db_qkan
+                logger.info("run_assigntgb: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
                 return
 
             autokorrektur: bool = self.dlg_at.cb_autokorrektur.isChecked()
@@ -687,6 +699,7 @@ class LinkFl(QKanPlugin):
                 bufferradius,
             ):
                 del self.db_qkan
+                logger.info("run_assigntgb: QKan-Datenbank wurde am Ende geschlossen")
                 return
 
         # --------------------------------------------------------------------------
@@ -738,6 +751,7 @@ class LinkFl(QKanPlugin):
 
         # Datenbankverbindungen schliessen
         del self.db_qkan
+        logger.info("run_managegroups: QKan-Datenbank wurde am Ende geschlossen")
 
     # ----------------------------------------------------------------------------------------------
     # Logischen Cache der Verknüpfungen aktualisieren
@@ -800,11 +814,13 @@ class LinkFl(QKanPlugin):
                     self.db_qkan, fangradius, flaechen_bereinigen, delete_geom_none
                 ):
                     del self.db_qkan
+                    logger.info("run_updatelinks: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
                     return
 
             if self.dlg_ul.cb_linksw.isChecked():
                 if not updatelinksw(self.db_qkan, fangradius, delete_geom_none):
                     del self.db_qkan
+                    logger.info("run_updatelinks: QKan-Datenbank wurde wegen eines Fehlers geschlossen")
                     return
 
             meldung("Fertig!", "Bereinigung Flächenverknüpfungen abgeschlossen.")
@@ -813,3 +829,4 @@ class LinkFl(QKanPlugin):
         # Datenbankverbindungen schliessen
 
         del self.db_qkan
+        logger.info("run_updatelinks: QKan-Datenbank wurde am Ende geschlossen")

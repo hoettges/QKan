@@ -4,10 +4,11 @@
 <html class="writer-html5" lang="de" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Suche &mdash; QKan 3.2.32 Dokumentation</title>
+  <title>5. Erzeugung unbefestigter Flächen &mdash; QKan 3.2.32 Dokumentation</title>
   
 
   
@@ -25,7 +26,6 @@
   
 
   
-    
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -41,10 +41,10 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <script type="text/javascript" src="_static/searchtools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
-    <link rel="search" title="Suche" href="#" /> 
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="1. QKan-Tabellen" href="Qkan_Tabellen.html" />
+    <link rel="prev" title="4. Import von Flächendaten" href="Qkan_import_flaechendaten.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -75,7 +75,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Dokumentation durchsuchen" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -114,12 +114,12 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Datenaustausch.html">1. Import von Kanaldaten aus einfachen Tabellen (Excel, ACCESS, TXT, CSV)</a></li>
 </ul>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">1. Verarbeitung von befestigten und unbefestigten Flächen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html#vorgehen-bei-der-flachenzuordnung">2. Vorgehen bei der Flächenzuordnung</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">3. QKan-Formulare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_import_flaechendaten.html">4. Import von Flächendaten</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_erstellung_unbef_fl.html">5. Erzeugung unbefestigter Flächen</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. Erzeugung unbefestigter Flächen</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">1. QKan-Tabellen</a></li>
@@ -171,10 +171,14 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Suche</li>
+      <li><span class="section-number">5. </span>Erzeugung unbefestigter Flächen</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Qkan_erstellung_unbef_fl.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+          
         
       </li>
     
@@ -186,23 +190,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Bitte aktiviere JavaScript, um die Suchfunktion zu nutzen.
-    </p>
-  </div>
-  </noscript>
+  <section id="erzeugung-unbefestigter-flachen">
+<h1><span class="section-number">5. </span>Erzeugung unbefestigter Flächen<a class="headerlink" href="#erzeugung-unbefestigter-flachen" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Bevor die unbefestigten Flächen erzeugt werden können ist es wichtig, zu prüfen, ob die Attributtabellen der Flächenobjekte
+(„Haltungsflächen“ und „Flächen“) vollständig ausgefüllt sind. Das bedeutet, die Spalten „Name“, „Teilgebiet“, „Regenschreiber“ und
+„Abflussparameter“ müssen vollständig ausgefüllt sein. Wenn keine Flächen vorhanden sind oder die Tabellen unvollständig sind,
+ist :ref: <cite>hier&lt;Import_gebaeudedaten&gt;</cite> eine Beschreibung des Vorgehens.</p>
+<p>Außerdem sollten vor der Erzeugung der unbefestigten Flächen kleinere Flächen verschmolzen werden, um die Anzahl der Flächenschwerpunkte
+für die Abflussberechnung zu begrenzen. Vor allem auf dem Layer „Haltungsflächen“ kann es zu sehr kleinen Flächenstreifen/-ecken kommen,
+die mit größeren Flächen verschmolzen werden können. Dazu muss der Layer im Bearbeitungsmodus sein.
+Anschließend muss die kleine Fläche und eine angrenzende größere Fläche ausgewählt werden und mit dem Verschmelzungs-Tool (Icon?) vereint werden.
+Wichtig hierbei ist, dass dabei die Option „Attribute des Objektes mit der größten Fläche verwenden“ gewählt wird.
+Ein Beispiel für eine sinnvolle Verschmelzung ist hier gegeben:</p>
+<img alt="_images/vor_verschmelzung.png" src="_images/vor_verschmelzung.png" />
+<img alt="_images/nach_verschmelzung.png" src="_images/nach_verschmelzung.png" />
+<p>Sind die Fläche ausreichend vorbereitet sollten die Änderungen gespeichert werden und der Bearbeitungsmodus deaktiviert werden.
+Nun können die unbefestigten Flächen erstellt werden. Dies geschieht ganz leicht durch das Qkan-Tool „Erzeuge unbefestigte Flächen“.
+Wenn dieses Werkzeug angeklickt wird, öffnet sich automatisch ein Fenster welches ohne eine Auswahl mit „OK“ bestätigt werden kann.</p>
+<img alt="_images/Fenster.png" src="_images/Fenster.png" />
+<p>Die unbefestigten Flächen werden nun automatisch erstellt und liegen auf dem Layer „$Default_Unbef“ welches auch die Schraffur der Flächen anzeigt.</p>
+<img alt="QKan_Bilder/Erstellung_unbefestigte_flaechen/vor_unbef_flvor_unbef_fl.png" src="QKan_Bilder/Erstellung_unbefestigte_flaechen/vor_unbef_flvor_unbef_fl.png" />
+<img alt="_images/nach_unbef_fl.png" src="_images/nach_unbef_fl.png" />
+<p>Als nächstes müssen die befestigten Flächen für die Zuordnung zu den Haltungen vorbereitet werden.</p>
+</section>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="Qkan_Tabellen.html" class="btn btn-neutral float-right" title="1. QKan-Tabellen" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Qkan_import_flaechendaten.html" class="btn btn-neutral float-left" title="4. Import von Flächendaten" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+    </div>
 
   <hr/>
 
@@ -239,14 +259,7 @@
   
   
     
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>

@@ -109,7 +109,6 @@ def createlinkfl(
         if not db_qkan.sql(
             "UPDATE tezg SET geom=MakeValid(geom)", "k_link.createlinkfl (2)"
         ):
-            del db_qkan
             progress_bar.reset()
             return False
         # Flächen prüfen und ggfs. Meldung anzeigen
@@ -118,7 +117,6 @@ def createlinkfl(
 
     # Vorbereitung flaechen: Falls flnam leer ist, plausibel ergänzen:
     if not checknames(db_qkan, "flaechen", "flnam", "f_", autokorrektur):
-        del db_qkan
         return False
 
     progress_bar.setValue(5)
@@ -224,7 +222,6 @@ def createlinkfl(
                       FROM linkadd AS la"""
 
         if not db_qkan.sql(sql, "QKan_LinkFlaechen (4a)"):
-            del db_qkan
             progress_bar.reset()
             return False
 
@@ -247,7 +244,6 @@ def createlinkfl(
                         area(geom) > {mindestflaeche}"""
 
         if not db_qkan.sql(sql, "QKan_LinkFlaechen (4b)"):
-            del db_qkan
             progress_bar.reset()
             return False
 
@@ -295,7 +291,6 @@ def createlinkfl(
             WHERE area(geom) > {mindestflaeche}"""
 
         if not db_qkan.sql(sql, "QKan_LinkFlaechen (4c)"):
-            del db_qkan
             progress_bar.reset()
             return False
 
@@ -306,7 +301,6 @@ def createlinkfl(
 
     sql = f"UPDATE linkfl SET gbuf = CastToMultiPolygon(buffer(geom,?)) WHERE linkfl.glink IS NULL"
     if not db_qkan.sql(sql, "createlinkfl (2)", parameters=(suchradius,)):
-        del db_qkan
         progress_bar.reset()
         return False
 
@@ -387,7 +381,6 @@ def createlinkfl(
     logger.debug("\nSQL-3a:\n{}\n".format(sql))
 
     if not db_qkan.sql(sql, "createlinkfl (5)"):
-        del db_qkan
         progress_bar.reset()
         return False
 
@@ -399,7 +392,6 @@ def createlinkfl(
     if not db_qkan.sql(
         "DELETE FROM linkfl WHERE glink IS NULL", "QKan_LinkFlaechen (7)"
     ):
-        del db_qkan
         progress_bar.reset()
         return False
 
@@ -414,7 +406,6 @@ def createlinkfl(
             "Fehler beim Update der Flächen-Verknüpfungen",
             "Der logische Cache konnte nicht aktualisiert werden.",
         )
-        del db_qkan
         progress_bar.reset()
         return False
 
