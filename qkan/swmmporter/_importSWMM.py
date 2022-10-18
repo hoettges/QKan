@@ -569,27 +569,17 @@ class ImportTask:
 
             if npt==1:
                 # Start und Endpunkt der Haltung ausgeben
-                sql1 = f"""Select ST_X(StartPoint(geom)) from haltungen WHERE haltnam =?"""
-                sql2 = f"""Select ST_Y(StartPoint(geom)) from haltungen WHERE haltnam =?"""
+                sql = f"""Select 
+                        ST_X(StartPoint(geom)) AS xanf,
+                        ST_Y(StartPoint(geom)) AS yanf,
+                        ST_X(EndPoint(geom))   AS xend,
+                        ST_Y(EndPoint(geom))   AS yend
+                    FROM haltungen
+                    WHERE haltnam =?"""
 
-                sql3 = f"""Select ST_X(EndPoint(geom)) from haltungen WHERE haltnam =?"""
-                sql4 = f"""Select ST_Y(EndPoint(geom)) from haltungen WHERE haltnam =?"""
-
-                self.dbQK.sql(sql1, parameters=(name,))
+                self.dbQK.sql(sql, parameters=(name,))
                 for attr in self.dbQK.fetchall():
-                    x_start = attr[0]
-
-                self.dbQK.sql(sql2, parameters=(name,))
-                for attr in self.dbQK.fetchall():
-                    y_start = attr[0]
-
-                self.dbQK.sql(sql3, parameters=(name,))
-                for attr in self.dbQK.fetchall():
-                    x_end = attr[0]
-
-                self.dbQK.sql(sql4, parameters=(name,))
-                for attr in self.dbQK.fetchall():
-                    y_end = attr[0]
+                    x_start, y_start, x_end, y_end = attr[0]
 
                 #altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
                 sql = f"""

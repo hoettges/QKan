@@ -162,7 +162,7 @@
     <string comment="Pfad der Zieldatenbank"/>
    </property>
    <property name="title">
-    <string>Zieldatenbank: HYSTEM-EXTRAN-Datenbank</string>
+    <string>Export-Dateien</string>
    </property>
    <property name="flat">
     <bool>false</bool>
@@ -188,7 +188,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Datenziel: Hystem-Extran-Datenbank (*.INP):</string>
+     <string>Ergebnisdatei: SWMM (*.INP):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -293,7 +293,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Vorlage: Hystem-Extran-Datenbank (*.INP):</string>
+     <string>Vorlage-SWMM-Datei (*.INP):</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

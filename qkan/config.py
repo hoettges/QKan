@@ -293,6 +293,13 @@ class MUConfig(ClassObject):
     export_file: str = ""  # Export-Datenbank *.sqlite
 
 
+class SWMMConfig(ClassObject):
+    database: str = ""      # QKan-Projektdatenbank
+    template: str = ""
+    import_file: str = ""   # Importdatei *.inp
+    export_file: str = ""   # Exportdatei *.inp
+
+
 class ProjectConfig(ClassObject):
     file: str = ""
     save_file: bool = True
@@ -746,6 +753,7 @@ class Config(ClassObject):
     he: HEConfig = HEConfig()
     he8: HE8Config = HE8Config()
     mu: MUConfig = MUConfig()
+    swmm: SWMMConfig = SWMMConfig()
     linkflaechen: LinkFlConfig = LinkFlConfig()
     project: ProjectConfig = ProjectConfig()
     tools: ToolsConfig = ToolsConfig()

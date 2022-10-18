@@ -100,7 +100,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.default_dir = default_dir
 
         # Attach events
-        # self.pb_database.clicked.connect(self.select_database)    # ergibt sich aus Projekt
         self.pb_exportdb.clicked.connect(self.select_exportdb)
         self.pb_template.clicked.connect(self.select_template)
         self.cb_flaechen.clicked.connect(self.check_flaechen)
@@ -189,7 +188,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         )
         if filename:
             self.tf_exportdb.setText(filename)
-            # self.default_dir = os.path.dirname(filename)
+            self.default_dir = os.path.dirname(filename)
 
     def click_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
@@ -282,30 +281,24 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         """Füllt Auswahllisten im Export-Dialog"""
 
         self.db_qkan = db_qkan
-        # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
+        # Alle Teilgebiete in Flächen, Schächten und Haltungen, die noch nicht in Tabelle "teilgebiete" enthalten
+        # sind, ergänzen
 
-        sql = """INSERT INTO teilgebiete (tgnam)
-                SELECT teilgebiet FROM flaechen 
-                WHERE teilgebiet IS NOT NULL AND
-                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+        sql = """WITH tgb AS (
+                SELECT teilgebiet FROM flaechen
+                WHERE teilgebiet IS NOT NULL
+                UNION
+                SELECT teilgebiet FROM haltungen
+                WHERE teilgebiet IS NOT NULL
+                UNION
+                SELECT teilgebiet FROM schaechte
+                WHERE teilgebiet IS NOT NULL
+                )
+                INSERT INTO teilgebiete (tgnam)
+                SELECT teilgebiet FROM tgb
+                WHERE teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
         if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (1) "):
-            return False
-
-        sql = """INSERT INTO teilgebiete (tgnam)
-                SELECT teilgebiet FROM haltungen 
-                WHERE teilgebiet IS NOT NULL AND
-                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                GROUP BY teilgebiet"""
-        if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (2) "):
-            return False
-
-        sql = """INSERT INTO teilgebiete (tgnam)
-                SELECT teilgebiet FROM schaechte 
-                WHERE teilgebiet IS NOT NULL AND
-                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                GROUP BY teilgebiet"""
-        if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (3) "):
             return False
 
         self.db_qkan.commit()
