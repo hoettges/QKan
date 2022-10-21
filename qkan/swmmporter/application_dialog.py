@@ -1,7 +1,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgsProjectionSelectionWidget
@@ -72,13 +72,13 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         tr: Callable,
         parent: Optional[QWidget] = None,
     ):
+        # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
 
         self.default_dir = default_dir
 
         # Attach events
-        #self.pb_database.clicked.connect(self.select_database)    # ergibt sich aus Projekt
-        self.pb_SWMM_dest.clicked.connect(self.select_exportdb)
+        self.pb_SWMM_dest.clicked.connect(self.select_exportfile)
         self.pb_SWMM_template.clicked.connect(self.select_template)
 
         # Aktionen zu lw_teilgebiete: QListWidget
@@ -113,9 +113,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         )
         if filename:
             self.tf_SWMM_template.setText(filename)
-            self.default_dir = os.path.dirname(filename)
+            # self.default_dir = os.path.dirname(filename)
 
-    def select_exportdb(self) -> None:
+    def select_exportfile(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
         filename, _ = QFileDialog.getSaveFileName(
             self,
@@ -125,7 +125,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         )
         if filename:
             self.tf_SWMM_dest.setText(filename)
-            # self.default_dir = os.path.dirname(filename)
+            self.default_dir = os.path.dirname(filename)
 
     def click_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
@@ -156,7 +156,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen
          """
-        self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
+        # self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
         if not self.db_qkan:
             logger.error("db_qkan is not initialized.")
@@ -216,68 +216,62 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         return True
 
     def prepareDialog(self, db_qkan) -> bool:
-         """Füllt Auswahllisten im Export-Dialog"""
+        """Füllt Auswahllisten im Export-Dialog"""
 
-         self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
-         #self.db_qkan = db_qkan
-         # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
+        # self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
+        self.db_qkan = db_qkan
+        # Alle Teilgebiete in Flächen, Schächten und Haltungen, die noch nicht in Tabelle "teilgebiete" enthalten
+        # sind, ergänzen
 
-         sql = """INSERT INTO teilgebiete (tgnam)
-                 SELECT teilgebiet FROM flaechen
-                 WHERE teilgebiet IS NOT NULL AND
-                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                 GROUP BY teilgebiet"""
-         if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (1) "):
-             return False
+        sql = """WITH tgb AS (
+                SELECT teilgebiet FROM flaechen
+                WHERE teilgebiet IS NOT NULL
+                UNION
+                SELECT teilgebiet FROM haltungen
+                WHERE teilgebiet IS NOT NULL
+                UNION
+                SELECT teilgebiet FROM schaechte
+                WHERE teilgebiet IS NOT NULL
+                )
+                INSERT INTO teilgebiete (tgnam)
+                SELECT teilgebiet FROM tgb
+                WHERE teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                GROUP BY teilgebiet"""
+        if not self.db_qkan.sql(sql, "swmmporter.application_dialog.connectQKanDB (1) "):
+            return False
 
-         sql = """INSERT INTO teilgebiete (tgnam)
-                 SELECT teilgebiet FROM haltungen
-                 WHERE teilgebiet IS NOT NULL AND
-                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                 GROUP BY teilgebiet"""
-         if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (2) "):
-             return False
+        self.db_qkan.commit()
 
-         sql = """INSERT INTO teilgebiete (tgnam)
-                 SELECT teilgebiet FROM schaechte
-                 WHERE teilgebiet IS NOT NULL AND
-                 teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                 GROUP BY teilgebiet"""
-         if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (3) "):
-             return False
+        # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
-         self.db_qkan.commit()
+        # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
+        teilgebiete = QKan.config.selections.teilgebiete
 
-         # Anlegen der Tabelle zur Auswahl der Teilgebiete
+        # Abfragen der Tabelle teilgebiete nach Teilgebieten
+        sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
+        if not self.db_qkan.sql(sql, "swmmporter.application_dialog.connectQKanDB (4) "):
+            return False
+        daten = self.db_qkan.fetchall()
+        self.lw_teilgebiete.clear()
 
-         # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-         teilgebiete = QKan.config.selections.teilgebiete
+        for ielem, elem in enumerate(daten):
+            self.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
+            try:
+                if elem[0] in teilgebiete:
+                    self.lw_teilgebiete.setCurrentRow(ielem)
+            except BaseException as err:
+                fehlermeldung(
+                    (
+                        "swmmporter.application_dialog.connectQKanDB, "
+                        f"Fehler in elem = {elem}\n"
+                    ),
+                    repr(err),
+                )
 
-         # Abfragen der Tabelle teilgebiete nach Teilgebieten
-         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-         if not self.db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (4) "):
-             return False
-         daten = self.db_qkan.fetchall()
-         self.lw_teilgebiete.clear()
+        # Initialisierung der Anzeige der Anzahl zu exportierender Objekte
+        self.count_selection()
 
-         for ielem, elem in enumerate(daten):
-             self.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-             try:
-                 if elem[0] in teilgebiete:
-                     self.lw_teilgebiete.setCurrentRow(ielem)
-             except BaseException as err:
-                 fehlermeldung(
-                     (
-                         "he8porter.application_dialog.connectQKanDB, "
-                         f"Fehler in elem = {elem}\n"
-                     ),
-                     repr(err),
-                 )
-
-         # Initialisierung der Anzeige der Anzahl zu exportierender Objekte
-         self.count_selection()
-
-         return True
+        return True
 
     #def check_flaechen(self) -> None:
     #    # noinspection PyArgumentList,PyCallByClass

@@ -28,7 +28,7 @@ from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
 import logging
-from qkan import QKan
+from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
 from qkan.plugin import QKanPlugin
@@ -56,8 +56,13 @@ class SWMMPorter(QKanPlugin):
         """
         # Save reference to the QGIS interface
         super().__init__(iface)
+
+        default_dir = get_default_dir()
+        self.log.debug(f"He8Porter: default_dir: {default_dir}")
         self.import_dlg = ImportDialog(default_dir=self.default_dir, tr=self.tr)
         self.export_dlg = ExportDialog(default_dir=self.default_dir, tr=self.tr)
+
+        self.db_qkan: DBConnection = None
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
@@ -85,8 +90,10 @@ class SWMMPorter(QKanPlugin):
 
 
     def run_export (self) -> None:
+        """Anzeigen des Exportformulars und anschließender Start des Exports in eine *.inp-Datei"""
 
-        # Fill dialog with current info
+        # noinspection PyArgumentList
+
         self.db_qkan = DBConnection()
         dbname = self.db_qkan.dbname
 
@@ -94,6 +101,10 @@ class SWMMPorter(QKanPlugin):
         if self.db_qkan:
             self.export_dlg.tf_database.setText(dbname)
 
+        if not self.export_dlg.prepareDialog(self.db_qkan):
+            return False
+
+        # Formular anzeigen
         self.export_dlg.show()
 
         #if not self.export_dlg.prepareDialog(self.db_qkan):
@@ -155,28 +166,8 @@ class SWMMPorter(QKanPlugin):
         if not self.db_qkan:
             self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
-        # Zieldatenbank aus Vorlage kopieren
-        #if os.path.exists(QKan.config.swmm.template):
-        #    try:
-         #       shutil.copyfile(QKan.config.swmm.template, QKan.config.swmm.export_file)
-          #  except BaseException:
-           #     fehlermeldung(
-            #        "Fehler in Export nach SWMM",
-             #       "Fehler beim Kopieren der Vorlage: \n   {QKan.config.swmm.template}\n"
-              #      + "nach Ziel: {QKan.config.swmm.export_file}\n",
-               # )
-
-        #"""Attach SQLite-Database with SWMM Data"""
-        #sql = f'ATTACH DATABASE "{QKan.config.swmm.export_file}" AS he'
-
-        #if not self.db_qkan.sql(sql, "SWMMPorter.run_export_to_swmm Attach SWMM"):
-        #    logger.error(
-        #        f"Fehler in SWMMPorter._doexport(): Attach fehlgeschlagen: {QKan.config.swmm.export_file}"
-        #    )
-        #    return False
-
         # Run export
-        ExportTask(QKan.config.swmm.template, self.db_qkan, QKan.config.swmm.export_file, QKan.config.swmm.template, QKan.config.swmm.liste_teilgebiete, status).run()
+        ExportTask(QKan.config.swmm.template, self.db_qkan, QKan.config.swmm.export_file, QKan.config.swmm.template, QKan.config.selections.teilgebiete, status).run()
 
         # Close connection
         del self.db_qkan
@@ -242,9 +233,6 @@ class SWMMPorter(QKanPlugin):
 
         Einspringpunkt für Test
         """
-        QKan.config.swmm.import_file = self.import_dlg.tf_import.text()
-        QKan.config.project.file = self.import_dlg.tf_project.text()
-
         self.log.info("Creating DB")
         db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
