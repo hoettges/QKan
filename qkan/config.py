@@ -236,12 +236,13 @@ class DynaConfig(ClassObject):
 class SWMMConfig(ClassObject):
     autonummerierung: bool = False
     # bef_choice: enums.BefChoice = enums.BefChoice.FLAECHEN
+    database: str = ""  # QKan-Projektdatenbank
     file: str = ""
     # prof_choice: enums.ProfChoice = enums.ProfChoice.PROFILNAME
     profile_ergaenzen: bool = True
     template: str = ""
-    import_file: str = ""
-    export_file: str = ""
+    import_file: str = ""  # Importdatei *.inp
+    export_file: str = ""  # Exportdatei *.inp
     liste_teilgebiete: list = []
 
 

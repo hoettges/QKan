@@ -544,17 +544,16 @@ class ImportTask:
             del self.dbQK
             return False
 
-
     def _vertices(self) -> bool:
         data = self.data.get("vertices", [])
         data.append("ende")  # Trick, damit am Ende das letzte Polygon geschrieben wird
 
         namvor = ""  # Solange der Name gleich bleibt, gehören
         # die Eckpunkte zur selben Haltung
-        #npt = 2  # Punkt, der eingefügt werden muss
-        npt=1
+        # npt = 2  # Punkt, der eingefügt werden muss
+        npt = 1
 
-        list=[]
+        list = []
 
         for line in data:
             name = line[0:17].strip()  # schnam
@@ -567,7 +566,7 @@ class ImportTask:
             else:
                 npt = 1
 
-            if npt==1:
+            if npt == 1:
                 # Start und Endpunkt der Haltung ausgeben
                 sql = f"""Select 
                         ST_X(StartPoint(geom)) AS xanf,
@@ -581,7 +580,7 @@ class ImportTask:
                 for attr in self.dbQK.fetchall():
                     x_start, y_start, x_end, y_end = attr[0]
 
-                #altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
+                # altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
                 sql = f"""
                                          UPDATE haltungen SET geom = NULL
                                          WHERE haltnam = ?
@@ -599,7 +598,8 @@ class ImportTask:
                             WHERE haltnam = ?
                          """
 
-                paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch, QKan.config.epsg, npt, name]
+                paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch,
+                            QKan.config.epsg, npt, name]
 
                 if not self.dbQK.sql(
                         sql, parameters=paralist
@@ -607,8 +607,8 @@ class ImportTask:
                     del self.dbQK
                     return False
 
-            if npt>1:
-                #weitere punkte ergänzen
+            if npt > 1:
+                # weitere punkte ergänzen
                 sql = f"""
                                 UPDATE haltungen SET geom = AddPoint(geom,MakePoint(?, ?, ?), ?)
                                 WHERE haltnam = ?
