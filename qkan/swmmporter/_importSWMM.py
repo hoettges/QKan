@@ -578,7 +578,7 @@ class ImportTask:
 
                 self.dbQK.sql(sql, parameters=(name,))
                 for attr in self.dbQK.fetchall():
-                    x_start, y_start, x_end, y_end = attr[0]
+                    x_start, y_start, x_end, y_end = attr
 
                 # altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
                 sql = f"""
