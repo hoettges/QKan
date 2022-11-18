@@ -28,6 +28,8 @@ from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
 import logging
+
+import qkan.config
 from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
@@ -186,11 +188,11 @@ class SWMMPorter(QKanPlugin):
         if self.import_dlg.exec_():
             # Read from form and save to config
             QKan.config.database.qkan = self.import_dlg.tf_database.text()
-            QKan.config.project.file = self.import_dlg.tf_project.text()
+            QKan.config.swmm.file = self.import_dlg.tf_project.text()
+            QKan.config.swmm.import_file = self.import_dlg.tf_import.text()
 
             QKan.config.save()
 
-            QKan.config.swmm.import_file = self.import_dlg.tf_import.text()
             if not QKan.config.swmm.import_file:
                 fehlermeldung("Fehler beim Import", "Es wurde keine Datei ausgewählt!")
                 self.iface.messageBar().pushMessage(

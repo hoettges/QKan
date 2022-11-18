@@ -176,7 +176,7 @@ class ImportTask:
             #     return False
 
             params = {'schnam': name,
-                      'sohlhoehe': elevation, 'deckelhoehe': elevation + maxdepth,
+                      'sohlhoehe': elevation, 'deckelhoehe': float(elevation) + float(maxdepth),
                        'schachttyp': 'Schacht'}
 
             logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
@@ -284,9 +284,10 @@ class ImportTask:
         """Liest die Koordinaten zu den bereits angelegten Schaechten ein"""
         data = self.data.get("coordinates", [])
         for line in data:
-            name = line[0:17].strip()  # schnam
-            xsch = fzahl(line[17:36].strip(), 3, self.xoffset) + self.xoffset  # xsch
-            ysch = fzahl(line[36:54].strip(), 3, self.yoffset) + self.yoffset  # ysch
+            linen = line.strip()
+            name = linen[0:17].strip()  # schnam
+            xsch = fzahl(linen[17:34].strip(), 3, self.xoffset) + self.xoffset  # xsch
+            ysch = fzahl(linen[34:54].strip(), 3, self.yoffset) + self.yoffset  # ysch
             du = 1.0
 
             sql = f"""
@@ -552,6 +553,10 @@ class ImportTask:
         # die Eckpunkte zur selben Haltung
         # npt = 2  # Punkt, der eingefügt werden muss
         npt = 1
+        x_start=0
+        y_start=0
+        x_end=0
+        y_end=0
 
         list = []
 
@@ -630,6 +635,7 @@ class ImportTask:
     def _xsections(self) -> bool:
         """Liest die Profildaten zu den Haltungen ein. Dabei werden sowohl Haltungsdaten ergänzt
         als auch Profildaten erfasst"""
+        #TODO nochmal prüfen
 
         profiltypes = {"CIRCULAR": "Kreisquerschnitt"}
 
@@ -637,9 +643,9 @@ class ImportTask:
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
             haltnam = line[0:17].strip()
-            xsection = line[17:30].strip()  # shape
-            hoehe = line[30:47].strip()  # Geom1
-            breite = line[47:58].strip()  # Geom2
+            xsection = line[17:31].strip()  # shape
+            hoehe = line[31:42].strip()  # Geom1
+            breite = line[42:54].strip()  # Geom2
             barrels = line[
                 80:91
             ].strip()  # Falls > 1, muss die Haltung mehrfach angelegt werden
