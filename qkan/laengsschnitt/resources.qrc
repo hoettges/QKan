@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/qkan/laengsschnitt" >
+        <file>res/laengsschnitt.png</file>
+    </qresource>
+</RCC>

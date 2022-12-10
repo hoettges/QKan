@@ -121,6 +121,7 @@ class QKan:
         from .datacheck import Plausi
         from .zustandsklassen import zustandsklassen
         from .sanierungsbedarfszahl import sanierungsbedarfszahl
+        from .laengsschnitt import Laengsschnitt
 
         self.plugins: List = [
             CreateUnbefFl(iface),
@@ -137,6 +138,7 @@ class QKan:
             Plausi(iface),
             zustandsklassen(iface),
             sanierungsbedarfszahl(iface),
+            Laengsschnitt(iface),
 
         ]
 
