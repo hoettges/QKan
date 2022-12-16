@@ -67,11 +67,11 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
         self.pushButton.clicked.connect(self.export_cad)
         self.pushButton_2.clicked.connect(self.refresh)
         self.refresh_function = None
+        self.export_cad_function = None
 
 
     def export_cad(self):
-        #TODO: hier den zugriff zu cad programmieren
-        pass
+        self.export_cad_function()
 
     def refresh(self):
         self.refresh_function()

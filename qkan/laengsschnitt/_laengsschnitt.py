@@ -6,6 +6,13 @@ from typing import Dict, Iterator, Tuple, Union
 from qgis.utils import iface
 from qgis.core import Qgis
 import os
+import codecs
+import array
+import math
+
+import win32com.client
+import pythoncom
+from win32com.client import VARIANT
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -108,7 +115,7 @@ class LaengsTask:
         selected = layer.selectedFeatures()
         liste=[]
 
-        if table != 'schaechte' or 'haltungen':
+        if table not in ['schaechte', 'haltungen']:
             iface.messageBar().pushMessage("Fehler", 'Bitte Haltungen oder Schächte wählen', level=Qgis.Critical)
             return
 
@@ -227,8 +234,46 @@ class LaengsTask:
         plt.ylabel('Höhe [m NHN]')
         new_plot.legend()
 
+    def cad(self):
+        pass
+
+        #wie oben elemente wählen
+        #daten für autocad aufbereiten
+        #autocad benötigt andere daten als matplotlib (Koordinatenpaare erwartet!)
+        #cad anbindung starten
+        #längssschnitt in cad erstellen
+
+        try:
+            acad = win32com.client.Dispatch('AutoCAD.Application')
+            acad.Visible = True
+        except WindowsError:
+            print('Autocad wird gestartet. Das kann ca. eine halbe Minute dauern...')
+            acad = win32com.client.CreateObject('AutoCAD.Application')
+            acad = win32com.client.GetActiveObject('AutoCAD.Application')  # scheint zwar doppelt,
+            # aber sonst erscheint ein Fehler
+            acad.Visible = True
+        except BaseException as e:
+            print(e)
+
+        # Prüfen, ob schon eine Datei offen ist. Falls nicht, wird eine neue Datei angelegt.
+
+        if acad.Documents.Count > 0:
+            doc = acad.ActiveDocument
+            print("Eine Datei ist bereits offen")
+        else:
+            print("Eine neue Datei wird angelegt")
+            doc = acad.Documents.Add()
+
+        print("Bitte klicken Sie in der AutoCAD-Datei auf einen Punkt!")
+        x0, y0, z0 = doc.Utility.GetPoint()  # z0 wird nicht benötigt
+        print('Geklickt: ({},{})'.format(x0, y0))
 
 
+        #wie untenstehenden für die Linien sowie auch für alle anderen Sachene erweitern
+        #Graphen zeichnen lasse
+        #Beschriftung einfügen
+
+        doc.SendCommand("LINIE " "1,1 " "3,5\n" "5,-2\n" "\n")
 
 
 

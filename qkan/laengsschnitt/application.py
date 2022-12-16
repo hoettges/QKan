@@ -30,6 +30,7 @@ class Laengsschnitt(QKanPlugin):
         self.get_widget()
 
         self.laengs_dlg.refresh_function = self.refresh_function
+        self.laengs_dlg.export_cad_function = self.export_cad_function
 
     def refresh_function(self):
         db_qkan = DBConnection(dbname=self.database_qkan)
@@ -43,7 +44,22 @@ class Laengsschnitt(QKanPlugin):
                 f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
                 level=Qgis.Critical,
             )
-        LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).run()
+        LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).zeichnen()
+        self.canv.draw()
+
+    def export_cad_function(self):
+        db_qkan = DBConnection(dbname=self.database_qkan)
+        if not db_qkan:
+            fehlermeldung(
+                "Fehler im XML-Export",
+                f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
+            )
+            self.iface.messageBar().pushMessage(
+                "Fehler im XML-Export",
+                f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
+                level=Qgis.Critical,
+            )
+        LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).cad()
         self.canv.draw()
 
 

@@ -129,7 +129,9 @@ WHEN d1 IS NULL AND d3 <= 0
     THEN abstpar <= (hoehob + hoehun) / 2.0 + 0.5
 ELSE FALSE END)
 ', 'Haltungen nach Typ', 'haltnam'),
-                        ('Zustandsklassen', 'Der Schadenskode hat mehr als 3 Zeichen', 'Fehler', 9, 'SELECT pk , ''Der Schadenskode hat mehr als 3 Zeichen'' AS bemerkung FROM Untersuchdat_haltung WHERE LENGTH(kuerzel) IS NOT 3', 'Untersuchdat_haltung', 'pk'),
+			('Zustandsklassen', 'Der Schadenskode hat mehr als 3 Zeichen', 'Fehler', 9, 'SELECT pk , ''Der Schadenskode hat mehr als 3 Zeichen'' AS bemerkung FROM Untersuchdat_haltung WHERE LENGTH(kuerzel) IS NOT 3', 'Untersuchdat_haltung', 'pk'),
+			('Zustandsklassen', 'Haltungsname doppelt', 'Fehler', 9, 'SELECT COUNT(*) AS "Count", pk , ''Haltungsname doppelt'' AS bemerkung from haltungen group by haltnam having count(*)>1 ', 'haltungen', 'pk'),
+			('Zustandsklassen', 'Schachtname doppelt', 'Fehler', 9, 'SELECT COUNT(*) AS "Count", pk , ''Haltungsname doppelt'' AS bemerkung from schaechte group by schnam having count(*)>1 ', 'schaechte', 'pk'),
 			('Zustandsklassen', 'Der Schadenskode hat mehr als 3 Zeichen', 'Fehler', 9, 'SELECT pk , ''Der Schadenskode hat mehr als 3 Zeichen'' AS bemerkung FROM Untersuchdat_schacht WHERE LENGTH(kuerzel) IS NOT 3', 'Untersuchdat_schacht', 'pk'),
                         ('Zustandsklassen', 'Fehlende Angabe der Streckenschadensnummer', 'Fehler', 9, 'SELECT pk , ''Fehlende Angabe der Streckenschadensnummer'' AS bemerkung FROM Untersuchdat_haltung WHERE streckenschaden IS NOT "not found" and streckenschaden_lfdnr IS 0', 'Untersuchdat_haltung', 'pk'),
                         ('Zustandsklassen', 'Fehlende Angabe des Streckenschadens', 'Fehler', 9, 'SELECT pk , ''Fehlende Angabe des Streckenschadens'' AS bemerkung FROM Untersuchdat_haltung WHERE (streckenschaden IS "not found" or streckenschaden IS NULL) and streckenschaden_lfdnr IS NOT 0', 'Untersuchdat_haltung', 'pk'), 
