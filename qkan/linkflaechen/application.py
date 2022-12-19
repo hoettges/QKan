@@ -35,6 +35,7 @@ from . import resources  # isort:skip
 
 logger = logging.getLogger("QKan.linkflaechen.application")
 
+
 class LinkFl(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)

@@ -8,7 +8,8 @@ logger = logging.getLogger("QKan.database.migrations")
 
 
 def run(dbcon: DBConnection) -> bool:
-    # Einleitungen aus Aussengebieten ----------------------------------------------------------------
+    """ Einleitungen aus Aussengebieten """
+
     sql = """
     CREATE TABLE IF NOT EXISTS aussengebiete (
         pk INTEGER PRIMARY KEY, 

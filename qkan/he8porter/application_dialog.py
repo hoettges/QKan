@@ -97,8 +97,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
 
-        self.default_dir = default_dir
-
         # Attach events
         self.pb_exportdb.clicked.connect(self.select_exportdb)
         self.pb_template.clicked.connect(self.select_template)
@@ -399,8 +397,6 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     ):
         # noinspection PyCallByClass,PyArgumentList
         super().__init__(default_dir, tr, parent)
-
-        self.default_dir = default_dir
 
         # Attach events
         self.pb_import.clicked.connect(self.select_import)

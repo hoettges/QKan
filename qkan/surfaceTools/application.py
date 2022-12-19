@@ -22,12 +22,12 @@
 
 from qgis.gui import QgisInterface
 
-from qkan import QKan
+from qkan import QKan, get_default_dir, list_selected_items
 from qkan.database.qkan_utils import get_database_QKan
 from qkan.plugin import QKanPlugin
 
 from .application_dialog import SurfaceToolDialog, VoronoiDialog
-from .surfaceTool import AccessAttr, FlaechenVerarbeitung
+from .surfaceTool import SurfaceTask
 
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
@@ -36,8 +36,11 @@ from . import resources  # isort:skip
 class SurfaceTools(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
-        self.surface_dlg = SurfaceToolDialog()
-        self.voronoi_dlg = VoronoiDialog()
+
+        self.iface = iface
+        default_dir = get_default_dir()
+        self.surface_dlg = SurfaceToolDialog(default_dir, tr=self.tr)
+        self.voronoi_dlg = VoronoiDialog(default_dir, tr=self.tr)
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
@@ -65,20 +68,9 @@ class SurfaceTools(QKanPlugin):
         # Fetch the currently loaded layers
         # Fetch the currently loaded layers
 
-        database_qkan, _ = get_database_QKan()
-        if not database_qkan:
-            self.log.error("database_qkan is undefined")
-            return
+        database_qkan, epsg = get_database_QKan()
 
-        self.surface_dlg.cb_haupt.clear()
-        self.surface_dlg.cb_geschnitten.clear()
-        obj = AccessAttr(database_qkan)
-        temp_list = obj.accessAttribute()
-        abflussparameter = list(set(temp_list))
-        for tempAttr in abflussparameter:
-            attr = str(tempAttr).lstrip("('").rstrip(",')")
-            self.surface_dlg.cb_haupt.addItem(attr)
-            self.surface_dlg.cb_geschnitten.addItem(attr)
+        self.surface_dlg.prepareDialog(database_qkan, epsg)
 
         # show the dialog
         self.surface_dlg.show()
@@ -88,22 +80,47 @@ class SurfaceTools(QKanPlugin):
         if result:
             schneiden = self.surface_dlg.cb_haupt.currentText()
             geschnitten = self.surface_dlg.cb_geschnitten.currentText()
-            QKan.config.database.qkan = str(database_qkan)
 
-            QKan.config.save()
+            self.log.debug(f'run_cut - Auswahl:\nschneiden: {schneiden}\ngeschnitten: {geschnitten}')
+
+            # QKan.config.save()
 
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            self.log.debug(
-                f"""QKan-Modul Aufruf
-                            FlaechenVerarbeitung
-                            """
-            )
+            self.log.debug(f"""QKan-Modul Aufruf SurfaceTask.run_cut """)
 
-            FlaechenVerarbeitung(str(database_qkan), schneiden, geschnitten)
-            del obj
+            run = SurfaceTask(self.iface, database_qkan, epsg)
+            run.run_cut(schneiden, geschnitten)
+            del run
+            self.iface.mapCanvas().refreshAllLayers()
 
     def run_voronoi(self) -> None:
         """Erzeugt Voronoi-Flächen zu ausgewählten Haltungen"""
-        pass
+
+        database_qkan, epsg = get_database_QKan()
+
+        self.log.debug(f'Modul {__name__}: database_qkan: {database_qkan}')
+
+        self.voronoi_dlg.prepareDialog(database_qkan, epsg)
+
+        # show the dialog
+        self.voronoi_dlg.show()
+        # Run the dialog event loop
+        result = self.voronoi_dlg.exec_()
+        # See if OK was pressed
+        if result:
+            # Start der Verarbeitung
+
+            liste_entwarten = list_selected_items(self.voronoi_dlg.lw_hal_entw)
+            self.log.debug(f"Modul {__name__}: liste_entwarten = {liste_entwarten}")
+
+            # Modulaufruf in Logdatei schreiben
+            self.log.debug(f"""QKan-Modul Aufruf SurfaceTask.run_voronoi """)
+
+            QKan.config.save()
+
+            run = SurfaceTask(self.iface, database_qkan, epsg)
+            run.run_voronoi(liste_entwarten)
+            del run
+            self.iface.mapCanvas().refreshAllLayers()

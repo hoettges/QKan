@@ -1,4 +1,3 @@
-import logging
 import os
 import shutil
 from pathlib import Path
@@ -21,7 +20,7 @@ from .application_dialog import ExportDialog, ImportDialog, ResultsDialog
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
 
-logger = logging.getLogger("QKan.he8.application")
+# logger = logging.getLogger("QKan.he8.application")
 
 
 class He8Porter(QKanPlugin):
@@ -30,6 +29,7 @@ class He8Porter(QKanPlugin):
 
         default_dir = get_default_dir()
         self.log.debug(f"He8Porter: default_dir: {default_dir}")
+
         self.export_dlg = ExportDialog(default_dir, tr=self.tr)
         self.import_dlg = ImportDialog(default_dir, tr=self.tr)
         self.results_dlg = ResultsDialog(default_dir, tr=self.tr)
@@ -166,7 +166,7 @@ class He8Porter(QKanPlugin):
         sql = f'ATTACH DATABASE "{QKan.config.he8.export_file}" AS he'
 
         if not self.db_qkan.sql(sql, "He8Porter.run_export_to_he8 Attach HE8"):
-            logger.error(
+            self.log.error(
                 f"Fehler in He8Porter._doexport(): Attach fehlgeschlagen: {QKan.config.he8.export_file}"
             )
             return False
@@ -299,7 +299,7 @@ class He8Porter(QKanPlugin):
         # Attach SQLite-Database with HE8 Data
         sql = f'ATTACH DATABASE "{QKan.config.he8.import_file}" AS he'
         if not db_qkan.sql(sql, "He8Porter.run_import_to_he8 Attach HE8"):
-            logger.error(
+            self.log.error(
                 f"Fehler in He8Porter._doimport(): Attach fehlgeschlagen: {QKan.config.he8.import_file}"
             )
             return False
@@ -378,6 +378,6 @@ class He8Porter(QKanPlugin):
             # Start der Verarbeitung
 
             # Modulaufruf in Logdatei schreiben
-            logger.debug(f"""QKan-Modul Aufruf importResults()""")
+            self.log.debug(f"""QKan-Modul Aufruf importResults()""")
 
             ResultsTask().run()

@@ -2,17 +2,15 @@
 
 """
 
-  Import from HE
+  Qgsadapt
   ==============
   
-  Aus einer Hystem-Extran-Datenbank im Firebird-Format werden Kanaldaten
-  in die QKan-Datenbank importiert. Dazu wird eine Projektdatei erstellt,
-  die verschiedene thematische Layer erzeugt, u.a. eine Klassifizierung
-  der Schachttypen.
+  Für ein geladenes Projekt wird eine andere Projektdatei (default: Projekt.qgs im Verzeichnis templates)
+  geladen und damit das aktuelle Projekt angepasst.
   
-  | Dateiname            : import_from_he.py
-  | Date                 : September 2016
-  | Copyright            : (C) 2016 by Joerg Hoettges
+  | Dateiname            : k_qgsadapt.py
+  | Date                 : November 2020
+  | Copyright            : (C) 2020 by Joerg Hoettges
   | Email                : hoettges@fh-aachen.de
   | git sha              : $Format:%H$
   
@@ -24,8 +22,8 @@
 """
 
 __author__ = "Joerg Hoettges"
-__date__ = "September 2016"
-__copyright__ = "(C) 2016, Joerg Hoettges"
+__date__ = "November 2020"
+__copyright__ = "(C) 2020, Joerg Hoettges"
 
 import logging
 import os
@@ -70,6 +68,8 @@ def qgsadapt(
     :returns:                   Success
     :type:                      Boolean
     """
+
+    iface = QKan.instance.iface
 
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten
@@ -299,12 +299,12 @@ def qgsadapt(
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
 
-    # iface.mainWindow().statusBar().clearMessage()
-    # iface.messageBar().pushMessage(
-    # "Information",
-    # "Projektdatei ist angepasst und muss neu geladen werden!",
-    # level=Qgis.Info,
-    # )
+    iface.mainWindow().statusBar().clearMessage()
+    iface.messageBar().pushMessage(
+    "Information",
+    "Projektdatei ist angepasst und muss neu geladen werden!",
+    level=Qgis.Info,
+    )
 
     # Importiertes Projekt laden
     # project = QgsProject.instance()

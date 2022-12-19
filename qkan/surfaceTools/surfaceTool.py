@@ -9,33 +9,38 @@ from typing import Any, List
 
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
+from qgis import processing
+from qgis.core import Qgis
+from qgis.PyQt.QtWidgets import QProgressBar
 
 logger = logging.getLogger("QKan.surfaceTools.surface_tools")
 
 
-class SurfaceTool:
+class SurfaceTask:
     def __init__(
-        self, database_qkan: str, epsg: int = 25832, dbtyp: str = "SpatiaLite"
+        self, iface, database_qkan: str, epsg: int = 25832, dbtyp: str = "SpatiaLite"
     ):
+        self.iface = iface
+        self.database_qkan = database_qkan
         self.epsg = epsg
         self.dbtyp = dbtyp
         # self.sqlobject = Path(sqlfile)
         """not sure if this is correct or needed"""
-        self.database_QKan = database_qkan
 
-        self.dbQK = DBConnection(
-            dbname=database_qkan, epsg=epsg
-        )  # Datenbankobjekt der QKan-Datenbank zum Schreiben
+        if self.database_qkan:
+            self.db_qkan: DBConnection = DBConnection(dbname=self.database_qkan)
+            if not self.db_qkan.connected:
+                logger.error(
+                    "Fehler in surfaceTools.SurfaceTask:\n"
+                    f"QKan-Datenbank {self.database_qkan} wurde nicht"
+                    " gefunden oder war nicht aktuell!\nAbbruch!"
+                )
+                return
+        else:
+            fehlermeldung("Fehler: Für diese Funktion muss ein Projekt geladen sein!")
+            return
 
-        self.connected = self.dbQK.connected
-
-        if not self.dbQK.connected:
-            fehlermeldung(
-                "Fehler in surface_tools:\n",
-                "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_qkan
-                ),
-            )
+        return
 
     def create_table(self) -> bool:
         sql = f"""
@@ -44,14 +49,14 @@ class SurfaceTool:
                 geom MULTIPOLYGON)
             """
 
-        if not self.dbQK.sql(sql, mute_logger=True):
-            del self.dbQK
+        if not self.db_qkan.sql(sql, mute_logger=True):
+            del self.db_qkan
             return False
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
         return True
 
-    def processing(self, schneiden: str, geschnitten: str) -> bool:
+    def cut_overlap(self, schneiden: str, geschnitten: str) -> bool:
         sql = f"""
             WITH fl_cut AS (
                 SELECT pk, geom AS geom FROM flaechen
@@ -77,11 +82,11 @@ class SurfaceTool:
             FROM fl_isect
             GROUP BY pk
             """
-        if not self.dbQK.sql(sql, mute_logger=True):
-            del self.dbQK
+        if not self.db_qkan.sql(sql, mute_logger=True):
+            del self.db_qkan
             return False
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
         return True
 
     def update(self) -> bool:
@@ -92,54 +97,202 @@ class SurfaceTool:
                 WHERE flaechen.pk = temp_flaechencut.pk)
                 WHERE flaechen.pk IN (SELECT pk FROM temp_flaechencut)
             """
-        if not self.dbQK.sql(sql, mute_logger=True):
-            del self.dbQK
+        if not self.db_qkan.sql(sql, mute_logger=True):
+            del self.db_qkan
             return False
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
         return True
 
+    def run_cut(self, schneiden: str, geschnitten: str) -> bool:
 
-class AccessAttr:
-    def __init__(
-        self, database_qkan: str, epsg: int = 25832, dbtyp: str = "SpatiaLite"
-    ):
-        self.epsg = epsg
-        self.dbtyp = dbtyp
-        self.database_QKan = database_qkan
+        if not self.db_qkan.connected:
+            return False
 
-        self.dbQK = DBConnection(
-            dbname=database_qkan, epsg=epsg
-        )  # Datenbankobjekt der QKan-Datenbank zum Schreiben
+        self.create_table()
+        self.cut_overlap(schneiden, geschnitten)
+        self.update()
 
-        self.connected = self.dbQK.connected
+        return True
 
-        if not self.dbQK.connected:
+    def run_voronoi(self, liste_entwarten: List[str]) -> bool:
+        """Erstellt Voronoi-Gebiete zu ausgewählten Haltungen"""
+
+        progress_bar = QProgressBar(self.iface.messageBar())
+        progress_bar.setRange(0, 100)
+        status_message = self.iface.messageBar().createMessage(
+            "",
+            "Haltungsflächen werden verschnitten. Bitte warten...",
+        )
+        status_message.layout().addWidget(progress_bar)
+        self.iface.messageBar().pushWidget(status_message, Qgis.Info, 10)
+        # progress_bar.reset()
+        progress_bar.setValue(0)
+
+        if not self.db_qkan.connected:
             fehlermeldung(
                 "Fehler in surface_tools:\n",
                 "QKan-Datenbank {} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                    database_qkan
+                    self.database_qkan
                 ),
             )
 
-    def accessAttribute(self) -> List[Any]:
-        if not self.dbQK.sql("SELECT abflussparameter FROM flaechen", mute_logger=True):
-            del self.dbQK
-            return []
+        sql = """WITH flrange AS
+            ( SELECT Extent(geom) AS geom FROM flaechen)
+            SELECT 
+              MbrMinX(geom) AS xmin,
+              MbrMaxX(geom) AS xmax,
+              MbrMinY(geom) AS ymin,
+              MbrMaxY(geom) AS ymax
+            FROM flrange"""
 
-        return self.dbQK.fetchall()
+        if not self.db_qkan.sql(sql, mute_logger=True):
+            del self.db_qkan
+            return False
 
+        data = self.db_qkan.fetchall()
+        xmin, xmax, ymin, ymax = data[0]
 
-def FlaechenVerarbeitung(database_qkan: str, schneiden: str, geschnitten: str) -> bool:
-    overlap = SurfaceTool(database_qkan, epsg=25832, dbtyp="SpatiaLite")
+        # Haltungslinien in schlanke Polygone umwandeln, da voronoi.skeleton nur Polygone verarbeitet
+        if liste_entwarten and len(liste_entwarten) > 0:
+            selection_entw = " AND entwart IN ('" + "', '".join(liste_entwarten) + "')"
+        else:
+            selection_entw = ""
 
-    if not overlap.connected:
-        return False
+        p_line2poly = processing.run(
+            "native:geometrybyexpression",
+            {
+                'INPUT': f'spatialite://dbname=\'{self.database_qkan}\' table="haltungen" (geom) sql=(haltungstyp IS NULL or haltungstyp = \'Haltung\'){selection_entw}',
+                'OUTPUT_GEOMETRY': 0,
+                'WITH_Z': False,
+                'WITH_M': False,
+                'EXPRESSION': '''make_polygon(
+                    make_line(
+                        start_point($geometry),
+                        make_point(
+                            x(centroid($geometry))-(y(end_point($geometry))-y(start_point($geometry)))*0.01,
+                            y(centroid($geometry))+(x(end_point($geometry))-x(start_point($geometry)))*0.01
+                        ),
+                        end_point($geometry),
+                        make_point(
+                            x(centroid($geometry))+(y(end_point($geometry))-y(start_point($geometry)))*0.01,
+                            y(centroid($geometry))-(x(end_point($geometry))-x(start_point($geometry)))*0.01
+                        )
+                    )
+                )''',
+                'OUTPUT': 'TEMPORARY_OUTPUT'
+            }
+        )
+        # layer=p_line2poly['OUTPUT']
+        # QgsProject.instance().addMapLayer(layer)
 
-    overlap.create_table()
-    overlap.processing(schneiden, geschnitten)
-    overlap.update()
+        progress_bar.setValue(20)
 
-    del overlap
+        # Voronoi-Gebiete erzeugen
+        p_voronoi = processing.run(
+            "grass7:v.voronoi.skeleton",
+            {'input': p_line2poly['OUTPUT'],
+             'smoothness': 0.01,
+             'thin': -1,
+             '-a': True,
+             '-s': False,
+             '-l': False,
+             '-t': False,
+             'output': 'TEMPORARY_OUTPUT',
+             'GRASS_REGION_PARAMETER': f'{xmin},{xmax},{ymin},{ymax} [EPSG:{self.epsg}]',
+             'GRASS_SNAP_TOLERANCE_PARAMETER': -1,
+             'GRASS_MIN_AREA_PARAMETER': 0.0001,
+             'GRASS_OUTPUT_TYPE_PARAMETER': 0,
+             'GRASS_VECTOR_DSCO': '',
+             'GRASS_VECTOR_LCO': '',
+             'GRASS_VECTOR_EXPORT_NOCAT': False
+             }
+        )
+        # layer = QgsVectorLayer(p_voronoi['output'], "skeleton", "ogr")
+        # QgsProject.instance().addMapLayer(layer)
 
-    return True
+        progress_bar.setValue(50)
+
+        p_savedb = processing.run(
+            "qgis:importintospatialite",
+            {'INPUT': p_voronoi['output'],
+             'DATABASE': self.database_qkan,
+             'TABLENAME': 'voronoi',
+             'PRIMARY_KEY': '',
+             'GEOMETRY_COLUMN': 'geom',
+             'ENCODING': 'UTF-8',
+             'OVERWRITE': True,
+             'CREATEINDEX': True,
+             'LOWERCASE_NAMES': True,
+             'DROP_STRING_LENGTH': True,
+             'FORCE_SINGLEPART': False
+             }
+        )
+
+        progress_bar.setValue(70)
+
+        sql = """CREATE TABLE IF NOT EXISTS tezgsel (pk INTEGER PRIMARY KEY)"""
+        if not self.db_qkan.sql(sql, stmt_category="Voronoi_1"):
+            del self.db_qkan
+            return False
+
+        self.db_qkan.commit()
+
+        progress_bar.setValue(80)
+
+        sql = """DELETE FROM tezgsel"""
+        if not self.db_qkan.sql(sql, stmt_category="Voronoi_2"):
+            del self.db_qkan
+            return False
+
+        self.db_qkan.commit()
+
+        progress_bar.setValue(85)
+
+        sql = """INSERT INTO tezgsel (pk)
+                    SELECT t.pk
+                    FROM tezg AS t
+                    INNER JOIN (SELECT ST_Buffer(geom, -0.05) AS geom FROM flaechen WHERE aufteilen) AS f
+                    ON ST_Intersects(t.geom, f.geom)
+                    GROUP BY t.pk"""
+        if not self.db_qkan.sql(sql, stmt_category="Voronoi_3"):
+            del self.db_qkan
+            return False
+
+        self.db_qkan.commit()
+
+        progress_bar.setValue(90)
+
+        sql = """INSERT INTO tezg (
+                        flnam,
+                        haltnam, schnam, neigkl, neigung,
+                        befgrad, schwerpunktlaufzeit, regenschreiber,
+                        teilgebiet, abflussparameter, kommentar, createdat,
+                        geom)
+                    SELECT
+                        substr(t.flnam ||'-' || CAST(t.pk AS TEXT), 1, 30) AS flnam,
+                        t.haltnam, t.schnam, t.neigkl, t.neigung,
+                        t.befgrad, t.schwerpunktlaufzeit, t.regenschreiber,
+                        t.teilgebiet, t.abflussparameter, t.kommentar, t.createdat,
+                        ST_Intersection(t.geom, v.geom) AS geom
+                    FROM tezg AS t
+                    INNER JOIN tezgsel AS s  ON t.pk=s.pk
+                    INNER JOIN voronoi AS v ON ST_Intersects(t.geom, v.geom)"""
+        if not self.db_qkan.sql(sql, stmt_category="Voronoi_4"):
+            del self.db_qkan
+            return False
+
+        self.db_qkan.commit()
+
+        progress_bar.setValue(95)
+
+        sql = """DELETE FROM tezg WHERE pk IN (SELECT pk FROM tezgsel)"""
+        if not self.db_qkan.sql(sql, stmt_category="Voronoi_5"):
+            del self.db_qkan
+            return False
+
+        self.db_qkan.commit()
+
+        progress_bar.setValue(100)
+        status_message.setText("Fertig!")
+        status_message.setLevel(Qgis.Success)

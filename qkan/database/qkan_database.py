@@ -22,8 +22,8 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.2.31"  # Version der QKan-Datenbank
-__qgsVersion__ = "3.2.32"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = "3.2.32"  # Version der QKan-Datenbank
+__qgsVersion__ = "3.2.33"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -1081,9 +1081,16 @@ def createdbtables(
     try:
 
         daten = [
-            "'MW', 'Mischwasser', NULL, 0, 0",
-            "'RW', 'Regenwasser', NULL, 1, 2",
-            "'SW', 'Schmutzwasser', NULL, 2, 1",
+            "'MW', 'Mischwasser', 'Mischwasser', 0, 0",
+            "'RW', 'Regenwasser', 'Regenwasser', 1, 2",
+            "'SW', 'Schmutzwasser', 'Schmutzwasser', 2, 1",
+            "'MD', 'MW Druck', 'Mischwasserdruckleitung', 0, 0",
+            "'RD', 'SW Druck', 'Schmutzwasserdruckleitung', 0, 0",
+            "'SD', 'RW Druck', 'Regenwasserdruckleitung', 0, 0",
+            "'GR', 'Rinnen/Gräben', 'Rinnen/Gräben', 0, 0",
+            "'SG', 'stillgelegt', 'stillgelegt', 0, 0",
+            "'MN', 'MW nicht angeschlossen', 'ohne Mischwasseranschlüsse', 0, 0",
+            "'RN', 'RW nicht angeschlossen', 'ohne Regenwasseranschlüsse', 1, 2",
         ]
 
         for ds in daten:

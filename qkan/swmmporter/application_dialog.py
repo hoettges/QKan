@@ -1,6 +1,5 @@
 import logging
 import os
-from pathlib import Path
 from typing import Callable, List, Optional
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
@@ -17,8 +16,6 @@ from qgis.PyQt.QtWidgets import (
     QRadioButton,
     QWidget,
 )
-
-from qgis.utils import pluginDirectory
 
 from qkan import QKan, enums, list_selected_items
 from qkan.database.dbfunc import DBConnection
