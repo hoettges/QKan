@@ -647,7 +647,7 @@ class DBConnection:
         elif tabnam == 'tezg':
             parlis = ['flnam', 'regenschreiber', 'schnam', 'befgrad', 'neigung',
                        'createdat', 'haltnam', 'neigkl', 'schwerpunktlaufzeit', 'teilgebiet', 'abflussparameter',
-                      'kommentar']
+                      'kommentar', 'geom']
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
@@ -655,12 +655,33 @@ class DBConnection:
                     INSERT INTO tezg
                       (flnam, regenschreiber, schnam, befgrad, neigung, 
                         createdat, haltnam, neigkl, schwerpunktlaufzeit, teilgebiet, abflussparameter,
-                      kommentar)
+                      kommentar, geom)
                     VALUES (
                     :flnam, :regenschreiber, :schnam, :befgrad, :neigung, 
                         coalesce(:createdat, CURRENT_TIMESTAMP), :haltnam, :neigkl, :schwerpunktlaufzeit, :teilgebiet, 
-                        :abflussparameter, :kommentar
+                        :abflussparameter, :kommentar,
+                    GeomFromText(:geom, :epsg)
                     );"""
+        elif tabnam == 'teilgebiete':
+            parlis = ['tgnam', 'kommentar', 'createdat', 'geom']
+            for el in parlis:
+                if not parameters.get(el, None):
+                    parameters[el] = None
+            sql = """
+                INSERT INTO teilgebiete
+                  (tgnam, kommentar, createdat, geom)
+                VALUES (
+                    :tgnam, :kommentar, 
+                    coalesce(:createdat, CURRENT_TIMESTAMP),
+                    GeomFromText(:geom, :epsg)
+                );"""
+        else:
+            warnung(
+                "dbfunc.DBConnection.insertdata:",
+                f"Daten für diesen Layer {tabnam} können (noch) nicht " 
+                "über die QKan-Clipboardfunktion eingefügt werden",
+            )
+            return False
 
         result = self.sql(sql, stmt_category, parameters, mute_logger,
                           transaction, ignore)
