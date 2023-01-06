@@ -1,6 +1,8 @@
 Import von Flächendaten
 =======================
 
+Eine Videoanleitung zum Import von Flächendaten ist `hier <https://fh-aachen.sciebo.de/s/fWvLMPr4f9A6JoZ>`_ zu finden.
+
 Für die Abflussberechnung mit einem Simulationsprogramm ist es notwendig, das Einzugsgebiet in Flächen mit einheitlichen 
 Abflussparametern/Flächendaten zu unterteilen. Dafür können Flächendaten (für NRW) aus dem INSPIRE-Portal_ genutzt werden. 
 Um diese Daten laden zu können, wird das Plug-in „WFS 2.0 Client“ benötigt, das unter „Erweiterungen“ installiert werden kann. 
@@ -47,13 +49,10 @@ Die Objekte werden dann über → Bearbeiten → Objekte einfügen → Alle einf
 
 Für die Abflussberechnung ist es nun erforderlich, dass die Attributtabelle ergänzt wird. Dafür sollte die Tabelle wie folgt ergänzt werden:
 
-- **Name:** beliebiger eindeutiger Name (sinnvoll ist hier eine automatisch Bezeichnung durch einen Code, z.B.:  
-``'fl_'  ||  lpad(  format_number( pk),4,0))``
+- **Name:** beliebiger eindeutiger Name (sinnvoll ist hier eine automatisch Bezeichnung durch einen Code, z.B.: ``'fl_'  ||  lpad(  format_number( pk),4,0))``
 - **Teilgebiet:** Name/Nummer des zu bearbeitenden Teilgebiets
 - **Regenschreiber:** Name/Nummer des Regenschreibers der zur Berechnung verwendet wird
-- **Abflussparameter:** ```Dach``` (Erscheint der Name in Klammern () in der Tabelle muss die Bezeichnung in der Abflussparameter-Tabelle von 
-HYSTEM-EXTRAN angepasst werden. Diese liegt auf dem Layer → Referenztabellen → Abflussparameter HE. In diesem Fall muss die Bezeichnung 
-„Gebäude“ in „Dach“ geändert werden:
+- **Abflussparameter:** ```Dach``` (Erscheint der Name in Klammern () in der Tabelle muss die Bezeichnung in der Abflussparameter-Tabelle von HYSTEM-EXTRAN angepasst werden. Diese liegt auf dem Layer → Referenztabellen → Abflussparameter HE. In diesem Fall muss die Bezeichnung „Gebäude“ in „Dach“ geändert werden:
 
 .. image:: ./QKan_Bilder/Import_von_flaechendaten/abflussparameter_HE_gebaeude.png
 
@@ -94,8 +93,7 @@ Analog zu den Gebäude-Daten muss auch hier die Attributtabelle angepasst werden
 - **Name:** beliebiger eindeutiger Name (sinnvoll ist hier eine automatisch Bezeichnung durch einen Code, z.B.:  ``'hf_'  ||  lpad(  format_number( pk),4,0))``
 - **Teilgebiet:** Name/Nummer des zu bearbeitenden Teilgebiets
 - **Regenschreiber:** Name/Nummer des Regenschreibers der zur Berechnung verwendet wird
-- **Abflussparameter:** Um Fehler zu Vermeiden kann hier sofort der Name für unbefestigte Flächen ``$Default_Unb`` aus der Attributtabelle 
-„Abflussparameter HE“ kopiert und eingefügt werden.  
+- **Abflussparameter:** Um Fehler zu Vermeiden kann hier sofort der Name für unbefestigte Flächen ``$Default_Unb`` aus der Attributtabelle „Abflussparameter HE“ kopiert und eingefügt werden.  
 
 Die Änderungen müssen gespeichert werden und der Bearbeitungsmodus kann deaktiviert werden. 
 Die Attributtabelle sollten nun ungefähr wie unten dargestellt aussehen. 
@@ -130,8 +128,7 @@ damit nicht auch die schon vorhandenen Gebäudeflächen geändert werden. Die Ta
 - **Name:** beliebiger eindeutiger Name (sinnvoll ist hier eine automatisch Bezeichnung durch einen Code, z.B.:  ``'fl_'  ||  lpad(  format_number( pk),4,0))``
 - **Teilgebiet:** Name/Nummer des zu bearbeitenden Teilgebiets
 - **Regenschreiber:** Name/Nummer des Regenschreibers der zur Berechnung verwendet wird
-- **Abflussparameter:** `Strasse` (Erscheint der Name in Klammern () in der Tabelle muss die Bezeichnung in der Abflussparameter-Tabelle 
-von HYSTEM-EXTRAN angepasst werden. In diesem Fall muss die Bezeichnung „Straße“ in „Strasse“ umgeändert werden.)  
+- **Abflussparameter:** "`Strasse`" (Erscheint der Name in Klammern () in der Tabelle muss die Bezeichnung in der Abflussparameter-Tabelle von HYSTEM-EXTRAN angepasst werden. In diesem Fall muss die Bezeichnung „Straße“ in „Strasse“ umgeändert werden.)  
 
 Alle nötigen Flächendaten sind nun importiert und vorbereitet. Als nächstes sollten die unbefestigten Flächen erzeugt werden.
 

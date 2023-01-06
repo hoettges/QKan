@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>1. Allgemeine Funktionen &mdash; QKan 3.2.32 Dokumentation</title>
+  <title>1. Workflow: Von einfachen Tabellendaten zur Simulation &mdash; QKan 3.2.33 Dokumentation</title>
   
 
   
@@ -102,9 +102,9 @@
 <li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html#qkan-he7-plugin-fur-hystem-extran-7-x">2. QKan-HE7 Plugin für HYSTEM-EXTRAN 7.x</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Allgemeine Funktionen</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen">2. Übernahme von Kanaldaten aus Excel- oder ASCII-Tabellen</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#anlegen-eines-neuen-qkan-projektes">3. Anlegen eines neuen QKan-Projektes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Workflow: Von einfachen Tabellendaten zur Simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#anlegen-eines-neuen-qkan-projektes">2. Anlegen eines neuen QKan-Projektes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen">3. Übernahme von Kanaldaten aus Excel- oder ASCII-Tabellen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#vorbereitung-eines-einfachen-projektes-fur-den-hystem-extran-export">4. Vorbereitung eines einfachen Projektes für den HYSTEM-EXTRAN-Export</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#ubertragen-einer-anderen-projektdatei-auf-eine-qkan-datenbank">5. Übertragen einer anderen Projektdatei auf eine QKan-Datenbank</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#anzeigen-von-berechnungsergebnissen-aus-hystem-extran-8-x">6. Anzeigen von Berechnungsergebnissen aus HYSTEM-EXTRAN 8.x</a></li>
@@ -118,8 +118,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">1. Verarbeitung von befestigten und unbefestigten Flächen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html#vorgehen-bei-der-flachenzuordnung">2. Vorgehen bei der Flächenzuordnung</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">3. QKan-Formulare</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_import_flaechendaten.html">4. Import von Flächendaten</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_erstellung_unbef_fl.html">5. Erzeugung unbefestigter Flächen</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">1. Allgemeines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_import_flaechendaten.html">2. Import von Flächendaten</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_erstellung_unbef_fl.html">3. Erzeugung unbefestigter Flächen</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">1. QKan-Tabellen</a></li>
@@ -171,7 +174,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li><span class="section-number">1. </span>Allgemeine Funktionen</li>
+      <li><span class="section-number">1. </span>Workflow: Von einfachen Tabellendaten zur Simulation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -190,66 +193,88 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="allgemeine-funktionen">
-<h1><span class="section-number">1. </span>Allgemeine Funktionen<a class="headerlink" href="#allgemeine-funktionen" title="Link zu dieser Überschrift">¶</a></h1>
-<p id="index-0">Eine Anleitung zum Erstellen von Flächenanbindungen</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/Z0a5sIPUd0EWrTD">Video_QKan_Flaechenverknuepfung</a></p></li>
+  <section id="workflow-von-einfachen-tabellendaten-zur-simulation">
+<h1><span class="section-number">1. </span>Workflow: Von einfachen Tabellendaten zur Simulation<a class="headerlink" href="#workflow-von-einfachen-tabellendaten-zur-simulation" title="Link zu dieser Überschrift">¶</a></h1>
+<p id="index-0">An einem Beispielprojekt wird der Workflow beginnend mit dem Datenimport über die Datenaufbereitung bis zum Export in ein
+Simulationsprogramm demonstriert und erläutert.</p>
+<p><a class="reference external" href="https://fh-aachen.sciebo.de/s/Bvbz2c9cbCYDkaG">Excel-Datei mit Vorlagedaten (Anzeige und Download)</a></p>
+<dl class="simple">
+<dt>Zu den Videos:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/gCEqM9ZDOgmyf6s">Daten per Clipboard übernehmen</a></p></li>
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/fWvLMPr4f9A6JoZ">Flächendaten zu Gebäuden, Grundstücken und Straßen importieren</a></p></li>
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/DPMnlKBMS9jjqTC">Flächen vorbereiten</a></p></li>
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/cu4krqOti0rf8Vq">Flächenaufteilung vorbereiten</a></p></li>
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/Z0a5sIPUd0EWrTD">Flächen mit Haltungen verknüpfen</a></p></li>
 </ul>
-</section>
-<section id="ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen">
-<h1><span class="section-number">2. </span>Übernahme von Kanaldaten aus Excel- oder ASCII-Tabellen<a class="headerlink" href="#ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen" title="Link zu dieser Überschrift">¶</a></h1>
-<p id="index-1">Eine Anleitung zum Einfügen von Kanaldaten aus Tabellendaten</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/J1MC92ShnQWzUtD">Video_QKan_Clipboard</a></p></li>
-</ul>
+</dd>
+</dl>
 </section>
 <section id="anlegen-eines-neuen-qkan-projektes">
-<h1><span class="section-number">3. </span>Anlegen eines neuen QKan-Projektes<a class="headerlink" href="#anlegen-eines-neuen-qkan-projektes" title="Link zu dieser Überschrift">¶</a></h1>
-<p id="index-2">Eine Videoanleitung zum Anlegen eines neuen QKan-Projektes aus einer bestehenden HYSTEM-EXTRAN-Datenbank und zum
+<h1><span class="section-number">2. </span>Anlegen eines neuen QKan-Projektes<a class="headerlink" href="#anlegen-eines-neuen-qkan-projektes" title="Link zu dieser Überschrift">¶</a></h1>
+<p id="index-1">Eine Videoanleitung zum Anlegen eines neuen QKan-Projektes aus einer bestehenden HYSTEM-EXTRAN-Datenbank und zum
 anschließenden Einbinden von Flächendaten finden Sie hier:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/PK3WwcNaaGJJQVi">Video_QKan_Kanaldatenflaechen</a></p></li>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/PK3WwcNaaGJJQVi">Video: Neues QKan-Projekt erstellen</a></p></li>
 </ul>
+</div></blockquote>
+</section>
+<section id="ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen">
+<h1><span class="section-number">3. </span>Übernahme von Kanaldaten aus Excel- oder ASCII-Tabellen<a class="headerlink" href="#ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen" title="Link zu dieser Überschrift">¶</a></h1>
+<dl class="simple" id="index-2">
+<dt>Eine Anleitung zum Einfügen von Kanaldaten aus Tabellendaten</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/J1MC92ShnQWzUtD">Video: Daten aus dem Clipboard einfügen</a></p></li>
+</ul>
+</dd>
+</dl>
 </section>
 <section id="vorbereitung-eines-einfachen-projektes-fur-den-hystem-extran-export">
 <h1><span class="section-number">4. </span>Vorbereitung eines einfachen Projektes für den HYSTEM-EXTRAN-Export<a class="headerlink" href="#vorbereitung-eines-einfachen-projektes-fur-den-hystem-extran-export" title="Link zu dieser Überschrift">¶</a></h1>
 <p id="index-3">In der Videoanleitung wird an einem einfachen Beispiel die Datenvorbereitung für einen Export
 nach HYSTEM-EXTRAN 8.4 gezeigt. In diesem Projekt wird auf die Verwendung von Haltungsflächen
 verzichtet.</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/zoSzm5br6fmsJnj">Video_QKan_Vorbereitung_HE8-Export</a></p></li>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/zoSzm5br6fmsJnj">Video: QKan Vorbereitung HE8-Export</a></p></li>
 </ul>
+</div></blockquote>
 </section>
 <section id="ubertragen-einer-anderen-projektdatei-auf-eine-qkan-datenbank">
 <h1><span class="section-number">5. </span>Übertragen einer anderen Projektdatei auf eine QKan-Datenbank<a class="headerlink" href="#ubertragen-einer-anderen-projektdatei-auf-eine-qkan-datenbank" title="Link zu dieser Überschrift">¶</a></h1>
-<p id="index-4">Eine Videoanleitung, wie für eine bestehende QKan-Kanaldatenbank eine Vorlage-Projektdatei geladen werden kann:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/JOjxXdF72eLrJsw">Video_QKan_Projekt_laden</a></p></li>
+<dl class="simple" id="index-4">
+<dt>Eine Videoanleitung, wie für eine bestehende QKan-Kanaldatenbank eine Vorlage-Projektdatei geladen werden kann:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/JOjxXdF72eLrJsw">Video: QKan Projekt laden</a></p></li>
 </ul>
+</dd>
+</dl>
 </section>
 <section id="anzeigen-von-berechnungsergebnissen-aus-hystem-extran-8-x">
 <span id="index-5"></span><h1><span class="section-number">6. </span>Anzeigen von Berechnungsergebnissen aus HYSTEM-EXTRAN 8.x<a class="headerlink" href="#anzeigen-von-berechnungsergebnissen-aus-hystem-extran-8-x" title="Link zu dieser Überschrift">¶</a></h1>
-<p>Eine Videoanleitung, wie Ergebnisdaten als Ganglinien und als animierte Längsschnitte angezeigt werden können:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/mbWT9CwP2ljEwCW">Laengsschnitte</a></p></li>
+<dl class="simple">
+<dt>Eine Videoanleitung, wie Ergebnisdaten als Ganglinien und als animierte Längsschnitte angezeigt werden können:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/mbWT9CwP2ljEwCW">Video: Anzeige von Längsschnitten zu Berechnungsergebnissen</a></p></li>
 </ul>
+</dd>
+</dl>
 </section>
 <section id="einfugen-eines-zeichnungsrahmens-aus-einer-mit-autocad-erstellten-vorlage">
 <span id="index-6"></span><h1><span class="section-number">7. </span>Einfügen eines Zeichnungsrahmens aus einer mit Autocad erstellten Vorlage<a class="headerlink" href="#einfugen-eines-zeichnungsrahmens-aus-einer-mit-autocad-erstellten-vorlage" title="Link zu dieser Überschrift">¶</a></h1>
 <p>Eine Videoanleitung, wie ein mit AutoCAD erstellter Zeichnungsrahmen in ein QGIS-Layout eingefügt wird,
 finden Sie hier:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/pJZayVce4VQMiFl">QGISZeichnungsrahmen</a></p></li>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/pJZayVce4VQMiFl">Video: Einfügen eines Zeichnungsrahmens in QGIS</a></p></li>
 </ul>
+</div></blockquote>
 </section>
 <section id="import-eines-kanal-projektes-nach-qkan">
 <span id="index-7"></span><h1><span class="section-number">8. </span>Import eines Kanal++ Projektes nach QKan<a class="headerlink" href="#import-eines-kanal-projektes-nach-qkan" title="Link zu dieser Überschrift">¶</a></h1>
-<p>Eine Videoanleitung, wie ein Kanal++ Projekt nach QKan übertragen werden kann.</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/1VwlghfBHcHZWRi">Video_Kanalpp_nach_QKan_1</a></p></li>
+<dl class="simple">
+<dt>Eine Videoanleitung, wie ein Kanal++ Projekt nach QKan übertragen werden kann, finden Sie hier:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://fh-aachen.sciebo.de/s/1VwlghfBHcHZWRi">Video: Export auf Kanal++ nach QKan</a></p></li>
 </ul>
-<p>Für diese Anleitung werden zwei SQL-Anweisungen benötigt. Diese können Sie hier kopieren:</p>
+</dd>
+</dl>
 </section>
 
 

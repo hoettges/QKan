@@ -35,6 +35,7 @@ Starten Sie die Installation, akzeptieren das Lizenzabkommen und bestätigen die
 
 Es handelt sich um Beispieldaten, die für die Nutzung von QKan nicht benötigt werden. Klicken Sie anschließend auf "Installieren", um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.
 
+.. _QKan_plugins_fuer_QGIS
 QKan Plugins für QGIS
 ---------------------
 

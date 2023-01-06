@@ -4,7 +4,7 @@
     contain the root `toctree` directive.
 
 
-QKan - Kanaldaten mit QGIS
+Kanaldaten mit QGIS
 ==========================
 
 .. toctree::
@@ -14,7 +14,7 @@ QKan - Kanaldaten mit QGIS
     Qkan_allgemein
 
 
-QKan - Installation
+Installation
 ===================
 
 .. toctree::
@@ -34,7 +34,7 @@ Videoanleitungen
     Qkan_Videoanleitungen
 
 
-QKan - Datenaustausch
+Datenaustausch
 =====================
 
 .. toctree::
@@ -44,7 +44,7 @@ QKan - Datenaustausch
     Qkan_Datenaustausch
 
 
-QKan - Funktionen
+Funktionen
 =================
 
 .. toctree::
@@ -53,10 +53,22 @@ QKan - Funktionen
 
     Qkan_flaechen
     Qkan_Formulare
+
+
+Beispielprojekt "Workflow"
+==========================
+
+.. toctree::
+    :maxdepth: 2
+    :numbered:
+
+    Qkan_workflow
     Qkan_import_flaechendaten
     Qkan_erstellung_unbef_fl
+    Qkan_flaechen_vorbereiten
 
-QKan - Tabellen
+
+Tabellen
 ===============
 
 .. toctree::

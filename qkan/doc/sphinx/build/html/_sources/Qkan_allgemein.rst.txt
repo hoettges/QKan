@@ -1,7 +1,15 @@
 Allgemeines
 ===========
 
-QKan baut auf QGIS 3 auf und besteht aus einer Vielzahl von Plugins, die eine Palette von Funktionen zur Verarbeitung von Kanaldaten umfassen. 
+QKan baut auf QGIS ab Version 3.16 auf und besteht aus einer Vielzahl von Plugins, die eine Palette von Funktionen zur Verarbeitung von Kanaldaten umfassen. 
+
+Dabei wurden folgende Arbeitsschwerpunkte besonders berücksichtigt: 
+
+ - Datenimport von Kanalnetzdaten aus Tabellen und einer Vielzahl von Austauschformaten und Darstellung in QGIS. 
+ - Aufbereitung für die Nutzung in Simulationsprogrammen
+ - Weitergabe eines vollständigen Kanalkatasters an Nutzer, die über keine Lizenz eines Simulationsprogramms verfügen
+ - Ergebnisdarstellung
+ - Darstellung von Kanalzustandsdaten und deren Auswertung nach ISYBAU oder DWA-Richtlinie
 
 Ein besonderer Schwerpunkt ist die Verarbeitung der befestigten und unbefestigten Flächen. QKan enthält eine Funktion zur automatisierten 
 Zuordnung dieser Flächen zu den Haltungen, die optional beim Export in das Simulationsprogramm mit Haltungflächen verschnitten werden. 
@@ -9,20 +17,21 @@ Dabei ist es sowohl möglich, die Flächenzuordnung interaktiv für kleine Teilg
 
 Langfristig soll QKan eine Anbindung an die in Deutschland weit verbreiteten hydrodynamischen Simulationsprogramme bekommen. Bereits realisiert sind: 
 
-    - Kanal++/DYNA
-    - HYSTEM-EXTRAN 7.8 und 7.9 (setzt zusätzliche Installationen voraus)
-    - HYSTEM-EXTRAN 8.x
-    - MIKE+
+ - Kanal++/DYNA
+ - HYSTEM-EXTRAN 7.8 und 7.9 (setzt zusätzliche Installationen voraus)
+ - HYSTEM-EXTRAN 8.x
+ - MIKE+ (bisher nur Import für ausgewählte Datentypen)
+ - SWMM
 
 Grundsätzlich enthält QKan die Möglichkeit, Daten über das Clipboard in alle QKan-Tabellen einzufügen. Dabei werden automatisch grafische Objekte (Schächte, Haltungen) erzeugt. 
 
 Außerdem bestehen mit den Grundfunktionen von QGIS verschiedene Möglichkeiten des Datenim- und Exports:
 
-    - Text (ASCII)
-    - CSV
-    - Excel
-    - MS-Access-Datenbanken
-    - (fast) beliebige OGC-konforme Geodaten
+ - Text (ASCII)
+ - CSV
+ - Excel
+ - MS-Access-Datenbanken
+ - (fast) beliebige OGC-konforme Geodaten
 
 Wesentlicher Bestandteil von QKan ist eine Datenstruktur, die einen gemeinsamen Nenner der verschiedenen in Deutschland eingesetzten Programme darstellt. Das bedeutet insbesondere, dass die sogenannten "Sonderbauwerke", also Speicher, Pumpen, Wehre, Drosseln, Auslässe etc. nur mit den allgemeinen Daten in QKan verwaltet werden, programmspezifische Attribute jedoch in den Daten des jeweiligen Simulationsprogramms verwaltet werden müssen. 
 
@@ -40,10 +49,10 @@ Es steht auf der Plattform GITHUB zum Download zur Verfügung (siehe Installatio
 Die Entwicklung wurde durch das Land NRW im Rahmen der Förderprogramme "Mittelstand.Innovativ! - Innovationsgutschein F+E" (1)
 und "Mittelstand Innovativ & Digital (MID) – Teil MID-Digitalisierung" (2) sowie durch folgende Ingenieurbüros unterstützt: 
 
- - Ingenieurbüro Reinhard Beck GmbH (1)
- - blue-ing. GmbH (1)
- - Fischer Teamplan Ingenieurbüro GmbH (1)
- - Ingenieurgesellschaft Dr. Ing. Nacken mbH (1)
- - ATD Ingenieurgesellschaft mbH (2)
- - Tuttahs & Meyer Ing.-GmbH (2)
- - Ingenieurbüro Achten und Jansen GmbH (2)
+ - `blue-ing. GmbH, Düsseldorf (1, 2) <http://www.blue-ing.de/>`_
+ - Ingenieurbüro Reinhard Beck GmbH, Wuppertal (1)
+ - `Fischer Teamplan Ingenieurbüro GmbH, Erftstadt (1) <https://www.fischer-teamplan.de/>`_
+ - `Ingenieurgesellschaft Dr. Ing. Nacken mbH, Aachen (1) <https://www.nacken-ingenieure.de/>`_
+ - `ATD Ingenieurgesellschaft mbH, Aachen (2) <https://www.atdgmbh.de/>`_
+ - `Tuttahs & Meyer Ing.-GmbH, Aachen (2) <https://tuttahs-meyer.de/>`_
+ - `Ingenieurbüro Achten und Jansen GmbH, Aachen (2) <https://www.achten-jansen.de/>`_

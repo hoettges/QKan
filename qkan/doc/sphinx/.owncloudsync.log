@@ -1,0 +1,521 @@
+Log for:C:/FHAC/hoettges/HiWis/Kimmich, Friederike/QKan_Doku_Workflow/Doku_korrigiert_und_mit_build_erzeugt/
+# timestamp | duration | file | instruction | dir | modtime | etag | size | fileId | status | errorString | http result code | other size | other modtime | X-Request-ID
+#=#=#=# Syncrun started 2022-12-28T08:49:14Z
+#=#=#=#=# Propagation starts 2022-12-28T08:49:17Z (last step: 3131 msec , total: 3131 msec) 
+#=#=#=# Syncrun finished 2022-12-28T08:49:18Z (last step: 1088 msec , total: 4220 msec) 
+#=#=#=# Syncrun started 2022-12-28T08:49:22Z
+#=#=#=#=# Propagation starts 2022-12-28T08:49:22Z (last step: 333 msec , total: 333 msec) 
+#=#=#=# Syncrun finished 2022-12-28T08:49:22Z (last step: 8 msec , total: 342 msec) 
+#=#=#=# Syncrun started 2022-12-28T08:50:34Z
+#=#=#=#=# Propagation starts 2022-12-28T08:50:34Z (last step: 418 msec , total: 418 msec) 
+#=#=#=# Syncrun finished 2022-12-28T08:50:34Z (last step: 8 msec , total: 426 msec) 
+#=#=#=# Syncrun started 2022-12-28T08:59:26Z
+#=#=#=#=# Propagation starts 2022-12-28T08:59:26Z (last step: 393 msec , total: 393 msec) 
+2022-12-28T08:59:27Z | source/Qkan_import_flaechendaten.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Up | | 1664538932 | 104248c912aeb8fda14ddffdde00533d | 9977 | 397407759oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 9977 | 1664538932 | add4dd06-e894-466a-a2f2-b2888bc87ef4 | 
+2022-12-28T08:59:27Z | source/index.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Up | | 1659159979 | 5934fa9ec929a113983cfa4e1a6e9af0 | 1067 | 397407768oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 1067 | 1659159979 | 52b9510d-725f-4dc1-b553-e1861ce5860a | 
+2022-12-28T08:59:27Z | source/conf.py.bak | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Up | | 1660138587 | 14d07e59d9dfe0f07352f5490a409e4f | 5589 | 397407765oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 5589 | 1660138587 | 0f828cfb-6f8f-4c81-bc0c-14bf83b174dc | 
+#=#=#=# Syncrun finished 2022-12-28T08:59:27Z (last step: 1147 msec , total: 1541 msec) 
+#=#=#=# Syncrun started 2022-12-28T09:00:04Z
+#=#=#=#=# Propagation starts 2022-12-28T09:00:05Z (last step: 654 msec , total: 654 msec) 
+#=#=#=# Syncrun finished 2022-12-28T09:00:05Z (last step: 8 msec , total: 663 msec) 
+#=#=#=# Syncrun started 2022-12-28T10:42:39Z
+#=#=#=#=# Propagation starts 2022-12-28T10:42:39Z (last step: 393 msec , total: 393 msec) 
+#=#=#=# Syncrun finished 2022-12-28T10:42:39Z (last step: 10 msec , total: 403 msec) 
+#=#=#=# Syncrun started 2022-12-28T12:42:41Z
+#=#=#=#=# Propagation starts 2022-12-28T12:42:41Z (last step: 518 msec , total: 518 msec) 
+#=#=#=# Syncrun finished 2022-12-28T12:42:41Z (last step: 8 msec , total: 527 msec) 
+#=#=#=# Syncrun started 2022-12-28T17:12:44Z
+#=#=#=# Syncrun finished 2022-12-28T17:12:44Z (last step: 53 msec , total: 53 msec) 
+#=#=#=# Syncrun started 2022-12-28T17:13:45Z
+#=#=#=#=# Propagation starts 2022-12-28T17:13:45Z (last step: 397 msec , total: 397 msec) 
+#=#=#=# Syncrun finished 2022-12-28T17:13:45Z (last step: 8 msec , total: 406 msec) 
+#=#=#=# Syncrun started 2022-12-28T17:27:48Z
+#=#=#=#=# Propagation starts 2022-12-28T17:27:48Z (last step: 300 msec , total: 300 msec) 
+2022-12-28T17:27:49Z | source/Qkan_flaechen_vorbereiten.rst | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672248280 | ceb5151645d6a1f53a65492b01d95ae8 | 0 | 412398972oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 7eb86535-0f9d-403c-9975-862539fa7b11 | 
+2022-12-28T17:27:49Z | source/Qkan_workflow.rst | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672228229 | 858c64e65ca62c087c32da49a3342e7a | 334 | 412398975oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 8a5763f7-c99d-4b7f-9ff7-ce0bd332af14 | 
+#=#=#=# Syncrun finished 2022-12-28T17:27:49Z (last step: 980 msec , total: 1281 msec) 
+#=#=#=# Syncrun started 2022-12-28T17:27:51Z
+#=#=#=#=# Propagation starts 2022-12-28T17:27:52Z (last step: 707 msec , total: 707 msec) 
+#=#=#=# Syncrun finished 2022-12-28T17:27:52Z (last step: 21 msec , total: 729 msec) 
+#=#=#=# Syncrun started 2022-12-28T17:29:31Z
+#=#=#=#=# Propagation starts 2022-12-28T17:29:31Z (last step: 370 msec , total: 370 msec) 
+2022-12-28T17:29:32Z | source/conf.py | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1671277737 | af2a00ea710f54aa86a64ae977441d8f | 5589 | 397407771oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 5589 | 1664178944 | e49dcc51-63d5-4054-9bf2-7f561b1d7c08 | 
+2022-12-28T17:29:32Z | source/Qkan_Videoanleitungen.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672231472 | d17e581d088305b6b3f8cd9700a3eec6 | 4099 | 397407726oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 3341 | 1650876699 | f6f8e532-03b2-4837-9b1d-f6850d7e755c | 
+2022-12-28T17:29:32Z | source/index.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672248271 | 3ea4be5027afab3354cc14ca73e89481 | 1255 | 397407762oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 1126 | 1664540218 | be30efe6-e1cc-408f-9e85-12478e27786c | 
+#=#=#=# Syncrun finished 2022-12-28T17:29:32Z (last step: 827 msec , total: 1198 msec) 
+#=#=#=# Syncrun started 2022-12-28T17:29:51Z
+#=#=#=#=# Propagation starts 2022-12-28T17:29:52Z (last step: 656 msec , total: 656 msec) 
+#=#=#=# Syncrun finished 2022-12-28T17:29:52Z (last step: 12 msec , total: 669 msec) 
+#=#=#=# Syncrun started 2022-12-28T18:26:59Z
+#=#=#=#=# Propagation starts 2022-12-28T18:26:59Z (last step: 400 msec , total: 400 msec) 
+2022-12-28T18:27:00Z | source/Qkan_allgemein.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250462 | 0d6b5186201150ae5d7a43f2aa3de031 | 3941 | 397407753oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 2884 | 1652443794 | 966ae2fa-26e4-47e8-b4a5-b94883097fe7 | 
+2022-12-28T18:27:00Z | source/Qkan_allgemein.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672250441 | 1819b9431440d045964a681868d975fe | 3942 | 412399833oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 4b54d947-c9d4-496f-a3ed-67b30f6f58c4 | 
+#=#=#=# Syncrun finished 2022-12-28T18:27:00Z (last step: 1027 msec , total: 1427 msec) 
+#=#=#=# Syncrun started 2022-12-28T18:27:12Z
+#=#=#=#=# Propagation starts 2022-12-28T18:27:13Z (last step: 733 msec , total: 733 msec) 
+#=#=#=# Syncrun finished 2022-12-28T18:27:13Z (last step: 22 msec , total: 755 msec) 
+#=#=#=# Syncrun started 2022-12-28T18:27:39Z
+#=#=#=#=# Propagation starts 2022-12-28T18:27:39Z (last step: 425 msec , total: 425 msec) 
+2022-12-28T18:27:40Z | build/doctrees/Qkan_flaechen_vorbereiten.doctree | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672249283 | e90daee11affe4b7b0a6f7b0f3dfcd16 | 2074 | 412399836oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 98301a73-7ed6-4f03-a0e2-3173b7e8a008 | 
+2022-12-28T18:27:40Z | build/html/Qkan_workflow.html | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672228278 | 0740feb1f9c16b31607cacbe482072a4 | 8883 | 412399839oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | ac5460d3-71ab-4c8a-b51f-80fc98c7599a | 
+2022-12-28T18:27:40Z | build/html/_sources/Qkan_flaechen_vorbereiten.rst.txt | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672248280 | 0a87b2a11ee6c9a62a20374e3e8895c7 | 0 | 412399842oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 817b61e4-8b30-47aa-9248-8bb22c72986c | 
+2022-12-28T18:27:40Z | build/html/_sources/Qkan_workflow.rst.txt | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672228229 | ca290223f74c307e55e3a9337ff4455d | 334 | 412399845oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 58fed883-8dbc-4d6a-904f-1a55e6e778e1 | 
+2022-12-28T18:27:40Z | build/html/Qkan_flaechen_vorbereiten.html | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672249284 | 672529d99e190b7ac56ddcb7b179d4c8 | 8539 | 412399848oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | d57eab5f-c76a-4672-b673-72a48111b799 | 
+2022-12-28T18:27:40Z | build/doctrees/Qkan_workflow.doctree | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672228253 | 2047b6d8e5b9e511e79b7947da057403 | 3771 | 412399851oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | ac16356e-26d4-4ea6-bd16-768b437f0728 | 
+#=#=#=# Syncrun finished 2022-12-28T18:27:41Z (last step: 1432 msec , total: 1858 msec) 
+#=#=#=# Syncrun started 2022-12-28T18:27:52Z
+#=#=#=#=# Propagation starts 2022-12-28T18:27:53Z (last step: 1363 msec , total: 1363 msec) 
+#=#=#=# Syncrun finished 2022-12-28T18:27:54Z (last step: 39 msec , total: 1402 msec) 
+#=#=#=# Syncrun started 2022-12-28T18:28:01Z
+#=#=#=#=# Propagation starts 2022-12-28T18:28:01Z (last step: 424 msec , total: 424 msec) 
+2022-12-28T18:28:02Z | build/doctrees/Qkan_allgemein.doctree | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250994 | 2527e81ff828b547f92a34f6fb2ad3f2 | 18660 | 397406871oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 12453 | 1664540234 | ecb68aab-e21e-4fe0-bd42-01aa57239c44 | 
+2022-12-28T18:28:02Z | build/doctrees/index.doctree | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672249283 | 5a56eb81141ea3288c3fbf093709d467 | 7861 | 397406892oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 7441 | 1664540234 | b399b502-9b63-498f-9477-5efebdbeee80 | 
+2022-12-28T18:28:02Z | build/html/QKan_Formulare.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672218909 | 90a1b1130b3ea474bd88fdef905244f3 | 22326 | 397406901oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 22637 | 1664540235 | a0f74292-7a2b-4d99-b02d-3b58e7fd74ae | 
+2022-12-28T18:28:02Z | build/doctrees/Qkan_erstellung_unbef_fl.doctree | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250994 | ff33a2dd6c1e70f2c47fb7545ca1875a | 8995 | 397406883oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 9331 | 1664540645 | 367f26fa-a4e1-4e07-bf89-06425533f4e2 | 
+2022-12-28T18:28:02Z | build/doctrees/Qkan_Videoanleitungen.doctree | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672231478 | c0c7d540978a12b9f99929d03bd22d72 | 23199 | 397406865oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 18444 | 1664540234 | 8b6ee5f4-4159-4167-9682-72c63753d50d | 
+2022-12-28T18:28:02Z | build/html/Qkan_Datenaustausch.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672218909 | 536dff5d3f38cfc81253017ef305c2d9 | 12890 | 397407363oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 13155 | 1664540235 | 7af3cdac-99b8-4013-87c9-baf4c1126cbd | 
+2022-12-28T18:28:03Z | build/html/Qkan_Tabellen.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672218909 | cbe1b02d6405d8cf284ce2c9b370d658 | 14323 | 397407360oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 14644 | 1664540235 | fe885426-7494-4d60-8361-c43f52705958 | 
+2022-12-28T18:28:03Z | build/html/Qkan_Videoanleitungen.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672231478 | dc8009411645bcb5c2b03417260c74e8 | 14461 | 397407366oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 13155 | 1664540235 | b48c0515-2220-4a9d-8031-edec15b2923a | 
+2022-12-28T18:28:03Z | build/html/Qkan_allgemein.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250995 | 75b6b15ecb696ae951873e0f11c29ee1 | 13563 | 397407375oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 11895 | 1664540235 | 4fdbec5b-ce82-4057-b68e-f7bd61780c4a | 
+2022-12-28T18:28:03Z | build/html/Qkan_aufsetzen.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672218910 | c69986d434a4701a429e1940138d8873 | 23008 | 397407372oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 23273 | 1664540235 | 0e2b5010-e232-4cb3-886d-35cbc860df86 | 
+2022-12-28T18:28:03Z | build/html/Qkan_erstellung_unbef_fl.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250995 | 318c99a068dbe7f2aba5311c68da2295 | 11292 | 397407369oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 10987 | 1664540646 | 0eb2b6e0-3752-4194-a5f9-f6878eaae270 | 
+2022-12-28T18:28:03Z | build/html/Qkan_flaechen.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672218910 | b147a60336093b58950c569f3accc18c | 18557 | 397407378oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 18822 | 1664540235 | c0776c63-2934-47cb-b7b5-6c58460615b2 | 
+2022-12-28T18:28:04Z | build/html/Qkan_import_flaechendaten.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250995 | 9342928d4b98912f8eab2640e4142f60 | 20706 | 397407381oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 20433 | 1664540646 | 85ff4e42-25f1-42bc-baae-4e05b27c6c51 | 
+2022-12-28T18:28:04Z | build/html/_sources/Qkan_Videoanleitungen.rst.txt | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672231472 | 29ed208affb2e8be0edbe1ec2d9f4d6d | 4099 | 397407042oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 3341 | 1650876699 | 5f01aa76-5ba8-4c0d-a0b9-a7da4ae636e6 | 
+2022-12-28T18:28:04Z | build/doctrees/environment.pickle | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250994 | 457747c8b9885232c9ad92c72853995d | 2034849 | 397406916oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 1986721 | 1664540645 | 2810a81e-8c76-4a74-b4b7-ffe56b15096d | 
+2022-12-28T18:28:04Z | build/html/_sources/Qkan_allgemein.rst.txt | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250462 | 6d069ec3ea60b4c3aa33f1c2edcc2135 | 3941 | 397407051oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 2884 | 1652443794 | 7b85321d-337d-4dae-b75e-56f0b81b0e58 | 
+2022-12-28T18:28:04Z | build/html/_sources/index.rst.txt | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672248271 | 419202078e290b37faa7a15e1b3944dc | 1255 | 397407063oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 1126 | 1664540218 | 7e3474e8-47ea-4b96-af5f-8386fc4fcd47 | 
+2022-12-28T18:28:04Z | build/html/genindex.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250995 | 197eee52e2eba3cd781324f575c85eaf | 11668 | 397407387oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 11304 | 1664540646 | b83c7b85-8812-4269-a44a-89e1d2028b9b | 
+2022-12-28T18:28:04Z | build/html/index.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250995 | 3014dd4e85516bd4c707fc23aad69e6a | 17652 | 397407390oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 16950 | 1664540646 | f36b76c8-99d1-43a7-85f9-55966018a002 | 
+2022-12-28T18:28:04Z | build/html/objects.inv | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250995 | 28f71f44375a4c413281ab2febd62870 | 859 | 397407384oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 800 | 1664540646 | 877df581-93f4-452e-8ab3-eec6c29f1955 | 
+2022-12-28T18:28:04Z | build/html/search.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250995 | 6712963b59410f689a6c683f305d3f80 | 8139 | 397407393oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 7858 | 1664540646 | c1a3edb2-6545-483d-995f-862142b66c76 | 
+2022-12-28T18:28:05Z | build/html/searchindex.js | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672250995 | 410840fbb66bdd93593d0823ff6731f2 | 19135 | 397407396oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 18085 | 1664540646 | b2c72251-07ab-4e05-aec0-ecc8ad46d77f | 
+#=#=#=# Syncrun finished 2022-12-28T18:28:05Z (last step: 3399 msec , total: 3823 msec) 
+#=#=#=# Syncrun started 2022-12-28T18:28:32Z
+#=#=#=#=# Propagation starts 2022-12-28T18:28:34Z (last step: 1469 msec , total: 1469 msec) 
+#=#=#=# Syncrun finished 2022-12-28T18:28:34Z (last step: 24 msec , total: 1494 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:29:21Z
+#=#=#=#=# Propagation starts 2022-12-29T06:29:24Z (last step: 3460 msec , total: 3460 msec) 
+#=#=#=# Syncrun finished 2022-12-29T06:29:24Z (last step: 39 msec , total: 3499 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:29:27Z
+#=#=#=#=# Propagation starts 2022-12-29T06:29:28Z (last step: 298 msec , total: 298 msec) 
+#=#=#=# Syncrun finished 2022-12-29T06:29:28Z (last step: 11 msec , total: 309 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:37:12Z
+#=#=#=#=# Propagation starts 2022-12-29T06:37:12Z (last step: 422 msec , total: 422 msec) 
+2022-12-29T06:37:14Z | source/Qkan_Videoanleitungen.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672295830 | 701eff2d87c71ad8282509bcd46bee28 | 4202 | 397407726oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4099 | 1672231472 | 7a4404cd-e90e-45b3-bf48-ee0532d6a8ae | 
+2022-12-29T06:37:14Z | source/Qkan_Videoanleitungen.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672231472 | cb935835bd2759d407dc3e4677df722f | 4099 | 412404861oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 1da87c48-f07a-4590-a9cc-a6bccb9ddd54 | 
+#=#=#=# Syncrun finished 2022-12-29T06:37:13Z (last step: 1029 msec , total: 1452 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:37:18Z
+#=#=#=#=# Propagation starts 2022-12-29T06:37:19Z (last step: 729 msec , total: 729 msec) 
+#=#=#=# Syncrun finished 2022-12-29T06:37:19Z (last step: 14 msec , total: 744 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:38:21Z
+#=#=#=#=# Propagation starts 2022-12-29T06:38:21Z (last step: 395 msec , total: 395 msec) 
+2022-12-29T06:38:22Z | source/Qkan_Videoanleitungen.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672295899 | 409e01eaf6cf8d94b8dd74b01dd58865 | 4202 | 397407726oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4202 | 1672295830 | 3ff2183c-272f-4b36-a5fc-f3160dec75a4 | 
+2022-12-29T06:38:23Z | source/Qkan_Videoanleitungen.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672295830 | 72870f99898e371581af75951b015cdf | 4202 | 412404861oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4099 | 1672231472 | 8d4f8f72-1505-4700-a066-55197b426f4c | 
+#=#=#=# Syncrun finished 2022-12-29T06:38:22Z (last step: 699 msec , total: 1094 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:38:28Z
+#=#=#=#=# Propagation starts 2022-12-29T06:38:29Z (last step: 579 msec , total: 579 msec) 
+2022-12-29T06:38:31Z | source/Qkan_Videoanleitungen.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672295899 | 535441921313c6cd927c0c382d059e41 | 4202 | 412404861oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4202 | 1672295830 | a47a43e2-2867-42ff-a2cf-b809be2de548 | 
+2022-12-29T06:38:31Z | source/Qkan_Videoanleitungen.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672295907 | bc187cf4aebba4ebfecefde135ce8b1e | 4204 | 397407726oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4202 | 1672295899 | 1c8d9217-d3ab-4085-a82b-4b27851f4217 | 
+#=#=#=# Syncrun finished 2022-12-29T06:38:30Z (last step: 651 msec , total: 1231 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:38:38Z
+#=#=#=#=# Propagation starts 2022-12-29T06:38:39Z (last step: 668 msec , total: 668 msec) 
+#=#=#=# Syncrun finished 2022-12-29T06:38:39Z (last step: 21 msec , total: 689 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:39:25Z
+#=#=#=#=# Propagation starts 2022-12-29T06:39:25Z (last step: 322 msec , total: 322 msec) 
+2022-12-29T06:39:27Z | source/Qkan_Videoanleitungen.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672295963 | f1ce55a90130736a3b83533a45a89210 | 4410 | 397407726oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4204 | 1672295907 | c9185402-31b3-4da3-bee6-609931bcc459 | 
+2022-12-29T06:39:27Z | source/Qkan_Videoanleitungen.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672295907 | 1b9b60cd93f64132fecf9bead0134900 | 4204 | 412404861oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4202 | 1672295899 | eccdec29-c67c-43fe-b1ad-feda23b85bb7 | 
+#=#=#=# Syncrun finished 2022-12-29T06:39:26Z (last step: 726 msec , total: 1049 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:39:58Z
+#=#=#=#=# Propagation starts 2022-12-29T06:39:59Z (last step: 806 msec , total: 806 msec) 
+#=#=#=# Syncrun finished 2022-12-29T06:39:59Z (last step: 29 msec , total: 835 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:55:18Z
+#=#=#=#=# Propagation starts 2022-12-29T06:55:18Z (last step: 434 msec , total: 434 msec) 
+2022-12-29T06:55:19Z | source/Qkan_Videoanleitungen.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672296916 | 9893c1363279bef9a9d9ef6252da6d53 | 4099 | 397407726oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4410 | 1672295963 | e54a4ec6-7e2c-44b5-97a8-fb4f5636dfd1 | 
+2022-12-29T06:55:19Z | source/Qkan_Videoanleitungen.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672295963 | 21e604d5238cfff2bb8bed66edfc812d | 4410 | 412404861oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4204 | 1672295907 | 8fa1f381-b0fe-440f-8015-d025c697c1d6 | 
+#=#=#=# Syncrun finished 2022-12-29T06:55:19Z (last step: 749 msec , total: 1183 msec) 
+#=#=#=# Syncrun started 2022-12-29T06:55:29Z
+#=#=#=#=# Propagation starts 2022-12-29T06:55:29Z (last step: 601 msec , total: 601 msec) 
+#=#=#=# Syncrun finished 2022-12-29T06:55:29Z (last step: 29 msec , total: 630 msec) 
+#=#=#=# Syncrun started 2022-12-29T07:08:15Z
+#=#=#=#=# Propagation starts 2022-12-29T07:08:15Z (last step: 406 msec , total: 406 msec) 
+2022-12-29T07:08:16Z | build/doctrees/Qkan_allgemein.doctree | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672297450 | 7c56fac7c1716b0327de04798d343d67 | 18048 | 397406871oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 18660 | 1672250994 | 132a3c2b-da9e-400e-8769-b1bf1757c548 | 
+2022-12-29T07:08:16Z | build/html/Qkan_allgemein.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672297450 | 96ef14ebc262b589229cf1a49def60ca | 13355 | 397407375oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 13563 | 1672250995 | 982d2f4d-4dd9-4cad-a62f-d8a2b8aa2ffc | 
+2022-12-29T07:08:16Z | build/html/searchindex.js | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672297450 | f18e2df066d60835ba881983d2827a5b | 19143 | 397407396oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 19135 | 1672250995 | 69d40dc9-0c29-4ed8-b742-2faf824ea6b8 | 
+2022-12-29T07:08:16Z | build/html/_sources/Qkan_allgemein.rst.txt | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672297444 | 769b0a048cc8cee1e0dbcd778b0a24e1 | 3687 | 397407051oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 3941 | 1672250462 | be082ef9-ca47-4c66-aba4-1ea1c409a806 | 
+2022-12-29T07:08:16Z | source/Qkan_allgemein.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672297444 | 75cf79c260b55c1cf1db4dc57308dbcd | 3687 | 397407753oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 3941 | 1672250462 | df9308cb-d3a7-410a-be6e-be41f13d87be | 
+2022-12-29T07:08:17Z | source/Qkan_allgemein.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672297404 | 889f2045ad81f6000decfaa0a728e40e | 3714 | 412399833oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 3942 | 1672250441 | 94021137-deaa-4869-9e65-9d74861b0fec | 
+2022-12-29T07:08:18Z | build/doctrees/environment.pickle | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672297450 | e20329c2b7fc9fda6bdc5684cb149476 | 2034849 | 397406916oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 2034849 | 1672250994 | 6bca1a44-8d9d-42cc-b5f8-a4043a9970b2 | 
+#=#=#=# Syncrun finished 2022-12-29T07:08:18Z (last step: 2514 msec , total: 2920 msec) 
+#=#=#=# Syncrun started 2022-12-29T07:08:39Z
+#=#=#=#=# Propagation starts 2022-12-29T07:08:41Z (last step: 1390 msec , total: 1390 msec) 
+2022-12-29T07:08:42Z | source/Qkan_Videoanleitungen.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Up | | 1672295963 | 21e604d5238cfff2bb8bed66edfc812d | 4410 | 412404861oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4410 | 1672295963 | 85f1ae60-fd0e-4cd8-9801-e7ae4eba39e9 | 
+#=#=#=# Syncrun finished 2022-12-29T07:08:42Z (last step: 1207 msec , total: 2597 msec) 
+#=#=#=# Syncrun started 2022-12-29T07:08:45Z
+#=#=#=#=# Propagation starts 2022-12-29T07:08:45Z (last step: 653 msec , total: 653 msec) 
+2022-12-29T07:08:46Z | source/Qkan_allgemein.rst.bak | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Up | | 1672297404 | 889f2045ad81f6000decfaa0a728e40e | 3714 | 412399833oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 3714 | 1672297404 | 32607725-1708-43b3-8532-87d7f7873b12 | 
+#=#=#=# Syncrun finished 2022-12-29T07:08:46Z (last step: 1018 msec , total: 1671 msec) 
+#=#=#=# Syncrun started 2022-12-29T07:08:49Z
+#=#=#=#=# Propagation starts 2022-12-29T07:08:50Z (last step: 636 msec , total: 636 msec) 
+#=#=#=# Syncrun finished 2022-12-29T07:08:50Z (last step: 28 msec , total: 664 msec) 
+#=#=#=# Syncrun started 2022-12-29T09:08:54Z
+#=#=#=#=# Propagation starts 2022-12-29T09:08:55Z (last step: 401 msec , total: 401 msec) 
+#=#=#=# Syncrun finished 2022-12-29T09:08:55Z (last step: 14 msec , total: 415 msec) 
+#=#=#=# Syncrun started 2022-12-29T10:24:27Z
+#=#=#=#=# Propagation starts 2022-12-29T10:24:27Z (last step: 336 msec , total: 336 msec) 
+#=#=#=# Syncrun finished 2022-12-29T10:24:27Z (last step: 11 msec , total: 347 msec) 
+#=#=#=# Syncrun started 2022-12-29T11:33:20Z
+#=#=#=#=# Propagation starts 2022-12-29T11:33:20Z (last step: 399 msec , total: 399 msec) 
+#=#=#=# Syncrun finished 2022-12-29T11:33:20Z (last step: 12 msec , total: 411 msec) 
+#=#=#=# Syncrun started 2022-12-29T13:33:23Z
+#=#=#=#=# Propagation starts 2022-12-29T13:33:23Z (last step: 454 msec , total: 454 msec) 
+#=#=#=# Syncrun finished 2022-12-29T13:33:23Z (last step: 11 msec , total: 466 msec) 
+#=#=#=# Syncrun started 2022-12-29T15:33:28Z
+#=#=#=#=# Propagation starts 2022-12-29T15:33:29Z (last step: 474 msec , total: 474 msec) 
+#=#=#=# Syncrun finished 2022-12-29T15:33:29Z (last step: 12 msec , total: 486 msec) 
+#=#=#=# Syncrun started 2022-12-30T13:02:35Z
+#=#=#=#=# Propagation starts 2022-12-30T13:02:36Z (last step: 517 msec , total: 517 msec) 
+#=#=#=# Syncrun finished 2022-12-30T13:02:36Z (last step: 12 msec , total: 529 msec) 
+#=#=#=# Syncrun started 2022-12-31T06:52:47Z
+#=#=#=#=# Propagation starts 2022-12-31T06:52:48Z (last step: 650 msec , total: 650 msec) 
+#=#=#=# Syncrun finished 2022-12-31T06:52:48Z (last step: 13 msec , total: 663 msec) 
+#=#=#=# Syncrun started 2022-12-31T08:38:15Z
+#=#=#=#=# Propagation starts 2022-12-31T08:38:15Z (last step: 448 msec , total: 448 msec) 
+2022-12-31T08:38:16Z | build/doctrees/Qkan_erstellung_unbef_fl.doctree | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475735 | 121c2b0388739de9ff1060e474d6e7db | 9331 | 397406883oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 8995 | 1672250994 | a64463f5-3269-4140-be27-1de7d741a76d | 
+2022-12-31T08:38:16Z | build/html/Qkan_erstellung_unbef_fl.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475735 | 35eb28eec0732e147389b94fe282c884 | 11159 | 397407369oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 11292 | 1672250995 | 5f68b4e2-310e-41a9-9857-2e61962103c6 | 
+2022-12-31T08:38:16Z | build/doctrees/Qkan_Videoanleitungen.doctree | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475724 | 43f781d4560ae7cae8b5d41cad109230 | 25890 | 397406865oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 23199 | 1672231478 | c35b4c2b-2e51-47f4-a82f-80a2d16fb911 | 
+2022-12-31T08:38:16Z | build/html/Qkan_Videoanleitungen.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475724 | 9f7fcd953e31ed6c1b531a10b61d806f | 14524 | 397407366oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 14461 | 1672231478 | f58ac74c-1880-4a0a-83af-af17ba6144f2 | 
+2022-12-31T08:38:17Z | build/html/Qkan_import_flaechendaten.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475735 | 0475d877e5e8cc487d4ef92f19e22a66 | 20573 | 397407381oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 20706 | 1672250995 | 7f5c69ac-b0cd-45f1-b1db-b3cfe48ce23d | 
+2022-12-31T08:38:17Z | build/html/_sources/Qkan_Videoanleitungen.rst.txt | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475716 | d7e0e11abc41dd7c9927d6e2c8899519 | 3711 | 397407042oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4099 | 1672231472 | a9f5b670-40a4-4845-9a56-1a91b45335ab | 
+2022-12-31T08:38:17Z | build/html/genindex.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475735 | 2658b9fc55eecd03fc629e16341de11a | 11443 | 397407387oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 11668 | 1672250995 | 2cae2e62-0fd0-4f7c-9739-2f9bbcc65fa4 | 
+2022-12-31T08:38:17Z | build/html/index.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475735 | 14271a95cf52640905e6092a392a55c1 | 17386 | 397407390oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 17652 | 1672250995 | d259635f-2ddf-467a-a3d1-8de8973f461f | 
+2022-12-31T08:38:17Z | build/html/objects.inv | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475736 | 199c692765f66eb73d768241ffae7498 | 847 | 397407384oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 859 | 1672250995 | 00af1b49-e18f-46b9-ab15-112c3bd17bd6 | 
+2022-12-31T08:38:18Z | build/html/search.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475735 | 889a71ab87d3ee4a85adacf0e1184d3b | 8006 | 397407393oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 8139 | 1672250995 | 9cb4df8f-5830-401c-8f33-868147526411 | 
+2022-12-31T08:38:18Z | build/html/searchindex.js | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475736 | 98c2a3dca95eccf7b2d9bf1729bac27c | 19397 | 397407396oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 19143 | 1672297450 | e231649a-6589-4374-94bd-18ac4df74d44 | 
+2022-12-31T08:38:18Z | build/doctrees/environment.pickle | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475735 | 79623ea44f17c2187e60b47a79c66d38 | 2034479 | 397406916oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 2034849 | 1672297450 | fee324c8-06d7-4c26-a9c0-62bee621cde6 | 
+2022-12-31T08:38:18Z | source/Qkan_Videoanleitungen.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672475716 | 5c9dc97e6dcb148cf21f12ef5080e64c | 3711 | 397407726oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 4099 | 1672296916 | feee471e-eb15-4ccd-9eda-de04c040f096 | 
+#=#=#=# Syncrun finished 2022-12-31T08:38:18Z (last step: 2622 msec , total: 3071 msec) 
+#=#=#=# Syncrun started 2022-12-31T08:38:39Z
+#=#=#=#=# Propagation starts 2022-12-31T08:38:41Z (last step: 1472 msec , total: 1472 msec) 
+#=#=#=# Syncrun finished 2022-12-31T08:38:41Z (last step: 35 msec , total: 1508 msec) 
+#=#=#=# Syncrun started 2022-12-31T09:50:04Z
+#=#=#=#=# Propagation starts 2022-12-31T09:50:05Z (last step: 405 msec , total: 405 msec) 
+#=#=#=# Syncrun finished 2022-12-31T09:50:05Z (last step: 12 msec , total: 417 msec) 
+#=#=#=# Syncrun started 2023-01-02T08:12:06Z
+#=#=#=# Syncrun finished 2023-01-02T08:12:06Z (last step: 188 msec , total: 188 msec) 
+#=#=#=# Syncrun started 2023-01-02T08:13:05Z
+#=#=#=#=# Propagation starts 2023-01-02T08:13:06Z (last step: 509 msec , total: 509 msec) 
+#=#=#=# Syncrun finished 2023-01-02T08:13:06Z (last step: 12 msec , total: 522 msec) 
+#=#=#=# Syncrun started 2023-01-02T14:31:23Z
+#=#=#=#=# Propagation starts 2023-01-02T14:31:26Z (last step: 3123 msec , total: 3123 msec) 
+#=#=#=# Syncrun finished 2023-01-02T14:31:27Z (last step: 1027 msec , total: 4150 msec) 
+#=#=#=# Syncrun started 2023-01-02T14:32:29Z
+#=#=#=#=# Propagation starts 2023-01-02T14:32:30Z (last step: 452 msec , total: 452 msec) 
+#=#=#=# Syncrun finished 2023-01-02T14:32:30Z (last step: 12 msec , total: 465 msec) 
+#=#=#=# Syncrun started 2023-01-02T16:32:32Z
+#=#=#=#=# Propagation starts 2023-01-02T16:32:32Z (last step: 357 msec , total: 357 msec) 
+#=#=#=# Syncrun finished 2023-01-02T16:32:32Z (last step: 12 msec , total: 370 msec) 
+#=#=#=# Syncrun started 2023-01-02T17:35:35Z
+#=#=#=#=# Propagation starts 2023-01-02T17:35:35Z (last step: 360 msec , total: 360 msec) 
+#=#=#=# Syncrun finished 2023-01-02T17:35:35Z (last step: 11 msec , total: 372 msec) 
+#=#=#=# Syncrun started 2023-01-02T19:13:00Z
+#=#=#=#=# Propagation starts 2023-01-02T19:13:01Z (last step: 362 msec , total: 362 msec) 
+#=#=#=# Syncrun finished 2023-01-02T19:13:01Z (last step: 12 msec , total: 375 msec) 
+#=#=#=# Syncrun started 2023-01-03T06:37:17Z
+#=#=#=# Syncrun finished 2023-01-03T06:37:17Z (last step: 106 msec , total: 106 msec) 
+#=#=#=# Syncrun started 2023-01-03T06:38:18Z
+#=#=#=#=# Propagation starts 2023-01-03T06:38:18Z (last step: 339 msec , total: 339 msec) 
+#=#=#=# Syncrun finished 2023-01-03T06:38:18Z (last step: 13 msec , total: 353 msec) 
+#=#=#=# Syncrun started 2023-01-03T10:29:42Z
+#=#=#=#=# Propagation starts 2023-01-03T10:29:43Z (last step: 306 msec , total: 306 msec) 
+#=#=#=# Syncrun finished 2023-01-03T10:29:43Z (last step: 13 msec , total: 320 msec) 
+#=#=#=# Syncrun started 2023-01-03T12:29:45Z
+#=#=#=#=# Propagation starts 2023-01-03T12:29:45Z (last step: 345 msec , total: 345 msec) 
+#=#=#=# Syncrun finished 2023-01-03T12:29:45Z (last step: 14 msec , total: 359 msec) 
+#=#=#=# Syncrun started 2023-01-03T14:26:17Z
+#=#=#=#=# Propagation starts 2023-01-03T14:26:17Z (last step: 439 msec , total: 439 msec) 
+2023-01-03T14:26:18Z | Makefile | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1486045676 | a75c1f15d253e866ffaa5fd35a7b2f42 | 605 | 413085135oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 4da9cd09-adcf-4693-a7dd-335a06d54a88 | 
+2023-01-03T14:26:18Z | make.bat | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1630213408 | 25e461ab5c6ea3d58086eaf293d2a7cb | 864 | 413085138oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 2951b6db-8d3a-407c-a7f0-9f1a7a30445e | 
+2023-01-03T14:26:18Z | erzeuge doku.bat | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1644876284 | 50d9ef98bf300adea6732ef2ba35a36e | 132 | 413085141oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 5d8ee318-9743-48ff-b753-d59da16f936c | 
+2023-01-03T14:26:18Z | protokoll.txt #.lnk | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1643964186 | 89e30486414087bef1d894d5f2b822fb | 1668 | 413085153oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 9006b0dc-6a3b-49a6-8f20-5f65093e496a | 
+#=#=#=# Syncrun finished 2023-01-03T14:26:18Z (last step: 1265 msec , total: 1705 msec) 
+#=#=#=# Syncrun started 2023-01-03T14:26:55Z
+#=#=#=#=# Propagation starts 2023-01-03T14:26:55Z (last step: 489 msec , total: 489 msec) 
+#=#=#=# Syncrun finished 2023-01-03T14:26:55Z (last step: 14 msec , total: 503 msec) 
+#=#=#=# Syncrun started 2023-01-03T14:27:30Z
+#=#=#=#=# Propagation starts 2023-01-03T14:27:30Z (last step: 408 msec , total: 408 msec) 
+2023-01-03T14:27:31Z | build/doctrees/Qkan_Videoanleitungen.doctree | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672755885 | 56fb208a68e1a303339a26f2e5a845c3 | 26637 | 397406865oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 25890 | 1672475724 | 42cac36c-f602-46dc-833b-d58b72bd3599 | 
+2023-01-03T14:27:31Z | build/html/_sources/Qkan_Videoanleitungen.rst.txt | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672755851 | 0975e31288d4b2e19f4a0f8a11a3b2a8 | 3797 | 397407042oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 3711 | 1672475716 | ea669097-01fb-4cdc-a672-b12a4d920e20 | 
+2023-01-03T14:27:31Z | build/doctrees/Qkan_erstellung_unbef_fl.doctree | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672755885 | 1440ee383d720516f72dc0dd80261aad | 8995 | 397406883oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 9331 | 1672475735 | 6304f7bc-7858-4e95-9e4e-6678c4bd242b | 
+2023-01-03T14:27:31Z | build/html/Qkan_Videoanleitungen.html | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672755886 | c582ad50add0ad80955db743c02b51fc | 14659 | 397407366oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 14524 | 1672475724 | 83beaaf8-33f0-4e22-8e1d-97d6e8555c06 | 
+2023-01-03T14:27:32Z | source/Qkan_Videoanleitungen.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672755851 | a9e5e503662ad5829dd20e7580f28e7a | 3797 | 397407726oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 3711 | 1672475716 | 9604bf71-b906-46f7-9b59-3c480b17a053 | 
+2023-01-03T14:27:32Z | build/html/searchindex.js | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672755887 | 46814e5c61bfbd9d13763d8246fab3c7 | 19401 | 397407396oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 19397 | 1672475736 | 6ba59e2f-e334-463e-8877-9f54d5c51597 | 
+2023-01-03T14:27:33Z | build/doctrees/environment.pickle | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1672755885 | e91f66586c7953098dd78fcf5f5f5691 | 2034384 | 397406916oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 2034479 | 1672475735 | 0628b888-fd40-41fe-bd18-e63312693481 | 
+#=#=#=# Syncrun finished 2023-01-03T14:27:33Z (last step: 2554 msec , total: 2962 msec) 
+#=#=#=# Syncrun started 2023-01-03T14:27:36Z
+#=#=#=#=# Propagation starts 2023-01-03T14:27:37Z (last step: 1313 msec , total: 1313 msec) 
+#=#=#=# Syncrun finished 2023-01-03T14:27:37Z (last step: 22 msec , total: 1335 msec) 
+#=#=#=# Syncrun started 2023-01-03T16:27:40Z
+#=#=#=#=# Propagation starts 2023-01-03T16:27:41Z (last step: 399 msec , total: 399 msec) 
+#=#=#=# Syncrun finished 2023-01-03T16:27:41Z (last step: 12 msec , total: 412 msec) 
+#=#=#=# Syncrun started 2023-01-04T06:04:33Z
+#=#=#=#=# Propagation starts 2023-01-04T06:04:35Z (last step: 2346 msec , total: 2346 msec) 
+#=#=#=# Syncrun finished 2023-01-04T06:04:35Z (last step: 14 msec , total: 2361 msec) 
+#=#=#=# Syncrun started 2023-01-04T08:04:39Z
+#=#=#=#=# Propagation starts 2023-01-04T08:04:39Z (last step: 355 msec , total: 355 msec) 
+#=#=#=# Syncrun finished 2023-01-04T08:04:39Z (last step: 12 msec , total: 367 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:13:22Z
+#=#=#=#=# Propagation starts 2023-01-04T09:13:22Z (last step: 394 msec , total: 394 msec) 
+#=#=#=# Syncrun finished 2023-01-04T09:13:22Z (last step: 12 msec , total: 407 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:14:08Z
+#=#=#=#=# Propagation starts 2023-01-04T09:14:10Z (last step: 2170 msec , total: 2170 msec) 
+2023-01-04T09:14:11Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/INSPIRE_WFS_gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1664191420 | 1d3752d7a6b1c7187d2627d7fff9910d | 24637 | 413142903oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | a258a578-a646-4c15-aa47-bb485d52d882 | 
+2023-01-04T09:14:11Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/abflussparameter_HE_gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672650857 | eca1f0517e170389077ac8589b37845a | 42466 | 413142864oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 0e33b8e7-be63-4744-9942-5e1e6dc18778 | 
+2023-01-04T09:14:11Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/INSPIRE_themen.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1664189731 | 1c9929287854454851a63741583c08e6 | 36163 | 413142900oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | e53b4b32-500c-4818-858e-7ed94bc69647 | 
+2023-01-04T09:14:11Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1664270893 | e34914153cc2dc7bed50c56756adc3db | 94494 | 413142891oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | e6c18877-b8a8-424f-8d5e-b1257cba5498 | 
+2023-01-04T09:14:11Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/fertig_import.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1664280419 | d9495223f510d148cfd773119634e3de | 783389 | 413142882oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 3f4fe346-4fa2-4d38-89e0-4422cd8f0fb3 | 
+2023-01-04T09:14:12Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/attributtabelle_dach.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672650988 | a597397900c8b393a965f0bf9eaa8949 | 30082 | 413142867oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 3f2a4ef9-4234-428f-a26a-32660c6e26f1 | 
+2023-01-04T09:14:12Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/gebaeude_Objekte_einfuegen.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651063 | 8034e1c5103dde5d927b9289dbf0123d | 33443 | 413142897oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | e7f4d095-d435-40d5-b418-d3bd25129a88 | 
+2023-01-04T09:14:12Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/attributtabelle_unbef_fl.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651026 | 21ac688fbbec10fd0a03db5a4890f1e8 | 30809 | 413142873oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | c20617ed-90ae-4a37-914a-a31f0ee66c00 | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672823649 | 63b54362594c4 | 0 | 413142861oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 0 | 0 |  | 
+#=#=#=# Syncrun finished 2023-01-04T09:14:12Z (last step: 1112 msec , total: 3283 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:14:14Z
+#=#=#=#=# Propagation starts 2023-01-04T09:14:16Z (last step: 1609 msec , total: 1609 msec) 
+2023-01-04T09:14:17Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/INSPIRE_WFS_strassen.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1664278118 | eec06df0275ada04558ca47457b14025 | 19301 | 413142906oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 851335de-b5de-40e2-8d2f-b0266e2307c2 | 
+#=#=#=# Syncrun finished 2023-01-04T09:14:16Z (last step: 381 msec , total: 1990 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:14:19Z
+#=#=#=#=# Propagation starts 2023-01-04T09:14:20Z (last step: 1557 msec , total: 1557 msec) 
+2023-01-04T09:14:21Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/verschneidung_flurstuecke.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651110 | b40e1c3f930d7b175462c63681dedd28 | 34061 | 413142915oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | dd11e205-170a-4d0e-b301-970b5730417a | 
+#=#=#=# Syncrun finished 2023-01-04T09:14:21Z (last step: 372 msec , total: 1929 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:14:23Z
+#=#=#=#=# Propagation starts 2023-01-04T09:14:25Z (last step: 1668 msec , total: 1668 msec) 
+2023-01-04T09:14:25Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/WFS_Client_getcapabilities.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651138 | 9bebf100b8c7860688fd04bacbc0d005 | 17485 | 413142918oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | bde8357b-f9f3-4587-997d-fc48ee5fdd3f | 
+#=#=#=# Syncrun finished 2023-01-04T09:14:25Z (last step: 366 msec , total: 2035 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:14:27Z
+#=#=#=#=# Propagation starts 2023-01-04T09:14:29Z (last step: 1630 msec , total: 1630 msec) 
+2023-01-04T09:14:29Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/WFS_Client_getfeatures.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651166 | b026dfef14ab8593792be8e452574b85 | 37897 | 413142921oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | f27a2789-da1c-4b82-a7ce-3925567cad21 | 
+#=#=#=# Syncrun finished 2023-01-04T09:14:29Z (last step: 317 msec , total: 1947 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:14:31Z
+#=#=#=#=# Propagation starts 2023-01-04T09:14:33Z (last step: 1576 msec , total: 1576 msec) 
+2023-01-04T09:14:34Z | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten/WFS_Client_roadarea.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651206 | de1734a89009a92b3dc5428f077d541e | 25258 | 413142936oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 69952c70-bade-4859-8252-570480ebb8f0 | 
+#=#=#=# Syncrun finished 2023-01-04T09:14:33Z (last step: 315 msec , total: 1891 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:14:36Z
+#=#=#=#=# Propagation starts 2023-01-04T09:14:37Z (last step: 1314 msec , total: 1314 msec) 
+#=#=#=# Syncrun finished 2023-01-04T09:14:37Z (last step: 14 msec , total: 1329 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:15:48Z
+#=#=#=#=# Propagation starts 2023-01-04T09:15:50Z (last step: 1523 msec , total: 1523 msec) 
+ | source/Qkan_Bilder/Import_von_flaechendaten/Import_von_flaechendaten | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1672823672 | 63b543796d47b | 0 | 413142861oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 0 | 1672823672 |  | 
+#=#=#=# Syncrun finished 2023-01-04T09:15:50Z (last step: 29 msec , total: 1553 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:15:52Z
+#=#=#=#=# Propagation starts 2023-01-04T09:15:53Z (last step: 1316 msec , total: 1316 msec) 
+#=#=#=# Syncrun finished 2023-01-04T09:15:53Z (last step: 26 msec , total: 1343 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:16:28Z
+#=#=#=#=# Propagation starts 2023-01-04T09:16:30Z (last step: 1385 msec , total: 1385 msec) 
+2023-01-04T09:16:30Z | source/Qkan_Bilder/Import_von_flaechendaten/abflussparameter_HE_gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672650857 | 2aa96fc6d8fec2de31dc0fe8687c3373 | 42466 | 397407444oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 55658 | 1664270006 | 1b0da00d-11e3-4ee4-96f8-5ed1b9589e5a | 
+2023-01-04T09:16:30Z | source/Qkan_Bilder/Import_von_flaechendaten/attributtabelle_unbef_fl.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672651026 | 1827dd8861a42494ad1fdc0aa0e99ee6 | 30809 | 397407447oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 38578 | 1664277428 | dea223fd-9e03-403d-915d-6538cb68d260 | 
+2023-01-04T09:16:30Z | source/Qkan_Bilder/Import_von_flaechendaten/attributtabelle_dach.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672650988 | f0b5f10a789d10ec025a53b837c87e8b | 30082 | 397407441oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 39446 | 1664270107 | dc176529-36e7-4ada-b54b-456cc80d3551 | 
+2023-01-04T09:16:31Z | source/Qkan_Bilder/Import_von_flaechendaten/gebaeude_Objekte_einfuegen.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672651063 | 11f39a4c4c5d93140022659ce5510ec8 | 33443 | 397407456oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 50838 | 1664267236 | 8f6142e8-4b50-45c4-bdd3-12b1b74b6fbf | 
+2023-01-04T09:16:31Z | source/Qkan_Bilder/Import_von_flaechendaten/gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1664270893 | 44de15c89a81b15be2afce50b5216095 | 94494 | 397407459oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 94494 | 1664270893 | 14678a5d-b952-4dbe-afb8-6f8942f67d31 | 
+#=#=#=# Syncrun finished 2023-01-04T09:16:31Z (last step: 824 msec , total: 2209 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:16:33Z
+#=#=#=#=# Propagation starts 2023-01-04T09:16:34Z (last step: 1324 msec , total: 1324 msec) 
+2023-01-04T09:16:35Z | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_WFS_gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1664191420 | 1f00cfddad662b0d4b49f256795c5d34 | 24637 | 397407420oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 24637 | 1664191420 | 998b5f77-ef20-4eb6-8bc8-dd1e36954859 | 
+#=#=#=# Syncrun finished 2023-01-04T09:16:35Z (last step: 374 msec , total: 1699 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:16:37Z
+#=#=#=#=# Propagation starts 2023-01-04T09:16:38Z (last step: 1328 msec , total: 1328 msec) 
+2023-01-04T09:16:39Z | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_WFS_strassen.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1664278118 | 7250716136a9070d5c19377e2242a9e5 | 19301 | 397407423oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 19301 | 1664278118 | 8aee5069-4e9d-4c16-888a-4bb6a18c8edd | 
+#=#=#=# Syncrun finished 2023-01-04T09:16:38Z (last step: 352 msec , total: 1680 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:16:40Z
+#=#=#=#=# Propagation starts 2023-01-04T09:16:42Z (last step: 1263 msec , total: 1263 msec) 
+2023-01-04T09:16:42Z | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_themen.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1664189731 | f23f389d869b7765859db50497dd8122 | 36163 | 397407432oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 36163 | 1664189731 | 0472c4f9-3a21-4ad4-94d1-1d03259679ec | 
+2023-01-04T09:16:42Z | source/Qkan_Bilder/Import_von_flaechendaten/WFS_Client_getcapabilities.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672823801 | 97c2a5c7b3daae683c3348077ae3c463 | 17485 | 397407426oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 21474 | 1664191948 | 86cf188a-da32-4363-aa94-c17ac4e58add | 
+#=#=#=# Syncrun finished 2023-01-04T09:16:42Z (last step: 418 msec , total: 1681 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:16:44Z
+#=#=#=#=# Propagation starts 2023-01-04T09:16:46Z (last step: 1378 msec , total: 1378 msec) 
+2023-01-04T09:16:46Z | source/Qkan_Bilder/Import_von_flaechendaten/WFS_Client_getcapabilities.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672651138 | 9853d6b6ed36a92ecc7ad2545e9cb85c | 17485 | 397407426oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 17485 | 1672823801 | 2ac8d15a-3b66-4c68-ac07-2ca08eed1f95 | 
+2023-01-04T09:16:46Z | source/Qkan_Bilder/Import_von_flaechendaten/WFS_Client_getfeatures.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672651166 | 66a121ba287daeaaa6bc224f4f8423dd | 37897 | 397407429oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 50737 | 1664194160 | f77c45d4-81aa-45ea-ad1e-a80ad4a0b857 | 
+#=#=#=# Syncrun finished 2023-01-04T09:16:46Z (last step: 443 msec , total: 1822 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:16:48Z
+#=#=#=#=# Propagation starts 2023-01-04T09:16:50Z (last step: 1397 msec , total: 1397 msec) 
+2023-01-04T09:16:50Z | source/Qkan_Bilder/Import_von_flaechendaten/verschneidung_flurstuecke.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672651110 | 03786b9f28cccdd942a04b0fe7c33c68 | 34061 | 397407462oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 37276 | 1664272255 | d9992f38-9d21-476f-9636-bdff2e077eaa | 
+#=#=#=# Syncrun finished 2023-01-04T09:16:50Z (last step: 414 msec , total: 1812 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:16:52Z
+#=#=#=#=# Propagation starts 2023-01-04T09:16:54Z (last step: 1433 msec , total: 1433 msec) 
+2023-01-04T09:16:54Z | source/Qkan_Bilder/Import_von_flaechendaten/WFS_Client_roadarea.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672651206 | f76d5b610f1acf43935c520492219bbf | 25258 | 397407435oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 24144 | 1664278521 | a1be394c-3383-429d-81d7-3d5c7c19a7a2 | 
+#=#=#=# Syncrun finished 2023-01-04T09:16:54Z (last step: 359 msec , total: 1793 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:16:56Z
+#=#=#=#=# Propagation starts 2023-01-04T09:16:56Z (last step: 346 msec , total: 346 msec) 
+#=#=#=# Syncrun finished 2023-01-04T09:16:56Z (last step: 15 msec , total: 361 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:18:08Z
+#=#=#=#=# Propagation starts 2023-01-04T09:18:10Z (last step: 1385 msec , total: 1385 msec) 
+2023-01-04T09:18:10Z | source/Qkan_Bilder/Erstellung_unbefestigte_flaechen/Fenster.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672650734 | da64d8159114cea3a5072432c5732cf3 | 28246 | 397407399oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 33624 | 1664362313 | 4699f22d-4cce-44b9-a032-e5cea58854af | 
+#=#=#=# Syncrun finished 2023-01-04T09:18:10Z (last step: 330 msec , total: 1716 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:18:12Z
+#=#=#=#=# Propagation starts 2023-01-04T09:18:13Z (last step: 399 msec , total: 399 msec) 
+#=#=#=# Syncrun finished 2023-01-04T09:18:13Z (last step: 12 msec , total: 411 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:18:48Z
+#=#=#=#=# Propagation starts 2023-01-04T09:18:50Z (last step: 1546 msec , total: 1546 msec) 
+2023-01-04T09:18:50Z | source/Qkan_Bilder/Erstellung_unbefestigte_flaechen/Fenster.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672650734 | 98a580736c4f49d1dd17071c4ea7db0c | 28246 | 413143164oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 28246 | 1672650734 | cd469ad7-beba-407e-9963-29505753fab9 | 
+#=#=#=# Syncrun finished 2023-01-04T09:18:50Z (last step: 362 msec , total: 1908 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:18:52Z
+#=#=#=#=# Propagation starts 2023-01-04T09:18:53Z (last step: 478 msec , total: 478 msec) 
+#=#=#=# Syncrun finished 2023-01-04T09:18:53Z (last step: 12 msec , total: 490 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:19:28Z
+#=#=#=#=# Propagation starts 2023-01-04T09:19:30Z (last step: 1464 msec , total: 1464 msec) 
+ | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_WFS_gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1664191420 | 1f00cfddad662b0d4b49f256795c5d34 | 24637 | 397407420oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 24637 | 1664191420 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_WFS_strassen.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1664278118 | 7250716136a9070d5c19377e2242a9e5 | 19301 | 397407423oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 19301 | 1664278118 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_themen.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1664189731 | f23f389d869b7765859db50497dd8122 | 36163 | 397407432oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 36163 | 1664189731 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/WFS_Client_getcapabilities.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1672651138 | 9853d6b6ed36a92ecc7ad2545e9cb85c | 17485 | 397407426oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 17485 | 1672651138 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/WFS_Client_getfeatures.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1672651166 | 66a121ba287daeaaa6bc224f4f8423dd | 37897 | 397407429oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 37897 | 1672651166 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/WFS_Client_roadarea.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1672651206 | f76d5b610f1acf43935c520492219bbf | 25258 | 397407435oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 25258 | 1672651206 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/abflussparameter_HE_gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1672650857 | 2aa96fc6d8fec2de31dc0fe8687c3373 | 42466 | 397407444oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 42466 | 1672650857 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/attributtabelle_dach.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1672650988 | f0b5f10a789d10ec025a53b837c87e8b | 30082 | 397407441oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 30082 | 1672650988 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/attributtabelle_unbef_fl.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1672651026 | 1827dd8861a42494ad1fdc0aa0e99ee6 | 30809 | 397407447oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 30809 | 1672651026 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/fertig_import.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1664280419 | be5d8feb9ad70c9a2ee86cf36d5fed38 | 783389 | 397407468oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 783389 | 1664280419 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1664270893 | 44de15c89a81b15be2afce50b5216095 | 94494 | 397407459oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 94494 | 1664270893 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/gebaeude_Objekte_einfuegen.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1672651063 | 11f39a4c4c5d93140022659ce5510ec8 | 33443 | 397407456oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 33443 | 1672651063 |  | 
+ | source/Qkan_Bilder/Import_von_flaechendaten/verschneidung_flurstuecke.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1672651110 | 03786b9f28cccdd942a04b0fe7c33c68 | 34061 | 397407462oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 34061 | 1672651110 |  | 
+#=#=#=# Syncrun finished 2023-01-04T09:19:30Z (last step: 76 msec , total: 1540 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:19:32Z
+#=#=#=#=# Propagation starts 2023-01-04T09:19:33Z (last step: 1322 msec , total: 1322 msec) 
+2023-01-04T09:19:34Z | source/Qkan_Bilder/Import_von_flaechendaten/attributtabelle_unbef_fl.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651026 | ad131ee18426e5775f18cb66d1c722ef | 30809 | 413143236oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 1a4d616b-82dc-46c5-ae95-0e78e89181f4 | 
+#=#=#=# Syncrun finished 2023-01-04T09:19:34Z (last step: 448 msec , total: 1770 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:19:36Z
+#=#=#=#=# Propagation starts 2023-01-04T09:19:37Z (last step: 1304 msec , total: 1304 msec) 
+2023-01-04T09:19:38Z | source/Qkan_Bilder/Import_von_flaechendaten/fertig_import.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1664280419 | c1cd544192e380fb5618169f234a7e74 | 783389 | 413143239oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 2504a960-cd67-426c-bce7-ba233f75723d | 
+#=#=#=# Syncrun finished 2023-01-04T09:19:38Z (last step: 485 msec , total: 1790 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:19:40Z
+#=#=#=#=# Propagation starts 2023-01-04T09:19:41Z (last step: 1292 msec , total: 1292 msec) 
+2023-01-04T09:19:42Z | source/Qkan_Bilder/Import_von_flaechendaten/gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1664270893 | 6628644ddde8db0b00e98684dc2d373a | 94494 | 413143248oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 1346842a-9f50-4580-8571-2bf2f6e3384c | 
+#=#=#=# Syncrun finished 2023-01-04T09:19:41Z (last step: 382 msec , total: 1675 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:19:43Z
+#=#=#=#=# Propagation starts 2023-01-04T09:19:45Z (last step: 1543 msec , total: 1543 msec) 
+2023-01-04T09:19:46Z | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_themen.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672823985 | 6444268ed2675a12d30a1a5c1b2e6f93 | 36163 | 413143257oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 92d2a050-fe30-452c-8eb9-bc87c9c61793 | 
+2023-01-04T09:19:46Z | source/Qkan_Bilder/Import_von_flaechendaten/gebaeude_Objekte_einfuegen.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651063 | 121264963c8921f53db3ffb6fe1c92aa | 33443 | 413143251oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 460f3f06-0f38-4902-a716-2991e75df547 | 
+#=#=#=# Syncrun finished 2023-01-04T09:19:45Z (last step: 486 msec , total: 2030 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:19:48Z
+#=#=#=#=# Propagation starts 2023-01-04T09:19:49Z (last step: 1429 msec , total: 1429 msec) 
+2023-01-04T09:19:50Z | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_WFS_gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672823989 | 6a1a22f412c0ed670ec655cf7a60d893 | 24637 | 413143263oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | a317ce36-77b8-46c2-a832-c1177fe754c0 | 
+2023-01-04T09:19:50Z | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_themen.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1664189731 | e12e8d941b14626b391646876ccf5464 | 36163 | 413143257oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 36163 | 1672823985 | 59b7ca27-6d1a-4b88-8ade-77b4b4c1f611 | 
+#=#=#=# Syncrun finished 2023-01-04T09:19:50Z (last step: 510 msec , total: 1939 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:19:52Z
+#=#=#=#=# Propagation starts 2023-01-04T09:19:53Z (last step: 1328 msec , total: 1328 msec) 
+2023-01-04T09:19:54Z | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_WFS_gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1664191420 | 4eb24938aa1df1113025bb87be78380d | 24637 | 413143263oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 24637 | 1672823989 | d2cc7809-c000-4753-bdda-5c6bb22a3a4d | 
+2023-01-04T09:19:54Z | source/Qkan_Bilder/Import_von_flaechendaten/INSPIRE_WFS_strassen.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1664278118 | cd310914757100a6bd9c79e2aa015e58 | 19301 | 413143275oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 9efa01ff-5c5e-46d5-9890-c8d40743dcad | 
+#=#=#=# Syncrun finished 2023-01-04T09:19:54Z (last step: 473 msec , total: 1801 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:19:56Z
+#=#=#=#=# Propagation starts 2023-01-04T09:19:57Z (last step: 1317 msec , total: 1317 msec) 
+2023-01-04T09:19:58Z | source/Qkan_Bilder/Import_von_flaechendaten/verschneidung_flurstuecke.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672823997 | 559648708498912c0f58dd71c47ead4e | 34061 | 413143281oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | d1b71146-2372-4f33-b88a-a58e4774b6a7 | 
+#=#=#=# Syncrun finished 2023-01-04T09:19:58Z (last step: 362 msec , total: 1679 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:20:00Z
+#=#=#=#=# Propagation starts 2023-01-04T09:20:01Z (last step: 1399 msec , total: 1399 msec) 
+2023-01-04T09:20:02Z | source/Qkan_Bilder/Import_von_flaechendaten/verschneidung_flurstuecke.PNG | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672651110 | 12e7f2c0e8fda7801f17ddbc204294b2 | 34061 | 413143281oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 34061 | 1672823997 | 466986c9-5fc4-44b7-9a45-81984ef48c45 | 
+#=#=#=# Syncrun finished 2023-01-04T09:20:01Z (last step: 313 msec , total: 1713 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:20:03Z
+#=#=#=#=# Propagation starts 2023-01-04T09:20:05Z (last step: 1380 msec , total: 1380 msec) 
+2023-01-04T09:20:05Z | source/Qkan_Bilder/Import_von_flaechendaten/WFS_Client_getcapabilities.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651138 | e89d7a5a558d6501875edc9bb9e8dc48 | 17485 | 413143290oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 4b4d40f5-973d-44a5-bc54-f7898c189420 | 
+#=#=#=# Syncrun finished 2023-01-04T09:20:05Z (last step: 375 msec , total: 1756 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:20:07Z
+#=#=#=#=# Propagation starts 2023-01-04T09:20:09Z (last step: 1500 msec , total: 1500 msec) 
+2023-01-04T09:20:09Z | source/Qkan_Bilder/Import_von_flaechendaten/WFS_Client_getfeatures.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651166 | a283687db40b603d8716b1c08dbbb3cf | 37897 | 413143296oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 29f9c1c1-f37d-4c97-87cf-b763f3d9c8ec | 
+#=#=#=# Syncrun finished 2023-01-04T09:20:09Z (last step: 361 msec , total: 1862 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:20:11Z
+#=#=#=#=# Propagation starts 2023-01-04T09:20:13Z (last step: 1341 msec , total: 1341 msec) 
+2023-01-04T09:20:13Z | source/Qkan_Bilder/Import_von_flaechendaten/WFS_Client_roadarea.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672651206 | e316b00e0c80883608970fd64b5d01a6 | 25258 | 413143302oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | a1786be6-3365-4443-af2f-dbbb75e6610c | 
+#=#=#=# Syncrun finished 2023-01-04T09:20:13Z (last step: 380 msec , total: 1722 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:20:15Z
+#=#=#=#=# Propagation starts 2023-01-04T09:20:17Z (last step: 1363 msec , total: 1363 msec) 
+2023-01-04T09:20:17Z | source/Qkan_Bilder/Import_von_flaechendaten/abflussparameter_HE_gebaeude.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672650857 | cfb84d0f5c14cbb9a1a28532568ea3b8 | 42466 | 413143305oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 18d6933c-eee0-41b0-8742-ecbdbed6b5c7 | 
+#=#=#=# Syncrun finished 2023-01-04T09:20:17Z (last step: 380 msec , total: 1744 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:20:19Z
+#=#=#=#=# Propagation starts 2023-01-04T09:20:20Z (last step: 1364 msec , total: 1364 msec) 
+2023-01-04T09:20:21Z | source/Qkan_Bilder/Import_von_flaechendaten/attributtabelle_dach.PNG | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672650988 | 60aff99e519cb0185957fca28df316b3 | 30082 | 413143308oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | a5f9a5e0-a4c3-4899-9dbf-837a13bb026d | 
+#=#=#=# Syncrun finished 2023-01-04T09:20:21Z (last step: 384 msec , total: 1749 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:20:23Z
+#=#=#=#=# Propagation starts 2023-01-04T09:20:24Z (last step: 1511 msec , total: 1511 msec) 
+#=#=#=# Syncrun finished 2023-01-04T09:20:24Z (last step: 20 msec , total: 1531 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:36:18Z
+#=#=#=#=# Propagation starts 2023-01-04T09:36:19Z (last step: 741 msec , total: 741 msec) 
+ | source/Qkan_erstellung_unbef_fl.rst | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1664538921 | 107520e2a243aa8b1d1fa96b656c9767 | 2395 | 397407738oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 2395 | 1664538921 |  | 
+ | source/Qkan_import_flaechendaten.rst | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1664540637 | 048c0315898acdceea9862cd9c160dc0 | 9821 | 397407756oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 9821 | 1664540637 |  | 
+#=#=#=# Syncrun finished 2023-01-04T09:36:19Z (last step: 40 msec , total: 782 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:36:21Z
+#=#=#=#=# Propagation starts 2023-01-04T09:36:22Z (last step: 335 msec , total: 335 msec) 
+#=#=#=# Syncrun finished 2023-01-04T09:36:22Z (last step: 13 msec , total: 348 msec) 
+#=#=#=# Syncrun started 2023-01-04T09:36:58Z
+#=#=#=#=# Propagation starts 2023-01-04T09:36:59Z (last step: 762 msec , total: 762 msec) 
+2023-01-04T09:37:00Z | source/Qkan_erstellung_unbef_fl.rst | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672824723 | 3a86a1b4d4efb2e0d5bd7f1dd0db7f81 | 2531 | 413144862oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 702092d2-6ff7-4d1e-b222-9e4ce0a4dae6 | 
+2023-01-04T09:37:00Z | source/Qkan_import_flaechendaten.rst | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672824932 | 3204b78f8642a810914c6e0906f9dd8a | 9944 | 413144901oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | 8775c3da-53b9-4b44-9d07-1bd87a5a6866 | 
+#=#=#=# Syncrun finished 2023-01-04T09:37:00Z (last step: 448 msec , total: 1211 msec) 
+#=#=#=# Syncrun started 2023-01-04T11:37:04Z
+#=#=#=#=# Propagation starts 2023-01-04T11:37:05Z (last step: 541 msec , total: 541 msec) 
+#=#=#=# Syncrun finished 2023-01-04T11:37:05Z (last step: 12 msec , total: 554 msec) 
+#=#=#=# Syncrun started 2023-01-04T12:42:27Z
+#=#=#=#=# Propagation starts 2023-01-04T12:42:28Z (last step: 350 msec , total: 350 msec) 
+#=#=#=# Syncrun finished 2023-01-04T12:42:28Z (last step: 11 msec , total: 361 msec) 
+#=#=#=# Syncrun started 2023-01-04T14:42:29Z
+#=#=#=#=# Propagation starts 2023-01-04T14:42:29Z (last step: 447 msec , total: 447 msec) 
+#=#=#=# Syncrun finished 2023-01-04T14:42:29Z (last step: 14 msec , total: 461 msec) 
+#=#=#=# Syncrun started 2023-01-04T16:42:39Z
+#=#=#=#=# Propagation starts 2023-01-04T16:42:40Z (last step: 1259 msec , total: 1259 msec) 
+#=#=#=# Syncrun finished 2023-01-04T16:42:40Z (last step: 13 msec , total: 1273 msec) 
+#=#=#=# Syncrun started 2023-01-04T18:42:45Z
+#=#=#=#=# Propagation starts 2023-01-04T18:42:45Z (last step: 438 msec , total: 438 msec) 
+#=#=#=# Syncrun finished 2023-01-04T18:42:45Z (last step: 11 msec , total: 450 msec) 
+#=#=#=# Syncrun started 2023-01-04T20:42:50Z
+#=#=#=#=# Propagation starts 2023-01-04T20:42:50Z (last step: 405 msec , total: 405 msec) 
+#=#=#=# Syncrun finished 2023-01-04T20:42:50Z (last step: 24 msec , total: 429 msec) 
+#=#=#=# Syncrun started 2023-01-05T07:01:19Z
+#=#=#=#=# Propagation starts 2023-01-05T07:01:19Z (last step: 436 msec , total: 436 msec) 
+#=#=#=# Syncrun finished 2023-01-05T07:01:19Z (last step: 20 msec , total: 457 msec) 
+#=#=#=# Syncrun started 2023-01-05T07:01:21Z
+#=#=#=#=# Propagation starts 2023-01-05T07:01:22Z (last step: 282 msec , total: 282 msec) 
+#=#=#=# Syncrun finished 2023-01-05T07:01:22Z (last step: 14 msec , total: 296 msec) 
+#=#=#=# Syncrun started 2023-01-05T09:01:30Z
+#=#=#=#=# Propagation starts 2023-01-05T09:01:30Z (last step: 428 msec , total: 428 msec) 
+#=#=#=# Syncrun finished 2023-01-05T09:01:30Z (last step: 12 msec , total: 441 msec) 
+#=#=#=# Syncrun started 2023-01-05T11:15:25Z
+#=#=#=#=# Propagation starts 2023-01-05T11:15:25Z (last step: 734 msec , total: 734 msec) 
+2023-01-05T11:15:26Z | source/Qkan_erstellung_unbef_fl.rst | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Down | | 1672915643 | 7dfd8596c127f554ff617f91499dc298 | 2519 | 413338620oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 2531 | 1672824723 | 771f0fb3-c36c-42e3-8d42-ac61f4929de0 | 
+#=#=#=# Syncrun finished 2023-01-05T11:15:26Z (last step: 342 msec , total: 1077 msec) 
+#=#=#=# Syncrun started 2023-01-05T11:15:28Z
+#=#=#=#=# Propagation starts 2023-01-05T11:15:29Z (last step: 306 msec , total: 306 msec) 
+#=#=#=# Syncrun finished 2023-01-05T11:15:29Z (last step: 11 msec , total: 318 msec) 
+#=#=#=# Syncrun started 2023-01-05T12:10:24Z
+#=#=#=#=# Propagation starts 2023-01-05T12:10:25Z (last step: 420 msec , total: 420 msec) 
+2023-01-05T12:10:25Z | Neue Verknüpfung.lnk | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672920622 | fb1fdca5674770708467464635ec919b | 190 | 413368812oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 5ee12b3f-c3fe-4cb3-af3c-ddc06d664c16 | 
+#=#=#=# Syncrun finished 2023-01-05T12:10:26Z (last step: 788 msec , total: 1209 msec) 
+#=#=#=# Syncrun started 2023-01-05T12:10:28Z
+#=#=#=#=# Propagation starts 2023-01-05T12:10:28Z (last step: 330 msec , total: 330 msec) 
+#=#=#=# Syncrun finished 2023-01-05T12:10:28Z (last step: 14 msec , total: 344 msec) 
+#=#=#=# Syncrun started 2023-01-05T12:10:41Z
+#=#=#=#=# Propagation starts 2023-01-05T12:10:41Z (last step: 436 msec , total: 436 msec) 
+#=#=#=# Syncrun finished 2023-01-05T12:10:41Z (last step: 15 msec , total: 452 msec) 
+#=#=#=# Syncrun started 2023-01-05T12:11:02Z
+#=#=#=#=# Propagation starts 2023-01-05T12:11:03Z (last step: 435 msec , total: 435 msec) 
+2023-01-05T12:11:04Z | Neue Verknüpfung.lnk | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Up | | 1672920622 | fb1fdca5674770708467464635ec919b | 190 | 413368812oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 190 | 1672920622 | 1c10941d-b979-4010-afa8-7e9ffcf88d52 | 
+2023-01-05T12:11:03Z | Doku_zu_rst-Dateien.url | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1672920660 | be402904814f3eb2184d220673902c1e | 160 | 413368968oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 528ab39e-d05d-4043-a25e-845d1546bc0b | 
+#=#=#=# Syncrun finished 2023-01-05T12:11:04Z (last step: 975 msec , total: 1410 msec) 
+#=#=#=# Syncrun started 2023-01-05T12:11:21Z
+#=#=#=#=# Propagation starts 2023-01-05T12:11:21Z (last step: 406 msec , total: 406 msec) 
+#=#=#=# Syncrun finished 2023-01-05T12:11:21Z (last step: 15 msec , total: 422 msec) 
+#=#=#=# Syncrun started 2023-01-05T12:30:01Z
+#=#=#=#=# Propagation starts 2023-01-05T12:30:02Z (last step: 695 msec , total: 695 msec) 
+ | source/Qkan_erstellung_unbef_fl.rst | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1672915643 | 7dfd8596c127f554ff617f91499dc298 | 2519 | 413338620oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 2519 | 1672915643 |  | 
+#=#=#=# Syncrun finished 2023-01-05T12:30:02Z (last step: 29 msec , total: 724 msec) 
+#=#=#=# Syncrun started 2023-01-05T12:30:04Z
+#=#=#=#=# Propagation starts 2023-01-05T12:30:04Z (last step: 324 msec , total: 324 msec) 
+#=#=#=# Syncrun finished 2023-01-05T12:30:04Z (last step: 15 msec , total: 339 msec) 
+#=#=#=# Syncrun started 2023-01-05T12:30:41Z
+#=#=#=#=# Propagation starts 2023-01-05T12:30:42Z (last step: 707 msec , total: 707 msec) 
+2023-01-05T12:30:42Z | source/Qkan_erstellung_unbef_fl.rst | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Down | | 1672921766 | 1e5a97fc978c35a63fe750275d9fa6a6 | 1657 | 413375526oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 200 | 0 | 0 | ce3203c2-a4ac-43c9-befb-787f679df807 | 
+#=#=#=# Syncrun finished 2023-01-05T12:30:42Z (last step: 320 msec , total: 1028 msec) 
+#=#=#=# Syncrun started 2023-01-05T12:32:01Z
+#=#=#=#=# Propagation starts 2023-01-05T12:32:02Z (last step: 1419 msec , total: 1419 msec) 
+ | source/Qkan_Bilder/Erstellung_unbefestigte_flaechen/Verschmelzung_tool.png | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1664366686 | 63561f3e3c2de29603ac25f8baa5734c | 1399 | 397407402oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 1399 | 1664366686 |  | 
+ | source/Qkan_Bilder/Erstellung_unbefestigte_flaechen/nach_verschmelzung.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1664359714 | f4a481774202bc9d4ae8f0475d419cb2 | 159342 | 397407408oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 159342 | 1664359714 |  | 
+ | source/Qkan_Bilder/Erstellung_unbefestigte_flaechen/vor_verschmelzung.PNG | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Down | | 1664359664 | a7052aa5d378847fa334133e883eda1b | 149096 | 397407417oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 0 | 149096 | 1664359664 |  | 
+#=#=#=# Syncrun finished 2023-01-05T12:32:02Z (last step: 44 msec , total: 1464 msec) 
+#=#=#=# Syncrun started 2023-01-05T12:32:04Z
+#=#=#=#=# Propagation starts 2023-01-05T12:32:05Z (last step: 323 msec , total: 323 msec) 
+#=#=#=# Syncrun finished 2023-01-05T12:32:05Z (last step: 13 msec , total: 337 msec) 
