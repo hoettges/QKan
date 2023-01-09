@@ -8,14 +8,15 @@ from pathlib import Path
 from typing import Callable, List, Optional, cast
 
 import qgis
-from qgis.core import QgsProject
-from qgis.gui import QgisInterface
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, QStandardPaths, QTranslator
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QListWidget, QMenu, QMenuBar, QWidget
+from qgis.core import QgsProject
+from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
 
 from .config import Config
+from .utils import QgisPanelLogger
 
 # Toggle in DEV to log to console
 LOG_TO_CONSOLE = False
@@ -65,8 +66,18 @@ class QKan:
         file_handler = logging.FileHandler(self.log_path)
         file_handler.setFormatter(formatter)
         file_handler.setLevel(logging.DEBUG)
+
+        qgis_handler = QgisPanelLogger()
+        qgis_handler.setFormatter(
+            logging.Formatter(
+                fmt="%(name)s - %(message)s",
+            )
+        )
+        qgis_handler.setLevel(logging.DEBUG)
+
         self.logger.setLevel(logging.DEBUG)
         self.logger.addHandler(file_handler)
+        self.logger.addHandler(qgis_handler)
 
         if LOG_TO_CONSOLE:
             stream_handler = logging.StreamHandler()
@@ -91,7 +102,9 @@ class QKan:
 
         # Set list of QKan-Forms
         forms_dir = os.path.join(pluginDirectory("qkan"), "forms")
-        QKan.forms = [el for el in os.listdir(forms_dir) if os.path.splitext(el)[1] == '.ui']
+        QKan.forms = [
+            el for el in os.listdir(forms_dir) if os.path.splitext(el)[1] == ".ui"
+        ]
         # self.logger.debug(f"forms_dir: {forms_dir}")
         # self.logger.debug(f"Formularliste: \n{QKan.forms}")
 
@@ -139,7 +152,6 @@ class QKan:
             zustandsklassen(iface),
             sanierungsbedarfszahl(iface),
             Laengsschnitt(iface),
-
         ]
 
         actions = cast(QMenuBar, self.iface.mainWindow().menuBar()).actions()
