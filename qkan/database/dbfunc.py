@@ -13,7 +13,7 @@ import shutil
 import sqlite3
 from distutils.version import LooseVersion
 from sqlite3 import Connection
-from typing import Any, Iterable, List, Optional, Union, cast
+from typing import Any, List, Optional, Union, cast
 
 from qgis.core import Qgis, QgsVectorLayer
 from qgis.PyQt.QtWidgets import QProgressBar
@@ -27,7 +27,6 @@ from .qkan_utils import fehlermeldung, warnung, meldung, get_database_QKan
 __author__ = "Joerg Hoettges"
 __date__ = "September 2016"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-
 
 logger = logging.getLogger("QKan.database.dbfunc")
 
@@ -43,6 +42,10 @@ def checkchars(text: str) -> bool:
     """
 
     return not (max([ord(t) > 127 for t in text]) or ("." in text) or ("-" in text))
+
+
+class DBConnectError(Exception):
+    """Raised when connecting to the database fails."""
 
 
 class DBConnection:
@@ -108,131 +111,137 @@ class DBConnection:
 
         self.current_version = LooseVersion("0.0.0")
 
-        if not tab_object:
-            if not self.dbname:
-                self.dbname, _ = get_database_QKan()
-                if not self.dbname:
-                    fehlermeldung("Fehler: Für den Export muss ein Projekt geladen sein!")
-                    return None
+        self._connect(tab_object=tab_object, qkan_db_update=qkan_db_update)
 
-            # Verbindung zur Datenbank herstellen oder die Datenbank neu erstellen
-            if os.path.exists(self.dbname):
-                self.consl = spatialite_connect(
-                    database=self.dbname, check_same_thread=False
-                )
-                self.cursl = self.consl.cursor()
+    def __enter__(self) -> "DBConnection":
+        """Allows use via context manager for easier connection handling"""
+        # TODO: Replace other uses with context managers
+        return self
 
-                self.epsg = self.getepsg()
-                if self.epsg is None:
-                    logger.error(
-                        "dbfunc.DBConnection.__init__: EPSG konnte nicht ermittelt werden. \n"
-                        + " QKan-DB: {}\n".format(self.dbname)
-                    )
-
-                logger.debug(
-                    "dbfunc.DBConnection.__init__: Datenbank existiert und Verbindung hergestellt:\n"
-                    + "{}".format(self.dbname)
-                )
-                # Versionsprüfung
-
-                if not self.check_version():
-                    logger.debug("dbfunc: Datenbank ist nicht aktuell")
-                    if qkan_db_update:
-                        logger.debug(
-                            "dbfunc: Update aktiviert. Deshalb wird Datenbank aktualisiert"
-                        )
-                        self.upgrade_database()
-                        # if self.reload:
-                        #     logger.debug("dbfunc: Datenbank muss neu geladen werden")
-                        #     self.connected = False
-                        #     self.consl.close()
-                    else:
-                        warnung(
-                            f"Projekt muss aktualisiert werden. Die QKan-Version der Datenbank {self.current_version} stimmt nicht ",
-                            f"mit der aktuellen QKan-Version {self.actversion} überein und muss aktualisiert werden!",
-                        )
-                        self.consl.close()
-                        self.isCurrentVersion = False
-                        self.connected = False  # Verbindungsstatus zur Kontrolle
-                        return None
-            else:
-                QKan.instance.iface.messageBar().pushMessage(
-                    "Information",
-                    "SpatiaLite-Datenbank wird erstellt. Bitte waren...",
-                    level=Qgis.Info,
-                )
-
-                datenbank_qkan_template = os.path.join(QKan.template_dir, "qkan.sqlite")
-                try:
-                    shutil.copyfile(datenbank_qkan_template, self.dbname)
-
-                    self.consl = spatialite_connect(database=self.dbname)
-                    self.cursl = self.consl.cursor()
-
-                    # sql = 'SELECT InitSpatialMetadata()'
-                    # self.cursl.execute(sql)
-
-                    QKan.instance.iface.messageBar().pushMessage(
-                        "Information",
-                        "SpatiaLite-Datenbank ist erstellt!",
-                        level=Qgis.Info,
-                    )
-                    if not createdbtables(
-                        self.consl, self.cursl, self.actversion, self.epsg
-                    ):
-                        fehlermeldung(
-                            "Fehler",
-                            "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
-                        )
-                except BaseException as err:
-                    logger.debug(f"Datenbank ist nicht vorhanden: {self.dbname}")
-                    fehlermeldung(
-                        "Fehler in dbfunc.DBConnection:\n{}\n".format(err),
-                        "Kopieren von: {}\nnach: {}\n nicht möglich".format(
-                            QKan.template_dir, self.dbname
-                        ),
-                    )
-                    self.connected = False  # Verbindungsstatus zur Kontrolle
-                    self.consl = None
-        elif tab_object is not None:
-            tabconnect = tab_object.publicSource()
-            t_db, t_tab, t_geo, t_sql = tuple(tabconnect.split())
-            self.dbname = t_db.split("=")[1].strip("'")
-            self.tabname = t_tab.split("=")[1].strip('"')
-
-            # Pruefung auf korrekte Zeichen in Namen
-            if not checkchars(self.tabname):
-                fehlermeldung(
-                    "Fehler",
-                    "Unzulaessige Zeichen in Tabellenname: {}".format(self.tabname),
-                )
-                self.connected = False  # Verbindungsstatus zur Kontrolle
-                self.consl = None
-            else:
-                try:
-                    self.consl = spatialite_connect(database=self.dbname)
-                    self.cursl = self.consl.cursor()
-
-                    self.epsg = self.getepsg()
-                except:
-                    fehlermeldung(
-                        "Fehler",
-                        "Fehler beim Öffnen der SpatialLite-Datenbank {}!\nAbbruch!".format(
-                            self.dbname
-                        ),
-                    )
-                    self.connected = False  # Verbindungsstatus zur Kontrolle
-                    self.consl = None
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Closes connection once we're out of context"""
+        self.__del__()
 
     def __del__(self) -> None:
-        """Destructor.
+        """Closes connection once object is deleted"""
+        self._disconnect()
 
-        Beendet die Datenbankverbindung.
+    def _connect(
+        self, tab_object: Optional[QgsVectorLayer], qkan_db_update: bool
+    ) -> None:
+        """Connects to SQLite3 database.
+
+        Raises:
+            DBConnectError: dbname is not set & could not be determined from project
         """
+        if tab_object is not None:
+            self._connect_with_object(tab_object)
+            return
+
+        if not self.dbname:
+            self.dbname, _ = get_database_QKan()
+            if not self.dbname:
+                fehlermeldung("Fehler: Für den Export muss ein Projekt geladen sein!")
+                raise DBConnectError()
+
+        # Load existing database
+        if os.path.exists(self.dbname):
+            self.consl = spatialite_connect(
+                database=self.dbname, check_same_thread=False
+            )
+            self.cursl = self.consl.cursor()
+
+            self.epsg = self.getepsg()
+            if self.epsg is None:
+                logger.error(
+                    "dbfunc.DBConnection.__init__: EPSG konnte nicht ermittelt werden. \n"
+                    + " QKan-DB: {}\n".format(self.dbname)
+                )
+
+            logger.debug(
+                "dbfunc.DBConnection.__init__: Datenbank existiert und Verbindung hergestellt:\n"
+                + "{}".format(self.dbname)
+            )
+
+            # Versionsprüfung
+            if not self.check_version():
+                logger.debug("dbfunc: Datenbank ist nicht aktuell")
+                if qkan_db_update:
+                    logger.debug(
+                        "dbfunc: Update aktiviert. Deshalb wird Datenbank aktualisiert"
+                    )
+                    self.upgrade_database()
+                else:
+                    warnung(
+                        f"Projekt muss aktualisiert werden. Die QKan-Version der Datenbank {self.current_version} stimmt nicht ",
+                        f"mit der aktuellen QKan-Version {self.actversion} überein und muss aktualisiert werden!",
+                    )
+                    self.consl.close()
+                    self.isCurrentVersion = False
+                    self.connected = False
+
+                    return None
+
+        # Create new database
+        else:
+            QKan.instance.iface.messageBar().pushMessage(
+                "Information",
+                "SpatiaLite-Datenbank wird erstellt. Bitte waren...",
+                level=Qgis.Info,
+            )
+
+            datenbank_qkan_template = os.path.join(QKan.template_dir, "qkan.sqlite")
+            try:
+                shutil.copyfile(datenbank_qkan_template, self.dbname)
+
+                self.consl = spatialite_connect(database=self.dbname)
+                self.cursl = self.consl.cursor()
+
+                QKan.instance.iface.messageBar().pushMessage(
+                    "Information",
+                    "SpatiaLite-Datenbank ist erstellt!",
+                    level=Qgis.Info,
+                )
+                if not createdbtables(
+                    self.consl, self.cursl, self.actversion, self.epsg
+                ):
+                    fehlermeldung(
+                        "Fehler",
+                        "SpatiaLite-Datenbank: Tabellen konnten nicht angelegt werden",
+                    )
+            except BaseException as err:
+                logger.debug(f"Datenbank ist nicht vorhanden: {self.dbname}")
+                fehlermeldung(
+                    "Fehler in dbfunc.DBConnection:\n{}\n".format(err),
+                    "Kopieren von: {}\nnach: {}\n nicht möglich".format(
+                        QKan.template_dir, self.dbname
+                    ),
+                )
+                self.connected = False
+                self.consl = None
+
+    def _connect_with_object(self, tab_object: QgsVectorLayer) -> None:
+        tab_connect = tab_object.publicSource()
+        t_db, t_tab, t_geo, t_sql = tuple(tab_connect.split())
+        self.dbname = t_db.split("=")[1].strip("'")
+        self.tabname = t_tab.split("=")[1].strip('"')
+
+        # Pruefung auf korrekte Zeichen in Namen
+        if not checkchars(self.tabname):
+            fehlermeldung(
+                "Fehler",
+                "Unzulaessige Zeichen in Tabellenname: {}".format(self.tabname),
+            )
+            self.connected = False
+            self.consl = None
+
+    def _disconnect(self) -> None:
+        """Closes database connection."""
         try:
-            cast(Connection, self.consl).close()
+            if self.consl is not None:
+                cast(Connection, self.consl).close()
             logger.debug(f"Verbindung zur Datenbank {self.dbname} wieder geloest.")
-        except BaseException:
+        except sqlite3.Error:
             fehlermeldung(
                 "Fehler in dbfunc.DBConnection:",
                 f"Verbindung zur Datenbank {self.dbname} konnte nicht geloest werden.\n",
@@ -278,7 +287,7 @@ class DBConnection:
         self,
         sql: str,
         stmt_category: str = "allgemein",
-        parameters = (),              # : Optional[Iterable, dict[str, str]]   "Iterable" is deprecated
+        parameters=(),  # : Optional[Iterable, dict[str, str]]   "Iterable" is deprecated
         mute_logger: bool = False,
         ignore: bool = False,
     ) -> bool:
@@ -334,14 +343,17 @@ class DBConnection:
         except sqlite3.Error as e:
             if ignore:
                 warnung(
-                    "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=stmt_category),
+                    "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(
+                        e=stmt_category
+                    ),
                     "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=parameters),
                 )
             else:
-                logger.error(f'dbfunc.sql: \nsql: {sql}\n'
-                             f'parameters: {parameters}')
+                logger.error(f"dbfunc.sql: \nsql: {sql}\n" f"parameters: {parameters}")
                 fehlermeldung(
-                    "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(e=stmt_category),
+                    "dbfunc.DBConnection.sql: SQL-Fehler in {e}".format(
+                        e=stmt_category
+                    ),
                     "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=parameters),
                 )
                 self.__del__()
@@ -357,11 +369,30 @@ class DBConnection:
     ) -> bool:
         """Fügt einen Datensatz mit Geo-Objekt hinzu"""
 
-        if tabnam == 'schaechte':
-            parlis = ['schnam', 'sohlhoehe', 'deckelhoehe', 'durchm', 'druckdicht',
-                    'ueberstauflaeche', 'entwart', 'strasse', 'teilgebiet',
-                    'knotentyp', 'auslasstyp', 'schachttyp', 'simstatus',
-                    'material', 'kommentar', 'createdat', 'xsch', 'ysch', 'geom', 'geop', 'epsg']
+        if tabnam == "schaechte":
+            parlis = [
+                "schnam",
+                "sohlhoehe",
+                "deckelhoehe",
+                "durchm",
+                "druckdicht",
+                "ueberstauflaeche",
+                "entwart",
+                "strasse",
+                "teilgebiet",
+                "knotentyp",
+                "auslasstyp",
+                "schachttyp",
+                "simstatus",
+                "material",
+                "kommentar",
+                "createdat",
+                "xsch",
+                "ysch",
+                "geom",
+                "geop",
+                "epsg",
+            ]
             for el in parlis:
                 if parameters.get(el, None) is None:
                     parameters[el] = None
@@ -395,11 +426,33 @@ class DBConnection:
                         ELSE GeomFromText(:geom, :epsg)
                     END);"""
 
-        elif tabnam == 'haltungen':
-            parlis = ['haltnam', 'schoben', 'schunten', 'hoehe', 'breite',
-                      'laenge', 'sohleoben', 'sohleunten', 'teilgebiet', 'profilnam',
-                      'entwart', 'strasse', 'material', 'ks', 'haltungstyp', 'simstatus', 'kommentar',
-                      'createdat', 'xschob', 'yschob', 'xschun', 'yschun', 'geom', 'epsg']
+        elif tabnam == "haltungen":
+            parlis = [
+                "haltnam",
+                "schoben",
+                "schunten",
+                "hoehe",
+                "breite",
+                "laenge",
+                "sohleoben",
+                "sohleunten",
+                "teilgebiet",
+                "profilnam",
+                "entwart",
+                "strasse",
+                "material",
+                "ks",
+                "haltungstyp",
+                "simstatus",
+                "kommentar",
+                "createdat",
+                "xschob",
+                "yschob",
+                "xschun",
+                "yschun",
+                "geom",
+                "epsg",
+            ]
             for el in parlis:
                 if parameters.get(el, None) is None:
                     parameters[el] = None
@@ -438,12 +491,34 @@ class DBConnection:
                   END
                   ;"""
 
-        elif tabnam == 'haltungen_untersucht':
-            parlis = ['haltnam', 'schoben', 'schunten', 'hoehe', 'breite', 'laenge',
-                      'kommentar', 'createdat', 'baujahr', 'xschob', 'yschob',
-                      'xschun', 'yschun', 'untersuchtag', 'untersucher', 'wetter',
-                      'strasse', 'bewertungsart', 'bewertungstag', 'datenart',
-                      'max_ZD', 'max_ZB', 'max_ZS', 'geom', 'epsg']
+        elif tabnam == "haltungen_untersucht":
+            parlis = [
+                "haltnam",
+                "schoben",
+                "schunten",
+                "hoehe",
+                "breite",
+                "laenge",
+                "kommentar",
+                "createdat",
+                "baujahr",
+                "xschob",
+                "yschob",
+                "xschun",
+                "yschun",
+                "untersuchtag",
+                "untersucher",
+                "wetter",
+                "strasse",
+                "bewertungsart",
+                "bewertungstag",
+                "datenart",
+                "max_ZD",
+                "max_ZB",
+                "max_ZS",
+                "geom",
+                "epsg",
+            ]
             for el in parlis:
                 if parameters.get(el, None) is None:
                     parameters[el] = None
@@ -474,14 +549,39 @@ class DBConnection:
                   schaechte AS schun
                 WHERE schob.schnam = :schoben AND schun.schnam = :schunten;"""
 
-        elif tabnam == 'untersuchdat_haltung':
-            parlis = ['untersuchhal', 'untersuchrichtung', 'schoben', 'schunten', 'id',
-                      'videozaehler', 'inspektionslaenge', 'station', 'timecode',
-                      'video_offset', 'kuerzel', 'charakt1', 'charakt2', 'quantnr1',
-                      'quantnr2', 'streckenschaden', 'streckenschaden_lfdnr',
-                      'pos_von', 'pos_bis', 'foto_dateiname', 'film_dateiname',
-                      'ordner_bild', 'ordner_video', 'richtung',
-                      'ZD', 'ZB', 'ZS', 'createdat', 'geom', 'epsg']
+        elif tabnam == "untersuchdat_haltung":
+            parlis = [
+                "untersuchhal",
+                "untersuchrichtung",
+                "schoben",
+                "schunten",
+                "id",
+                "videozaehler",
+                "inspektionslaenge",
+                "station",
+                "timecode",
+                "video_offset",
+                "kuerzel",
+                "charakt1",
+                "charakt2",
+                "quantnr1",
+                "quantnr2",
+                "streckenschaden",
+                "streckenschaden_lfdnr",
+                "pos_von",
+                "pos_bis",
+                "foto_dateiname",
+                "film_dateiname",
+                "ordner_bild",
+                "ordner_video",
+                "richtung",
+                "ZD",
+                "ZB",
+                "ZS",
+                "createdat",
+                "geom",
+                "epsg",
+            ]
             for el in parlis:
                 if parameters.get(el, None) is None:
                     parameters[el] = None
@@ -567,12 +667,32 @@ class DBConnection:
                 WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND leitung.leitnam = :untersuchhal;
             """
 
-        elif tabnam == 'anschlussleitungen':
-            parlis = ['leitnam', 'schoben', 'schunten', 'hoehe', 'breite', 'laenge',
-                      'sohleoben', 'sohleunten',
-                      'teilgebiet', 'qzu', 'profilnam', 'entwart', 'material', 'ks',
-                      'simstatus', 'kommentar', 'createdat',
-                      'xschob', 'yschob', 'xschun', 'yschun', 'geom', 'epsg']
+        elif tabnam == "anschlussleitungen":
+            parlis = [
+                "leitnam",
+                "schoben",
+                "schunten",
+                "hoehe",
+                "breite",
+                "laenge",
+                "sohleoben",
+                "sohleunten",
+                "teilgebiet",
+                "qzu",
+                "profilnam",
+                "entwart",
+                "material",
+                "ks",
+                "simstatus",
+                "kommentar",
+                "createdat",
+                "xschob",
+                "yschob",
+                "xschun",
+                "yschun",
+                "geom",
+                "epsg",
+            ]
             for el in parlis:
                 if parameters.get(el, None) is None:
                     parameters[el] = None
@@ -603,14 +723,28 @@ class DBConnection:
                   END
                 );"""
 
-            logger.debug(f'insert anschlussleitung - sql: {sql}\n'
-                         f'parameter: {parameters}')
+            logger.debug(
+                f"insert anschlussleitung - sql: {sql}\n" f"parameter: {parameters}"
+            )
 
-        elif tabnam == 'schaechte_untersucht':
-            parlis = ['schnam', 'durchm', 'kommentar', 'createdat', 'baujahr',
-                      'untersuchtag', 'untersucher', 'wetter', 'strasse',
-                      'bewertungsart', 'bewertungstag', 'datenart', 'max_ZD',
-                      'max_ZB', 'max_ZS']
+        elif tabnam == "schaechte_untersucht":
+            parlis = [
+                "schnam",
+                "durchm",
+                "kommentar",
+                "createdat",
+                "baujahr",
+                "untersuchtag",
+                "untersucher",
+                "wetter",
+                "strasse",
+                "bewertungsart",
+                "bewertungstag",
+                "datenart",
+                "max_ZD",
+                "max_ZB",
+                "max_ZS",
+            ]
             for el in parlis:
                 if parameters.get(el, None) is None:
                     parameters[el] = None
@@ -634,12 +768,31 @@ class DBConnection:
                   schaechte AS sch
                   WHERE sch.schnam = :schnam;"""
 
-        elif tabnam == 'untersuchdat_schacht':
-            parlis = ['untersuchsch', 'id', 'videozaehler', 'timecode', 'kuerzel',
-                      'charakt1', 'charakt2', 'quantnr1', 'quantnr2', 'streckenschaden',
-                      'streckenschaden_lfdnr', 'pos_von', 'pos_bis', 'vertikale_lage',
-                      'inspektionslaenge', 'bereich', 'foto_dateiname', 'ordner',
-                      'ZD', 'ZB', 'ZS', 'createdat']
+        elif tabnam == "untersuchdat_schacht":
+            parlis = [
+                "untersuchsch",
+                "id",
+                "videozaehler",
+                "timecode",
+                "kuerzel",
+                "charakt1",
+                "charakt2",
+                "quantnr1",
+                "quantnr2",
+                "streckenschaden",
+                "streckenschaden_lfdnr",
+                "pos_von",
+                "pos_bis",
+                "vertikale_lage",
+                "inspektionslaenge",
+                "bereich",
+                "foto_dateiname",
+                "ordner",
+                "ZD",
+                "ZB",
+                "ZS",
+                "createdat",
+            ]
             for el in parlis:
                 if parameters.get(el, None) is None:
                     parameters[el] = None
@@ -682,8 +835,8 @@ class DBConnection:
                         :abflussparameter, :kommentar,
                     GeomFromText(:geom, :epsg)
                     );"""
-        elif tabnam == 'teilgebiete':
-            parlis = ['tgnam', 'kommentar', 'createdat', 'geom']
+        elif tabnam == "teilgebiete":
+            parlis = ["tgnam", "kommentar", "createdat", "geom"]
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
@@ -698,7 +851,7 @@ class DBConnection:
         else:
             warnung(
                 "dbfunc.DBConnection.insertdata:",
-                f"Daten für diesen Layer {tabnam} können (noch) nicht " 
+                f"Daten für diesen Layer {tabnam} können (noch) nicht "
                 "über die QKan-Clipboardfunktion eingefügt werden",
             )
             return False
@@ -771,10 +924,10 @@ class DBConnection:
 
         if not self.sql(
             """
-            SELECT value
-            FROM info
-            WHERE subject = 'version'
-            """,
+                SELECT value
+                FROM info
+                WHERE subject = 'version'
+                """,
             "dbfunc.DBConnection.version (1)",
         ):
             return False
@@ -897,10 +1050,7 @@ class DBConnection:
             return False
         data = self.fetchall()
         attr_dict_geo = dict(
-            [
-                (el[0], [el[0], el[2], geo_type[el[1]], el[3]])
-                for el in data
-            ]
+            [(el[0], [el[0], el[2], geo_type[el[1]], el[3]]) for el in data]
         )
         attr_set_geo = set(attr_dict_geo.keys())
 
@@ -951,11 +1101,11 @@ class DBConnection:
 
         # 1. Transaktion starten
         # if not self.sql(
-            # "BEGIN TRANSACTION;",
-            # "dbfunc.DBConnection.alter_table (4)",
-            # transaction=False,
+        # "BEGIN TRANSACTION;",
+        # "dbfunc.DBConnection.alter_table (4)",
+        # transaction=False,
         # ):
-            # return False
+        # return False
 
         # 2. Indizes und Trigger speichern
         # sql = """SELECT type, sql
@@ -1130,5 +1280,3 @@ class DBConnection:
             return False
 
         return True
-
-
