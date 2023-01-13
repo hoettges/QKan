@@ -171,8 +171,8 @@ class LaengsTask:
                 x_deckel.append(laenge1)
                 x_deckel.append(laenge2)
 
-                y_label.append((deckeloben+sohleoben)/2)
-                y_label.append((deckelunten+sohleunten)/2)
+                y_label.append((deckeloben+sohleoben-hoehe)/2)
+                y_label.append((deckelunten+sohleunten-hoehe)/2)
 
                 laenge1 += laenge
                 name.append(schoben)
@@ -207,7 +207,26 @@ class LaengsTask:
         new_plot.plot(x_sohle, y_sohle, color=farbe, label='Kanalsohle')
         new_plot.plot(x_sohle2, y_sohle2, color=farbe, label='Kanalscheitel')
 
-        for x, y, nam in zip(x_deckel, y_label, name):
+        x_deckel_neu = []
+        name_neu = []
+        y_label_neu = []
+
+        for i in x_deckel:
+            if i not in x_deckel_neu:
+                x_deckel_neu.append(i)
+
+        for i in name:
+            if i not in name_neu:
+                name_neu.append(i)
+        #iface.messageBar().pushMessage("Fehler", str(y_label), level=Qgis.Critical)
+
+        for i in y_label:
+            if i not in y_label_neu:
+                y_label_neu.append(i)
+
+        #iface.messageBar().pushMessage("Fehler", str(y_label_neu), level=Qgis.Critical)
+
+        for x, y, nam in zip(x_deckel_neu, y_label_neu, name_neu):
             plt.annotate(nam, (x, y),
                          textcoords="offset points",
                          xytext=(-10, 0),
@@ -219,13 +238,13 @@ class LaengsTask:
         plt.ylabel('Höhe [m NHN]')
         new_plot.legend()
         plt.table(cellText=data, rowLabels=rows, colLabels=columns, loc='bottom', bbox=[0.0, -0.65, 1, 0.45], cellLoc='center')
-        plt.tight_layout()
         plt.subplots_adjust(top=0.98,
                             bottom=0.4,
                             left=0.13,
                             right=0.99,
                             hspace=0.2,
                             wspace=0.2)
+
 
     def cad(self):
 
@@ -267,6 +286,8 @@ class LaengsTask:
         y_deckel = []
         y_label = []
         name = []
+        z_deckel = []
+        z_sohle =[]
 
         haltnam_l = ['Haltungsname']
         schoben_l = ['Schacht oben']
@@ -354,6 +375,10 @@ class LaengsTask:
                 laenge1 += laenge
                 name.append(schoben)
                 name.append(schunten)
+                z_deckel.append(deckeloben)
+                z_deckel.append(deckelunten)
+                z_sohle.append(sohleoben)
+                z_sohle.append(sohleunten)
 
                 haltnam_l.append(haltnam)
                 schoben_l.append(schoben)
@@ -366,15 +391,15 @@ class LaengsTask:
                 strasse_l.append(strasse)
                 haltungstyp_l.append(haltungstyp)
 
-        farbe = "FARBE" "7\n" "\n"
+        farbe = "-FARBE" +"\n"+ "7\n" "\n"
         if entwart == 'MW' or 'KM' or 'Mischwasser':
-            farbe = "FARBE" "6\n" "\n"
+            farbe = "-FARBE" +"\n"+ "6\n" "\n"
 
         elif entwart == 'RW' or 'KR' or 'Regenwasser':
-            farbe = "FARBE" "5\n" "\n"
+            farbe = "-FARBE" +"\n"+ "5\n" "\n"
 
         elif entwart == 'SW' or 'KS' or 'Schmutzwasser':
-            farbe = "FARBE" "1\n" "\n"
+            farbe = "-FARBE" +"\n"+ "1\n" "\n"
 
         # autocad benötigt andere daten als matplotlib (Koordinatenpaare erwartet!)
         deckel = "LINIE"
@@ -449,7 +474,7 @@ class LaengsTask:
 
             #doc.SendCommand("LINIE " "1,1 " "3,5\n" "5,-2\n" "\n")
             # mit "FARBE" die Farbe der zu zeichnenden Linie ändern
-            doc.SendCommand("FARBE" "7\n" "\n")
+            doc.SendCommand("-FARBE" +"\n"+ "7\n" "\n")
             doc.SendCommand(deckel)
             doc.SendCommand(farbe)
             doc.SendCommand(scheitel)
@@ -462,29 +487,56 @@ class LaengsTask:
                 schacht += " " + str(i) + "," + str(j)
                 schacht += " " + str(i) + "," + str(z)
                 schacht += "\n" "\n"
-                doc.SendCommand("FARBE" "1\n" "\n")
+                doc.SendCommand("-FARBE" +"\n"+ "1\n" "\n")
                 doc.SendCommand(schacht)
 
 
             #Graphen zeichnen lassen
-            #auch mit Linie? Abmessungen anhand der Höhen und Längen ermitteln und auf und abrunden
-            #linie von -10 bis max(länge)
-            x_min = -10
-            x_max = max(laenge_l)+10
-            x_linie = "LINIE " + str(x_min) + "," + str(x_max) + "\n" + "\n"
+            doc.SendCommand("-FARBE" + "\n" + "7\n" "\n")
+            x_min = -5
+            y_min = float(min(y_sohle)) - 5
+            y_max = float(max(y_deckel)) + 5
+            x_max = laenge2 + 5
+            x_linie = "LINIE " + str(x_min) + "," + str(y_min) + " " + str(x_max) + "," + str(y_min) + "\n" + "\n"
+            #iface.messageBar().pushMessage("Error", str(x_linie), level=Qgis.Critical)
             doc.SendCommand(x_linie)
+            #y_linie = "LINIE " + str(x_min) + "," + str(y_min) +  " " + str(x_min) + "," + str(y_max) + "\n" + "\n"
+            #iface.messageBar().pushMessage("Error", str(y_linie), level=Qgis.Critical)
+            #doc.SendCommand(y_linie)
+            x_linie2 = "LINIE " + str(x_min) + "," + str(y_min-3.5) + " " + str(x_max) + "," + str(y_min-3.5) + "\n" + "\n"
+            doc.SendCommand(x_linie2)
+            x_linie3 = "LINIE " + str(x_min) + "," + str(y_min - 7.5) + " " + str(x_max) + "," + str(y_min - 7.5) + "\n" + "\n"
+            doc.SendCommand(x_linie3)
 
-            y_min = min(y_sohle)-10
-            y_max = max(y_deckel)+10
-            y_linie = "LINIE " + str(y_min) + "," + str(y_max) + "\n" + "\n"
-            doc.SendCommand(y_linie)
+            #zu den eingefügten Daten zoomen
+            doc.SendCommand("ZOOM"+ "\n"+"A"+ "\n")
 
-            #regelmäßige Striche für die Beschriftung der Graphen erzeugen mit werten
-            #einen erzeugen und dann kopieren
 
-            #Beschriftung einfügen
-            #mit "TEXT" werte von oben übernehmen
+            #regelmäßige Striche für die Beschriftung der Graphen erzeugen
 
-            #Tabelle einfügen
-            #mit "CSV2TABLE " path
-            doc.SendCommand("CSV2TABLE" + str(path))
+            x_deckel_neu = []
+            name_neu = []
+
+            for i in x_deckel:
+                if i not in x_deckel_neu:
+                    x_deckel_neu.append(i)
+
+            for i in name:
+                if i not in name_neu:
+                    name_neu.append(i)
+
+            for i,j,x,y in zip(x_deckel_neu,name_neu,z_deckel,z_sohle):
+                linien = "LINIE"
+                linien += " " + str(i) + "," + str(y_min)
+                linien += " " + str(i) + "," + str(y_min-9)
+                linien += "\n" "\n"
+                doc.SendCommand(linien)
+
+                text1 = "-TEXT" +"\n"+str(i-1.5) + "," + str(y_min-3)+"\n"+"0.7"+"\n"+"90"+"\n"+str(x)+"\n" "\n"
+                doc.SendCommand(text1)
+                text2 = "-TEXT" + "\n" + str(i - 1.5) + "," + str(y_min - 7) + "\n" + "0.7" + "\n" + "90" + "\n" + str(y) + "\n" "\n"
+                doc.SendCommand(text2)
+                text3 = "-TEXT" + "\n" + str(i - 2) + "," + str(y_min - 11) + "\n" + "1" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
+                doc.SendCommand(text3)
+
+
