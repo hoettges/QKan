@@ -47,6 +47,9 @@ class Laengsschnitt(QKanPlugin):
         LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).zeichnen()
         self.canv.draw()
 
+        return LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).zeichnen()
+
+
     def export_cad_function(self):
         db_qkan = DBConnection(dbname=self.database_qkan)
         if not db_qkan:

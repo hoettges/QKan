@@ -16,6 +16,7 @@ from qgis.PyQt.QtWidgets import (
     QToolButton,
     QMessageBox,
     QDialogButtonBox,
+    QLabel,
 )
 
 
@@ -53,6 +54,7 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
     pushButton_2: QPushButton
     lineEdit: QLineEdit
     lineEdit_2: QLineEdit
+    label: QLabel
 
 
     def __init__(
@@ -75,6 +77,13 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
 
     def refresh(self):
         self.refresh_function()
+
+        if self.refresh_function() == 'nicht erstellt':
+            self.label.setText('Bitte Elemente vom Schacht- oder Haltungslayer auswählen und den "refresh" Knopf drücken!')
+
+        else:
+            self.label.setText('')
+
 
 
 
