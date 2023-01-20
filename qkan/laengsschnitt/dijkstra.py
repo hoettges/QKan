@@ -15,24 +15,24 @@ LOG_TO_CONSOLE = False
 
 # Init logging
 logger = logging.getLogger("QKan")
-# formatter = logging.Formatter(
-#     fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-#     datefmt="%Y-%m-%d %H:%M:%S",
-# )
-# log_path = Path(tempfile.gettempdir()) / "findpath_{}.log".format(
-#     datetime.datetime.today().strftime("%Y-%m-%d")
-# )
-# file_handler = logging.FileHandler(log_path)
-# file_handler.setFormatter(formatter)
-# file_handler.setLevel(logging.DEBUG)
-# logger.setLevel(logging.DEBUG)
-# logger.addHandler(file_handler)
-#
-# if LOG_TO_CONSOLE:
-#     stream_handler = logging.StreamHandler()
-#     stream_handler.setFormatter(formatter)
-#     stream_handler.setLevel(logging.DEBUG)
-#     logger.addHandler(stream_handler)
+formatter = logging.Formatter(
+    fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+log_path = Path(tempfile.gettempdir()) / "findpath_{}.log".format(
+    datetime.datetime.today().strftime("%Y-%m-%d")
+)
+file_handler = logging.FileHandler(log_path)
+file_handler.setFormatter(formatter)
+file_handler.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(file_handler)
+
+if LOG_TO_CONSOLE:
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    stream_handler.setLevel(logging.DEBUG)
+    logger.addHandler(stream_handler)
 
 
 class Netz:

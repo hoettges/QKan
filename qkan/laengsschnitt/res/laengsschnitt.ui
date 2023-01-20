@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Form</class>
- <widget class="QWidget" name="Form">
+ <widget class="QDialog" name="Form">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
   </property>
   <property name="geometry">
    <rect>
@@ -21,6 +24,9 @@
   </property>
   <property name="windowTitle">
    <string>Längsschnitt</string>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

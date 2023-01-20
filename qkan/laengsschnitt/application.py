@@ -13,7 +13,7 @@ import matplotlib.dates as mdates
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from qgis.PyQt.QtWidgets import QWidget, QCheckBox
+from qgis.PyQt.QtWidgets import QWidget, QCheckBox, QFileDialog
 
 from ._laengsschnitt import LaengsTask
 from .application_dialog import LaengsDialog
@@ -26,11 +26,11 @@ class Laengsschnitt(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
 
-        self.laengs_dlg = LaengsDialog(default_dir=self.default_dir, tr=self.tr)
-        self.get_widget()
+        self.laengs_dlg = None
+        #self.get_widget()
 
-        self.laengs_dlg.refresh_function = self.refresh_function
-        self.laengs_dlg.export_cad_function = self.export_cad_function
+        #self.laengs_dlg.refresh_function = self.refresh_function
+        #self.laengs_dlg.export_cad_function = self.export_cad_function
 
     def refresh_function(self):
         db_qkan = DBConnection(dbname=self.database_qkan)
@@ -63,8 +63,6 @@ class Laengsschnitt(QKanPlugin):
                 level=Qgis.Critical,
             )
         LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).cad()
-        self.canv.draw()
-
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
@@ -77,7 +75,10 @@ class Laengsschnitt(QKanPlugin):
         )
 
     def unload(self) -> None:
-        self.laengs_dlg.close()
+        if self.laengs_dlg is None:
+            return
+        else:
+            self.laengs_dlg.close()
 
     def get_widget(self):
         """
@@ -94,61 +95,69 @@ class Laengsschnitt(QKanPlugin):
         dialog.verticalLayout.addWidget(NavigationToolbar(self.canv, qw, True))
 
 
-    def laengsschnitt(self) -> None:
-        """Anzeigen des Formulares für den Längsschnitt und anschließender Erstellung"""
-
-        # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
-
-        self.laengs_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
-
-        self.laengs_dlg.show()
-
-        if self.laengs_dlg.exec_():
-            # Read from form and save to config
-
-            QKan.config.save()
-
-            #Hatung auswählen!
-            QKan.config.xml.import_file = self.laengs_dlg.tf_import.text()
-            if not QKan.config.xml.import_file:
-                fehlermeldung("Fehler beim Erstellen des Längsschnittes", "Es wurde keine passende Haltung ausgewählt!")
-                self.iface.messageBar().pushMessage(
-                    "Fehler beim Erstellen",
-                    "Es wurde keine Haltung ausgewählt!",
-                    level=Qgis.Critical,
-                )
-                return
-            else:
-                crs: QgsCoordinateReferenceSystem = self.laengs_dlg.epsg.crs()
-
-                try:
-                    epsg = int(crs.postgisSrid())
-                except ValueError:
-                    # TODO: Reporting this to the user might be preferable
-                    self.log.exception(
-                        "Failed to parse selected CRS %s\nauthid:%s\n"
-                        "description:%s\nproj:%s\npostgisSrid:%s\nsrsid:%s\nacronym:%s",
-                        crs,
-                        crs.authid(),
-                        crs.description(),
-                        crs.findMatchingProj(),
-                        crs.postgisSrid(),
-                        crs.srsid(),
-                        crs.ellipsoidAcronym(),
-                    )
-                else:
-                    # TODO: This should all be run in a QgsTask to prevent the main
-                    #  thread/GUI from hanging. However this seems to either not work
-                    #  or crash QGIS currently. (QGIS 3.10.3/0e1f846438)
-                    QKan.config.epsg = epsg
-
-                    QKan.config.save()
-
-                    self._dolaengs()
-
-
+    # def laengsschnitt(self) -> None:
+    #     """Anzeigen des Formulares für den Längsschnitt und anschließender Erstellung"""
+    #
+    #     # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
+    #
+    #     self.laengs_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
+    #
+    #     #self.laengs_dlg.show()
+    #
+    #     if self.laengs_dlg.exec_():
+    #         # Read from form and save to config
+    #
+    #         QKan.config.save()
+    #
+    #         #Hatung auswählen!
+    #         QKan.config.xml.import_file = self.laengs_dlg.tf_import.text()
+    #         if not QKan.config.xml.import_file:
+    #             fehlermeldung("Fehler beim Erstellen des Längsschnittes", "Es wurde keine passende Haltung ausgewählt!")
+    #             self.iface.messageBar().pushMessage(
+    #                 "Fehler beim Erstellen",
+    #                 "Es wurde keine Haltung ausgewählt!",
+    #                 level=Qgis.Critical,
+    #             )
+    #             return
+    #         else:
+    #             crs: QgsCoordinateReferenceSystem = self.laengs_dlg.epsg.crs()
+    #
+    #             try:
+    #                 epsg = int(crs.postgisSrid())
+    #             except ValueError:
+    #                 # TODO: Reporting this to the user might be preferable
+    #                 self.log.exception(
+    #                     "Failed to parse selected CRS %s\nauthid:%s\n"
+    #                     "description:%s\nproj:%s\npostgisSrid:%s\nsrsid:%s\nacronym:%s",
+    #                     crs,
+    #                     crs.authid(),
+    #                     crs.description(),
+    #                     crs.findMatchingProj(),
+    #                     crs.postgisSrid(),
+    #                     crs.srsid(),
+    #                     crs.ellipsoidAcronym(),
+    #                 )
+    #             else:
+    #                 # TODO: This should all be run in a QgsTask to prevent the main
+    #                 #  thread/GUI from hanging. However this seems to either not work
+    #                 #  or crash QGIS currently. (QGIS 3.10.3/0e1f846438)
+    #                 QKan.config.epsg = epsg
+    #
+    #                 QKan.config.save()
+    #
+    #                 self._dolaengs()
 
     def run_laengs(self) -> None:
+
+        if self.laengs_dlg is not None:
+            self.laengs_dlg.pushButton.setEnabled(False)
+            self.laengs_dlg.pushButton_2.setEnabled(False)
+        self.laengs_dlg = LaengsDialog(default_dir=self.default_dir, tr=self.tr)
+        self.get_widget()
+
+        self.laengs_dlg.refresh_function = self.refresh_function
+        self.laengs_dlg.export_cad_function = self.export_cad_function
+
         self.laengs_dlg.show()
 
         # Fill dialog with current info
@@ -173,6 +182,10 @@ class Laengsschnitt(QKanPlugin):
 
             # Run
             LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).run()
+
+        #result = self.laengs_dlg.exec_()
+        #if result == QFileDialog.Rejected:
+         #   return
 
 
     def _dolaengs(self) -> bool:

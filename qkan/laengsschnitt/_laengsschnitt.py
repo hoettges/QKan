@@ -33,7 +33,7 @@ logger = logging.getLogger("QKan.laengs.import")
 
 
 class LaengsTask:
-    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv:FigureCanvas):
+    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas):
         self.db_qkan = db_qkan
         self.fig = fig
         self.canv = canv
@@ -107,6 +107,7 @@ class LaengsTask:
             iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
             x = 'nicht erstellt'
             return x
+
 
         for i in route[1]:
 
