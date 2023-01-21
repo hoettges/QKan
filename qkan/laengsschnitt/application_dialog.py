@@ -17,7 +17,11 @@ from qgis.PyQt.QtWidgets import (
     QMessageBox,
     QDialogButtonBox,
     QLabel,
+
 )
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
 
 logger = logging.getLogger("QKan.laengs.application_dialog")
@@ -83,7 +87,6 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
 
         else:
             self.label.setText('')
-
 
 
 
