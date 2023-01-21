@@ -23,7 +23,7 @@ Die unbefestigten Flächen werden nun automatisch erstellt und liegen auf dem La
 Abbildung: Flächen vor Anwendung des Tools
 
 .. image:: ./QKan_Bilder/Erstellung_unbefestigte_flaechen/nach_unbef_fl.png
-	 :name: Schraffur der unbefestigten Flächen
+    :name: Schraffur der unbefestigten Flächen
 
 Abbildung: Schraffur der unbefestigten Flächen
 

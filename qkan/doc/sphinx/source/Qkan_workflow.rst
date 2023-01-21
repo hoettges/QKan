@@ -1,4 +1,3 @@
-.. _Workflow
 Allgemeines
 ===========
 

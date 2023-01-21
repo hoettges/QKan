@@ -1,0 +1,22 @@
+Running Sphinx v4.0.1
+loading translations [de]... done
+loading pickled environment... done
+building [mo]: targets for 0 po files that are out of date
+building [html]: targets for 1 source files that are out of date
+updating environment: 0 added, 1 changed, 0 removed
+reading sources... [100%] Qkan_Vorbereitung_Workflow                           
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+preparing documents... done
+writing output... [ 50%] Qkan_Vorbereitung_Workflow                            writing output... [100%] index                                                 
+generating indices... genindex done
+writing additional pages... search done
+copying images... [ 20%] QKan_Bilder/Vorbereitung_Workflow/QKan_datenbank_erstellen.pngcopying images... [ 40%] QKan_Bilder/Vorbereitung_Workflow/QKan_datenbank_erstellen_fenster.pngcopying images... [ 60%] QKan_Bilder/Vorbereitung_Workflow/gew_karte.png       copying images... [ 80%] QKan_Bilder/Vorbereitung_Workflow/Clipboard_funktionen.pngcopying images... [100%] QKan_Bilder/Vorbereitung_Workflow/Ergebnis_vorbereitung.png
+copying static files... done
+copying extra files... done
+dumping search index in German (code: de)... done
+dumping object inventory... done
+build succeeded, 1 warning.
+
+The HTML pages are in build\html.

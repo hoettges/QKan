@@ -12,11 +12,12 @@ def run(dbcon: DBConnection) -> bool:
     """
 
     # Alle Tabellen erneuern, in denen createdat vorkommt
+    # "tezg_data" aus Liste entfernt, jh, 18.01.2023
 
     views = [
         "haltungen_data", "haltungen_untersucht_data", "untersuchdat_haltung_data",
         "anschlussleitungen_data", "schaechte_data", "schaechte_untersucht_data",
-        "untersuchdat_schacht_data", "pumpen_data", "wehre_data", "tezg_data",
+        "untersuchdat_schacht_data", "pumpen_data", "wehre_data",
         "v_linkfl_check", "v_flaechen_ohne_linkfl", "v_flaechen_check",
         "v_tezg_check", "v_linkfl_redundant", "v_linksw_redundant",
         ]

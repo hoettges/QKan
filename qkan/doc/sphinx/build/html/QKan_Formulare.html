@@ -43,7 +43,7 @@
     
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
     <link rel="search" title="Suche" href="search.html" />
-    <link rel="next" title="1. QKan-Tabellen" href="Qkan_Tabellen.html" />
+    <link rel="next" title="1. Allgemeines" href="Qkan_workflow.html" />
     <link rel="prev" title="1. Verarbeitung von befestigten und unbefestigten Flächen" href="Qkan_flaechen.html" /> 
 </head>
 
@@ -102,9 +102,9 @@
 <li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html#qkan-he7-plugin-fur-hystem-extran-7-x">2. QKan-HE7 Plugin für HYSTEM-EXTRAN 7.x</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html">1. Allgemeine Funktionen</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen">2. Übernahme von Kanaldaten aus Excel- oder ASCII-Tabellen</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#anlegen-eines-neuen-qkan-projektes">3. Anlegen eines neuen QKan-Projektes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html">1. Workflow: Von einfachen Tabellendaten zur Simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#anlegen-eines-neuen-qkan-projektes">2. Anlegen eines neuen QKan-Projektes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen">3. Übernahme von Kanaldaten aus Excel- oder ASCII-Tabellen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#vorbereitung-eines-einfachen-projektes-fur-den-hystem-extran-export">4. Vorbereitung eines einfachen Projektes für den HYSTEM-EXTRAN-Export</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#ubertragen-einer-anderen-projektdatei-auf-eine-qkan-datenbank">5. Übertragen einer anderen Projektdatei auf eine QKan-Datenbank</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#anzeigen-von-berechnungsergebnissen-aus-hystem-extran-8-x">6. Anzeigen von Berechnungsergebnissen aus HYSTEM-EXTRAN 8.x</a></li>
@@ -147,6 +147,12 @@
 </li>
 </ul>
 </li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">1. Allgemeines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_import_flaechendaten.html">2. Import von Flächendaten</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_erstellung_unbef_fl.html">3. Erzeugung unbefestigter Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen_vorbereiten.html">4. Vorbereitung zur Flächenzuordnung</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">1. QKan-Tabellen</a></li>
@@ -265,7 +271,10 @@ Dieses kann aus mehreren Flächenteilen bestehen.</p>
 <p>Die Attributdaten werden dabei aus den Haltungsflächen übernommen.</p>
 <section id="tabelle-zur-auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen">
 <h3><span class="section-number">3.4.1. </span>Tabelle zur Auswahl der zu bearbeitenden Arten von Haltungsflächen<a class="headerlink" href="#tabelle-zur-auswahl-der-zu-bearbeitenden-arten-von-haltungsflachen" title="Link zu dieser Überschrift">¶</a></h3>
-<p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung auf ausgewählte Haltungsflächen beschränkt werden. Aufgelistet sind alle Abflussparameter und Teilgebiete, die in den Haltungsflächen verwendet werden. Durch die Auswahl einer Zeile in der Tabelle werden alle Haltungsflächen mit der dargestellten Kombination aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.</p>
+<p>Mit Hilfe der <a class="reference internal" href="#selectiontable"><span class="std std-ref">Auswahltabelle</span></a> kann die Bearbeitung auf ausgewählte Haltungsflächen beschränkt werden.
+Aufgelistet sind alle Abflussparameter und Teilgebiete, die in den Haltungsflächen verwendet werden.
+Durch die Auswahl einer Zeile in der Tabelle werden alle Haltungsflächen mit der dargestellten Kombination
+aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.</p>
 <p>Ausführliche Erläuterung zu diesem Thema: <a class="reference internal" href="Qkan_flaechen.html#createunbeffl"><span class="std std-ref">Erzeugen von unbefestigten Flächen</span></a></p>
 </section>
 </section>
@@ -287,7 +296,7 @@ Dieses kann aus mehreren Flächenteilen bestehen.</p>
 <li><p>Falls Sie nicht sicher sind, ob Ihre Datenbank auf dem aktuellen Stand ist, können sie unter der Überschrift „QKan-Datenbank“ die Option „auf aktuelle Version anpassen“ aktivieren.</p></li>
 <li><p>Legen Sie mit der Schaltfläche […] Namen und Standort des angepassten Projekts fest.</p></li>
 </ol>
-<img alt="_images/qkan_layersadapt.png" id="image-qkan-layersadapt" src="_images/qkan_layersadapt.png" />
+<img alt="_images/qkan_layersadapt.png" src="_images/qkan_layersadapt.png" />
 </section>
 <section id="datenbank-aktualisieren">
 <span id="index-6"></span><h2><span class="section-number">3.7. </span>Datenbank aktualisieren<a class="headerlink" href="#datenbank-aktualisieren" title="Link zu dieser Überschrift">¶</a></h2>
@@ -330,7 +339,7 @@ in der Auswahltabelle angeklickt wird, wird die Auswahl automatisch aktiviert</p
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="Qkan_Tabellen.html" class="btn btn-neutral float-right" title="1. QKan-Tabellen" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Qkan_workflow.html" class="btn btn-neutral float-right" title="1. Allgemeines" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="Qkan_flaechen.html" class="btn btn-neutral float-left" title="1. Verarbeitung von befestigten und unbefestigten Flächen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
     </div>
 

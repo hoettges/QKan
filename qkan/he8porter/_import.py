@@ -253,7 +253,12 @@ class ImportTask:
                 FROM he.Rohr AS ro
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON ro.Profiltyp = pr.he_nr
-                LEFT JOIN entwaesserungsarten AS ea 
+                LEFT JOIN (
+                    SELECT he_nr, bezeichnung FROM entwaesserungsarten 
+                    WHERE bezeichnung IN (
+                        'Mischwasser', 
+                        'Regenwasser', 
+                        'Schmutzwasser')) AS ea 
                 ON ea.he_nr = ro.Kanalart
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = ro.Planungsstatus

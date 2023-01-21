@@ -23,7 +23,7 @@ Automatisches Erzeugen von Anbindungen von Einzeleinleitern
 -----------------------------------------------------------
 
 Für jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), wird 
-eine Linie erzeugt, die am Punkte des Einzeleinleiters beginnt und auf der damit verknüpften Haltung
+eine Linie erzeugt, die am Punkte des Einzeleinleiters beginnt und auf der damit verknüpften Haltung 
 endet. 
 
 Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen
@@ -42,7 +42,7 @@ Automatisches Erzeugen von Flächenanbindungen
 ---------------------------------------------
 
 Für jede Fläche, für die noch keine Anbindung erstellt wurde (automatisch oder manuell), wird 
-eine Linie erzeugt, die innerhalb der Fläche beginnt und auf der damit verknüpften Haltung
+eine Linie erzeugt, die innerhalb der Fläche beginnt und auf der damit verknüpften Haltung 
 endet. 
 
 Abhängig von dem Flächenattribut "aufteilen" ist eine Anbindung pro Fläche oder pro Flächenteilstück 
@@ -66,14 +66,17 @@ Erzeugen der unbefestigten Flächen
 ----------------------------------
 
 Für jede Haltungsfläche (Tabelle tezg) wird aus dem Zwischenraum der befestigten Flächen ein Flächenobjekt angelegt. 
-Dieses kann aus mehreren Flächenteilen bestehen.
+Dieses kann aus mehreren Flächenteilen bestehen. 
 
-Die Attributdaten werden dabei aus den Haltungsflächen übernommen.
+Die Attributdaten werden dabei aus den Haltungsflächen übernommen. 
 
 Tabelle zur Auswahl der zu bearbeitenden Arten von Haltungsflächen
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung auf ausgewählte Haltungsflächen beschränkt werden. Aufgelistet sind alle Abflussparameter und Teilgebiete, die in den Haltungsflächen verwendet werden. Durch die Auswahl einer Zeile in der Tabelle werden alle Haltungsflächen mit der dargestellten Kombination aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.
+Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann die Bearbeitung auf ausgewählte Haltungsflächen beschränkt werden. 
+Aufgelistet sind alle Abflussparameter und Teilgebiete, die in den Haltungsflächen verwendet werden. 
+Durch die Auswahl einer Zeile in der Tabelle werden alle Haltungsflächen mit der dargestellten Kombination 
+aus Abflussparameter und Teilgebiet für die Bearbeitung ausgewählt.
 
 Ausführliche Erläuterung zu diesem Thema: :ref:`Erzeugen von unbefestigten Flächen <createunbeffl>`
 

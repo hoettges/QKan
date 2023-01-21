@@ -30,12 +30,15 @@ FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "application_dialog_base.ui")
 )
 
+
 def click_help() -> None:
     """Reaktion auf Klick auf Help-Schaltfläche"""
     helpfile = (
         Path(__file__).parent / ".." / "doc/sphinx/build/html/Qkan_Formulare.html"
     )
+    #webbrowser.register('firefox', None, webbrowser.GenericBrowser('firefox'), preferred=True)
     webbrowser.open_new_tab(str(helpfile) + "#erzeugen-der-unbefestigten-flachen")
+
 
 def list_selected_tab_items(table_widget: QTableWidget, n_cols: int = 5) -> List:
     """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
@@ -60,6 +63,7 @@ def list_selected_tab_items(table_widget: QTableWidget, n_cols: int = 5) -> List
         liste = [[el.text() for el in items][i : i + 5] for i in range(0, anz, 5)]
 
     return liste
+
 
 class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
     button_box: QDialogButtonBox

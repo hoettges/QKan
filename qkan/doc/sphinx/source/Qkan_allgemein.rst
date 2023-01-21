@@ -1,9 +1,9 @@
 Allgemeines
 ===========
 
-QKan baut auf QGIS ab Version 3.16 auf und besteht aus einer Vielzahl von Plugins, die eine Palette von Funktionen zur Verarbeitung von Kanaldaten umfassen. 
+QKan ist ein Werkzeug zur Simulation von Kanalnetzen. Es dient der Datenvor- und Nachbereitung und speichert die Kanalnetzdaten dazu in einer SQLite-Datenbank. 
 
-Dabei wurden folgende Arbeitsschwerpunkte besonders berücksichtigt: 
+QKan baut auf QGIS ab Version 3.22 auf und besteht aus einer Vielzahl von Plugins, die u.a. folgende Funktionsbereiche umfassen: 
 
  - Datenimport von Kanalnetzdaten aus Tabellen und einer Vielzahl von Austauschformaten und Darstellung in QGIS. 
  - Aufbereitung für die Nutzung in Simulationsprogrammen
@@ -18,10 +18,10 @@ Dabei ist es sowohl möglich, die Flächenzuordnung interaktiv für kleine Teilg
 Langfristig soll QKan eine Anbindung an die in Deutschland weit verbreiteten hydrodynamischen Simulationsprogramme bekommen. Bereits realisiert sind: 
 
  - Kanal++/DYNA
- - HYSTEM-EXTRAN 7.8 und 7.9 (setzt zusätzliche Installationen voraus)
  - HYSTEM-EXTRAN 8.x
  - MIKE+ (bisher nur Import für ausgewählte Datentypen)
  - SWMM
+ - HYSTEM-EXTRAN 7.8 und 7.9 (setzt zusätzliche Installationen voraus)
 
 Grundsätzlich enthält QKan die Möglichkeit, Daten über das Clipboard in alle QKan-Tabellen einzufügen. Dabei werden automatisch grafische Objekte (Schächte, Haltungen) erzeugt. 
 
@@ -40,9 +40,9 @@ Die Daten können sowohl mit den QKan-Funktionen verarbeitet werden, gleichzeiti
 Grundlagen
 ==========
 
-Bei QKan handelt es sich um ein Open-Source-Projekt von `Jörg Höttges`_ .
+QKan ist ein Open-Source-Projekt von `Jörg Höttges`_ . Es wird seit Aug 2016 an der FH Aachen entwickelt. 
 
-.. _`Jörg Höttges`: https://www.fh-aachen.de/hoettges  
+.. _`Jörg Höttges`: https://www.fh-aachen.de/menschen/hoettges  
 
 Es steht auf der Plattform GITHUB zum Download zur Verfügung (siehe Installation von QKan) und unterliegt der Open-Source-Lizenz GPL 3.0. 
 
@@ -56,3 +56,24 @@ und "Mittelstand Innovativ & Digital (MID) – Teil MID-Digitalisierung" (2) sow
  - `ATD Ingenieurgesellschaft mbH, Aachen (2) <https://www.atdgmbh.de/>`_
  - `Tuttahs & Meyer Ing.-GmbH, Aachen (2) <https://tuttahs-meyer.de/>`_
  - `Ingenieurbüro Achten und Jansen GmbH, Aachen (2) <https://www.achten-jansen.de/>`_
+
+Team
+====
+
+ - Jörg Höttges
+ - Yannick Linke
+ - Nora Blase
+ - Friederike Kimmich
+
+Ehemalige
+=========
+
+ - Leon Ochsenfeld
+
+Weitere Quellen
+===============
+
+ - Dank an `Gerhard Dreier <https://www.geoplaning.de>`_, aus dessen Plugins 
+   `"DWA_M150_XML_Import" und "longitudinal" <https://plugins.qgis.org/plugins/user/amphibitus/admin>`_ 
+   Teile des Quellcodes verwendet wurden.
+
