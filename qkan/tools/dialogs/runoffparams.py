@@ -26,16 +26,6 @@ FORM_CLASS_runoffparams, _ = uic.loadUiType(
 )
 
 
-def click_help() -> None:
-    helpfile = (
-        Path(__file__).parent.parent.parent
-        / "doc/sphinx/build/html/Qkan_Formulare.html"
-    )
-    webbrowser.open_new_tab(
-        str(helpfile) + "#berechnung-von-oberflachenabflussparametern"
-    )
-
-
 class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
     button_box: QDialogButtonBox
 
@@ -61,7 +51,7 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
         self.lw_abflussparameter.itemClicked.connect(self.click_lw_abflussparam)
         self.cb_selTgbActive.stateChanged.connect(self.click_tgb_selection)
         self.cb_selParActive.stateChanged.connect(self.click_par_selection)
-        self.button_box.helpRequested.connect(click_help)
+        self.button_box.helpRequested.connect(self.click_help)
         self.rb_itwh.toggled.connect(self.toggle_itwh)
 
         self.db_qkan = None
@@ -158,3 +148,8 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
             self.lf_anzahl_flaechen.setText(str(daten[0]))
         else:
             self.lf_anzahl_flaechen.setText("0")
+
+    def click_help(self) -> None:
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_Formulare.html#berechnung-von-oberflachenabflussparametern"
+        os.startfile(help_file)

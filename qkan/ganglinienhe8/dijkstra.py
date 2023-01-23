@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import logging
 from typing import Any, Dict, List, Optional, Tuple, cast
 
@@ -7,7 +10,7 @@ from .models import LayerType
 
 MAX_WEIGHT = 999999.0  # Defaultwert für Schacht ohne Verbindung
 
-logger = logging.getLogger("QKan.ganglinienhe8.dijkstra")
+logger = logging.getLogger("QKan")
 
 NetzType = List[Tuple[str, str, str, float]]
 
@@ -59,48 +62,6 @@ class Netz:
 
         # Initialisierung der Gewichtungen für die Instanz
         self.__weight = Netz.weights_template.copy()
-
-        #
-        # self.netz = netz
-        #
-        # if netz is None and len(Netz.links) == 0:
-        #     raise RuntimeError(
-        #         "Programmfehler: Erstmaliger Aufruf von Netz ohne Netzdaten"
-        #     )
-        #
-        # # Initialisierung der Gewichtungen für die Instanz
-        # self.__weight = Netz.weights_template.copy()
-        #
-        # # netz ist None, hier muss nichts erledigt werden
-        # if self.netz is None:
-        #     return
-        #
-        # # Verknüpfungen wurden schon aufgebaut
-        # if len(Netz.links) != 0:
-        #     return
-        #
-        # # Nur beim ersten Aufruf
-        # for name, schob, schun, laenge in cast(NetzType, self.netz):
-        #     # In Fließrichtung
-        #     if schob in Netz.links:
-        #         Netz.links[schob][schun] = laenge
-        #         Netz.haltung[schob][schun] = name
-        #     else:
-        #         Netz.links[schob] = {schun: laenge}
-        #         Netz.haltung[schob] = {schun: name}
-        #
-        #     # Gegen die Fließrichtung
-        #     if schun in Netz.links:
-        #         Netz.links[schun][schob] = laenge * Netz.faktor
-        #         Netz.haltung[schun][schob] = name
-        #     else:
-        #         Netz.links[schun] = {schob: laenge * Netz.faktor}
-        #         Netz.haltung[schun] = {schob: name}
-        #
-        #     # Template mit Gewichtungen erstellen
-        #     Netz.weights_template = {
-        #         schacht: MAX_WEIGHT for schacht in Netz.links.keys()
-        #     }
 
     def analyse(self, schacht: str) -> None:
         """Verteilt die Schachtgewichtungen ausgehend vom vorgegebenen Schacht"""
@@ -255,7 +216,7 @@ def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[Hal
         schachtauswahl = auswahl
     else:
         logger.error(f'Fehler bei der Objektauswahl\n'
-                     f'Auswahl: {schachtauswahl}\n'
+                     f'Auswahl: {auswahl}\n'
                      f'Auswahltyp: {layer_type}')
         return None
 
@@ -299,7 +260,7 @@ def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[Hal
 
     # Schacht mit der höchsten Wertung ist der Anfangsschacht
     knoten_max_wertung: Optional[str] = None
-    wertung = 0.0
+    wertung = 0.0                                     # Initialisierung
 
     for kvon in gewicht.keys():
         for knach in gewicht[kvon].keys():
@@ -354,7 +315,7 @@ def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[Hal
         # Schleife solange, bis knach erreicht ist, d.h. kvon == knach
         while schacht != knach:
             # Auswahl des nächsten Schachtes mit der kleinsten Gewichtung bezogen auf knach
-            wertung = MAX_WEIGHT
+            wertung = MAX_WEIGHT   # Initialisierung
 
             for schtest in Netz.links[schacht].keys():
                 wertakt = knotennetz[knach].weight[schtest]

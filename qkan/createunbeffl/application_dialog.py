@@ -31,14 +31,6 @@ FORM_CLASS, _ = uic.loadUiType(
 )
 
 
-def click_help() -> None:
-    """Reaktion auf Klick auf Help-Schaltfläche"""
-    helpfile = (
-        Path(__file__).parent / ".." / "doc/sphinx/build/html/Qkan_Formulare.html"
-    )
-    #webbrowser.register('firefox', None, webbrowser.GenericBrowser('firefox'), preferred=True)
-    webbrowser.open_new_tab(str(helpfile) + "#erzeugen-der-unbefestigten-flachen")
-
 
 def list_selected_tab_items(table_widget: QTableWidget, n_cols: int = 5) -> List:
     """Erstellt eine Liste aus den in einem Auswahllisten-Widget angeklickten Objektnamen
@@ -86,7 +78,7 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
 
         self.db_qkan: Optional[DBConnection] = None
 
-        self.button_box.helpRequested.connect(click_help)
+        self.button_box.helpRequested.connect(self.click_help)
         self.cb_selActive.stateChanged.connect(self.click_sel_active)
         self.tw_selAbflparamTeilgeb.itemClicked.connect(self.click_param_teilgebiete)
 
@@ -349,3 +341,9 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
             ):
                 del self.db_qkan
                 return
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_flaechen.html#createunbeffl"
+        os.startfile(help_file)

@@ -7,6 +7,7 @@ from typing import Callable, List, Optional
 from qgis.gui import QgsProjectionSelectionWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
+    QDialogButtonBox,
     QDialog,
     QWidget,
     QLineEdit,
@@ -21,14 +22,6 @@ from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 
 logger = logging.getLogger("QKan.datacheck.application_dialog")
-
-
-def click_help() -> None:
-    """Reaktion auf Klick auf Help-Schaltfläche"""
-    helpfile = (
-        Path(__file__).parent / ".." / "doc/sphinx/build/html/Qkan_Formulare.html"
-    )
-    webbrowser.open_new_tab(str(helpfile) + "#erzeugen-der-unbefestigten-flachen")
 
 
 class _Dialog(QDialog):
@@ -70,6 +63,7 @@ class PlausiDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         super().__init__(default_dir, tr, parent)
 
         self.lw_themen.itemClicked.connect(self.click_lw_themen)
+        self.buttonBox.helpRequested.connect(self.click_help)
 
     def click_lw_themen(self) -> None:
         """Reaktion auf Klick in Tabelle"""
@@ -134,3 +128,11 @@ class PlausiDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     def selected_themes(self):
         """Gibt die gewählten Themen zurück"""
         return self.themen
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_flaechen.html?highlight=plausibili"
+        os.startfile(help_file)
+
+

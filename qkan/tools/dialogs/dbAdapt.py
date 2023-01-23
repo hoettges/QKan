@@ -22,14 +22,6 @@ FORM_CLASS_dbAdapt, _ = uic.loadUiType(
 )
 
 
-def click_help() -> None:
-    helpfile = (
-        Path(__file__).parent.parent.parent
-        / "doc/sphinx/build/html/Qkan_Formulare.html"
-    )
-    webbrowser.open_new_tab(str(helpfile) + "#datenbank-aktualisieren")
-
-
 class DbAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_dbAdapt):  # type: ignore
 
     button_box: QDialogButtonBox
@@ -47,4 +39,9 @@ class DbAdaptDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_dbAdapt):  # typ
         super().__init__(plugin, parent, readonly=True)
 
         self.pb_selectProjectFile.clicked.connect(self.select_project_file)
-        self.button_box.helpRequested.connect(click_help)
+        self.button_box.helpRequested.connect(self.click_help)
+
+    def click_help(self) -> None:
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_Formulare.html#datenbank-aktualisieren"
+        os.startfile(help_file)

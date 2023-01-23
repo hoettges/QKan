@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>1. Import von Kanaldaten aus einfachen Tabellen (Excel, ACCESS, TXT, CSV) &mdash; QKan 3.2.33 Dokumentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="1. Verarbeitung von befestigten und unbefestigten Flächen" href="Qkan_flaechen.html" />
+    <link rel="prev" title="1. Allgemeine Funktionen" href="Qkan_Videoanleitungen.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> QKan
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">1. Allgemeines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html#grundlagen">2. Grundlagen</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">1. QKan - Plugin Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html#qkan-he7-plugin-fur-hystem-extran-7-x">2. QKan-HE7 Plugin für HYSTEM-EXTRAN 7.x</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html">1. Allgemeine Funktionen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#ubernahme-von-kanaldaten-aus-excel-oder-ascii-tabellen">2. Übernahme von Kanaldaten aus Excel- oder ASCII-Tabellen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#anlegen-eines-neuen-qkan-projektes">3. Anlegen eines neuen QKan-Projektes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#vorbereitung-eines-einfachen-projektes-fur-den-hystem-extran-export">4. Vorbereitung eines einfachen Projektes für den HYSTEM-EXTRAN-Export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#ubertragen-einer-anderen-projektdatei-auf-eine-qkan-datenbank">5. Übertragen einer anderen Projektdatei auf eine QKan-Datenbank</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#anzeigen-von-berechnungsergebnissen-aus-hystem-extran-8-x">6. Anzeigen von Berechnungsergebnissen aus HYSTEM-EXTRAN 8.x</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#einfugen-eines-zeichnungsrahmens-aus-einer-mit-autocad-erstellten-vorlage">7. Einfügen eines Zeichnungsrahmens aus einer mit Autocad erstellten Vorlage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html#import-eines-kanal-projektes-nach-qkan">8. Import eines Kanal++ Projektes nach QKan</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Import von Kanaldaten aus einfachen Tabellen (Excel, ACCESS, TXT, CSV)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">1. Verarbeitung von befestigten und unbefestigten Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html#vorgehen-bei-der-flachenzuordnung">2. Vorgehen bei der Flächenzuordnung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">3. QKan-Formulare</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">1. QKan-Tabellen</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QKan</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">1. </span>Import von Kanaldaten aus einfachen Tabellen (Excel, ACCESS, TXT, CSV)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Qkan_Datenaustausch.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="import-von-kanaldaten-aus-einfachen-tabellen-excel-access-txt-csv">
+<h1><span class="section-number">1. </span>Import von Kanaldaten aus einfachen Tabellen (Excel, ACCESS, TXT, CSV)<a class="headerlink" href="#import-von-kanaldaten-aus-einfachen-tabellen-excel-access-txt-csv" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Der Import von Daten aus einfachen Tabellen ist prinzipiell mit allen Methoden möglich, die QGIS zur Verfügung
+stellt. Leider funktioniert das Einfügen aus der Zwischenablage nur dann, wenn alle Attribute einer Tabelle
+einschließlich der Geometrieattribute vorhanden sind, die Namen exakt mit denen der Tabelle übereinstimmen
+und in der gleichen Reihenfolge stehen. Da dies nicht besonders praktikabel ist, wurde in QKan eine
+intelligente Clipboard-Einfügefunktion implementiert.</p>
+<p>Die Bedienung ist denkbar einfach: Um Daten mit Copy&amp;Paste aus einer Tabelle (Excel, Textdatei,
+ACCESS-Datenbank, etc.) einzufügen, muss der entsprechende Layer in der Layerkontrolle aktiviert sein. Er darf
+sich dabei nicht im Bearbeitungsmodus befinden. Dabei gelten folgende Anforderungen:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bestimmte Pflichtattribute müssen vorhanden sein</p></li>
+<li><p>Die Reihenfolge der Daten ist beliebig</p></li>
+<li><p>Für die meisten Attributnamen werden zahlreiche Synonyme akzeptiert (z. B. „schnam“, „schachtname“ oder
+„Schachtbezeichnung“). Die Synonyme werden anhand vorgegebener „regulärer Ausdrücke“ den Attributnamen der
+QKan-Tabellen zugeordnet, die gegebenenfalls erweitert werden können.</p></li>
+</ul>
+</div></blockquote>
+<p>Zum Einfügen der Daten muss nur noch die Schaltfläche „Tabellendaten aus Clipboard einfügen“ angeklickt werden (siehe nachfolgende Abbildung)</p>
+<img alt="_images/clipboard_einfuegen.png" src="_images/clipboard_einfuegen.png" />
+<p>Abbildung: Schaltfläche zum Einfügen von Tabellendaten aus dem Clipboard</p>
+<p>Um vorab zu überprüfen, welche Spaltennamen erkannt werden, kann vorab die Schaltfläche „Tabellen aus Clipboard: Zuordnung anzeigen“ (siehe nachfolgende Abbildung) angeklickt werden.</p>
+<img alt="_images/clipboard_testen.png" src="_images/clipboard_testen.png" />
+<p>Abbildung: Überprüfen der automatischen Spaltennamenerkennung</p>
+<p>Bei Tabellen mit Geometrien (Schächte, Haltungen, Fläche, etc.) werden in den Fällen, wo Punktkoordinaten
+oder Paare davon ausreichen (z. B. Schächte: Punktkoordinate, Haltungen und Wehre: 2 Punktkoordinaten für
+Anfangs- und Endpunkt) diese aus den eingefügten Koordinatenwerten erzeugt.</p>
+<p>Es ist aber auch möglich, Geometrien als WKT-Text einzufügen. Die Schreibweise entspricht der von QGIS,
+wenn Datensätze mit Geometrien kopiert und in eine Textdatei eingefügt werden.</p>
+<p>Beispiel zum Ausprobieren:</p>
+<div class="line-block">
+<div class="line">1. Leere QKan-Datenbank anlegen (Schaltfläche „Neue QKan-Datenbank erstellen“)</div>
+</div>
+<div class="line-block">
+<div class="line">2. Schachtdaten (in Layer „Schächte“ einfügen):</div>
+<div class="line"><br /></div>
+<div class="line">Schacht;x;y;Sohle;Deckel</div>
+<div class="line">D110076;388809.4738;5709888.006;80.49;83.61</div>
+<div class="line">D110077;388806.8219;5709900.202;80.34;83.71</div>
+<div class="line">D110075;388813.9783;5709854.593;81.16;84.09</div>
+<div class="line">D110073;388749.989;5709812.893;82.77;85.47</div>
+<div class="line">D110074;388709.6162;5709930.665;80.82;83.49</div>
+<div class="line">D110801;388806.4423;5709907.041;80.22;83.28</div>
+<div class="line">D110036;388798.8302;5709945.165;79.51;82.56</div>
+<div class="line">D119801;388784.1633;5709985.519;78.84;81.86</div>
+</div>
+<div class="line-block">
+<div class="line">3. Haltungsdaten (in Layer „Haltungen nach Typ“ einfügen):</div>
+<div class="line"><br /></div>
+<div class="line">Haltung;Schacht_oben;Schacht_unten;Höhe;Breite;Länge;Sohleoben;Sohleunten;Profilname</div>
+<div class="line">410;D110076;D110077;0.3;0.3;12.55;80.5;80.32;Kreisquerschnitt</div>
+<div class="line">409;D110075;D110076;0.3;0.3;34.04;81.16;80.52;Kreisquerschnitt</div>
+<div class="line">408;D110073;D110074;0.2;0.2;124.28;82.8;80.85;Kreisquerschnitt</div>
+<div class="line">407;D110801;D110036;0.3;0.3;40.14;80.2;79.49;Kreisquerschnitt</div>
+<div class="line">443;D110036;D119801;0.3;0.3;42.4;79.49;78.88;Kreisquerschnitt</div>
+<div class="line">1364;D110077;D110801;0.3;0.3;5.5;80.3;80.2;Kreisquerschnitt</div>
+</div>
+<img alt="_images/netz_aus_clipboard.png" src="_images/netz_aus_clipboard.png" />
+<p>Abbildung: Eingefügtes Kanalnetz in QKan</p>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="Qkan_flaechen.html" class="btn btn-neutral float-right" title="1. Verarbeitung von befestigten und unbefestigten Flächen" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Qkan_Videoanleitungen.html" class="btn btn-neutral float-left" title="1. Allgemeine Funktionen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017 - 2022, Hoettges.
+
+    </p>
+  </div>
+    
+    
+    
+    Erstellt mit <a href="https://www.sphinx-doc.org/">Sphinx</a> mit einem
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    bereitgestellt von <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

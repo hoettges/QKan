@@ -38,9 +38,6 @@ class LaengsTask:
         self.fig = fig
         self.canv = canv
 
-        self.file = file
-
-
     def run(self) -> bool:
         self.zeichnen()
 
@@ -80,7 +77,9 @@ class LaengsTask:
                 if x2 not in liste:
                     liste.append(x2)
 
-        route = find_route(self.file, liste)
+        route = find_route(self.db_qkan, liste)
+        logger.debug(f'zeichnen.ausgewaehlt: {liste}')
+        logger.debug(f'route: {route}')
         # route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
         x_sohle = []
         y_sohle = []
@@ -108,7 +107,6 @@ class LaengsTask:
             x = 'nicht erstellt'
             return x
 
-
         for i in route[1]:
 
             sql = """
@@ -132,10 +130,11 @@ class LaengsTask:
                     FROM haltungen AS h,
                         schaechte AS schob,
                         schaechte AS schun
-                    WHERE schob.schnam = h.schoben AND schun.schnam = h.schunten AND haltnam = {}
-                    """.format("'"+str(i)+"'")
+                    WHERE schob.schnam = h.schoben AND schun.schnam = h.schunten AND haltnam = ?
+                    """
 
-            if not self.db_qkan.sql(sql, "laengsschnitt: Datenbankzugriff nicht möoeglich"):
+            if not self.db_qkan.sql(sql, "laengsschnitt.zeichnen", parameters=(str(i),)):
+                logger.error(f"{__file__}: Fehler beim  in Zeile 137: Datenbankzugriff nicht möglich")
                 x = 'nicht erstellt'
                 return x
 
@@ -277,7 +276,7 @@ class LaengsTask:
                 if x2 not in liste:
                     liste.append(x2)
 
-        route = find_route(self.file, liste)
+        route = find_route(self.db_qkan, liste)
 
         x_sohle = []
         y_sohle = []

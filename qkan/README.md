@@ -20,6 +20,6 @@ hydrodynamischen Kanalnetzberechnung zu mehreren, in Deutschland gängigen Simul
    Ganglinien möglich ist. 
 
  - Verwaltung von Kanalzustandsdaten: Die Daten können aus M150- und ISYBAU-Dateien
-   sowie aus einer STRAKAT-ACCESS-Datenbank importiert und der Kanalzustand ausgewertet werden. 
+   importiert und der Kanalzustand ausgewertet werden. 
    Dabei werden optional auch Hausanschlüsse dargestellt. 
 

@@ -29,14 +29,6 @@ FORM_CLASS_layersadapt, _ = uic.loadUiType(
 )
 
 
-def click_help() -> None:
-    helpfile = (
-        Path(__file__).parent.parent.parent
-        / "doc/sphinx/build/html/Qkan_Formulare.html"
-    )
-    webbrowser.open_new_tab(str(helpfile) + "#projektlayer-aktualisieren")
-
-
 class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
     button_box: QDialogButtonBox
 
@@ -69,7 +61,7 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
         super().__init__(plugin, parent, readonly=True)
 
         self.pb_selectProjectTemplate.clicked.connect(self.select_project_template)
-        self.button_box.helpRequested.connect(click_help)
+        self.button_box.helpRequested.connect(self.click_help)
         # self.cb_adaptForms.clicked.connect(self.click_adapt_forms)
         self.cb_adaptTableLookups.clicked.connect(self.click_adapt_table_lookups)
         self.cb_adaptKBS.clicked.connect(self.click_adapt_kbs)
@@ -137,3 +129,9 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
         )
         if os.path.dirname(filename) != "":
             self.tf_projectTemplate.setText(filename)
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_Formulare.html#projektlayer-aktualisieren"
+        os.startfile(help_file)

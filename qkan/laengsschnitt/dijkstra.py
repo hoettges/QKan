@@ -1,38 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import datetime
-import sqlite3
 import logging
-import tempfile
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, cast
 
-MAX_WEIGHT = 999999  # Defaultwert für Schacht ohne Verbindung
+from qkan.database.dbfunc import DBConnection
 
-# Toggle in DEV to log to console
-LOG_TO_CONSOLE = False
+MAX_WEIGHT = 999999.0  # Defaultwert für Schacht ohne Verbindung
 
-# Init logging
 logger = logging.getLogger("QKan")
-formatter = logging.Formatter(
-    fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-log_path = Path(tempfile.gettempdir()) / "findpath_{}.log".format(
-    datetime.datetime.today().strftime("%Y-%m-%d")
-)
-file_handler = logging.FileHandler(log_path)
-file_handler.setFormatter(formatter)
-file_handler.setLevel(logging.DEBUG)
-logger.setLevel(logging.DEBUG)
-logger.addHandler(file_handler)
-
-if LOG_TO_CONSOLE:
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(formatter)
-    stream_handler.setLevel(logging.DEBUG)
-    logger.addHandler(stream_handler)
 
 
 class Netz:
@@ -126,13 +102,11 @@ class Netz:
         return self.__weight
 
 
-def find_route(dbname: str, schachtauswahl):
-    qkanCon = sqlite3.connect(dbname)               # in der Testroutine steht DBConnection nicht zur Verfügung...
-    qkanDb = qkanCon.cursor()
-    if not qkanDb:
+def find_route(qkan_db: DBConnection, schachtauswahl):
+    if not qkan_db:
         logger.error(
             "Fehler in dijkstra.find_route:\n"
-            f"QKan-Datenbank {qkanDb:s} wurde nicht"
+            f"QKan-Datenbank {qkan_db:s} wurde nicht"
             " gefunden oder war nicht aktuell!\nAbbruch!"
         )
         return None
@@ -142,8 +116,8 @@ def find_route(dbname: str, schachtauswahl):
             SELECT haltnam, schoben, schunten, laenge
             FROM haltungen
         """
-    qkanDb.execute(sql)
-    netz = qkanDb.fetchall()
+    qkan_db.sql(sql)
+    netz = qkan_db.fetchall()
 
     # schachtauswahl prüfen: Schacht muss als Anfangs- oder Endschacht im Netz vorhanden sein
     for schacht in schachtauswahl.copy():

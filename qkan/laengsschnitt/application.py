@@ -27,42 +27,21 @@ class Laengsschnitt(QKanPlugin):
         super().__init__(iface)
 
         self.laengs_dlg = None
+        self.db_qkan: DBConnection = None
         #self.get_widget()
 
         #self.laengs_dlg.refresh_function = self.refresh_function
         #self.laengs_dlg.export_cad_function = self.export_cad_function
 
     def refresh_function(self):
-        db_qkan = DBConnection(dbname=self.database_qkan)
-        if not db_qkan:
-            fehlermeldung(
-                "Fehler im XML-Export",
-                f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
-            )
-            self.iface.messageBar().pushMessage(
-                "Fehler im XML-Export",
-                f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
-                level=Qgis.Critical,
-            )
-        LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).zeichnen()
+        LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv).zeichnen()
         self.canv.draw()
 
-        return LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).zeichnen()
+        return LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv).zeichnen()
 
 
     def export_cad_function(self):
-        db_qkan = DBConnection(dbname=self.database_qkan)
-        if not db_qkan:
-            fehlermeldung(
-                "Fehler im XML-Export",
-                f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
-            )
-            self.iface.messageBar().pushMessage(
-                "Fehler im XML-Export",
-                f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
-                level=Qgis.Critical,
-            )
-        LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).cad()
+        LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv).cad()
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
@@ -162,80 +141,25 @@ class Laengsschnitt(QKanPlugin):
 
         # Fill dialog with current info
         self.database_qkan, _ = get_database_QKan()
+        self.db_qkan = DBConnection(dbname=self.database_qkan)
+        self.log.debug(f"{__file__}: Datenbankverbindung wurde hergestellt...")
 
         if self.laengs_dlg.exec_():
 
             # Save to config
             QKan.config.save()
 
-            db_qkan = DBConnection(dbname=self.database_qkan)
-            if not db_qkan:
+            #db_qkan = DBConnection(dbname=self.database_qkan)
+            if not self.db_qkan:
                 fehlermeldung(
-                    "Fehler im XML-Export",
+                    "Fehler im Längsschnitt",
                     f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
                 )
                 self.iface.messageBar().pushMessage(
-                    "Fehler im XML-Export",
+                    "Fehler im Längsschnitt",
                     f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
                     level=Qgis.Critical,
                 )
 
             # Run
-            LaengsTask(db_qkan, self.database_qkan, self.fig, self.canv).run()
-
-        #result = self.laengs_dlg.exec_()
-        #if result == QFileDialog.Rejected:
-         #   return
-
-
-    def _dolaengs(self) -> bool:
-        """Start der Erstellung des Längsschnittes
-
-        Einspringpunkt für Test
-        """
-
-        self.log.info("Creating DB")
-        db_qkan = DBConnection(
-            dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
-        )
-
-        if not db_qkan:
-            fehlermeldung(
-                "Fehler im XML-Import",
-                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-            )
-            self.iface.messageBar().pushMessage(
-                "Fehler im XML-Import",
-                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-                level=Qgis.Critical,
-            )
-            return False
-
-        self.log.info("DB creation finished, starting importer")
-        laengs = LaengsTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice, QKan.config.xml.data_choice, QKan.config.xml.ordner_bild, QKan.config.xml.ordner_video )
-        laengs.run()
-        del laengs
-
-        # Write and load new project file, only if new project
-        if QgsProject.instance().fileName() == '':
-            QKan.config.project.template = str(
-                Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-            )
-
-            qgsadapt(
-                QKan.config.database.qkan,
-                db_qkan,
-            )
-
-            # Load generated project
-            # noinspection PyArgumentList
-            project = QgsProject.instance()
-            project.read(QKan.config.project.file)
-            project.reloadAllLayers()
-
-        # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
-
-        del db_qkan
-        self.log.debug("Closed DB")
-
-        return True
+            LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv).run()

@@ -52,22 +52,6 @@ FORM_CLASS_managegroups, _ = uic.loadUiType(
 )
 
 
-def click_help_fl() -> None:
-    helpfile = str(
-        Path(__file__).parent / ".." / "doc/sphinx/build/html/Qkan_Formulare.html"
-    )
-    webbrowser.open_new_tab(helpfile + "#automatisches-erzeugen-von-flachenanbindungen")
-
-
-def click_help_sw() -> None:
-    helpfile = str(
-        Path(__file__).parent / ".." / "doc/sphinx/build/html/Qkan_Formulare.html"
-    )
-    webbrowser.open_new_tab(
-        helpfile + "#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern"
-    )
-
-
 class AssigntgebDialog(QDialog, FORM_CLASS_assigntgeb):  # type: ignore
     button_box: QDialogButtonBox
 
@@ -144,7 +128,7 @@ class CreatelineflDialog(QKanDialog, FORM_CLASS_createlinefl):  # type: ignore
         self.cb_selFlActive.stateChanged.connect(self.click_selection)
         self.cb_selHalActive.stateChanged.connect(self.click_hal_selection)
         self.cb_selTgbActive.stateChanged.connect(self.click_tgb_selection)
-        self.button_box.helpRequested.connect(click_help_fl)
+        self.button_box.helpRequested.connect(self.click_help_fl)
         self.tf_fangradius.textChanged.connect(self.changed_tf_fangradius)
 
     def click_lw_flaechen_abflussparam(self) -> None:
@@ -319,6 +303,11 @@ class CreatelineflDialog(QKanDialog, FORM_CLASS_createlinefl):  # type: ignore
         else:
             self.lf_anzahl_haltungen.setText("0")
 
+    def click_help_fl(self) -> None:
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_Formulare.html#automatisches-erzeugen-von-flachenanbindungen"
+        os.startfile(help_file)
+
 
 class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):  # type: ignore
 
@@ -349,7 +338,7 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):  # type: ignore
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
         self.cb_selHalActive.stateChanged.connect(self.click_hal_selection)
         self.cb_selTgbActive.stateChanged.connect(self.click_tgb_selection)
-        self.button_box.helpRequested.connect(click_help_sw)
+        self.button_box.helpRequested.connect(self.click_help_sw)
 
     def click_lw_hal_entw(self) -> None:
         """Reaktion auf Klick in Tabelle"""
@@ -455,6 +444,11 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):  # type: ignore
             self.lf_anzahl_einleit.setText(str(daten[0]))
         else:
             self.lf_anzahl_einleit.setText("0")
+
+    def click_help_sw(self) -> None:
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_Formulare.html#automatisches-erzeugen-von-anbindungen-von-einzeleinleitern"
+        os.startfile(help_file)
 
 
 class UpdateLinksDialog(QDialog, FORM_CLASS_updatelinks):  # type: ignore

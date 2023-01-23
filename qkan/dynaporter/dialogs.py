@@ -42,13 +42,6 @@ IMPORT_CLASS, _ = uic.loadUiType(
 )
 
 
-def click_help() -> None:
-    """Reaktion auf Klick auf Help-Schaltfläche"""
-
-    help_file = Path(__file__).parent / ".." / "doc" / "exportdyna.html"
-    os.startfile(str(help_file))
-
-
 class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
     button_box: QDialogButtonBox
 
@@ -82,7 +75,7 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
 
         self.db_qkan: Optional[DBConnection] = None
 
-        self.button_box.helpRequested.connect(click_help)
+        self.button_box.helpRequested.connect(self.click_help)
         self.cb_selActive.stateChanged.connect(self.click_selection)
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
 
@@ -437,6 +430,14 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
             )
 
             del self.db_qkan
+
+
+    def click_help(self) -> None:
+        """Reaktion auf Klick auf Help-Schaltfläche"""
+
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_allgemein.html?highlight=dyna"
+        os.startfile(help_file)
 
 
 class ImportDialog(QKanDBDialog, IMPORT_CLASS):  # type: ignore
