@@ -288,7 +288,8 @@ class LaengsTask:
         y_label = []
         name = []
         z_deckel = []
-        z_sohle =[]
+        z_sohle = []
+        z_sohle_h = []
 
         haltnam_l = ['Haltungsname']
         schoben_l = ['Schacht oben']
@@ -352,8 +353,13 @@ class LaengsTask:
                 material = attr[11]
                 strasse = attr[12]
                 haltungstyp = attr[13]
+                hschoben = attr[14]
+                hschunten = attr[15]
 
                 laenge2 += laenge
+
+                z_sohle_h.append(hschoben)
+                z_sohle_h.append(hschunten)
 
                 y_sohle.append(sohleoben)
                 y_sohle.append(sohleunten)
@@ -494,50 +500,106 @@ class LaengsTask:
 
             #Graphen zeichnen lassen
             doc.SendCommand("-FARBE" + "\n" + "7\n" "\n")
-            x_min = -5
-            y_min = float(min(y_sohle)) - 5
-            y_max = float(max(y_deckel)) + 5
-            x_max = laenge2 + 5
-            x_linie = "LINIE " + str(x_min) + "," + str(y_min) + " " + str(x_max) + "," + str(y_min) + "\n" + "\n"
-            #iface.messageBar().pushMessage("Error", str(x_linie), level=Qgis.Critical)
+            x_min = -2.5
+            y_min = float(min(y_sohle)) - 2.5
+            y_max = float(max(y_deckel)) + 2.5
+            x_max = laenge2 + 2.5
+            x_linie = "LINIE " + str(x_min- 5) + "," + str(y_min) + " " + str(x_max) + "," + str(y_min) + "\n" + "\n"
             doc.SendCommand(x_linie)
-            #y_linie = "LINIE " + str(x_min) + "," + str(y_min) +  " " + str(x_min) + "," + str(y_max) + "\n" + "\n"
-            #iface.messageBar().pushMessage("Error", str(y_linie), level=Qgis.Critical)
-            #doc.SendCommand(y_linie)
-            x_linie2 = "LINIE " + str(x_min) + "," + str(y_min-3.5) + " " + str(x_max) + "," + str(y_min-3.5) + "\n" + "\n"
+            x_linie2 = "LINIE " + str(x_min- 5) + "," + str(y_min - 1.5) + " " + str(x_max) + "," + str(y_min - 1.5) + "\n" + "\n"
             doc.SendCommand(x_linie2)
-            x_linie3 = "LINIE " + str(x_min) + "," + str(y_min - 7.5) + " " + str(x_max) + "," + str(y_min - 7.5) + "\n" + "\n"
+            x_linie3 = "LINIE " + str(x_min- 5) + "," + str(y_min-3.5) + " " + str(x_max) + "," + str(y_min-3.5) + "\n" + "\n"
             doc.SendCommand(x_linie3)
+            x_linie4 = "LINIE " + str(x_min- 5) + "," + str(y_min - 4.5) + " " + str(x_max) + "," + str(y_min - 4.5) + "\n" + "\n"
+            doc.SendCommand(x_linie4)
+            x_linie5 = "LINIE " + str(x_min- 5) + "," + str(y_min - 5.5) + " " + str(x_max) + "," + str(y_min - 5.5) + "\n" + "\n"
+            doc.SendCommand(x_linie5)
+            x_linie6 = "LINIE " + str(x_min- 5) + "," + str(y_min - 6.5) + " " + str(x_max) + "," + str(y_min - 6.5) + "\n" + "\n"
+            doc.SendCommand(x_linie6)
+            x_linie7 = "LINIE " + str(x_min- 5) + "," + str(y_min - 7.5) + " " + str(x_max) + "," + str(y_min - 7.5) + "\n" + "\n"
+            doc.SendCommand(x_linie7)
+
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min -1) + "\n" + "0.25" + "\n" + "0" + "\n" + "Deckelhöhe [m ü. NHN]" + "\n" "\n"
+            doc.SendCommand(beschr)
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min - 3) + "\n" + "0.25" + "\n" + "0" + "\n" + "Schachtname" + "\n" "\n"
+            doc.SendCommand(beschr)
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min - 4) + "\n" + "0.25" + "\n" + "0" + "\n" + "Sohlehöhe Schacht [m ü. NHN]" + "\n" "\n"
+            doc.SendCommand(beschr)
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min - 5) + "\n" + "0.25" + "\n" + "0" + "\n" + "Sohlhöhe Haltung [m ü. NHN]" + "\n" "\n"
+            doc.SendCommand(beschr)
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min - 6) + "\n" + "0.25" + "\n" + "0" + "\n" + "Länge [m]" + "\n" "\n"
+            doc.SendCommand(beschr)
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min - 7) + "\n" + "0.25" + "\n" + "0" + "\n" + "Nennweite / Material [mm]" + "\n" "\n"
+            doc.SendCommand(beschr)
+
+            #TODO: Kasten um die Schrift zeichen
 
             #zu den eingefügten Daten zoomen
             doc.SendCommand("ZOOM"+ "\n"+"A"+ "\n")
 
-
             #regelmäßige Striche für die Beschriftung der Graphen erzeugen
 
-            x_deckel_neu = []
-            name_neu = []
+            x_deckel_neu = x_deckel[::2]
+            x_deckel_neu.append(x_deckel[-1])
+            name_neu = name[::2]
+            name_neu.append(name[-1])
+            z_sohle_neu = z_sohle[::2]
+            z_sohle_neu.append(z_sohle[-1])
+            z_deckel_neu = z_deckel[::2]
+            z_deckel_neu.append(z_deckel[-1])
 
-            for i in x_deckel:
-                if i not in x_deckel_neu:
-                    x_deckel_neu.append(i)
+            #iface.messageBar().pushMessage("Fehler", str(z_sohle), level=Qgis.Critical)
+            #iface.messageBar().pushMessage("Fehler", str(z_sohle_neu), level=Qgis.Critical)
 
-            for i in name:
-                if i not in name_neu:
-                    name_neu.append(i)
-
-            for i,j,x,y in zip(x_deckel_neu,name_neu,z_deckel,z_sohle):
+            for i,j,x,y in zip(x_deckel_neu,name_neu,z_deckel_neu,z_sohle_neu):
                 linien = "LINIE"
                 linien += " " + str(i) + "," + str(y_min)
-                linien += " " + str(i) + "," + str(y_min-9)
+                linien += " " + str(i) + "," + str(y_min-7.5)
                 linien += "\n" "\n"
                 doc.SendCommand(linien)
 
-                text1 = "-TEXT" +"\n"+str(i-1.5) + "," + str(y_min-3)+"\n"+"0.7"+"\n"+"90"+"\n"+str(x)+"\n" "\n"
-                doc.SendCommand(text1)
-                text2 = "-TEXT" + "\n" + str(i - 1.5) + "," + str(y_min - 7) + "\n" + "0.7" + "\n" + "90" + "\n" + str(y) + "\n" "\n"
-                doc.SendCommand(text2)
-                text3 = "-TEXT" + "\n" + str(i - 2) + "," + str(y_min - 11) + "\n" + "1" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
-                doc.SendCommand(text3)
+                text_deckelhoehe = "-TEXT" +"\n"+str(i-0.3) + "," + str(y_min-1)+"\n"+"0.25"+"\n"+"90"+"\n"+str(x)+"\n" "\n"
+                doc.SendCommand(text_deckelhoehe)
+                text_name = "-TEXT" + "\n" + str(i - 1.5) + "," + str(y_min - 3) + "\n" + "0.5" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
+                doc.SendCommand(text_name)
+                text_sohlhoehe_s = "-TEXT" + "\n" + str(i - 1.5) + "," + str(y_min - 4) + "\n" + "0.25" + "\n" + "0" + "\n" + str(y) + "\n" "\n"
+                doc.SendCommand(text_sohlhoehe_s)
 
+            x=0
+           # iface.messageBar().pushMessage("Fehler", str(x_deckel), level=Qgis.Critical)
+           # iface.messageBar().pushMessage("Fehler", str(z_sohle_h), level=Qgis.Critical)
+            
+            for i,j in zip(x_deckel , z_sohle_h):
+                #so verschieben, dass die TExte passend stehen
+                if x % 2:
+                    text_sohlhoehe_h = "-TEXT" + "\n" + str(i-1.5) + "," + str(y_min - 5) + "\n" + "0.25" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
+                    doc.SendCommand(text_sohlhoehe_h)
+                else:
+                    text_sohlhoehe_h = "-TEXT" + "\n" + str(i + 0.5) + "," + str(y_min - 5) + "\n" + "0.25" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
+                    doc.SendCommand(text_sohlhoehe_h)
+                x+=1
+
+
+            laenge = laenge_l
+            laenge.pop(0)
+            dn = breite_l
+            dn.pop(0)
+            material = material_l
+            material.pop(0)
+
+            x_mitte = []
+            x=0
+            while x+1<len(x_deckel_neu):
+                m= (x_deckel_neu[x]+x_deckel_neu[x+1])/2
+                x+=1
+                x_mitte.append(m)
+
+            # mittig zwischen zwei Schächte schreiben Länge, Nennweite und Material, Gefälle, Stationierung
+            for i,k,l,m in zip(x_mitte,laenge,dn,material):
+                text_laenge = "-TEXT" + "\n" + str(i) + "," + str(y_min - 6) + "\n" + "0.25" + "\n" + "0" + "\n" + str(k) + "\n" "\n"
+                doc.SendCommand(text_laenge)
+                text_dn = "-TEXT" + "\n" + str(i) + "," + str(y_min - 7) + "\n" + "0.25" + "\n" + "0" + "\n" + str(l*1000)+" "+str(m) + "\n" "\n"
+                doc.SendCommand(text_dn)
+                #text_material = "-TEXT" + "\n" + str(i) + "," + str(y_min - 8) + "\n" + "0.25" + "\n" + "0" + "\n" + str(m) + "\n" "\n"
+                #doc.SendCommand(text_material)
 
