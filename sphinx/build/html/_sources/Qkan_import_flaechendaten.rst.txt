@@ -9,7 +9,7 @@ Um diese Daten laden zu können, wird das Plug-in „WFS 2.0 Client“ benötigt
   
 .. _INSPIRE-Portal: https://www.bezreg-koeln.nrw.de/brk_internet/geobasis/inspire/index.html
 
-.. _Import_gebaeudedaten
+
 Import Gebäudedaten
 -------------------
 
@@ -70,7 +70,7 @@ Analog können nun die weiteren Flächen hinzugefügt werden.
 
 Abbildung: Ergebnis Import Gebäudedaten
 
-  
+
 Import Flurstücke
 -----------------
 
@@ -104,8 +104,8 @@ Die Schraffur (Kontur) der Objekte sollte ebenfalls dem Layer „Haltungsfläche
      :name: Attributtabelle nach Bearbeitung
 
 Abbildung: Attributtabelle nach Bearbeitung
-  
-    
+
+
 Import Straßen
 --------------
 

@@ -1,13 +1,15 @@
 QKan-Tabellen
 =============
 
+
 Tabelleninhalte
--------------------------------------------
+---------------
 
 Im Folgenden werden QKan-Tabellen und ihre Inhalte dokumentiert. 
 
+
 Haltungen
-++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++
 
 Die Tabelle enthält alle Verbindungselemente in einem Kanalnetz. In der nachfolgenden 
 Tabelle sind die internen Attributnamen sowie für die verschiedenen Elementtypen in 

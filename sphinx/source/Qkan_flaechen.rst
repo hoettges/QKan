@@ -70,8 +70,6 @@ exportieren.
 
 .. index:: Teilgebiete
 
-.. _teilgebiete:
-
 Teilgebiete
 -----------
 
@@ -79,6 +77,7 @@ Bei größeren Entwässerungsnetzen ist es hilfreich, die Bearbeitung nacheinand
 In QKan dient dazu ein entsprechender Layer "Teilgebiete" (QKan-Tabelle "teilgebiete"). Alle für die Flächenaufteilung 
 verwendeten Layer enthalten ein entsprechendes Attribut, mit dem die automatische Erzeugung der Verbindungslinien 
 eines oder mehrere ausgewählte Teilgebiete beschränkt werden kann. 
+
 
 Vorgehen bei der Flächenzuordnung
 =================================
@@ -135,3 +134,5 @@ Beschleunigung bei der Verarbeitung bewirken.
 
 Erzeugen von Anbindungen zwischen Einzeleinleitern und Haltungen
 ----------------------------------------------------------------
+
+(Dieses Kapitel muss noch erstellt werden)

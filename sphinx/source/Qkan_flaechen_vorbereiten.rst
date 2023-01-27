@@ -1,7 +1,7 @@
 Vorbereitung zur Flächenzuordnung
-==================================
+=================================
 
-Eine Videoanleitung zur Vorbereitung zur Flächenaufteilung ist `hier LINK` zu finden.
+Eine Videoanleitung zur Vorbereitung zur Flächenaufteilung ist `hier <https://fh-aachen.sciebo.de/s/cu4krqOti0rf8Vq>`_ zu finden.
 
 Nachdem die unbefestigten Flächen erstellt wurden, ist nun noch ein letzter Vorbereitungsschritt notwendig, bevor der Export in ein Simulationsprogramm (HYSTEM-EXTRAN, Mike++ o.ä.) durchgeführt werden kann.
 Simulationsprogrammme erfordern, dass alle Flächen genau einer Haltung zugeordnet werden können.

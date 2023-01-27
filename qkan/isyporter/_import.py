@@ -1,4 +1,5 @@
 import logging
+import sys
 import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
 from lxml import etree

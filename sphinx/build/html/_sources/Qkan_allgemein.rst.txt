@@ -38,7 +38,7 @@ Wesentlicher Bestandteil von QKan ist eine Datenstruktur, die einen gemeinsamen 
 Die Daten können sowohl mit den QKan-Funktionen verarbeitet werden, gleichzeitig stehen aber auch die vielfältigen und umfassenden Funktionen von QGIS zur Verfügung. Insbesondere kann mit Hilfe der Datenbanksprache SQL beinahe jede denkbare Aufgabe realisiert werden. 
 
 Grundlagen
-==========
+----------
 
 QKan ist ein Open-Source-Projekt von `Jörg Höttges`_ . Es wird seit Aug 2016 an der FH Aachen entwickelt. 
 
@@ -58,7 +58,7 @@ und "Mittelstand Innovativ & Digital (MID) – Teil MID-Digitalisierung" (2) sow
  - `Ingenieurbüro Achten und Jansen GmbH, Aachen (2) <https://www.achten-jansen.de/>`_
 
 Team
-====
+----
 
  - Jörg Höttges
  - Yannick Linke
@@ -66,12 +66,12 @@ Team
  - Friederike Kimmich
 
 Ehemalige
-=========
+---------
 
  - Leon Ochsenfeld
 
 Weitere Quellen
-===============
+---------------
 
  - Dank an `Gerhard Dreier <https://www.geoplaning.de>`_, aus dessen Plugins 
    `"DWA_M150_XML_Import" und "longitudinal" <https://plugins.qgis.org/plugins/user/amphibitus/admin>`_ 

@@ -3,11 +3,13 @@ QKan-Formulare
 
 .. index:: Berechnung von Oberflächenabflussparametern (Menü)
 
+
 Berechnung von Oberflächenabflussparametern
 -------------------------------------------
 
 Für befestigte und unbefestigte Flächen werden die Oberflächenabflussparameter
 nach HYSTEM/EXTRAN (geplante Alternative: Kanal++) berechnet. 
+
 
 Tabellen zur Auswahl der zu berücksichtigenden Flächen
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -19,12 +21,14 @@ Entwässerungsarten sowie allgemein auf ausgewählte Teilgebiete beschränkt wer
 
 .. index:: Anbindungen Einzeleinleiter (Menü)
 
+
 Automatisches Erzeugen von Anbindungen von Einzeleinleitern
 -----------------------------------------------------------
 
 Für jeden Einzeleinleiter, für den noch keine Anbindung erstellt wurde (automatisch oder manuell), wird 
 eine Linie erzeugt, die am Punkte des Einzeleinleiters beginnt und auf der damit verknüpften Haltung 
 endet. 
+
 
 Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -38,6 +42,7 @@ Ausführliche Erläuterung zu diesem Thema: :ref:`Anbindungen von Einzeleinleite
 
 .. index:: Flächenanbindungen (Menü)
 
+
 Automatisches Erzeugen von Flächenanbindungen
 ---------------------------------------------
 
@@ -47,6 +52,7 @@ endet.
 
 Abhängig von dem Flächenattribut "aufteilen" ist eine Anbindung pro Fläche oder pro Flächenteilstück 
 und Haltungsfläche (Tabelle "tezg") vorgesehen. 
+
 
 Tabelle zur Auswahl der zu berücksichtigenden Flächen, Haltungen und Haltungsflächen
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -62,6 +68,7 @@ Ausführliche Erläuterung zu diesem Thema: :ref:`createlinkfl`
 
 .. index:: Unbefestigte Fläche (Menü)
 
+
 Erzeugen der unbefestigten Flächen
 ----------------------------------
 
@@ -69,6 +76,7 @@ Für jede Haltungsfläche (Tabelle tezg) wird aus dem Zwischenraum der befestigt
 Dieses kann aus mehreren Flächenteilen bestehen. 
 
 Die Attributdaten werden dabei aus den Haltungsflächen übernommen. 
+
 
 Tabelle zur Auswahl der zu bearbeitenden Arten von Haltungsflächen
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -84,10 +92,12 @@ Ausführliche Erläuterung zu diesem Thema: :ref:`Erzeugen von unbefestigten Fl�
 
 .. index:: Export nach HYSTEM/EXTRAN (Menü)
 
+
 Export nach HYSTEM/EXTRAN
 -------------------------
 
 Der Export funktioniert für Version 7.8 und 7.9.
+
 
 Tabelle zur Auswahl der zu exportierenden Daten
 +++++++++++++++++++++++++++++++++++++++++++++++
@@ -96,6 +106,7 @@ Mit Hilfe der :ref:`Auswahltabelle<selectionTable>` kann der Export auf ausgewä
 
 
 .. index:: Projektlayer aktualisieren (Menü)
+
 
 Projektlayer aktualisieren
 --------------------------
@@ -115,6 +126,7 @@ Dieses Modul ist vor allem hilfreich, um Projekte, die noch auf einer älteren Q
 
 .. index:: Datenbank aktualisieren
 
+
 Datenbank aktualisieren
 -----------------------
 
@@ -124,6 +136,7 @@ wurde, können Sie mit den Optionsfeldern auswählen, ob die Projektdatei vor de
 
 
 .. index:: Projektdatei übertragen
+
 
 Projektdatei auf andere Datenbank übertragen
 --------------------------------------------
@@ -138,12 +151,11 @@ Oft entstehen nach einiger Zeit komplexe Projektdateien, die besondere Layerdars
 .. image:: ./QKan_Bilder/qkan_qgsAdapt.png
 
 
-
-
 Allgemeine Funktionselemente in Formularen
 ------------------------------------------
 
 .. _selectionTable:
+
 
 Auswahl in Listen
 +++++++++++++++++

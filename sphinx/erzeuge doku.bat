@@ -1,2 +1,2 @@
-C:\FHAC\hoettges\Kanalprogramme\QKan\qkan\doc\sphinx\make html >C:\FHAC\hoettges\Kanalprogramme\QKan\qkan\doc\sphinx\protokoll.txt
+C:\FHAC\hoettges\Kanalprogramme\QKan\sphinx\make html >C:\FHAC\hoettges\Kanalprogramme\QKan\sphinx\protokoll.txt
 pause

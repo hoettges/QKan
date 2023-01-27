@@ -1,5 +1,5 @@
-Import von Kanaldaten aus einfachen Tabellen (Excel, ACCESS, TXT, CSV)
-======================================================================
+Import von Kanaldaten aus einfachen Tabellen
+============================================
 
 Der Import von Daten aus einfachen Tabellen ist prinzipiell mit allen Methoden möglich, die QGIS zur Verfügung 
 stellt. Leider funktioniert das Einfügen aus der Zwischenablage nur dann, wenn alle Attribute einer Tabelle 

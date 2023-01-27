@@ -4,19 +4,19 @@ loading pickled environment... done
 building [mo]: targets for 0 po files that are out of date
 building [html]: targets for 1 source files that are out of date
 updating environment: 0 added, 1 changed, 0 removed
-reading sources... [100%] Qkan_Vorbereitung_Workflow                           
+reading sources... [100%] Qkan_aufsetzen                                       
 looking for now-outdated files... none found
 pickling environment... done
 checking consistency... done
 preparing documents... done
-writing output... [ 50%] Qkan_Vorbereitung_Workflow                            writing output... [100%] index                                                 
+writing output... [ 50%] Qkan_aufsetzen                                        writing output... [100%] index                                                 
 generating indices... genindex done
 writing additional pages... search done
-copying images... [ 20%] QKan_Bilder/Vorbereitung_Workflow/QKan_datenbank_erstellen.pngcopying images... [ 40%] QKan_Bilder/Vorbereitung_Workflow/QKan_datenbank_erstellen_fenster.pngcopying images... [ 60%] QKan_Bilder/Vorbereitung_Workflow/gew_karte.png       copying images... [ 80%] QKan_Bilder/Vorbereitung_Workflow/Clipboard_funktionen.pngcopying images... [100%] QKan_Bilder/Vorbereitung_Workflow/Ergebnis_vorbereitung.png
+copying images... [ 33%] QKan_Bilder/QGIS_herunterladen.png                    copying images... [ 66%] QKan_Bilder/QGIS_komponenten.png                      copying images... [100%] QKan_Bilder/QKan_Plugin.png                           
 copying static files... done
 copying extra files... done
 dumping search index in German (code: de)... done
 dumping object inventory... done
-build succeeded, 1 warning.
+build succeeded, 3 warnings.
 
 The HTML pages are in build\html.
