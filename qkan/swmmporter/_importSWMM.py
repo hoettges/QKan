@@ -179,7 +179,7 @@ class ImportTask:
                       'sohlhoehe': elevation, 'deckelhoehe': float(elevation) + float(maxdepth),
                        'schachttyp': 'Schacht'}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+            logger.debug(f'swmm.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
 
             if not self.dbQK.insertdata(
@@ -331,7 +331,7 @@ class ImportTask:
             #     return False
 
             params = {'flnam': name, 'regenschreiber': regenschreiber, 'schnam': schnam,
-                       'befgrad': befgrad, 'neigung': neigung , 'abflussparameter': abnam}
+                       'befgrad': befgrad, 'neigung': int(neigung), 'abflussparameter': abnam}
 
             logger.debug(f'm145porter.import - insertdata:\ntabnam: tezg\n'
                           f'params: {params}')

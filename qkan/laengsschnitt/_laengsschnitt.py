@@ -189,13 +189,13 @@ class LaengsTask:
                 haltungstyp_l.append(haltungstyp)
 
         farbe = 'black'
-        if entwart == 'MW' or 'KM' or 'Mischwasser':
+        if entwart == 'MW' or entwart =='KM' or entwart =='Mischwasser':
             farbe = 'pink'
 
-        elif entwart == 'RW' or 'KR' or 'Regenwasser':
+        elif entwart == 'RW' or entwart =='KR' or entwart =='Regenwasser':
             farbe = 'blue'
 
-        elif entwart == 'SW' or 'KS' or 'Schmutzwasser':
+        elif entwart == 'SW' or entwart =='KS' or entwart =='Schmutzwasser':
             farbe = 'red'
 
         data = [schoben_l, schunten_l, laenge_l, entwart_l, hoehe_l, breite_l, material_l, strasse_l, haltungstyp_l]
@@ -398,13 +398,13 @@ class LaengsTask:
                 haltungstyp_l.append(haltungstyp)
 
         farbe = "-FARBE" +"\n"+ "7\n" "\n"
-        if entwart == 'MW' or 'KM' or 'Mischwasser':
+        if entwart == 'MW' or entwart == 'KM' or entwart == 'Mischwasser':
             farbe = "-FARBE" +"\n"+ "6\n" "\n"
 
-        elif entwart == 'RW' or 'KR' or 'Regenwasser':
+        elif entwart == 'RW' or entwart == 'KR' or entwart == 'Regenwasser':
             farbe = "-FARBE" +"\n"+ "5\n" "\n"
 
-        elif entwart == 'SW' or 'KS' or 'Schmutzwasser':
+        elif entwart == 'SW' or entwart == 'KS' or entwart == 'Schmutzwasser':
             farbe = "-FARBE" +"\n"+ "1\n" "\n"
 
         # autocad benötigt andere daten als matplotlib (Koordinatenpaare erwartet!)
