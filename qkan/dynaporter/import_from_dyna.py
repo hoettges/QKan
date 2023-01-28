@@ -365,7 +365,6 @@ def import_kanaldaten(
                         xp, yp = [float(w) for w in werte]
                         grenzen.reset(xp, yp)
 
-                        plmodus = "Linie"  # Alternative: 'Kreis'
                         profilmodus = 1
                         x1, y1 = (
                             xp,
@@ -707,7 +706,7 @@ def import_kanaldaten(
     # Daten aus temporären DYNA-Tabellen abfragen
     sql = """
         INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
-                                    schachttyp, simstatus, kommentar)
+                                    schachttyp, simstatus, kommentar, geop, geom)
         SELECT 
             dyna12.schoben as schnam,
             dyna12.xob as xsch, 
@@ -720,8 +719,8 @@ def import_kanaldaten(
             'Schacht' AS schachttyp, 
             simulationsstatus.bezeichnung AS simstatus, 
             'Importiert mit QKan' AS kommentar,
-            MakePoint(dyna12.xsch, dyna12.ysch, :epsg) AS geop,
-            CastToMultiPolygon(MakePolygon(MakeCircle(dyna12.xsch, dyna12.ysch, 1.0, :epsg)))
+            MakePoint(dyna12.xob, dyna12.yob, :epsg) AS geop,
+            CastToMultiPolygon(MakePolygon(MakeCircle(dyna12.xob, dyna12.yob, 1.0, :epsg))) AS geom
         FROM dyna12
         LEFT JOIN simulationsstatus
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
@@ -756,7 +755,7 @@ def import_kanaldaten(
             simulationsstatus.bezeichnung AS simstatus, 
             'Importiert mit QKan' AS kommentar,
             MakePoint(dyna41.xkoor, dyna41.ykoor, :epsg) AS geop,
-            CastToMultiPolygon(MakePolygon(MakeCircle(dyna41.xkoor, dyna41.ykoor, 1.0, :epsg)))
+            CastToMultiPolygon(MakePolygon(MakeCircle(dyna41.xkoor, dyna41.ykoor, 1.0, :epsg))) AS geom
         FROM dyna41
         LEFT JOIN dyna12
         ON dyna41.schnam = dyna12.schunten
@@ -788,7 +787,7 @@ def import_kanaldaten(
         INSERT INTO haltungen 
             (haltnam, schoben, schunten, 
             hoehe, breite, laenge, sohleoben, sohleunten, 
-            deckeloben, deckelunten, teilgebiet, profilnam, entwart, ks, simstatus, kommentar)
+            teilgebiet, profilnam, entwart, ks, simstatus, kommentar, geom)
         SELECT 
             printf('%s-%s', dyna12.kanalnummer, dyna12.haltungsnummer) AS haltnam, 
             dyna12.schoben AS schoben, 
@@ -798,8 +797,6 @@ def import_kanaldaten(
             dyna12.laenge AS laenge, 
             dyna12.sohleoben AS sohleoben, 
             dyna12.sohleunten AS sohleunten, 
-            dyna12.deckeloben AS deckeloben, 
-            coalesce(dy12un.deckeloben, dyna41.deckelhoehe) as deckelunten, 
             NULL as teilgebiet, 
             dynaprofil.profilnam as profilnam, 
             entwaesserungsarten.bezeichnung as entwart, 
@@ -825,7 +822,8 @@ def import_kanaldaten(
         ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
         GROUP BY dyna12.kanalnummer, dyna12.haltungsnummer"""
 
-    if not db_qkan.sql(sql, "importkanaldaten_dyna (7)"):
+    params = {'epsg': epsg}
+    if not db_qkan.sql(sql, "importkanaldaten_dyna (7)", parameters=params):
         del db_qkan
         return False
 
@@ -838,8 +836,7 @@ def import_kanaldaten(
             (flnam, haltnam, schnam, neigkl, 
             schwerpunktlaufzeit, regenschreiber, 
             teilgebiet, abflussparameter, 
-            flaeche, befgrad, 
-             kommentar)
+            kommentar)
         SELECT
             printf('f_%s-%s', dyna12.kanalnummer, dyna12.haltungsnummer) AS flnam, 
             printf('%s-%s', dyna12.kanalnummer, dyna12.haltungsnummer) AS haltnam, 
@@ -847,8 +844,6 @@ def import_kanaldaten(
             dyna12.neigkl AS neigkl,
             NULL AS schwerpunktlaufzeit, NULL AS regenschreiber, 
             NULL AS teilgebiet, '$Default_Unbef' AS abflussparameter, 
-            dyna12.flaeche AS flaeche,
-            dyna12.flaecheund / (dyna12.flaeche + 1.0e-19) AS befgrad, 
             'DYNA-Import' AS kommentar
         FROM dyna12
         GROUP BY dyna12.kanalnummer, dyna12.haltungsnummer"""

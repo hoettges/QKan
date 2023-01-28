@@ -12,7 +12,7 @@ def run(dbcon: DBConnection) -> bool:
     #  Temporäre Tabelle zum Export von Flächen für HE 8 -----------------------------
 
     sql = """
-    CREATE TABLE IF NOT EXISTS flaechen_he8 (ö
+    CREATE TABLE IF NOT EXISTS flaechen_he8 (
         pk INTEGER PRIMARY KEY,
         Name TEXT, 
         Haltung TEXT, 

@@ -80,7 +80,12 @@ class ImportTask:
                                        )
                     ) AS geom
                 FROM he.Schacht AS sh
-                LEFT JOIN entwaesserungsarten AS ea 
+                LEFT JOIN (
+                    SELECT he_nr, bezeichnung FROM entwaesserungsarten 
+                    WHERE bezeichnung IN (
+                        'Mischwasser', 
+                        'Regenwasser', 
+                        'Schmutzwasser')) AS ea 
                 ON ea.he_nr = sh.Kanalart
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = sh.Planungsstatus
@@ -553,7 +558,12 @@ class ImportTask:
                 FROM he.qRegler AS qr
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON qr.Profiltyp = pr.he_nr
-                LEFT JOIN entwaesserungsarten AS ea 
+                LEFT JOIN (
+                    SELECT he_nr, bezeichnung FROM entwaesserungsarten 
+                    WHERE bezeichnung IN (
+                        'Mischwasser', 
+                        'Regenwasser', 
+                        'Schmutzwasser')) AS ea 
                 ON ea.he_nr = qr.Kanalart
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = qr.Planungsstatus
@@ -604,7 +614,12 @@ class ImportTask:
                 FROM he.hRegler AS hr
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON hr.Profiltyp = pr.he_nr
-                LEFT JOIN entwaesserungsarten AS ea 
+                LEFT JOIN (
+                    SELECT he_nr, bezeichnung FROM entwaesserungsarten 
+                    WHERE bezeichnung IN (
+                        'Mischwasser', 
+                        'Regenwasser', 
+                        'Schmutzwasser')) AS ea 
                 ON ea.he_nr = hr.Kanalart
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = hr.Planungsstatus

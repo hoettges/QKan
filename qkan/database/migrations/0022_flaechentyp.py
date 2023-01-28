@@ -85,7 +85,7 @@ def run(dbcon: DBConnection) -> bool:
     ]
 
     for sql in sqllis:
-        if not dbcon.sql(sql, "dbfunc.DBConnection.version (3.1.6)", transaction=False):
+        if not dbcon.sql(sql, "dbfunc.DBConnection.version (3.1.6)"):
             return False
 
     dbcon.commit()

@@ -93,7 +93,7 @@ def run(dbcon: DBConnection) -> bool:
 
     for sql in sqllis:
         if not dbcon.sql(
-            sql, "dbfunc.DBConnection.version (2.5.8-1)", transaction=True
+            sql, "dbfunc.DBConnection.version (2.5.8-1)"
         ):
             return False
 
@@ -102,7 +102,7 @@ def run(dbcon: DBConnection) -> bool:
     # if el[0] != 'table':
     # sql = el[1]
     # logger.debug("Trigger 'linkfl' verarbeitet:\n{}".format(el[1]))
-    # if not dbcon.sql(sql, 'dbfunc.DBConnection.version (2.2.2-7)', transaction=True):
+    # if not dbcon.sql(sql, 'dbfunc.DBConnection.version (2.2.2-7)'):
     # return False
     # else:
     # logger.debug("1. Trigger 'table' erkannt:\n{}".format(el[1]))
@@ -168,7 +168,7 @@ def run(dbcon: DBConnection) -> bool:
 
     for sql in sqllis:
         if not dbcon.sql(
-            sql, "dbfunc.DBConnection.version (2.2.2-4)", transaction=True
+            sql, "dbfunc.DBConnection.version (2.2.2-4)"
         ):
             return False
 
@@ -177,7 +177,7 @@ def run(dbcon: DBConnection) -> bool:
     # if el[0] != 'table':
     # sql = el[1]
     # logger.debug("Trigger 'linksw' verarbeitet:\n{}".format(el[1]))
-    # if not dbcon.sql(sql, 'dbfunc.DBConnection.version (2.2.2-5)', transaction=True):
+    # if not dbcon.sql(sql, 'dbfunc.DBConnection.version (2.2.2-5)'):
     # return False
     # else:
     # logger.debug("1. Trigger 'table' erkannt:\n{}".format(el[1]))

@@ -300,9 +300,9 @@ class ExportTask:
             for b in self.dbQK.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
-                    name_1,
-                    rain_gage,
-                    outlet_1,
+                    name_t,
+                    rain_gage_t,
+                    outlet_t,
                     area,
                     width,
                     imperv,
@@ -310,8 +310,7 @@ class ExportTask:
                 ) = [0 if el is None else el for el in b]
 
                 # In allen Namen Leerzeichen durch '_' ersetzen
-                name = name_1.replace(" ", "_")
-                outlet = outlet_1.replace(" ", "_")
+                name, outlet, rain_gage = ["" if el == 0 else el.replace(" ", "_") for el in (name_t, outlet_t, rain_gage_t)]
 
                 datasc += (
                     f"{name:<16s} {rain_gage:<16s} {outlet:<16s} {area:<8.2f} "
@@ -388,9 +387,9 @@ class ExportTask:
             for b in self.dbQK.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
-                    name_1,
-                    rain_gage,
-                    outlet_1,
+                    name_t,
+                    rain_gage_t,
+                    outlet_t,
                     area,
                     width,
                     imperv,
@@ -409,8 +408,7 @@ class ExportTask:
                 ) = [0 if el is None else el for el in b]
 
                 # In allen Namen Leerzeichen durch '_' ersetzen
-                name = name_1.replace(" ", "_")
-                outlet = outlet_1.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 datasa += (
                     f"{name:<16s} {nImperv:<10.3f} {nPerv:<10.2f} {sImperv:<10.2f} {sPerv:<10.1f} "
@@ -484,9 +482,9 @@ class ExportTask:
             for b in self.dbQK.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
-                    name_1,
-                    rain_gage,
-                    outlet_1,
+                    name_t,
+                    rain_gage_t,
+                    outlet_t,
                     area,
                     width,
                     imperv,
@@ -505,7 +503,7 @@ class ExportTask:
                 ) = [0 if el is None else el for el in b]
 
                 # In allen Namen Leerzeichen durch '_' ersetzen
-                name = name_1.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 datain += f"{name:<16s} {maxRate:<10.1f} {minRate:<10.1f} {decay:<10.1f} {dryTime:<10.0f} {maxInfil}\n"
 
@@ -570,7 +568,7 @@ class ExportTask:
                 ) = [0 if el is None else el for el in b]
 
                 # In allen Namen Leerzeichen durch '_' ersetzen
-                name = name_t.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 # [JUNCTIONS]
                 dataju += (
@@ -638,7 +636,7 @@ class ExportTask:
                     ysch,
                 ) = [0 if el is None else el for el in b]
 
-                name = name_t.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 dataou += (
                     f"{name:<16s} {invertElevation:<10.3f} FREE                        NO                       \n"
@@ -703,7 +701,7 @@ class ExportTask:
                     ysch,
                 ) = [0 if el is None else el for el in b]
 
-                name = name_t.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 dataou += (
                     f"{name:<16s} {invertElevation:<8.1f} {maxDepth:<10.3f} {initDepth:<10.3f} FUNCTIONAL 1000      0         0        0        0\n"
@@ -760,7 +758,7 @@ class ExportTask:
                     haltungstyp,
                 ) = [0 if el is None else el for el in b]
 
-                name = name_t.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 datacd += (
                     f"{name:<16s} {schoben:<17s}{schunten:<17s}{laenge:<11.3f}{ks:<10.3f} 0          0          0          0         \n"
@@ -818,7 +816,7 @@ class ExportTask:
                     haltungstyp,
                 ) = [0 if el is None else el for el in b]
 
-                name = name_t.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 datacd += (
                     f"{name:<16s} {schoben:<17s}{schunten:<17s} *                ON       0        0     \n"
@@ -876,7 +874,7 @@ class ExportTask:
                     haltungstyp,
                 ) = [0 if el is None else el for el in b]
 
-                name = name_t.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 datacd += (
                     f"{name:<16s} {schoben:<17s}{schunten:<17s} TRANSVERSE   0          3.33       NO       0        0          YES   \n"
@@ -938,7 +936,7 @@ class ExportTask:
                     haltungstyp,
                 ) = [0 if el is None else el for el in b]
 
-                name = name_t.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 dataxs += (
                     f"{name:<16s} {schoben:<16s}{schunten:<<16s}{laenge:<10.3f}{ks:<10.3f}  0          0          1                    \n"
@@ -1099,7 +1097,7 @@ class ExportTask:
                 ) = [0 if el is None else el for el in b]
 
                 # In allen Namen Leerzeichen durch '_' ersetzen
-                name = name_t.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 # [COORDINATES]
                 dataco += f"{name:<16s} {xsch:<18.3f} {ysch:<18.3f}\n"
@@ -1151,7 +1149,7 @@ class ExportTask:
                 ) = [0 if el is None else el for el in b]
 
                 # In allen Namen Leerzeichen durch '_' ersetzen
-                name = name_t.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 list = list.replace('LINESTRING(', '')
                 list = list.replace(')', '')
@@ -1231,7 +1229,7 @@ class ExportTask:
                 ) = [0 if el is None else el for el in b]
 
                 # In allen Namen Leerzeichen durch '_' ersetzen
-                name = name_t.replace(" ", "_")
+                name = "" if name_t == 0 else name_t.replace(" ", "_")
 
                 list = list.replace('MULTIPOLYGON(((', '')
                 list = list.replace(')))', '')

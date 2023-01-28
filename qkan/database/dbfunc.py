@@ -281,9 +281,28 @@ class DBConnection:
         stmt_category: str = "allgemein",
         parameters = (),              # : Optional[Iterable, dict[str, str]]   "Iterable" is deprecated
         mute_logger: bool = False,
-        transaction: bool = False,  # Unused, for compatibility only
-        ignore: bool = False,      # ignore error and continue
+        ignore: bool = False,
     ) -> bool:
+        """Execute a sql query on connected database
+
+        :sql:                   SQL-statement
+        :type sql:              String
+
+        :stmt_category:         Category name. Allows suppression of sql-statement in logfile for
+                                2 seconds appending on mute_logger
+        :type stmt_category:    String
+
+        :parameters:            parameters used in sql statement
+        :type projectfile:      List or Dict
+
+        :mute_logger:           suppress logging message for the same stmt_category for 2 seconds
+        :type mute_logger:      String
+
+        :ignore:                ignore error and continue
+        :type ignore:           Boolean
+
+        :returns: void
+        """
         try:
             self.cursl.execute(sql, parameters)
 
@@ -331,7 +350,6 @@ class DBConnection:
             tabnam: str,
             stmt_category: str = "allgemein",
             mute_logger: bool = False,
-            transaction: bool = False,  # Unused, for compatibility only
             ignore: bool = False,  # ignore error and continue
             **parameters: dict              # [str, str] not yet allowed for QGIS = 3.16
     ) -> bool:
@@ -683,8 +701,7 @@ class DBConnection:
             )
             return False
 
-        result = self.sql(sql, stmt_category, parameters, mute_logger,
-                          transaction, ignore)
+        result = self.sql(sql, stmt_category, parameters, mute_logger, ignore)
 
         return result
 
@@ -844,7 +861,6 @@ class DBConnection:
         if not self.sql(
             f"PRAGMA table_info({tabnam})",
             "dbfunc.DBConnection.alter_table (1)",
-            transaction=False,
         ):
             return False
         data = self.fetchall()
@@ -875,7 +891,6 @@ class DBConnection:
             sql,
             "dbfunc.DBConnection.alter_table (2)",
             parameters=(tabnam,),
-            transaction=False,
         ):
             return False
         data = self.fetchall()
@@ -929,7 +944,6 @@ class DBConnection:
         if not self.sql(
             "PRAGMA foreign_keys=OFF;",
             "dbfunc.DBConnection.alter_table (3)",
-            transaction=False,
         ):
             return False
 
@@ -949,14 +963,13 @@ class DBConnection:
         #     sql,
         #     "dbfunc.DBConnection.alter_table (5)",
         #     parameters=(tabnam,),
-        #     transaction=False,
         # ):
         #     return False
         # triggers = [el[1] for el in self.fetchall()]
 
         # 2.1. Temporäre Hilfstabelle erstellen
         sql = f"CREATE TABLE IF NOT EXISTS {tabnam}_t ({attr_text_new});"
-        if not self.sql(sql, "dbfunc.DBConnection.alter_table (6)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (6)"):
             return False
 
         # 2.2. Geo-Attribute in Tabelle ergänzen
@@ -966,15 +979,13 @@ class DBConnection:
                 "SELECT AddGeometryColumn(?, ?, ?, ?, ?)",
                 "dbfunc.DBConnection.alter_table (7)",
                 parameters=(f'{tabnam}_t', gnam, epsg, geotype, nccords),
-                transaction=False,
-            ):
+                ):
                 return False
 
         # 3. Hilfstabelle entleeren
         if not self.sql(
             f"DELETE FROM {tabnam}_t",
             "dbfunc.DBConnection.alter_table (8)",
-            transaction=False,
         ):
             return False
 
@@ -982,7 +993,7 @@ class DBConnection:
         sql = f"""INSERT INTO {tabnam}_t ({', '.join(attr_set_both)})
                 SELECT {', '.join(attr_set_both)}
                 FROM {tabnam};"""
-        if not self.sql(sql, "dbfunc.DBConnection.alter_table (9)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (9)"):
             return False
 
         # 5.1. Löschen der Geoobjektattribute
@@ -991,18 +1002,17 @@ class DBConnection:
                 "SELECT DiscardGeometryColumn(?, ?)",
                 "dbfunc.DBConnection.alter_table (10)",
                 parameters=(tabnam, attr),
-                transaction=False,
-            ):
+                ):
                 return False
 
         # 5.2. Löschen der Tabelle
         sql = f"DROP TABLE {tabnam};"
-        if not self.sql(sql, "dbfunc.DBConnection.alter_table (11)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (11)"):
             return False
 
         # 6.1 Geänderte Tabelle erstellen
         sql = f"""CREATE TABLE {tabnam} ({attr_text_new});"""
-        if not self.sql(sql, "dbfunc.DBConnection.alter_table (12)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (12)"):
             return False
 
         # 6.2. Geo-Attribute in Tabelle ergänzen und Indizes erstellen
@@ -1012,22 +1022,20 @@ class DBConnection:
                 "SELECT AddGeometryColumn(?, ?, ?, ?, ?)",
                 "dbfunc.DBConnection.alter_table (13)",
                 parameters=(tabnam, gnam, epsg, geotype, nccords),
-                transaction=False,
-            ):
+                ):
                 return False
             if not self.sql(
                 "SELECT CreateSpatialIndex(?, ?)",
                 "dbfunc.DBConnection.alter_table (14)",
                 parameters=(tabnam, attr),
-                transaction=False,
-            ):
+                ):
                 return False
 
         # 7. Daten aus Hilfstabelle übertragen, dabei nur gemeinsame Attribute berücksichtigen
         sql = f"""INSERT INTO {tabnam} ({', '.join(attr_set_both)})
                 SELECT {', '.join(attr_set_both)}
                 FROM {tabnam}_t;"""
-        if not self.sql(sql, "dbfunc.DBConnection.alter_table (15)", transaction=False):
+        if not self.sql(sql, "dbfunc.DBConnection.alter_table (15)"):
             return False
 
         # 8.1. Löschen der Geoobjektattribute der Hilfstabelle
@@ -1036,28 +1044,25 @@ class DBConnection:
                 "SELECT DiscardGeometryColumn(?, ?)",
                 "dbfunc.DBConnection.alter_table (16)",
                 parameters=(f"{tabnam}_t", attr),
-                transaction=False,
-            ):
+                ):
                 return False
 
         # 9. Löschen der Hilfstabelle
         if not self.sql(
             f"DROP TABLE {tabnam}_t;",
             "dbfunc.DBConnection.alter_table (17)",
-            transaction=False,
         ):
             return False
 
         # 9. Indizes und Trigger wiederherstellen
         # for sql in triggers:
-        #     if not self.sql(sql, 'dbfunc.DBConnection.alter_table (18)', transaction=False):
+        #     if not self.sql(sql, 'dbfunc.DBConnection.alter_table (18)'):
         #         return False
 
         # 10. Verify key constraints
         if not self.sql(
             "PRAGMA foreign_key_check;",
             "dbfunc.DBConnection.alter_table (19)",
-            transaction=False,
         ):
             return False
 
@@ -1068,7 +1073,6 @@ class DBConnection:
         if not self.sql(
             "PRAGMA foreign_keys=ON;",
             "dbfunc.DBConnection.alter_table (20)",
-            transaction=False,
         ):
             return False
 

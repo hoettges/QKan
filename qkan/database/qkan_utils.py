@@ -538,7 +538,23 @@ def check_flaechenbilanz(db_qkan: "DBConnection") -> bool:
     :param db_qkan:     Typ der Datenbank (spatialite, postgis)
     """
 
-    sql = """SELECT * FROM v_flaechen_check"""
+    sql = """WITH flintersect AS (
+        SELECT fl.flnam AS finam, 
+               CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
+               ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
+               END AS flaeche
+        FROM linkfl AS lf
+        INNER JOIN flaechen AS fl
+        ON lf.flnam = fl.flnam
+        LEFT JOIN tezg AS tg
+        ON lf.tezgnam = tg.flnam)
+    SELECT fa.flnam, fi.finam, sum(fi.flaeche) AS fl_int, 
+           AREA(fa.geom) AS fl_ori, sum(fi.flaeche) - AREA(fa.geom) AS diff
+    FROM flaechen AS fa
+    LEFT JOIN flintersect AS fi
+    ON fa.flnam = fi.finam
+    GROUP BY fa.flnam
+    HAVING ABS(sum(fi.flaeche) - AREA(fa.geom)) > 2"""
 
     if not db_qkan.sql(sql, "qkan_utils.check_flaechenbilanz (1)"):
         return False
@@ -550,7 +566,23 @@ def check_flaechenbilanz(db_qkan: "DBConnection") -> bool:
             'Öffnen Sie den Layer "Prüfung Flächenbilanz"',
         )
 
-    sql = """SELECT * FROM v_tezg_check"""
+    sql = """WITH flintersect AS (
+        SELECT tg.flnam AS finam, 
+               CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
+               ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
+               END AS flaeche
+        FROM linkfl AS lf
+        INNER JOIN flaechen AS fl
+        ON lf.flnam = fl.flnam
+        LEFT JOIN tezg AS tg
+        ON lf.tezgnam = tg.flnam)
+    SELECT tg.flnam, fi.finam, sum(fi.flaeche) AS fl_int, 
+           AREA(tg.geom) AS fl_ori, sum(fi.flaeche) - AREA(tg.geom) AS diff
+    FROM tezg AS tg
+    LEFT JOIN flintersect AS fi
+    ON tg.flnam = fi.finam
+    GROUP BY tg.flnam
+    HAVING ABS(sum(fi.flaeche) - AREA(tg.geom)) > 2"""
 
     if not db_qkan.sql(sql, "qkan_utils.check_flaechenbilanz (2)"):
         return False
