@@ -124,11 +124,14 @@ class ImportTask:
         self.read()
         self._junctions()
         self._outfalls()
+        self._dividers()
         self._storage()
         self._coordinates()
         self._conduits()
         self._pumps()
+        self._outlets()
         self._weirs()
+        self._orifices()
         self._xsections()
         self._subcatchments()
         self._polygons()
@@ -227,6 +230,46 @@ class ImportTask:
 
             params = {'schnam': name,
                       'sohlhoehe': elevation, 'schachttyp': 'Auslass'}
+
+            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="schaechte",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.dbQK
+                return
+
+        self.dbQK.commit()
+    def _dividers(self):
+        #speicherschächte
+
+        data = self.data.get("dividers", [])
+        for line in data:
+            line_tokens = line.split()
+            name = line_tokens[0] # schnam
+            elevation = line_tokens[1]  # sohlhoehe
+            maxdepth = 'NULL'   # ToDo!
+            #initdepth = line_tokens[3]   # entfällt
+
+            # sql = f"""
+            #     INSERT into schaechte (
+            #         schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
+            #     VALUES (?, ?, ?, ?, 'Schacht')
+            #     """
+            # if not self.dbQK.sql(
+            #     sql,
+            #     mute_logger=True,
+            #     parameters=(name, elevation, elevation + maxdepth, areaPonded),
+            # ):
+            #     del self.dbQK
+            #     return False
+
+            params = {'schnam': name,
+                      'sohlhoehe': elevation, 'deckelhoehe': 'NULL',
+                      'schachttyp': 'Speicher'}
 
             logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
@@ -512,6 +555,59 @@ class ImportTask:
             del self.dbQK
             return False
 
+    def _orifices(self):
+        data = self.data.get("orifices", [])
+        for line in data:
+            # Attribute bitte aus qkan.database.qkan_database.py entnehmen
+            line_tokens = line.split()
+            haltnam = line_tokens[0]
+            schoben = line_tokens[1]
+            schunten = line_tokens[2]
+
+            params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
+                      'entwart': 'Regenwasser', 'haltungstyp': 'Drosselbauwerk',
+                      'simstatus': '?'} # ToDo!
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="haltungen",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.dbQK
+                return
+
+        self.dbQK.commit()
+        
+    def _outlets(self):
+        data = self.data.get("outlets", [])
+        for line in data:
+            # Attribute bitte aus qkan.database.qkan_database.py entnehmen
+            line_tokens = line.split()
+            haltnam = line_tokens[0]
+            schoben = line_tokens[1]
+            schunten = line_tokens[2]
+
+            params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
+                      'entwart': 'Regenwasser', 'haltungstyp': 'Haltung mit Oeffnung',
+                      'simstatus': '?'} # ToDo!
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="haltungen",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.dbQK
+                return
+
+        self.dbQK.commit()
+        
+        
     def _weirs(self):
 
         data = self.data.get("weirs", [])
