@@ -155,12 +155,13 @@ class ImportTask:
         """Liest einen Teil der Schachtdaten ein. Rest siehe coordinates"""
         data = self.data.get("junctions", [])
         for line in data:
-            name = line[0:17].strip()  # schnam
-            elevation = line[17:28].strip()  # sohlhoehe
-            maxdepth = line[28:39].strip()  # = deckelhoehe - sohlhoehe
-            initdepth = line[39:50].strip()  # entfällt
-            surDepth = line[50:61].strip()  # entfällt
-            areaPonded = line[61:72].strip()  # ueberstauflaeche
+            line_tokens = line.split()
+            name = line_tokens[0]  # schnam
+            elevation = line_tokens[1]  # sohlhoehe
+            maxdepth = line_tokens[2]  # = deckelhoehe - sohlhoehe
+            initdepth = line_tokens[3]  # entfällt
+            surDepth = line_tokens[4]  # entfällt
+            areaPonded = line_tokens[5]  # ueberstauflaeche
 
             # sql = f"""
             #     INSERT into schaechte (
@@ -206,10 +207,11 @@ class ImportTask:
 
         data = self.data.get("outfalls", [])
         for line in data:
-            name = line[0:17].strip()  # schnam
-            elevation = line[17:28].strip()  # sohlhoehe
-            outtype = line[28:39].strip()  # Auslasstyp
-            if outtype != "":
+            line_tokens = line.split()
+            name = line_tokens[0] # schnam
+            elevation = line_tokens[1]  # sohlhoehe
+            outtype = line_tokens[3]   # Auslasstyp
+            if outtype != "FREE":
                 auslasstyp = outtypes[outtype]
             else:
                 auslasstyp = "frei"
