@@ -366,8 +366,9 @@ class ImportTask:
         for line in data:
             line_tokens = line.split()
             name = line_tokens[0]
-            xsch = fzahl(line_tokens[1], 3, self.xoffset) + self.xoffset  # xsch
-            ysch = fzahl(line_tokens[2], 3, self.yoffset) + self.yoffset  # ysch
+            if name != "ende":
+                xsch = fzahl(line_tokens[1], 3, self.xoffset) + self.xoffset  # xsch
+                ysch = fzahl(line_tokens[2], 3, self.yoffset) + self.yoffset  # ysch
 
             if nampoly != name:
                 if nampoly != "":
@@ -572,8 +573,9 @@ class ImportTask:
         for line in data:
             line_tokens = line.split()
             name = line_tokens[0]
-            xsch = fzahl(line_tokens[1], 3, self.xoffset) + self.xoffset  # xsch
-            ysch = fzahl(line_tokens[2], 3, self.yoffset) + self.yoffset  # ysch
+            if name != "ende":
+                xsch = fzahl(line_tokens[1], 3, self.xoffset) + self.xoffset  # xsch
+                ysch = fzahl(line_tokens[2], 3, self.yoffset) + self.yoffset  # ysch
 
             if name == namvor:
                 npt += 1
