@@ -124,11 +124,14 @@ class ImportTask:
         self.read()
         self._junctions()
         self._outfalls()
+        self._dividers()
         self._storage()
         self._coordinates()
         self._conduits()
         self._pumps()
+        self._outlets()
         self._weirs()
+        self._orifices()
         self._xsections()
         self._subcatchments()
         self._polygons()
@@ -155,12 +158,13 @@ class ImportTask:
         """Liest einen Teil der Schachtdaten ein. Rest siehe coordinates"""
         data = self.data.get("junctions", [])
         for line in data:
-            name = line[0:17].strip()  # schnam
-            elevation = line[17:28].strip()  # sohlhoehe
-            maxdepth = line[28:39].strip()  # = deckelhoehe - sohlhoehe
-            initdepth = line[39:50].strip()  # entfällt
-            surDepth = line[50:61].strip()  # entfällt
-            areaPonded = line[61:72].strip()  # ueberstauflaeche
+            line_tokens = line.split()
+            name = line_tokens[0]  # schnam
+            elevation = line_tokens[1]  # sohlhoehe
+            maxdepth = line_tokens[2]  # = deckelhoehe - sohlhoehe
+            initdepth = line_tokens[3]  # entfällt
+            surDepth = line_tokens[4]  # entfällt
+            areaPonded = line_tokens[5]  # ueberstauflaeche
 
             # sql = f"""
             #     INSERT into schaechte (
@@ -206,10 +210,11 @@ class ImportTask:
 
         data = self.data.get("outfalls", [])
         for line in data:
-            name = line[0:17].strip()  # schnam
-            elevation = line[17:28].strip()  # sohlhoehe
-            outtype = line[28:39].strip()  # Auslasstyp
-            if outtype != "":
+            line_tokens = line.split()
+            name = line_tokens[0] # schnam
+            elevation = line_tokens[1]  # sohlhoehe
+            outtype = line_tokens[2]   # Auslasstyp
+            if outtype not in outtypes.keys():
                 auslasstyp = outtypes[outtype]
             else:
                 auslasstyp = "frei"
@@ -238,16 +243,57 @@ class ImportTask:
                 return
 
         self.dbQK.commit()
+    def _dividers(self):
+        #speicherschächte
+
+        data = self.data.get("dividers", [])
+        for line in data:
+            line_tokens = line.split()
+            name = line_tokens[0] # schnam
+            elevation = line_tokens[1]  # sohlhoehe
+            maxdepth = 'NULL'   # ToDo!
+            #initdepth = line_tokens[3]   # entfällt
+
+            # sql = f"""
+            #     INSERT into schaechte (
+            #         schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
+            #     VALUES (?, ?, ?, ?, 'Schacht')
+            #     """
+            # if not self.dbQK.sql(
+            #     sql,
+            #     mute_logger=True,
+            #     parameters=(name, elevation, elevation + maxdepth, areaPonded),
+            # ):
+            #     del self.dbQK
+            #     return False
+
+            params = {'schnam': name,
+                      'sohlhoehe': elevation, 'deckelhoehe': 'NULL',
+                      'schachttyp': 'Speicher'}
+
+            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="schaechte",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.dbQK
+                return
+
+        self.dbQK.commit()
 
     def _storage(self):
         #speicherschächte
 
         data = self.data.get("storage", [])
         for line in data:
-            name = line[0:17].strip()  # schnam
-            elevation = line[17:26].strip()  # sohlhoehe
-            maxdepth = line[26:37].strip()  # = deckelhoehe - sohlhoehe
-            #initdepth = line[38:50].strip()  # entfällt
+            line_tokens = line.split()
+            name = line_tokens[0] # schnam
+            elevation = line_tokens[1]  # sohlhoehe
+            maxdepth = line_tokens[2]   # = deckelhoehe - sohlhoehe
+            #initdepth = line_tokens[3]   # entfällt
 
             # sql = f"""
             #     INSERT into schaechte (
@@ -285,9 +331,10 @@ class ImportTask:
         data = self.data.get("coordinates", [])
         for line in data:
             linen = line.strip()
-            name = linen[0:17].strip()  # schnam
-            xsch = fzahl(linen[17:34].strip(), 3, self.xoffset) + self.xoffset  # xsch
-            ysch = fzahl(linen[34:54].strip(), 3, self.yoffset) + self.yoffset  # ysch
+            line_tokens = linen.split()
+            name = line_tokens[0]
+            xsch = fzahl(line_tokens[1], 3, self.xoffset) + self.xoffset  # xsch
+            ysch = fzahl(line_tokens[2], 3, self.yoffset) + self.yoffset  # ysch
             du = 1.0
 
             sql = f"""
@@ -312,11 +359,12 @@ class ImportTask:
         data = self.data.get("subcatchments", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            name = line[0:17].strip()
-            regenschreiber = line[17:34].strip()
-            schnam = line[34:51].strip()
-            befgrad = fzahl(line[60:69].strip())
-            neigung = fzahl(line[78:85].strip())
+            line_tokens = line.split()
+            name = line_tokens[0]
+            regenschreiber = line_tokens[1]
+            schnam = line_tokens[2]
+            befgrad = fzahl(line_tokens[4])
+            neigung = fzahl(line_tokens[6])
             abnam = '$Default_Unbef'
 
             # sql = f"""
@@ -359,9 +407,11 @@ class ImportTask:
         xlis: List[float] = []  # x-Koordinaten zum Polygon
         ylis: List[float] = []  # y-Koordinaten zum Polygon
         for line in data:
-            name = line[0:17].strip()  # schnam
-            xsch = fzahl(line[17:36].strip(), 3, self.xoffset) + self.xoffset  # xsch
-            ysch = fzahl(line[36:55].strip(), 3, self.yoffset) + self.yoffset  # ysch
+            line_tokens = line.split()
+            name = line_tokens[0]
+            if name != "ende":
+                xsch = fzahl(line_tokens[1], 3, self.xoffset) + self.xoffset  # xsch
+                ysch = fzahl(line_tokens[2], 3, self.yoffset) + self.yoffset  # ysch
 
             if nampoly != name:
                 if nampoly != "":
@@ -405,13 +455,14 @@ class ImportTask:
         data = self.data.get("conduits", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            haltnam = line[0:17].strip()
-            schoben = line[17:34].strip()
-            schunten = line[34:51].strip()
-            laenge = line[51:62].strip()
+            line_tokens = line.split()
+            haltnam = line_tokens[0]
+            schoben = line_tokens[1]
+            schunten = line_tokens[2]
+            laenge = line_tokens[3]
 
             # Rauheitsbeiwerte
-            mannings_n = fzahl(line[62:73])
+            mannings_n = fzahl(line_tokens[4])
             # kst = 1/mannings_n                      # interessant: die Einheit von mannings_n ist s/m**(1/3)!
             # ks = ksFromKst(kst)
 
@@ -466,9 +517,10 @@ class ImportTask:
         data = self.data.get("pumps", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            haltnam = line[0:17].strip()
-            schoben = line[17:34].strip()
-            schunten = line[34:51].strip()
+            line_tokens = line.split()
+            haltnam = line_tokens[0]
+            schoben = line_tokens[1]
+            schunten = line_tokens[2]
 
             params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
                        'entwart': 'Regenwasser', 'haltungstyp': 'Pumpe',
@@ -503,14 +555,68 @@ class ImportTask:
             del self.dbQK
             return False
 
+    def _orifices(self):
+        data = self.data.get("orifices", [])
+        for line in data:
+            # Attribute bitte aus qkan.database.qkan_database.py entnehmen
+            line_tokens = line.split()
+            haltnam = line_tokens[0]
+            schoben = line_tokens[1]
+            schunten = line_tokens[2]
+
+            params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
+                      'entwart': 'Regenwasser', 'haltungstyp': 'Drosselbauwerk',
+                      'simstatus': '?'} # ToDo!
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="haltungen",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.dbQK
+                return
+
+        self.dbQK.commit()
+        
+    def _outlets(self):
+        data = self.data.get("outlets", [])
+        for line in data:
+            # Attribute bitte aus qkan.database.qkan_database.py entnehmen
+            line_tokens = line.split()
+            haltnam = line_tokens[0]
+            schoben = line_tokens[1]
+            schunten = line_tokens[2]
+
+            params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
+                      'entwart': 'Regenwasser', 'haltungstyp': 'Haltung mit Oeffnung',
+                      'simstatus': '?'} # ToDo!
+
+            logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
+                         f'params: {params}')
+
+            if not self.dbQK.insertdata(
+                    tabnam="haltungen",
+                    mute_logger=False,
+                    **params
+            ):
+                del self.dbQK
+                return
+
+        self.dbQK.commit()
+        
+        
     def _weirs(self):
 
         data = self.data.get("weirs", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            haltnam = line[0:17].strip()
-            schoben = line[17:34].strip()
-            schunten = line[34:51].strip()
+            line_tokens = line.split()
+            haltnam = line_tokens[0]
+            schoben = line_tokens[1]
+            schunten = line_tokens[2]
 
             params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
                       'entwart': 'Regenwasser', 'haltungstyp': 'Wehr',
@@ -561,9 +667,11 @@ class ImportTask:
         list = []
 
         for line in data:
-            name = line[0:17].strip()  # schnam
-            xsch = fzahl(line[17:36].strip(), 3, self.xoffset) + self.xoffset  # xsch
-            ysch = fzahl(line[36:54].strip(), 3, self.yoffset) + self.yoffset  # ysch
+            line_tokens = line.split()
+            name = line_tokens[0]
+            if name != "ende":
+                xsch = fzahl(line_tokens[1], 3, self.xoffset) + self.xoffset  # xsch
+                ysch = fzahl(line_tokens[2], 3, self.yoffset) + self.yoffset  # ysch
 
             if name == namvor:
                 npt += 1
@@ -642,17 +750,21 @@ class ImportTask:
         data = self.data.get("xsections", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            haltnam = line[0:17].strip()
-            xsection = line[17:31].strip()  # shape
-            hoehe = line[31:42].strip()  # Geom1
-            breite = line[42:54].strip()  # Geom2
-            barrels = line[
-                80:91
-            ].strip()  # Falls > 1, muss die Haltung mehrfach angelegt werden
-
+            line_tokens = line.split()
+            haltnam = line_tokens[0]
+            xsection = line_tokens[1]  # shape
             if xsection == "IRREGULAR":
                 hoehe = "NULL"
                 breite = "NULL"
+            elif xsection == "CUSTOM":
+                hoehe = "NULL"
+                breite = "NULL"
+            elif xsection == "STREET":
+                hoehe = "NULL"
+                breite = "NULL"
+            else: # der Normalfall
+                hoehe = line_tokens[2]  # Geom1
+                breite = line_tokens[3]  # Geom2   
 
             if xsection in profiltypes:
                 profilnam = profiltypes[xsection]
