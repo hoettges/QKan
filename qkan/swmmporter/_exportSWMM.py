@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List, cast
 from lxml import etree
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject, Qgis
 from qgis.utils import pluginDirectory, iface
 from qgis.PyQt.QtWidgets import QProgressBar
 from qkan import QKan, enums
@@ -1153,18 +1153,22 @@ class ExportTask:
                 # In allen Namen Leerzeichen durch '_' ersetzen
                 name = name_t.replace(" ", "_")
 
-                list = list.replace('LINESTRING(', '')
-                list = list.replace(')', '')
-                list = list.replace(',', '')
-                x = 2
-                liste = list.split()
-                for i in liste:
-                    while x + 2 <= len(liste) and x < len(liste) - 2:
-                        xsch = float(liste[x])
-                        ysch = float(liste[x + 1])
-                        x += 2
+                if type(list) != str:
+                    pass
 
-                        dataver += f"{name:<16s} {xsch:<18.3f} {ysch:<18.3f}\n"
+                else:
+                    list = list.replace('LINESTRING(', '')
+                    list = list.replace(')', '')
+                    list = list.replace(',', '')
+                    x = 2
+                    liste = list.split()
+                    for i in liste:
+                        while x + 2 <= len(liste) and x < len(liste) - 2:
+                            xsch = float(liste[x])
+                            ysch = float(liste[x + 1])
+                            x += 2
+
+                            dataver += f"{name:<16s} {xsch:<18.3f} {ysch:<18.3f}\n"
 
             if self.status == 'append' or self.status == 'update':
                 self.insertfunk("[VERTICES]", dataver)
