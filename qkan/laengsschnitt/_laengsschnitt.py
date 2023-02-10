@@ -1,15 +1,7 @@
 import logging
-import sys
-import re
-from typing import Dict, Iterator, Tuple, Union
 from qgis.utils import iface
 from qgis.core import Qgis
 import csv
-import os
-import codecs
-import array
-import math
-import numpy as np
 from pathlib import Path
 
 import win32com.client
@@ -33,10 +25,12 @@ logger = logging.getLogger("QKan.laengs.import")
 
 
 class LaengsTask:
-    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas):
+    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, selected, auswahl):
         self.db_qkan = db_qkan
         self.fig = fig
         self.canv = canv
+        self.selected = selected
+        self.auswahl = auswahl
 
     def run(self) -> bool:
         self.zeichnen()
@@ -45,6 +39,7 @@ class LaengsTask:
         #hier wird der Längsschnitt in das Fenster gezeichnet
         figure = self.fig
         figure.clear()
+        plt.figure(figure.number)
         new_plot = figure.add_subplot(111)
 
         #aktuellen layer auswählen
@@ -56,7 +51,7 @@ class LaengsTask:
 
 
         #selektierte elemente anzeigen
-        selected = layer.selectedFeatures()
+        self.selected = layer.selectedFeatures()
         liste=[]
 
         if table not in ['schaechte', 'haltungen']:
@@ -64,12 +59,12 @@ class LaengsTask:
             return
 
         if table == 'schaechte':
-            for f in selected:
+            for f in self.selected:
                 x = f['schnam']
                 liste.append(x)
 
         if table == 'haltungen':
-            for f in selected:
+            for f in self.selected:
                 x = f['schoben']
                 x2 = f['schunten']
                 if x not in liste:
@@ -106,6 +101,8 @@ class LaengsTask:
             iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
             x = 'nicht erstellt'
             return x
+
+        #iface.messageBar().pushMessage("Fehler", str(route), level=Qgis.Critical)
 
         for i in route[1]:
 
@@ -218,13 +215,10 @@ class LaengsTask:
         for i in name:
             if i not in name_neu:
                 name_neu.append(i)
-        #iface.messageBar().pushMessage("Fehler", str(y_label), level=Qgis.Critical)
 
         for i in y_label:
             if i not in y_label_neu:
                 y_label_neu.append(i)
-
-        #iface.messageBar().pushMessage("Fehler", str(y_label_neu), level=Qgis.Critical)
 
         for x, y, nam in zip(x_deckel_neu, y_label_neu, name_neu):
             plt.annotate(nam, (x, y),
@@ -245,6 +239,10 @@ class LaengsTask:
                             hspace=0.2,
                             wspace=0.2)
 
+        self.auswahl[figure.number]=self.selected
+        
+        return self.auswahl
+
 
     def cad(self):
 
@@ -255,7 +253,10 @@ class LaengsTask:
         dbname, table, geom, sql = get_qkanlayer_attributes(x)
 
         # selektierte elemente anzeigen
-        selected = layer.selectedFeatures()
+
+        figure = self.fig
+        self.selected=self.auswahl[figure.number]
+
         liste = []
 
         if table not in ['schaechte', 'haltungen']:
@@ -263,12 +264,12 @@ class LaengsTask:
             return
 
         if table == 'schaechte':
-            for f in selected:
+            for f in self.selected:
                 x = f['schnam']
                 liste.append(x)
 
         if table == 'haltungen':
-            for f in selected:
+            for f in self.selected:
                 x = f['schoben']
                 x2 = f['schunten']
                 if x not in liste:

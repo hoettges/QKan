@@ -33,15 +33,15 @@ class Laengsschnitt(QKanPlugin):
         #self.laengs_dlg.refresh_function = self.refresh_function
         #self.laengs_dlg.export_cad_function = self.export_cad_function
 
-    def refresh_function(self):
-        LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv).zeichnen()
-        self.canv.draw()
+    def refresh_function(self, database, fig, canv,selected, auswahl):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl).zeichnen()
+        canv.draw()
 
-        return LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv).zeichnen()
+        return LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl).zeichnen()
 
 
-    def export_cad_function(self):
-        LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv).cad()
+    def export_cad_function(self,database, fig, canv, selected, auswahl):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl).cad()
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
@@ -63,15 +63,15 @@ class Laengsschnitt(QKanPlugin):
         """
         Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
         """
-        dialog = self.laengs_dlg
-        self.fig = plt.figure()
+        self.dialog = self.laengs_dlg
+        self.dialog.fig = plt.figure()
         #in der self.fig können die Matplotlib sachen angezeigt werden
 
-        qw = QWidget(dialog)
-        self.canv = FigureCanvas(self.fig)
+        qw = QWidget(self.dialog)
+        self.dialog.canv = FigureCanvas(self.dialog.fig)
 
-        dialog.verticalLayout.addWidget(self.canv)
-        dialog.verticalLayout.addWidget(NavigationToolbar(self.canv, qw, True))
+        self.dialog.verticalLayout.addWidget(self.dialog.canv)
+        self.dialog.verticalLayout.addWidget(NavigationToolbar(self.dialog.canv, qw, True))
 
 
     # def laengsschnitt(self) -> None:
@@ -128,21 +128,27 @@ class Laengsschnitt(QKanPlugin):
 
     def run_laengs(self) -> None:
 
-        if self.laengs_dlg is not None:
-            self.laengs_dlg.pushButton.setEnabled(False)
-            self.laengs_dlg.pushButton_2.setEnabled(False)
+        #if self.laengs_dlg is not None:
+        #    self.laengs_dlg.pushButton.setEnabled(False)
+        #    self.laengs_dlg.pushButton_2.setEnabled(False)
         self.laengs_dlg = LaengsDialog(default_dir=self.default_dir, tr=self.tr)
         self.get_widget()
+        self.fig = self.dialog.fig
+        self.canv = self.dialog.canv
+        self.selected = self.dialog.selected
+        self.auswahl = self.dialog.auswahl
 
-        self.laengs_dlg.refresh_function = self.refresh_function
-        self.laengs_dlg.export_cad_function = self.export_cad_function
 
-        self.laengs_dlg.show()
 
         # Fill dialog with current info
         self.database_qkan, _ = get_database_QKan()
         self.db_qkan = DBConnection(dbname=self.database_qkan)
         self.log.debug(f"{__file__}: Datenbankverbindung wurde hergestellt...")
+
+        self.laengs_dlg.refresh_function = self.refresh_function
+        self.laengs_dlg.export_cad_function = self.export_cad_function
+
+        self.laengs_dlg.show()
 
         if self.laengs_dlg.exec_():
 
@@ -162,4 +168,4 @@ class Laengsschnitt(QKanPlugin):
                 )
 
             # Run
-            LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv).run()
+            LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv, self.selected, self.auswahl).run()
