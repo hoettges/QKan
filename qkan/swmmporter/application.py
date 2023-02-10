@@ -169,7 +169,7 @@ class SWMMPorter(QKanPlugin):
             self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
         # Run export
-        ExportTask(QKan.config.swmm.template, self.db_qkan, QKan.config.swmm.export_file, QKan.config.swmm.template, QKan.config.selections.teilgebiete, status).run()
+        ExportTask(self.db_qkan, QKan.config.swmm.export_file, QKan.config.swmm.template, QKan.config.selections.teilgebiete, status).run()
 
         # Close connection
         del self.db_qkan

@@ -611,7 +611,7 @@ class ExportTask:
 
             # Verschneidung nur, wenn (mit_verschneidung)
             if mit_verschneidung:
-                case_verschneidung = "fl.aufteilen IS NULL or fl.aufteilen <> 'ja'"
+                case_verschneidung = "(fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL"
                 join_verschneidung = """
                     LEFT JOIN tezg AS tg
                     ON lf.tezgnam = tg.flnam"""

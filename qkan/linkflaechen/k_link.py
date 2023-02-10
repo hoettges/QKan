@@ -27,9 +27,6 @@ from qkan.linkflaechen.updatelinks import updatelinkfl, updatelinksw
 
 logger = logging.getLogger("QKan.linkflaechen.k_link")
 
-# ------------------------------------------------------------------------------
-# Erzeugung der graphischen Verknüpfungen für Flächen
-
 
 # noinspection PyArgumentList
 def createlinkfl(
@@ -47,8 +44,7 @@ def createlinkfl(
     fangradius: float = 0.1,
     bezug_abstand: enums.BezugAbstand = enums.BezugAbstand.KANTE,
 ) -> bool:
-    """
-    Import der Kanaldaten aus einer HE-Firebird-Datenbank und Schreiben in eine QKan-SpatiaLite-Datenbank.
+    """Erzeugung der graphischen Verknüpfungen für Flächen
 
     Die Bearbeitung erfolgt in einer zusätzlichen Tabelle 'linkfl'
     Sie wird zunächst aus der Tabelle "flaechen" erstellt, und enthält zusätzlich
@@ -200,7 +196,7 @@ def createlinkfl(
                           FROM flaechen AS fl
                           LEFT JOIN linkfl AS lf
                           ON lf.flnam = fl.flnam
-                          WHERE (fl.aufteilen <> 'ja' or fl.aufteilen IS NULL) AND
+                          WHERE ((fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL) AND
                                 lf.pk IS NULL AND area(fl.geom) > {mindestflaeche}{ausw_einf})
                       INSERT INTO linkfl (flnam, tezgnam, teilgebiet, geom)
                       SELECT la.flnam, tg.flnam AS tezgnam, la.teilgebiet, la.geom
@@ -215,7 +211,7 @@ def createlinkfl(
                           FROM flaechen AS fl
                           LEFT JOIN linkfl AS lf
                           ON lf.flnam = fl.flnam
-                          WHERE (fl.aufteilen <> 'ja' or fl.aufteilen IS NULL) AND
+                          WHERE ((fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL) AND
                                 lf.pk IS NULL AND area(fl.geom) > {mindestflaeche}{ausw_einf})
                       INSERT INTO linkfl (flnam, tezgnam, teilgebiet, geom)
                       SELECT la.flnam, NULL AS tezgnam, la.teilgebiet, la.geom
@@ -234,7 +230,7 @@ def createlinkfl(
                       ON intersects(fl.geom, tg.geom) AND fl.geom IS NOT NULL AND tg.geom IS NOT NULL
                       LEFT JOIN linkfl AS lf
                       ON lf.flnam = fl.flnam AND lf.tezgnam = tg.flnam
-                      WHERE fl.aufteilen = 'ja' AND
+                      WHERE (fl.aufteilen = 'ja' OR fl.aufteilen) AND
                             lf.pk IS NULL AND area(fl.geom) > {mindestflaeche}{ausw_vers})
                   INSERT INTO linkfl (flnam, tezgnam, teilgebiet, geom)
                   SELECT la.flnam, la.tezgnam, la.teilgebiet, 
@@ -256,7 +252,7 @@ def createlinkfl(
         # ON within(centroid(flaechen.geom),tezg.geom)
         # LEFT JOIN linkfl
         # ON linkfl.flnam = flaechen.flnam
-        # WHERE ((flaechen.aufteilen <> 'ja' or flaechen.aufteilen IS NULL)
+        # WHERE ((flaechen.aufteilen <> 'ja' OR flaechen.aufteilen IS NULL)
         # and flaechen.geom IS NOT NULL and tezg.geom IS NOT NULL){ausw_einf}
         # UNION
         # SELECT
@@ -282,7 +278,7 @@ def createlinkfl(
                 FROM flaechen AS fl
                 LEFT JOIN linkfl
                 ON linkfl.flnam = fl.flnam
-                WHERE ((fl.aufteilen <> 'ja' or fl.aufteilen IS NULL) 
+                WHERE ((fl.aufteilen <> 'ja' OR fl.aufteilen IS NULL) 
                     AND linkfl.pk IS NULL
                     AND fl.geom IS NOT NULL){ausw_einf})
             INSERT INTO linkfl (flnam, teilgebiet, geom)
@@ -324,7 +320,7 @@ def createlinkfl(
     if bezug_abstand == enums.BezugAbstand.MITTELPUNKT:
         bezug = "lf.geom"
     else:
-        bezug = "PointonSurface(lf.geom)"
+        bezug = "Centroid(lf.geom)"
 
     # Erläuterung zur nachfolgenden SQL-Abfrage:
     # tlink enthält alle potenziellen Verbindungen zwischen Flächen und Haltungen mit der jeweiligen Entfernung

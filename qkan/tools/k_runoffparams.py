@@ -111,7 +111,8 @@ def setRunoffparams(
                         coalesce(fl.neigkl, 1) AS neigkl,
                         fl.abflussparameter AS abflussparameter, 
                         fl.teilgebiet AS teilgebiet, 
-                        CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
+                        CASE WHEN (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL THEN fl.geom 
+                             ELSE CastToMultiPolygon(intersection(fl.geom,tg.geom)) END AS geom
                     FROM linkfl AS lf
                     INNER JOIN flaechen AS fl
                     ON lf.flnam = fl.flnam

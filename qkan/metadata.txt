@@ -8,9 +8,9 @@
 
 [general]
 name=QKan
-qgisMinimumVersion=3.22.1
+qgisMinimumVersion=3.22
 description=Gruppe der QKan-Erweiterung(en)
-version=3.2.36
+version=3.2.37
 author=Jörg Höttges, Leon Ochsenfeld, Yannick Linke, Nora Blase
 email=hoettges@fh-aachen.de
 

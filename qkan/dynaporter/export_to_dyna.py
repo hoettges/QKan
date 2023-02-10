@@ -111,7 +111,7 @@ def write12(
     # Verschneidung nur, wenn (mit_verschneidung)
     if mit_verschneidung:
         case_verschneidung = """
-                CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN fl.geom 
+                CASE WHEN (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL THEN fl.geom 
                 ELSE CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3)) END AS geom"""
         join_verschneidung = """
             LEFT JOIN tezg AS tg

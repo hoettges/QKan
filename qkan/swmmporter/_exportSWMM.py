@@ -32,19 +32,17 @@ ref_profile = {"1": "CIRCULAR", "3": "RECT_CLOSED", "5": "EGG"}
 class ExportTask:
     def __init__(
         self,
-        inpfile: str,
         db_qkan: DBConnection,
-        projectfile: str,
+        exportFile: str,
         template: str,
         liste_teilgebiete: List[str],
         status: str,
         epsg: int = 25832,
     ):
         self.epsg = epsg
-        self.inpobject = Path(inpfile)
         self.data: Dict[str, List[str]] = {}
         self.db_qkan = db_qkan
-        self.projectfile = projectfile
+        self.exportFile = exportFile
         self.template = template
         #self.xoffset, self.yoffset = offset
         self.xoffset, self.yoffset = 100,100
@@ -58,7 +56,7 @@ class ExportTask:
 
         self.connected = self.dbQK.connected
 
-        self.ergfileSwmm = self.projectfile
+        self.ergfileSwmm = self.exportFile
         self.file=None
 
         if not self.dbQK.connected:
@@ -167,8 +165,7 @@ class ExportTask:
         # Andere Tabellen sind in diesem Quellcode integriert, wie z. B. ref_typen
 
         databaseQKan=self.db_qkan
-        templateSwmm=self.inpobject
-        ergfileSwmm=self.projectfile
+        ergfileSwmm=self.exportFile
         liste_teilgebiete=self.liste_teilgebiete
 
         iface = QKan.instance.iface
@@ -198,51 +195,50 @@ class ExportTask:
         file_to_delete.close()
 
     def title(self):
-        self.file = open(self.ergfileSwmm, 'a')
 
         if self.status == 'new':
-            allgemein = (
-                "[TITLE]"
-                "\nExample"
-                "\nDual Drainage System"
-                "\nFinal Design"
-                "\n"
-                "\n[OPTIONS]"
-                "\nFLOW_UNITS           CFS"
-                "\nINFILTRATION         HORTON"
-                "\nFLOW_ROUTING         DYNWAVE"
-                "\nSTART_DATE           01/01/2007"
-                "\nSTART_TIME           00:00:00"
-                "\nREPORT_START_DATE    01/01/2007"
-                "\nREPORT_START_TIME    00:00:00"
-                "\nEND_DATE             01/01/2007"
-                "\nEND_TIME             12:00:00"
-                "\nSWEEP_START          01/01"
-                "\nSWEEP_END            12/31"
-                "\nDRY_DAYS             0"
-                "\nREPORT_STEP          00:01:00"
-                "\nWET_STEP             00:01:00"
-                "\nDRY_STEP             01:00:00"
-                "\nROUTING_STEP         0:00:15"
-                "\nALLOW_PONDING        NO"
-                "\nINERTIAL_DAMPING     PARTIAL"
-                "\nVARIABLE_STEP        0.75"
-                "\nLENGTHENING_STEP     0"
-                "\nMIN_SURFAREA         0"
-                "\nNORMAL_FLOW_LIMITED  SLOPE"
-                "\nSKIP_STEADY_STATE    NO"
-                "\nFORCE_MAIN_EQUATION  H-W"
-                "\nLINK_OFFSETS         DEPTH"
-                "\nMIN_SLOPE            0"
-                "\n"
-                "\n[EVAPORATION]"
-                "\n;;Type       Parameters"
-                "\n;;---------- ----------"
-                "\nCONSTANT     0.0"
-                "\n"
-                )
-            self.file.write(allgemein)
-            self.file.close()
+            with open(self.ergfileSwmm, 'a') as f2:
+                allgemein = (
+                    "[TITLE]"
+                    "\nExample"
+                    "\nDual Drainage System"
+                    "\nFinal Design"
+                    "\n"
+                    "\n[OPTIONS]"
+                    "\nFLOW_UNITS           CFS"
+                    "\nINFILTRATION         HORTON"
+                    "\nFLOW_ROUTING         DYNWAVE"
+                    "\nSTART_DATE           01/01/2007"
+                    "\nSTART_TIME           00:00:00"
+                    "\nREPORT_START_DATE    01/01/2007"
+                    "\nREPORT_START_TIME    00:00:00"
+                    "\nEND_DATE             01/01/2007"
+                    "\nEND_TIME             12:00:00"
+                    "\nSWEEP_START          01/01"
+                    "\nSWEEP_END            12/31"
+                    "\nDRY_DAYS             0"
+                    "\nREPORT_STEP          00:01:00"
+                    "\nWET_STEP             00:01:00"
+                    "\nDRY_STEP             01:00:00"
+                    "\nROUTING_STEP         0:00:15"
+                    "\nALLOW_PONDING        NO"
+                    "\nINERTIAL_DAMPING     PARTIAL"
+                    "\nVARIABLE_STEP        0.75"
+                    "\nLENGTHENING_STEP     0"
+                    "\nMIN_SURFAREA         0"
+                    "\nNORMAL_FLOW_LIMITED  SLOPE"
+                    "\nSKIP_STEADY_STATE    NO"
+                    "\nFORCE_MAIN_EQUATION  H-W"
+                    "\nLINK_OFFSETS         DEPTH"
+                    "\nMIN_SLOPE            0"
+                    "\n"
+                    "\n[EVAPORATION]"
+                    "\n;;Type       Parameters"
+                    "\n;;---------- ----------"
+                    "\nCONSTANT     0.0"
+                    "\n"
+                    )
+                f2.write(allgemein)
 
         elif self.status == 'append' or self.status == 'update':
             with open(self.template) as f:

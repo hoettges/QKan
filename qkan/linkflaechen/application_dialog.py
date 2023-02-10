@@ -252,7 +252,7 @@ class CreatelineflDialog(QKanDialog, FORM_CLASS_createlinefl):  # type: ignore
             )
 
         sql = f"""SELECT count(*) AS anzahl FROM flaechen
-                WHERE (aufteilen <> 'ja' OR aufteilen IS NULL){auswahl}"""
+                WHERE ((aufteilen <> 'ja' AND not aufteilen) OR aufteilen IS NULL){auswahl}"""
 
         if not self.db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionfl (1)"):
             return

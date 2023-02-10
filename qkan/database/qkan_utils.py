@@ -540,7 +540,7 @@ def check_flaechenbilanz(db_qkan: "DBConnection") -> bool:
 
     sql = """WITH flintersect AS (
         SELECT fl.flnam AS finam, 
-               CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
+               CASE WHEN (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL THEN area(fl.geom) 
                ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
                END AS flaeche
         FROM linkfl AS lf
@@ -568,7 +568,7 @@ def check_flaechenbilanz(db_qkan: "DBConnection") -> bool:
 
     sql = """WITH flintersect AS (
         SELECT tg.flnam AS finam, 
-               CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
+               CASE WHEN (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL THEN area(fl.geom) 
                ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
                END AS flaeche
         FROM linkfl AS lf

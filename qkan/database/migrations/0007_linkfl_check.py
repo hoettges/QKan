@@ -32,7 +32,7 @@ def run(dbcon: DBConnection) -> bool:
         ON lf.flnam = fl.flnam
         LEFT JOIN tezg AS tg
         ON lf.tezgnam = tg.flnam
-        WHERE fl.aufteilen = "ja" and fl.aufteilen IS NOT NULL
+        WHERE fl.aufteilen = 'ja' OR fl.aufteilen
         GROUP BY fl.flnam, tg.flnam
         UNION
         SELECT 
@@ -47,7 +47,7 @@ def run(dbcon: DBConnection) -> bool:
         FROM linkfl AS lf
         LEFT JOIN flaechen AS fl
         ON lf.flnam = fl.flnam
-        WHERE fl.aufteilen <> "ja" OR fl.aufteilen IS NULL
+        WHERE (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL
         GROUP BY fl.flnam
     )
     SELECT pk, anzahl, CASE 
@@ -80,9 +80,9 @@ def run(dbcon: DBConnection) -> bool:
         LEFT JOIN tezg AS tg
         ON tg.flnam = lf.tezgnam
         WHERE (
-            (fl.aufteilen <> "ja" or fl.aufteilen IS NULL) AND lf.pk IS NULL)
+            ((fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL) AND lf.pk IS NULL)
             OR
-            (fl.aufteilen = "ja" AND fl.aufteilen IS NOT NULL AND lf.pk IS NULL)
+            ((fl.aufteilen = 'ja' OR fl.aufteilen) AND lf.pk IS NULL)
         UNION
         VALUES
             (0, '', '', 'o.k.')

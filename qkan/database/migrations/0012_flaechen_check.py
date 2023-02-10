@@ -20,7 +20,7 @@ def run(dbcon: DBConnection) -> bool:
     CREATE VIEW IF NOT EXISTS "v_flaechen_check" AS 
     WITH flintersect AS (
         SELECT fl.flnam AS finam, 
-               CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
+               CASE WHEN (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL THEN area(fl.geom) 
                ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
                END AS flaeche
         FROM linkfl AS lf
@@ -51,7 +51,7 @@ def run(dbcon: DBConnection) -> bool:
     CREATE VIEW IF NOT EXISTS "v_tezg_check" AS 
     WITH flintersect AS (
         SELECT tg.flnam AS finam, 
-               CASE WHEN fl.aufteilen IS NULL or fl.aufteilen <> 'ja' THEN area(fl.geom) 
+               CASE WHEN (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL THEN area(fl.geom) 
                ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
                END AS flaeche
         FROM linkfl AS lf

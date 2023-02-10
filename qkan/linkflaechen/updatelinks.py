@@ -158,7 +158,7 @@ def updatelinkfl(
             ON lf.tezgnam = tg.flnam
             INNER JOIN flaechen AS fl
             ON lf.flnam = fl.flnam
-            WHERE (fl.aufteilen <> 'ja' OR fl.aufteilen IS NULL) OR 
+            WHERE ((fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL) OR 
                   (tg.geom IS NOT NULL AND within(StartPoint(lf.glink),buffer(tg.geom, ?))))
         UPDATE linkfl SET tezgnam =
         (   SELECT flnam
