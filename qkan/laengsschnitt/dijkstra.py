@@ -15,49 +15,56 @@ class Netz:
     """Erzeugt ein Netz aus einer Liste mit Haltungen"""
 
     # Klassenattribute, damit die Verknüpfungen nach dem Aufbau erhalten bleiben
-    links: Dict[str, Dict[str, float]] = {}
-    weights_template: Dict[str, float] = {}
-    haltung: Dict[str, Dict[str, str]] = {}
-    faktor = 2.0  # Faktor zur Unterscheidung der Fließrichtung
+    #links: Dict[str, Dict[str, float]] = {}
+    #weights_template: Dict[str, float] = {}
+    #haltung: Dict[str, Dict[str, str]] = {}
+    #faktor = 2.0  # Faktor zur Unterscheidung der Fließrichtung
 
-    def __init__(self, netz = None):
+    def __init__(self, netz: None):
         """Beim ersten Aufruf muss das Netz angegeben werden, damit die Verknüpfungen
         erstellt werden können"""
+        self.links: Dict[str, Dict[str, float]] = {}
+        self.weights_template: Dict[str, float] = {}
+        self.haltung: Dict[str, Dict[str, str]] = {}
+        self.faktor = 2.0
 
         self.netz = netz
+
         if self.netz:
-            if Netz.links == {}:
+            if self.links == {}:
                 # Nur beim ersten Aufruf
                 for (name, schob, schun, laenge) in self.netz:
                     if not laenge:
                         laenge = 2.
                     # In Fließrichtung
-                    if schob in Netz.links:
-                        Netz.links[schob][schun]=laenge
-                        Netz.haltung[schob][schun]=name
+                    if schob in self.links:
+                        self.links[schob][schun]=laenge
+                        self.haltung[schob][schun]=name
                     else:
-                        Netz.links[schob] = {schun: laenge}
-                        Netz.haltung[schob] = {schun: name}
+                        self.links[schob] = {schun: laenge}
+                        self.haltung[schob] = {schun: name}
 
                     # Gegen die Fließrichtung
-                    if schun in Netz.links:
-                        Netz.links[schun][schob]=laenge*Netz.faktor
-                        Netz.haltung[schun][schob]=name
+                    if schun in self.links:
+                        self.links[schun][schob]=laenge*self.faktor
+                        self.haltung[schun][schob]=name
                     else:
-                        Netz.links[schun] = {schob: laenge*Netz.faktor}
-                        Netz.haltung[schun] = {schob: name}
+                        self.links[schun] = {schob: laenge*self.faktor}
+                        self.haltung[schun] = {schob: name}
 
                     # Template mit Gewichtungen erstellen
-                    Netz.weights_template = {schacht: MAX_WEIGHT for schacht in Netz.links.keys()}
+                    self.weights_template = {schacht: MAX_WEIGHT for schacht in self.links.keys()}
             else:
                 """Verknüpfungen wurden schon aufgebaut"""
                 pass
         else:
-            if Netz.links == {}:
+            if self.links == {}:
                 raise RuntimeError("Programmfehler: Erstmaliger Aufruf von Netz ohne Netzdaten")
 
         # Initialisierung der Gewichtungen für die Instanz
-        self.__weight = Netz.weights_template.copy()
+        self.__weight = self.weights_template.copy()
+
+
 
     def analyse(self, schacht: str) -> None:
         """Verteilt die Schachtgewichtungen ausgehend vom vorgegebenen Schacht"""
@@ -72,10 +79,10 @@ class Netz:
             frontdel = []  # Liste nicht mehr zu untersuchender Schächte
 
             for schanf in front:
-                for schend in Netz.links[schanf]:
+                for schend in self.links[schanf]:
                     weight_old = self.__weight.get(schend, 0)
                     weight_new = (
-                        self.__weight.get(schanf, 0) + Netz.links[schanf][schend]
+                        self.__weight.get(schanf, 0) + self.links[schanf][schend]
                     )
 
                     if weight_new < weight_old:
@@ -101,6 +108,10 @@ class Netz:
         """Gibt Schachtgewichtung zurück"""
         return self.__weight
 
+#class Route:
+ #   def init(self,qkan_db: DBConnection, schachtauswahl):
+  #      self.qkan_db=qkan_db
+   #     self.schachtauswahl =schachtauswahl
 
 def find_route(qkan_db: DBConnection, schachtauswahl):
     if not qkan_db:
@@ -212,12 +223,12 @@ def find_route(qkan_db: DBConnection, schachtauswahl):
             # Auswahl des nächsten Schachtes mit der kleinsten Gewichtung bezogen auf knach
             wertung = MAX_WEIGHT   # Initialisierung
 
-            for schtest in Netz.links[schacht].keys():
+            for schtest in knotennetz[knach].links[schacht].keys():
                 wertakt = knotennetz[knach].weight[schtest]
                 if wertakt < wertung:
                     wertung = wertakt
                     schnext = schtest
-                    haltnext = Netz.haltung[schacht][schnext]
+                    haltnext = knotennetz[knach].haltung[schacht][schnext]
 
             if schnext is not None and haltnext is not None:
                 # Damit der letzte Schacht nicht doppelt auftaucht
@@ -236,12 +247,13 @@ def find_route(qkan_db: DBConnection, schachtauswahl):
 
     return schaechtelaengs, haltungenlaengs
 
+
 if __name__ == '__main__':
     dbname = 'C:/FHAC/Bayernallee/hoettges/NUMERIK/Python/eigene Versuche/dijkstra/nette.sqlite'
     # schachtauswahl = ['E120189', 'E120197', 'D120060', 'D120084', 'EP R010']
     schachtauswahl = ['E120170', 'E120136', 'E120172']
 
-    schaechtelaengs, haltungenlaengs = find_route(dbname, schachtauswahl)
+    schaechtelaengs, haltungenlaengs = Netz.find_route(dbname, schachtauswahl)
 
     if not schaechtelaengs:
         print('Die gewählen Schächte befinden sich nicht in einem zusammenhängenden Netz')

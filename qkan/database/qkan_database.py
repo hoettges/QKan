@@ -1225,12 +1225,21 @@ def createdbtables(
             "'RW', 'Regenwasser', 'Regenwasser', 1, 2",
             "'SW', 'Schmutzwasser', 'Schmutzwasser', 2, 1",
             "'MD', 'MW Druck', 'Mischwasserdruckleitung', 0, 0",
-            "'RD', 'SW Druck', 'Schmutzwasserdruckleitung', 2, 0",
-            "'SD', 'RW Druck', 'Regenwasserdruckleitung', 1, 0",
+            "'SD', 'SW Druck', 'Schmutzwasserdruckleitung', 2, 0",
+            "'RD', 'RW Druck', 'Regenwasserdruckleitung', 1, 0",
             "'GR', 'Rinnen/Gräben', 'Rinnen/Gräben', 1, 0",
             "'SG', 'stillgelegt', 'stillgelegt', 0, 0",
             "'MN', 'MW nicht angeschlossen', 'ohne Mischwasseranschlüsse', 0, 0",
             "'RN', 'RW nicht angeschlossen', 'ohne Regenwasseranschlüsse', 1, 2",
+            "'KM', 'Mischwasser', 'Mischwasser', 0, 0",
+            "'KR', 'Regenwasser', 'Regenwasser', 1, 2",
+            "'KS', 'Schmutzwasser', 'Schmutzwasser', 2, 1",
+            "'DM', 'MW Druck', 'Mischwasserdruckleitung', 0, 0",
+            "'DS', 'SW Druck', 'Schmutzwasserdruckleitung', 2, 0",
+            "'DR', 'RW Druck', 'Regenwasserdruckleitung', 1, 0",
+            "'M', 'Mischwasser', 'Mischwasser', 0, 0",
+            "'R', 'Regenwasser', 'Regenwasser', 1, 2",
+            "'S', 'Schmutzwasser', 'Schmutzwasser', 2, 1",
         ]
 
         for ds in daten:

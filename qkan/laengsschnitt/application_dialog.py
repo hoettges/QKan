@@ -74,19 +74,25 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
         self.pushButton_2.clicked.connect(self.refresh)
         self.refresh_function = None
         self.export_cad_function = None
+        self.fig=None
+        self.canv=None
+        self.database=None
+        self.selected=None
+        self.auswahl = {}
 
 
     def export_cad(self):
-        self.export_cad_function()
+        self.export_cad_function(self.database, self.fig, self.canv, self.selected,self.auswahl)
 
     def refresh(self):
-        self.refresh_function()
+        self.refresh_function(self.database, self.fig, self.canv, self.selected,self.auswahl)
 
-        if self.refresh_function() == 'nicht erstellt':
+        if self.refresh_function(self.database, self.fig, self.canv,self.selected,self.auswahl) == 'nicht erstellt':
             self.label.setText('Bitte Elemente vom Schacht- oder Haltungslayer auswählen und den "refresh" Knopf drücken!')
 
         else:
             self.label.setText('')
+            self.auswahl = self.refresh_function(self.database, self.fig, self.canv, self.selected,self.auswahl)
 
 
 

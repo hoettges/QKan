@@ -4,6 +4,7 @@ import re
 import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
 from lxml import etree
+from fnmatch import fnmatch
 from qkan import QKan
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
@@ -505,14 +506,24 @@ class ImportTask:
 
         for schacht in _iter():
             # Entwässerungsarten
+            bez = 'NULL'
             if schacht.entwart in self.mapper_entwart:
                 entwart = self.mapper_entwart[schacht.entwart]
             else:
+                entwaesserung = {'Mischwasser': ['Mi*'],
+                                 'Regenwasser': ['Re*'],
+                                 'Schmutzwasser': ['Sc*']}
+                for x in entwaesserung.keys():
+                    for patt in entwaesserung[x]:
+                        if fnmatch(schacht.entwart, patt):
+                            key = [i for i, x in entwaesserung.items() if str(patt) in x][0]
+                            bez = key
+
                 sql = """
-                INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
-                VALUES ('{e}', '{e}')
-                """.format(
-                    e=schacht.entwart
+                               INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
+                               VALUES ('{e}', '{f}')
+                               """.format(
+                    e=schacht.entwart, f=bez
                 )
                 self.mapper_entwart[schacht.entwart] = schacht.entwart
                 entwart = schacht.entwart
@@ -1384,14 +1395,27 @@ class ImportTask:
             if haltung.entwart in self.mapper_entwart:
                 entwart = self.mapper_entwart[haltung.entwart]
             else:
+                bez = 'NULL'
+                entwaesserung = {'Mischwasser': ['Mi*'],
+                                 'Regenwasser': ['Re*'],
+                                 'Schmutzwasser': ['Sc*']}
+                for x in entwaesserung.keys():
+                    for patt in entwaesserung[x]:
+                        if fnmatch(haltung.entwart, patt):
+                            key = [i for i, x in entwaesserung.items() if str(patt) in x][0]
+                            bez = key
+
+                sql = """
+                                                INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
+                                                VALUES ('{e}', '{f}')
+                                                """.format(
+                    e=haltung.entwart, f=bez
+                )
+
                 self.mapper_entwart[haltung.entwart] = haltung.entwart
                 entwart = haltung.entwart
 
-                if not self.db_qkan.sql(
-                    "INSERT INTO entwaesserungsarten (kuerzel, bezeichnung) VALUES (?, ?)",
-                    "xml_import Haltungen [2]",
-                    parameters=(haltung.entwart, haltung.entwart),
-                ):
+                if not self.db_qkan.sql(sql, "xml_import Haltung [1]"):
                     return None
 
 
