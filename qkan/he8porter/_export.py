@@ -476,8 +476,8 @@ class ExportTask:
                       LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                       WHERE (ha.haltungstyp IS NULL or ha.haltungstyp = 'Haltung') AND ha.haltnam = he.Rohr.Name{auswahl})
                   WHERE he.Rohr.Name IN 
-                  ( SELECT haltnam FROM haltungen AND 
-                    (haltungen.haltungstyp IS NULL OR haltungen.haltungstyp = 'Haltung')){auswahl}
+                  ( SELECT haltnam FROM haltungen
+                    WHERE (haltungen.haltungstyp IS NULL OR haltungen.haltungstyp = 'Haltung'){auswahl})
                   """
 
                 if not self.db_qkan.sql(
@@ -990,7 +990,7 @@ class ExportTask:
                         WHERE ha.haltnam = he.Pumpe.Name
                     )
                     WHERE he.Pumpe.Name IN (
-                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Pumpe'{auswahl}
+                        SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'Pumpe'{auswahl}
                         )
                     """
 
@@ -1094,7 +1094,7 @@ class ExportTask:
                         WHERE ha.haltnam = he.Wehr.Name{auswahl}
                     )
                     WHERE he.Wehr.Name IN (
-                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Wehr'{auswahl}
+                        SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'Wehr'{auswahl}
                         )
                     """
 
@@ -1198,7 +1198,7 @@ class ExportTask:
                         WHERE ha.haltnam = he.Drossel.Name{auswahl}
                     )
                     WHERE he.Drossel.Name IN (
-                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Drossel'{auswahl}
+                        SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'Drossel'{auswahl}
                         )
                     """
 
@@ -1312,7 +1312,7 @@ class ExportTask:
                         WHERE ha.haltnam = he.Schieber.Name{auswahl}
                     )
                     WHERE he.Schieber.Name IN (
-                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'Schieber'{auswahl}
+                        SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'Schieber'{auswahl}
                         )
                     """
 
@@ -1436,7 +1436,7 @@ class ExportTask:
                         WHERE ha.haltnam = he.GrundSeitenauslass.Name{auswahl}
                     )
                     WHERE he.GrundSeitenauslass.Name IN (
-                        SELECT haltnam FROM haltungen WHERE ha.haltungstyp = 'GrundSeitenauslass'{auswahl}
+                        SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'GrundSeitenauslass'{auswahl}
                         )
                     """
 
@@ -1570,8 +1570,8 @@ class ExportTask:
                       LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
                       LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                       WHERE ha.haltungstyp = 'Q-Regler' AND ha.haltnam = he.QRegler.Name{auswahl})
-                  WHERE he.Rohr.Name IN 
-                  ( SELECT haltnam FROM haltungen AND haltungen.haltungstyp = 'Q-Regler'){auswahl}
+                  WHERE he.QRegler.Name IN 
+                  ( SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'Q-Regler'){auswahl}
                     """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_qregler (1)"):
@@ -1718,8 +1718,8 @@ class ExportTask:
                       LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
                       LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                       WHERE ha.haltungstyp = 'H-Regler' AND ha.haltnam = he.HRegler.Name{auswahl})
-                  WHERE he.Rohr.Name IN 
-                  ( SELECT haltnam FROM haltungen AND haltungen.haltungstyp = 'H-Regler'){auswahl}
+                  WHERE he.HRegler.Name IN 
+                  ( SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'H-Regler'){auswahl}
                     """
 
                 if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_hregler (1)"):
