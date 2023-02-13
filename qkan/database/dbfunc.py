@@ -311,23 +311,20 @@ class DBConnection:
 
             # Suppress log message for 2 seconds if category is identical to last query
             if self.sqltext == stmt_category:
+                self.sqlcount += 1
                 if (self.sqltime.now() - self.sqltime).seconds < 2:
-                    self.sqlcount += 1
                     return True
-
-            self.sqltext = stmt_category
-            self.sqltime = self.sqltime.now()
-            if self.sqlcount == 0:
-                logger.debug(
-                    "dbfunc.DBConnection.sql: {}\nsql: {}\nparameters: {}\n".format(stmt_category, sql, parameters)
-                )
             else:
-                logger.debug(
-                    "dbfunc.DBConnection.sql (Nr. {}): {}\n{}\n{}\n".format(
-                        self.sqlcount, stmt_category, sql, parameters
-                    )
+                self.sqlcount = 0
+                self.sqltext = stmt_category
+
+            # Log-Message if new category or same category for more than 2 seconds
+            self.sqltime = self.sqltime.now()
+            logger.debug(
+                "dbfunc.DBConnection.sql (Nr. {}): {}\nsql: {}\nparameters: {}\n".format(
+                    self.sqlcount+1, stmt_category, sql, parameters
                 )
-            self.sqlcount = 0
+            )
             return True
         except sqlite3.Error as e:
             if ignore:

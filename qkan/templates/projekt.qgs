@@ -30372,38 +30372,38 @@ def my_form_open(dialog, layer, feature):
       <filterByMap type="bool">false</filterByMap>
     </Legend>
     <Macros>
-      <pythonCode type="QString">import logging&#xd;&#xd;
-from qgis.core import Qgis, QgsMessageLog, QgsProject&#xd;&#xd;
-from qgis.gui import QgisInterface&#xd;&#xd;
-from qgis.utils import iface&#xd;&#xd;
-def openProject():&#xd;&#xd;
-    """Check actual version of database and project file"""&#xd;&#xd;
-    try:&#xd;&#xd;
-        from qkan import QKan&#xd;&#xd;
-        from qkan.database.dbfunc import DBConnection&#xd;&#xd;
-        from qkan.database.qkan_utils import get_database_QKan, warnung&#xd;&#xd;
-        from qkan.tools.application import QKanTools&#xd;&#xd;
-        logger = logging.getLogger("QKan.openProject")&#xd;&#xd;
-        logger.debug("openProjekt started\n")&#xd;&#xd;
-        database_qkan, _ = get_database_QKan(silent=True)&#xd;&#xd;
-        db_qkan = DBConnection(dbname=database_qkan)&#xd;&#xd;
-        isActual = db_qkan.isCurrentVersion&#xd;&#xd;
-        if not isActual:&#xd;&#xd;
-            qkt = QKanTools(QKan.instance.iface)&#xd;&#xd;
-            warnung("Versionskontrolle", "Die Datenbank muss aktualisiert werden!")&#xd;&#xd;
-            qkt.run_dbAdapt()&#xd;&#xd;
-    except ImportError:&#xd;&#xd;
-        import traceback&#xd;&#xd;
-        traceback.print_exc()&#xd;&#xd;
-        msg = "Diese Projektdatei wurde mit dem Programm QKan (Prof. Höttges, FH Aachen) erstellt."&#xd;&#xd;
-        QgsMessageLog.logMessage(&#xd;&#xd;
-            message=msg, level=Qgis.Info,&#xd;&#xd;
-        )&#xd;&#xd;
-        iface.messageBar().pushMessage("Information", msg, level=Qgis.Info)&#xd;&#xd;
-def saveProject():&#xd;&#xd;
-    pass&#xd;&#xd;
-def closeProject():&#xd;&#xd;
-    pass&#xd;&#xd;
+      <pythonCode type="QString">import logging&#xd;
+from qgis.core import Qgis, QgsMessageLog, QgsProject&#xd;
+from qgis.gui import QgisInterface&#xd;
+from qgis.utils import iface&#xd;
+def openProject():&#xd;
+    """Check actual version of database and project file"""&#xd;
+    try:&#xd;
+        from qkan import QKan&#xd;
+        from qkan.database.dbfunc import DBConnection&#xd;
+        from qkan.database.qkan_utils import get_database_QKan, warnung&#xd;
+        from qkan.tools.application import QKanTools&#xd;
+        logger = logging.getLogger("QKan.openProject")&#xd;
+        logger.debug("openProjekt started\n")&#xd;
+        database_qkan, _ = get_database_QKan(silent=True)&#xd;
+        db_qkan = DBConnection(dbname=database_qkan)&#xd;
+        isActual = db_qkan.isCurrentVersion&#xd;
+        if not isActual:&#xd;
+            qkt = QKanTools(QKan.instance.iface)&#xd;
+            warnung("Versionskontrolle", "Die Datenbank muss aktualisiert werden!", duration=5)&#xd;
+            qkt.run_dbAdapt()&#xd;
+    except ImportError:&#xd;
+        import traceback&#xd;
+        traceback.print_exc()&#xd;
+        msg = "Diese Projektdatei wurde mit dem Programm QKan (Prof. Höttges, FH Aachen) erstellt."&#xd;
+        QgsMessageLog.logMessage(&#xd;
+            message=msg, level=Qgis.Info,&#xd;
+        )&#xd;
+        iface.messageBar().pushMessage("Information", msg, level=Qgis.Info)&#xd;
+def saveProject():&#xd;
+    pass&#xd;
+def closeProject():&#xd;
+    pass&#xd;
       </pythonCode>
     </Macros>
     <Measure>

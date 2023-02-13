@@ -712,7 +712,7 @@ class ExportTask:
                 data = self.db_qkan.fetchone()
                 if len(data) == 2:
                     idmin, idmax = data
-                    logger.debug(f"idmin = {idmin}\nidmax = {idmax}\n")
+                    logger.debug(f"idmin = {idmin}\nidmax = {idmax}\nself.nextid = {self.nextid}\n")
                 else:
                     fehlermeldung(
                         "Fehler (5) in QKan_Export",
@@ -894,7 +894,7 @@ class ExportTask:
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM tezg"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg"):
+                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -937,17 +937,17 @@ class ExportTask:
                             0 AS IsTwEinzugsflaeche, 
                             coalesce(tg.createdat, datetime('now')) AS lastmodified, 
                             tg.kommentar AS Kommentar, 
-                            SetSrid(tg.geom, -1) AS Geometry
+                            SetSrid(CastToMultiPolygon(tg.geom), -1) AS Geometry
                         FROM tezg AS tg
                     """
 
-                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg (2)"):
+                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg (3)"):
                         return False
 
                     self.nextid += idmax - idmin + 1
                     self.db_qkan.sql(
                         "UPDATE he.Itwh$ProgInfo SET NextId = ?",
-                        parameters=(self.nextid,),
+                        parameters=(self.nextid,), stmt_category="dbQK: export_to_he8.export_tezg (4)"
                     )
 
                     fortschritt("{} Haltungsflaechen eingefuegt".format(self.nextid - nr0), 0.90)

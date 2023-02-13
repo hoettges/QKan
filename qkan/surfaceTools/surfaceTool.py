@@ -213,6 +213,7 @@ class SurfaceTask:
 
         progress_bar.setValue(50)
 
+        # Speichern der Voronoi-Gebiete in der Spatialite-DB
         p_savedb = processing.run(
             "qgis:importintospatialite",
             {'INPUT': p_voronoi['output'],
@@ -231,7 +232,9 @@ class SurfaceTask:
 
         progress_bar.setValue(70)
 
-        sql = """CREATE TABLE IF NOT EXISTS tezgsel (pk INTEGER PRIMARY KEY)"""
+        # Erstellen einer temporären Tabelle zur Selektion aller Haltungsflächen, in denen
+        # aufzuteilende Flächen liegen
+        sql = """CREATE TEMP TABLE IF NOT EXISTS tezgsel (pk INTEGER PRIMARY KEY)"""
         if not self.db_qkan.sql(sql, stmt_category="Voronoi_1"):
             del self.db_qkan
             return False
@@ -263,6 +266,7 @@ class SurfaceTask:
 
         progress_bar.setValue(90)
 
+        # Einfügen verschnittener Haltungsflächen (basierend auf Selektionstabelle tezgsel)
         sql = """INSERT INTO tezg (
                         flnam,
                         haltnam, schnam, neigkl, neigung,
@@ -270,7 +274,7 @@ class SurfaceTask:
                         teilgebiet, abflussparameter, kommentar, createdat,
                         geom)
                     SELECT
-                        substr(t.flnam ||'-' || CAST(t.pk AS TEXT), 1, 30) AS flnam,
+                        substr(t.flnam ||'-' || CAST(v.pk AS TEXT), 1, 30) AS flnam,
                         t.haltnam, t.schnam, t.neigkl, t.neigung,
                         t.befgrad, t.schwerpunktlaufzeit, t.regenschreiber,
                         t.teilgebiet, t.abflussparameter, t.kommentar, t.createdat,
@@ -286,6 +290,7 @@ class SurfaceTask:
 
         progress_bar.setValue(95)
 
+        # Löschen der ursprünglichen Haltungsflächen basierend auf Selektionstabelle tezgsel
         sql = """DELETE FROM tezg WHERE pk IN (SELECT pk FROM tezgsel)"""
         if not self.db_qkan.sql(sql, stmt_category="Voronoi_5"):
             del self.db_qkan

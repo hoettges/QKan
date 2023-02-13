@@ -27,14 +27,14 @@ def meldung(title: str, text: str) -> None:
     QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Info)
 
 
-def warnung(title: str, text: str) -> None:
+def warnung(title: str, text: str, duration: int=-1) -> None:
     logger.warning("{:s} {:s}".format(title, text))
     # noinspection PyArgumentList
     QgsMessageLog.logMessage(
         message="{:s} {:s}".format(title, text), tag='QKan', level=Qgis.Warning
     )
     QKan.instance.iface.openMessageLog()
-    QKan.instance.iface.messageBar().pushMessage(title, text, level=Qgis.Warning)
+    QKan.instance.iface.messageBar().pushMessage(title, text, duration=duration, level=Qgis.Warning)
 
 
 def fortschritt(text: str, prozent: float = 0) -> None:
