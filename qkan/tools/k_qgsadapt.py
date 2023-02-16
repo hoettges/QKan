@@ -35,7 +35,7 @@ from qgis.utils import pluginDirectory
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, list_qkan_layers
+from qkan.database.qkan_utils import fehlermeldung, list_qkan_layers, get_qkanlayer_attributes
 
 logger = logging.getLogger("QKan.tools.k_qgsadapt")
 
@@ -279,12 +279,37 @@ def qgsadapt(
                 if element is not None:
                     element.text = "{:.3f}".format(zoom[idx])
 
-        # Set path to database
+        # Set path to QKan database in datasource
         for tag_datasource in root.findall(".//projectlayers/maplayer/datasource"):
             text = tag_datasource.text or ""
-            if not text or text[:6] != "dbname":
+            dbname, table, _, _ = get_qkanlayer_attributes(text)
+            if not text or text[:6] != "dbname" or table not in qkanTables:
                 continue
             tag_datasource.text = (
+                "dbname='" + datasource + "' " + text[text.find("table=") :]
+            )
+
+        # Set path to QKan database in LayerSource
+        for tag_layersource in root.findall(
+                ".//projectlayers/maplayer/fieldConfiguration/field/editWidget/config/Option/Option[@name='LayerSource']"
+        ):
+            text = tag_layersource.attrib['value'] or ""
+            dbname, table, _, _ = get_qkanlayer_attributes(text)
+            if not text or text[:6] != "dbname" or table not in qkanTables:
+                continue
+            tag_layersource.attrib['value'] = (
+                "dbname='" + datasource + "' " + text[text.find("table=") :]
+            )
+
+        # Set path to QKan database in layer-tree-layer
+        for tag_layertreelayer in root.findall(
+                ".//layer-tree-group/layer-tree-group/layer-tree-group/layer-tree-layer/[@providerKey='spatialite']"
+        ):
+            text = tag_layertreelayer.attrib['source'] or ""
+            dbname, table, _, _ = get_qkanlayer_attributes(text)
+            if not text or text[:6] != "dbname" or table not in qkanTables:
+                continue
+            tag_layertreelayer.attrib['source'] = (
                 "dbname='" + datasource + "' " + text[text.find("table=") :]
             )
 

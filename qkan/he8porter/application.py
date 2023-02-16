@@ -176,7 +176,6 @@ class He8Porter(QKanPlugin):
 
         # Close connection
         del self.db_qkan
-        self.log.debug("Closed DB")
 
         return True
 

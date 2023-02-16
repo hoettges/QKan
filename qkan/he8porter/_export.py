@@ -450,13 +450,13 @@ class ExportTask:
                       coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
                       coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
                       coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
-                      coalesce(profile.he_nr, 68) AS Profiltyp, 
-                      CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN ha.profilnam
+                      coalesce(pf.he_nr, 68) AS Profiltyp, 
+                      CASE WHEN coalesce(pf.he_nr, 68) = 68 THEN ha.profilnam
                       ELSE NULL
                       END
                       AS Sonderprofilbezeichnung, 
                       ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
-                      entwaesserungsarten.he_nr AS Kanalart,
+                      ea.he_nr AS Kanalart,
                       coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
                       coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
                       ha.kommentar AS Kommentar,
@@ -471,8 +471,10 @@ class ExportTask:
                       haltungen AS ha 
                       JOIN schaechte AS sob ON ha.schoben = sob.schnam
                       JOIN schaechte AS sun ON ha.schunten = sun.schnam
-                      LEFT JOIN profile ON ha.profilnam = profile.profilnam
-                      LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                      LEFT JOIN (SELECT profilnam, he_nr FROM profile GROUP BY profilnam) AS pf 
+                        ON ha.profilnam = pf.profilnam
+                      LEFT JOIN (SELECT bezeichnung, he_nr FROM entwaesserungsarten GROUP BY bezeichnung) AS ea 
+                        ON ha.entwart = ea.bezeichnung
                       LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                       WHERE (ha.haltungstyp IS NULL or ha.haltungstyp = 'Haltung') AND ha.haltnam = he.Rohr.Name{auswahl})
                   WHERE he.Rohr.Name IN 
@@ -532,13 +534,13 @@ class ExportTask:
                         coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
                         coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
                         coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
-                        coalesce(profile.he_nr, 68) AS Profiltyp,
-                        CASE WHEN coalesce(profile.he_nr, 68) = 68 THEN ha.profilnam
+                        coalesce(pf.he_nr, 68) AS Profiltyp,
+                        CASE WHEN coalesce(pf.he_nr, 68) = 68 THEN ha.profilnam
                         ELSE NULL
                         END
                         AS Sonderprofilbezeichnung, 
                         ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
-                        entwaesserungsarten.he_nr AS Kanalart,
+                        ea.he_nr AS Kanalart,
                         coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
                         1 AS Rauigkeitsansatz, 
                         coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
@@ -554,8 +556,10 @@ class ExportTask:
                         haltungen AS ha
                         JOIN schaechte AS sob ON ha.schoben = sob.schnam
                         JOIN schaechte AS sun ON ha.schunten = sun.schnam
-                        LEFT JOIN profile ON ha.profilnam = profile.profilnam
-                        LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                        LEFT JOIN (SELECT profilnam, he_nr FROM profile GROUP BY profilnam) AS pf
+                          ON ha.profilnam = pf.profilnam
+                        LEFT JOIN (SELECT bezeichnung, he_nr FROM entwaesserungsarten GROUP BY bezeichnung) AS ea 
+                          ON ha.entwart = ea.bezeichnung
                         LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                         WHERE ha.haltnam NOT IN (SELECT Name FROM he.Rohr) 
                         AND (ha.haltungstyp IS NULL OR ha.haltungstyp = 'Haltung'){auswahl};
@@ -900,7 +904,6 @@ class ExportTask:
                 data = self.db_qkan.fetchone()
                 if len(data) == 2:
                     idmin, idmax = data
-                    idanz = idmax - idmin + 1
                     logger.debug(f"idmin = {idmin}\nidmax = {idmax}\n")
                 else:
                     fehlermeldung(
@@ -1299,7 +1302,7 @@ class ExportTask:
                             ha.sohleoben + ha.hoehe AS MaximaleHubhoehe,
                             ha.breite AS Geometrie2,
                             ha.ks AS Verluste,
-                            profile.he_nr AS Profiltyp,
+                            pf.he_nr AS Profiltyp,
                             si.he_nr AS Planungsstatus,
                             ha.kommentar AS Kommentar,
                             ha.createdat AS LastModified,
@@ -1307,8 +1310,8 @@ class ExportTask:
                         FROM haltungen AS ha
                         LEFT JOIN simulationsstatus AS si
                         ON ha.simstatus = si.bezeichnung
-                        LEFT JOIN profile
-                        ON ha.profilnam = profile.profilnam
+                        LEFT JOIN (SELECT profilnam, he_nr FROM profile GROUP BY profilnam) AS pf
+                          ON ha.profilnam = pf.profilnam
                         WHERE ha.haltnam = he.Schieber.Name{auswahl}
                     )
                     WHERE he.Schieber.Name IN (
@@ -1363,7 +1366,7 @@ class ExportTask:
                         ha.sohleoben + ha.hoehe AS MaximaleHubhoehe,
                         ha.breite AS Geometrie2,
                         ha.ks AS Verluste,
-                        profile.he_nr AS Profiltyp,
+                        pf.he_nr AS Profiltyp,
                         si.he_nr AS Planungsstatus,
                         ha.kommentar AS Kommentar,
                         ha.createdat AS LastModified,
@@ -1371,8 +1374,8 @@ class ExportTask:
                     FROM haltungen AS ha
                     LEFT JOIN simulationsstatus AS si
                     ON ha.simstatus = si.bezeichnung
-                    LEFT JOIN profile
-                    ON ha.profilnam = profile.profilnam
+                    LEFT JOIN (SELECT profilnam, he_nr FROM profile GROUP BY profilnam) AS pf
+                      ON ha.profilnam = pf.profilnam
                     WHERE ha.haltungstyp = 'Schieber'
                     AND ha.haltnam NOT IN (SELECT Name FROM he.Schieber){auswahl};
                     """
@@ -1423,7 +1426,7 @@ class ExportTask:
                             ha.sohleoben AS HoeheUnterkante,
                             ha.breite AS Geometrie2,
                             ha.ks AS Auslassbeiwert,
-                            profile.he_nr AS Profiltyp,
+                            pf.he_nr AS Profiltyp,
                             si.he_nr AS Planungsstatus,
                             ha.kommentar AS Kommentar,
                             ha.createdat AS LastModified,
@@ -1431,8 +1434,8 @@ class ExportTask:
                         FROM haltungen AS ha
                         LEFT JOIN simulationsstatus AS si
                         ON ha.simstatus = si.bezeichnung
-                        LEFT JOIN profile
-                        ON ha.profilnam = profile.profilnam
+                        LEFT JOIN (SELECT profilnam, he_nr FROM profile GROUP BY profilnam) AS pf
+                          ON ha.profilnam = pf.profilnam
                         WHERE ha.haltnam = he.GrundSeitenauslass.Name{auswahl}
                     )
                     WHERE he.GrundSeitenauslass.Name IN (
@@ -1485,7 +1488,7 @@ class ExportTask:
                         ha.sohleoben AS HoeheUnterkante,
                         ha.breite AS Geometrie2,
                         ha.ks AS Auslassbeiwert,
-                        profile.he_nr AS Profiltyp,
+                        pf.he_nr AS Profiltyp,
                         si.he_nr AS Planungsstatus,
                         ha.kommentar AS Kommentar,
                         ha.createdat AS LastModified,
@@ -1493,8 +1496,8 @@ class ExportTask:
                     FROM haltungen AS ha
                     LEFT JOIN simulationsstatus AS si
                     ON ha.simstatus = si.bezeichnung
-                    LEFT JOIN profile
-                    ON ha.profilnam = profile.profilnam
+                    LEFT JOIN (SELECT profilnam, he_nr FROM profile GROUP BY profilnam) AS pf
+                      ON ha.profilnam = pf.profilnam
                     WHERE ha.haltungstyp = 'GrundSeitenauslass'
                     AND ha.haltnam NOT IN (SELECT Name FROM he.GrundSeitenauslass){auswahl};
                     """
@@ -1551,10 +1554,10 @@ class ExportTask:
                       coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
                       coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
                       ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
-                      entwaesserungsarten.he_nr AS Kanalart,
+                      ea.he_nr AS Kanalart,
                       coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
                       coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
-                      profile.he_nr AS Profiltyp,
+                      pf.he_nr AS Profiltyp,
                       coalesce(ha.createdat, datetime('now')) AS LastModified, 
                       28 AS Materialart, 
                       0 AS Einzugsgebiet, 
@@ -1566,8 +1569,10 @@ class ExportTask:
                       haltungen AS ha 
                       JOIN schaechte AS sob ON ha.schoben = sob.schnam
                       JOIN schaechte AS sun ON ha.schunten = sun.schnam
-                      LEFT JOIN profile ON ha.profilnam = profile.profilnam
-                      LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                      LEFT JOIN (SELECT profilnam, he_nr FROM profile GROUP BY profilnam) AS pf
+                        ON ha.profilnam = pf.profilnam
+                      LEFT JOIN (SELECT bezeichnung, he_nr FROM entwaesserungsarten GROUP BY bezeichnung) AS ea 
+                        ON ha.entwart = ea.bezeichnung
                       LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                       WHERE ha.haltungstyp = 'Q-Regler' AND ha.haltnam = he.QRegler.Name{auswahl})
                   WHERE he.QRegler.Name IN 
@@ -1624,11 +1629,11 @@ class ExportTask:
                         coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
                         coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
                         ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
-                        entwaesserungsarten.he_nr AS Kanalart,
+                        ea.he_nr AS Kanalart,
                         coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
                         1 AS Rauigkeitsansatz, 
                         coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
-                        profile.he_nr AS Profiltyp,
+                        pf.he_nr AS Profiltyp,
                         coalesce(ha.createdat, datetime('now')) AS LastModified, 
                         28 AS Materialart,
                         0 AS Einzugsgebiet,
@@ -1640,8 +1645,10 @@ class ExportTask:
                         haltungen AS ha
                         JOIN schaechte AS sob ON ha.schoben = sob.schnam
                         JOIN schaechte AS sun ON ha.schunten = sun.schnam
-                        LEFT JOIN profile ON ha.profilnam = profile.profilnam
-                        LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                        LEFT JOIN (SELECT profilnam, he_nr FROM profile GROUP BY profilnam) AS pf
+                          ON ha.profilnam = pf.profilnam
+                        LEFT JOIN (SELECT bezeichnung, he_nr FROM entwaesserungsarten GROUP BY bezeichnung) AS ea 
+                          ON ha.entwart = ea.bezeichnung
                         LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                         WHERE ha.haltnam NOT IN (SELECT Name FROM he.QRegler) 
                         AND ha.haltungstyp = 'Q-Regler'{auswahl};
@@ -1699,10 +1706,10 @@ class ExportTask:
                       coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
                       coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
                       ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
-                      entwaesserungsarten.he_nr AS Kanalart,
+                      ea.he_nr AS Kanalart,
                       coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
                       coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
-                      profile.he_nr AS Profiltyp,
+                      pf.he_nr AS Profiltyp,
                       coalesce(ha.createdat, datetime('now')) AS LastModified, 
                       28 AS Materialart, 
                       0 AS Einzugsgebiet, 
@@ -1714,8 +1721,10 @@ class ExportTask:
                       haltungen AS ha 
                       JOIN schaechte AS sob ON ha.schoben = sob.schnam
                       JOIN schaechte AS sun ON ha.schunten = sun.schnam
-                      LEFT JOIN profile ON ha.profilnam = profile.profilnam
-                      LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                      LEFT JOIN (SELECT profilnam, he_nr FROM profile GROUP BY profilnam) AS pf
+                        ON ha.profilnam = pf.profilnam
+                      LEFT JOIN (SELECT bezeichnung, he_nr FROM entwaesserungsarten GROUP BY bezeichnung) AS ea 
+                        ON ha.entwart = ea.bezeichnung
                       LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                       WHERE ha.haltungstyp = 'H-Regler' AND ha.haltnam = he.HRegler.Name{auswahl})
                   WHERE he.HRegler.Name IN 
@@ -1772,11 +1781,11 @@ class ExportTask:
                         coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
                         coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
                         ha.hoehe AS Geometrie1, ha.breite AS Geometrie2,
-                        entwaesserungsarten.he_nr AS Kanalart,
+                        ea.he_nr AS Kanalart,
                         coalesce(ha.ks, 1.5) AS Rauigkeitsbeiwert, 1 AS Anzahl, 
                         1 AS Rauigkeitsansatz, 
                         coalesce(ha.ks, 1.5) AS RauhigkeitAnzeige,
-                        profile.he_nr AS Profiltyp,
+                        pf.he_nr AS Profiltyp,
                         coalesce(ha.createdat, datetime('now')) AS LastModified, 
                         28 AS Materialart,
                         0 AS Einzugsgebiet,
@@ -1788,8 +1797,10 @@ class ExportTask:
                         haltungen AS ha
                         JOIN schaechte AS sob ON ha.schoben = sob.schnam
                         JOIN schaechte AS sun ON ha.schunten = sun.schnam
-                        LEFT JOIN profile ON ha.profilnam = profile.profilnam
-                        LEFT JOIN entwaesserungsarten ON ha.entwart = entwaesserungsarten.bezeichnung
+                        LEFT JOIN (SELECT profilnam, he_nr FROM profile GROUP BY profilnam) AS pf
+                          ON ha.profilnam = pf.profilnam
+                        LEFT JOIN (SELECT bezeichnung, he_nr FROM entwaesserungsarten GROUP BY bezeichnung) AS ea 
+                          ON ha.entwart = ea.bezeichnung
                         LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                         WHERE ha.haltnam NOT IN (SELECT Name FROM he.HRegler) 
                         AND ha.haltungstyp = 'H-Regler'{auswahl};

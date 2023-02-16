@@ -182,9 +182,6 @@ def is_qkan_layer(layername: str, source: str) -> bool:
     return False
 
 
-# todo: nachfolgende Funktion ist deprecated und kann durch listQkanLayers ersetzt werden...
-
-
 def get_qkanlayer_attributes(source: str) -> Tuple[str, str, str, str]:
     """Ermittelt die Attribute eines QKan-Layers in einer SpatiaLite-Datenbank
 
@@ -223,6 +220,18 @@ def get_qkanlayer_attributes(source: str) -> Tuple[str, str, str, str]:
         dbname = ""
 
     return dbname, table, geom, sql
+
+
+def set_qkanlayer_dbname(oldsource: str, newdb: str) -> str:
+    """Ersetzt Pfad in QgsConnectionstring"""
+
+    dbname_o, table, geom, sql = get_qkanlayer_attributes(oldsource)
+    dbname_t = f"dbname='{newdb}'"                      # obligatory in QKan
+    table_t = f' table="{table}"'                       # obligatory in QKan
+    geom_t = f' ({geom})' if geom != '' else ''
+    sql_t = f' sql={sql}' if sql != '' else ''
+    newsource = dbname_t + table_t + geom_t + sql_t
+    return newsource
 
 
 def get_database_QKan(silent: bool = False) -> Tuple[Optional[str], Optional[int]]:

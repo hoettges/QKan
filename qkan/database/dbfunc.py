@@ -90,8 +90,7 @@ class DBConnection:
 
         # Die nachfolgenden Klassenobjekte dienen dazu, gleichartige (sqlidtext) SQL-Debug-Meldungen
         # nur einmal pro Sekunde zu erzeugen.
-        self.sqltime = datetime.datetime(2017, 1, 1, 1, 0, 0)
-        self.sqltime = self.sqltime.now()
+        self.sqltime = datetime.datetime.now()
         self.sqltext = ""
         self.sqlcount = 0
 
@@ -148,14 +147,14 @@ class DBConnection:
                         #     self.connected = False
                         #     self.consl.close()
                     else:
-                        meldung(
+                        warnung(
                             f"Projekt muss aktualisiert werden. Die QKan-Version der Datenbank {self.current_version} stimmt nicht ",
                             f"mit der aktuellen QKan-Version {self.actversion} überein und muss aktualisiert werden!",
                         )
                         self.consl.close()
                         self.isCurrentVersion = False
                         self.connected = False  # Verbindungsstatus zur Kontrolle
-
+                        return None
             else:
                 QKan.instance.iface.messageBar().pushMessage(
                     "Information",
@@ -303,6 +302,12 @@ class DBConnection:
 
         :returns: void
         """
+        if not self.isCurrentVersion:
+            warnung(
+                f"Projekt muss aktualisiert werden. Die QKan-Version der Datenbank {self.current_version} stimmt nicht ",
+                f"mit der aktuellen QKan-Version {self.actversion} überein und muss aktualisiert werden!",
+            )
+            return False
         try:
             self.cursl.execute(sql, parameters)
 

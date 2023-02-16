@@ -23,7 +23,7 @@ __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 __dbVersion__ = "3.2.37"  # Version der QKan-Datenbank
-__qgsVersion__ = "3.2.37"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__qgsVersion__ = "3.2.38"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -1202,8 +1202,8 @@ def createdbtables(
 
     sql = """CREATE TABLE entwaesserungsarten (
             pk INTEGER PRIMARY KEY, 
-            kuerzel TEXT, 
             bezeichnung TEXT, 
+            kuerzel TEXT, 
             bemerkung TEXT, 
             he_nr INTEGER, 
             kp_nr INTEGER)"""
@@ -1221,25 +1221,25 @@ def createdbtables(
     try:
 
         daten = [
-            "'MW', 'Mischwasser', 'Mischwasser', 0, 0",
-            "'RW', 'Regenwasser', 'Regenwasser', 1, 2",
-            "'SW', 'Schmutzwasser', 'Schmutzwasser', 2, 1",
-            "'MD', 'MW Druck', 'Mischwasserdruckleitung', 0, 0",
-            "'SD', 'SW Druck', 'Schmutzwasserdruckleitung', 2, 0",
-            "'RD', 'RW Druck', 'Regenwasserdruckleitung', 1, 0",
-            "'GR', 'Rinnen/Gräben', 'Rinnen/Gräben', 1, 0",
-            "'SG', 'stillgelegt', 'stillgelegt', 0, 0",
-            "'MN', 'MW nicht angeschlossen', 'ohne Mischwasseranschlüsse', 0, 0",
-            "'RN', 'RW nicht angeschlossen', 'ohne Regenwasseranschlüsse', 1, 2",
-            "'KM', 'Mischwasser', 'Mischwasser', 0, 0",
-            "'KR', 'Regenwasser', 'Regenwasser', 1, 2",
-            "'KS', 'Schmutzwasser', 'Schmutzwasser', 2, 1",
-            "'DM', 'MW Druck', 'Mischwasserdruckleitung', 0, 0",
-            "'DS', 'SW Druck', 'Schmutzwasserdruckleitung', 2, 0",
-            "'DR', 'RW Druck', 'Regenwasserdruckleitung', 1, 0",
-            "'M', 'Mischwasser', 'Mischwasser', 0, 0",
-            "'R', 'Regenwasser', 'Regenwasser', 1, 2",
-            "'S', 'Schmutzwasser', 'Schmutzwasser', 2, 1",
+            "'Mischwasser', 'MW', 'Mischwasser', 0, 0",
+            "'Regenwasser', 'RW', 'Regenwasser', 1, 2",
+            "'Schmutzwasser', 'SW', 'Schmutzwasser', 2, 1",
+            "'MW Druck', 'MD', 'Mischwasserdruckleitung', 0, 0",
+            "'SW Druck', 'SD', 'Schmutzwasserdruckleitung', 2, 0",
+            "'RW Druck', 'RD', 'Regenwasserdruckleitung', 1, 0",
+            "'Rinnen/Gräben', 'GR', 'Rinnen/Gräben', 1, 0",
+            "'stillgelegt', 'SG', 'stillgelegt', 0, 0",
+            "'MW nicht angeschlossen', 'MN', 'ohne Mischwasseranschlüsse', 0, 0",
+            "'RW nicht angeschlossen', 'RN', 'ohne Regenwasseranschlüsse', 1, 2",
+            "'Mischwasser', 'KM', 'Mischwasser', 0, 0",
+            "'Regenwasser', 'KR', 'Regenwasser', 1, 2",
+            "'Schmutzwasser', 'KS', 'Schmutzwasser', 2, 1",
+            "'MW Druck', 'DM', 'Mischwasserdruckleitung', 0, 0",
+            "'SW Druck', 'DS', 'Schmutzwasserdruckleitung', 2, 0",
+            "'RW Druck', 'DR', 'Regenwasserdruckleitung', 1, 0",
+            "'Mischwasser', 'M', 'Mischwasser', 0, 0",
+            "'Regenwasser', 'R', 'Regenwasser', 1, 2",
+            "'Schmutzwasser', 'S', 'Schmutzwasser', 2, 1",
         ]
 
         for ds in daten:
