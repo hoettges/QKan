@@ -317,7 +317,10 @@ class ImportTask:
                 "Fehler beim XML-Import: Schächte",
                 f'Keine Geometrie "SMP" für Schacht {name}',
             )
-            xsch, ysch, sohlhoehe = (0.0,) * 3
+            xsch = _strip_float(_block.findtext("d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt/d:Rechtswert", 0.0, self.NS))
+            ysch = _strip_float(_block.findtext("d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt/d:Hochwert", 0.0, self.NS))
+            sohlhoehe = _strip_float(_block.findtext("d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt/d:Punkthoehe", 0.0, self.NS))
+            #xsch, ysch, sohlhoehe = (0.0,) * 3
         else:
             xsch = _strip_float(smp.findtext("d:Rechtswert", 0.0, self.NS))
             ysch = _strip_float(smp.findtext("d:Hochwert", 0.0, self.NS))
@@ -412,7 +415,7 @@ class ImportTask:
         def _iter() -> Iterator[Schacht]:
             # .//Schacht/../.. nimmt AbwassertechnischeAnlage
             blocks = self.xml.findall(
-                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/d:Knoten/d:Schacht/../..",
+                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektart='2']",
                 self.NS,
             )
 
@@ -592,7 +595,7 @@ class ImportTask:
         def _iter() -> Iterator[Schacht_untersucht]:
             # .//Schacht/../.. nimmt AbwassertechnischeAnlage
             blocks = self.xml.findall(
-                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/d:Knoten/d:Schacht/../..",
+                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektart='2']",
                 self.NS,
             )
 
@@ -1115,6 +1118,7 @@ class ImportTask:
 
     def _haltungen(self) -> None:
         def _iter() -> Iterator[Haltung]:
+
             blocks = self.xml.findall(
                 "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektart='1']",
                 self.NS,
@@ -1136,88 +1140,94 @@ class ImportTask:
                 yschun
             ) = (0.0,) * 11
 
+
             for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
-                schoben = block.findtext("d:Kante/[d:KnotenZulaufTyp='0']/d:KnotenZulauf", "not found", self.NS)
-                schunten = block.findtext("d:Kante/[d:KnotenAblaufTyp='0']/d:KnotenAblauf", "not found", self.NS)
-                sohleoben = _strip_float(block.findtext("d:Kante/[d:KnotenZulaufTyp='0']/d:SohlhoeheZulauf", 0.0, self.NS))
-                sohleunten = _strip_float(block.findtext("d:Kante/[d:KnotenAblaufTyp='0']/d:SohlhoeheAblauf", 0.0, self.NS))
-                laenge = _strip_float(block.findtext("d:Kante/d:Laenge", 0.0, self.NS))
-                material = block.findtext("d:Kante/d:Material", "not found", self.NS)
-                profilnam = block.findtext("d:Kante/d:Profil/d:Profilart", "not found", self.NS)
-                hoehe = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilhoehe", 0.0, self.NS)) / 1000.
-                breite = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilbreite", 0.0, self.NS)) / 1000.
+                found_leitung = block.findtext("d:Kante/d:Leitung", "", self.NS)
+                if found_leitung == '':
 
-                # hier ergännzen mit dem fall das x,y unter Polygone steht!!
-                # Haltungen können alternativ als Kanten oder als Polygone vorkommen.
+                    name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                    schoben = block.findtext("d:Kante/d:KnotenZulauf", "not found", self.NS)
+                    schunten = block.findtext("d:Kante/d:KnotenAblauf", "not found", self.NS)
+                    sohleoben = _strip_float(block.findtext("d:Kante/d:SohlhoeheZulauf", 0.0, self.NS))
+                    sohleunten = _strip_float(block.findtext("d:Kante/d:SohlhoeheAblauf", 0.0, self.NS))
+                    laenge = _strip_float(block.findtext("d:Kante/d:Laenge", 0.0, self.NS))
+                    material = block.findtext("d:Kante/d:Material", "not found", self.NS)
+                    profilnam = block.findtext("d:Kante/d:Profil/d:Profilart", "not found", self.NS)
+                    hoehe = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilhoehe", 0.0, self.NS)) / 1000.
+                    breite = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilbreite", 0.0, self.NS)) / 1000.
 
-                found_kanten = block.findtext("d:Geometrie/d:Geometriedaten/d:Kanten", "not found", self.NS)
-                if found_kanten:
-                    xschob = _strip_float(block.findtext(
-                        "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start/d:Rechtswert",
-                        0.0, self.NS)
-                    )
-                    yschob = _strip_float(block.findtext(
-                        "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start/d:Hochwert",
-                        0.0, self.NS)
-                    )
-                    xschun = _strip_float(block.findtext(
-                        "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende/d:Rechtswert",
-                        0.0, self.NS)
-                    )
-                    yschun = _strip_float(block.findtext(
-                        "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende/d:Hochwert",
-                        0.0, self.NS)
+                    # hier ergännzen mit dem fall das x,y unter Polygone steht!!
+                    # Haltungen können alternativ als Kanten oder als Polygone vorkommen.
+
+                    found_kanten = block.findtext("d:Geometrie/d:Geometriedaten/d:Kanten", "not found", self.NS)
+                    if found_kanten:
+                        xschob = _strip_float(block.findtext(
+                            "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start/d:Rechtswert",
+                            0.0, self.NS)
+                        )
+                        yschob = _strip_float(block.findtext(
+                            "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start/d:Hochwert",
+                            0.0, self.NS)
+                        )
+                        xschun = _strip_float(block.findtext(
+                            "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende/d:Rechtswert",
+                            0.0, self.NS)
+                        )
+                        yschun = _strip_float(block.findtext(
+                            "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende/d:Hochwert",
+                            0.0, self.NS)
+                        )
+                    else:
+                        for kante in block.findall(
+                                "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante",
+                                self.NS
+                        ):
+                            if kante is not None:
+                                # Für mehr als 1 Kante: Start der 1. Kante (siehe break)
+                                for _start in block.findall(
+                                        "d:Start", self.NS
+                                ):
+                                    xschob = _strip_float(_start.findtext("d:Rechtswert", 0.0, self.NS))
+                                    yschob = _strip_float(_start.findtext("d:Hochwert", 0.0, self.NS))
+                                    deckeloben = _strip_float(
+                                        _start.findtext("d:Punkthoehe", 0.0, self.NS)
+                                    )
+                                    break
+                                # Für mehr als 1 Kante: Ende der letzten Kante
+                                for _ende in block.findall(
+                                        "d:Start", self.NS
+                                ):
+                                    xschob = _strip_float(_ende.findtext("d:Rechtswert", 0.0, self.NS))
+                                    yschob = _strip_float(_ende.findtext("d:Hochwert", 0.0, self.NS))
+                                    deckeloben = _strip_float(
+                                        _ende.findtext("d:Punkthoehe", 0.0, self.NS)
+                                    )
+
+                    yield Haltung(
+                        haltnam=name,
+                        schoben=schoben,
+                        schunten=schunten,
+                        hoehe=hoehe,
+                        breite=breite,
+                        laenge=laenge,
+                        material=material,
+                        sohleoben=sohleoben,
+                        sohleunten=sohleunten,
+                        deckeloben=deckeloben,
+                        deckelunten=deckelunten,
+                        profilnam=profilnam,
+                        entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
+                        strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
+                        ks=1.5,  # in Hydraulikdaten enthalten.
+                        simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
+                        kommentar=block.findtext("d:Kommentar", "-", self.NS),
+                        xschob=xschob,
+                        yschob=yschob,
+                        xschun=xschun,
+                        yschun=yschun,
                     )
                 else:
-                    for kante in block.findall(
-                            "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante",
-                            self.NS
-                    ):
-                        if kante is not None:
-                            # Für mehr als 1 Kante: Start der 1. Kante (siehe break)
-                            for _start in block.findall(
-                                    "d:Start", self.NS
-                            ):
-                                xschob = _strip_float(_start.findtext("d:Rechtswert", 0.0, self.NS))
-                                yschob = _strip_float(_start.findtext("d:Hochwert", 0.0, self.NS))
-                                deckeloben = _strip_float(
-                                    _start.findtext("d:Punkthoehe", 0.0, self.NS)
-                                )
-                                break
-                            # Für mehr als 1 Kante: Ende der letzten Kante
-                            for _ende in block.findall(
-                                    "d:Start", self.NS
-                            ):
-                                xschob = _strip_float(_ende.findtext("d:Rechtswert", 0.0, self.NS))
-                                yschob = _strip_float(_ende.findtext("d:Hochwert", 0.0, self.NS))
-                                deckeloben = _strip_float(
-                                    _ende.findtext("d:Punkthoehe", 0.0, self.NS)
-                                )
-
-                yield Haltung(
-                    haltnam=name,
-                    schoben=schoben,
-                    schunten=schunten,
-                    hoehe=hoehe,
-                    breite=breite,
-                    laenge=laenge,
-                    material=material,
-                    sohleoben=sohleoben,
-                    sohleunten=sohleunten,
-                    deckeloben=deckeloben,
-                    deckelunten=deckelunten,
-                    profilnam=profilnam,
-                    entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
-                    strasse=block.findtext("d:Lage/d:Strassenname", "not found", self.NS),
-                    ks=1.5,  # in Hydraulikdaten enthalten.
-                    simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
-                    kommentar=block.findtext("d:Kommentar", "-", self.NS),
-                    xschob=xschob,
-                    yschob=yschob,
-                    xschun=xschun,
-                    yschun=yschun,
-                )
+                    pass
 
         def _iter2() -> Iterator[Haltung]:
             blocks = self.xml.findall(
@@ -1382,9 +1392,10 @@ class ImportTask:
     def _haltungen_untersucht(self) -> None:
         def _iter() -> Iterator[Haltung_untersucht]:
             blocks = self.xml.findall(
-                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/d:Kante/d:Haltung/../..",
+                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektart='1']",
                 self.NS,
             )
+
             logger.debug(f"Anzahl Haltungen: {len(blocks)}")
 
 
@@ -1485,6 +1496,8 @@ class ImportTask:
                     xschun=xschun,
                     yschun=yschun,
                 )
+                #else:
+                 #   pass
 
         def _iter2() -> Iterator[Haltung_untersucht]:
             blocks = self.xml.findall(
@@ -1898,8 +1911,9 @@ class ImportTask:
 
     def _anschlussleitungen(self) -> None:
         def _iter() -> Iterator[Anschlussleitung]:
+
             blocks = self.xml.findall(
-                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/d:Kante/d:Leitung/../..",
+                "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektart='1']",
                 self.NS,
             )
             logger.debug(f"Anzahl Anschlussleitungen: {len(blocks)}")
@@ -1915,108 +1929,112 @@ class ImportTask:
                 deckelunten,
             ) = (0.0,) * 7
             for block in blocks:
-                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+                found_leitung = block.findtext("d:Kante/d:Leitung", "", self.NS)
+                if found_leitung != '':
+                    name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
 
-                # TODO: Does <AbwassertechnischeAnlage> even contain multiple <Kante>?
-                for _haltung in block.findall("d:Kante/d:KantenTyp/..", self.NS):
-                    schoben = _haltung.findtext("d:KnotenZulauf", "not found", self.NS)
-                    schunten = _haltung.findtext("d:KnotenAblauf", "not found", self.NS)
+                    # TODO: Does <AbwassertechnischeAnlage> even contain multiple <Kante>?
+                    for _haltung in block.findall("d:Kante/d:KantenTyp/..", self.NS):
+                        schoben = _haltung.findtext("d:KnotenZulauf", "not found", self.NS)
+                        schunten = _haltung.findtext("d:KnotenAblauf", "not found", self.NS)
 
-                    sohleoben = _strip_float(
-                        _haltung.findtext("d:SohlhoeheZulauf", 0.0, self.NS)
+                        sohleoben = _strip_float(
+                            _haltung.findtext("d:SohlhoeheZulauf", 0.0, self.NS)
+                        )
+                        sohleunten = _strip_float(
+                            _haltung.findtext("d:SohlhoeheAblauf", 0.0, self.NS)
+                        )
+                        laenge = _strip_float(_haltung.findtext("d:Laenge", 0.0, self.NS))
+
+                        material = _haltung.findtext("d:Material", "not found", self.NS)
+
+                        for profil in _haltung.findall("d:Profil", self.NS):
+                            profilnam = profil.findtext("d:Profilart", "not found", self.NS)
+                            hoehe = (
+                                _strip_float(profil.findtext("d:Profilhoehe", 0.0, self.NS))
+                                / 1000
+                            )
+                            breite = (
+                                _strip_float(profil.findtext("d:Profilbreite", 0.0, self.NS))
+                                / 1000
+                            )
+
+
+                    for _haltung in block.findall(
+                        "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
+                    ):
+                        if _haltung is not None:
+                            xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                            yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                            deckeloben = _strip_float(
+                                _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                            )
+                        else:
+                            pass
+
+                    for _haltung in block.findall(
+                            "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Start",
+                            self.NS
+                    ):
+                        if _haltung is not None:
+                            xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                            yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                            deckeloben = _strip_float(
+                                _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                            )
+                        else:
+                            pass
+
+
+                    for _haltung in block.findall(
+                        "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
+                    ):
+                        if _haltung is not None:
+                            xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                            yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                            deckelunten = _strip_float(
+                                _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                            )
+                        else:
+                            pass
+
+                    for _haltung in block.findall(
+                            "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Ende",
+                            self.NS
+                    ):
+                        if _haltung is not None:
+                            xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
+                            yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
+                            deckelunten = _strip_float(
+                                _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
+                            )
+                        else:
+                             pass
+
+                    yield Anschlussleitung(
+                        leitnam=name,
+                        schoben=schoben,
+                        schunten=schunten,
+                        hoehe=hoehe,
+                        breite=breite,
+                        laenge=laenge,
+                        material=material,
+                        sohleoben=sohleoben,
+                        sohleunten=sohleunten,
+                        deckeloben=deckeloben,
+                        deckelunten=deckelunten,
+                        profilnam=profilnam,
+                        entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
+                        ks=1.5,  # in Hydraulikdaten enthalten.
+                        simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
+                        kommentar=block.findtext("d:Kommentar", "-", self.NS),
+                        xschob=xschob,
+                        yschob=yschob,
+                        xschun=xschun,
+                        yschun=yschun,
                     )
-                    sohleunten = _strip_float(
-                        _haltung.findtext("d:SohlhoeheAblauf", 0.0, self.NS)
-                    )
-                    laenge = _strip_float(_haltung.findtext("d:Laenge", 0.0, self.NS))
-
-                    material = _haltung.findtext("d:Material", "not found", self.NS)
-
-                    for profil in _haltung.findall("d:Profil", self.NS):
-                        profilnam = profil.findtext("d:Profilart", "not found", self.NS)
-                        hoehe = (
-                            _strip_float(profil.findtext("d:Profilhoehe", 0.0, self.NS))
-                            / 1000
-                        )
-                        breite = (
-                            _strip_float(profil.findtext("d:Profilbreite", 0.0, self.NS))
-                            / 1000
-                        )
-
-
-                for _haltung in block.findall(
-                    "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Start", self.NS
-                ):
-                    if _haltung is not None:
-                        xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
-                        yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
-                        deckeloben = _strip_float(
-                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
-                        )
-                    else:
-                        pass
-
-                for _haltung in block.findall(
-                        "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Start",
-                        self.NS
-                ):
-                    if _haltung is not None:
-                        xschob = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
-                        yschob = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
-                        deckeloben = _strip_float(
-                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
-                        )
-                    else:
-                        pass
-
-
-                for _haltung in block.findall(
-                    "d:Geometrie/d:Geometriedaten/d:Kanten/d:Kante/d:Ende", self.NS
-                ):
-                    if _haltung is not None:
-                        xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
-                        yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
-                        deckelunten = _strip_float(
-                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
-                        )
-                    else:
-                        pass
-
-                for _haltung in block.findall(
-                        "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Ende",
-                        self.NS
-                ):
-                    if _haltung is not None:
-                        xschun = _strip_float(_haltung.findtext("d:Rechtswert", 0.0, self.NS))
-                        yschun = _strip_float(_haltung.findtext("d:Hochwert", 0.0, self.NS))
-                        deckelunten = _strip_float(
-                            _haltung.findtext("d:Punkthoehe", 0.0, self.NS)
-                        )
-                    else:
-                        pass
-
-                yield Anschlussleitung(
-                    leitnam=name,
-                    schoben=schoben,
-                    schunten=schunten,
-                    hoehe=hoehe,
-                    breite=breite,
-                    laenge=laenge,
-                    material=material,
-                    sohleoben=sohleoben,
-                    sohleunten=sohleunten,
-                    deckeloben=deckeloben,
-                    deckelunten=deckelunten,
-                    profilnam=profilnam,
-                    entwart=block.findtext("d:Entwaesserungsart", "not found", self.NS),
-                    ks=1.5,  # in Hydraulikdaten enthalten.
-                    simstatus=_strip_int(block.findtext("d:Status", 0, self.NS)),
-                    kommentar=block.findtext("d:Kommentar", "-", self.NS),
-                    xschob=xschob,
-                    yschob=yschob,
-                    xschun=xschun,
-                    yschun=yschun,
-                )
+                else:
+                    pass
 
         def _iter2() -> Iterator[Anschlussleitung]:
             blocks = self.xml.findall(
