@@ -5,6 +5,8 @@ import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
 from lxml import etree
 from fnmatch import fnmatch
+from qgis.core import Qgis
+from qgis.utils import iface
 from qkan import QKan
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
@@ -212,6 +214,21 @@ class Pumpe(ClassObject):
 
 # endregion
 
+def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> float:
+    """Ersetzt während der Entwicklungszeit die QKan-Funktion"""
+    """Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
+       enthalten ist, werden n Nachkommastellen angenommen"""
+    zahl = text.strip()
+    if zahl == "":
+        return default
+    elif "." in zahl:
+        try:
+            return float(zahl)
+        except BaseException as err:
+            logger.error("10: {}".format(err))
+            return default
+    else:
+        return float(zahl) / 10.0 ** n
 
 def _strip_float(value: Union[str, float], default: float = 0.0) -> float:
      if isinstance(value, float):
@@ -364,10 +381,12 @@ class ImportTask:
             self._auslaesse()
             #self._speicher()
             self._haltungen()
+            self._haltunggeom()
             #self._wehre()
             self._pumpen()
         if getattr(QKan.config.xml, "import_haus", True):
             self._anschlussleitungen()
+            self._anschlussleitunggeom()
         if getattr(QKan.config.xml, "import_zustand", True):
             self._schaechte_untersucht()
             self._untersuchdat_schaechte()
@@ -1171,143 +1190,76 @@ class ImportTask:
             ) = (0.0,) * 7
 
             for block in blocks:
-                if block.findtext("HG006")is not None:
-                    continue
+                if block.findtext("[HG006='L']")is not None:
+                    pass
+                    #continue
+                else:
 
-                name = block.findtext("HG001", "not found")
+                    name = block.findtext("HG001", "not found")
+                    if name == "not found":
+                        name = block.findtext("HG002", "not found")
+
+                    schoben = block.findtext("HG003", "not found")
+                    schunten = block.findtext("HG004", "not found")
+
+                    laenge = _strip_float(block.findtext("HG310", 0.0))
+
+                    material = block.findtext("HG304", "not found")
 
 
-                schoben = block.findtext("HG003", "not found")
-                schunten = block.findtext("HG004", "not found")
+                    profilnam = block.findtext("HG305", "not found")
+                    hoehe = (
+                        _strip_float(block.findtext("HG307", 0.0))
+                        / 1000
+                    )
+                    breite = (
+                        _strip_float(block.findtext("HG306", 0.0))
+                        / 1000
+                    )
 
-                laenge = _strip_float(block.findtext("HG310", 0.0))
+                    xschob = 0.0
+                    yschob = 0.0
+                    xschun = 0.0
+                    yschun = 0.0
 
-                material = block.findtext("HG304", "not found")
+                    if block.findall("GO[GO002='L']") is not None:
+                        pass
+                        # for _gp in block.findall("GO[GO002='L']/GP[1]"):
+                        #
+                        #     xschob = _strip_float(_gp.findtext("GP003", 0.0))
+                        #     if xschob == 0.0:
+                        #         xschob = _strip_float(_gp.findtext("GP005", 0.0))
+                        #     yschob = _strip_float(_gp.findtext("GP004", 0.0))
+                        #     if yschob == 0.0:
+                        #         yschob = _strip_float(_gp.findtext("GP006", 0.0))
+                        #     sohleoben = _strip_float(
+                        #         _gp.findtext("GP007", 0.0)
+                        #     )
 
+                    if block.findall("GO[GO002='H']") is not None:
+                        for _gp in block.findall("GO[GO002='H']/GP[1]"):
 
-                profilnam = block.findtext("HG305", "not found")
-                hoehe = (
-                    _strip_float(block.findtext("HG307", 0.0))
-                    / 1000
-                )
-                breite = (
-                    _strip_float(block.findtext("HG306", 0.0))
-                    / 1000
-                )
+                            xschob = _strip_float(_gp.findtext("GP003", 0.0))
+                            if xschob == 0.0:
+                                xschob = _strip_float(_gp.findtext("GP005", 0.0))
+                            yschob = _strip_float(_gp.findtext("GP004", 0.0))
+                            if yschob == 0.0:
+                                yschob = _strip_float(_gp.findtext("GP006", 0.0))
+                            sohleoben = _strip_float(
+                                _gp.findtext("GP007", 0.0)
+                            )
 
-                xschob = 0.0
-                yschob = 0.0
-                xschun = 0.0
-                yschun = 0.0
-                #x=0
+                        for _gp in block.findall("GO[GO002='H']/GP[last()]"):
 
-                # for _haltung in block.findall(
-                #         "GO/GP[GP999='S']"
-                # ):
-                #     if x == 0:
-                #         xschob = _strip_float(_haltung.findtext("GP003", 0.0))
-                #         if xschob == 0.0:
-                #             xschob = _strip_float(_haltung.findtext("GP005", 0.0))
-                #             print(str(xschob))
-                #         yschob = _strip_float(_haltung.findtext("GP004", 0.0))
-                #         if yschob == 0.0:
-                #             yschob = _strip_float(_haltung.findtext("GP006", 0.0))
-                #         deckeloben = _strip_float(
-                #             _haltung.findtext("GP007", 0.0)
-                #         )
-                #
-                #     if x == 1:
-                #         xschun = _strip_float(_haltung.findtext("GP003", 0.0))
-                #         if xschun == 0.0:
-                #             xschun = _strip_float(_haltung.findtext("GP005", 0.0))
-                #             print(str(xschun))
-                #         yschun = _strip_float(_haltung.findtext("GP004", 0.0))
-                #         if yschun == 0.0:
-                #             yschun = _strip_float(_haltung.findtext("GP006", 0.0))
-                #         deckelunten = _strip_float(
-                #             _haltung.findtext("GP007", 0.0)
-                #         )
-                #     x += 1
-                #
-                # if xschob == 0.0 and yschob == 0.0:
-                #     for _haltung in block.findall(
-                #             "GO/GP[1]"
-                #     ):
-                #         xschob = _strip_float(_haltung.findtext("GP003", 0.0))
-                #         if xschob == 0.0:
-                #             xschob = _strip_float(_haltung.findtext("GP005", 0.0))
-                #         yschob = _strip_float(_haltung.findtext("GP004", 0.0))
-                #         if yschob == 0.0:
-                #             yschob = _strip_float(_haltung.findtext("GP006", 0.0))
-                #         deckeloben = _strip_float(
-                #             _haltung.findtext("GP007", 0.0)
-                #         )
-                #
-                # if xschun == 0.0 and yschun == 0.0:
-                #     for _haltung in block.findall(
-                #             "GO/GP[2]"
-                #     ):
-                #         xschun = _strip_float(_haltung.findtext("GP003", 0.0))
-                #         if xschun == 0.0:
-                #             xschun = _strip_float(_haltung.findtext("GP005", 0.0))
-                #         yschun = _strip_float(_haltung.findtext("GP004", 0.0))
-                #         if yschun == 0.0:
-                #             yschun = _strip_float(_haltung.findtext("GP006", 0.0))
-                #         deckelunten = _strip_float(
-                #             _haltung.findtext("GP007", 0.0)
-                #         )
-
-                if block.findall("GO[GO002='L']") is not None:
-                    for _gp in block.findall("GO[GO002='L']/GP[1]"):
-
-                        xschob = _strip_float(_gp.findtext("GP003", 0.0))
-                        if xschob == 0.0:
-                            xschob = _strip_float(_gp.findtext("GP005", 0.0))
-                        yschob = _strip_float(_gp.findtext("GP004", 0.0))
-                        if yschob == 0.0:
-                            yschob = _strip_float(_gp.findtext("GP006", 0.0))
-                        sohleoben = _strip_float(
-                            _gp.findtext("GP007", 0.0)
-                        )
-
-                if block.findall("GO[GO002='H']") is not None:
-                    for _gp in block.findall("GO[GO002='H']/GP[1]"):
-
-                        xschob = _strip_float(_gp.findtext("GP003", 0.0))
-                        if xschob == 0.0:
-                            xschob = _strip_float(_gp.findtext("GP005", 0.0))
-                        yschob = _strip_float(_gp.findtext("GP004", 0.0))
-                        if yschob == 0.0:
-                            yschob = _strip_float(_gp.findtext("GP006", 0.0))
-                        sohleoben = _strip_float(
-                            _gp.findtext("GP007", 0.0)
-                        )
-
-                if block.findall("GO[GO002='L']") is not None:
-                    for _gp in block.findall("GO[GO002='L']/GP[last()]"):
-
-                        xschun = _strip_float(_gp.findtext("GP003", 0.0))
-                        if xschun == 0.0:
-                            xschun = _strip_float(_gp.findtext("GP005", 0.0))
-                        yschun = _strip_float(_gp.findtext("GP004", 0.0))
-                        if yschun == 0.0:
-                            yschun = _strip_float(_gp.findtext("GP006", 0.0))
-                        sohleunten = _strip_float(
-                            _gp.findtext("GP007", 0.0)
-                        )
-
-                if block.findall("GO[GO002='H']") is not None:
-                    for _gp in block.findall("GO[GO002='H']/GP[last()]"):
-
-                        xschun = _strip_float(_gp.findtext("GP003", 0.0))
-                        if xschun == 0.0:
-                            xschun = _strip_float(_gp.findtext("GP005", 0.0))
-                        yschun = _strip_float(_gp.findtext("GP004", 0.0))
-                        if yschun == 0.0:
-                            yschun = _strip_float(_gp.findtext("GP006", 0.0))
-                        sohleunten = _strip_float(
-                            _gp.findtext("GP007", 0.0)
-                        )
+                            xschun = _strip_float(_gp.findtext("GP003", 0.0))
+                            if xschun == 0.0:
+                                xschun = _strip_float(_gp.findtext("GP005", 0.0))
+                            yschun = _strip_float(_gp.findtext("GP004", 0.0))
+                            if yschun == 0.0:
+                                yschun = _strip_float(_gp.findtext("GP006", 0.0))
+                            sohleunten = _strip_float(
+                                _gp.findtext("GP007", 0.0)
+                            )
 
 
                 yield Haltung(
@@ -1440,6 +1392,118 @@ class ImportTask:
 
 
         self.db_qkan.commit()
+
+    def _haltunggeom(self):
+        blocks = self.xml.findall("HG")
+
+        x_start = 0
+        y_start = 0
+        x_end = 0
+        y_end = 0
+
+        list = []
+        for block in blocks:
+            x_liste=[]
+            y_liste=[]
+            name = block.findtext("HG001", "not found")
+            if name == "not found":
+                name = block.findtext("HG002", "not found")
+            if name == "not found":
+                continue
+
+            if block.findall("GO[GO002='H']") is not None:
+                if len(block.findall("GO[GO002='H']/GP")) > 2:
+                    for _gp in block.findall("GO[GO002='H']/GP"):
+
+                        xsch = _strip_float(_gp.findtext("GP003", 0.0))
+                        if xsch == 0.0:
+                            xsch = _strip_float(_gp.findtext("GP005", 0.0))
+                        ysch = _strip_float(_gp.findtext("GP004", 0.0))
+                        if ysch == 0.0:
+                            ysch = _strip_float(_gp.findtext("GP006", 0.0))
+
+                        x_liste.append(xsch)
+                        y_liste.append(ysch)
+
+                    text = str(name), x_liste, y_liste
+                    list.append(text)
+
+        list.append('Ende')
+
+        for line in list:
+            #line_tokens = line.split(',')
+            name = line[0]
+            if line != "Ende":
+                x_liste = line[1]   # xsch
+                x_liste.pop(0)
+                x_liste.pop(-1)
+                y_liste = line[2]   # ysch
+                y_liste.pop(0)
+                y_liste.pop(-1)
+
+            npt=1
+
+            for xsch, ysch in zip(x_liste, y_liste):
+                if npt == 1:
+                    # Start und Endpunkt der Haltung ausgeben
+                    sql = f"""Select 
+                                ST_X(StartPoint(geom)) AS xanf,
+                                ST_Y(StartPoint(geom)) AS yanf,
+                                ST_X(EndPoint(geom))   AS xend,
+                                ST_Y(EndPoint(geom))   AS yend
+                            FROM haltungen
+                            WHERE haltnam =?"""
+
+                    self.db_qkan.sql(sql, parameters=(name,))
+                    for attr in self.db_qkan.fetchall():
+                        x_start, y_start, x_end, y_end = attr
+
+                    # altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
+                    sql = f"""
+                                                 UPDATE haltungen SET geom = NULL
+                                                 WHERE haltnam = ?
+                                                 """
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=(name,)
+                    ):
+                        del self.db_qkan
+                        return False
+
+                    sql = f"""
+                                    UPDATE haltungen SET geom = AddPoint(MakeLine(MakePoint(?, ?, ?), MakePoint(?, ?, ?)),
+                                                    MakePoint(?, ?, ?), ?)
+                                    WHERE haltnam = ?
+                                 """
+
+                    paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch,
+                                QKan.config.epsg, npt, name]
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=paralist
+                    ):
+                        del self.db_qkan
+                        return False
+
+                if npt > 1:
+                    # weitere punkte ergänzen
+                    sql = f"""
+                                        UPDATE haltungen SET geom = AddPoint(geom,MakePoint(?, ?, ?), ?)
+                                        WHERE haltnam = ?
+                                     """
+
+                    paralist = [xsch, ysch, QKan.config.epsg, npt, name]
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=paralist
+                    ):
+                        del self.db_qkan
+                        return False
+
+                npt+=1
+            self.db_qkan.commit()
+
+
 
 
         # 2. Teil: Hier werden die hydraulischen Haltungsdaten in die Datenbank geschrieben
@@ -1983,12 +2047,6 @@ class ImportTask:
                 schoben = block.findtext("HG003", "not found")
                 schunten = block.findtext("HG004", "not found")
 
-                sohleoben = _strip_float(
-                    block.findtext("SohlhoeheZulauf", 0.0)
-                )
-                sohleunten = _strip_float(
-                    block.findtext("SohlhoeheAblauf", 0.0)
-                )
                 laenge = _strip_float(block.findtext("HG310", 0.0))
 
                 material = block.findtext("HG304", "not found")
@@ -2003,39 +2061,31 @@ class ImportTask:
                         / 1000
                 )
 
-                for _haltung in block.findall(
-                        "GO/GP[1]"
-                ):
-                    xschob = _strip_float(_haltung.findtext("GP003", 0.0))
-                    if xschob == 0.0:
-                        xschob = _strip_float(_haltung.findtext("GP005", 0.0))
-                    else:
-                        pass
-                    yschob = _strip_float(_haltung.findtext("GP004", 0.0))
-                    if yschob == 0.0:
-                        yschob = _strip_float(_haltung.findtext("GP006", 0.0))
-                    else:
-                        pass
-                    deckeloben = _strip_float(
-                        _haltung.findtext("GP007", 0.0)
-                    )
+                if block.findall("GO[GO002='L']") is not None:
 
-                for _haltung in block.findall(
-                        "GO/GP[2]"
-                ):
-                    xschun = _strip_float(_haltung.findtext("GP003", 0.0))
-                    if xschun == 0.0:
-                        xschun = _strip_float(_haltung.findtext("GP005", 0.0))
-                    else:
-                        pass
-                    yschun = _strip_float(_haltung.findtext("GP004", 0.0))
-                    if yschun == 0.0:
-                        yschun = _strip_float(_haltung.findtext("GP006", 0.0))
-                    else:
-                        pass
-                    deckelunten = _strip_float(
-                        _haltung.findtext("GP007", 0.0)
-                    )
+                    for _gp in block.findall("GO[GO002='L']/GP[1]"):
+
+                        xschob = _strip_float(_gp.findtext("GP003", 0.0))
+                        if xschob == 0.0:
+                            xschob = _strip_float(_gp.findtext("GP005", 0.0))
+                        yschob = _strip_float(_gp.findtext("GP004", 0.0))
+                        if yschob == 0.0:
+                            yschob = _strip_float(_gp.findtext("GP006", 0.0))
+                        sohleoben = _strip_float(
+                            _gp.findtext("GP007", 0.0)
+                        )
+
+                    for _gp in block.findall("GO[GO002='L']/GP[last()]"):
+
+                        xschun = _strip_float(_gp.findtext("GP003", 0.0))
+                        if xschun == 0.0:
+                            xschun = _strip_float(_gp.findtext("GP005", 0.0))
+                        yschun = _strip_float(_gp.findtext("GP004", 0.0))
+                        if yschun == 0.0:
+                            yschun = _strip_float(_gp.findtext("GP006", 0.0))
+                        sohleunten = _strip_float(
+                            _gp.findtext("GP007", 0.0)
+                        )
 
                 yield Anschlussleitung(
                     leitnam=name,
@@ -2151,6 +2201,116 @@ class ImportTask:
 
 
         self.db_qkan.commit()
+
+    def _anschlussleitunggeom(self):
+        blocks = self.xml.findall("HG")
+
+        x_start = 0
+        y_start = 0
+        x_end = 0
+        y_end = 0
+
+        list = []
+        for block in blocks:
+            x_liste=[]
+            y_liste=[]
+            name = block.findtext("HG001", "not found")
+            if name == "not found":
+                name = block.findtext("HG002", "not found")
+            if name == "not found":
+                continue
+
+            if block.findall("GO[GO002='L']") is not None:
+                if len(block.findall("GO[GO002='L']/GP")) > 2:
+                    for _gp in block.findall("GO[GO002='L']/GP"):
+
+                        xsch = _strip_float(_gp.findtext("GP003", 0.0))
+                        if xsch == 0.0:
+                            xsch = _strip_float(_gp.findtext("GP005", 0.0))
+                        ysch = _strip_float(_gp.findtext("GP004", 0.0))
+                        if ysch == 0.0:
+                            ysch = _strip_float(_gp.findtext("GP006", 0.0))
+
+                        x_liste.append(xsch)
+                        y_liste.append(ysch)
+
+                    text = str(name), x_liste, y_liste
+                    list.append(text)
+
+        list.append('Ende')
+
+        for line in list:
+            #line_tokens = line.split(',')
+            name = line[0]
+            if line != "Ende":
+                x_liste = line[1]   # xsch
+                x_liste.pop(0)
+                x_liste.pop(-1)
+                y_liste = line[2]   # ysch
+                y_liste.pop(0)
+                y_liste.pop(-1)
+
+            npt=1
+
+            for xsch, ysch in zip(x_liste, y_liste):
+                if npt == 1:
+                    # Start und Endpunkt der Haltung ausgeben
+                    sql = f"""Select 
+                                ST_X(StartPoint(geom)) AS xanf,
+                                ST_Y(StartPoint(geom)) AS yanf,
+                                ST_X(EndPoint(geom))   AS xend,
+                                ST_Y(EndPoint(geom))   AS yend
+                            FROM anschlussleitungen
+                            WHERE leitnam =?"""
+
+                    self.db_qkan.sql(sql, parameters=(name,))
+                    for attr in self.db_qkan.fetchall():
+                        x_start, y_start, x_end, y_end = attr
+
+                    # altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
+                    sql = f"""
+                                                 UPDATE anschlussleitungen SET geom = NULL
+                                                 WHERE leitnam = ?
+                                                 """
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=(name,)
+                    ):
+                        del self.db_qkan
+                        return False
+
+                    sql = f"""
+                                    UPDATE anschlussleitungen SET geom = AddPoint(MakeLine(MakePoint(?, ?, ?), MakePoint(?, ?, ?)),
+                                                    MakePoint(?, ?, ?), ?)
+                                    WHERE leitnam = ?
+                                 """
+
+                    paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch,
+                                QKan.config.epsg, npt, name]
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=paralist
+                    ):
+                        del self.db_qkan
+                        return False
+
+                if npt > 1:
+                    # weitere punkte ergänzen
+                    sql = f"""
+                                        UPDATE anschlussleitungen SET geom = AddPoint(geom,MakePoint(?, ?, ?), ?)
+                                        WHERE leitnam = ?
+                                     """
+
+                    paralist = [xsch, ysch, QKan.config.epsg, npt, name]
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=paralist
+                    ):
+                        del self.db_qkan
+                        return False
+
+                npt+=1
+            self.db_qkan.commit()
 
 
 

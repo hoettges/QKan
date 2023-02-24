@@ -1244,7 +1244,7 @@ def createdbtables(
 
         for ds in daten:
             cursl.execute(
-                "INSERT INTO entwaesserungsarten (kuerzel, bezeichnung, bemerkung, he_nr, kp_nr) VALUES ({})".format(
+                "INSERT INTO entwaesserungsarten (bezeichnung, kuerzel, bemerkung, he_nr, kp_nr) VALUES ({})".format(
                     ds
                 )
             )

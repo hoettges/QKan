@@ -313,10 +313,10 @@ class ImportTask:
         )
 
         if not smp:
-            fehlermeldung(
-                "Fehler beim XML-Import: Schächte",
-                f'Keine Geometrie "SMP" für Schacht {name}',
-            )
+            #fehlermeldung(
+            #    "Fehler beim XML-Import: Schächte",
+            #    f'Keine Geometrie "SMP" für Schacht {name}',
+            #)
             xsch = _strip_float(_block.findtext("d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt/d:Rechtswert", 0.0, self.NS))
             ysch = _strip_float(_block.findtext("d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt/d:Hochwert", 0.0, self.NS))
             sohlhoehe = _strip_float(_block.findtext("d:Geometrie/d:Geometriedaten/d:Knoten/d:Punkt/d:Punkthoehe", 0.0, self.NS))
