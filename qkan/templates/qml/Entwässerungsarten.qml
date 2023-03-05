@@ -1,12 +1,12 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis hasScaleBasedVisibilityFlag="0" version="3.22.4-Białowieża" minScale="0" maxScale="0" readOnly="0" styleCategories="AllStyleCategories">
+<qgis readOnly="0" maxScale="0" minScale="0" styleCategories="AllStyleCategories" version="3.22.16-Białowieża" hasScaleBasedVisibilityFlag="0">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal durationField="" enabled="0" startField="" fixedDuration="0" startExpression="" endExpression="" mode="0" accumulate="0" durationUnit="min" limitMode="0" endField="">
+  <temporal limitMode="0" enabled="0" accumulate="0" endField="" startField="" startExpression="" durationUnit="min" fixedDuration="0" mode="0" durationField="" endExpression="">
     <fixedRange>
       <start></start>
       <end></end>
@@ -14,7 +14,10 @@
   </temporal>
   <customproperties>
     <Option type="Map">
-      <Option value="0" name="embeddedWidgets/count" type="QString"/>
+      <Option type="List" name="dualview/previewExpressions">
+        <Option value="&quot;kuerzel&quot;" type="QString"/>
+      </Option>
+      <Option value="0" type="int" name="embeddedWidgets/count"/>
       <Option name="variableNames"/>
       <Option name="variableValues"/>
     </Option>
@@ -23,115 +26,115 @@
     <activeChecks/>
     <checkConfiguration/>
   </geometryOptions>
-  <legend type="default-vector" showLabelLegend="0"/>
+  <legend showLabelLegend="0" type="default-vector"/>
   <referencedLayers/>
   <fieldConfiguration>
-    <field name="pk" configurationFlags="None">
+    <field configurationFlags="None" name="pk">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
+            <Option value="0" type="QString" name="IsMultiline"/>
+            <Option value="0" type="QString" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="kuerzel" configurationFlags="None">
+    <field configurationFlags="None" name="bezeichnung">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
+            <Option value="0" type="QString" name="IsMultiline"/>
+            <Option value="0" type="QString" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="bezeichnung" configurationFlags="None">
+    <field configurationFlags="None" name="kuerzel">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
+            <Option value="0" type="QString" name="IsMultiline"/>
+            <Option value="0" type="QString" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="bemerkung" configurationFlags="None">
+    <field configurationFlags="None" name="bemerkung">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
+            <Option value="0" type="QString" name="IsMultiline"/>
+            <Option value="0" type="QString" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="he_nr" configurationFlags="None">
+    <field configurationFlags="None" name="he_nr">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
+            <Option value="0" type="QString" name="IsMultiline"/>
+            <Option value="0" type="QString" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
     </field>
-    <field name="kp_nr" configurationFlags="None">
+    <field configurationFlags="None" name="kp_nr">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" name="IsMultiline" type="QString"/>
-            <Option value="0" name="UseHtml" type="QString"/>
+            <Option value="0" type="QString" name="IsMultiline"/>
+            <Option value="0" type="QString" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias field="pk" name="" index="0"/>
-    <alias field="kuerzel" name="Kürzel" index="1"/>
-    <alias field="bezeichnung" name="Bezeichnung" index="2"/>
-    <alias field="bemerkung" name="Bemerkung" index="3"/>
-    <alias field="he_nr" name="NR (HYSTEM-EXTRAN)" index="4"/>
-    <alias field="kp_nr" name="NR (Kanal++)" index="5"/>
+    <alias index="0" field="pk" name=""/>
+    <alias index="1" field="bezeichnung" name="Bezeichnung"/>
+    <alias index="2" field="kuerzel" name="Kürzel"/>
+    <alias index="3" field="bemerkung" name="Bemerkung"/>
+    <alias index="4" field="he_nr" name="NR (HYSTEM-EXTRAN)"/>
+    <alias index="5" field="kp_nr" name="NR (Kanal++)"/>
   </aliases>
   <defaults>
-    <default field="pk" applyOnUpdate="0" expression=""/>
-    <default field="kuerzel" applyOnUpdate="0" expression=""/>
-    <default field="bezeichnung" applyOnUpdate="0" expression=""/>
-    <default field="bemerkung" applyOnUpdate="0" expression=""/>
-    <default field="he_nr" applyOnUpdate="0" expression=""/>
-    <default field="kp_nr" applyOnUpdate="0" expression=""/>
+    <default applyOnUpdate="0" field="pk" expression=""/>
+    <default applyOnUpdate="0" field="bezeichnung" expression=""/>
+    <default applyOnUpdate="0" field="kuerzel" expression=""/>
+    <default applyOnUpdate="0" field="bemerkung" expression=""/>
+    <default applyOnUpdate="0" field="he_nr" expression=""/>
+    <default applyOnUpdate="0" field="kp_nr" expression=""/>
   </defaults>
   <constraints>
-    <constraint field="pk" constraints="3" unique_strength="1" notnull_strength="1" exp_strength="0"/>
-    <constraint field="kuerzel" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="bezeichnung" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="bemerkung" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="he_nr" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint field="kp_nr" constraints="0" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint exp_strength="0" constraints="3" field="pk" notnull_strength="2" unique_strength="2"/>
+    <constraint exp_strength="0" constraints="0" field="bezeichnung" notnull_strength="0" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" field="kuerzel" notnull_strength="0" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" field="bemerkung" notnull_strength="0" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" field="he_nr" notnull_strength="0" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" field="kp_nr" notnull_strength="0" unique_strength="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint field="pk" exp="" desc=""/>
-    <constraint field="kuerzel" exp="" desc=""/>
-    <constraint field="bezeichnung" exp="" desc=""/>
-    <constraint field="bemerkung" exp="" desc=""/>
-    <constraint field="he_nr" exp="" desc=""/>
-    <constraint field="kp_nr" exp="" desc=""/>
+    <constraint exp="" desc="" field="pk"/>
+    <constraint exp="" desc="" field="bezeichnung"/>
+    <constraint exp="" desc="" field="kuerzel"/>
+    <constraint exp="" desc="" field="bemerkung"/>
+    <constraint exp="" desc="" field="he_nr"/>
+    <constraint exp="" desc="" field="kp_nr"/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
     <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
   </attributeactions>
-  <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
     <columns>
-      <column name="pk" type="field" hidden="0" width="-1"/>
-      <column name="kuerzel" type="field" hidden="0" width="-1"/>
-      <column name="bezeichnung" type="field" hidden="0" width="-1"/>
-      <column name="bemerkung" type="field" hidden="0" width="-1"/>
-      <column name="he_nr" type="field" hidden="0" width="-1"/>
-      <column name="kp_nr" type="field" hidden="0" width="-1"/>
-      <column type="actions" hidden="1" width="-1"/>
+      <column type="field" width="-1" name="pk" hidden="0"/>
+      <column type="field" width="-1" name="bezeichnung" hidden="0"/>
+      <column type="field" width="-1" name="kuerzel" hidden="0"/>
+      <column type="field" width="-1" name="bemerkung" hidden="0"/>
+      <column type="field" width="-1" name="he_nr" hidden="0"/>
+      <column type="field" width="-1" name="kp_nr" hidden="0"/>
+      <column type="actions" width="-1" hidden="1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -163,28 +166,28 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field name="bemerkung" editable="1"/>
-    <field name="bezeichnung" editable="1"/>
-    <field name="he_nr" editable="1"/>
-    <field name="kp_nr" editable="1"/>
-    <field name="kuerzel" editable="1"/>
-    <field name="pk" editable="1"/>
+    <field editable="1" name="bemerkung"/>
+    <field editable="1" name="bezeichnung"/>
+    <field editable="1" name="he_nr"/>
+    <field editable="1" name="kp_nr"/>
+    <field editable="1" name="kuerzel"/>
+    <field editable="1" name="pk"/>
   </editable>
   <labelOnTop>
-    <field name="bemerkung" labelOnTop="0"/>
-    <field name="bezeichnung" labelOnTop="0"/>
-    <field name="he_nr" labelOnTop="0"/>
-    <field name="kp_nr" labelOnTop="0"/>
-    <field name="kuerzel" labelOnTop="0"/>
-    <field name="pk" labelOnTop="0"/>
+    <field labelOnTop="0" name="bemerkung"/>
+    <field labelOnTop="0" name="bezeichnung"/>
+    <field labelOnTop="0" name="he_nr"/>
+    <field labelOnTop="0" name="kp_nr"/>
+    <field labelOnTop="0" name="kuerzel"/>
+    <field labelOnTop="0" name="pk"/>
   </labelOnTop>
   <reuseLastValue>
-    <field name="bemerkung" reuseLastValue="0"/>
-    <field name="bezeichnung" reuseLastValue="0"/>
-    <field name="he_nr" reuseLastValue="0"/>
-    <field name="kp_nr" reuseLastValue="0"/>
-    <field name="kuerzel" reuseLastValue="0"/>
-    <field name="pk" reuseLastValue="0"/>
+    <field reuseLastValue="0" name="bemerkung"/>
+    <field reuseLastValue="0" name="bezeichnung"/>
+    <field reuseLastValue="0" name="he_nr"/>
+    <field reuseLastValue="0" name="kp_nr"/>
+    <field reuseLastValue="0" name="kuerzel"/>
+    <field reuseLastValue="0" name="pk"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>
