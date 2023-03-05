@@ -95,7 +95,7 @@ def run(dbcon: DBConnection) -> bool:
             BEGIN
                 UPDATE haltungen SET 
                 schoben = (
-                    SELECT schnam
+                    SELECT coalesce(schnam, OLD.schoben)
                     FROM schaechte AS s
                     WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, 1), 0.1)) = 1
                     AND s.ROWID IN (
@@ -108,12 +108,12 @@ def run(dbcon: DBConnection) -> bool:
                 WHERE pk = old.pk;
 
                 UPDATE haltungen SET 
-                laenge = round(ST_Length(new.geom), 3)
+                laenge = coalesce(round(ST_Length(new.geom), 3), OLD.laenge)
                 WHERE pk = old.pk;
 
                 UPDATE haltungen SET 
                 schunten = (
-                    SELECT schnam
+                    SELECT coalesce(schnam, OLD.schunten)
                     FROM schaechte AS s
                     WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, -1), 0.1)) = 1
                     AND s.ROWID IN (
@@ -127,7 +127,7 @@ def run(dbcon: DBConnection) -> bool:
             
                 UPDATE haltungen SET 
                 sohleoben = (
-                    SELECT sohlhoehe
+                    SELECT coalesce(sohlhoehe, OLD.sohleoben)
                     FROM schaechte AS s
                     WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, 1), 0.1)) = 1
                     AND s.ROWID IN (
@@ -141,7 +141,7 @@ def run(dbcon: DBConnection) -> bool:
             
                 UPDATE haltungen SET 
                 sohleunten = (
-                    SELECT sohlhoehe
+                    SELECT coalesce(sohlhoehe, OLD.sohleunten)
                     FROM schaechte AS s
                     WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, -1), 0.1)) = 1
                     AND s.ROWID IN (
