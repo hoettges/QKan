@@ -4,6 +4,8 @@ import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
 from lxml import etree
 from fnmatch import fnmatch
+from qgis.core import Qgis
+from qgis.utils import iface
 from qkan import QKan
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
@@ -334,10 +336,12 @@ class ImportTask:
             self._auslaesse()
             self._speicher()
             self._haltungen()
+            self._haltunggeom()
             self._wehre()
             self._pumpen()
         if getattr(QKan.config.xml, "import_haus", True):
             self._anschlussleitungen()
+            self._anschlussleitunggeom()
         if getattr(QKan.config.xml, "import_zustand", True):
             self._schaechte_untersucht()
             self._untersuchdat_schaechte()
@@ -1156,8 +1160,6 @@ class ImportTask:
                     hoehe = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilhoehe", 0.0, self.NS)) / 1000.
                     breite = _strip_float(block.findtext("d:Kante/d:Profil/d:Profilbreite", 0.0, self.NS)) / 1000.
 
-                    # hier ergännzen mit dem fall das x,y unter Polygone steht!!
-                    # Haltungen können alternativ als Kanten oder als Polygone vorkommen.
 
                     found_kanten = block.findtext("d:Geometrie/d:Geometriedaten/d:Kanten", "not found", self.NS)
                     if found_kanten:
@@ -1184,8 +1186,7 @@ class ImportTask:
                         ):
                             if kante is not None:
                                 # Für mehr als 1 Kante: Start der 1. Kante (siehe break)
-                                for _start in block.findall(
-                                        "d:Start", self.NS
+                                for _start in block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Start[1]", self.NS
                                 ):
                                     xschob = _strip_float(_start.findtext("d:Rechtswert", 0.0, self.NS))
                                     yschob = _strip_float(_start.findtext("d:Hochwert", 0.0, self.NS))
@@ -1194,8 +1195,7 @@ class ImportTask:
                                     )
                                     break
                                 # Für mehr als 1 Kante: Ende der letzten Kante
-                                for _ende in block.findall(
-                                        "d:Start", self.NS
+                                for _ende in block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Ende[last()]", self.NS
                                 ):
                                     xschob = _strip_float(_ende.findtext("d:Rechtswert", 0.0, self.NS))
                                     yschob = _strip_float(_ende.findtext("d:Hochwert", 0.0, self.NS))
@@ -1387,6 +1387,131 @@ class ImportTask:
                 return None
 
         self.db_qkan.commit()
+
+
+    def _haltunggeom(self):
+        blocks = self.xml.findall(
+            "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektart='1']",
+            self.NS,
+        )
+
+        x_start = 0
+        y_start = 0
+        x_end = 0
+        y_end = 0
+
+        list = []
+        for block in blocks:
+            x_liste = []
+            y_liste = []
+            found_leitung = block.findtext("d:Kante/d:Leitung", "", self.NS)
+            if found_leitung == '':
+
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                found_kanten = block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS)
+                if found_kanten:
+
+                    if block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS) is not None:
+                        if len(block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS)) > 2:
+                            for _gp in block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS):
+                                xschob = _strip_float(_gp.findtext("d:Kante/d:Start/d:Rechtswert", 0.0, self.NS))
+                                yschob = _strip_float(_gp.findtext("d:Kante/d:Start/d:Hochwert",0.0, self.NS))
+
+                                x_liste.append(xschob)
+                                y_liste.append(yschob)
+
+                            text = str(name), x_liste, y_liste
+                            list.append(text)
+
+
+                else:
+                    if block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS) is not None:
+                        if len(block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS)) > 1:
+                            for _gp in block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS):
+                                xschob = _strip_float(_gp.findtext("d:Start/d:Rechtswert", 0.0, self.NS))
+                                yschob = _strip_float(_gp.findtext("d:Start/d:Hochwert", 0.0, self.NS))
+
+                                x_liste.append(xschob)
+                                y_liste.append(yschob)
+
+                            text = str(name), x_liste, y_liste
+                            list.append(text)
+        list.append('Ende')
+
+        for line in list:
+            #line_tokens = line.split(',')
+            name = line[0]
+            if line != "Ende":
+                x_liste = line[1]   # xsch
+                x_liste.pop(0)
+                #x_liste.pop(-1)
+                y_liste = line[2]   # ysch
+                y_liste.pop(0)
+                #y_liste.pop(-1)
+
+            npt=1
+
+            for xsch, ysch in zip(x_liste, y_liste):
+                if npt == 1:
+                    # Start und Endpunkt der Haltung ausgeben
+                    sql = f"""Select 
+                                ST_X(StartPoint(geom)) AS xanf,
+                                ST_Y(StartPoint(geom)) AS yanf,
+                                ST_X(EndPoint(geom))   AS xend,
+                                ST_Y(EndPoint(geom))   AS yend
+                            FROM haltungen
+                            WHERE haltnam =?"""
+
+                    self.db_qkan.sql(sql, parameters=(name,))
+                    for attr in self.db_qkan.fetchall():
+                        x_start, y_start, x_end, y_end = attr
+
+                    # altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
+                    sql = f"""
+                                                 UPDATE haltungen SET geom = NULL
+                                                 WHERE haltnam = ?
+                                                 """
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=(name,)
+                    ):
+                        del self.db_qkan
+                        return False
+
+                    sql = f"""
+                                    UPDATE haltungen SET geom = AddPoint(MakeLine(MakePoint(?, ?, ?), MakePoint(?, ?, ?)),
+                                                    MakePoint(?, ?, ?), ?)
+                                    WHERE haltnam = ?
+                                 """
+
+                    paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch,
+                                QKan.config.epsg, npt, name]
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=paralist
+                    ):
+                        del self.db_qkan
+                        return False
+
+                if npt > 1:
+                    # weitere punkte ergänzen
+                    sql = f"""
+                                        UPDATE haltungen SET geom = AddPoint(geom,MakePoint(?, ?, ?), ?)
+                                        WHERE haltnam = ?
+                                     """
+
+                    paralist = [xsch, ysch, QKan.config.epsg, npt, name]
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=paralist
+                    ):
+                        del self.db_qkan
+                        return False
+
+                npt+=1
+            self.db_qkan.commit()
+
 
     #Haltung_untersucht
     def _haltungen_untersucht(self) -> None:
@@ -1973,7 +2098,7 @@ class ImportTask:
                             pass
 
                     for _haltung in block.findall(
-                            "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Start",
+                            "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Start[1]",
                             self.NS
                     ):
                         if _haltung is not None:
@@ -1999,7 +2124,7 @@ class ImportTask:
                             pass
 
                     for _haltung in block.findall(
-                            "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Ende",
+                            "d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante/d:Ende[last()]",
                             self.NS
                     ):
                         if _haltung is not None:
@@ -2180,6 +2305,136 @@ class ImportTask:
                 return None
 
         self.db_qkan.commit()
+
+    def _anschlussleitunggeom(self):
+        #blocks = self.xml.findall("HG")
+        blocks = self.xml.findall(
+            "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektart='1']",
+            self.NS,
+        )
+
+        x_start = 0
+        y_start = 0
+        x_end = 0
+        y_end = 0
+
+        list = []
+        for block in blocks:
+            x_liste = []
+            y_liste = []
+
+            found_leitung = block.findtext("d:Kante/d:Leitung", "", self.NS)
+            if found_leitung != '':
+
+                name = block.findtext("d:Objektbezeichnung", "not found", self.NS)
+
+                # hier ergännzen mit dem fall das x,y unter Polygone steht!!
+                # Haltungen können alternativ als Kanten oder als Polygone vorkommen.
+
+                found_kanten = block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS)
+                if found_kanten:
+
+                    if block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS) is not None:
+                        if len(block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS)) > 2:
+                            for _gp in block.findall("d:Geometrie/d:Geometriedaten/d:Kanten", self.NS):
+                                xschob = _strip_float(_gp.findtext("d:Kante/d:Start/d:Rechtswert", 0.0, self.NS))
+                                yschob = _strip_float(_gp.findtext("d:Kante/d:Start/d:Hochwert",0.0, self.NS))
+
+                                x_liste.append(xschob)
+                                y_liste.append(yschob)
+
+                            text = str(name), x_liste, y_liste
+                            list.append(text)
+
+
+                else:
+                    if block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS) is not None:
+                        if len(block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS)) > 1:
+                            for _gp in block.findall("d:Geometrie/d:Geometriedaten/d:Polygone/d:Polygon/d:Kante", self.NS):
+                                xschob = _strip_float(_gp.findtext("d:Start/d:Rechtswert", 0.0, self.NS))
+                                yschob = _strip_float(_gp.findtext("d:Start/d:Hochwert", 0.0, self.NS))
+
+                                x_liste.append(xschob)
+                                y_liste.append(yschob)
+
+                            text = str(name), x_liste, y_liste
+                            list.append(text)
+
+        list.append('Ende')
+
+        for line in list:
+            #line_tokens = line.split(',')
+            name = line[0]
+            if line != "Ende":
+                x_liste = line[1]   # xsch
+                x_liste.pop(0)
+                #x_liste.pop(-1)
+                y_liste = line[2]   # ysch
+                y_liste.pop(0)
+                #y_liste.pop(-1)
+
+            npt=1
+
+            for xsch, ysch in zip(x_liste, y_liste):
+                if npt == 1:
+                    # Start und Endpunkt der Haltung ausgeben
+                    sql = f"""Select 
+                                ST_X(StartPoint(geom)) AS xanf,
+                                ST_Y(StartPoint(geom)) AS yanf,
+                                ST_X(EndPoint(geom))   AS xend,
+                                ST_Y(EndPoint(geom))   AS yend
+                            FROM anschlussleitungen
+                            WHERE leitnam =?"""
+
+                    self.db_qkan.sql(sql, parameters=(name,))
+                    for attr in self.db_qkan.fetchall():
+                        x_start, y_start, x_end, y_end = attr
+
+                    # altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
+                    sql = f"""
+                                                 UPDATE anschlussleitungen SET geom = NULL
+                                                 WHERE leitnam = ?
+                                                 """
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=(name,)
+                    ):
+                        del self.db_qkan
+                        return False
+
+                    sql = f"""
+                                    UPDATE anschlussleitungen SET geom = AddPoint(MakeLine(MakePoint(?, ?, ?), MakePoint(?, ?, ?)),
+                                                    MakePoint(?, ?, ?), ?)
+                                    WHERE leitnam = ?
+                                 """
+
+                    paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch,
+                                QKan.config.epsg, npt, name]
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=paralist
+                    ):
+                        del self.db_qkan
+                        return False
+
+                if npt > 1:
+                    # weitere punkte ergänzen
+                    sql = f"""
+                                        UPDATE anschlussleitungen SET geom = AddPoint(geom,MakePoint(?, ?, ?), ?)
+                                        WHERE leitnam = ?
+                                     """
+
+                    paralist = [xsch, ysch, QKan.config.epsg, npt, name]
+
+                    if not self.db_qkan.sql(
+                            sql, parameters=paralist
+                    ):
+                        del self.db_qkan
+                        return False
+
+                npt+=1
+            self.db_qkan.commit()
+
 
 
     def _wehre(self) -> None:
