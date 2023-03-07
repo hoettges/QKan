@@ -190,156 +190,153 @@ def get_info(qkan_db: DBConnection, schaechte: List[str], haltungen: List[str]) 
 
 
 def find_route(dbname: str, auswahl: List[str], layer_type: int) -> Optional[HaltungenStruct]:
-    qkan_db: DBConnection = DBConnection(dbname=dbname)
-    if not qkan_db:
-        logger.error(
-            "Fehler in dijkstra.find_route:\n"
-            f"QKan-Datenbank {qkan_db:s} wurde nicht"
-            " gefunden oder war nicht aktuell!\nAbbruch!"
-        )
-        return None
+    with DBConnection(dbname=dbname) as qkan_db:
+        if not qkan_db:
+            logger.error(
+                "Fehler in dijkstra.find_route:\n"
+                f"QKan-Datenbank {qkan_db:s} wurde nicht"
+                " gefunden oder war nicht aktuell!\nAbbruch!"
+            )
+            return None
 
-    # Kanaldaten lesen
-    sql = """
-            SELECT haltnam, schoben, schunten, laenge
-            FROM haltungen
-        """
-    qkan_db.sql(sql)
-    data = qkan_db.fetchall()
-    netz = cast(NetzType, data)
+        # Kanaldaten lesen
+        sql = "SELECT haltnam, schoben, schunten, laenge FROM haltungen"
+        qkan_db.sql(sql)
+        data = qkan_db.fetchall()
+        netz = cast(NetzType, data)
 
-    if layer_type == LayerType.Haltung:
-        netzdict = dict([(hal[0], (hal[1], hal[2])) for hal in netz])
-        schachtauswahl = list(set([netzdict[haltung][0] for haltung in auswahl] + \
-                                  [netzdict[haltung][1] for haltung in auswahl]))
-    elif layer_type == LayerType.Schacht:
-        schachtauswahl = auswahl
-    else:
-        logger.error(f'Fehler bei der Objektauswahl\n'
-                     f'Auswahl: {auswahl}\n'
-                     f'Auswahltyp: {layer_type}')
-        return None
-
-    logger.debug(f'Objektauswahl\n'
-                 f'Auswahl: {schachtauswahl}\n'
-                 f'Auswahltyp ({LayerType.Schacht}=Schächte, {LayerType.Haltung}=Haltungen): {layer_type}')
-
-    # schachtauswahl prüfen: Schacht muss als Anfangs- oder Endschacht im Netz vorhanden sein
-    for schacht in schachtauswahl.copy():
-        if schacht not in [e[1] for e in netz] + [e[2] for e in netz]:
-            schachtauswahl.remove(schacht)
-            logger.debug(f'Schacht war nicht im Netz enthalten, deshalb entfernt: {schacht}')
-
-    # Dict mit Gewichten bezogen auf die Schächte in 'schachtauswahl'
-    # Hinweis: Parameter netz ist nur beim ersten Aufruf wirksam, um Netz.links und Netz.haltungen
-    # als Klassenattribute zu erstellen
-    knotennetz: Dict[str, Netz] = {e: Netz(netz) for e in schachtauswahl}
-
-    for schacht in schachtauswahl.copy():
-        if schacht in knotennetz:
-            knotennetz[schacht].analyse(schacht)
+        if layer_type == LayerType.Haltung:
+            netzdict = dict([(hal[0], (hal[1], hal[2])) for hal in netz])
+            schachtauswahl = list(set([netzdict[haltung][0] for haltung in auswahl] + \
+                                      [netzdict[haltung][1] for haltung in auswahl]))
+        elif layer_type == LayerType.Schacht:
+            schachtauswahl = auswahl
         else:
-            logger.error("Dijkstra-Fehler: Schacht %s ist nicht vorhanden", schacht)
-            schachtauswahl.remove(schacht)
+            logger.error(f'Fehler bei der Objektauswahl\n'
+                         f'Auswahl: {auswahl}\n'
+                         f'Auswahltyp: {layer_type}')
+            return None
 
-    # Gewichtungen auf der Strecke von 'kvon' nach 'knach' für alle paarweisen
-    # Kombinationen aus 'schachtauswahl'
-    logger.info(knotennetz)
-    gewicht: Dict[str, Dict[str, float]] = {
-        kvon: {
-            knach: knotennetz[kvon].weight.get(knach, 0)
-            for knach in schachtauswahl
-            if kvon != knach
+        logger.debug(f'Objektauswahl\n'
+                     f'Auswahl: {schachtauswahl}\n'
+                     f'Auswahltyp ({LayerType.Schacht}=Schächte, {LayerType.Haltung}=Haltungen): {layer_type}')
+
+        # schachtauswahl prüfen: Schacht muss als Anfangs- oder Endschacht im Netz vorhanden sein
+        for schacht in schachtauswahl.copy():
+            if schacht not in [e[1] for e in netz] + [e[2] for e in netz]:
+                schachtauswahl.remove(schacht)
+                logger.debug(f'Schacht war nicht im Netz enthalten, deshalb entfernt: {schacht}')
+
+        # Dict mit Gewichten bezogen auf die Schächte in 'schachtauswahl'
+        # Hinweis: Parameter netz ist nur beim ersten Aufruf wirksam, um Netz.links und Netz.haltungen
+        # als Klassenattribute zu erstellen
+        knotennetz: Dict[str, Netz] = {e: Netz(netz) for e in schachtauswahl}
+
+        for schacht in schachtauswahl.copy():
+            if schacht in knotennetz:
+                knotennetz[schacht].analyse(schacht)
+            else:
+                logger.error("Dijkstra-Fehler: Schacht %s ist nicht vorhanden", schacht)
+                schachtauswahl.remove(schacht)
+
+        # Gewichtungen auf der Strecke von 'kvon' nach 'knach' für alle paarweisen
+        # Kombinationen aus 'schachtauswahl'
+        logger.info(knotennetz)
+        gewicht: Dict[str, Dict[str, float]] = {
+            kvon: {
+                knach: knotennetz[kvon].weight.get(knach, 0)
+                for knach in schachtauswahl
+                if kvon != knach
+            }
+            for kvon in schachtauswahl
         }
-        for kvon in schachtauswahl
-    }
 
-    # Aufstellung der Liste mit Schächten in Reihenfolge des Länggschnitts: knotenlaengs
-    knotenlaengs: List[str] = []
-    krest: List[str] = schachtauswahl.copy()  # Vorlageliste zur sukzessiven Entnahme
+        # Aufstellung der Liste mit Schächten in Reihenfolge des Länggschnitts: knotenlaengs
+        knotenlaengs: List[str] = []
+        krest: List[str] = schachtauswahl.copy()  # Vorlageliste zur sukzessiven Entnahme
 
-    # Schacht mit der höchsten Wertung ist der Anfangsschacht
-    knoten_max_wertung: Optional[str] = None
-    wertung = 0.0                                     # Initialisierung
+        # Schacht mit der höchsten Wertung ist der Anfangsschacht
+        knoten_max_wertung: Optional[str] = None
+        wertung = 0.0                                     # Initialisierung
 
-    for kvon in gewicht.keys():
-        for knach in gewicht[kvon].keys():
-            wertakt = gewicht[kvon][knach]  # Wertung des Kandidaten
-            if wertakt > wertung:
-                knoten_max_wertung = knach
-                wertung = wertakt  # Übernahme der neuen höheren Wertung
+        for kvon in gewicht.keys():
+            for knach in gewicht[kvon].keys():
+                wertakt = gewicht[kvon][knach]  # Wertung des Kandidaten
+                if wertakt > wertung:
+                    knoten_max_wertung = knach
+                    wertung = wertakt  # Übernahme der neuen höheren Wertung
 
-    if wertung > MAX_WEIGHT - 0.0001:
-        return None
+        if wertung > MAX_WEIGHT - 0.0001:
+            return None
 
-    # Kontrolle, ob mindestens noch ein Schacht
-    if knoten_max_wertung is None:
-        logger.error(f"Fehler in Dijkstra: Keine Kanäle über Mindestwertung von 0")
-        return None
+        # Kontrolle, ob mindestens noch ein Schacht
+        if knoten_max_wertung is None:
+            logger.error(f"Fehler in Dijkstra: Keine Kanäle über Mindestwertung von 0")
+            return None
 
-    # Die weiteren Schächte werden jeweils nach der geringsten Wertigkeit gewählt
-    knotenlaengs.append(knoten_max_wertung)
-    krest.remove(knoten_max_wertung)  # Restliste
+        # Die weiteren Schächte werden jeweils nach der geringsten Wertigkeit gewählt
+        knotenlaengs.append(knoten_max_wertung)
+        krest.remove(knoten_max_wertung)  # Restliste
 
-    schacht = knoten_max_wertung
-    knoten_min_wertung: Optional[str] = None
-    while krest:
-        wertung = MAX_WEIGHT  # Initialisierung
-        for knach in krest:
-            wertakt = gewicht[schacht][knach]
-            if wertakt < wertung:
-                knoten_min_wertung = knach
-                wertung = wertakt
-
-        if knoten_min_wertung is None:
-            continue
-
-        # gefundenen nächsten Schacht verarbeiten
-        schacht = knoten_min_wertung
-        knotenlaengs.append(knoten_min_wertung)
-        krest.remove(knoten_min_wertung)
-
-    schacht = knotenlaengs.pop(0)
-    schaechtelaengs: List[str] = [schacht]
-    haltungenlaengs = []
-
-    # Kontrolle, ob mindestens noch ein Schacht
-    if len(gewicht) < 1:
-        logger.error(f"Fehler in Dijkstra: Weniger als 2 Schächte: {knotenlaengs}")
-        return None
-
-    # Sukzessives Durchhangeln mit schacht zum jeweils nächsten Knoten in knotenlaengs
-    schnext = None
-    haltnext = None
-    for knach in knotenlaengs:
-        # Schleife solange, bis knach erreicht ist, d.h. kvon == knach
-        while schacht != knach:
-            # Auswahl des nächsten Schachtes mit der kleinsten Gewichtung bezogen auf knach
-            wertung = MAX_WEIGHT   # Initialisierung
-
-            for schtest in Netz.links[schacht].keys():
-                wertakt = knotennetz[knach].weight[schtest]
+        schacht = knoten_max_wertung
+        knoten_min_wertung: Optional[str] = None
+        while krest:
+            wertung = MAX_WEIGHT  # Initialisierung
+            for knach in krest:
+                wertakt = gewicht[schacht][knach]
                 if wertakt < wertung:
+                    knoten_min_wertung = knach
                     wertung = wertakt
-                    schnext = schtest
-                    haltnext = Netz.haltung[schacht][schnext]
 
-            if schnext is not None and haltnext is not None:
-                # Damit der letzte Schacht nicht doppelt auftaucht
-                # if schnext != knach:
-                schaechtelaengs.append(schnext)
-                haltungenlaengs.append(haltnext)
+            if knoten_min_wertung is None:
+                continue
 
-                # Schritt zum nächsten Schacht
-            schacht = schnext
+            # gefundenen nächsten Schacht verarbeiten
+            schacht = knoten_min_wertung
+            knotenlaengs.append(knoten_min_wertung)
+            krest.remove(knoten_min_wertung)
 
-    # Letzten Knoten noch anhängen
-    # schaechtelaengs.append(schacht)
+        schacht = knotenlaengs.pop(0)
+        schaechtelaengs: List[str] = [schacht]
+        haltungenlaengs = []
 
-    logger.debug(f'Haltungen längs: {haltungenlaengs}')
-    logger.debug(f'Schächte längs: {schaechtelaengs}')
+        # Kontrolle, ob mindestens noch ein Schacht
+        if len(gewicht) < 1:
+            logger.error(f"Fehler in Dijkstra: Weniger als 2 Schächte: {knotenlaengs}")
+            return None
 
-    schinfolaengs, halinfolaengs = get_info(qkan_db, schaechtelaengs, haltungenlaengs)
+        # Sukzessives Durchhangeln mit schacht zum jeweils nächsten Knoten in knotenlaengs
+        schnext = None
+        haltnext = None
+        for knach in knotenlaengs:
+            # Schleife solange, bis knach erreicht ist, d.h. kvon == knach
+            while schacht != knach:
+                # Auswahl des nächsten Schachtes mit der kleinsten Gewichtung bezogen auf knach
+                wertung = MAX_WEIGHT   # Initialisierung
+
+                for schtest in Netz.links[schacht].keys():
+                    wertakt = knotennetz[knach].weight[schtest]
+                    if wertakt < wertung:
+                        wertung = wertakt
+                        schnext = schtest
+                        haltnext = Netz.haltung[schacht][schnext]
+
+                if schnext is not None and haltnext is not None:
+                    # Damit der letzte Schacht nicht doppelt auftaucht
+                    # if schnext != knach:
+                    schaechtelaengs.append(schnext)
+                    haltungenlaengs.append(haltnext)
+
+                    # Schritt zum nächsten Schacht
+                schacht = schnext
+
+        # Letzten Knoten noch anhängen
+        # schaechtelaengs.append(schacht)
+
+        logger.debug(f'Haltungen längs: {haltungenlaengs}')
+        logger.debug(f'Schächte längs: {schaechtelaengs}')
+
+        schinfolaengs, halinfolaengs = get_info(qkan_db, schaechtelaengs, haltungenlaengs)
 
     return {
         "haltungen": haltungenlaengs,

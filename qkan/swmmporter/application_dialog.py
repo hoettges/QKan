@@ -155,7 +155,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
          """
         # self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
-        if not self.db_qkan:
+        if not self.db_qkan.connected:
             logger.error("db_qkan is not initialized.")
             return False
 

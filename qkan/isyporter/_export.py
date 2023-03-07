@@ -698,9 +698,6 @@ class ExportTask:
             minidom.parseString(tostring(root)).toprettyxml(indent="  ")
         )
 
-        # Close connection
-        del self.db_qkan
-
         fortschritt("Ende...", 1)
         progress_bar.setValue(100)
         status_message.setText("Datenexport abgeschlossen.")

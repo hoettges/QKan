@@ -76,11 +76,9 @@ class ImportTask:
         #self.xoffset, self.yoffset = offset
         self.xoffset, self.yoffset = [0.0,0.0]
 
-        self.dbQK = db_qkan
+        self.connected = self.db_qkan.connected
 
-        self.connected = self.dbQK.connected
-
-        if not self.dbQK.connected:
+        if not self.db_qkan.connected:
             fehlermeldung(
                 "Fehler in import_from_swmm:\n",
                 "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
@@ -89,8 +87,7 @@ class ImportTask:
             )
 
     def __del__(self) -> None:
-        self.dbQK.sql("SELECT RecoverSpatialIndex()")
-        del self.dbQK
+        self.db_qkan.sql("SELECT RecoverSpatialIndex()")
 
     def read(self) -> None:
         with self.inpobject.open("r") as inp:
@@ -166,19 +163,6 @@ class ImportTask:
             surDepth = line_tokens[4]  # entfällt
             areaPonded = line_tokens[5]  # ueberstauflaeche
 
-            # sql = f"""
-            #     INSERT into schaechte (
-            #         schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
-            #     VALUES (?, ?, ?, ?, 'Schacht')
-            #     """
-            # if not self.dbQK.sql(
-            #     sql,
-            #     mute_logger=True,
-            #     parameters=(name, elevation, elevation + maxdepth, areaPonded),
-            # ):
-            #     del self.dbQK
-            #     return False
-
             params = {'schnam': name,
                       'sohlhoehe': elevation, 'deckelhoehe': float(elevation) + float(maxdepth),
                        'schachttyp': 'Schacht'}
@@ -186,15 +170,14 @@ class ImportTask:
             logger.debug(f'swmm.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
 
-            if not self.dbQK.insertdata(
+            if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
                     **params
             ):
-                del self.dbQK
-                return
+                return False
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
 
     def _outfalls(self) -> bool:
@@ -219,30 +202,20 @@ class ImportTask:
             else:
                 auslasstyp = "frei"
 
-            # sql = f"""
-            #     INSERT into schaechte (
-            #         schnam, sohlhoehe, auslasstyp, schachttyp)
-            #     VALUES (?, ?, ?, 'Auslass')
-            #     """
-            # if not self.dbQK.sql(sql, parameters=(name, elevation, auslasstyp)):
-            #     del self.dbQK
-            #     return False
-
             params = {'schnam': name,
                       'sohlhoehe': elevation, 'schachttyp': 'Auslass'}
 
             logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
 
-            if not self.dbQK.insertdata(
+            if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
                     **params
             ):
-                del self.dbQK
                 return
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
     def _dividers(self):
         #speicherschächte
 
@@ -254,19 +227,6 @@ class ImportTask:
             maxdepth = 'NULL'   # ToDo!
             #initdepth = line_tokens[3]   # entfällt
 
-            # sql = f"""
-            #     INSERT into schaechte (
-            #         schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
-            #     VALUES (?, ?, ?, ?, 'Schacht')
-            #     """
-            # if not self.dbQK.sql(
-            #     sql,
-            #     mute_logger=True,
-            #     parameters=(name, elevation, elevation + maxdepth, areaPonded),
-            # ):
-            #     del self.dbQK
-            #     return False
-
             params = {'schnam': name,
                       'sohlhoehe': elevation, 'deckelhoehe': 'NULL',
                       'schachttyp': 'Speicher'}
@@ -274,15 +234,14 @@ class ImportTask:
             logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
 
-            if not self.dbQK.insertdata(
+            if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
                     **params
             ):
-                del self.dbQK
                 return
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
     def _storage(self):
         #speicherschächte
@@ -295,18 +254,6 @@ class ImportTask:
             maxdepth = line_tokens[2]   # = deckelhoehe - sohlhoehe
             #initdepth = line_tokens[3]   # entfällt
 
-            # sql = f"""
-            #     INSERT into schaechte (
-            #         schnam, sohlhoehe, deckelhoehe, ueberstauflaeche, schachttyp)
-            #     VALUES (?, ?, ?, ?, 'Schacht')
-            #     """
-            # if not self.dbQK.sql(
-            #     sql,
-            #     mute_logger=True,
-            #     parameters=(name, elevation, elevation + maxdepth, areaPonded),
-            # ):
-            #     del self.dbQK
-            #     return False
 
             params = {'schnam': name,
                       'sohlhoehe': elevation, 'deckelhoehe': elevation + maxdepth,
@@ -315,15 +262,14 @@ class ImportTask:
             logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
 
-            if not self.dbQK.insertdata(
+            if not self.db_qkan.insertdata(
                     tabnam="schaechte",
                     mute_logger=False,
                     **params
             ):
-                del self.dbQK
                 return
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
 
     def _coordinates(self) -> bool:
@@ -344,14 +290,13 @@ class ImportTask:
                  ))
                 WHERE schnam = ?
                 """
-            if not self.dbQK.sql(sql, parameters=(xsch, ysch,
-                                                  xsch, ysch, QKan.config.epsg,
-                                                  xsch, ysch, du, QKan.config.epsg,
-                                                  name)):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, parameters=(xsch, ysch,
+                                                     xsch, ysch, QKan.config.epsg,
+                                                     xsch, ysch, du, QKan.config.epsg,
+                                                     name)):
                 return False
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
 
     def _subcatchments(self) -> bool:
@@ -367,17 +312,6 @@ class ImportTask:
             neigung = fzahl(line_tokens[6])
             abnam = '$Default_Unbef'
 
-            # sql = f"""
-            #     INSERT into tezg (
-            #          flnam, regenschreiber, schnam, befgrad, neigung)
-            #     VALUES (?, ?, ?, ?, ?)
-            #     """
-            # if not self.dbQK.sql(
-            #     sql, parameters=(name, regenschreiber, schnam, befgrad, neigung)
-            # ):
-            #     del self.dbQK
-            #     return False
-
             params = {'flnam': name, 'regenschreiber': regenschreiber, 'schnam': schnam,
                        'befgrad': befgrad, 'neigung': int(neigung), 'abflussparameter': abnam}
 
@@ -389,8 +323,7 @@ class ImportTask:
                      mute_logger=False,
                      **params
             ):
-                del self.db_qkan
-                return
+                return False
 
         self.db_qkan.commit()
 
@@ -428,10 +361,9 @@ class ImportTask:
 
                     sql = "UPDATE tezg SET geom = GeomFromText('MULTIPOLYGON((("+str(coords)+")))',?) WHERE flnam = ? "
 
-                    if not self.dbQK.sql(
+                    if not self.db_qkan.sql(
                             sql, parameters=(QKan.config.epsg, nampoly)
                     ):
-                        del self.dbQK
                         return False
 
                 nampoly = name
@@ -446,7 +378,7 @@ class ImportTask:
             xlis.append(xsch)
             ylis.append(ysch)
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
 
     def _conduits(self) -> bool:
@@ -466,17 +398,6 @@ class ImportTask:
             # kst = 1/mannings_n                      # interessant: die Einheit von mannings_n ist s/m**(1/3)!
             # ks = ksFromKst(kst)
 
-            # sql = f"""
-            #     INSERT into haltungen (
-            #         haltnam, schoben, schunten, laenge, ks, entwart, simstatus)
-            #     VALUES (?, ?, ?, ?, ?, 'Regenwasser', 'vorhanden')
-            #     """
-            # if not self.dbQK.sql(
-            #     sql, parameters=(haltnam, schoben, schunten, laenge, mannings_n)
-            # ):
-            #     del self.dbQK
-            #     return False
-
             params = {'haltnam': haltnam, 'schoben': schoben, 'schunten': schunten,
                       'laenge': laenge, 'ks': mannings_n, 'entwart': 'Regenwasser', 'haltungstyp': 'Haltung',
                       'simstatus': 'vorhanden'}
@@ -484,15 +405,14 @@ class ImportTask:
             logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
                          f'params: {params}')
 
-            if not self.dbQK.insertdata(
+            if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
                     **params
             ):
-                del self.dbQK
                 return
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
         # Haltungsobjekte mithilfe der Schachtkoordinaten erzeugen
         sql = f"""
@@ -506,11 +426,10 @@ class ImportTask:
          WHERE schob.schnam = haltungen.schoben AND schun.schnam = haltungen.schunten
          )
          """
-        if not self.dbQK.sql(sql):
-            del self.dbQK
+        if not self.db_qkan.sql(sql):
             return False
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
     def _pumps(self):
 
@@ -529,15 +448,14 @@ class ImportTask:
             logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
                          f'params: {params}')
 
-            if not self.dbQK.insertdata(
+            if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
                     **params
             ):
-                del self.dbQK
                 return
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
         # Haltungsobjekte mithilfe der Schachtkoordinaten erzeugen
         sql = f"""
@@ -551,8 +469,7 @@ class ImportTask:
                  WHERE schob.schnam = haltungen.schoben AND schun.schnam = haltungen.schunten
                  )
                  """
-        if not self.dbQK.sql(sql):
-            del self.dbQK
+        if not self.db_qkan.sql(sql):
             return False
 
     def _orifices(self):
@@ -571,15 +488,14 @@ class ImportTask:
             logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
                          f'params: {params}')
 
-            if not self.dbQK.insertdata(
+            if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
                     **params
             ):
-                del self.dbQK
                 return
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
         
     def _outlets(self):
         data = self.data.get("outlets", [])
@@ -597,15 +513,14 @@ class ImportTask:
             logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
                          f'params: {params}')
 
-            if not self.dbQK.insertdata(
+            if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
                     **params
             ):
-                del self.dbQK
                 return
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
         
         
     def _weirs(self):
@@ -625,15 +540,14 @@ class ImportTask:
             logger.debug(f'isyporter.import - insertdata:\ntabnam: haltungen\n'
                          f'params: {params}')
 
-            if not self.dbQK.insertdata(
+            if not self.db_qkan.insertdata(
                     tabnam="haltungen",
                     mute_logger=False,
                     **params
             ):
-                del self.dbQK
                 return
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
         # Haltungsobjekte mithilfe der Schachtkoordinaten erzeugen
         sql = f"""
@@ -647,8 +561,7 @@ class ImportTask:
                          WHERE schob.schnam = haltungen.schoben AND schun.schnam = haltungen.schunten
                          )
                          """
-        if not self.dbQK.sql(sql):
-            del self.dbQK
+        if not self.db_qkan.sql(sql):
             return False
 
     def _vertices(self) -> bool:
@@ -689,8 +602,8 @@ class ImportTask:
                     FROM haltungen
                     WHERE haltnam =?"""
 
-                self.dbQK.sql(sql, parameters=(name,))
-                for attr in self.dbQK.fetchall():
+                self.db_qkan.sql(sql, parameters=(name,))
+                for attr in self.db_qkan.fetchall():
                     x_start, y_start, x_end, y_end = attr
 
                 # altes haltungsobjekt löschen, da AddPoint ansonsten nicht richtig funktioniert
@@ -699,10 +612,9 @@ class ImportTask:
                                          WHERE haltnam = ?
                                          """
 
-                if not self.dbQK.sql(
+                if not self.db_qkan.sql(
                         sql, parameters=(name,)
                 ):
-                    del self.dbQK
                     return False
 
                 sql = f"""
@@ -714,10 +626,9 @@ class ImportTask:
                 paralist = [x_start, y_start, QKan.config.epsg, x_end, y_end, QKan.config.epsg, xsch, ysch,
                             QKan.config.epsg, npt, name]
 
-                if not self.dbQK.sql(
+                if not self.db_qkan.sql(
                         sql, parameters=paralist
                 ):
-                    del self.dbQK
                     return False
 
             if npt > 1:
@@ -729,15 +640,14 @@ class ImportTask:
 
                 paralist = [xsch, ysch, QKan.config.epsg, npt, name]
 
-                if not self.dbQK.sql(
+                if not self.db_qkan.sql(
                         sql, parameters=paralist
                 ):
-                    del self.dbQK
                     return False
 
             namvor = name
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
 
     def _xsections(self) -> bool:
@@ -775,11 +685,10 @@ class ImportTask:
                 UPDATE haltungen SET (profilnam, hoehe, breite) = (?, ?, ?)
                 WHERE haltnam = ?
                 """
-            if not self.dbQK.sql(sql, parameters=(profilnam, hoehe, breite, haltnam)):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, parameters=(profilnam, hoehe, breite, haltnam)):
                 return False
 
-        self.dbQK.commit()
+        self.db_qkan.commit()
 
 
         # todo: SQL-Anweisung wie oben ergänzen
@@ -793,9 +702,9 @@ class ImportTask:
                         max(y(geop)) AS ymax
                  FROM schaechte"""
         try:
-            if not self.dbQK.sql(sql, "importkanaldaten_swmm (17)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "importkanaldaten_swmm (17)"):
                 return False
+
         except BaseException as e:
             fehlermeldung("SQL-Fehler", str(e))
             fehlermeldung(
@@ -804,7 +713,7 @@ class ImportTask:
             )
 
         try:
-            zoom = self.dbQK.fetchone()
+            zoom = self.db_qkan.fetchone()
         except BaseException as e:
             fehlermeldung("SQL-Fehler", str(e))
             fehlermeldung(
@@ -819,11 +728,10 @@ class ImportTask:
                 FROM geom_cols_ref_sys
                 WHERE Lower(f_table_name) = Lower('schaechte')
                 AND Lower(f_geometry_column) = Lower('geom')"""
-        if not self.dbQK.sql(sql, "importkanaldaten_swmm (37)"):
-            del self.dbQK
+        if not self.db_qkan.sql(sql, "importkanaldaten_swmm (37)"):
             return False
 
-        srid = self.dbQK.fetchone()[0]
+        srid = self.db_qkan.fetchone()[0]
         try:
             crs = QgsCoordinateReferenceSystem.fromEpsgId(srid)
             srsid = crs.srsid()
@@ -857,9 +765,9 @@ class ImportTask:
             templatepath = os.path.join(pluginDirectory("qkan"), "templates")
             projecttemplate = os.path.join(templatepath, "projekt.qgs")
             projectpath = os.path.dirname(self.projectfile)
-            if os.path.dirname(self.dbQK) == projectpath:
-                datasource = self.dbQK.replace(
-                    os.path.dirname(self.dbQK), "."
+            if os.path.dirname(self.db_qkan) == projectpath:
+                datasource = self.db_qkan.replace(
+                    os.path.dirname(self.db_qkan), "."
                 )
             else:
                 datasource = self.db_qkan
@@ -1043,7 +951,7 @@ class ImportTask:
     # Datenbankverbindungen schliessen
 
   #  template_project = Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-  #  qgsadapt(database_qkan, swmm.dbQK, projectfile, str(template_project), epsg)
+  #  qgsadapt(database_qkan, swmm.db_qkan, projectfile, str(template_project), epsg)
 
     # noinspection PyArgumentList
    # project = QgsProject.instance()

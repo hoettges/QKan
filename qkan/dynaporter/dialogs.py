@@ -1,7 +1,6 @@
 import logging
 import os
-from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional, cast
+from typing import TYPE_CHECKING, List, Optional, cast, Union
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgsProjectionSelectionWidget
@@ -73,8 +72,7 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
 
         self.iface = QKan.instance.iface
 
-        self.db_qkan: Optional[DBConnection] = None
-
+        self.db_name: Union[str, None] = None
         self.button_box.helpRequested.connect(self.click_help)
         self.cb_selActive.stateChanged.connect(self.click_selection)
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
@@ -124,8 +122,8 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
         der betroffenen Flächen und Haltungen
         """
 
-        if self.db_qkan is None:
-            logger.error("qkan_db is not initialized.")
+        if self.db_name is None:
+            logger.error("db_name is not initialized.")
             return False
 
         logger.debug("arg: {}".format(self.lw_teilgebiete))
@@ -138,52 +136,54 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
                 "', '".join(liste_teilgebiete)
             )
 
-        if not self.db_qkan.sql(
-            f"SELECT count(*) AS anzahl FROM flaechen {auswahl}",
-            "QKan_ExportDYNA.application.countselection (1)",
-        ):
-            return False
-        daten = self.db_qkan.fetchone()
-        if not (daten is None):
-            self.lf_anzahl_flaechen.setText(str(daten[0]))
-        else:
-            self.lf_anzahl_flaechen.setText("0")
+        with DBConnection(dbname=self.db_name) as db_qkan:
+            if not db_qkan.sql(
+                f"SELECT count(*) AS anzahl FROM flaechen {auswahl}",
+                "QKan_ExportDYNA.application.countselection (1)",
+            ):
+                return False
+            daten = db_qkan.fetchone()
 
-        # Zu berücksichtigende Schächte zählen
-        auswahl = ""
-        if len(liste_teilgebiete) != 0:
-            auswahl = "WHERE schaechte.teilgebiet in ('{}')".format(
-                "', '".join(liste_teilgebiete)
-            )
+            if not (daten is None):
+                self.lf_anzahl_flaechen.setText(str(daten[0]))
+            else:
+                self.lf_anzahl_flaechen.setText("0")
 
-        if not self.db_qkan.sql(
-            f"SELECT count(*) AS anzahl FROM schaechte {auswahl}",
-            "QKan_ExportDYNA.application.countselection (2) ",
-        ):
-            return False
-        daten = self.db_qkan.fetchone()
-        if not (daten is None):
-            self.lf_anzahl_schaechte.setText(str(daten[0]))
-        else:
-            self.lf_anzahl_schaechte.setText("0")
+            # Zu berücksichtigende Schächte zählen
+            auswahl = ""
+            if len(liste_teilgebiete) != 0:
+                auswahl = "WHERE schaechte.teilgebiet in ('{}')".format(
+                    "', '".join(liste_teilgebiete)
+                )
 
-        # Zu berücksichtigende Haltungen zählen
-        auswahl = ""
-        if len(liste_teilgebiete) != 0:
-            auswahl = "WHERE haltungen.teilgebiet in ('{}')".format(
-                "', '".join(liste_teilgebiete)
-            )
+            if not db_qkan.sql(
+                f"SELECT count(*) AS anzahl FROM schaechte {auswahl}",
+                "QKan_ExportDYNA.application.countselection (2) ",
+            ):
+                return False
+            daten = db_qkan.fetchone()
+            if not (daten is None):
+                self.lf_anzahl_schaechte.setText(str(daten[0]))
+            else:
+                self.lf_anzahl_schaechte.setText("0")
 
-        if not self.db_qkan.sql(
-            f"SELECT count(*) AS anzahl FROM haltungen {auswahl}",
-            "QKan_ExportDYNA.application.countselection (3) ",
-        ):
-            return False
-        daten = self.db_qkan.fetchone()
-        if not (daten is None):
-            self.lf_anzahl_haltungen.setText(str(daten[0]))
-        else:
-            self.lf_anzahl_haltungen.setText("0")
+            # Zu berücksichtigende Haltungen zählen
+            auswahl = ""
+            if len(liste_teilgebiete) != 0:
+                auswahl = "WHERE haltungen.teilgebiet in ('{}')".format(
+                    "', '".join(liste_teilgebiete)
+                )
+
+            if not db_qkan.sql(
+                f"SELECT count(*) AS anzahl FROM haltungen {auswahl}",
+                "QKan_ExportDYNA.application.countselection (3) ",
+            ):
+                return False
+            daten = db_qkan.fetchone()
+            if not (daten is None):
+                self.lf_anzahl_haltungen.setText(str(daten[0]))
+            else:
+                self.lf_anzahl_haltungen.setText("0")
 
         return True
 
@@ -224,212 +224,208 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
 
         # Datenbankverbindung für Abfragen
         if database_qkan != "":
+            self.db_name = database_qkan
             # Nur wenn schon eine Projekt geladen oder eine QKan-Datenbank ausgewählt
-            self.db_qkan = DBConnection(
-                dbname=database_qkan
-            )  # Datenbankobjekt der QKan-Datenbank zum Lesen
-            if not self.db_qkan.connected:
-                fehlermeldung(
-                    "Fehler in exportdyna.application:\n",
-                    "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                        database_qkan
-                    ),
-                )
-                return
-
-            # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
-
-            sql = """INSERT INTO teilgebiete (tgnam)
-                    SELECT teilgebiet FROM flaechen 
-                    WHERE teilgebiet IS NOT NULL AND
-                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                    GROUP BY teilgebiet"""
-            if not self.db_qkan.sql(sql, "QKan_ExportDYNA.application.run (1) "):
-                return
-
-            sql = """INSERT INTO teilgebiete (tgnam)
-                    SELECT teilgebiet FROM haltungen 
-                    WHERE teilgebiet IS NOT NULL AND
-                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                    GROUP BY teilgebiet"""
-            if not self.db_qkan.sql(sql, "QKan_ExportDYNA.application.run (2) "):
-                return
-
-            sql = """INSERT INTO teilgebiete (tgnam)
-                    SELECT teilgebiet FROM schaechte 
-                    WHERE teilgebiet IS NOT NULL AND
-                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                    GROUP BY teilgebiet"""
-            if not self.db_qkan.sql(sql, "QKan_ExportDYNA.application.run (3) "):
-                return
-
-            self.db_qkan.commit()
-
-            # Anlegen der Tabelle zur Auswahl der Teilgebiete
-
-            # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-            liste_teilgebiete = QKan.config.selections.teilgebiete
-
-            # Abfragen der Tabelle teilgebiete nach Teilgebieten
-            if not self.db_qkan.sql(
-                'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"',
-                "QKan_ExportDYNA.application.run (4) ",
-            ):
-                return
-            daten = self.db_qkan.fetchall()
-            self.lw_teilgebiete.clear()
-
-            for ielem, elem in enumerate(daten):
-                self.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-                try:
-                    if elem[0] in liste_teilgebiete:
-                        self.lw_teilgebiete.setCurrentRow(ielem)
-                except BaseException as err:
+            with DBConnection(dbname=database_qkan) as db_qkan:
+                if not db_qkan.connected:
                     fehlermeldung(
-                        "QKan_ExportDYNA (6), Fehler in elem = {}\n".format(elem),
-                        repr(err),
+                        "Fehler in exportdyna.application:\n",
+                        "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
+                            database_qkan
+                        ),
                     )
-                    # if len(daten) == 1:
-                    # self.dlg.lw_teilgebiete.setCurrentRow(0)
+                    return
 
-            # Ereignis bei Auswahländerung in Liste Teilgebiete
+                # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
 
-        if not self.db_qkan:
-            logger.error("self.qkan_db is not initialized.")
-            return
+                sql = """INSERT INTO teilgebiete (tgnam)
+                        SELECT teilgebiet FROM flaechen 
+                        WHERE teilgebiet IS NOT NULL AND
+                        teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                        GROUP BY teilgebiet"""
+                if not db_qkan.sql(sql, "QKan_ExportDYNA.application.run (1) "):
+                    return
 
-        if not self.count_selection():
-            del self.db_qkan
-            return
+                sql = """INSERT INTO teilgebiete (tgnam)
+                        SELECT teilgebiet FROM haltungen 
+                        WHERE teilgebiet IS NOT NULL AND
+                        teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                        GROUP BY teilgebiet"""
+                if not db_qkan.sql(sql, "QKan_ExportDYNA.application.run (2) "):
+                    return
 
-        # Autokorrektur
-        self.cb_profile_ergaenzen.setChecked(QKan.config.dyna.profile_ergaenzen)
-        self.cb_autonummerierung_dyna.setChecked(QKan.config.dyna.autonummerierung)
+                sql = """INSERT INTO teilgebiete (tgnam)
+                        SELECT teilgebiet FROM schaechte 
+                        WHERE teilgebiet IS NOT NULL AND
+                        teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                        GROUP BY teilgebiet"""
+                if not db_qkan.sql(sql, "QKan_ExportDYNA.application.run (3) "):
+                    return
 
-        # Festlegung des Fangradius
-        # Kann über Menü "Optionen" eingegeben werden
-        fangradius = QKan.config.fangradius
+                db_qkan.commit()
 
-        # Haltungsflächen (tezg) berücksichtigen
-        self.cb_regardTezg.setChecked(QKan.config.mit_verschneidung)
+                # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
-        # Mindestflächengröße
-        # Kann über Menü "Optionen" eingegeben werden
-        mindestflaeche = QKan.config.mindestflaeche
+                # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
+                liste_teilgebiete = QKan.config.selections.teilgebiete
 
-        # Maximalzahl Schleifendurchläufe
-        max_loops = QKan.config.max_loops
+                # Abfragen der Tabelle teilgebiete nach Teilgebieten
+                if not db_qkan.sql(
+                    'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"',
+                    "QKan_ExportDYNA.application.run (4) ",
+                ):
+                    return
+                daten = db_qkan.fetchall()
+                self.lw_teilgebiete.clear()
 
-        # Optionen zur Berechnung der befestigten Flächen
-        dynabef_choice = QKan.config.dyna.bef_choice
-        if dynabef_choice == enums.BefChoice.FLAECHEN:
-            self.rb_flaechen.setChecked(True)
-        elif dynabef_choice == enums.BefChoice.TEZG:
-            self.rb_tezg.setChecked(True)
+                for ielem, elem in enumerate(daten):
+                    self.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
+                    try:
+                        if elem[0] in liste_teilgebiete:
+                            self.lw_teilgebiete.setCurrentRow(ielem)
+                    except BaseException as err:
+                        fehlermeldung(
+                            "QKan_ExportDYNA (6), Fehler in elem = {}\n".format(elem),
+                            repr(err),
+                        )
+                        # if len(daten) == 1:
+                        # self.dlg.lw_teilgebiete.setCurrentRow(0)
 
-        # Optionen zur Zuordnung des Profilschlüssels
-        dynaprof_choice = QKan.config.dyna.prof_choice
+                # Ereignis bei Auswahländerung in Liste Teilgebiete
 
-        if dynaprof_choice == enums.ProfChoice.PROFILNAME:
-            self.rb_profnam.setChecked(True)
-        elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
-            self.rb_profkey.setChecked(True)
+            if not db_qkan.connected:
+                logger.error("self.qkan_db is not initialized.")
+                return
 
-        # Formular anzeigen
+            if not self.count_selection():
+                return
 
-        self.show()
-        # Run the dialog event loop
-        result = self.exec_()
-        # See if OK was pressed
-        if result:
-            # Abrufen der ausgewählten Elemente in beiden Listen
-            liste_teilgebiete = list_selected_items(self.lw_teilgebiete)
+            # Autokorrektur
+            self.cb_profile_ergaenzen.setChecked(QKan.config.dyna.profile_ergaenzen)
+            self.cb_autonummerierung_dyna.setChecked(QKan.config.dyna.autonummerierung)
 
-            # Eingaben aus Formular übernehmen
-            database_qkan = cast(str, self.tf_qkanDB.text())
-            dynafile: str = self.tf_KP_dest.text()
-            template_dyna: str = self.tf_KP_template.text()
-            profile_ergaenzen: bool = self.cb_profile_ergaenzen.isChecked()
-            autonummerierung_dyna: bool = self.cb_autonummerierung_dyna.isChecked()
-            mit_verschneidung: bool = self.cb_regardTezg.isChecked()
-            if self.rb_flaechen.isChecked():
-                dynabef_choice = enums.BefChoice.FLAECHEN
-            elif self.rb_tezg.isChecked():
-                dynabef_choice = enums.BefChoice.TEZG
-            else:
-                fehlermeldung(
-                    "exportdyna.application.run",
-                    "Fehlerhafte Option: \ndynabef_choice = {}".format(
-                        repr(dynabef_choice)
-                    ),
+            # Festlegung des Fangradius
+            # Kann über Menü "Optionen" eingegeben werden
+            fangradius = QKan.config.fangradius
+
+            # Haltungsflächen (tezg) berücksichtigen
+            self.cb_regardTezg.setChecked(QKan.config.mit_verschneidung)
+
+            # Mindestflächengröße
+            # Kann über Menü "Optionen" eingegeben werden
+            mindestflaeche = QKan.config.mindestflaeche
+
+            # Maximalzahl Schleifendurchläufe
+            max_loops = QKan.config.max_loops
+
+            # Optionen zur Berechnung der befestigten Flächen
+            dynabef_choice = QKan.config.dyna.bef_choice
+            if dynabef_choice == enums.BefChoice.FLAECHEN:
+                self.rb_flaechen.setChecked(True)
+            elif dynabef_choice == enums.BefChoice.TEZG:
+                self.rb_tezg.setChecked(True)
+
+            # Optionen zur Zuordnung des Profilschlüssels
+            dynaprof_choice = QKan.config.dyna.prof_choice
+
+            if dynaprof_choice == enums.ProfChoice.PROFILNAME:
+                self.rb_profnam.setChecked(True)
+            elif dynaprof_choice == enums.ProfChoice.PROFILKEY:
+                self.rb_profkey.setChecked(True)
+
+            # Formular anzeigen
+
+            self.show()
+            # Run the dialog event loop
+            result = self.exec_()
+            # See if OK was pressed
+            if result:
+                # Abrufen der ausgewählten Elemente in beiden Listen
+                liste_teilgebiete = list_selected_items(self.lw_teilgebiete)
+
+                # Eingaben aus Formular übernehmen
+                database_qkan = cast(str, self.tf_qkanDB.text())
+                dynafile: str = self.tf_KP_dest.text()
+                template_dyna: str = self.tf_KP_template.text()
+                profile_ergaenzen: bool = self.cb_profile_ergaenzen.isChecked()
+                autonummerierung_dyna: bool = self.cb_autonummerierung_dyna.isChecked()
+                mit_verschneidung: bool = self.cb_regardTezg.isChecked()
+                if self.rb_flaechen.isChecked():
+                    dynabef_choice = enums.BefChoice.FLAECHEN
+                elif self.rb_tezg.isChecked():
+                    dynabef_choice = enums.BefChoice.TEZG
+                else:
+                    fehlermeldung(
+                        "exportdyna.application.run",
+                        "Fehlerhafte Option: \ndynabef_choice = {}".format(
+                            repr(dynabef_choice)
+                        ),
+                    )
+                if self.rb_profnam.isChecked():
+                    dynaprof_choice = enums.ProfChoice.PROFILNAME
+                elif self.rb_profkey.isChecked():
+                    dynaprof_choice = enums.ProfChoice.PROFILKEY
+                else:
+                    fehlermeldung(
+                        "exportdyna.application.run",
+                        "Fehlerhafte Option: \ndynaprof_choice = {}".format(
+                            repr(dynaprof_choice)
+                        ),
+                    )
+
+                # Konfigurationsdaten schreiben
+                QKan.config.selections.teilgebiete = liste_teilgebiete
+                QKan.config.database.qkan = database_qkan
+                QKan.config.dyna.autonummerierung = autonummerierung_dyna
+                QKan.config.dyna.bef_choice = dynabef_choice
+                QKan.config.dyna.file = dynafile
+                QKan.config.dyna.prof_choice = dynaprof_choice
+                QKan.config.dyna.profile_ergaenzen = profile_ergaenzen
+                QKan.config.dyna.template = template_dyna
+                QKan.config.fangradius = fangradius
+                QKan.config.max_loops = max_loops
+                QKan.config.mindestflaeche = mindestflaeche
+                QKan.config.mit_verschneidung = mit_verschneidung
+
+                QKan.config.save()
+
+                # Start der Verarbeitung
+
+                # Modulaufruf in Logdatei schreiben
+                logger.debug(
+                    f"""QKan-Modul Aufruf
+                    exportKanaldaten(
+                        iface,
+                        "{dynafile}",
+                        "{template_dyna}",
+                        DBConnection(dbname={database_qkan}),
+                        {dynabef_choice},
+                        {dynaprof_choice},
+                        {liste_teilgebiete},
+                        {profile_ergaenzen},
+                        {autonummerierung_dyna},
+                        {mit_verschneidung},
+                        {fangradius},
+                        {mindestflaeche},
+                        {max_loops},
+                )"""
                 )
-            if self.rb_profnam.isChecked():
-                dynaprof_choice = enums.ProfChoice.PROFILNAME
-            elif self.rb_profkey.isChecked():
-                dynaprof_choice = enums.ProfChoice.PROFILKEY
-            else:
-                fehlermeldung(
-                    "exportdyna.application.run",
-                    "Fehlerhafte Option: \ndynaprof_choice = {}".format(
-                        repr(dynaprof_choice)
-                    ),
+
+                export_kanaldaten(
+                    self.iface,
+                    dynafile,
+                    template_dyna,
+                    db_qkan,
+                    dynabef_choice,
+                    dynaprof_choice,
+                    liste_teilgebiete,
+                    profile_ergaenzen,
+                    autonummerierung_dyna,
+                    mit_verschneidung,
+                    fangradius,
+                    mindestflaeche,
+                    max_loops,
                 )
-
-            # Konfigurationsdaten schreiben
-            QKan.config.selections.teilgebiete = liste_teilgebiete
-            QKan.config.database.qkan = database_qkan
-            QKan.config.dyna.autonummerierung = autonummerierung_dyna
-            QKan.config.dyna.bef_choice = dynabef_choice
-            QKan.config.dyna.file = dynafile
-            QKan.config.dyna.prof_choice = dynaprof_choice
-            QKan.config.dyna.profile_ergaenzen = profile_ergaenzen
-            QKan.config.dyna.template = template_dyna
-            QKan.config.fangradius = fangradius
-            QKan.config.max_loops = max_loops
-            QKan.config.mindestflaeche = mindestflaeche
-            QKan.config.mit_verschneidung = mit_verschneidung
-
-            QKan.config.save()
-
-            # Start der Verarbeitung
-
-            # Modulaufruf in Logdatei schreiben
-            logger.debug(
-                f"""QKan-Modul Aufruf
-                exportKanaldaten(
-                    iface,
-                    "{dynafile}",
-                    "{template_dyna}",
-                    {self.db_qkan},
-                    {dynabef_choice},
-                    {dynaprof_choice},
-                    {liste_teilgebiete},
-                    {profile_ergaenzen},
-                    {autonummerierung_dyna},
-                    {mit_verschneidung},
-                    {fangradius},
-                    {mindestflaeche},
-                    {max_loops},
-            )"""
-            )
-
-            export_kanaldaten(
-                self.iface,
-                dynafile,
-                template_dyna,
-                self.db_qkan,
-                dynabef_choice,
-                dynaprof_choice,
-                liste_teilgebiete,
-                profile_ergaenzen,
-                autonummerierung_dyna,
-                mit_verschneidung,
-                fangradius,
-                mindestflaeche,
-                max_loops,
-            )
-
-            del self.db_qkan
 
 
     def click_help(self) -> None:

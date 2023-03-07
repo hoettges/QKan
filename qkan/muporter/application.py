@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 from pathlib import Path
+from typing import Optional
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
@@ -32,17 +33,10 @@ class MuPorter(QKanPlugin):
         self.export_dlg = ExportDialog(default_dir, tr=self.tr)
         self.import_dlg = ImportDialog(default_dir, tr=self.tr)
 
-        self.db_qkan: DBConnection = None
+        self.db_name: Optional[str] = None
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
-        # icon_export = ":/plugins/qkan/mu_porter/res/icon_export.png"
-        # QKan.instance.add_action(
-        #     icon_export,
-        #     text=self.tr("Export nach Mike+"),
-        #     callback=self.run_export,
-        #     parent=self.iface.mainWindow(),
-        # )
         icon_import = ":/plugins/qkan/mu_porter/res/icon_import.png"
         QKan.instance.add_action(
             icon_import,
@@ -55,18 +49,29 @@ class MuPorter(QKanPlugin):
         self.export_dlg.close()
         self.import_dlg.close()
 
+    @property
+    def database_name(self) -> str:
+        """Contains the database name"""
+        if self.db_name:
+            return self.db_name
+
+        self.db_name, _ = get_database_QKan()
+        return self.db_name
+
     def run_export(self) -> None:
         """Anzeigen des Exportformulars und anschließender Start des Exports in eine Mike+-Datenbank"""
 
         # noinspection PyArgumentList
 
-        self.connectQKanDB()  # Setzt self.db_qkan und self.database_qkan
-
         # Datenbankpfad in Dialog übernehmen
-        self.export_dlg.tf_database.setText(self.database_qkan)
+        self.export_dlg.tf_database.setText(self.database_name)
 
-        if not self.export_dlg.prepareDialog(self.db_qkan):
-            return False
+        if self.database_name is None:
+            fehlermeldung("Fehler: Für diese Funktion muss ein Projekt geladen sein!")
+            return
+
+        if not self.export_dlg.prepareDialog():
+            return
 
         # Formular anzeigen
         self.export_dlg.show()
@@ -150,32 +155,6 @@ class MuPorter(QKanPlugin):
         del self.export_dlg.db_qkan
         self.log.debug("Closed DB")
 
-        return True
-
-    def connectQKanDB(self, database_qkan=None):
-        """Liest die verknüpfte QKan-DB aus dem geladenen Projekt
-        Für Test muss database_qkan vorgegeben werden
-        """
-
-        # Verbindung zur Datenbank des geladenen Projekts herstellen
-        if database_qkan:
-            self.database_qkan = database_qkan
-        else:
-            self.database_qkan, _ = get_database_QKan()
-        if self.database_qkan:
-            self.db_qkan: DBConnection = DBConnection(dbname=self.database_qkan)
-            if not self.db_qkan.connected:
-                logger.error(
-                    "Fehler in he8porter.application_dialog.connectQKanDB:\n"
-                    f"QKan-Datenbank {self.database_qkan:s} wurde nicht"
-                    " gefunden oder war nicht aktuell!\nAbbruch!"
-                )
-                return False
-        else:
-            fehlermeldung("Fehler: Für den Export muss ein Projekt geladen sein!")
-            return False
-
-        self.export_dlg.connectQKanDB(self.db_qkan)
         return True
 
     def run_import(self) -> None:
@@ -274,55 +253,53 @@ class MuPorter(QKanPlugin):
         """
 
         self.log.info("Creating DB")
-        db_qkan = DBConnection(dbname=QKan.config.mu.database, epsg=QKan.config.epsg)
+        with DBConnection(dbname=QKan.config.mu.database, epsg=QKan.config.epsg) as db_qkan:
+            if not db_qkan.connected:
+                fehlermeldung(
+                    "Fehler im Mike+-Import",
+                    f"QKan-Datenbank {QKan.config.mu.database} wurde nicht gefunden!\nAbbruch!",
+                )
+                self.iface.messageBar().pushMessage(
+                    "Fehler im Mike+-Import",
+                    f"QKan-Datenbank {QKan.config.mu.database} wurde nicht gefunden!\nAbbruch!",
+                    level=Qgis.Critical,
+                )
+                return False
 
-        if not db_qkan:
-            fehlermeldung(
-                "Fehler im Mike+-Import",
-                f"QKan-Datenbank {QKan.config.mu.database} wurde nicht gefunden!\nAbbruch!",
-            )
-            self.iface.messageBar().pushMessage(
-                "Fehler im Mike+-Import",
-                f"QKan-Datenbank {QKan.config.mu.database} wurde nicht gefunden!\nAbbruch!",
-                level=Qgis.Critical,
-            )
-            return False
+            # Attach SQLite-Database with Mike+ Data
+            sql = f'ATTACH DATABASE "{QKan.config.mu.import_file}" AS mu'
+            if not db_qkan.sql(sql, "MuPorter.run_import_to_mu Attach Mike+"):
+                logger.error(
+                    f"Fehler in MUPorter._doimport(): Attach fehlgeschlagen: {QKan.config.mu.import_file}"
+                )
+                return False
 
-        # Attach SQLite-Database with Mike+ Data
-        sql = f'ATTACH DATABASE "{QKan.config.mu.import_file}" AS mu'
-        if not db_qkan.sql(sql, "MuPorter.run_import_to_mu Attach Mike+"):
-            logger.error(
-                f"Fehler in MUPorter._doimport(): Attach fehlgeschlagen: {QKan.config.mu.import_file}"
-            )
-            return False
+            self.log.info("DB creation finished, starting importer")
+            imp = ImportTask(db_qkan)
+            imp.run()
+            del imp
 
-        self.log.info("DB creation finished, starting importer")
-        imp = ImportTask(db_qkan)
-        imp.run()
-        del imp
+            # Write and load new project file, only if new project
+            if QgsProject.instance().fileName() == '':
+                QKan.config.project.template = str(
+                    Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
+                )
+                qgsadapt(
+                    QKan.config.mu.database,
+                    db_qkan,
+                    QKan.config.project.file,
+                    QKan.config.project.template,
+                    QKan.config.epsg,
+                )
 
-        # Write and load new project file, only if new project
-        if QgsProject.instance().fileName() == '':
-            QKan.config.project.template = str(
-                Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-            )
-            qgsadapt(
-                QKan.config.mu.database,
-                db_qkan,
-                QKan.config.project.file,
-                QKan.config.project.template,
-                QKan.config.epsg,
-            )
+                # Load generated project
+                # noinspection PyArgumentList
+                project = QgsProject.instance()
+                project.read(QKan.config.project.file)
+                project.reloadAllLayers()
 
-            # Load generated project
-            # noinspection PyArgumentList
-            project = QgsProject.instance()
-            project.read(QKan.config.project.file)
-            project.reloadAllLayers()
+                # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
 
-            # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
-
-        del db_qkan
         self.log.debug("Closed DB")
 
         return True

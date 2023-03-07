@@ -11,6 +11,7 @@ import logging
 import os
 import shutil
 import sqlite3
+import warnings
 from distutils.version import LooseVersion
 from sqlite3 import Connection
 from typing import Any, List, Optional, Union, cast
@@ -115,15 +116,18 @@ class DBConnection:
 
     def __enter__(self) -> "DBConnection":
         """Allows use via context manager for easier connection handling"""
-        # TODO: Replace other uses with context managers
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Closes connection once we're out of context"""
-        self.__del__()
+        self._disconnect()
 
     def __del__(self) -> None:
         """Closes connection once object is deleted"""
+        warnings.warn(
+            "Deleting the database object is deprecated. Use a context manager instead.",
+            DeprecationWarning,
+        )
         self._disconnect()
 
     def _connect(
@@ -356,7 +360,7 @@ class DBConnection:
                     ),
                     "{e}\n{s}\n{p}".format(e=repr(e), s=sql, p=parameters),
                 )
-                self.__del__()
+                self._disconnect()
             return False
 
     def insertdata(
@@ -871,7 +875,7 @@ class DBConnection:
                 "dbfunc.DBConnection.sql: SQL-Fehler beim Ausführen der SQL-Datei",
                 "{e}\n{f}".format(e=repr(e), f=filenam),
             )
-            self.__del__()
+            self._disconnect()
             return False
         return True
 

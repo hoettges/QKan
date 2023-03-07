@@ -56,28 +56,23 @@ class EmptyDBDialog(QKanDBDialog, QKanProjectDialog, FORM_CLASS_empty_db):  # ty
 
     def _doemptydb(self):
 
-        db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
+        with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
+            if not db_qkan.connected:
+                fehlermeldung("Fehler beim Erstellen der Datenbank:\n")
+                return
 
-        if not db_qkan.connected:
-            fehlermeldung("Fehler beim Erstellen der Datenbank:\n")
-            return
+            logger.debug('empty_db(2)')
 
-        logger.debug('empty_db(2)')
+            if QKan.config.project.file == "":
+                return
 
-        if QKan.config.project.file == "":
-            del db_qkan
-            return
+            logger.debug(f'empty_db(5): project_file={QKan.config.project.file}')
 
-        logger.debug(f'empty_db(5): project_file={QKan.config.project.file}')
-
-        # Create project file
-        qgsadapt(
-            QKan.config.database.qkan,
-            db_qkan,
-            QKan.config.project.file,
-            None,
-            QKan.config.epsg
-        )
-
-        # Close database
-        del db_qkan
+            # Create project file
+            qgsadapt(
+                QKan.config.database.qkan,
+                db_qkan,
+                QKan.config.project.file,
+                None,
+                QKan.config.epsg
+            )

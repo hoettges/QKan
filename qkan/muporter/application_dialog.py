@@ -32,10 +32,10 @@ EXPORT_CLASS, _ = uic.loadUiType(
 
 class _Dialog(QDialog):
     def __init__(
-        self,
-        default_dir: str,
-        tr: Callable,
-        parent: Optional[QWidget] = None,
+            self,
+            default_dir: str,
+            tr: Callable,
+            parent: Optional[QWidget] = None,
     ):
         # noinspection PyArgumentList
         super().__init__(parent)
@@ -90,10 +90,10 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     # cb_export_wehre: QCheckBox
 
     def __init__(
-        self,
-        default_dir: str,
-        tr: Callable,
-        parent: Optional[QWidget] = None,
+            self,
+            default_dir: str,
+            tr: Callable,
+            parent: Optional[QWidget] = None,
     ):
         # noinspection PyArgumentList
         super().__init__(default_dir, tr, parent)
@@ -137,19 +137,6 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # Aktionen beim Export
         self.rb_append.setChecked(QKan.config.check_export.append)
         self.rb_update.setChecked(QKan.config.check_export.update)
-
-    # deaktiviert, weil sich die Quelldatenbank aus dem Projekt ergibt
-    # def select_database(self):
-    #     # noinspection PyArgumentList,PyCallByClass
-    #     filename, _ = QFileDialog.getOpenFileName(
-    #         self,
-    #         self.tr("Zu importierende SQLite-Datei"),
-    #         self.default_dir,
-    #         "*.sqlite",
-    #     )
-    #     if filename:
-    #         self.tf_database.setText(filename)
-    #         self.default_dir = os.path.dirname(filename)
 
     def select_template(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
@@ -213,130 +200,137 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         der betroffenen Flächen und Haltungen
         """
 
-        if not self.db_qkan:
-            logger.error("db_qkan is not initialized.")
-            return False
+        with DBConnection(dbname=self.database_name) as db_qkan:
+            if not db_qkan.connected:
+                logger.error(
+                    "Fehler in muporter.application_dialog.count_selection:\n"
+                    "QKan-Datenbank %s wurde nicht gefunden oder war nicht aktuell!\nAbbruch!", self.database_name
+                )
+                return False
 
-        teilgebiete: List[str] = list_selected_items(self.lw_teilgebiete)
-        # teilgebiete: List[str] = []        # Todo: wieder aktivieren
+            teilgebiete: List[str] = list_selected_items(self.lw_teilgebiete)
+            # teilgebiete: List[str] = []        # Todo: wieder aktivieren
 
-        # Zu berücksichtigende Flächen zählen
-        auswahl = ""
-        if len(teilgebiete) != 0:
-            auswahl = " WHERE flaechen.teilgebiet in ('{}')".format(
-                "', '".join(teilgebiete)
-            )
+            # Zu berücksichtigende Flächen zählen
+            auswahl = ""
+            if len(teilgebiete) != 0:
+                auswahl = " WHERE flaechen.teilgebiet in ('{}')".format(
+                    "', '".join(teilgebiete)
+                )
 
-        sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
+            sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
 
-        if not self.db_qkan.sql(sql, "QKan_ExportHE.application.countselection (1)"):
-            return False
-        daten = self.db_qkan.fetchone()
-        if not (daten is None):
-            self.lf_anzahl_flaechen.setText(str(daten[0]))
-        else:
-            self.lf_anzahl_flaechen.setText("0")
+            if not db_qkan.sql(sql, "QKan_ExportHE.application.countselection (1)"):
+                return False
 
-        # Zu berücksichtigende Schächte zählen
-        auswahl = ""
-        if len(teilgebiete) != 0:
-            auswahl = " WHERE schaechte.teilgebiet in ('{}')".format(
-                "', '".join(teilgebiete)
-            )
+            daten = db_qkan.fetchone()
+            if not (daten is None):
+                self.lf_anzahl_flaechen.setText(str(daten[0]))
+            else:
+                self.lf_anzahl_flaechen.setText("0")
 
-        sql = f"SELECT count(*) AS anzahl FROM schaechte {auswahl}"
-        if not self.db_qkan.sql(sql, "QKan_ExportHE.application.countselection (2) "):
-            return False
-        daten = self.db_qkan.fetchone()
-        if not (daten is None):
-            self.lf_anzahl_schaechte.setText(str(daten[0]))
-        else:
-            self.lf_anzahl_schaechte.setText("0")
+            # Zu berücksichtigende Schächte zählen
+            auswahl = ""
+            if len(teilgebiete) != 0:
+                auswahl = " WHERE schaechte.teilgebiet in ('{}')".format(
+                    "', '".join(teilgebiete)
+                )
 
-        # Zu berücksichtigende Haltungen zählen
-        auswahl = ""
-        if len(teilgebiete) != 0:
-            auswahl = " WHERE haltungen.teilgebiet in ('{}')".format(
-                "', '".join(teilgebiete)
-            )
+            sql = f"SELECT count(*) AS anzahl FROM schaechte {auswahl}"
+            if not db_qkan.sql(sql, "QKan_ExportHE.application.countselection (2) "):
+                return False
 
-        sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
-        if not self.db_qkan.sql(sql, "QKan_ExportHE.application.countselection (3) "):
-            return False
-        daten = self.db_qkan.fetchone()
-        if not (daten is None):
-            self.lf_anzahl_haltungen.setText(str(daten[0]))
-        else:
-            self.lf_anzahl_haltungen.setText("0")
+            daten = db_qkan.fetchone()
+            if not (daten is None):
+                self.lf_anzahl_schaechte.setText(str(daten[0]))
+            else:
+                self.lf_anzahl_schaechte.setText("0")
+
+            # Zu berücksichtigende Haltungen zählen
+            auswahl = ""
+            if len(teilgebiete) != 0:
+                auswahl = " WHERE haltungen.teilgebiet in ('{}')".format(
+                    "', '".join(teilgebiete)
+                )
+
+            sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
+            if not db_qkan.sql(sql, "QKan_ExportHE.application.countselection (3) "):
+                return False
+
+            daten = db_qkan.fetchone()
+            if not (daten is None):
+                self.lf_anzahl_haltungen.setText(str(daten[0]))
+            else:
+                self.lf_anzahl_haltungen.setText("0")
+
         return True
 
-    def prepareDialog(self, db_qkan) -> bool:
+    def prepareDialog(self) -> bool:
         """Füllt Auswahllisten im Dialog"""
 
-        self.db_qkan = db_qkan
-        # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
-
-        sql = """INSERT INTO teilgebiete (tgnam)
-                SELECT teilgebiet FROM flaechen 
-                WHERE teilgebiet IS NOT NULL AND
-                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                GROUP BY teilgebiet"""
-        if not self.db_qkan.sql(sql, "mu_porter.application_dialog.connectQKanDB (1) "):
-            return False
-
-        sql = """INSERT INTO teilgebiete (tgnam)
-                SELECT teilgebiet FROM haltungen 
-                WHERE teilgebiet IS NOT NULL AND
-                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                GROUP BY teilgebiet"""
-        if not self.db_qkan.sql(sql, "mu_porter.application_dialog.connectQKanDB (2) "):
-            return False
-
-        sql = """INSERT INTO teilgebiete (tgnam)
-                SELECT teilgebiet FROM schaechte 
-                WHERE teilgebiet IS NOT NULL AND
-                teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                GROUP BY teilgebiet"""
-        if not self.db_qkan.sql(sql, "mu_porter.application_dialog.connectQKanDB (3) "):
-            return False
-
-        self.db_qkan.commit()
-
-        # Anlegen der Tabelle zur Auswahl der Teilgebiete
-
-        # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-        teilgebiete = QKan.config.selections.teilgebiete
-
-        # Abfragen der Tabelle teilgebiete nach Teilgebieten
-        sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-        if not self.db_qkan.sql(sql, "mu_porter.application_dialog.connectQKanDB (4) "):
-            return False
-        daten = self.db_qkan.fetchall()
-        self.lw_teilgebiete.clear()
-
-        for ielem, elem in enumerate(daten):
-            self.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-            try:
-                if elem[0] in teilgebiete:
-                    self.lw_teilgebiete.setCurrentRow(ielem)
-            except BaseException as err:
-                fehlermeldung(
-                    (
-                        "mu_porter.application_dialog.connectQKanDB, "
-                        f"Fehler in elem = {elem}\n"
-                    ),
-                    repr(err),
+        with DBConnection(dbname=self.database_name) as db_qkan:
+            if not db_qkan.connected:
+                logger.error(
+                    "Fehler in muporter.application_dialog.prepareDialog:\n"
+                    "QKan-Datenbank %s wurde nicht gefunden oder war nicht aktuell!\nAbbruch!", self.database_name
                 )
+                return False
+
+            # Check, ob alle Teilgebiete in Flächen, Schächten und Haltungen auch in Tabelle "teilgebiete" enthalten
+
+            sql = """INSERT INTO teilgebiete (tgnam)
+                    SELECT teilgebiet FROM flaechen 
+                    WHERE teilgebiet IS NOT NULL AND
+                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                    GROUP BY teilgebiet"""
+            if not db_qkan.sql(sql, "mu_porter.application_dialog.prepareDialog (1) "):
+                return False
+
+            sql = """INSERT INTO teilgebiete (tgnam)
+                    SELECT teilgebiet FROM haltungen 
+                    WHERE teilgebiet IS NOT NULL AND
+                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                    GROUP BY teilgebiet"""
+            if not db_qkan.sql(sql, "mu_porter.application_dialog.prepareDialog (2) "):
+                return False
+
+            sql = """INSERT INTO teilgebiete (tgnam)
+                    SELECT teilgebiet FROM schaechte 
+                    WHERE teilgebiet IS NOT NULL AND
+                    teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
+                    GROUP BY teilgebiet"""
+            if not db_qkan.sql(sql, "mu_porter.application_dialog.prepareDialog (3) "):
+                return False
+
+            db_qkan.commit()
+
+            # Anlegen der Tabelle zur Auswahl der Teilgebiete
+
+            # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
+            teilgebiete = QKan.config.selections.teilgebiete
+
+            # Abfragen der Tabelle teilgebiete nach Teilgebieten
+            sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
+            if not db_qkan.sql(sql, "mu_porter.application_dialog.prepareDialog (4) "):
+                return False
+            daten = db_qkan.fetchall()
+            self.lw_teilgebiete.clear()
+
+            for ielem, elem in enumerate(daten):
+                self.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
+                try:
+                    if elem[0] in teilgebiete:
+                        self.lw_teilgebiete.setCurrentRow(ielem)
+                except BaseException as err:
+                    fehlermeldung(
+                        (
+                            "mu_porter.application_dialog.prepareDialog, "
+                            f"Fehler in elem = {elem}\n"
+                        ),
+                        repr(err),
+                    )
+
         return True
-
-    def connectHEDB(self, database_he: str) -> None:
-        """Attach SQLite-Database with MU Data"""
-        sql = f'ATTACH DATABASE "{database_he}" AS he'
-
-        if self.db_qkan is None or not self.db_qkan.sql(
-            sql, "MuPorter.run_export_to_mu Attach MU"
-        ):
-            return
 
 
 IMPORT_CLASS, _ = uic.loadUiType(
@@ -377,10 +371,10 @@ class ImportDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     rb_append: QRadioButton
 
     def __init__(
-        self,
-        default_dir: str,
-        tr: Callable,
-        parent: Optional[QWidget] = None,
+            self,
+            default_dir: str,
+            tr: Callable,
+            parent: Optional[QWidget] = None,
     ):
         # noinspection PyCallByClass,PyArgumentList
         super().__init__(default_dir, tr, parent)

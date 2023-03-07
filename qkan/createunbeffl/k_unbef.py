@@ -205,7 +205,7 @@ def create_unpaved_areas(
     # WHERE fl.flnam NOT IN
     # (   SELECT flnam FROM linkfl WHERE flnam IS NOT NULL)"""
 
-    # if not dbQK.sql(sql, "QKan.CreateUnbefFlaechen (5)"):
+    # if not db_qkan.sql(sql, "QKan.CreateUnbefFlaechen (5)"):
     # return False
 
     # status_message.setText("Nachbearbeitung")

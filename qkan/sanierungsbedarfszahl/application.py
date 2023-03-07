@@ -20,8 +20,6 @@ class sanierungsbedarfszahl(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
 
-        self.db_qkan: DBConnection = None
-
         self.import_dlg = SanierungDialog(default_dir=self.default_dir, tr=self.tr)
 
     # noinspection PyPep8Naming
@@ -137,47 +135,37 @@ class sanierungsbedarfszahl(QKanPlugin):
         check_cb['cb14'] = self.import_dlg.checkBox_14.isChecked()
 
         self.log.info("Creating DB")
-        db_qkan = DBConnection(
-            dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
-        )
+        with DBConnection(
+                dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
+        ) as db_qkan:
+            if not db_qkan.connected:
+                fehlermeldung(
+                    "Fehler im XML-Import",
+                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+                )
+                self.iface.messageBar().pushMessage(
+                    "Fehler im XML-Import",
+                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+                    level=Qgis.Critical,
+                )
+                return False
 
-        if not db_qkan:
-            fehlermeldung(
-                "Fehler im XML-Import",
-                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+            self.log.info("DB creation finished, starting Zustandsklassen")
+            zustand = sanierungsbedarfszahl_funkt(
+                check_cb,
+                QKan.config.database.qkan,
+                QKan.config.sanierung.date,
+                QKan.config.sanierung.speicher,
+                QKan.config.sanierung.atlas,
+                massstab,
+                format,
+                excel_format,
+                QKan.config.sanierung.speicher2,
+                QKan.config.epsg,
+                db_format
             )
-            self.iface.messageBar().pushMessage(
-                "Fehler im XML-Import",
-                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-                level=Qgis.Critical,
-            )
-            return False
-
-        self.log.info("DB creation finished, starting Zustandsklassen")
-        zustand = sanierungsbedarfszahl_funkt(check_cb, QKan.config.database.qkan, QKan.config.sanierung.date, QKan.config.sanierung.speicher, QKan.config.sanierung.atlas, massstab, format, excel_format, QKan.config.sanierung.speicher2, QKan.config.epsg, db_format)
-        zustand.run()
-        del zustand
-
-        #QKan.config.project.template = str(
-        #    Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-        #)
-
-        #qgsadapt(
-         #   QKan.config.database.qkan,
-         #   db_qkan,
-         #   QKan.config.project.file,
-         #   QKan.config.project.template,
-         #   QKan.config.epsg,
- #       )
-#
-  #      del db_qkan
-   #     self.log.debug("Closed DB")
-
-        # Load generated project
-        # noinspection PyArgumentList
-        #project = QgsProject.instance()
-        #project.read(QKan.config.project.file)
-        #project.reloadAllLayers()
+            zustand.run()
+            del zustand
 
         # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
 

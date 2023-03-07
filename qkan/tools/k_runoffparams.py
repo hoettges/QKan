@@ -56,7 +56,7 @@ def setRunoffparams(
 ) -> None:
     """Berechnet Oberlächenabflussparameter für HYSTEM/EXTRAN 7 und DYNA/Kanal++.
 
-    :dbQK:                          Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :db_qkan:                          Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :runoffparamstype_choice:       Simulationsprogramm, für das die Paremter berechnet werden sollen.
     :runoffmodeltype_choice:        Funktionen, die von den Simulationsprogrammen genutzt werden sollen
     :liste_teilgebiete:             Liste der bei der Bearbeitung zu berücksichtigenden Teilgebiete (Tabelle tezg)

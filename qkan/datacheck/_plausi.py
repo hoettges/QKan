@@ -12,7 +12,6 @@ class PlausiTask(QKanPlugin):
         self.db_qkan = db_qkan
 
     def run(self) -> bool:
-
         selected_themes = QKan.config.plausi.themen
 
         # update damit die Charakterisirungsfehler funktionieren
@@ -22,7 +21,6 @@ class PlausiTask(QKanPlugin):
                             """
         if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1a)"):
             logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
-            del self.db_qkan
             return False
 
         sql = f"""Update Untersuchdat_haltung
@@ -31,7 +29,6 @@ class PlausiTask(QKanPlugin):
                                     """
         if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1b)"):
             logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
-            del self.db_qkan
             return False
 
         sql = f"""Update Untersuchdat_schacht
@@ -40,7 +37,6 @@ class PlausiTask(QKanPlugin):
                                     """
         if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1c)"):
             logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
-            del self.db_qkan
             return False
 
         sql = f"""Update Untersuchdat_schacht
@@ -49,7 +45,6 @@ class PlausiTask(QKanPlugin):
                                             """
         if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1d)"):
             logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
-            del self.db_qkan
             return False
 
         sql = f"""Update Untersuchdat_schacht
@@ -58,14 +53,12 @@ class PlausiTask(QKanPlugin):
                                                     """
         if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1e)"):
             logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
-            del self.db_qkan
             return False
 
         if not QKan.config.plausi.keepdata:
             sql = """DELETE FROM pruefliste"""
             if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1)"):
                 logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
-                del self.db_qkan
                 return False
 
         filter = "('" + "', '".join(selected_themes) + "')"
@@ -76,7 +69,6 @@ class PlausiTask(QKanPlugin):
 
         if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (1)"):
             logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
-            del self.db_qkan
             return False
 
         for (gruppe, warntext, warntyp, warnlevel, sql, layername, attrname) in self.db_qkan.fetchall():

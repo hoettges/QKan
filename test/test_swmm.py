@@ -1,3 +1,4 @@
+from qkan.database.dbfunc import DBConnection
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
 from zipfile import ZipFile
 from pathlib import Path
@@ -72,7 +73,8 @@ class TestQKan2SWMM(QgisTest):
         QKan.config.check_export.synch = False
 
         imp = SWMMPorter(iface())
-        erg = imp._doexport()
+        with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
+            erg = imp._doexport(db_qkan)
 
         LOGGER.debug(f"erg (Validate_SWMM_export): {erg}")
         if not erg:

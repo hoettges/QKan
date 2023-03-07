@@ -51,8 +51,6 @@ class PlausiDialog(_Dialog, IMPORT_CLASS):  # type: ignore
     lw_themen: QListWidget
     le_anzahl: QLineEdit
 
-    db_qkan: DBConnection
-
     def __init__(
         self,
         default_dir: str,
@@ -86,9 +84,8 @@ class PlausiDialog(_Dialog, IMPORT_CLASS):  # type: ignore
         self.le_anzahl.setText(str(anzahl))
         return True
 
-    def prepareDialog(self, db_qkan) -> bool:
+    def prepareDialog(self, db_qkan: DBConnection) -> bool:
         """Füllt Themenliste der Plausibilitätsabfragen"""
-        self.db_qkan = db_qkan
 
         # gespeicherte Optionen abrufen
         self.cb_keepdata.setChecked(QKan.config.plausi.keepdata)
@@ -99,9 +96,9 @@ class PlausiDialog(_Dialog, IMPORT_CLASS):  # type: ignore
 
         # Abfragen der Tabelle plausisql nach Themen, wird gespeichert als dict in self.themesdata
         sql = '''SELECT gruppe, count(*) AS n FROM pruefsql GROUP BY gruppe;'''
-        if not self.db_qkan.sql(sql, "datacheck.application_dialog.connectQKanDB (1) "):
+        if not db_qkan.sql(sql, "datacheck.application_dialog.connectQKanDB (1) "):
             return False
-        data = self.db_qkan.fetchall()
+        data = db_qkan.fetchall()
 
         self.themesdata: dict[str, int] = dict(data)                    # dict(Themen: Anzahl) zur Verwaltung der Anzahl ausgewählter Plausibilitätsabfragen
         themeslist: list[str] = [elem[0] for elem in data]              # Liste der Themen

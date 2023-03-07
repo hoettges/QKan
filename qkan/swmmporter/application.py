@@ -64,8 +64,6 @@ class SWMMPorter(QKanPlugin):
         self.import_dlg = ImportDialog(default_dir=self.default_dir, tr=self.tr)
         self.export_dlg = ExportDialog(default_dir=self.default_dir, tr=self.tr)
 
-        self.db_qkan: DBConnection = None
-
     # noinspection PyPep8Naming
     def initGui(self) -> None:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
@@ -96,62 +94,67 @@ class SWMMPorter(QKanPlugin):
 
         # noinspection PyArgumentList
 
-        self.db_qkan = DBConnection()
-        dbname = self.db_qkan.dbname
+        with DBConnection() as db_qkan:
+            if not db_qkan.connected:
+                logger.error(
+                    "Fehler in swmmporter.SWMMPorter.run_export:\n"
+                    "QKan-Datenbank wurde nicht "
+                    "gefunden oder war nicht aktuell!\nAbbruch!"
+                )
+                return
 
-        #self.database_qkan, _ = get_database_QKan()
-        if self.db_qkan:
-            self.export_dlg.tf_database.setText(dbname)
+            self.export_dlg.tf_database.setText(db_qkan.dbname)
 
-        if not self.export_dlg.prepareDialog(self.db_qkan):
-            return False
+            if not self.export_dlg.prepareDialog(db_qkan):
+                return
 
-        # Formular anzeigen
-        self.export_dlg.show()
+            # Formular anzeigen
+            self.export_dlg.show()
 
-        #if not self.export_dlg.prepareDialog(self.db_qkan):
-        #    return False
+            # Im Formular wurde [OK] geklickt
+            if self.export_dlg.exec_():
+                self._save_config()
+                self._doexport(db_qkan)
 
-        # Im Formular wurde [OK] geklickt
-        if self.export_dlg.exec_():
-            # Read from form and save to config
-            QKan.config.database.qkan = self.export_dlg.tf_database.text()
-            QKan.config.swmm.export_file = self.export_dlg.tf_SWMM_dest.text()
-            QKan.config.swmm.template = self.export_dlg.tf_SWMM_template.text()
+        self.log.debug("Closed DB")
 
-            QKan.config.check_export.haltungen = (
-                self.export_dlg.cb_haltungen.isChecked()
-            )
-            QKan.config.check_export.schaechte = (
-                self.export_dlg.cb_schaechte.isChecked()
-            )
-            QKan.config.check_export.auslaesse = (
-                self.export_dlg.cb_auslaesse.isChecked()
-            )
-            QKan.config.check_export.speicher = self.export_dlg.cb_speicher.isChecked()
-            QKan.config.check_export.pumpen = self.export_dlg.cb_pumpen.isChecked()
-            QKan.config.check_export.wehre = self.export_dlg.cb_wehre.isChecked()
-            QKan.config.check_export.flaechen = self.export_dlg.cb_flaechen.isChecked()
+    def _save_config(self) -> None:
+        """Read from form and save to config"""
+        QKan.config.database.qkan = self.export_dlg.tf_database.text()
+        QKan.config.swmm.export_file = self.export_dlg.tf_SWMM_dest.text()
+        QKan.config.swmm.template = self.export_dlg.tf_SWMM_template.text()
 
-            QKan.config.check_export.einzugsgebiete = (
-                self.export_dlg.cb_einzugsgebiete.isChecked()
-            )
+        QKan.config.check_export.haltungen = (
+            self.export_dlg.cb_haltungen.isChecked()
+        )
+        QKan.config.check_export.schaechte = (
+            self.export_dlg.cb_schaechte.isChecked()
+        )
+        QKan.config.check_export.auslaesse = (
+            self.export_dlg.cb_auslaesse.isChecked()
+        )
+        QKan.config.check_export.speicher = self.export_dlg.cb_speicher.isChecked()
+        QKan.config.check_export.pumpen = self.export_dlg.cb_pumpen.isChecked()
+        QKan.config.check_export.wehre = self.export_dlg.cb_wehre.isChecked()
+        QKan.config.check_export.flaechen = self.export_dlg.cb_flaechen.isChecked()
 
-            QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
-            QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
-            QKan.config.check_export.new = self.export_dlg.rb_new.isChecked()
+        QKan.config.check_export.einzugsgebiete = (
+            self.export_dlg.cb_einzugsgebiete.isChecked()
+        )
 
-            teilgebiete = [
-                _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
-            ]
-            QKan.config.selections.teilgebiete = teilgebiete
+        QKan.config.check_export.append = self.export_dlg.rb_append.isChecked()
+        QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
+        QKan.config.check_export.new = self.export_dlg.rb_new.isChecked()
 
-            QKan.config.save()
+        teilgebiete = [
+            _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
+        ]
+        QKan.config.selections.teilgebiete = teilgebiete
 
-            self._doexport()
+        QKan.config.save()
 
-    def _doexport(self) -> bool:
-        """Start des Export in eine SWMM-Datei
+    def _doexport(self, db_qkan: DBConnection) -> bool:
+        """Start des Exports in eine SWMM-Datei
 
         Einspringpunkt für Test
         """
@@ -163,22 +166,13 @@ class SWMMPorter(QKanPlugin):
         else:
             status = 'new'
 
-
-        # Für Test muss noch die Datenbankverbindung hergestellt werden
-        if not self.db_qkan:
-            self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
-
         # Run export
-        ExportTask(self.db_qkan, QKan.config.swmm.export_file, QKan.config.swmm.template, QKan.config.selections.teilgebiete, status).run()
-
-        # Close connection
-        del self.db_qkan
-        self.log.debug("Closed DB")
+        ExportTask(db_qkan, QKan.config.swmm.export_file, QKan.config.swmm.template, QKan.config.selections.teilgebiete, status).run()
 
         return True
 
     def run_import(self) -> None:
-        """Anzeigen des Importformulars SWMM und anschließender Start des Import aus einer SWMM-Datei"""
+        """Anzeigen des Importformulars SWMM und anschließender Start des Imports aus einer SWMM-Datei"""
 
         # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
         #self.import_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')
@@ -231,115 +225,48 @@ class SWMMPorter(QKanPlugin):
 
 
     def _doimport(self) -> bool:
-        """Start des Import aus einer SWMM-Datei
+        """Start des Imports aus einer SWMM-Datei
 
         Einspringpunkt für Test
         """
         self.log.info("Creating DB")
-        db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
 
-        if not db_qkan:
-            fehlermeldung(
-                "Fehler im SWMM-Import",
-                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-            )
-            self.iface.messageBar().pushMessage(
-                "Fehler im SWMM-Import",
-                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-                level=Qgis.Critical,
-            )
-            return False
+        with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
+            if not db_qkan.connected:
+                fehlermeldung(
+                    "Fehler im SWMM-Import",
+                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+                )
+                self.iface.messageBar().pushMessage(
+                    "Fehler im SWMM-Import",
+                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+                    level=Qgis.Critical,
+                )
+                return False
 
-        # Attach SQLite-Database with HE8 Data
-        #sql = f'ATTACH DATABASE "{QKan.config.swmm.import_file}" AS swmm'
-        #if not db_qkan.sql(sql, "SWMMporter.run_import_to_swmm Attach SWMM"):
-        #    logger.error(
-        #        f"Fehler in SWMMporter._doimport(): Attach fehlgeschlagen: {QKan.config.he8.import_file}"
-        #    )
-         #   return False
+            self.log.info("DB creation finished, starting importer")
+            imp = ImportTask(QKan.config.swmm.import_file, db_qkan, QKan.config.project.file)
+            imp.run()
+            del imp
 
-        self.log.info("DB creation finished, starting importer")
-        imp = ImportTask(QKan.config.swmm.import_file, db_qkan, QKan.config.project.file)
-        imp.run()
-        del imp
+            # Write and load new project file, only if new project
+            if QgsProject.instance().fileName() == '':
+                QKan.config.project.template = str(
+                    Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
+                )
+                qgsadapt(
+                    QKan.config.database.qkan,
+                    db_qkan,
+                    QKan.config.project.file,
+                    QKan.config.project.template,
+                    QKan.config.epsg,
+                )
 
-        # Write and load new project file, only if new project
-        if QgsProject.instance().fileName() == '':
-            QKan.config.project.template = str(
-                Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-            )
-            qgsadapt(
-                QKan.config.database.qkan,
-                db_qkan,
-                QKan.config.project.file,
-                QKan.config.project.template,
-                QKan.config.epsg,
-            )
+                # Load generated project
+                # noinspection PyArgumentList
+                project = QgsProject.instance()
+                project.read(QKan.config.project.file)
+                project.reloadAllLayers()
 
-            # Load generated project
-            # noinspection PyArgumentList
-            project = QgsProject.instance()
-            project.read(QKan.config.project.file)
-            project.reloadAllLayers()
-
-        del db_qkan
         self.log.debug("Closed DB")
-
         return True
-
-
-    # # Ende Eigene Funktionen ---------------------------------------------------
-    # #kann weg?
-    #
-    # def run(self) -> None:
-    #     """Run method that performs all the real work"""
-    #
-    #     self.dlg.tf_qkanDB.setText(QKan.config.database.qkan)
-    #     self.dlg.tf_SWMMFile.setText(QKan.config.dyna.file)
-    #
-    #     # noinspection PyCallByClass,PyArgumentList
-    #     self.dlg.qsw_epsg.setCrs(
-    #         QgsCoordinateReferenceSystem.fromEpsgId(QKan.config.epsg)
-    #     )
-    #
-    #     self.dlg.tf_projectFile.setText(QKan.config.project.file)
-    #
-    #     # show the dialog
-    #     self.dlg.show()
-    #     # Run the dialog event loop
-    #     result = self.dlg.exec_()
-    #     # See if OK was pressed
-    #     if result:
-    #         # Namen der Datenbanken uebernehmen
-    #         swm_mfile: str = self.dlg.tf_SWMMFile.text()
-    #         database_qkan: str = self.dlg.tf_qkanDB.text()
-    #         projectfile: str = self.dlg.tf_projectFile.text()
-    #         epsg: int = int(self.dlg.qsw_epsg.crs().postgisSrid())
-    #
-    #         # Konfigurationsdaten schreiben
-    #         QKan.config.database.qkan = database_qkan
-    #         QKan.config.dyna.file = swm_mfile
-    #         QKan.config.epsg = epsg
-    #         QKan.config.project.file = projectfile
-    #
-    #         QKan.config.save()
-    #
-    #         # Start der Verarbeitung
-    #
-    #         # Modulaufruf in Logdatei schreiben
-    #         self.log.debug(
-    #             f"""QKan-Modul Aufruf
-    #             importKanaldaten(
-    #                 "{swm_mfile}",
-    #                 "{database_qkan}",
-    #                 "{projectfile}",
-    #                 {epsg},
-    #             )"""
-    #         )
-    #
-    #         importKanaldaten(
-    #             swm_mfile,
-    #             database_qkan,
-    #             projectfile,
-    #             epsg,
-    #         )

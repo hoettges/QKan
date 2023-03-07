@@ -20,8 +20,6 @@ class zustandsklassen(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
 
-        self.db_qkan: DBConnection = None
-
         self.import_dlg = ZustandDialog(default_dir=self.default_dir, tr=self.tr)
 
     # noinspection PyPep8Naming
@@ -131,48 +129,25 @@ class zustandsklassen(QKanPlugin):
         check_cb['cb15'] = self.import_dlg.checkBox_15.isChecked()
 
         self.log.info("Creating DB")
-        db_qkan = DBConnection(
+        with DBConnection(
             dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
-        )
-
-        if not db_qkan:
-            fehlermeldung(
-                "Fehler im XML-Import",
-                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-            )
-            self.iface.messageBar().pushMessage(
-                "Fehler im XML-Import",
-                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-                level=Qgis.Critical,
-            )
-            return False
+        ) as db_qkan:
+            if not db_qkan.connected:
+                fehlermeldung(
+                    "Fehler im XML-Import",
+                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+                )
+                self.iface.messageBar().pushMessage(
+                    "Fehler im XML-Import",
+                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+                    level=Qgis.Critical,
+                )
+                return False
 
         self.log.info("DB creation finished, starting Zustandsklassen")
-        zustand = Zustandsklassen_funkt(check_cb, QKan.config.database.qkan, QKan.config.zustand.date, QKan.config.epsg )
+        zustand = Zustandsklassen_funkt(check_cb, QKan.config.database.qkan, QKan.config.zustand.date, QKan.config.epsg)
         zustand.run()
         del zustand
 
-        #QKan.config.project.template = str(
-        #    Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-        #)
-
-        #qgsadapt(
-         #   QKan.config.database.qkan,
-         #   db_qkan,
-         #   QKan.config.project.file,
-         #   QKan.config.project.template,
-         #   QKan.config.epsg,
- #       )
-#
-  #      del db_qkan
-   #     self.log.debug("Closed DB")
-
-        # Load generated project
-        # noinspection PyArgumentList
-        #project = QgsProject.instance()
-        #project.read(QKan.config.project.file)
-        #project.reloadAllLayers()
-
         # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
-
         return True

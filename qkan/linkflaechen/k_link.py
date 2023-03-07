@@ -99,14 +99,15 @@ def createlinkfl(
         if not db_qkan.sql(
             "UPDATE flaechen SET geom=MakeValid(geom)", "k_link.createlinkfl (1)"
         ):
-            del db_qkan
             progress_bar.reset()
             return False
+
         if not db_qkan.sql(
             "UPDATE tezg SET geom=MakeValid(geom)", "k_link.createlinkfl (2)"
         ):
             progress_bar.reset()
             return False
+
         # Flächen prüfen und ggfs. Meldung anzeigen
         if not check_flaechenbilanz(db_qkan):
             return False
@@ -177,18 +178,7 @@ def createlinkfl(
 
     # Sowohl Flächen, die nicht als auch die, die verschnitten werden müssen
 
-    # if not checkgeom(dbQK, 'tezg', 'geom', autokorrektur, liste_teilgebiete):
-    # del dbQK
-    # progress_bar.reset()
-    # return False
-
-    # if not checkgeom(dbQK, 'flaechen', 'geom', autokorrektur, liste_teilgebiete):
-    # del dbQK
-    # progress_bar.reset()
-    # return False
-
     if mit_verschneidung:
-
         # 1. Nicht zu verschneidende Flächen: aufteilen <> 'ja'
         if links_in_tezg:
             sql = f"""WITH linkadd AS (
@@ -630,21 +620,20 @@ def assigntgeb(
         if not db_qkan.sql(
             "UPDATE flaechen SET geom=MakeValid(geom)", "k_link.assigntgeb (1)"
         ):
-            del db_qkan
             progress_bar.reset()
             return False
+
         if not db_qkan.sql(
             "UPDATE tezg SET geom=MakeValid(geom)", "k_link.assigntgeb (2)"
         ):
-            del db_qkan
             progress_bar.reset()
             return False
+
         # Flächen prüfen und ggfs. Meldung anzeigen
         if not check_flaechenbilanz(db_qkan):
             return False
 
     if not checknames(db_qkan, "teilgebiete", "tgnam", "tg_", autokorrektur):
-        del db_qkan
         return False
 
     if len(liste_teilgebiete) != 0:
@@ -712,7 +701,6 @@ def assigntgeb(
                     repr(auswahltyp)
                 ),
             )
-            del db_qkan
             return False
 
         # logger.debug(u'\nSQL:\n{}\n'.format(sql))

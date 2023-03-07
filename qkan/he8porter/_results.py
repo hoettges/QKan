@@ -51,14 +51,12 @@ class ResultsTask:
 
         database_QKan, epsg = get_database_QKan()
 
-        """Attach SQLite-Database with HE8 Data"""
+        # Attach SQLite-Database with HE8 Data
         sql = f'ATTACH DATABASE "{QKan.config.he8.results_file}" AS he'
 
-        dbQK = DBConnection(
-            dbname=database_QKan
-        )  # Datenbankobjekt der QKan-Datenbank zum Schreiben
-        if not dbQK.connected:
-            return None
+        with DBConnection(dbname=database_QKan) as db_qkan:
+            if not db_qkan.connected:
+                return False
 
         if dbQK is None:
             fehlermeldung(

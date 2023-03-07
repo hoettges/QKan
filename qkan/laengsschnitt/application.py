@@ -151,7 +151,6 @@ class Laengsschnitt(QKanPlugin):
         self.laengs_dlg.show()
 
         if self.laengs_dlg.exec_():
-
             # Save to config
             QKan.config.save()
 

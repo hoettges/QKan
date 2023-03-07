@@ -93,7 +93,7 @@ class TestQKanHE8(QgisTest):
         QKan.config.check_export.synch = False
 
         imp = XmlPorter(iface())
-        imp.connectQKanDB(QKan.config.database.qkan)
+        imp.db_name = QKan.config.database.qkan
         erg = imp._doexport()
 
         LOGGER.debug(f"erg (Validate_HE8_export): {erg}")

@@ -15,7 +15,6 @@ from . import resources  # isort:skip
 class DynaPorter(QKanPlugin):
     def __init__(self, iface: QgisInterface):
         super().__init__(iface)
-        self.db_qkan: Optional[DBConnection] = None
 
         self.dlg_import = ImportDialog(self)
         self.dlg_export = ExportDialog(self)

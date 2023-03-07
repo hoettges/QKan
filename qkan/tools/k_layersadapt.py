@@ -355,7 +355,7 @@ def layersadapt(
                         WHERE Lower(f_table_name) = Lower(?)
                         AND Lower(f_geometry_column) = Lower(?)"""
                 if not dbQK.sql(
-                    sql, "dbQK: k_layersadapt (3)", parameters=(table, geom)
+                    sql, "db_qkan: k_layersadapt (3)", parameters=(table, geom)
                 ):
                     del dbQK
                     return
@@ -439,7 +439,7 @@ def layersadapt(
     # Zoom auf alles
     if zoom_alles:
         # Tabellenstatistik aktualisieren, damit Zoom alles richtig funktioniert ...
-        if not dbQK.sql("SELECT UpdateLayerStatistics()", "dbQK: k_layersadapt (5)"):
+        if not dbQK.sql("SELECT UpdateLayerStatistics()", "db_qkan: k_layersadapt (5)"):
             del dbQK
             return
 

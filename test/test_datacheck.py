@@ -9,7 +9,6 @@ sys.path.append(os.path.join(os.path.split(__file__)[0], ".."))
 
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
 
-from qkan import enums
 from qkan.datacheck.application import Plausi
 from qkan.database.dbfunc import DBConnection
 
@@ -28,10 +27,11 @@ class TestPlausi(QgisTest):
 
     def test_plausi(self) -> None:
         database_qkan = str(BASE_WORK / "modell.sqlite")
-        db_qkan = DBConnection(database_qkan, qkan_db_update=True)              # inkl. automatischem DB-Update
 
-        test = Plausi(iface())
-        test._doplausi(db_qkan)
+        # inkl. automatischem DB-Update
+        with DBConnection(database_qkan, qkan_db_update=True) as db_qkan:
+            test = Plausi(iface())
+            test._doplausi(db_qkan, is_test=True)
 
         # self.assertTrue(False, "Fehlernachricht")
 

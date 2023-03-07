@@ -117,7 +117,7 @@ class RunoffParamsDialog(QKanDBDialog, FORM_CLASS_runoffparams):  # type: ignore
     def count_selection(self) -> None:
         """Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
         der betroffenen Flächen und Haltungen"""
-        if not self.db_qkan:
+        if not self.db_qkan.connected:
             logger.debug("Error in RunoffParamsDialog.count_selection: db_qkan nicht verbunden...")
             return
 

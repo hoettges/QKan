@@ -44,22 +44,16 @@ class ExportTask:
         self.db_qkan = db_qkan
         self.exportFile = exportFile
         self.template = template
-        #self.xoffset, self.yoffset = offset
         self.xoffset, self.yoffset = 100,100
         self.liste_teilgebiete = liste_teilgebiete
         self.status = status
 
-        #self.dbQK = DBConnection(
-        #    dbname=database_qkan, epsg=epsg
-        #)  # Datenbankobjekt der QKan-Datenbank zum Schreiben
-        self.dbQK = db_qkan
-
-        self.connected = self.dbQK.connected
+        self.connected = self.db_qkan.connected
 
         self.ergfileSwmm = self.exportFile
-        self.file=None
+        self.file = None
 
-        if not self.dbQK.connected:
+        if not self.db_qkan.connected:
             fehlermeldung(
                 "Fehler in import_from_swmm:\n",
                 "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
@@ -68,11 +62,9 @@ class ExportTask:
             )
 
     def __del__(self) -> None:
-        self.dbQK.sql("SELECT RecoverSpatialIndex()")
-        del self.dbQK
+        self.db_qkan.sql("SELECT RecoverSpatialIndex()")
 
     def insertfunk(self, search_phrase, value):
-
         line_num = 0
         line_num2 = 0
         z = 0
@@ -182,9 +174,7 @@ class ExportTask:
 
 
         # Verbindung zur Spatialite-Datenbank mit den Kanaldaten
-
-        dbQK=self.dbQK
-        if not dbQK.connected:
+        if not self.db_qkan.connected:
             logger.error(
                 """Fehler in exportSwmm:
                 QKan-Datenbank {databaseQKan} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!"""
@@ -287,13 +277,12 @@ class ExportTask:
                                           FROM tezg AS tg
                                         {auswahl}"""
 
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
 
             datasc = ""  # Datenzeilen [subcatchments]
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -374,13 +363,12 @@ class ExportTask:
                                         ON apdur.bodenklasse = bk.bknam
                                         {auswahl}"""
 
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
 
             datasa = ""  # Datenzeilen [subareas]
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -469,13 +457,12 @@ class ExportTask:
                                                 ON apdur.bodenklasse = bk.bknam
                                                 {auswahl}"""
 
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
 
             datain = ""  # Datenzeilen [infiltration]
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -544,13 +531,12 @@ class ExportTask:
                                     WHERE s.schachttyp = 'Schacht'
                                     {auswahl}"""
 
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
 
             dataju = ""  # Datenzeilen [JUNCTIONS]
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -614,12 +600,11 @@ class ExportTask:
                                             WHERE s.schachttyp = 'Auslass'
                                             {auswahl}"""
 
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
             dataou = ""  # Datenzeilen [OUTFALLS]
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -679,12 +664,11 @@ class ExportTask:
                                             WHERE s.schachttyp = 'Speicher'
                                             {auswahl}"""
 
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
             dataou = ""  # Datenzeilen [OUTFALLS]
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -737,13 +721,12 @@ class ExportTask:
                                         haltungen AS h
                                     WHERE h.haltungstyp IS 'Haltung'
                                     {auswahl}"""
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
 
             datacd = ""  # Datenzeilen
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -795,13 +778,12 @@ class ExportTask:
                                         haltungen AS h
                                     WHERE h.haltungstyp IS 'Pumpe'
                                     {auswahl}"""
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
 
             datacd = ""  # Datenzeilen
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -853,13 +835,12 @@ class ExportTask:
                                         haltungen AS h
                                     WHERE h.haltungstyp IS 'Wehr'
                                     {auswahl}"""
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
 
             datacd = ""  # Datenzeilen
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -914,13 +895,12 @@ class ExportTask:
                                         Intersects(h.geom,g.geom) and h.haltungstyp IS 'Haltung'
                                     GROUP BY h.haltnam
                                     {auswahl}"""
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
 
             dataxs = ""  # Datenzeilen
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
 
                 (
@@ -1080,11 +1060,10 @@ class ExportTask:
                                     WHERE s.schachttyp = 'Schacht'
                                     {auswahl}"""
 
-            if not self.dbQK.sql(sql, "dbQK: exportSWMM (3)"):
-                del self.dbQK
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -1131,11 +1110,11 @@ class ExportTask:
                                     from haltungen AS h
                                     WHERE h.haltungstyp IS 'Haltung'
                                     {auswahl}"""
-            self.dbQK.sql(sql)
+            self.db_qkan.sql(sql)
 
             dataver = ""
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -1218,9 +1197,9 @@ class ExportTask:
                                     tg.flnam, tg.schnam, st_astext(tg.geom)
                                     from tezg AS tg
                                     {auswahl}"""
-            self.dbQK.sql(sql)
+            self.db_qkan.sql(sql)
 
-            for b in self.dbQK.fetchall():
+            for b in self.db_qkan.fetchall():
                 # In allen Feldern None durch NULL ersetzen
                 (
                     name_t,
@@ -1283,12 +1262,12 @@ class ExportTask:
             #     Intersects(f.geom,g.geom)
             # GROUP BY f.regnr"""
             #
-            # self.dbQK.sql(sql)
+            # self.db_qkan.sql(sql)
             #
             # datarm = ""  # Datenzeilen
             # datasy = ""  # Datenzeilen
             #
-            # for c in self.dbQK.fetchall():
+            # for c in self.db_qkan.fetchall():
             #
             #     datarm += (
             #         "{:<16d} INTENSITY 1:00     1.0      TIMESERIES TS1             \n".format(

@@ -217,7 +217,7 @@ def write12(
         ON h.entwart = a.bezeichnung
     """
 
-    if not db_qkan.sql(sql, "dbQK: export_to_dyna.write12 (1)"):
+    if not db_qkan.sql(sql, "db_qkan: export_to_dyna.write12 (1)"):
         return False
 
     fortschritt("Export Datensätze Typ12", 0.3)
@@ -505,7 +505,7 @@ def write16(
     ORDER BY s.schnam, han.kanalnummer, han.haltungsnummer
     """
 
-    if not db_qkan.sql(sql, "dbQK: export_to_dyna.write16 (1)"):
+    if not db_qkan.sql(sql, "db_qkan: export_to_dyna.write16 (1)"):
         return False
 
     akt_schnam = ""  # Identifiziert Datensätze zum gleichen Knoten
@@ -623,7 +623,7 @@ def write41(
         WHERE s.schachttyp = 'Auslass'{ausw_and}{ausw_tab}{auswahl}
     """
 
-    if not db_qkan.sql(sql, "dbQK: export_to_dyna.write41 (1)"):
+    if not db_qkan.sql(sql, "db_qkan: export_to_dyna.write41 (1)"):
         return False
 
     for attr in db_qkan.fetchall():
@@ -775,7 +775,7 @@ def export_kanaldaten(
             SET kanalnummer = NULL,
                 haltungsnummer = NULL {ausw_where}{auswahl}"""
 
-        if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (1)"):
+        if not db_qkan.sql(sql, "db_qkan: export_to_dyna.init_dynahal (1)"):
             return False
 
         db_qkan.commit()
@@ -811,7 +811,7 @@ def export_kanaldaten(
                 SELECT haltnam FROM dynahal)
                 {ausw_and}{auswahl}"""
 
-        if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (2)"):
+        if not db_qkan.sql(sql, "db_qkan: export_to_dyna.init_dynahal (2)"):
             return False
 
         # Zurücksetzen von "kanalnummer" und "haltungsnummer"
@@ -822,7 +822,7 @@ def export_kanaldaten(
                 haltungsnummer = NULL
                 {ausw_where}{auswahl}"""
 
-        if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (3)"):
+        if not db_qkan.sql(sql, "db_qkan: export_to_dyna.init_dynahal (3)"):
             return False
 
         # Nummerierung der Anfangshaltungen
@@ -834,7 +834,7 @@ def export_kanaldaten(
                 WHERE anzobob <> 1 OR anzobun <> 1
                     {ausw_and}{auswahl}"""
 
-        if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (4)"):
+        if not db_qkan.sql(sql, "db_qkan: export_to_dyna.init_dynahal (4)"):
             return False
 
         db_qkan.commit()
@@ -866,11 +866,11 @@ def export_kanaldaten(
                     {ausw_and}{auswahl};
                 """
 
-            if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (5)"):
+            if not db_qkan.sql(sql, "db_qkan: export_to_dyna.init_dynahal (5)"):
                 return False
 
             if not db_qkan.sql(
-                "SELECT changes();", "dbQK: export_to_dyna.init_dynahal (6)"
+                "SELECT changes();", "db_qkan: export_to_dyna.init_dynahal (6)"
             ):
                 return False
 
@@ -901,7 +901,7 @@ def export_kanaldaten(
         # noinspection SqlWithoutWhere
         if not db_qkan.sql(
             "DELETE FROM dynahal;",
-            "dbQK: export_to_dyna.init_dynahal (7): Daten in Tabelle dynahal konnten nicht gelöscht werden",
+            "db_qkan: export_to_dyna.init_dynahal (7): Daten in Tabelle dynahal konnten nicht gelöscht werden",
         ):
             return False
 
@@ -918,7 +918,7 @@ def export_kanaldaten(
                 SELECT haltnam FROM dynahal)
                 {ausw_and}{auswahl}"""
 
-        if not db_qkan.sql(sql, "dbQK: export_to_dyna.init_dynahal (8)"):
+        if not db_qkan.sql(sql, "db_qkan: export_to_dyna.init_dynahal (8)"):
             return False
 
     progress_bar.setValue(20)
@@ -1050,7 +1050,7 @@ def export_kanaldaten(
                         # VALUES ('{key}', '{nam}', {br}, {ho})'''.format(
                         # key=profil_key, nam=profilnam, br=breite, ho=hoehe)
                         # logger.debug('sql = {}'.format(sql))
-                        # if not dbQK.sql(sql, 'importkanaldaten_kp (1)'):
+                        # if not db_qkan.sql(sql, 'importkanaldaten_kp (1)'):
                         # return None
 
                     if zeile[0:2] != "++":
@@ -1078,7 +1078,7 @@ def export_kanaldaten(
                 FROM haltungen {ausw_where}{auswahl}
                 GROUP BY profilnam"""
 
-        if not db_qkan.sql(sql, "dbQK: QKan_ExportDYNA.export_to_dyna.profile (1)"):
+        if not db_qkan.sql(sql, "db_qkan: QKan_ExportDYNA.export_to_dyna.profile (1)"):
             return False
 
         daten = db_qkan.fetchall()
@@ -1099,7 +1099,7 @@ def export_kanaldaten(
                 if profile_ergaenzen:
                     if not db_qkan.sql(
                         "INSERT INTO profile (profilnam) VALUES (?)",
-                        "dbQK: export_to_dyna.exportKanaldaten (1)",
+                        "db_qkan: export_to_dyna.exportKanaldaten (1)",
                         parameters=(profil_new,),
                     ):
                         return False
@@ -1119,7 +1119,7 @@ def export_kanaldaten(
                 ON h.profilnam = p.profilnam {ausw_where}{auswahl}
                 GROUP BY p.kp_key"""
 
-        if not db_qkan.sql(sql, "dbQK: QKan_ExportDYNA.export_to_dyna.profile (2)"):
+        if not db_qkan.sql(sql, "db_qkan: QKan_ExportDYNA.export_to_dyna.profile (2)"):
             return False
 
         daten = db_qkan.fetchall()
@@ -1138,7 +1138,7 @@ def export_kanaldaten(
                 if profile_ergaenzen:
                     if not db_qkan.sql(
                         "INSERT INTO profile (profilnam, kp_key) VALUES (?, ?)",
-                        "dbQK: export_to_dyna.exportKanaldaten (1)",
+                        "db_qkan: export_to_dyna.exportKanaldaten (1)",
                         parameters=(profilnam, profil_key),
                     ):
                         return False

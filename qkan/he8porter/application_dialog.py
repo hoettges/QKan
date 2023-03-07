@@ -218,7 +218,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         der betroffenen Flächen und Haltungen
         """
 
-        if not self.db_qkan:
+        if not self.db_qkan.connected:
             logger.error("db_qkan is not initialized.")
             return False
 
@@ -275,7 +275,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
             self.lf_anzahl_haltungen.setText("0")
         return True
 
-    def prepareDialog(self, db_qkan) -> bool:
+    def prepareDialog(self, db_qkan: DBConnection) -> bool:
         """Füllt Auswahllisten im Export-Dialog"""
 
         self.db_qkan = db_qkan

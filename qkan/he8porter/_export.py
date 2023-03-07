@@ -136,7 +136,7 @@ class ExportTask:
                     """
 
                 if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_he8.export_schaechte (1)"
+                    sql, "db_qkan: export_to_he8.export_schaechte (1)"
                 ):
                     return False
 
@@ -144,7 +144,7 @@ class ExportTask:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
                 if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_he8.export_schaechte (2)"
+                    sql, "db_qkan: export_to_he8.export_schaechte (2)"
                 ):
                     return False
 
@@ -186,7 +186,7 @@ class ExportTask:
                               schaechte.schachttyp = 'Schacht'{auswahl}
                     """
 
-                    if not self.db_qkan.sql(sql, "dbQK: export_schaechte (3)"):
+                    if not self.db_qkan.sql(sql, "db_qkan: export_schaechte (3)"):
                         return False
 
                     self.nextid += idmax - idmin + 1
@@ -236,7 +236,7 @@ class ExportTask:
                           (SELECT schnam FROM schaechte WHERE schaechte.schachttyp = 'Speicher'{auswahl})
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_speicher (1)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_speicher (1)"):
                     return False
 
             if self.append:
@@ -245,7 +245,7 @@ class ExportTask:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
                 if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_he8.export_schaechte (2)"
+                    sql, "db_qkan: export_to_he8.export_schaechte (2)"
                 ):
                     return False
 
@@ -294,7 +294,7 @@ class ExportTask:
                               schaechte.schachttyp = 'Speicher'{auswahl}
                     """
 
-                    if not self.db_qkan.sql(sql, "dbQK: export_speicher (1)"):
+                    if not self.db_qkan.sql(sql, "db_qkan: export_speicher (1)"):
                         return False
 
                     self.nextid += idmax - idmin + 1
@@ -346,7 +346,7 @@ class ExportTask:
                     """
 
                 if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_he8.export_auslaesse (1)"
+                    sql, "db_qkan: export_to_he8.export_auslaesse (1)"
                 ):
                     return False
 
@@ -356,7 +356,7 @@ class ExportTask:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 if not self.db_qkan.sql(
                     "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen",
-                    "dbQK: export_to_he8.export_schaechte (2)",
+                    "db_qkan: export_to_he8.export_schaechte (2)",
                 ):
                     return False
 
@@ -402,7 +402,7 @@ class ExportTask:
                               schaechte.schachttyp = 'Auslass'{auswahl}
                     """
 
-                    if not self.db_qkan.sql(sql, "dbQK: export_auslaesse (2)"):
+                    if not self.db_qkan.sql(sql, "db_qkan: export_auslaesse (2)"):
                         return False
 
                     self.nextid += idmax - idmin + 1
@@ -483,14 +483,14 @@ class ExportTask:
                   """
 
                 if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_he8.export_haltungen (1)"
+                    sql, "db_qkan: export_to_he8.export_haltungen (1)"
                 ):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_haltungen (2)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_haltungen (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -566,7 +566,7 @@ class ExportTask:
                       """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_haltungen (3)"
+                        sql, "db_qkan: export_to_he8.export_haltungen (3)"
                     ):
                         return False
 
@@ -703,14 +703,14 @@ class ExportTask:
 
                 for sql in sqllis:
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_flaechen (1)"
+                        sql, "db_qkan: export_to_he8.export_flaechen (1)"
                     ):
                         return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM linkfl"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_flaechen (2)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_flaechen (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -788,7 +788,7 @@ class ExportTask:
                         WHERE flaeche*10000 > {mindestflaeche} and (flnam NOT IN (SELECT Name FROM he.Flaeche))"""
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_flaechen (3)"
+                        sql, "db_qkan: export_to_he8.export_flaechen (3)"
                     ):
                         return False
 
@@ -812,7 +812,7 @@ class ExportTask:
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM tezg"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_tezg"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -883,7 +883,7 @@ class ExportTask:
                         WHERE fh.Name IS NULL AND
                          area(tg.geom)*abs(tb.bef - coalesce(tg.befgrad, 0)/100.) > {mindestflaeche}"""
 
-                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg (1)"):
+                    if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_tezg (1)"):
                         return False
 
                     self.nextid += (idmax - idmin + 1) * 2
@@ -898,7 +898,7 @@ class ExportTask:
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM tezg"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg (2)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_tezg (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -944,13 +944,13 @@ class ExportTask:
                         FROM tezg AS tg
                     """
 
-                    if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_tezg (3)"):
+                    if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_tezg (3)"):
                         return False
 
                     self.nextid += idmax - idmin + 1
                     self.db_qkan.sql(
                         "UPDATE he.Itwh$ProgInfo SET NextId = ?",
-                        parameters=(self.nextid,), stmt_category="dbQK: export_to_he8.export_tezg (4)"
+                        parameters=(self.nextid,), stmt_category="db_qkan: export_to_he8.export_tezg (4)"
                     )
 
                     fortschritt("{} Haltungsflaechen eingefuegt".format(self.nextid - nr0), 0.90)
@@ -997,13 +997,13 @@ class ExportTask:
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen (1)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_pumpen (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_pumpen (2)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_pumpen (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -1047,7 +1047,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_pumpen (3)"
+                        sql, "db_qkan: export_to_he8.export_pumpen (3)"
                     ):
                         return False
 
@@ -1101,13 +1101,13 @@ class ExportTask:
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre (1)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_wehre (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_wehre (2)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_wehre (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -1153,7 +1153,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_wehre (3)"
+                        sql, "db_qkan: export_to_he8.export_wehre (3)"
                     ):
                         return False
 
@@ -1205,13 +1205,13 @@ class ExportTask:
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_drosseln (1)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_drosseln (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_drosseln (2)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_drosseln (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -1255,7 +1255,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_drosseln (3)"
+                        sql, "db_qkan: export_to_he8.export_drosseln (3)"
                     ):
                         return False
 
@@ -1319,13 +1319,13 @@ class ExportTask:
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_schieber (1)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_schieber (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_schieber (2)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_schieber (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -1381,7 +1381,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_schieber (3)"
+                        sql, "db_qkan: export_to_he8.export_schieber (3)"
                     ):
                         return False
 
@@ -1443,13 +1443,13 @@ class ExportTask:
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_grundseitenauslaesse (1)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_grundseitenauslaesse (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_grundseitenauslaesse (2)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_grundseitenauslaesse (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -1503,7 +1503,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_grundseitenauslaesse (3)"
+                        sql, "db_qkan: export_to_he8.export_grundseitenauslaesse (3)"
                     ):
                         return False
 
@@ -1579,13 +1579,13 @@ class ExportTask:
                   ( SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'Q-Regler'){auswahl}
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_qregler (1)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_qregler (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_qregler (2)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_qregler (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -1655,7 +1655,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_qregler (3)"
+                        sql, "db_qkan: export_to_he8.export_qregler (3)"
                     ):
                         return False
 
@@ -1731,13 +1731,13 @@ class ExportTask:
                   ( SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'H-Regler'){auswahl}
                     """
 
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_hregler (1)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_hregler (1)"):
                     return False
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
-                if not self.db_qkan.sql(sql, "dbQK: export_to_he8.export_hregler (2)"):
+                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_hregler (2)"):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -1807,7 +1807,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_hregler (3)"
+                        sql, "db_qkan: export_to_he8.export_hregler (3)"
                     ):
                         return False
 
@@ -1830,7 +1830,7 @@ class ExportTask:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM abflussparameter"
                 if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_he8.export_Abflussparameter (2)"
+                    sql, "db_qkan: export_to_he8.export_Abflussparameter (2)"
                 ):
                     return False
 
@@ -1874,7 +1874,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_abflussparameter (2)"
+                        sql, "db_qkan: export_to_he8.export_abflussparameter (2)"
                     ):
                         return False
 
@@ -1901,7 +1901,7 @@ class ExportTask:
                     "SELECT min(rowid) as idmin, max(rowid) as idmax FROM bodenklassen"
                 )
                 if not self.db_qkan.sql(
-                    sql, "dbQK: export_to_he8.export_Bodenklassen (2)"
+                    sql, "db_qkan: export_to_he8.export_Bodenklassen (2)"
                 ):
                     return False
 
@@ -1939,7 +1939,7 @@ class ExportTask:
                     """
 
                     if not self.db_qkan.sql(
-                        sql, "dbQK: export_to_he8.export_abflussparameter (2)"
+                        sql, "db_qkan: export_to_he8.export_abflussparameter (2)"
                     ):
                         return False
 

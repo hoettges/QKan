@@ -43,7 +43,7 @@ def updatelinkfl(
 ) -> bool:
     """Aktualisierung des logischen Cache für die Tabelle "linkfl"
 
-    :dbQK:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
+    :db_qkan:                  Datenbankobjekt, das die Verknüpfung zur QKan-SpatiaLite-Datenbank verwaltet.
     :type dbQK:             DBConnection
 
     :radiusHal:             Fangradius für das Verknüpfungsende auf der Haltung
@@ -97,7 +97,7 @@ def updatelinkfl(
     if deletelinkGeomNone:
         if not dbQK.sql(
             "DELETE FROM linkfl WHERE glink IS NULL",
-            "dbQK: linkflaechen.updatelinks.updatelinkfl (1)",
+            "db_qkan: linkflaechen.updatelinks.updatelinkfl (1)",
         ):
             return False
 
@@ -118,7 +118,7 @@ def updatelinkfl(
             WHERE within(StartPoint(linkfl.glink),fl.geom) AND fl.geom IS NOT NULL)
         WHERE linkfl.pk NOT IN linksvalid"""
 
-    if not dbQK.sql(sql, "dbQK: linkflaechen.updatelinks.updatelinkfl (2)"):
+    if not dbQK.sql(sql, "db_qkan: linkflaechen.updatelinks.updatelinkfl (2)"):
         return False
 
     # progress_bar.setValue(30)
@@ -140,7 +140,7 @@ def updatelinkfl(
 
     if not dbQK.sql(
         sql,
-        "dbQK: linkflaechen.updatelinks.updatelinkfl (3)",
+        "db_qkan: linkflaechen.updatelinks.updatelinkfl (3)",
         parameters=(radiusHal, radiusHal),
     ):
         return False
@@ -167,7 +167,7 @@ def updatelinkfl(
         WHERE linkfl.pk NOT IN linksvalid"""
 
     if not dbQK.sql(
-        sql, "dbQK: linkflaechen.updatelinks.updatelinkfl (4)", parameters=(radiusHal,)
+        sql, "db_qkan: linkflaechen.updatelinks.updatelinkfl (4)", parameters=(radiusHal,)
     ):
         return False
 
@@ -199,7 +199,7 @@ def updatelinksw(
     if deletelinkGeomNone:
         sql = """DELETE FROM linksw WHERE glink IS NULL"""
 
-        if not dbQK.sql(sql, "dbQK: linkflaechen.updatelinks.updatelinksw (2)"):
+        if not dbQK.sql(sql, "db_qkan: linkflaechen.updatelinks.updatelinksw (2)"):
             return False
 
     # 1. einleit-Punkt in "linksw" eintragen (ohne Einschränkung auf auswahl)
@@ -218,7 +218,7 @@ def updatelinksw(
 
     if not dbQK.sql(
         sql,
-        "dbQK: linkflaechen.updatelinks.updatelinksw (3)",
+        "db_qkan: linkflaechen.updatelinks.updatelinksw (3)",
         parameters=(radiusHal, radiusHal),
     ):
         return False
@@ -243,7 +243,7 @@ def updatelinksw(
 
     if not dbQK.sql(
         sql,
-        "dbQK: linkflaechen.updatelinks.updatelinksw (4)",
+        "db_qkan: linkflaechen.updatelinks.updatelinksw (4)",
         parameters=(radiusHal, radiusHal),
     ):
         return False
@@ -268,7 +268,7 @@ def updatelinksw(
 
     logger.debug("\nSQL-4d:\n{}\n".format(sql))
 
-    if not dbQK.sql(sql, "dbQK: linkflaechen.updatelinks.updatelinksw (6)"):
+    if not dbQK.sql(sql, "db_qkan: linkflaechen.updatelinks.updatelinksw (6)"):
         return False
 
     dbQK.commit()
@@ -291,7 +291,7 @@ def updatelinkageb(
     if deletelink_geom_none:
         if not db_qkan.sql(
             "DELETE FROM linkageb WHERE glink IS NULL",
-            "dbQK: linkflaechen.updatelinks.updatelinkageb (2)",
+            "db_qkan: linkflaechen.updatelinks.updatelinkageb (2)",
         ):
             return False
 
@@ -309,7 +309,7 @@ def updatelinkageb(
             WHERE within(StartPoint(linkageb.glink),ag.geom))
         WHERE linkageb.pk NOT IN linksvalid"""
 
-    if not db_qkan.sql(sql, "dbQK: linkflaechen.updatelinks.updatelinkageb (3)"):
+    if not db_qkan.sql(sql, "db_qkan: linkflaechen.updatelinks.updatelinkageb (3)"):
         return False
 
     # progress_bar.setValue(30)
@@ -332,7 +332,7 @@ def updatelinkageb(
 
     if not db_qkan.sql(
         sql,
-        "dbQK: linkflaechen.updatelinks.updatelinkageb (4)",
+        "db_qkan: linkflaechen.updatelinks.updatelinkageb (4)",
         parameters=(radius_hal, radius_hal),
     ):
         return False
@@ -357,7 +357,7 @@ def updatelinkageb(
 
     logger.debug("\nSQL-4d:\n%s\n", sql)
 
-    if not db_qkan.sql(sql, "dbQK: linkflaechen.updatelinks.updatelinkageb (6)"):
+    if not db_qkan.sql(sql, "db_qkan: linkflaechen.updatelinks.updatelinkageb (6)"):
         return False
 
     db_qkan.commit()
