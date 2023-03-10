@@ -2,7 +2,7 @@ from pathlib import Path
 
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
-from qgis.utils import pluginDirectory
+from qgis.utils import pluginDirectory,iface
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
@@ -20,6 +20,7 @@ from .application_dialog import LaengsDialog
 
 # noinspection PyUnresolvedReferences
 from . import resources  # isort:skip
+from PyQt5.QtWidgets import *
 
 
 class Laengsschnitt(QKanPlugin):
@@ -28,20 +29,28 @@ class Laengsschnitt(QKanPlugin):
 
         self.laengs_dlg = None
         self.db_qkan: DBConnection = None
+        self.auswahl={}
         #self.get_widget()
 
         #self.laengs_dlg.refresh_function = self.refresh_function
         #self.laengs_dlg.export_cad_function = self.export_cad_function
 
-    def refresh_function(self, database, fig, canv,selected, auswahl):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl).zeichnen()
+    def refresh_function(self, database, fig, canv,selected, auswahl, point, massstab, features):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl, point, massstab, features).zeichnen()
         canv.draw()
 
-        return LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl).zeichnen()
+        return LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl, point, massstab, features).zeichnen()
 
 
-    def export_cad_function(self,database, fig, canv, selected, auswahl):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl).cad()
+    def export_cad_function(self,database, fig, canv, selected, auswahl, point, massstab, features):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl, point, massstab, features).cad()
+
+    def show_function(self,database, fig, canv, selected, auswahl, point, massstab, features):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl, point, massstab, features).show()
+
+    def gang_function(self, database, fig, canv,selected, auswahl, point, massstab, features):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl, point, massstab, features).ganglinie()
+
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
@@ -72,6 +81,20 @@ class Laengsschnitt(QKanPlugin):
 
         self.dialog.verticalLayout.addWidget(self.dialog.canv)
         self.dialog.verticalLayout.addWidget(NavigationToolbar(self.dialog.canv, qw, True))
+
+    def get_widget_2(self):
+        """
+        Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
+        """
+        self.dialog_2 = self.laengs_dlg
+        self.dialog.fig_2 = plt.figure()
+        #in der self.fig können die Matplotlib sachen angezeigt werden
+
+        qw = QWidget(self.dialog_2)
+        self.dialog.canv_2 = FigureCanvas(self.dialog.fig_2)
+
+        self.dialog.verticalLayout_2.addWidget(self.dialog.canv_2)
+        self.dialog.verticalLayout_2.addWidget(NavigationToolbar(self.dialog.canv_2, qw, True))
 
 
     # def laengsschnitt(self) -> None:
@@ -132,12 +155,14 @@ class Laengsschnitt(QKanPlugin):
         #    self.laengs_dlg.pushButton.setEnabled(False)
         #    self.laengs_dlg.pushButton_2.setEnabled(False)
         self.laengs_dlg = LaengsDialog(default_dir=self.default_dir, tr=self.tr)
+
         self.get_widget()
+        self.get_widget_2()
         self.fig = self.dialog.fig
         self.canv = self.dialog.canv
         self.selected = self.dialog.selected
         self.auswahl = self.dialog.auswahl
-
+        self.features = self.dialog.features
 
 
         # Fill dialog with current info
@@ -147,8 +172,13 @@ class Laengsschnitt(QKanPlugin):
 
         self.laengs_dlg.refresh_function = self.refresh_function
         self.laengs_dlg.export_cad_function = self.export_cad_function
+        self.laengs_dlg.show_function = self.show_function
 
+        self.laengs_dlg.pushButton_2.click()
         self.laengs_dlg.show()
+
+        self.point = self.laengs_dlg.lineEdit.text()
+        self.massstab = self.laengs_dlg.lineEdit_2.text()
 
         if self.laengs_dlg.exec_():
             # Save to config
@@ -167,4 +197,4 @@ class Laengsschnitt(QKanPlugin):
                 )
 
             # Run
-            LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv, self.selected, self.auswahl).run()
+            LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv, self.selected, self.auswahl, self.point, self.massstab, self.features).run()
