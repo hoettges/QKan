@@ -18,6 +18,7 @@ from qkan.database.qkan_utils import get_qkanlayer_attributes
 from .dijkstra import find_route
 
 
+
 logger = logging.getLogger("QKan.laengs.import")
 
 
@@ -25,12 +26,15 @@ logger = logging.getLogger("QKan.laengs.import")
 
 
 class LaengsTask:
-    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, selected, auswahl):
+    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, selected, auswahl, point, massstab, features):
         self.db_qkan = db_qkan
         self.fig = fig
         self.canv = canv
         self.selected = selected
         self.auswahl = auswahl
+        self.point = point
+        self.massstab = massstab
+        self.features = features
 
     def run(self) -> bool:
         self.zeichnen()
@@ -52,6 +56,10 @@ class LaengsTask:
 
         #selektierte elemente anzeigen
         self.selected = layer.selectedFeatures()
+        for i in self.selected:
+            attrs = i["pk"]
+            self.features.append(attrs)
+
         liste=[]
 
         if table not in ['schaechte', 'haltungen']:
@@ -239,12 +247,24 @@ class LaengsTask:
                             hspace=0.2,
                             wspace=0.2)
 
-        self.auswahl[figure.number]=self.selected
-        
-        return self.auswahl
+        self.auswahl[figure.number] = self.selected
+
+
+    def show(self):
+        # selektierte elemente anzeigen
+        layer = iface.activeLayer()
+        layer.selectByExpression("pk in {}".format(tuple(self.features)))
 
 
     def cad(self):
+        points = self.point.split(",", 1)
+        massstab_liste = self.massstab.split(":", 1)
+
+        #Koordinaten für Einfügepunkt
+        pointx = points[0]
+        pointy = points[1]
+        #Maßstab
+        massstab = massstab_liste[1]
 
         layer = iface.activeLayer()
         x = layer.source()
@@ -255,7 +275,7 @@ class LaengsTask:
         # selektierte elemente anzeigen
 
         figure = self.fig
-        self.selected=self.auswahl[figure.number]
+        self.selected = self.auswahl[figure.number]
 
         liste = []
 
@@ -361,23 +381,23 @@ class LaengsTask:
                 z_sohle_h.append(hschoben)
                 z_sohle_h.append(hschunten)
 
-                y_sohle.append(sohleoben)
-                y_sohle.append(sohleunten)
-                x_sohle.append(laenge1)
-                x_sohle.append(laenge2)
+                y_sohle.append(sohleoben+pointy)
+                y_sohle.append(sohleunten+pointy)
+                x_sohle.append((laenge1/massstab)+pointx)
+                x_sohle.append((laenge2/massstab)+pointx)
 
-                y_sohle2.append(sohleoben + hoehe)
-                y_sohle2.append(sohleunten + hoehe)
-                x_sohle2.append(laenge1)
-                x_sohle2.append(laenge2)
+                y_sohle2.append(sohleoben + hoehe+pointy)
+                y_sohle2.append(sohleunten + hoehe+pointy)
+                x_sohle2.append((laenge1/massstab)+pointx)
+                x_sohle2.append((laenge2/massstab)+pointx)
 
-                y_deckel.append(deckeloben)
-                y_deckel.append(deckelunten)
-                x_deckel.append(laenge1)
-                x_deckel.append(laenge2)
+                y_deckel.append(deckeloben+pointy)
+                y_deckel.append(deckelunten+pointy)
+                x_deckel.append((laenge1/massstab)/+pointx)
+                x_deckel.append((laenge2/massstab)+pointx)
 
-                y_label.append((deckeloben + sohleoben) / 2)
-                y_label.append((deckelunten + sohleunten) / 2)
+                y_label.append(((deckeloben + sohleoben) / 2)+pointy)
+                y_label.append(((deckelunten + sohleunten) / 2)+pointy)
 
                 laenge1 += laenge
                 name.append(schoben)
@@ -431,18 +451,17 @@ class LaengsTask:
 
         sohle += "\n" "\n"
 
-
         #CSV-Tabelle erstellen
-        path = Path(__file__).parent.absolute()
-        path = str(path)+'/some.csv'
-        with open(path, 'w', newline='') as f:
-            writer = csv.writer(f)
-            rows = tuple(haltnam_l)
-            writer.writerow(rows)
+        #path = Path(__file__).parent.absolute()
+        #path = str(path)+'/some.csv'
+        #with open(path, 'w', newline='') as f:
+         #   writer = csv.writer(f)
+          #  rows = tuple(haltnam_l)
+           # writer.writerow(rows)
 
-            data = [schoben_l, schunten_l, laenge_l, entwart_l, hoehe_l, breite_l, material_l, strasse_l, haltungstyp_l]
-            for i in data:
-                writer.writerow(i)
+            #data = [schoben_l, schunten_l, laenge_l, entwart_l, hoehe_l, breite_l, material_l, strasse_l, haltungstyp_l]
+            #for i in data:
+             #   writer.writerow(i)
 
         #cad anbindung starten
         acad = None
@@ -479,7 +498,6 @@ class LaengsTask:
 
             #längssschnitt in cad erstellen
 
-            #doc.SendCommand("LINIE " "1,1 " "3,5\n" "5,-2\n" "\n")
             # mit "FARBE" die Farbe der zu zeichnenden Linie ändern
             doc.SendCommand("-FARBE" +"\n"+ "7\n" "\n")
             doc.SendCommand(deckel)
@@ -602,4 +620,7 @@ class LaengsTask:
                 doc.SendCommand(text_dn)
                 #text_material = "-TEXT" + "\n" + str(i) + "," + str(y_min - 8) + "\n" + "0.25" + "\n" + "0" + "\n" + str(m) + "\n" "\n"
                 #doc.SendCommand(text_material)
+
+    def gangline(self):
+        pass
 
