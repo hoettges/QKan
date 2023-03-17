@@ -1,8 +1,9 @@
 import logging
-from qgis.utils import iface
+from qgis.utils import iface, spatialite_connect
 from qgis.core import Qgis
 import csv
 from pathlib import Path
+import datetime
 
 import win32com.client
 import pythoncom
@@ -26,15 +27,22 @@ logger = logging.getLogger("QKan.laengs.import")
 
 
 class LaengsTask:
-    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, selected, auswahl, point, massstab, features):
+    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, fig_2: plt.figure, canv_2: FigureCanvas, selected, auswahl, point, massstab, features, db_erg):
         self.db_qkan = db_qkan
         self.fig = fig
         self.canv = canv
+        self.fig_2 = fig_2
+        self.canv_2 = canv_2
         self.selected = selected
         self.auswahl = auswahl
         self.point = point
         self.massstab = massstab
         self.features = features
+        self.db_erg = db_erg
+        #TODO: datenbank anbindung
+
+        db = spatialite_connect(self.db_erg)
+        self.db_erg_curs = db.cursor()
 
     def run(self) -> bool:
         self.zeichnen()
@@ -261,10 +269,12 @@ class LaengsTask:
         massstab_liste = self.massstab.split(":", 1)
 
         #Koordinaten für Einfügepunkt
-        pointx = points[0]
-        pointy = points[1]
-        #Maßstab
-        massstab = massstab_liste[1]
+        pointx = float(points[0])
+        pointy = float(points[1])
+        iface.messageBar().pushMessage("Fehler", str(pointx), level=Qgis.Critical)
+        iface.messageBar().pushMessage("Fehler", str(pointy), level=Qgis.Critical)
+        # Maßstab
+        massstab = float(massstab_liste[1])
 
         layer = iface.activeLayer()
         x = layer.source()
@@ -393,7 +403,7 @@ class LaengsTask:
 
                 y_deckel.append(deckeloben+pointy)
                 y_deckel.append(deckelunten+pointy)
-                x_deckel.append((laenge1/massstab)/+pointx)
+                x_deckel.append((laenge1/massstab)+pointx)
                 x_deckel.append((laenge2/massstab)+pointx)
 
                 y_label.append(((deckeloben + sohleoben) / 2)+pointy)
@@ -521,33 +531,45 @@ class LaengsTask:
             x_min = -2.5
             y_min = float(min(y_sohle)) - 2.5
             y_max = float(max(y_deckel)) + 2.5
-            x_max = laenge2 + 2.5
-            x_linie = "LINIE " + str(x_min- 5) + "," + str(y_min) + " " + str(x_max) + "," + str(y_min) + "\n" + "\n"
+            x_max = laenge2 / massstab + 2.5
+            x_linie = "LINIE " + str(x_min - 5) + "," + str(y_min) + " " + str(x_max) + "," + str(y_min) + "\n" + "\n"
             doc.SendCommand(x_linie)
-            x_linie2 = "LINIE " + str(x_min- 5) + "," + str(y_min - 1.5) + " " + str(x_max) + "," + str(y_min - 1.5) + "\n" + "\n"
+            x_linie2 = "LINIE " + str(x_min - 5) + "," + str(y_min - 1.0) + " " + str(x_max) + "," + str(
+                y_min - 1.5) + "\n" + "\n"
             doc.SendCommand(x_linie2)
-            x_linie3 = "LINIE " + str(x_min- 5) + "," + str(y_min-3.5) + " " + str(x_max) + "," + str(y_min-3.5) + "\n" + "\n"
+            x_linie3 = "LINIE " + str(x_min - 5) + "," + str(y_min - 2.5) + " " + str(x_max) + "," + str(
+                y_min - 3.5) + "\n" + "\n"
             doc.SendCommand(x_linie3)
-            x_linie4 = "LINIE " + str(x_min- 5) + "," + str(y_min - 4.5) + " " + str(x_max) + "," + str(y_min - 4.5) + "\n" + "\n"
+            x_linie4 = "LINIE " + str(x_min - 5) + "," + str(y_min - 3.5) + " " + str(x_max) + "," + str(
+                y_min - 4.5) + "\n" + "\n"
             doc.SendCommand(x_linie4)
-            x_linie5 = "LINIE " + str(x_min- 5) + "," + str(y_min - 5.5) + " " + str(x_max) + "," + str(y_min - 5.5) + "\n" + "\n"
+            x_linie5 = "LINIE " + str(x_min - 5) + "," + str(y_min - 4.5) + " " + str(x_max) + "," + str(
+                y_min - 5.5) + "\n" + "\n"
             doc.SendCommand(x_linie5)
-            x_linie6 = "LINIE " + str(x_min- 5) + "," + str(y_min - 6.5) + " " + str(x_max) + "," + str(y_min - 6.5) + "\n" + "\n"
+            x_linie6 = "LINIE " + str(x_min - 5) + "," + str(y_min - 5.5) + " " + str(x_max) + "," + str(
+                y_min - 6.5) + "\n" + "\n"
             doc.SendCommand(x_linie6)
-            x_linie7 = "LINIE " + str(x_min- 5) + "," + str(y_min - 7.5) + " " + str(x_max) + "," + str(y_min - 7.5) + "\n" + "\n"
+            x_linie7 = "LINIE " + str(x_min - 5) + "," + str(y_min - 6.5) + " " + str(x_max) + "," + str(
+                y_min - 7.5) + "\n" + "\n"
             doc.SendCommand(x_linie7)
 
-            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min -1) + "\n" + "0.25" + "\n" + "0" + "\n" + "Deckelhöhe [m ü. NHN]" + "\n" "\n"
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(
+                y_min - 1) + "\n" + "0.25" + "\n" + "0" + "\n" + "Deckelhöhe [m ü. NHN]" + "\n" "\n"
             doc.SendCommand(beschr)
-            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min - 3) + "\n" + "0.25" + "\n" + "0" + "\n" + "Schachtname" + "\n" "\n"
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(
+                y_min - 3) + "\n" + "0.25" + "\n" + "0" + "\n" + "Schachtname" + "\n" "\n"
             doc.SendCommand(beschr)
-            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min - 4) + "\n" + "0.25" + "\n" + "0" + "\n" + "Sohlehöhe Schacht [m ü. NHN]" + "\n" "\n"
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(
+                y_min - 4) + "\n" + "0.25" + "\n" + "0" + "\n" + "Sohlehöhe Schacht [m ü. NHN]" + "\n" "\n"
             doc.SendCommand(beschr)
-            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min - 5) + "\n" + "0.25" + "\n" + "0" + "\n" + "Sohlhöhe Haltung [m ü. NHN]" + "\n" "\n"
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(
+                y_min - 5) + "\n" + "0.25" + "\n" + "0" + "\n" + "Sohlhöhe Haltung [m ü. NHN]" + "\n" "\n"
             doc.SendCommand(beschr)
-            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min - 6) + "\n" + "0.25" + "\n" + "0" + "\n" + "Länge [m]" + "\n" "\n"
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(
+                y_min - 6) + "\n" + "0.25" + "\n" + "0" + "\n" + "Länge [m]" + "\n" "\n"
             doc.SendCommand(beschr)
-            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(y_min - 7) + "\n" + "0.25" + "\n" + "0" + "\n" + "Nennweite / Material [mm]" + "\n" "\n"
+            beschr = "-TEXT" + "\n" + str(x_min - 5) + "," + str(
+                y_min - 7) + "\n" + "0.25" + "\n" + "0" + "\n" + "Nennweite / Material [mm]" + "\n" "\n"
             doc.SendCommand(beschr)
 
             #TODO: Kasten um die Schrift zeichen
@@ -576,11 +598,11 @@ class LaengsTask:
                 linien += "\n" "\n"
                 doc.SendCommand(linien)
 
-                text_deckelhoehe = "-TEXT" +"\n"+str(i-0.3) + "," + str(y_min-1)+"\n"+"0.25"+"\n"+"90"+"\n"+str(x)+"\n" "\n"
+                text_deckelhoehe = "-TEXT" +"\n"+str(i-0.3) + "," + str(y_min-1)+"\n"+"0.125"+"\n"+"90"+"\n"+str(x)+"\n" "\n"
                 doc.SendCommand(text_deckelhoehe)
-                text_name = "-TEXT" + "\n" + str(i - 1.5) + "," + str(y_min - 3) + "\n" + "0.5" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
+                text_name = "-TEXT" + "\n" + str(i - 1.5) + "," + str(y_min - 3) + "\n" + "0.15" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
                 doc.SendCommand(text_name)
-                text_sohlhoehe_s = "-TEXT" + "\n" + str(i - 1.5) + "," + str(y_min - 4) + "\n" + "0.25" + "\n" + "0" + "\n" + str(y) + "\n" "\n"
+                text_sohlhoehe_s = "-TEXT" + "\n" + str(i - 1.5) + "," + str(y_min - 4) + "\n" + "0.125" + "\n" + "0" + "\n" + str(y) + "\n" "\n"
                 doc.SendCommand(text_sohlhoehe_s)
 
             x=0
@@ -590,10 +612,10 @@ class LaengsTask:
             for i,j in zip(x_deckel , z_sohle_h):
                 #so verschieben, dass die TExte passend stehen
                 if x % 2:
-                    text_sohlhoehe_h = "-TEXT" + "\n" + str(i-1.5) + "," + str(y_min - 5) + "\n" + "0.25" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
+                    text_sohlhoehe_h = "-TEXT" + "\n" + str(i-1.5) + "," + str(y_min - 5) + "\n" + "0.1" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
                     doc.SendCommand(text_sohlhoehe_h)
                 else:
-                    text_sohlhoehe_h = "-TEXT" + "\n" + str(i + 0.5) + "," + str(y_min - 5) + "\n" + "0.25" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
+                    text_sohlhoehe_h = "-TEXT" + "\n" + str(i + 0.5) + "," + str(y_min - 5) + "\n" + "0.1" + "\n" + "0" + "\n" + str(j) + "\n" "\n"
                     doc.SendCommand(text_sohlhoehe_h)
                 x+=1
 
@@ -614,13 +636,219 @@ class LaengsTask:
 
             # mittig zwischen zwei Schächte schreiben Länge, Nennweite und Material, Gefälle, Stationierung
             for i,k,l,m in zip(x_mitte,laenge,dn,material):
-                text_laenge = "-TEXT" + "\n" + str(i) + "," + str(y_min - 6) + "\n" + "0.25" + "\n" + "0" + "\n" + str(k) + "\n" "\n"
+                text_laenge = "-TEXT" + "\n" + str(i) + "," + str(y_min - 6) + "\n" + "0.125" + "\n" + "0" + "\n" + str(k) + "\n" "\n"
                 doc.SendCommand(text_laenge)
-                text_dn = "-TEXT" + "\n" + str(i) + "," + str(y_min - 7) + "\n" + "0.25" + "\n" + "0" + "\n" + str(l*1000)+" "+str(m) + "\n" "\n"
+                text_dn = "-TEXT" + "\n" + str(i) + "," + str(y_min - 7) + "\n" + "0.125" + "\n" + "0" + "\n" + str(l*1000)+" "+str(m) + "\n" "\n"
                 doc.SendCommand(text_dn)
                 #text_material = "-TEXT" + "\n" + str(i) + "," + str(y_min - 8) + "\n" + "0.25" + "\n" + "0" + "\n" + str(m) + "\n" "\n"
                 #doc.SendCommand(text_material)
 
     def gangline(self):
-        pass
+        figure = self.fig_2
+        figure.clear()
+        plt.figure(figure.number)
+        new_plot = figure.add_subplot(111)
+
+        # aktuellen layer auswählen
+        layer = iface.activeLayer()
+        x = layer.source()
+
+        # mit dbfunk layer namen anzeigen lassen (für die information ob haltungen oder schächte ausgewählt wurden)
+        dbname, table, geom, sql = get_qkanlayer_attributes(x)
+
+        # selektierte elemente anzeigen
+        self.selected = layer.selectedFeatures()
+        for i in self.selected:
+            attrs = i["pk"]
+            self.features.append(attrs)
+
+        liste = []
+
+        if table not in ['schaechte', 'haltungen']:
+            iface.messageBar().pushMessage("Fehler", 'Bitte Haltungen oder Schächte wählen', level=Qgis.Critical)
+            return
+
+        if table == 'schaechte':
+            for f in self.selected:
+                x = f['schnam']
+                liste.append(x)
+
+        if table == 'haltungen':
+            for f in self.selected:
+                x = f['schoben']
+                x2 = f['schunten']
+                if x not in liste:
+                    liste.append(x)
+                if x2 not in liste:
+                    liste.append(x2)
+
+        route = find_route(self.db_qkan, liste)
+        logger.debug(f'zeichnen.ausgewaehlt: {liste}')
+        logger.debug(f'route: {route}')
+
+        schaechte={}
+        haltungen={}
+
+        if table == 'schaechte':
+            for schacht in liste:
+                self.db.sql(
+                    '''SELECT es.zeitpunkt AS zeitpunkt,
+                              es.zufluss AS zufluss,
+                              es.wasserstand AS wasserstand,
+                              es.durchfluss AS durchfluss,
+                              es.wasserstand - kn.Sohlhoehe AS wassertiefe  
+                       FROM LAU_GL_S AS es
+                       INNER JOIN (
+                         SELECT Name, Sohlhoehe FROM Schacht UNION
+                         SELECT Name, Sohlhoehe FROM Speicherschacht UNION
+                         SELECT Name, Sohlhoehe FROM Auslass
+                       ) AS kn
+                       ON es.Knoten = kn.Name
+                       WHERE es.Knoten={}'''.format(
+                        "'{}'".format(schacht)
+                    )
+                )
+
+                #sql = """
+                #                INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
+                #                VALUES ('{e}', '{f}')
+                #                """.format(
+                 #   e=schacht.entwart, f=bez
+                #)
+
+                if not self.db_qkan.sql(sql, "xml_import Schächte [1]"):
+                    return None
+
+                res = self.db.fetchall()
+                for zeitpunkt_t, zufluss, wasserstand, durchfluss, wassertiefe in res:
+                    try:
+                        if '.' in zeitpunkt_t:
+                            zeitpunkt = datetime.datetime.strptime(
+                                zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                            )
+                        else:
+                            zeitpunkt = datetime.datetime.strptime(
+                                zeitpunkt_t, "%Y-%m-%d %H:%M:%S"
+                            )
+                        # self.__log.info(
+                        # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
+                        # )
+                    except BaseException as err:
+                        return
+                        #main_logger.error(
+                         #   f"qkan.ganglinienhe8.ganglinie8 (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
+                        #)
+                    if schaechte.get(zeitpunkt) is None:
+                        schaechte[zeitpunkt] = {}
+                    schaechte[zeitpunkt][schacht] = dict(
+                        zufluss=zufluss, durchfluss=durchfluss, wasserstand=wasserstand, wassertiefe=wassertiefe,
+                    )
+
+        if table == 'haltungen':
+            for haltung in liste:
+                self.db.sql(
+                    'SELECT zeitpunkt,auslastung,durchfluss,geschwindigkeit,wasserstand AS wassertiefe FROM lau_gl_el WHERE "KANTE"={}'.format(
+                        "'{}'".format(haltung)
+                    )
+                )
+                res = self.db.fetchall()
+                for zeitpunkt_t, auslastung, durchfluss, geschwindigkeit, wassertiefe in res:
+                    try:
+                        if '.' in zeitpunkt_t:
+                            zeitpunkt = datetime.datetime.strptime(
+                                zeitpunkt_t, "%Y-%m-%d %H:%M:%S.%f"
+                            )
+                        else:
+                            zeitpunkt = datetime.datetime.strptime(
+                                zeitpunkt_t, "%Y-%m-%d %H:%M:%S"
+                            )
+                        # self.__log.info(
+                        # f"zeitpunkt_t: {zeitpunkt_t}\nzeitpunkt: {zeitpunkt}\ntyp von zeitpunkt: {type(zeitpunkt)}\n"
+                        # )
+                    except BaseException as err:
+                        return
+                        #main_logger.error(
+                        #    f"qkan.ganglinienhe8.ganglinie8 (1): Fehler '{err}' bei Konvertierung von {zeitpunkt_t}"
+                        #)
+                    if haltungen.get(zeitpunkt) is None:
+                        haltungen[zeitpunkt] = {}
+                    haltungen[zeitpunkt][haltung] = dict(
+                        auslastung=auslastung,
+                        durchfluss=durchfluss,
+                        geschwindigkeit=geschwindigkeit,
+                        wassertiefe=wassertiefe,
+                    )
+
+
+        #Schreibt die Datensätze in eine Figure von Matplotlib
+        def draw_haltung():
+            """
+            Schreibt die Y-Werte für die jeweilige Methode zu einem gegebenen Zeitpunkt.
+
+            :return: Gibt ein Dictionary mit allen Y-Werten einer bestimmten Haltung zurück
+            :rtype: dict
+            """
+            _y = {}
+            for haltung in self.__route.get("haltungen"):
+                for zeitpunkt in self.__x:
+                    if _y.get(haltung) is None:
+                        _y[haltung] = []
+                    _y[haltung].append(
+                        self.__route.get("haltunginfo")
+                            .get(zeitpunkt)
+                            .get(haltung)
+                            .get(method)
+                    )
+            self.__log.info("Y-Werte der Haltungen wurden zusammengefasst")
+            return _y
+
+        def draw_schacht():
+            """
+            Schreibt die Y-Werte für die jeweilige Methode zu einem gegebenen Zeitpunkt.
+
+            :return: Gibt ein Dictionary mit allen Y-Werten eines bestimmten Schachts zurück
+            :rtype: dict
+            """
+            _y = {}
+            for schacht in self.__route.get("schaechte"):
+                for zeitpunkt in self.__x:
+                    if _y.get(schacht) is None:
+                        _y[schacht] = []
+                    _y[schacht].append(
+                        self.__route.get("schachtinfo")
+                            .get(zeitpunkt)
+                            .get(schacht)
+                            .get(method)
+                    )
+            self.__log.info("Y-Werte der Schächte wurden zusammengefasst")
+            return _y
+
+        idx = self.__dialog.combo_type.currentIndex()
+        self.__log.debug("Aktueller Index der Layer-Combobox:\t{}".format(idx))
+        self.__active_layer = LayerType.Haltung if idx == 0 else LayerType.Schacht
+        method_idx = self.__dialog.combo_method.currentIndex()
+        self.__log.debug(
+            "Aktueller Index der Methoden-Combobox:\t{}".format(method_idx)
+        )
+        methods = [
+            ["durchfluss", "geschwindigkeit", "auslastung", "wassertiefe"],
+            ["zufluss", "wasserstand", "wassertiefe", "durchfluss"],
+        ]
+        method = methods[idx][method_idx]
+        axes = [["m³/s", "m/s", "%", "m"], ["m³/s", "m NN", "m", "m³/s"]]
+
+        colors = [
+            "#00BFFF",
+            "#C000FF",
+            "#FF4000",
+            "#40FF00",
+            "#00FFD5",
+            "#A9FF00",
+            "#FF0077",
+            "#F6FF00",
+            "#FFDD00",
+            "#FF8800",
+            "#FF00A2",
+            "#FF9E00",
+        ]
 

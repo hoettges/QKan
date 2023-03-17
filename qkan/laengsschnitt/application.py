@@ -35,21 +35,21 @@ class Laengsschnitt(QKanPlugin):
         #self.laengs_dlg.refresh_function = self.refresh_function
         #self.laengs_dlg.export_cad_function = self.export_cad_function
 
-    def refresh_function(self, database, fig, canv,selected, auswahl, point, massstab, features):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl, point, massstab, features).zeichnen()
+    def refresh_function(self, database, fig, canv, fig_2, canv_2, selected, auswahl, point, massstab, features, db_erg):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, selected, auswahl, point, massstab, features, db_erg).zeichnen()
         canv.draw()
 
-        return LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl, point, massstab, features).zeichnen()
+        return LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, selected, auswahl, point, massstab, features, db_erg).zeichnen()
 
 
-    def export_cad_function(self,database, fig, canv, selected, auswahl, point, massstab, features):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl, point, massstab, features).cad()
+    def export_cad_function(self,database, fig, canv, fig_2, canv_2, selected, auswahl, point, massstab, features, db_erg):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, selected, auswahl, point, massstab, features, db_erg).cad()
 
-    def show_function(self,database, fig, canv, selected, auswahl, point, massstab, features):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl, point, massstab, features).show()
+    def show_function(self,database, fig, canv, fig_2, canv_2, selected, auswahl, point, massstab, features, db_erg):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, selected, auswahl, point, massstab, features, db_erg).show()
 
-    def gang_function(self, database, fig, canv,selected, auswahl, point, massstab, features):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, selected, auswahl, point, massstab, features).ganglinie()
+    def gang_function(self, database, fig, canv, fig_2, canv_2, selected, auswahl, point, massstab, features, db_erg):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, selected, auswahl, point, massstab, features, db_erg).ganglinie()
 
 
     # noinspection PyPep8Naming
@@ -163,6 +163,9 @@ class Laengsschnitt(QKanPlugin):
         self.selected = self.dialog.selected
         self.auswahl = self.dialog.auswahl
         self.features = self.dialog.features
+        self.fig_2 = self.dialog_2.fig_2
+        self.canv_2 = self.dialog_2.canv_2
+        self.db_erg = self.dialog_2.db_erg
 
 
         # Fill dialog with current info
@@ -181,6 +184,7 @@ class Laengsschnitt(QKanPlugin):
         self.massstab = self.laengs_dlg.lineEdit_2.text()
 
         if self.laengs_dlg.exec_():
+
             # Save to config
             QKan.config.save()
 
@@ -197,4 +201,4 @@ class Laengsschnitt(QKanPlugin):
                 )
 
             # Run
-            LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv, self.selected, self.auswahl, self.point, self.massstab, self.features).run()
+            LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv, self.fig_2, self.canv_2, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg).run()
