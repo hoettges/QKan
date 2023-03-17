@@ -1144,58 +1144,6 @@ def createdbtables(
         consl.close()
         return False
 
-    try:
-
-        daten = [
-            "'Kreis', 1, 1, NULL",
-            "'Rechteck (geschlossen)', 2, 3, NULL",
-            "'Ei (B:H = 2:3)', 3, 5, NULL",
-            "'Maul (B:H = 2:1,66)', 4, 4, NULL",
-            "'Halbschale (offen) (B:H = 2:1)', 5, NULL, NULL",
-            "'Kreis gestreckt (B:H=2:2.5)', 6, NULL, NULL",
-            "'Kreis überhöht (B:H=2:3)', 7, NULL, NULL",
-            "'Ei überhöht (B:H=2:3.5)', 8, NULL, NULL",
-            "'Ei breit (B:H=2:2.5)', 9, NULL, NULL",
-            "'Ei gedrückt (B:H=2:2)', 10, NULL, NULL",
-            "'Drachen (B:H=2:2)', 11, NULL, NULL",
-            "'Maul (DIN) (B:H=2:1.5)', 12, NULL, NULL",
-            "'Maul überhöht (B:H=2:2)', 13, NULL, NULL",
-            "'Maul gedrückt (B:H=2:1.25)', 14, NULL, NULL",
-            "'Maul gestreckt (B:H=2:1.75)', 15, NULL, NULL",
-            "'Maul gestaucht (B:H=2:1)', 16, NULL, NULL",
-            "'Haube (B:H=2:2.5)', 17, NULL, NULL",
-            "'Parabel (B:H=2:2)', 18, NULL, NULL",
-            "'Rechteck mit geneigter Sohle (B:H=2:1)', 19, NULL, NULL",
-            "'Rechteck mit geneigter Sohle (B:H=1:1)', 20, NULL, NULL",
-            "'Rechteck mit geneigter Sohle (B:H=1:2)', 21, NULL, NULL",
-            "'Rechteck mit geneigter und horizontaler Sohle (B:H=2:1,b=0.2B)', 22, NULL, NULL",
-            "'Rechteck mit geneigter und horizontaler Sohle (B:H=1:1,b=0.2B)', 23, NULL, NULL",
-            "'Rechteck mit geneigter und horizontaler Sohle (B:H=1:2,b=0.2B)', 24, NULL, NULL",
-            "'Rechteck mit geneigter und horizontaler Sohle (B:H=2:1,b=0.4B)', 25, NULL, NULL",
-            "'Rechteck mit geneigter und horizontaler Sohle (B:H=1:1,b=0.4B)', 26, NULL, NULL",
-            "'Rechteck mit geneigter und horizontaler Sohle (B:H=1:2,b=0.4B)', 27, NULL, NULL",
-            "'Druckrohrleitung', 50, NULL, NULL",
-            "'Sonderprofil', 68, 2, NULL",
-            "'Gerinne', 69, NULL, NULL",
-            "'Trapez (offen)', 900, NULL, NULL",
-            "'Doppeltrapez (offen)', 901, NULL, NULL",
-        ]
-
-        for ds in daten:
-            cursl.execute(
-                "INSERT INTO profile (profilnam, he_nr, mu_nr, kp_key) VALUES ({})".format(
-                    ds
-                )
-            )
-
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabellendaten "Profile" konnten nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
-
     consl.commit()
 
     # Entwaesserungssysteme ----------------------------------------------------
@@ -1218,44 +1166,6 @@ def createdbtables(
         consl.close()
         return False
 
-    try:
-
-        daten = [
-            "'Mischwasser', 'MW', 'Mischwasser', 0, 0",
-            "'Regenwasser', 'RW', 'Regenwasser', 1, 2",
-            "'Schmutzwasser', 'SW', 'Schmutzwasser', 2, 1",
-            "'MW Druck', 'MD', 'Mischwasserdruckleitung', NULL, NULL",
-            "'SW Druck', 'SD', 'Schmutzwasserdruckleitung', NULL, NULL",
-            "'RW Druck', 'RD', 'Regenwasserdruckleitung', NULL, NULL",
-            "'Rinnen/Gräben', 'GR', 'Rinnen/Gräben', NULL, NULL",
-            "'stillgelegt', 'SG', 'stillgelegt', NULL, NULL",
-            "'MW nicht angeschlossen', 'MN', 'ohne Mischwasseranschlüsse', NULL, NULL",
-            "'RW nicht angeschlossen', 'RN', 'ohne Regenwasseranschlüsse', NULL, NULL",
-            "'Mischwasser', 'KM', 'Mischwasser', NULL, NULL",
-            "'Regenwasser', 'KR', 'Regenwasser', NULL, NULL",
-            "'Schmutzwasser', 'KS', 'Schmutzwasser', NULL, NULL",
-            "'MW Druck', 'DM', 'Mischwasserdruckleitung', NULL, NULL",
-            "'SW Druck', 'DS', 'Schmutzwasserdruckleitung', NULL, NULL",
-            "'RW Druck', 'DR', 'Regenwasserdruckleitung', NULL, NULL",
-            "'Mischwasser', 'M', 'Mischwasser', NULL, NULL",
-            "'Regenwasser', 'R', 'Regenwasser', NULL, NULL",
-            "'Schmutzwasser', 'S', 'Schmutzwasser', NULL, NULL",
-        ]
-
-        for ds in daten:
-            cursl.execute(
-                "INSERT INTO entwaesserungsarten (bezeichnung, kuerzel, bemerkung, he_nr, kp_nr) VALUES ({})".format(
-                    ds
-                )
-            )
-
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabellendaten "entwaesserungsarten" konnten nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
     consl.commit()
 
     # Sonderelemente Haltungen -------------------------------------------------
@@ -1275,27 +1185,6 @@ def createdbtables(
         consl.close()
         return False
 
-    try:
-        daten = [
-            ('Haltung', None),
-            ('Drossel', 'HYSTEM-EXTRAN 8'),
-            ('H-Regler', 'HYSTEM-EXTRAN 8'),
-            ('Q-Regler', 'HYSTEM-EXTRAN 8'),
-            ('Schieber', 'HYSTEM-EXTRAN 8'),
-            ('GrundSeitenauslass', 'HYSTEM-EXTRAN 8'),
-            ('Pumpe', None),
-            ('Wehr', None),
-        ]
-        sql = "INSERT INTO haltungstypen (bezeichnung, bemerkung) VALUES (?, ?)"
-        for dat in daten:
-            cursl.execute(sql, dat)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabellendaten "haltungstypen" konnten nicht hinzugefuegt werden.',
-        )
-        consl.close()
-        return False
     consl.commit()
 
     # Untersuchungsrichtung ----------------------------------------------------
@@ -1319,16 +1208,14 @@ def createdbtables(
     try:
 
         daten = [
-            "'O', 'in Fließrichtung', NULL",
-            "'U', 'gegen Fließrichtung', NULL",
+            ('O', 'in Fließrichtung', 'automatisch hinzugefügt'),
+            ('U', 'gegen Fließrichtung', 'automatisch hinzugefügt'),
         ]
 
-        for ds in daten:
-            cursl.execute(
-                "INSERT INTO untersuchrichtung (kuerzel, bezeichnung, bemerkung) VALUES ({})".format(
-                    ds
-                )
-            )
+        cursl.executemany(
+            "INSERT INTO untersuchrichtung (kuerzel, bezeichnung, bemerkung) VALUES (?, ?, ?)",
+            daten
+        )
 
     except BaseException as err:
         fehlermeldung(
@@ -1360,18 +1247,16 @@ def createdbtables(
     try:
 
         daten = [
-            "0, 'keine Angabe', NULL",
-            "1, 'kein Niederschlag', NULL",
-            "2, 'Regen', NULL",
-            "3, 'Schnee- oder Eisschmelzwasser', NULL",
+            (0, 'keine Angabe', NULL),
+            (1, 'kein Niederschlag', NULL),
+            (2, 'Regen', NULL),
+            (3, 'Schnee- oder Eisschmelzwasser', NULL),
         ]
 
-        for ds in daten:
-            cursl.execute(
-                "INSERT INTO wetter (kuerzel, bezeichnung, bemerkung) VALUES ({})".format(
-                    ds
-                )
-            )
+        cursl.executemany(
+            "INSERT INTO wetter (kuerzel, bezeichnung, bemerkung) VALUES (?, ?, ?)",
+            daten
+        )
 
     except BaseException as err:
         fehlermeldung(
@@ -1403,18 +1288,16 @@ def createdbtables(
     try:
 
         daten = [
-            "0, 'keine Angabe', NULL",
-            "1, 'ISYBAU 2006/DIN-EN 13508-2:2011', NULL",
-            "2, 'ISYBAU 2001', NULL",
-            "3, 'ISYBAU 1996', NULL",
-            "4, 'Anderes Verfahren', NULL",
+            (0, 'keine Angabe', NULL),
+            (1, 'ISYBAU 2006/DIN-EN 13508-2:2011', NULL),
+            (2, 'ISYBAU 2001', NULL),
+            (3, 'ISYBAU 1996', NULL),
+            (4, 'Anderes Verfahren', NULL),
         ]
 
-        for ds in daten:
-            cursl.execute(
-                "INSERT INTO bewertungsart (kuerzel, bezeichnung, bemerkung) VALUES ({})".format(
-                    ds
-                )
+        cursl.executemany(
+            "INSERT INTO bewertungsart (kuerzel, bezeichnung, bemerkung) VALUES (?, ?, ?)",
+            daten
             )
 
     except BaseException as err:
@@ -1447,16 +1330,14 @@ def createdbtables(
     try:
 
         daten = [
-            "1, 'vorhanden', NULL",
-            "0, 'nicht vorhanden', NULL",
+            (1, 'vorhanden', NULL),
+            (0, 'nicht vorhanden', NULL),
         ]
 
-        for ds in daten:
-            cursl.execute(
-                "INSERT INTO druckdicht (kuerzel, bezeichnung, bemerkung) VALUES ({})".format(
-                    ds
-                )
-            )
+        cursl.executemany(
+            "INSERT INTO druckdicht (kuerzel, bezeichnung, bemerkung) VALUES (?, ?, ?)",
+            daten
+        )
 
     except BaseException as err:
         fehlermeldung(
@@ -1480,29 +1361,6 @@ def createdbtables(
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'Tabelle "pumpentypen" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    try:
-
-        daten = [
-            "'Offline', 1",
-            "'Online Schaltstufen', 2",
-            "'Online Kennlinie', 3",
-            "'Online Wasserstandsdifferenz', 4",
-            "'Ideal', 5",
-        ]
-
-        for ds in daten:
-            cursl.execute(
-                "INSERT INTO pumpentypen (bezeichnung, he_nr) VALUES ({})".format(ds)
-            )
-
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabellendaten "pumpentypen" konnten nicht hinzugefuegt werden.',
         )
         consl.close()
         return False
@@ -1879,22 +1737,20 @@ def createdbtables(
     try:
 
         daten = [
-            "'keine Angabe', 0, NULL, 5",
-            "'vorhanden', 1, 1, 0",
-            "'geplant', 2, NULL, 1",
-            "'fiktiv', 3, NULL, 2",
-            "'außer Betrieb (keine Sim.)', 4, NULL, 3",
-            "'verfüllt (keine Sim.)', 5, NULL, NULL",
-            "'stillgelegt', NULL, NULL, 4",
-            "'rückgebaut', NULL, NULL, 6",
+            ('keine Angabe', 0, NULL, 5),
+            ('vorhanden', 1, 1, 0),
+            ('geplant', 2, NULL, 1),
+            ('fiktiv', 3, NULL, 2),
+            ('außer Betrieb (keine Sim.)', 4, NULL, 3),
+            ('verfüllt (keine Sim.)', 5, NULL, NULL),
+            ('stillgelegt', NULL, NULL, 4),
+            ('rückgebaut', NULL, NULL, 6),
         ]
 
-        for ds in daten:
-            cursl.execute(
-                "INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})".format(
-                    ds
-                )
-            )
+        cursl.executemany(
+            "INSERT INTO simulationsstatus (bezeichnung, he_nr, mu_nr, kp_nr) VALUES (?, ?, ?, ?)",
+            daten
+        )
 
     except BaseException as err:
         fehlermeldung(
@@ -1927,19 +1783,17 @@ def createdbtables(
     try:
 
         daten = [
-            "'frei', 0, NULL, NULL",
-            "'normal', 1, NULL, NULL",
-            "'konstant', 2, NULL, NULL",
-            "'Tide', 3, NULL, NULL",
-            "'Zeitreihe', 4, NULL, NULL",
+            ('frei', 0, NULL, NULL),
+            ('normal', 1, NULL, NULL),
+            ('konstant', 2, NULL, NULL),
+            ('Tide', 3, NULL, NULL),
+            ('Zeitreihe', 4, NULL, NULL),
         ]
 
-        for ds in daten:
-            cursl.execute(
-                "INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) VALUES ({})".format(
-                    ds
-                )
-            )
+        cursl.executemany(
+            "INSERT INTO auslasstypen (bezeichnung, he_nr, mu_nr, kp_nr) VALUES (?, ?, ?, ?)",
+            daten
+        )
 
     except BaseException as err:
         fehlermeldung(
@@ -1974,33 +1828,6 @@ def createdbtables(
         fehlermeldung(
             "qkan_database.createdbtables: {}".format(err),
             'Tabelle "abflussparameter" konnten nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    try:
-        daten = [
-            "'$Default_Bef', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, NULL, '2011-01-13 08:44'",
-            "'$Default_Unbef', 'Standart qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', 'Grünfläche', '2011-01-13 08:44'",
-            "'Gebäude', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, 'Gebäude', '2020-01-13 14:13'",
-            "'Straße', 'Standart qkhe', 0.25, 0.85, 0.7, 1.8, 0, 0, NULL, 'Straße', '2020-01-13 14:13'",
-            "'Grünfläche', 'Standart qkhe', 0.5, 0.5, 2, 5, 0, 0, 'LehmLoess', 'Grünfläche', '2020-01-13 14:13'",
-            "'Gewässer', 'Standart qkhe', 0, 0, 0, 0, 0, 0, NULL, 'Gewässer', '2020-01-13 14:13'",
-        ]
-
-        for ds in daten:
-            sql = """INSERT INTO abflussparameter
-                     ( apnam, kommentar, anfangsabflussbeiwert, endabflussbeiwert, benetzungsverlust, 
-                       muldenverlust, benetzung_startwert, mulden_startwert, bodenklasse, flaechentyp, 
-                       createdat) Values ({})""".format(
-                ds
-            )
-            cursl.execute(sql)
-
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'Tabellendaten "abflussparameter" konnten nicht hinzugefuegt werden.',
         )
         consl.close()
         return False
@@ -2071,35 +1898,6 @@ def createdbtables(
         consl.close()
         return False
 
-    daten = [
-        "'VollDurchlaessig', 10, 9, 10, 144, 1.584, 100, '2011-01-13 08:44:50', 'Importiert mit qg2he'",
-        "'Sand', 2.099, 0.16, 1.256, 227.9, 1.584, 12, '2011-01-13 08:44:50', 'Importiert mit qg2he'",
-        "'SandigerLehm', 1.798, 0.101, 1.06, 143.9, 0.72, 18, '2011-01-13 08:44:50', 'Importiert mit qg2he'",
-        "'LehmLoess', 1.601, 0.081, 0.94, 100.2, 0.432, 23, '2011-01-13 08:44:50', 'Importiert mit qg2he'",
-        "'Ton', 1.9, 0.03, 1.087, 180, 0.144, 16, '2011-01-13 08:44:50', 'Importiert mit qg2he'",
-        "'Undurchlaessig', 0, 0, 0, 100, 1, 0, '2011-01-13 08:44:50', 'Importiert mit qg2he'",
-        "NULL, 0, 0, 0, 0, 0, 0, '2011-01-13 08:44:50', 'nur für interne QKan-Aufgaben'",
-    ]
-
-    for ds in daten:
-        try:
-            sql = """INSERT INTO bodenklassen
-                     ( 'bknam', 'infiltrationsrateanfang', 'infiltrationsrateende', 'infiltrationsratestart', 
-                       'rueckgangskonstante', 'regenerationskonstante', 'saettigungswassergehalt', 
-                       'createdat', 'kommentar') Values ({})""".format(
-                ds
-            )
-            cursl.execute(sql)
-
-        except BaseException as err:
-            fehlermeldung(
-                "qkan_database.createdbtables: {}".format(err),
-                'Tabellendaten "bodenklassen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
-                    err
-                ),
-            )
-            consl.close()
-            return False
     consl.commit()
 
     # Abflusstypen -------------------------------------------------------------
@@ -2121,28 +1919,26 @@ def createdbtables(
         return False
 
     daten = [
-        "'Speicherkaskade', 0, 0",
-        "'Fliesszeiten', 1, 1",
-        "'Schwerpunktlaufzeit', 2, 2",
+        ('Speicherkaskade', 0, 0),
+        ('Fliesszeiten', 1, 1),
+        ('Schwerpunktlaufzeit', 2, 2),
     ]
 
-    for ds in daten:
-        try:
-            sql = """INSERT INTO abflusstypen
-                     (abflusstyp, he_nr, kp_nr) Values ({})""".format(
-                ds
-            )
-            cursl.execute(sql)
+    try:
+        sql = """INSERT INTO abflusstypen
+                 (abflusstyp, he_nr, kp_nr) Values (?. ?, ?)"""
+        cursl.executemany(sql, daten)
 
-        except BaseException as err:
-            fehlermeldung(
-                "qkan_database.createdbtables: {}".format(err),
-                'Tabellendaten "abflusstypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
-                    err
-                ),
-            )
-            consl.close()
-            return False
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabellendaten "abflusstypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
+                err
+            ),
+        )
+        consl.close()
+        return False
+
     consl.commit()
 
     # Knotentypen -------------------------------------------------------------
@@ -2162,33 +1958,31 @@ def createdbtables(
         return False
 
     daten = [
-        "'Anfangsschacht'",
-        "'Einzelschacht'",
-        "'Endschacht'",
-        "'Hochpunkt'",
-        "'Normalschacht'",
-        "'Tiefpunkt'",
-        "'Verzweigung'",
-        "'Fliesszeiten'",
+        ('Anfangsschacht'),
+        ('Einzelschacht'),
+        ('Endschacht'),
+        ('Hochpunkt'),
+        ('Normalschacht'),
+        ('Tiefpunkt'),
+        ('Verzweigung'),
+        ('Fliesszeiten'),
     ]
 
-    for ds in daten:
-        try:
-            sql = """INSERT INTO knotentypen
-                     ( 'knotentyp') Values ({})""".format(
-                ds
-            )
-            cursl.execute(sql)
+    try:
+        sql = """INSERT INTO knotentypen
+                 ( 'knotentyp') Values (?)"""
+        cursl.executemany(sql, daten)
 
-        except BaseException as err:
-            fehlermeldung(
-                "qkan_database.createdbtables: {}".format(err),
-                'Tabellendaten "knotentypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
-                    err
-                ),
-            )
-            consl.close()
-            return False
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabellendaten "knotentypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
+                err
+            ),
+        )
+        consl.close()
+        return False
+
     consl.commit()
 
     # Schachttypen -------------------------------------------------------------
@@ -2207,22 +2001,24 @@ def createdbtables(
         consl.close()
         return False
 
-    daten = ["Auslass", "Schacht", "Speicher"]
+    daten = [("Auslass",),
+             ("Schacht",),
+             ("Speicher",)]
 
-    for ds in daten:
-        try:
-            sql = f"""INSERT INTO schachttypen (schachttyp) Values ('{ds}')"""
-            cursl.execute(sql)
+    try:
+        sql = f"""INSERT INTO schachttypen (schachttyp) Values (?)"""
+        cursl.executemany(sql, daten)
 
-        except BaseException as err:
-            fehlermeldung(
-                "qkan_database.createdbtables: {}".format(err),
-                'Tabellendaten "schachttypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
-                    err
-                ),
-            )
-            consl.close()
-            return False
+    except BaseException as err:
+        fehlermeldung(
+            "qkan_database.createdbtables: {}".format(err),
+            'Tabellendaten "schachttypen" konnten nicht hinzugefuegt werden: \n{}\n'.format(
+                err
+            ),
+        )
+        consl.close()
+        return False
+
     consl.commit()
 
     # Hilfstabelle für den DYNA-Export -----------------------------------------

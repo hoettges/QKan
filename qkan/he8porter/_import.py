@@ -21,6 +21,7 @@ class ImportTask:
 
         result = all(
             [
+                self._reftables(),
                 self._profile(),
                 self._bodenklassen(),
                 self._abflussparameter(),
@@ -44,6 +45,111 @@ class ImportTask:
         )
 
         return result
+
+    def _reftables(self) -> bool:
+        """Referenztabellen mit Datensätzen für HE-Import füllen"""
+
+        daten = [
+            ('Mischwasser', 'MW', 'Mischwasser', 0, 0),
+            ('Regenwasser', 'RW', 'Regenwasser', 1, 2),
+            ('Schmutzwasser', 'SW', 'Schmutzwasser', 2, 1),
+            ('MW Druck', 'MD', 'Mischwasserdruckleitung', 0, 0),
+            ('RW Druck', 'RD', 'Regenwasserdruckleitung', 1, 2),
+            ('SW Druck', 'SD', 'Schmutzwasserdruckleitung', 2, 1),
+            ('Rinnen/Gräben', 'GR', 'Rinnen/Gräben', None, None),
+            ('stillgelegt', 'SG', 'stillgelegt', None, None),
+            ('MW nicht angeschlossen', 'MN', 'ohne Mischwasseranschlüsse', None, None),
+            ('RW nicht angeschlossen', 'RN', 'ohne Regenwasseranschlüsse', None, None),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        sql = """INSERT INTO entwaesserungsarten (
+                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr)
+                    SELECT ?, ?, ?, ?, ?
+                    WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
+        if not self.db_qkan.sql(sql, "he8_import Referenzliste entwaesserungsarten", daten, many=True):
+            return False
+
+        daten = [
+            ('Haltung', None),
+            ('Drossel', 'HYSTEM-EXTRAN 8'),
+            ('H-Regler', 'HYSTEM-EXTRAN 8'),
+            ('Q-Regler', 'HYSTEM-EXTRAN 8'),
+            ('Schieber', 'HYSTEM-EXTRAN 8'),
+            ('GrundSeitenauslass', 'HYSTEM-EXTRAN 8'),
+            ('Pumpe', None),
+            ('Wehr', None),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        sql = """INSERT INTO haltungstypen (bezeichnung, bemerkung)
+                    SELECT ?, ?
+                    WHERE ? NOT IN (SELECT bezeichnung FROM haltungstypen)"""
+
+        if not self.db_qkan.sql(sql, "he8_import Referenzliste haltungstypen", daten, many=True):
+            return False
+
+        daten = [
+            ('Kreis', 1, 1, None),
+            ('Rechteck (geschlossen)', 2, 3, None),
+            ('Ei (B:H = 2:3)', 3, 5, None),
+            ('Maul (B:H = 2:1,66)', 4, 4, None),
+            ('Halbschale (offen) (B:H = 2:1)', 5, None, None),
+            ('Kreis gestreckt (B:H=2:2.5)', 6, None, None),
+            ('Kreis überhöht (B:H=2:3)', 7, None, None),
+            ('Ei überhöht (B:H=2:3.5)', 8, None, None),
+            ('Ei breit (B:H=2:2.5)', 9, None, None),
+            ('Ei gedrückt (B:H=2:2)', 10, None, None),
+            ('Drachen (B:H=2:2)', 11, None, None),
+            ('Maul (DIN) (B:H=2:1.5)', 12, None, None),
+            ('Maul überhöht (B:H=2:2)', 13, None, None),
+            ('Maul gedrückt (B:H=2:1.25)', 14, None, None),
+            ('Maul gestreckt (B:H=2:1.75)', 15, None, None),
+            ('Maul gestaucht (B:H=2:1)', 16, None, None),
+            ('Haube (B:H=2:2.5)', 17, None, None),
+            ('Parabel (B:H=2:2)', 18, None, None),
+            ('Rechteck mit geneigter Sohle (B:H=2:1)', 19, None, None),
+            ('Rechteck mit geneigter Sohle (B:H=1:1)', 20, None, None),
+            ('Rechteck mit geneigter Sohle (B:H=1:2)', 21, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=2:1,b=0.2B)', 22, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:1,b=0.2B)', 23, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:2,b=0.2B)', 24, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=2:1,b=0.4B)', 25, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:1,b=0.4B)', 26, None, None),
+            ('Rechteck mit geneigter und horizontaler Sohle (B:H=1:2,b=0.4B)', 27, None, None),
+            ('Druckrohrleitung', 50, None, None),
+            ('Sonderprofil', 68, 2, None),
+            ('Gerinne', 69, None, None),
+            ('Trapez (offen)', 900, None, None),
+            ('Doppeltrapez (offen)', 901, None, None),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        sql = """INSERT INTO profile (profilnam, he_nr, mu_nr, kp_key)
+                    SELECT ?, ?, ?, ?
+                    WHERE ? NOT IN (SELECT profilnam FROM profile)"""
+
+        if not self.db_qkan.sql(sql, "he8_import Referenzliste profile", daten, many=True):
+            return False
+
+        daten = [
+             ('Offline', 1),
+             ('Online Schaltstufen', 2),
+             ('Online Kennlinie', 3),
+             ('Online Wasserstandsdifferenz', 4),
+             ('Ideal', 5),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        sql = """INSERT INTO pumpentypen (bezeichnung, he_nr)
+                    SELECT ?, ?
+                    WHERE ? NOT IN (SELECT bezeichnung FROM pumpentypen)"""
+
+        if not self.db_qkan.sql(sql, "he8_import Referenzliste pumpentypen", daten, many=True):
+            return False
+
+        self.db_qkan.commit()
+        return True
 
     def _schaechte(self) -> bool:
         """Import der Schächte"""
@@ -82,10 +188,12 @@ class ImportTask:
                 FROM he.Schacht AS sh
                 LEFT JOIN (
                     SELECT he_nr, bezeichnung FROM entwaesserungsarten 
-                    WHERE bezeichnung IN (
+                    WHERE he_nr IS NOT NULL AND bezeichnung IN (
                         'Mischwasser', 
                         'Regenwasser', 
-                        'Schmutzwasser')) AS ea 
+                        'Schmutzwasser')
+                    GROUP BY he_nr, bezeichnung
+                    ) AS ea 
                 ON ea.he_nr = sh.Kanalart
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = sh.Planungsstatus
@@ -260,10 +368,12 @@ class ImportTask:
                 ON ro.Profiltyp = pr.he_nr
                 LEFT JOIN (
                     SELECT he_nr, bezeichnung FROM entwaesserungsarten 
-                    WHERE bezeichnung IN (
+                    WHERE he_nr IS NOT NULL AND bezeichnung IN (
                         'Mischwasser', 
                         'Regenwasser', 
-                        'Schmutzwasser')) AS ea 
+                        'Schmutzwasser')
+                    GROUP BY he_nr, bezeichnung
+                    ) AS ea 
                 ON ea.he_nr = ro.Kanalart
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = ro.Planungsstatus
@@ -560,10 +670,12 @@ class ImportTask:
                 ON qr.Profiltyp = pr.he_nr
                 LEFT JOIN (
                     SELECT he_nr, bezeichnung FROM entwaesserungsarten 
-                    WHERE bezeichnung IN (
+                    WHERE he_nr IS NOT NULL AND bezeichnung IN (
                         'Mischwasser', 
                         'Regenwasser', 
-                        'Schmutzwasser')) AS ea 
+                        'Schmutzwasser')
+                    GROUP BY he_nr, bezeichnung
+                    ) AS ea 
                 ON ea.he_nr = qr.Kanalart
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = qr.Planungsstatus
@@ -616,10 +728,12 @@ class ImportTask:
                 ON hr.Profiltyp = pr.he_nr
                 LEFT JOIN (
                     SELECT he_nr, bezeichnung FROM entwaesserungsarten 
-                    WHERE bezeichnung IN (
+                    WHERE he_nr IS NOT NULL AND bezeichnung IN (
                         'Mischwasser', 
                         'Regenwasser', 
-                        'Schmutzwasser')) AS ea 
+                        'Schmutzwasser')
+                    GROUP BY he_nr, bezeichnung
+                    ) AS ea 
                 ON ea.he_nr = hr.Kanalart
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = hr.Planungsstatus

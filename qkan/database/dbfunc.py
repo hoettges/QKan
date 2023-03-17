@@ -292,6 +292,7 @@ class DBConnection:
         sql: str,
         stmt_category: str = "allgemein",
         parameters=(),  # : Optional[Iterable, dict[str, str]]   "Iterable" is deprecated
+        many: bool = False,
         mute_logger: bool = False,
         ignore: bool = False,
     ) -> bool:
@@ -306,6 +307,9 @@ class DBConnection:
 
         :parameters:            parameters used in sql statement
         :type projectfile:      List or Dict
+
+        :many:                  executes sql for every element in parameters -> must be a sequence of lists
+        :type many:             Boolean
 
         :mute_logger:           suppress logging message for the same stmt_category for 2 seconds
         :type mute_logger:      String
@@ -322,7 +326,10 @@ class DBConnection:
             )
             return False
         try:
-            self.cursl.execute(sql, parameters)
+            if many:
+                self.cursl.executemany(sql, parameters)
+            else:
+                self.cursl.execute(sql, parameters)
 
             if mute_logger:
                 return True
