@@ -91,12 +91,15 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
         self.gang_function = None
         self.fig = None
         self.canv = None
+        self.fig_2 = None
+        self.canv_2 = None
         self.database = None
         self.selected = None
         self.auswahl = {}
         self.features = []
         self.point = self.lineEdit.text()
         self.massstab = self.lineEdit_2.text()
+        self.db_erg = self.lineEdit_3.text()
         #self.pushButton_2.installEventFilter(self)
 
 
@@ -109,21 +112,23 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
 
 
     def export_cad(self):
-        self.export_cad_function(self.database, self.fig, self.canv, self.selected, self.auswahl, self.point, self.massstab, self.features)
+        self.point = self.lineEdit.text()
+        self.massstab = self.lineEdit_2.text()
+        self.export_cad_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg)
 
     def show_selection(self):
-        self.show_function(self.database, self.fig, self.canv, self.selected, self.auswahl, self.point, self.massstab, self.features)
+        self.show_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg)
 
     def refresh(self):
-        self.refresh_function(self.database, self.fig, self.canv, self.selected, self.auswahl, self.point, self.massstab, self.features)
+        self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg)
 
-        if self.refresh_function(self.database, self.fig, self.canv, self.selected, self.auswahl, self.point, self.massstab, self.features) == 'nicht erstellt':
+        if self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg) == 'nicht erstellt':
             self.label.setText('Bitte Elemente vom Schacht- oder Haltungslayer auswählen und den "refresh" Knopf drücken!')
 
         else:
             self.label.setText('')
             #self.auswahl = \
-            self.refresh_function(self.database, self.fig, self.canv, self.selected, self.auswahl, self.point, self.massstab, self.features)
+            self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg)
 
     def select_erg(self):
         filename, _ = QFileDialog.getOpenFileName(
@@ -137,7 +142,7 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
             self.lineEdit_3.setText(filename)
 
     def ganglinie(self):
-        self.gang_function(self.database, self.fig, self.canv, self.selected, self.auswahl, self.point, self.massstab, self.features)
+        self.gang_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg)
 
 
 
