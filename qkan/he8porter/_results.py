@@ -140,7 +140,7 @@ class ResultsTask:
             # Stilvorlage nach Benutzerwahl laden
             templatepath = os.path.join(pluginDirectory("qkan"), "templates")
             if QKan.config.he8.qml_choice == "uebh":
-                template = os.path.join(templatepath, "Überstauhäufigkeit.qml")
+                template = os.path.join(templatepath, 'qml', "Überstauhäufigkeit.qml")
                 try:
                     vlayer.loadNamedStyle(template)
                 except:
@@ -149,7 +149,7 @@ class ResultsTask:
                         'Stildatei "Überstauhäufigkeit.qml" wurde nicht gefunden!\nAbbruch!',
                     )
             elif QKan.config.he8.qml_choice == "uebvol":
-                template = os.path.join(templatepath, "Überstauvolumen.qml")
+                template = os.path.join(templatepath, 'qml', "Überstauvolumen.qml")
                 try:
                     vlayer.loadNamedStyle(template)
                 except:

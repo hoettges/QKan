@@ -27,11 +27,10 @@ class TestPlausi(QgisTest):
 
     def test_plausi(self) -> None:
         database_qkan = str(BASE_WORK / "modell.sqlite")
+        db_qkan = DBConnection(database_qkan, qkan_db_update=True)              # inkl. automatischem DB-Update
 
-        # inkl. automatischem DB-Update
-        with DBConnection(database_qkan, qkan_db_update=True) as db_qkan:
-            test = Plausi(iface())
-            test._doplausi(db_qkan, is_test=True)
+        test = Plausi(iface())
+        test._doplausi(db_qkan)
 
         # self.assertTrue(False, "Fehlernachricht")
 

@@ -1,0 +1,87 @@
+Log for:C:/FHAC/hoettges/Kanalprogramme/QKan/test/
+# timestamp | duration | file | instruction | dir | modtime | etag | size | fileId | status | errorString | http result code | other size | other modtime | X-Request-ID
+#=#=#=# Syncrun started 2023-03-31T15:57:29Z
+#=#=#=#=# Propagation starts 2023-03-31T15:57:30Z (last step: 727 msec , total: 727 msec) 
+2023-03-31T15:57:32Z | test_surfaceTools.py | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1671401110 | cb21fe51b9e7a31080ec2c651f386b1f | 2583 | 432228109oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 01ff6e4a-90ea-48ea-b63a-fe0357e2554e | 
+2023-03-31T15:57:32Z | data/interaktive_Tests/#quelle.lnk | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1539527005 | 1f7822ee3d81f97eda36d46748863415 | 1872 | 432228124oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 6570318c-6364-44df-90e1-1e92ec4b50a4 | 
+2023-03-31T15:57:32Z | data/interaktive_Tests/k_layersadapt beispiele #.lnk | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1564174513 | f3e60746014e615874b1c1a177d41998 | 1737 | 432228130oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | c6012925-3fe0-49c9-bb7e-036849129dde | 
+2023-03-31T15:57:32Z | data/interaktive_Tests/console.py | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1564299243 | 19d2d3b0350c04bc00e0ee3528fc397a | 4443 | 432228133oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 25ebdb93-e9dc-4fdd-abae-b60378c9d35b | 
+2023-03-31T15:57:33Z | data/interaktive_Tests/qkan templates #.lnk | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1564174475 | 41995a5251fbc8c5f5a43018ca9fcbb4 | 1652 | 432228136oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | f047eee1-9968-40c5-93bf-73be4524ac70 | 
+2023-03-31T15:57:42Z | data/interaktive_Tests/sicher/s190724_1118.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1563959901 | da543cd6d733de69cd79aabe5100fb2b | 5372246 | 432228304oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | a78107e0-d10f-47d5-850a-2322af0295b5 | 
+2023-03-31T15:57:43Z | data/interaktive_Tests/sicher/s190724_1233.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1563964419 | 95808f09ca625c142242f99a527ab8ab | 46390 | 432228322oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | d6f0e6b3-566e-4449-8bba-e297b00af0bd | 
+2023-03-31T15:57:47Z | data/interaktive_Tests/val_ganglinien.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1584873887 | 8f34b8ab2274217563b12d928fd5e05c | 8870045 | 432228388oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 37f32670-2b8f-466c-811e-1c6b164930a6 | 
+2023-03-31T15:57:53Z | data/interaktive_Tests/sicher/s200105_2223.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1578259398 | fd92d0580b78c0ce7446ea461abf28d3 | 5011854 | 432228499oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | a7464b1f-f03d-414a-895b-db388484d60a | 
+2023-03-31T15:57:58Z | data/interaktive_Tests/sicher/val_he8Export_itwh 200104.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1578173545 | f76d9fbade39581789f0c6fe5269fba8 | 4845855 | 432228580oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 27c3dd34-89a6-468e-80f6-cd6a0cd15950 | 
+2023-03-31T15:58:18Z | data/interaktive_Tests/sicher/val_heImport_190822_1026.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1566462408 | 82aad9b06fa95d5c04546929464b8893 | 5408051 | 432228916oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 0f6c361e-91e1-4b97-a282-1955009b1d68 | 
+2023-03-31T15:58:40Z | data/interaktive_Tests/sicher/val_linkfl_190819_2102.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1566241328 | 3199ccac940c64418df39d2cf4d65f97 | 2552348 | 432229270oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 44efb95b-e4d7-45bf-8f1e-7fd14dd51062 | 
+2023-03-31T15:59:00Z | data/interaktive_Tests/sicher/val_qkan_itwh_3.0.3.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1578949850 | 7888ae5c70f2bb89b2c7dee12f41ba0e | 10269096 | 432229609oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 87141b0c-d4d2-4a20-aef7-fca63ac8cf70 | 
+2023-03-31T15:59:04Z | data/interaktive_Tests/sicher/val_he8Export_itwh_200106.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1578343686 | 0f668dd5daf174e531f1c82a467e2728 | 10249469 | 432229681oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 667dabec-d960-4809-b5c0-64081f0b0eed | 
+2023-03-31T15:59:09Z | data/interaktive_Tests/sicher/val_upgrade_243_181014.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1539527129 | 161dc1c309e7b12886a6261a09c92963 | 1940934 | 432229762oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | f6c4e6f9-0986-4293-a4ef-69b79e1d055c | 
+2023-03-31T15:59:18Z | data/interaktive_Tests/val_layersadapt.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1566219475 | 491b5e6481f060146c3c5149eb4f12ba | 5360000 | 432229927oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 938f9149-02b5-4414-8ab8-2dbace386339 | 
+2023-03-31T15:59:21Z | data/interaktive_Tests/sicher/val_qkan_itwh_3.0.5.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1578990913 | abf6cd9a9dbc728dcb361eeab5890130 | 10026627 | 432229969oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | c05e0d8f-35e3-4c32-9965-4ba2b9d2b7a6 | 
+2023-03-31T15:57:32Z | data/interaktive_Tests/sicher | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1616401925 |  | 4096 | 432228118oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 12f7a5d2-e562-4088-a95d-052c06f9ddc6 | 
+2023-03-31T16:00:05Z | data/interaktive_Tests/val_qkan_itwh 3.0.9.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1581373786 | b7770fdb61fb0df3ed6186056df5bb59 | 10099529 | 432230704oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 7f7aa71b-5db1-48ea-b66f-26d19414b32b | 
+2023-03-31T16:00:10Z | data/interaktive_Tests/val_upgrade.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1581372786 | f126554a21a17ee71f4211341d5c52b2 | 1937160 | 432230809oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 0847c71f-7085-4a5f-98c5-9a3e7fb3b5d7 | 
+2023-03-31T16:00:12Z | wip/test_swmm.py | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1657874578 | 8a12f2259333bc2df7e5c819578f6f46 | 3622 | 432230848oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 1e3f751b-e2b1-47fa-8f68-4d4578e0b674 | 
+2023-03-31T16:00:12Z | wip/test_xml.py | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1678485265 | 2c514b9db4565901a18a576f526f0a2f | 3962 | 432230851oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | e08c0ff1-84f0-4e36-a48a-e0e15a3a844c | 
+2023-03-31T15:57:31Z | wip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1678485265 |  | 0 | 432228100oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | acafb3a7-f8ad-4dd8-a577-a18837579120 | 
+2023-03-31T16:00:19Z | data/interaktive_Tests/val_qkan_nette 3.0.1.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1581373573 | a4e0a57cb0e726ce5acc9c3f87dd98bb | 21440373 | 432230947oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | e13e6467-f734-470a-ba09-7db64952c638 | 
+2023-03-31T16:00:24Z | data/interaktive_Tests/val_Wesel_gesamt_20181120.zip | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1585342215 | 32687a9a18d12ffb346ba8616f7b6dee | 93800556 | 432231046oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 0b4f0eef-e5ed-492e-9937-4bfde67b439e | 
+2023-03-31T15:57:31Z | data/interaktive_Tests | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1616401928 |  | 4096 | 432228091oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | d44a18e5-5023-4858-8f04-7d134aa02714 | 
+#=#=#=# Syncrun finished 2023-03-31T16:00:23Z (last step: 173926 msec , total: 174654 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:00:45Z
+#=#=#=#=# Propagation starts 2023-03-31T16:00:46Z (last step: 1465 msec , total: 1465 msec) 
+#=#=#=# Syncrun finished 2023-03-31T16:00:46Z (last step: 38 msec , total: 1504 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:00:50Z
+#=#=#=#=# Propagation starts 2023-03-31T16:00:50Z (last step: 409 msec , total: 409 msec) 
+#=#=#=# Syncrun finished 2023-03-31T16:00:50Z (last step: 47 msec , total: 457 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:11:23Z
+#=#=#=#=# Propagation starts 2023-03-31T16:11:24Z (last step: 874 msec , total: 874 msec) 
+2023-03-31T16:11:26Z | test_datacheck.py | SyncInstruction(CSYNC_INSTRUCTION_SYNC) | OCC::SyncFileItem::Up | | 1680279081 | abf1bc7501eabd6dbd9b2d2d965bf263 | 1274 | 400068620oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 1298 | 1666107046 | bc909891-4ac6-424b-807c-cad3dfb73f18 | 
+2023-03-31T16:11:26Z | test_datacheck.py.bak | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1666107046 | c1e64d3ceadd33163f35a3a06c128fd9 | 1298 | 432237472oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 6a930e0c-7a6b-4242-aa2e-87a507260da9 | 
+#=#=#=# Syncrun finished 2023-03-31T16:11:25Z (last step: 1054 msec , total: 1929 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:11:30Z
+#=#=#=#=# Propagation starts 2023-03-31T16:11:30Z (last step: 281 msec , total: 281 msec) 
+#=#=#=# Syncrun finished 2023-03-31T16:11:30Z (last step: 153 msec , total: 434 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:11:56Z
+#=#=#=#=# Propagation starts 2023-03-31T16:11:57Z (last step: 883 msec , total: 883 msec) 
+#=#=#=# Syncrun finished 2023-03-31T16:11:57Z (last step: 195 msec , total: 1078 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:12:51Z
+#=#=#=#=# Propagation starts 2023-03-31T16:12:52Z (last step: 723 msec , total: 723 msec) 
+2023-03-31T16:12:54Z | test_datacheck.py.bak | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Up | | 1666107046 | c1e64d3ceadd33163f35a3a06c128fd9 | 1298 | 432237472oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 1298 | 1666107046 | 781c5bd5-54f5-4803-9645-5b17af56d6f7 | 
+#=#=#=# Syncrun finished 2023-03-31T16:12:53Z (last step: 853 msec , total: 1576 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:13:30Z
+#=#=#=#=# Propagation starts 2023-03-31T16:13:30Z (last step: 674 msec , total: 674 msec) 
+#=#=#=# Syncrun finished 2023-03-31T16:13:31Z (last step: 194 msec , total: 868 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:14:31Z
+#=#=#=#=# Propagation starts 2023-03-31T16:14:32Z (last step: 873 msec , total: 873 msec) 
+2023-03-31T16:14:34Z | test_mu.py | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Up | | 1666107046 | 702881963c12cf31258333624f12330d | 3885 | 400068614oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 3885 | 1666107046 | fd10eb6a-2776-4ab4-9ae3-2205085119f7 | 
+#=#=#=# Syncrun finished 2023-03-31T16:14:34Z (last step: 1526 msec , total: 2400 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:14:36Z
+#=#=#=#=# Propagation starts 2023-03-31T16:14:37Z (last step: 397 msec , total: 397 msec) 
+2023-03-31T16:14:38Z | test_mu.py | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1666107046 | c212719d77dbb6d933d15caceb083e3b | 3885 | 432240010oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | 1532e255-733a-4887-b26e-4620a85abca9 | 
+#=#=#=# Syncrun finished 2023-03-31T16:14:38Z (last step: 1079 msec , total: 1477 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:14:43Z
+#=#=#=#=# Propagation starts 2023-03-31T16:14:43Z (last step: 343 msec , total: 343 msec) 
+#=#=#=# Syncrun finished 2023-03-31T16:14:43Z (last step: 169 msec , total: 513 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:14:50Z
+#=#=#=#=# Propagation starts 2023-03-31T16:14:50Z (last step: 528 msec , total: 528 msec) 
+#=#=#=# Syncrun finished 2023-03-31T16:14:50Z (last step: 169 msec , total: 698 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:18:53Z
+#=#=#=#=# Propagation starts 2023-03-31T16:18:53Z (last step: 401 msec , total: 401 msec) 
+2023-03-31T16:18:55Z | test_swmm.py | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Up | | 1666107046 | 33bb72a401355c48d0fd3065f326bfef | 3143 | 400068611oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 3143 | 1666107046 | b4cd3db1-211e-4333-bbe7-c19de82b1733 | 
+#=#=#=# Syncrun finished 2023-03-31T16:18:54Z (last step: 1101 msec , total: 1502 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:18:56Z
+#=#=#=#=# Propagation starts 2023-03-31T16:18:57Z (last step: 293 msec , total: 293 msec) 
+2023-03-31T16:18:58Z | test_swmm.py | SyncInstruction(CSYNC_INSTRUCTION_NEW) | OCC::SyncFileItem::Up | | 1678485265 | 1f38661ba58f005f9355a40bd273cd98 | 3297 | 432241315oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 201 | 0 | 0 | b9ac5705-a42e-44e2-ae63-5298a946bf7f | 
+#=#=#=# Syncrun finished 2023-03-31T16:18:58Z (last step: 1047 msec , total: 1341 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:19:30Z
+#=#=#=#=# Propagation starts 2023-03-31T16:19:30Z (last step: 334 msec , total: 334 msec) 
+#=#=#=# Syncrun finished 2023-03-31T16:19:30Z (last step: 144 msec , total: 478 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:20:29Z
+#=#=#=#=# Propagation starts 2023-03-31T16:20:29Z (last step: 631 msec , total: 631 msec) 
+2023-03-31T16:20:31Z | data/info.txt.bak | SyncInstruction(CSYNC_INSTRUCTION_REMOVE) | OCC::SyncFileItem::Up | | 1678453421 | f9db270722f5238355c054798329e2c0 | 138 | 427941815oc7wg632j0r1 | OCC::SyncFileItem::Success |  | 204 | 138 | 1678453421 | cce137f3-ee48-4980-a5b1-b47c46f7f03c | 
+#=#=#=# Syncrun finished 2023-03-31T16:20:30Z (last step: 959 msec , total: 1590 msec) 
+#=#=#=# Syncrun started 2023-03-31T16:20:50Z
+#=#=#=#=# Propagation starts 2023-03-31T16:20:51Z (last step: 946 msec , total: 946 msec) 
+#=#=#=# Syncrun finished 2023-03-31T16:20:51Z (last step: 132 msec , total: 1078 msec) 

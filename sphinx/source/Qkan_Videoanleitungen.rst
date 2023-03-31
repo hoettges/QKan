@@ -1,5 +1,5 @@
-Workflow: Von einfachen Tabellendaten zur Simulation
-====================================================
+Übersicht: Videoanleitungen zum Workflow
+========================================
 
 .. index:: Video: Workflow
 

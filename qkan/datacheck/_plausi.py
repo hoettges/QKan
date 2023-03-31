@@ -71,7 +71,7 @@ class PlausiTask(QKanPlugin):
             logger.error('Plausibilitätsabfragen konnten nicht abgefragt werden.')
             return False
 
-        for (gruppe, warntext, warntyp, warnlevel, sql, layername, attrname) in self.db_qkan.fetchall():
+        for (gruppe, warnung, warntyp, warnlevel, sqltext, layername, attrname) in self.db_qkan.fetchall():
             sql = f"""INSERT INTO pruefliste (objname, warntext, warntyp, warnlevel, layername, attrname)
                 SELECT
                     {attrname},
@@ -81,9 +81,9 @@ class PlausiTask(QKanPlugin):
                     '{layername}' AS layername,
                     '{attrname}' AS attrname
                 FROM
-                ({sql});"""
+                ({sqltext});"""
             if not self.db_qkan.sql(sql, "datacheck.PlausiTask.run (2)"):
-                logger.warning(f"Plausibilitätsabfrage '{warntext}' zum Thema '{gruppe}' ist fehlgeschlagen.")
+                logger.warning(f"Plausibilitätsabfrage '{warnung}' zum Thema '{gruppe}' ist fehlgeschlagen.")
 
         self.db_qkan.commit()
 

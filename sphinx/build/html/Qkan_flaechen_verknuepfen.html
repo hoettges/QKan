@@ -4,10 +4,11 @@
 <html class="writer-html5" lang="de" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Suche &mdash; QKan 3.2.38 Dokumentation</title>
+  <title>Flächen mit Haltungen verknüpfen &mdash; QKan 3.2.38 Dokumentation</title>
   
 
   
@@ -25,7 +26,6 @@
   
 
   
-    
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -41,10 +41,8 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <script type="text/javascript" src="_static/searchtools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
-    <link rel="search" title="Suche" href="#" /> 
+    <link rel="search" title="Suche" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -75,7 +73,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Dokumentation durchsuchen" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -93,29 +91,11 @@
               
             
             
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Allgemeines</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Flächen mit Haltungen verknüpfen</a></li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">QKan - Plugin Installation</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Datenaustausch.html">Import von Kanaldaten aus einfachen Tabellen</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Verarbeitung von befestigten und unbefestigten Flächen</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html#vorgehen-bei-der-flachenzuordnung">Vorgehen bei der Flächenzuordnung</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Best practice Beispiel „Workflow“</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_import_flaechendaten.html">Import von Flächendaten</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_erstellung_unbef_fl.html">Erzeugung unbefestigter Flächen</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen_vorbereiten.html">Vorbereitung zur Flächenzuordnung</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
-</ul>
-
+</div>
             
           
         </div>
@@ -162,10 +142,14 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Suche</li>
+      <li>Flächen mit Haltungen verknüpfen</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Qkan_flaechen_verknuepfen.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+          
         
       </li>
     
@@ -177,18 +161,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Bitte aktiviere JavaScript, um die Suchfunktion zu nutzen.
-    </p>
-  </div>
-  </noscript>
+  <section id="flachen-mit-haltungen-verknupfen">
+<h1>Flächen mit Haltungen verknüpfen<a class="headerlink" href="#flachen-mit-haltungen-verknupfen" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Nachdem die Flächen vorbereitet wurden, können diese nun mit den Haltungsflächen verknüpft werden, zu denen sie entwässern.
+Eine Videoanleitung zur Verknüpfung der Flächen mit Haltungen ist <cite>hier &lt;LINK&gt;</cite> zu finden.</p>
+<p>Die Verknüpfung geschieht über das Tool <img alt="Tool_Verknuepfungslinie" src="_images/Tool_verknuepfungslinien_fl_haltung.png" /> „Erzeuge Verknüpfungslinien von Flächen zu Haltungen“.</p>
+<p>In der Regel werden bei den Filteroptionen, in dem nun geöffneten Fesnter, nur die Haltungen spezifiziert.
+Dafür wird in der Tabelle „Haltungen“ der Eintrag „Mischwasser“ ausgewählt (siehe Bild).
+Bei den Optionen zur Erzeugung von Zuordnungen kann gegebenenfalls der Suchradius (siehe Bild) vergrößert werden.
+Vor allem, wenn einige Flächen weit entfernt von Haltungen liegen, aber dennoch angschlossen werden sollen, denn der Suchradius begrenzt den Bereich, indem die Zuordnung vorgenommen wird.
+Auch die anderen Optionen sollten entsprechend dem hier dargestellten Beispiel ausgewählt werden.</p>
+<img alt="_images/Fenster_verbindungslinien_erstellen.png" src="_images/Fenster_verbindungslinien_erstellen.png" />
+<p>Das Fenster kann dann mit „OK“ geschlossen werden. Die Verknüpfungslinien erscheinen nun im Plan.</p>
+</section>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
            
@@ -230,14 +216,7 @@
   
   
     
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>

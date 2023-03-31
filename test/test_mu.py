@@ -91,7 +91,7 @@ class TestQKanMU_not_ready_to_run(QgisTest):
         QKan.config.check_export.synch = False
 
         imp = MuPorter(iface())
-        imp.db_name = QKan.config.mu.database
+        imp.connectQKanDB(QKan.config.mu.database)
         erg = imp._doexport()
 
         LOGGER.debug(f"erg (Validate_MU_export): {erg}")
