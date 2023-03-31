@@ -29,7 +29,7 @@ logger = logging.getLogger("QKan.laengs.import")
 
 
 class LaengsTask:
-    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, fig_2: plt.figure, canv_2: FigureCanvas, fig_3: plt.figure, canv_3: FigureCanvas, selected, auswahl, point, massstab, features, db_erg, ausgabe):
+    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, fig_2: plt.figure, canv_2: FigureCanvas, fig_3: plt.figure, canv_3: FigureCanvas, selected, auswahl, point, massstab, features, db_erg, ausgabe, max):
         self.db_qkan = db_qkan
         self.fig = fig
         self.canv = canv
@@ -44,7 +44,7 @@ class LaengsTask:
         self.features = features
         self.db_erg = db_erg
         self.ausgabe = ausgabe
-        #TODO: datenbank anbindung
+        self.max = max
 
         self.db_erg = spatialite_connect(self.db_erg)
         self.db_erg_curs = self.db_erg.cursor()
@@ -74,6 +74,7 @@ class LaengsTask:
             self.features.append(attrs)
 
         liste=[]
+        liste2=[]
 
         if table not in ['schaechte', 'haltungen']:
             iface.messageBar().pushMessage("Fehler", 'Bitte Haltungen oder Schächte wählen', level=Qgis.Critical)
@@ -88,6 +89,8 @@ class LaengsTask:
             for f in self.selected:
                 x = f['schoben']
                 x2 = f['schunten']
+                x3 = f['haltnam']
+                liste2.append(x3)
                 if x not in liste:
                     liste.append(x)
                 if x2 not in liste:
@@ -122,8 +125,6 @@ class LaengsTask:
             iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
             x = 'nicht erstellt'
             return x
-
-        #iface.messageBar().pushMessage("Fehler", str(route), level=Qgis.Critical)
 
         for i in route[1]:
 
@@ -206,6 +207,55 @@ class LaengsTask:
                 strasse_l.append(strasse)
                 haltungstyp_l.append(haltungstyp)
 
+
+        y_liste = []
+
+        if self.max == True:
+            haltungen = {}
+            schaechte = {}
+            if table == 'haltungen':
+                for haltung in liste2:
+                    sql = 'SELECT wasserstandoben,wasserstandunten FROM lau_max_el WHERE KANTE=?'
+                    data = (haltung,)
+
+                    try:
+                        self.db_erg_curs.execute(sql, data)
+                    except:
+                        iface.messageBar().pushMessage("Error",
+                                                       "Daten konnten nicht ausgelesen werden",
+                                                       level=Qgis.Critical)
+                    wasserstaende = self.db_erg_curs.fetchall()
+
+                    for wasserstandoben, wasserstandunten in wasserstaende:
+                        haltungen[haltung] = dict(
+                            wasserstandoben=wasserstandoben, wasserstandunten=wasserstandunten
+                        )
+
+                for h in liste2:
+                    y_liste.append(haltungen[h]['wasserstandoben'])
+                    y_liste.append(haltungen[h]['wasserstandunten'])
+
+            if table == 'schaechte':
+                for schacht in liste:
+                    sql = 'SELECT wasserstand FROM lau_max_s WHERE KNOTEN=?'
+                    data = (schacht,)
+
+                    try:
+                        self.db_erg_curs.execute(sql, data)
+                    except:
+                        iface.messageBar().pushMessage("Error",
+                                                       "Daten konnten nicht ausgelesen werden",
+                                                       level=Qgis.Critical)
+                    wasserstaende = self.db_erg_curs.fetchall()
+
+                    for wasserstand in wasserstaende:
+                        schaechte[schacht] = dict(
+                            wasserstand=wasserstand)
+
+                for s in liste:
+                    y_liste.append(schaechte[s]['wasserstand'])
+
+
         farbe = 'black'
         if entwart == 'MW' or entwart =='KM' or entwart =='Mischwasser':
             farbe = 'pink'
@@ -224,6 +274,8 @@ class LaengsTask:
         new_plot.plot(x_deckel, y_deckel, color="black", label='Deckel')
         new_plot.plot(x_sohle, y_sohle, color=farbe, label='Kanalsohle')
         new_plot.plot(x_sohle2, y_sohle2, color=farbe, label='Kanalscheitel')
+        if len(y_liste) > 0 and table == 'haltungen':
+            new_plot.plot(x_sohle2, y_liste, color="blue", label='maximaler Wasserstand')
 
         x_deckel_neu = []
         name_neu = []
@@ -248,6 +300,9 @@ class LaengsTask:
                          rotation=90,
                          ha='center')
 
+        if len(y_liste) > 0 and table == 'schaechte':
+            new_plot.plot(x_deckel_neu, y_liste, color="blue", label='maximaler Wasserstand')
+
         plt.vlines(x_deckel, y_sohle, y_deckel, color="red", linestyles='solid', label='Schacht', linewidth=5)
         plt.xlabel('Länge [m]')
         plt.ylabel('Höhe [m NHN]')
@@ -270,6 +325,7 @@ class LaengsTask:
 
 
     def cad(self):
+        #TODO: max Wasserstand ergänzen
         points = self.point.split(",", 1)
         massstab_liste = self.massstab.split(":", 1)
 
@@ -293,6 +349,7 @@ class LaengsTask:
         self.selected = self.auswahl[figure.number]
 
         liste = []
+        liste2 = []
 
         if table not in ['schaechte', 'haltungen']:
             iface.messageBar().pushMessage("Fehler", 'Bitte Haltungen oder Schächte wählen', level=Qgis.Critical)
@@ -307,6 +364,8 @@ class LaengsTask:
             for f in self.selected:
                 x = f['schoben']
                 x2 = f['schunten']
+                x3 = f['haltnam']
+                liste2.append(x3)
                 if x not in liste:
                     liste.append(x)
                 if x2 not in liste:
@@ -432,6 +491,53 @@ class LaengsTask:
                 material_l.append(material)
                 strasse_l.append(strasse)
                 haltungstyp_l.append(haltungstyp)
+
+        y_liste = []
+
+        if self.max == True:
+            haltungen = {}
+            schaechte = {}
+            if table == 'haltungen':
+                for haltung in liste2:
+                    sql = 'SELECT wasserstandoben,wasserstandunten FROM lau_max_el WHERE KANTE=?'
+                    data = (haltung,)
+
+                    try:
+                        self.db_erg_curs.execute(sql, data)
+                    except:
+                        iface.messageBar().pushMessage("Error",
+                                                       "Daten konnten nicht ausgelesen werden",
+                                                       level=Qgis.Critical)
+                    wasserstaende = self.db_erg_curs.fetchall()
+
+                    for wasserstandoben, wasserstandunten in wasserstaende:
+                        haltungen[haltung] = dict(
+                            wasserstandoben=wasserstandoben, wasserstandunten=wasserstandunten
+                        )
+
+                for h in liste2:
+                    y_liste.append(haltungen[h]['wasserstandoben'])
+                    y_liste.append(haltungen[h]['wasserstandunten'])
+
+            if table == 'schaechte':
+                for schacht in liste:
+                    sql = 'SELECT wasserstand FROM lau_max_s WHERE KNOTEN=?'
+                    data = (schacht,)
+
+                    try:
+                        self.db_erg_curs.execute(sql, data)
+                    except:
+                        iface.messageBar().pushMessage("Error",
+                                                       "Daten konnten nicht ausgelesen werden",
+                                                       level=Qgis.Critical)
+                    wasserstaende = self.db_erg_curs.fetchall()
+
+                    for wasserstand in wasserstaende:
+                        schaechte[schacht] = dict(
+                            wasserstand=wasserstand)
+
+                for s in liste:
+                    y_liste.append(schaechte[s]['wasserstand'])
 
         farbe = "-FARBE" +"\n"+ "7\n" "\n"
         if entwart == 'MW' or entwart == 'KM' or entwart == 'Mischwasser':
@@ -819,7 +925,7 @@ class LaengsTask:
                     new_plot.xaxis.set_minor_formatter(mdates.DateFormatter("%H:%M"))
                     new_plot.legend()
 
-            if self.ausgabe == 'Wasserstand':
+            if self.ausgabe == 'Wassertiefe':
                 plt.xlabel('Zeit')
                 plt.ylabel('m')
                 for h in liste:
@@ -914,6 +1020,7 @@ class LaengsTask:
             self.features.append(attrs)
 
         liste = []
+        liste2 = []
 
         if table not in ['schaechte', 'haltungen']:
             iface.messageBar().pushMessage("Fehler", 'Bitte Haltungen oder Schächte wählen', level=Qgis.Critical)
@@ -928,6 +1035,8 @@ class LaengsTask:
             for f in self.selected:
                 x = f['schoben']
                 x2 = f['schunten']
+                x3 = f['haltnam']
+                liste2.append(x3)
                 if x not in liste:
                     liste.append(x)
                 if x2 not in liste:
@@ -1062,42 +1171,12 @@ class LaengsTask:
         rows = ('Schacht oben', 'Schacht unten', 'Länge [m]', 'Entwässerungsart', 'Höhe [m]', 'Breite [m]', 'Material',
                 'Strasse', 'Typ')
 
-        new_plot.plot(x_deckel, y_deckel, color="black", label='Deckel')
-        new_plot.plot(x_sohle, y_sohle, color=farbe, label='Kanalsohle')
-        new_plot.plot(x_sohle2, y_sohle2, color=farbe, label='Kanalscheitel')
 
-        x_deckel_neu = []
-        name_neu = []
-        y_label_neu = []
-
-        for i in x_deckel:
-            if i not in x_deckel_neu:
-                x_deckel_neu.append(i)
-
-        for i in name:
-            if i not in name_neu:
-                name_neu.append(i)
-
-        for i in y_label:
-            if i not in y_label_neu:
-                y_label_neu.append(i)
-
-        for x, y, nam in zip(x_deckel_neu, y_label_neu, name_neu):
-            plt.annotate(nam, (x, y),
-                         textcoords="offset points",
-                         xytext=(-10, 0),
-                         rotation=90,
-                         ha='center')
-
-        plt.vlines(x_deckel, y_sohle, y_deckel, color="red", linestyles='solid', label='Schacht', linewidth=5)
-        plt.xlabel('Länge [m]')
-        plt.ylabel('Höhe [m NHN]')
-        new_plot.legend()
 
         haltungen = {}
         schaechte = {}
         if table == 'haltungen':
-            for haltung in liste:
+            for haltung, xkoordinate_o, xkoordinate_u in zip(liste2, x_sohle2, x_sohle2[1:]):
                 sql = 'SELECT wasserstandoben,wasserstandunten,zeitpunkt FROM lau_gl_el WHERE KANTE=?'
                 data = (haltung,)
 
@@ -1127,24 +1206,23 @@ class LaengsTask:
                     if haltungen.get(zeitpunkt) is None:
                         haltungen[zeitpunkt] = {}
                     haltungen[zeitpunkt][haltung] = dict(
-                        wasserstandoben=wasserstandoben, wasserstandunten=wasserstandunten
+                        wasserstandoben=wasserstandoben, wasserstandunten=wasserstandunten, xkoordinate_o=xkoordinate_o,
+                        xkoordinate_u=xkoordinate_u
                     )
+            y_liste = []
+            x_liste = []
+            for h in liste2:
+                zeit_liste = []
+                for x, y in haltungen.items():
+                    zeit_liste.append(x)
+                    y_liste.append(y[h]['wasserstandoben'])
+                    y_liste.append(y[h]['wasserstandunten'])
+                    x_liste.append(y[h]['xkoordinate_o'])
+                    x_liste.append(y[h]['xkoordinate_u'])
 
-
-            #x_liste = []
-            #y_liste = []
-            #for h in liste:
-            #    for x, y in haltungen.items():
-            #        x_liste.append(x)
-            #        y_liste.append(y[h]['wasserstandoben'])
-            #        y_liste.append(y[h]['wasserstandunten'])
-            #iface.messageBar().pushMessage("Error", str(x_deckel),
-            #                               level=Qgis.Critical)
-            #iface.messageBar().pushMessage("Error", str(y_liste),
-            #                               level=Qgis.Critical)
 
         if table == 'schaechte':
-            for schacht in liste:
+            for schacht, xkoordinate in zip(liste, x_sohle2 ):
                 sql = 'SELECT wasserstand,zeitpunkt FROM lau_gl_s WHERE KNOTEN=?'
                 data = (schacht,)
 
@@ -1172,4 +1250,98 @@ class LaengsTask:
                                                        level=Qgis.Critical)
                     if schaechte.get(zeitpunkt) is None:
                         schaechte[zeitpunkt] = {}
-                    schaechte[zeitpunkt][schacht] = wasserstand
+                    schaechte[zeitpunkt][schacht] = dict(
+                        wasserstand=wasserstand, xkoordinate=xkoordinate
+                    )
+
+            y_liste = []
+            x_liste = []
+            for s in liste:
+                zeit_liste = []
+                for x, y in schaechte.items():
+                    zeit_liste.append(x)
+                    y_liste.append(y[s]['wasserstand'])
+                    x_liste.append(y[s]['xkoordinate'])
+
+
+        #matplotlib animierter längsschnitt einfügen
+
+        zeit = zeit_liste
+        x = x_liste
+        y = y_liste
+
+        #figure, ax = plt.subplots(1, 1, figsize=(6, 6))
+
+        plt.xlabel('Länge [m]')
+        plt.ylabel('Höhe [m NHN]')
+        new_plot.legend()
+        x_deckel_neu = []
+        def animate(t):
+            iface.messageBar().pushMessage("Error",
+                                           'test',
+                                           level=Qgis.Critical)
+            plt.cla()  # clear the previous image
+            new_plot.plot(x_deckel, y_deckel, color="black", label='Deckel')
+            new_plot.plot(x_sohle, y_sohle, color=farbe, label='Kanalsohle')
+            new_plot.plot(x_sohle2, y_sohle2, color=farbe, label='Kanalscheitel')
+
+            name_neu = []
+            y_label_neu = []
+
+            for i in x_deckel:
+                if i not in x_deckel_neu:
+                    x_deckel_neu.append(i)
+
+            for i in name:
+                if i not in name_neu:
+                    name_neu.append(i)
+
+            for i in y_label:
+                if i not in y_label_neu:
+                    y_label_neu.append(i)
+
+            for x, y, nam in zip(x_deckel_neu, y_label_neu, name_neu):
+                plt.annotate(nam, (x, y),
+                             textcoords="offset points",
+                             xytext=(-10, 0),
+                             rotation=90,
+                             ha='center')
+
+            new_plot.vlines(x_deckel, y_sohle, y_deckel, color="red", linestyles='solid', label='Schacht', linewidth=5)
+            plt.xlabel('Länge [m]')
+            plt.ylabel('Höhe [m NHN]')
+            new_plot.legend()
+            #new_plot.plot(x_liste[t], y_liste[t])  # plot the line
+            #ax.set_xlim([x0, tfinal])  # fix the x axis
+            #ax.set_ylim([1.1 * np.min(y), 1.1 * np.max(y)])  # fix the y axis
+
+        anim = animation.FuncAnimation(figure, animate, frames=zeit, blit=False)
+        #anim.event_source.start()
+        #plt.show()
+
+    if table == 'schaechte':
+        zeit = zeit_liste
+        x = x_deckel_neu
+        y = y_liste
+
+        for i in zeit:
+            #plt.scatter(x, y, color='red', marker='.')
+            f = plt.plot(x, y)
+            #plt.legend(f, [f'f(x) = x^{i}'])
+            #camera.snap()
+
+
+        figure, ax = plt.subplots(1, 1, figsize=(6, 6))
+
+        plt.xlabel('Länge [m]')
+        plt.ylabel('Höhe [m NHN]')
+        new_plot.legend()
+        def animate(i):
+            ax.cla()  # clear the previous image
+            ax.plot(x[:i], y[:i])  # plot the line
+            #ax.set_xlim([x0, tfinal])  # fix the x axis
+            #ax.set_ylim([1.1 * np.min(y), 1.1 * np.max(y)])  # fix the y axis
+
+        anim = animation.FuncAnimation(figure, animate, frames=zeit, interval=1, blit=False)
+        #plt.show()
+

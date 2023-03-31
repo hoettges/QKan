@@ -67,13 +67,14 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
     lineEdit: QLineEdit
     lineEdit_2: QLineEdit
     label: QLabel
-    lineEdit_3: QLineEdit
-    pushButton_4: QPushButton
+    #lineEdit_3: QLineEdit
+    #pushButton_4: QPushButton
     pushButton_5: QPushButton
     lineEdit_4: QLineEdit
     pushButton_6: QPushButton
     pushButton_7: QPushButton
     comboBox: QComboBox
+    checkBox: QCheckBox
 
 
     def __init__(
@@ -88,10 +89,11 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
         self.pushButton.clicked.connect(self.export_cad)
         self.pushButton_2.clicked.connect(self.refresh)
         self.pushButton_3.clicked.connect(self.show_selection)
-        self.pushButton_4.clicked.connect(self.select_erg)
+        #self.pushButton_4.clicked.connect(self.select_erg)
         self.pushButton_5.clicked.connect(self.ganglinie)
         self.pushButton_6.clicked.connect(self.animiert_laengs)
-        self.pushButton_7.clicked.connect(self.select_erg_2)
+        self.pushButton_7.clicked.connect(self.select_erg)
+        self.checkBox.toggled.connect(self.clicked)
         self.refresh_function = None
         self.export_cad_function = None
         self.show_function = None
@@ -106,10 +108,11 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
         self.database = None
         self.selected = None
         self.auswahl = {}
+        self.max = False
         self.features = []
         self.point = self.lineEdit.text()
         self.massstab = self.lineEdit_2.text()
-        self.db_erg = self.lineEdit_3.text()
+        self.db_erg = self.lineEdit_4.text()
         list_schacht = ["Zufluss", "Wasserstand", "Wassertiefe", "Durchfluss"]
         list_haltung = ["Durchfluss", "Geschwindigkeit", "Auslastung", "Wassertiefe"]
         layer = iface.activeLayer()
@@ -130,37 +133,31 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
 
         self.ausgabe = self.comboBox.currentText()
 
+    def clicked(self):
+        self.max = True
 
     def export_cad(self):
+        self.db_erg = self.lineEdit_4.text()
         self.point = self.lineEdit.text()
         self.massstab = self.lineEdit_2.text()
-        self.export_cad_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe)
+        self.export_cad_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
 
     def show_selection(self):
-        self.show_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe)
+        self.db_erg = self.lineEdit_4.text()
+        self.show_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
 
     def refresh(self):
-        self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe)
+        self.db_erg = self.lineEdit_4.text()
+        self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
 
-        if self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe) == 'nicht erstellt':
+        if self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max) == 'nicht erstellt':
             self.label.setText('Bitte Elemente vom Schacht- oder Haltungslayer auswählen und den "refresh" Knopf drücken!')
 
         else:
             self.label.setText('')
-            self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe)
+            self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
 
     def select_erg(self):
-        filename, _ = QFileDialog.getOpenFileName(
-            self,
-            self.tr("Zu importierende Hystem-Extran Ergebnisse"),
-            self.default_dir,
-            "*.idbr",
-        )
-
-        if filename:
-            self.lineEdit_3.setText(filename)
-
-    def select_erg_2(self):
         filename, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Zu importierende Hystem-Extran Ergebnisse"),
@@ -172,14 +169,14 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
             self.lineEdit_4.setText(filename)
 
     def ganglinie(self):
-        self.db_erg = self.lineEdit_3.text()
+        self.db_erg = self.lineEdit_4.text()
         self.ausgabe = self.comboBox.currentText()
-        self.gang_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe)
+        self.gang_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
 
     def animiert_laengs(self):
         self.db_erg = self.lineEdit_4.text()
         self.animiert_laengs_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl,
-                           self.point, self.massstab, self.features, self.db_erg, self.ausgabe)
+                           self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
 
 
 

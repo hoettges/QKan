@@ -32,24 +32,24 @@ class Laengsschnitt(QKanPlugin):
         self.auswahl={}
 
 
-    def refresh_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe).zeichnen()
+    def refresh_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max).zeichnen()
         canv.draw()
 
-        return LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe).zeichnen()
+        return LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max).zeichnen()
 
 
-    def export_cad_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe).cad()
+    def export_cad_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max).cad()
 
-    def show_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe).show()
+    def show_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max).show()
 
-    def gang_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe).ganglinie()
+    def gang_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max).ganglinie()
         canv_3.draw()
-    def animiert_laengs_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe):
-        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe).laengs()
+    def animiert_laengs_function(self, database, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max):
+        LaengsTask(self.db_qkan, self.database_qkan, fig, canv, fig_2, canv_2, fig_3, canv_3, selected, auswahl, point, massstab, features, db_erg, ausgabe, max).laengs()
         canv_2.draw()
 
     # noinspection PyPep8Naming
@@ -132,6 +132,7 @@ class Laengsschnitt(QKanPlugin):
         self.canv_3 = self.dialog.canv_3
         self.db_erg = self.dialog.db_erg
         self.ausgabe = self.laengs_dlg.comboBox.currentText()
+        self.max = self.dialog.max
 
 
         # Fill dialog with current info
@@ -169,4 +170,4 @@ class Laengsschnitt(QKanPlugin):
                 )
 
             # Run
-            LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe).run()
+            LaengsTask(self.db_qkan, self.database_qkan, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max).run()
