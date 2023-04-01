@@ -10,6 +10,7 @@ intelligente Clipboard-Einfügefunktion implementiert.
 Die Bedienung ist denkbar einfach: Um Daten mit Copy&Paste aus einer Tabelle (Excel, Textdatei, 
 ACCESS-Datenbank, etc.) einzufügen, muss der entsprechende Layer in der Layerkontrolle aktiviert sein. Er darf 
 sich dabei nicht im Bearbeitungsmodus befinden. Dabei gelten folgende Anforderungen: 
+
  - bestimmte Pflichtattribute müssen vorhanden sein
  - Die Reihenfolge der Daten ist beliebig
  - Für die meisten Attributnamen werden zahlreiche Synonyme akzeptiert (z. B. "schnam", "schachtname" oder 

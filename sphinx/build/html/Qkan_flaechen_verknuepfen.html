@@ -42,7 +42,9 @@
 
     
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
-    <link rel="search" title="Suche" href="search.html" /> 
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="Übersicht: Videoanleitungen zum Workflow" href="Qkan_Videoanleitungen.html" />
+    <link rel="prev" title="Vorbereitung zur Flächenzuordnung" href="Qkan_flaechen_vorbereiten.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,11 +93,42 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Flächen mit Haltungen verknüpfen</a></li>
+              <p class="caption"><span class="caption-text">Kanaldaten mit QGIS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Allgemeines</a></li>
 </ul>
-</div>
+<p class="caption"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">QKan - Plugin Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Datenaustausch</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Datenaustausch.html">Import von Kanaldaten aus einfachen Tabellen</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Funktionen</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Verarbeitung von befestigten und unbefestigten Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html#vorgehen-bei-der-flachenzuordnung">Vorgehen bei der Flächenzuordnung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">QKan-Formulare</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Beispielprojekt</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Best practice Beispiel „Workflow“</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_import_flaechendaten.html">Import von Flächendaten</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_erstellung_unbef_fl.html">Erzeugung unbefestigter Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen_vorbereiten.html">Vorbereitung zur Flächenzuordnung</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Flächen mit Haltungen verknüpfen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#verbindungslinien-hinzufugen">Verbindungslinien hinzufügen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verbindungslinien-bearbeiten">Verbindungslinien bearbeiten</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html">Übersicht: Videoanleitungen zum Workflow</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tabellen</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
+</ul>
+
             
           
         </div>
@@ -165,14 +198,42 @@
 <h1>Flächen mit Haltungen verknüpfen<a class="headerlink" href="#flachen-mit-haltungen-verknupfen" title="Link zu dieser Überschrift">¶</a></h1>
 <p>Nachdem die Flächen vorbereitet wurden, können diese nun mit den Haltungsflächen verknüpft werden, zu denen sie entwässern.
 Eine Videoanleitung zur Verknüpfung der Flächen mit Haltungen ist <cite>hier &lt;LINK&gt;</cite> zu finden.</p>
-<p>Die Verknüpfung geschieht über das Tool <img alt="Tool_Verknuepfungslinie" src="_images/Tool_verknuepfungslinien_fl_haltung.png" /> „Erzeuge Verknüpfungslinien von Flächen zu Haltungen“.</p>
-<p>In der Regel werden bei den Filteroptionen, in dem nun geöffneten Fesnter, nur die Haltungen spezifiziert.
+<p>Die Verknüpfung geschieht über das Tool <a class="reference internal" href="_images/Tool_verknuepfungslinien_fl_haltung.png"><img alt="Tool_Verknuepfungslinie" src="_images/Tool_verknuepfungslinien_fl_haltung.png" style="width: 1.25em;" /></a> „Erzeuge Verknüpfungslinien von Flächen zu Haltungen“.
+In der Regel werden bei den Filteroptionen, in dem nun geöffneten Fenster, nur die Haltungen spezifiziert.
 Dafür wird in der Tabelle „Haltungen“ der Eintrag „Mischwasser“ ausgewählt (siehe Bild).
 Bei den Optionen zur Erzeugung von Zuordnungen kann gegebenenfalls der Suchradius (siehe Bild) vergrößert werden.
-Vor allem, wenn einige Flächen weit entfernt von Haltungen liegen, aber dennoch angschlossen werden sollen, denn der Suchradius begrenzt den Bereich, indem die Zuordnung vorgenommen wird.
+Der Suchradius begrenzt den Bereich, indem die Zuordnung vorgenommen wird.
+Daher ist die Anpassung vor allem sinnvoll, wenn einige Flächen weit entfernt von Haltungen liegen und dennoch angeschlossen werden sollen.
 Auch die anderen Optionen sollten entsprechend dem hier dargestellten Beispiel ausgewählt werden.</p>
 <img alt="_images/Fenster_verbindungslinien_erstellen.png" src="_images/Fenster_verbindungslinien_erstellen.png" />
 <p>Das Fenster kann dann mit „OK“ geschlossen werden. Die Verknüpfungslinien erscheinen nun im Plan.</p>
+<img alt="QKan_Bilder/Flaechen_verknuepfen/angeschlossene_flaechen.png" src="QKan_Bilder/Flaechen_verknuepfen/angeschlossene_flaechen.png" />
+<p>Nachdem die Verknüpfungslinien erstellt wurden, müssen noch die Parameter zur Oberflächenabflussberechnung angepasst werden.
+Die entsprechenden Parameter sind in QKan in den Verknüpfungslinien gespeichert.
+Erzeugt werden können diese über das Tool „Oberflächenabflussparameter eintragen“ <a class="reference internal" href="QKan_Bilder/Flaechen_verknuepfen/Tool_oberflaechenabflussparameter.png"><img alt="Tool_oberflaechenabflussparameter" src="QKan_Bilder/Flaechen_verknuepfen/Tool_oberflaechenabflussparameter.png" style="width: 1.25em;" /></a>.
+Dabei kann das sich öffnende Fenster ohne eine Änderung (siehe Bild unten) mit „OK“ geschlossen werden.</p>
+<img alt="QKan_Bilder/Flaechen_verknuepfen/berechnung_oberflaechenabflussparameter.png" src="QKan_Bilder/Flaechen_verknuepfen/berechnung_oberflaechenabflussparameter.png" />
+<p>In der Attributtabelle ist nun die Spalte „Fließzeit Fläche“ mit Werten gefüllt.
+Alle nötigen Vorbereitungen für einen Export nach HYSTEM-EXTRAN sind nun durchgeführt.</p>
+<p>Es können auch nachträglich Verbindungslinien bearbeitet oder hinzugefügt werden.</p>
+<section id="verbindungslinien-hinzufugen">
+<h2>Verbindungslinien hinzufügen<a class="headerlink" href="#verbindungslinien-hinzufugen" title="Link zu dieser Überschrift">¶</a></h2>
+<p>War der Suchradius zu gering gewählt, kann es vorkommen, dass Flächen nicht mit Haltungen automatisch verknüpft werden.
+Soll eine Fläche von Hand mit einer Haltung verknüpft werden,
+muss dafür der entsprechende Layer „Anbindungen Flächen“ ausgewählt und im Bearbeitungsmodus <a class="reference internal" href="QKan_Bilder/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="QKan_Bilder/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> sein.
+Anschließend kann über das Tool <a class="reference internal" href="QKan_Bilder/Flaechen_verknuepfen/Tool_linienobjekt_hinzufuegen.png"><img alt="Tool_linienobjekt_hinzufuegen" src="QKan_Bilder/Flaechen_verknuepfen/Tool_linienobjekt_hinzufuegen.png" style="width: 1.25em;" /></a> „Linienobjekt hinzufügen“ durch Anklicken der entsprechenden Fläche,
+danach der gewünschten Haltung und anschließend durch Bestätigung mit einem Rechtsklick, eine Verknüpfungslinie erstellt werden.
+Im Gegensatz zu anderen Geo-Objekten, öffnet sich bei der Erstellung von Verknüpfungslinien kein Formularfenster.
+Dies ist über die Layereigenschaften so vorgegeben, da es standartmäßig nicht benötigt wird.</p>
+</section>
+<section id="verbindungslinien-bearbeiten">
+<h2>Verbindungslinien bearbeiten<a class="headerlink" href="#verbindungslinien-bearbeiten" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Vorhandene Verbindungslinien können auch im Nachhinein geändert werden.
+Dazu muss im Bearbeitungsmodus <a class="reference internal" href="QKan_Bilder/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="QKan_Bilder/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> das Stützpunkt-Werkzeug <a class="reference internal" href="QKan_Bilder/Flaechen_verknuepfen/Tool_stuetzpunkt_werkzeug.png"><img alt="Tool_stuetzpunkt_werkzeug" src="QKan_Bilder/Flaechen_verknuepfen/Tool_stuetzpunkt_werkzeug.png" style="width: 1.25em;" /></a> ausgewählt werden.
+Nun kann die zu ändernde Verbindungslinie editiert werden, indem der Endpunkt angeklickt und auf die gewünschte Haltung gezogen wird.
+Wichtig hierbei ist, dass der Menüpunkt „Topologisches Editieren“ <a class="reference internal" href="QKan_Bilder/Flaechen_verknuepfen/Tool_topologisches_editieren.png"><img alt="Tool_topologisches_editieren" src="QKan_Bilder/Flaechen_verknuepfen/Tool_topologisches_editieren.png" style="width: 1.25em;" /></a> deaktiviert ist,
+da sonst alle Haltungen, die an dieser Stelle verknüpft sind mitausgewählt werden.</p>
+</section>
 </section>
 
 
@@ -180,6 +241,10 @@ Auch die anderen Optionen sollten entsprechend dem hier dargestellten Beispiel a
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="Qkan_Videoanleitungen.html" class="btn btn-neutral float-right" title="Übersicht: Videoanleitungen zum Workflow" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Qkan_flaechen_vorbereiten.html" class="btn btn-neutral float-left" title="Vorbereitung zur Flächenzuordnung" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+    </div>
 
   <hr/>
 

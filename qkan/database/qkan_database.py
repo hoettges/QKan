@@ -1247,10 +1247,10 @@ def createdbtables(
     try:
 
         daten = [
-            (0, 'keine Angabe', NULL),
-            (1, 'kein Niederschlag', NULL),
-            (2, 'Regen', NULL),
-            (3, 'Schnee- oder Eisschmelzwasser', NULL),
+            (0, 'keine Angabe', None),
+            (1, 'kein Niederschlag', None),
+            (2, 'Regen', None),
+            (3, 'Schnee- oder Eisschmelzwasser', None),
         ]
 
         cursl.executemany(
@@ -1288,11 +1288,11 @@ def createdbtables(
     try:
 
         daten = [
-            (0, 'keine Angabe', NULL),
-            (1, 'ISYBAU 2006/DIN-EN 13508-2:2011', NULL),
-            (2, 'ISYBAU 2001', NULL),
-            (3, 'ISYBAU 1996', NULL),
-            (4, 'Anderes Verfahren', NULL),
+            (0, 'keine Angabe', None),
+            (1, 'ISYBAU 2006/DIN-EN 13508-2:2011', None),
+            (2, 'ISYBAU 2001', None),
+            (3, 'ISYBAU 1996', None),
+            (4, 'Anderes Verfahren', None),
         ]
 
         cursl.executemany(
@@ -1330,8 +1330,8 @@ def createdbtables(
     try:
 
         daten = [
-            (1, 'vorhanden', NULL),
-            (0, 'nicht vorhanden', NULL),
+            (1, 'vorhanden', None),
+            (0, 'nicht vorhanden', None),
         ]
 
         cursl.executemany(
@@ -1737,14 +1737,14 @@ def createdbtables(
     try:
 
         daten = [
-            ('keine Angabe', 0, NULL, 5),
+            ('keine Angabe', 0, None, 5),
             ('vorhanden', 1, 1, 0),
-            ('geplant', 2, NULL, 1),
-            ('fiktiv', 3, NULL, 2),
-            ('außer Betrieb (keine Sim.)', 4, NULL, 3),
-            ('verfüllt (keine Sim.)', 5, NULL, NULL),
-            ('stillgelegt', NULL, NULL, 4),
-            ('rückgebaut', NULL, NULL, 6),
+            ('geplant', 2, None, 1),
+            ('fiktiv', 3, None, 2),
+            ('außer Betrieb (keine Sim.)', 4, None, 3),
+            ('verfüllt (keine Sim.)', 5, None, None),
+            ('stillgelegt', None, None, 4),
+            ('rückgebaut', None, None, 6),
         ]
 
         cursl.executemany(
@@ -1783,11 +1783,11 @@ def createdbtables(
     try:
 
         daten = [
-            ('frei', 0, NULL, NULL),
-            ('normal', 1, NULL, NULL),
-            ('konstant', 2, NULL, NULL),
-            ('Tide', 3, NULL, NULL),
-            ('Zeitreihe', 4, NULL, NULL),
+            ('frei', 0, None, None),
+            ('normal', 1, None, None),
+            ('konstant', 2, None, None),
+            ('Tide', 3, None, None),
+            ('Zeitreihe', 4, None, None),
         ]
 
         cursl.executemany(
@@ -1926,7 +1926,7 @@ def createdbtables(
 
     try:
         sql = """INSERT INTO abflusstypen
-                 (abflusstyp, he_nr, kp_nr) Values (?. ?, ?)"""
+                 (abflusstyp, he_nr, kp_nr) Values (?, ?, ?)"""
         cursl.executemany(sql, daten)
 
     except BaseException as err:
@@ -1958,19 +1958,19 @@ def createdbtables(
         return False
 
     daten = [
-        ('Anfangsschacht'),
-        ('Einzelschacht'),
-        ('Endschacht'),
-        ('Hochpunkt'),
-        ('Normalschacht'),
-        ('Tiefpunkt'),
-        ('Verzweigung'),
-        ('Fliesszeiten'),
+        ('Anfangsschacht',),
+        ('Einzelschacht',),
+        ('Endschacht',),
+        ('Hochpunkt',),
+        ('Normalschacht',),
+        ('Tiefpunkt',),
+        ('Verzweigung',),
+        ('Fliesszeiten',),
     ]
 
     try:
         sql = """INSERT INTO knotentypen
-                 ( 'knotentyp') Values (?)"""
+                 (knotentyp) Values (?)"""
         cursl.executemany(sql, daten)
 
     except BaseException as err:
