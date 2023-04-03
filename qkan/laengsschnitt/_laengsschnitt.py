@@ -1319,29 +1319,29 @@ class LaengsTask:
         #anim.event_source.start()
         #plt.show()
 
-    if table == 'schaechte':
-        zeit = zeit_liste
-        x = x_deckel_neu
-        y = y_liste
+        if table == 'schaechte':
+            zeit = zeit_liste
+            x = x_deckel_neu
+            y = y_liste
 
-        for i in zeit:
-            #plt.scatter(x, y, color='red', marker='.')
-            f = plt.plot(x, y)
-            #plt.legend(f, [f'f(x) = x^{i}'])
-            #camera.snap()
+            for i in zeit:
+                #plt.scatter(x, y, color='red', marker='.')
+                f = plt.plot(x, y)
+                #plt.legend(f, [f'f(x) = x^{i}'])
+                #camera.snap()
 
 
-        figure, ax = plt.subplots(1, 1, figsize=(6, 6))
+            figure, ax = plt.subplots(1, 1, figsize=(6, 6))
 
-        plt.xlabel('Länge [m]')
-        plt.ylabel('Höhe [m NHN]')
-        new_plot.legend()
-        def animate(i):
-            ax.cla()  # clear the previous image
-            ax.plot(x[:i], y[:i])  # plot the line
-            #ax.set_xlim([x0, tfinal])  # fix the x axis
-            #ax.set_ylim([1.1 * np.min(y), 1.1 * np.max(y)])  # fix the y axis
+            plt.xlabel('Länge [m]')
+            plt.ylabel('Höhe [m NHN]')
+            new_plot.legend()
+            def animate(i):
+                ax.cla()  # clear the previous image
+                ax.plot(x[:i], y[:i])  # plot the line
+                #ax.set_xlim([x0, tfinal])  # fix the x axis
+                #ax.set_ylim([1.1 * np.min(y), 1.1 * np.max(y)])  # fix the y axis
 
-        anim = animation.FuncAnimation(figure, animate, frames=zeit, interval=1, blit=False)
-        #plt.show()
+            anim = animation.FuncAnimation(figure, animate, frames=zeit, interval=1, blit=False)
+            #plt.show()
 
