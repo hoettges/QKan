@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import math
+import os,math
 from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 from xml.etree.ElementTree import ElementTree
 
@@ -780,9 +780,8 @@ def formf(zahl: Optional[float], anz: Optional[int]) -> str:
 
 
 def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> float:
-    """
-    Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
-    enthalten ist, werden n Nachkommastellen angenommen
+    """Wandelt einen Text in eine Zahl um. Falls kein Dezimalzeichen
+enthalten ist, werden n Nachkommastellen angenommen
     """
     zahl = text.strip()
     if zahl == "":
@@ -797,3 +796,16 @@ def fzahl(text: str, n: float = 0.0, default: float = 0.0) -> float:
         return float(zahl) / 10.0 ** n
 
 
+def read_qml(qmlfiles: dict[str, str], qmldir:str = 'qml'):
+    """Liest qml-Datei(en) für QKan-Layer"""
+
+    layer_tree_root = QgsProject.instance().layerTreeRoot()
+    group = layer_tree_root.findGroup('QKan')
+    for layer in group.findLayers():
+        for laynam in qmlfiles.keys():
+            if laynam == layer.name():
+                style_file = os.path.join(QKan.template_dir, qmldir, qmlfiles[laynam])
+                if style_file:
+                    l = layer.layer()
+                    l.loadNamedStyle(style_file)
+                    l.triggerRepaint()

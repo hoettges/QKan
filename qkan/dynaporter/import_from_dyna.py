@@ -15,8 +15,6 @@ __date__ = "September 2016"
 __copyright__ = "(C) 2016, Joerg Hoettges"
 
 import logging
-import os
-import xml.etree.ElementTree as ElementTree
 from typing import Tuple, cast, Callable, List
 from pathlib import Path
 
@@ -25,7 +23,8 @@ from qgis.utils import pluginDirectory
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import eval_node_types, fehlermeldung, fzahl
+
+from qkan.database.qkan_utils import read_qml, eval_node_types, fehlermeldung, fzahl
 from qkan.tools.k_qgsadapt import qgsadapt
 
 logger = logging.getLogger("QKan.dynaporter.import_from_dyna")
@@ -203,8 +202,8 @@ def import_kanaldaten(
 
     tasks: List[Callable[[DBConnection], bool]] = [
         _recreate_tables,
-        lambda x: _init_read_parameters(x, dynafile=dynafile),
-        _update_dyna_profile,
+        lambda x: _read_dynafile(x, dynafile=dynafile),
+        _reftables,
         lambda x: _insert_data_from_dyna(x, epsg=epsg),
     ]
 
@@ -243,6 +242,14 @@ def import_kanaldaten(
             # noinspection PyArgumentList
             project = QgsProject.instance()
             project.read(projectfile)  # read the new project file
+            read_qml(
+                {
+                    'Haltungen nach Typ': 'haltungen_nach_typ.qml',
+                    'Abflussparameter': 'abflussparameter.qml',
+                },
+                'qml/dyna'
+            )
+            project.reloadAllLayers()
 
     # ------------------------------------------------------------------------------
     # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
@@ -260,8 +267,9 @@ def import_kanaldaten(
 
 
 def _recreate_tables(db_qkan: DBConnection) -> bool:
+    """Create temporary tables necessary to disentangle pipe and node data in dyna file"""
     sqllist = [
-        """CREATE TABLE IF NOT EXISTS dyna12 (
+        """CREATE TEMP TABLE IF NOT EXISTS dyna12 (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            ID INTEGER,
            IDob INTEGER,
@@ -291,7 +299,7 @@ def _recreate_tables(db_qkan: DBConnection) -> bool:
            yob REAL,
            strschluessel TEXT)""",
         "DELETE FROM dyna12",
-        """CREATE TABLE IF NOT EXISTS dyna41 (
+        """CREATE TEMP TABLE IF NOT EXISTS dyna41 (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            schnam TEXT,
            deckelhoehe REAL,
@@ -300,12 +308,12 @@ def _recreate_tables(db_qkan: DBConnection) -> bool:
            kanalnummer TEXT,
            haltungsnummer TEXT)""",
         "DELETE FROM dyna41",
-        """CREATE TABLE IF NOT EXISTS dynarauheit (
+        """CREATE TEMP TABLE IF NOT EXISTS dynarauheit (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            ks_key TEXT,
            ks REAL)""",
         "DELETE FROM dynarauheit",
-        """CREATE TABLE IF NOT EXISTS dynaprofil (
+        """CREATE TEMP TABLE IF NOT EXISTS dynaprofil (
            pk INTEGER PRIMARY KEY AUTOINCREMENT,
            profil_key TEXT,
            profilnam TEXT,
@@ -318,10 +326,15 @@ def _recreate_tables(db_qkan: DBConnection) -> bool:
         if not db_qkan.sql(sql, "importkanaldaten_dyna create tab_typ12"):
             return False
 
+    db_qkan.commit()
+
     return True
 
 
-def _init_read_parameters(db_qkan: DBConnection, dynafile: str) -> bool:
+def _read_dynafile(db_qkan: DBConnection, dynafile: str) -> bool:
+    """read dyna file to temporary dyna tables"""
+
+
     # Initialisierung von Parametern für die nachfolgende Leseschleife
 
     status_einw = False
@@ -684,10 +697,35 @@ def _init_read_parameters(db_qkan: DBConnection, dynafile: str) -> bool:
     return True
 
 
-def _update_dyna_profile(db_qkan: DBConnection) -> bool:
-    # ------------------------------------------------------------------------------
-    # Profile aus DYNA-Datei in Tabelle profile ergänzen
-    # 1. Bei Namenskonflikten mit bereits gespeicherten Profilen wird die kp_key auf NULL gesetzt
+def _reftables(db_qkan: DBConnection) -> bool:
+    """add data to reference tables"""
+
+    # 1. add data to table entwaesserungsarten
+
+    daten = [
+        ('Regenwasser', 'R', 'Freispiegelabfluss im geschlossenen Profil, Regenwassersystem', 1, 2, 'R', 'KR', 0, 0),
+        ('Schmutzwasser', 'S', 'Freispiegelabfluss im geschlossenen Profil, Schmutzwassersystem', 2, 1, 'S', 'KS', 0, 0),
+        ('Mischwasser', 'M', 'Freispiegelabfluss im geschlossenen Profil, Mischwassersystem', 0, 0, 'M', 'KM', 0, 0),
+        ('RW Druckleitung', 'RD', 'Druckabfluss, Regenwassersystem', 1, None, None, 'DR', None, 1),
+        ('SW Druckleitung', 'SD', 'Druckabfluss, Schmutzwassersystem', 2, None, None, 'DS', None, 1),
+        ('MW Druckleitung', 'MD', 'Druckabfluss, Mischwassersystem', 0, None, None, 'DM', None, 1),
+        ('RW nicht angeschlossen', 'RT', 'Transporthaltung ohne Anschlüsse, Regenwassersystem', 1, 2, None, None, 1, 0),
+        ('MW nicht angeschlossen', 'MT', 'Transporthaltung ohne Anschlüsse, Mischwassersystem', 0, 0, None, None, 1, 0),
+        ('Rinne/Graben', 'RG', 'Abfluss im offenen Profil, Regenwassersystem (Rinnen, Gerinne, z.B. Entwässerungsgräben)', None, None, None, 'GR', None, None),
+        ('stillgelegt', 'SG', 'stillgelegt', None, None, None, None, None, None),
+    ]
+
+    daten = [el + (el[0],) for el in daten]  # trick: repeat last argument for ? after WHERE in SQL
+    sql = """INSERT INTO entwaesserungsarten (
+                bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m145, isybau, transport, druckdicht)
+                SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
+                WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
+    if not db_qkan.sql(sql, "dyna_import Referenzliste entwaesserungsarten", daten, many=True):
+        return False
+
+    # 2. add pipe profiles from temporary dyna tables
+
+    # 2.1. Bei Namenskonflikten mit bereits gespeicherten Profilen wird die kp_key auf NULL gesetzt
     sql = """UPDATE profile
         SET kp_key = NULL
         WHERE profilnam IN 
@@ -698,7 +736,7 @@ def _update_dyna_profile(db_qkan: DBConnection) -> bool:
     if not db_qkan.sql(sql, "importkanaldaten_dyna profile-1"):
         return False
 
-    # 2. Neue Profile aus DYNA hinzufügen
+    # 2.2. Neue Profile aus DYNA hinzufügen
     sql = """INSERT INTO profile
         (profilnam, kp_key)
         SELECT profilnam, profil_key
@@ -718,6 +756,12 @@ def _insert_data_from_dyna(db_qkan: DBConnection, epsg: int) -> bool:
     # Schachtdaten
 
     sql = """
+        WITH ea AS (
+            SELECT bezeichnung, kp_nr 
+            FROM entwaesserungsarten 
+            WHERE kp_nr IS NOT NULL
+            GROUP BY kp_nr
+        )
         INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
                                     schachttyp, simstatus, kommentar, geop, geom)
         SELECT 
@@ -728,7 +772,7 @@ def _insert_data_from_dyna(db_qkan: DBConnection, epsg: int) -> bool:
             dyna12.deckeloben as deckelhoehe, 
             1.0 as durchm, 
             0 as druckdicht, 
-            entwaesserungsarten.bezeichnung as entwart, 
+            ea.bezeichnung as entwart, 
             'Schacht' AS schachttyp, 
             simulationsstatus.bezeichnung AS simstatus, 
             'Importiert mit QKan' AS kommentar,
@@ -737,8 +781,8 @@ def _insert_data_from_dyna(db_qkan: DBConnection, epsg: int) -> bool:
         FROM dyna12
         LEFT JOIN simulationsstatus
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
-        LEFT JOIN entwaesserungsarten
-        ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
+        LEFT JOIN ea
+        ON dyna12.entwart_nr = ea.kp_nr
         GROUP BY dyna12.schoben"""
 
     params = {"epsg": epsg}
@@ -751,6 +795,12 @@ def _insert_data_from_dyna(db_qkan: DBConnection, epsg: int) -> bool:
     # Auslässe
 
     sql = """
+        WITH ea AS (
+            SELECT bezeichnung, kp_nr 
+            FROM entwaesserungsarten 
+            WHERE kp_nr IS NOT NULL
+            GROUP BY kp_nr
+        )
         INSERT INTO schaechte (schnam, xsch, ysch, sohlhoehe, deckelhoehe, durchm, druckdicht, entwart, 
                                     schachttyp, simstatus, kommentar, geop, geom)
         SELECT
@@ -761,7 +811,7 @@ def _insert_data_from_dyna(db_qkan: DBConnection, epsg: int) -> bool:
             dyna41.deckelhoehe as deckelhoehe, 
             1.0 as durchm, 
             0 as druckdicht, 
-            entwaesserungsarten.bezeichnung as entwart,
+            ea.bezeichnung as entwart,
             'Auslass' AS schachttyp, 
             simulationsstatus.bezeichnung AS simstatus, 
             'Importiert mit QKan' AS kommentar,
@@ -772,8 +822,8 @@ def _insert_data_from_dyna(db_qkan: DBConnection, epsg: int) -> bool:
         ON dyna41.schnam = dyna12.schunten
         LEFT JOIN simulationsstatus
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
-        LEFT JOIN entwaesserungsarten
-        ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
+        LEFT JOIN ea
+        ON dyna12.entwart_nr = ea.kp_nr
         GROUP BY dyna41.schnam"""
 
     params = {"epsg": epsg}
@@ -788,6 +838,12 @@ def _insert_data_from_dyna(db_qkan: DBConnection, epsg: int) -> bool:
     # Daten aus temporären DYNA-Tabellen abfragen
 
     sql = """
+        WITH ea AS (
+            SELECT bezeichnung, kp_nr 
+            FROM entwaesserungsarten 
+            WHERE kp_nr IS NOT NULL
+            GROUP BY kp_nr
+        )
         INSERT INTO haltungen 
             (haltnam, schoben, schunten, 
             hoehe, breite, laenge, sohleoben, sohleunten, 
@@ -803,7 +859,7 @@ def _insert_data_from_dyna(db_qkan: DBConnection, epsg: int) -> bool:
             dyna12.sohleunten AS sohleunten, 
             NULL as teilgebiet, 
             dynaprofil.profilnam as profilnam, 
-            entwaesserungsarten.bezeichnung as entwart, 
+            ea.bezeichnung as entwart, 
             dynarauheit.ks as ks, 
             simulationsstatus.bezeichnung as simstatus, 
             'DYNA-Import' AS kommentar,
@@ -822,8 +878,8 @@ def _insert_data_from_dyna(db_qkan: DBConnection, epsg: int) -> bool:
         ON dyna12.profil_key = dynaprofil.profil_key
         LEFT JOIN simulationsstatus
         ON dyna12.simstatus_nr = simulationsstatus.kp_nr
-        LEFT JOIN entwaesserungsarten
-        ON dyna12.entwart_nr = entwaesserungsarten.kp_nr
+        LEFT JOIN ea
+        ON dyna12.entwart_nr = ea.kp_nr
         GROUP BY dyna12.kanalnummer, dyna12.haltungsnummer"""
 
     params = {'epsg': epsg}

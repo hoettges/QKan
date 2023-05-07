@@ -205,7 +205,7 @@ class ImportTask:
             params = {'schnam': name,
                       'sohlhoehe': elevation, 'schachttyp': 'Auslass'}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+            logger.debug(f'swmmporter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -231,7 +231,7 @@ class ImportTask:
                       'sohlhoehe': elevation, 'deckelhoehe': 'NULL',
                       'schachttyp': 'Speicher'}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+            logger.debug(f'mswmmporter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -259,7 +259,7 @@ class ImportTask:
                       'sohlhoehe': elevation, 'deckelhoehe': elevation + maxdepth,
                       'schachttyp': 'Speicher'}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: schaechte\n'
+            logger.debug(f'mswmmporter.import - insertdata:\ntabnam: schaechte\n'
                          f'params: {params}')
 
             if not self.db_qkan.insertdata(
@@ -315,7 +315,7 @@ class ImportTask:
             params = {'flnam': name, 'regenschreiber': regenschreiber, 'schnam': schnam,
                        'befgrad': befgrad, 'neigung': int(neigung), 'abflussparameter': abnam}
 
-            logger.debug(f'm145porter.import - insertdata:\ntabnam: tezg\n'
+            logger.debug(f'mswmmporter.import - insertdata:\ntabnam: tezg\n'
                           f'params: {params}')
 
             if not self.db_qkan.insertdata(

@@ -2,9 +2,9 @@ Flächen mit Haltungen verknüpfen
 ================================
 
 Nachdem die Flächen vorbereitet wurden, können diese nun mit den Haltungsflächen verknüpft werden, zu denen sie entwässern.
-Eine Videoanleitung zur Verknüpfung der Flächen mit Haltungen ist `hier <LINK>` zu finden. 
+.. Eine Videoanleitung zur Verknüpfung der Flächen mit Haltungen ist `hier <LINK>`_ zu finden. 
 
-Die Verknüpfung geschieht über das Tool |Tool_Verknuepfungslinie| "Erzeuge Verknüpfungslinien von Flächen zu Haltungen".
+Die Verknüpfung geschieht über das Tool |Tool_Verknuepfungslinie| :guilabel:`Erzeuge Verknüpfungslinien von Flächen zu Haltungen`.
 In der Regel werden bei den Filteroptionen, in dem nun geöffneten Fenster, nur die Haltungen spezifiziert.
 Dafür wird in der Tabelle "Haltungen" der Eintrag "Mischwasser" ausgewählt (siehe Bild).
 Bei den Optionen zur Erzeugung von Zuordnungen kann gegebenenfalls der Suchradius (siehe Bild) vergrößert werden.
@@ -16,18 +16,18 @@ Auch die anderen Optionen sollten entsprechend dem hier dargestellten Beispiel a
 .. |Tool_Verknuepfungslinie| image:: ./QKan_Bilder/Flaechen_verknuepfen/Tool_verknuepfungslinien_fl_haltung.png
 							 :width: 1.25 em
 
-Das Fenster kann dann mit "OK" geschlossen werden. Die Verknüpfungslinien erscheinen nun im Plan.
+Das Fenster kann dann mit :guilabel:`OK` geschlossen werden. Die Verknüpfungslinien erscheinen nun im Plan.
 
 .. image:: ./QKan_Bilder/Flaechen_verknuepfen/angeschlossene_flaechen.png
 
 Nachdem die Verknüpfungslinien erstellt wurden, müssen noch die Parameter zur Oberflächenabflussberechnung angepasst werden.
 Die entsprechenden Parameter sind in QKan in den Verknüpfungslinien gespeichert.
-Erzeugt werden können diese über das Tool "Oberflächenabflussparameter eintragen" |Tool_oberflaechenabflussparameter|.
-Dabei kann das sich öffnende Fenster ohne eine Änderung (siehe Bild unten) mit "OK" geschlossen werden.
+Erzeugt werden können diese mit |Tool_oberflaechenabflussparameter| :guilabel:`Oberflächenabflussparameter eintragen`.
+Dabei kann das sich öffnende Fenster ohne eine Änderung (siehe Bild unten) mit :guilabel:`OK` geschlossen werden.
 
 .. image:: ./QKan_Bilder/Flaechen_verknuepfen/berechnung_oberflaechenabflussparameter.png
 
-In der Attributtabelle ist nun die Spalte "Fließzeit Fläche" mit Werten gefüllt.
+In der Attributtabelle ist nun die Spalte :guilabel:`Fließzeit Fläche` mit Werten gefüllt.
 Alle nötigen Vorbereitungen für einen Export nach HYSTEM-EXTRAN sind nun durchgeführt.
 
 .. |Tool_oberflaechenabflussparameter| image:: ./QKan_Bilder/Flaechen_verknuepfen/Tool_oberflaechenabflussparameter.png
@@ -40,8 +40,8 @@ Verbindungslinien hinzufügen
 
 War der Suchradius zu gering gewählt, kann es vorkommen, dass Flächen nicht mit Haltungen automatisch verknüpft werden.
 Soll eine Fläche von Hand mit einer Haltung verknüpft werden,
-muss dafür der entsprechende Layer "Anbindungen Flächen" ausgewählt und im Bearbeitungsmodus |Tool_bearbeitungsmodus| sein.
-Anschließend kann über das Tool |Tool_linienobjekt_hinzufuegen| "Linienobjekt hinzufügen" durch Anklicken der entsprechenden Fläche,
+muss dafür der entsprechende Layer "Anbindungen Flächen" ausgewählt und im :guilabel:`Bearbeitungsmodus` |Tool_bearbeitungsmodus| sein.
+Anschließend kann über |Tool_linienobjekt_hinzufuegen| :guilabel:`Linienobjekt hinzufügen` durch Anklicken der entsprechenden Fläche,
 danach der gewünschten Haltung und anschließend durch Bestätigung mit einem Rechtsklick, eine Verknüpfungslinie erstellt werden.
 Im Gegensatz zu anderen Geo-Objekten, öffnet sich bei der Erstellung von Verknüpfungslinien kein Formularfenster.
 Dies ist über die Layereigenschaften so vorgegeben, da es standartmäßig nicht benötigt wird.
@@ -56,9 +56,9 @@ Verbindungslinien bearbeiten
 ----------------------------
 
 Vorhandene Verbindungslinien können auch im Nachhinein geändert werden.
-Dazu muss im Bearbeitungsmodus |Tool_bearbeitungsmodus| das Stützpunkt-Werkzeug |Tool_stuetzpunkt_werkzeug| ausgewählt werden.
+Dazu muss im :guilabel:`Bearbeitungsmodus` |Tool_bearbeitungsmodus| das :guilabel:`Stützpunkt-Werkzeug` |Tool_stuetzpunkt_werkzeug| ausgewählt werden.
 Nun kann die zu ändernde Verbindungslinie editiert werden, indem der Endpunkt angeklickt und auf die gewünschte Haltung gezogen wird.
-Wichtig hierbei ist, dass der Menüpunkt "Topologisches Editieren" |Tool_topologisches_editieren| deaktiviert ist,
+Wichtig hierbei ist, dass der Menüpunkt :guilabel:`Topologisches Editieren` |Tool_topologisches_editieren| deaktiviert ist,
 da sonst alle Haltungen, die an dieser Stelle verknüpft sind mitausgewählt werden.
 
 .. |Tool_stuetzpunkt_werkzeug| image:: ./QKan_Bilder/Flaechen_verknuepfen/Tool_stuetzpunkt_werkzeug.png

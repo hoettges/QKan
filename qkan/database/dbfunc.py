@@ -1131,8 +1131,9 @@ class DBConnection:
         # triggers = [el[1] for el in self.fetchall()]
 
         # 2.1. Temporäre Hilfstabelle erstellen
-        sql = f"CREATE TABLE IF NOT EXISTS {tabnam}_t ({attr_text_new});"
+        sql = f"CREATE TABLE IF NOT EXISTS {tabnam}_t ({attr_text_new}\n);"
         if not self.sql(sql, "dbfunc.DBConnection.alter_table (6)"):
+            logger.error(f'{sql =}')
             return False
 
         # 2.2. Geo-Attribute in Tabelle ergänzen
@@ -1153,7 +1154,7 @@ class DBConnection:
             return False
 
         # 4. Daten aus Originaltabelle übertragen, dabei nur gemeinsame Attribute berücksichtigen
-        sql = f"""INSERT INTO {tabnam}_t ({', '.join(attr_set_both)})
+        sql = f"""INSERT INTO {tabnam}_t ({', '.join(attr_set_both)}\n)
                 SELECT {', '.join(attr_set_both)}
                 FROM {tabnam};"""
         if not self.sql(sql, "dbfunc.DBConnection.alter_table (9)"):
@@ -1174,7 +1175,7 @@ class DBConnection:
             return False
 
         # 6.1 Geänderte Tabelle erstellen
-        sql = f"""CREATE TABLE {tabnam} ({attr_text_new});"""
+        sql = f"""CREATE TABLE {tabnam} ({attr_text_new}\n);"""
         if not self.sql(sql, "dbfunc.DBConnection.alter_table (12)"):
             return False
 
@@ -1195,7 +1196,7 @@ class DBConnection:
                 return False
 
         # 7. Daten aus Hilfstabelle übertragen, dabei nur gemeinsame Attribute berücksichtigen
-        sql = f"""INSERT INTO {tabnam} ({', '.join(attr_set_both)})
+        sql = f"""INSERT INTO {tabnam} ({', '.join(attr_set_both)}\n)
                 SELECT {', '.join(attr_set_both)}
                 FROM {tabnam}_t;"""
         if not self.sql(sql, "dbfunc.DBConnection.alter_table (15)"):

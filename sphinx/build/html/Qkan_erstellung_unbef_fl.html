@@ -1,207 +1,120 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="de" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Erzeugung unbefestigter Flächen &mdash; QKan 3.2.38 Dokumentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/translations.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
     <link rel="search" title="Suche" href="search.html" />
     <link rel="next" title="Vorbereitung zur Flächenzuordnung" href="Qkan_flaechen_vorbereiten.html" />
     <link rel="prev" title="Import von Flächendaten" href="Qkan_import_flaechendaten.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="index.html" class="icon icon-home"> QKan
           
-
-          
+          <a href="index.html" class="icon icon-home">
+            QKan
           </a>
-
-          
-            
-            
               <div class="version">
                 3.2
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Dokumentation durchsuchen" />
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Kanaldaten mit QGIS</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Kanaldaten mit QGIS</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Allgemeines</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Installation</span></p>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">QKan - Plugin Installation</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Datenaustausch</span></p>
+<p class="caption" role="heading"><span class="caption-text">Datenaustausch</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Datenaustausch.html">Import von Kanaldaten aus einfachen Tabellen</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Funktionen</span></p>
+<p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Verarbeitung von befestigten und unbefestigten Flächen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html#vorgehen-bei-der-flachenzuordnung">Vorgehen bei der Flächenzuordnung</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">QKan-Formulare</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Beispielprojekt</span></p>
+<p class="caption" role="heading"><span class="caption-text">Beispielprojekt</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Best practice Beispiel „Workflow“</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_import_flaechendaten.html">Import von Flächendaten</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Erzeugung unbefestigter Flächen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen_vorbereiten.html">Vorbereitung zur Flächenzuordnung</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen_verknuepfen.html">Flächen mit Haltungen verknüpfen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_export_he.html">Export nach HYSTEM-EXTRAN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html">Übersicht: Videoanleitungen zum Workflow</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tabellen</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tabellen</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">QKan</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li>Erzeugung unbefestigter Flächen</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Erzeugung unbefestigter Flächen</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/Qkan_erstellung_unbef_fl.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="erzeugung-unbefestigter-flachen">
-<h1>Erzeugung unbefestigter Flächen<a class="headerlink" href="#erzeugung-unbefestigter-flachen" title="Link zu dieser Überschrift">¶</a></h1>
+<h1>Erzeugung unbefestigter Flächen<a class="headerlink" href="#erzeugung-unbefestigter-flachen" title="Permalink to this heading"></a></h1>
 <p>Eine Videoanleitung zur Erzeugung von unbefestigten Flächen ist <a class="reference external" href="https://fh-aachen.sciebo.de/s/DPMnlKBMS9jjqTC">hier</a> zu finden.</p>
-<p>Bevor die unbefestigten Flächen erzeugt werden können ist es wichtig, zu prüfen, ob die Attributtabellen der Flächenobjekte
+<p>Bevor die unbefestigten Flächen erzeugt werden können, ist es wichtig, zu prüfen, ob die Attributtabellen der Flächenobjekte
 („Haltungsflächen“ und „Flächen“) vollständig ausgefüllt sind. Das bedeutet, die Spalten „Name“, „Teilgebiet“, „Regenschreiber“ und
 „Abflussparameter“ müssen vollständig ausgefüllt sein. Wenn keine Flächen vorhanden sind oder die Tabellen unvollständig sind,
 ist <a class="reference external" href="Import_gebaeudedaten">hier</a> eine Beschreibung des Vorgehens.</p>
 <p>Eine Verschmelzung der kleinen Flächen ist nicht mehr notwendig, da eine hohe Anzahl an Flächenschwerpunkten für die Programme heute kein Problem mehr darstellen.</p>
-<p>Die unbefestigten Flächen können nun also direkt erstellt werden. Dies geschieht ganz leicht durch das QKan-Tool „Erzeuge unbefestigte Flächen“.
-Wenn dieses Werkzeug angeklickt wird, öffnet sich automatisch ein Fenster welches ohne eine Auswahl mit „OK“ bestätigt werden kann.</p>
+<p>Die unbefestigten Flächen können nun also direkt erstellt werden. Dies geschieht mit <a class="reference internal" href="_images/Tool_unbef_flaechen.png"><img alt="Tool_unbef_flaechen" src="_images/Tool_unbef_flaechen.png" style="width: 1.25em;" /></a> <span class="guilabel">Erzeuge unbefestigte Flächen</span>.
+Das geöffnete Fenster kann ohne eine Auswahl mit <span class="guilabel">OK</span> bestätigt werden.</p>
 <img alt="_images/Fenster.png" src="_images/Fenster.png" />
-<p>Die unbefestigten Flächen werden nun automatisch erstellt und liegen auf dem Layer „$Default_Unbef“ welches auch die Schraffur der Flächen anzeigt.</p>
+<p>Die unbefestigten Flächen werden so automatisch erstellt und liegen auf dem Layer „$Default_Unbef“ welches auch die Schraffur der Flächen anzeigt.</p>
 <img alt="_images/vor_unbef_fl.png" id="flachen-vor-anwendung-des-tools" src="_images/vor_unbef_fl.png" />
 <p>Abbildung: Flächen vor Anwendung des Tools</p>
 <img alt="_images/nach_unbef_fl.png" id="schraffur-der-unbefestigten-flachen" src="_images/nach_unbef_fl.png" />
@@ -211,50 +124,33 @@ Wenn dieses Werkzeug angeklickt wird, öffnet sich automatisch ein Fenster welch
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="Qkan_flaechen_vorbereiten.html" class="btn btn-neutral float-right" title="Vorbereitung zur Flächenzuordnung" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Qkan_import_flaechendaten.html" class="btn btn-neutral float-left" title="Import von Flächendaten" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="Qkan_flaechen_vorbereiten.html" class="btn btn-neutral float-right" title="Vorbereitung zur Flächenzuordnung" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2017 - 2022, Hoettges.
-
-    </p>
+    <p>&#169; Copyright 2017 - 2022, Hoettges.</p>
   </div>
-    
-    
-    
-    Erstellt mit <a href="https://www.sphinx-doc.org/">Sphinx</a> mit einem
-    
+
+  Erstellt mit <a href="https://www.sphinx-doc.org/">Sphinx</a> mit einem
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    bereitgestellt von <a href="https://readthedocs.org">Read the Docs</a>. 
+    bereitgestellt von <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

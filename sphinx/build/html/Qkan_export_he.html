@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Export nach HYSTEM-EXTRAN &mdash; QKan 3.2.38 Dokumentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="Übersicht: Videoanleitungen zum Workflow" href="Qkan_Videoanleitungen.html" />
+    <link rel="prev" title="Flächen mit Haltungen verknüpfen" href="Qkan_flaechen_verknuepfen.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QKan
+          </a>
+              <div class="version">
+                3.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Kanaldaten mit QGIS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Allgemeines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">QKan - Plugin Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datenaustausch</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Datenaustausch.html">Import von Kanaldaten aus einfachen Tabellen</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Funktionen</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html">Verarbeitung von befestigten und unbefestigten Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen.html#vorgehen-bei-der-flachenzuordnung">Vorgehen bei der Flächenzuordnung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Formulare.html">QKan-Formulare</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Beispielprojekt</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Qkan_workflow.html">Best practice Beispiel „Workflow“</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_import_flaechendaten.html">Import von Flächendaten</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_erstellung_unbef_fl.html">Erzeugung unbefestigter Flächen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen_vorbereiten.html">Vorbereitung zur Flächenzuordnung</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_flaechen_verknuepfen.html">Flächen mit Haltungen verknüpfen</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Export nach HYSTEM-EXTRAN</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#anpassung-des-datumsformates">Anpassung des Datumsformates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#erstellung-einer-vorlagen-datenbank-in-hystem-extran">Erstellung einer Vorlagen-Datenbank in HYSTEM-EXTRAN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#export-nach-hystem-extran-8">Export nach HYSTEM-EXTRAN 8</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Videoanleitungen.html">Übersicht: Videoanleitungen zum Workflow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tabellen</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qkan_Tabellen.html">QKan-Tabellen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QKan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Export nach HYSTEM-EXTRAN</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Qkan_export_he.rst.txt" rel="nofollow"> Quelltext anzeigen</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="export-nach-hystem-extran">
+<h1>Export nach HYSTEM-EXTRAN<a class="headerlink" href="#export-nach-hystem-extran" title="Permalink to this heading"></a></h1>
+<section id="anpassung-des-datumsformates">
+<h2>Anpassung des Datumsformates<a class="headerlink" href="#anpassung-des-datumsformates" title="Permalink to this heading"></a></h2>
+<p>Bevor der Export-Vorgang gestartet wird, sollte das Datumsformat geprüft werden, da dieses häufiger zu Problemen führt.
+Das Datumsformat muss für den Export in der Form „yyyy-mm-dd hh:mm:ss“ in der Tabelle vorliegen.
+In dem hier verwendeten Datensatz fehlt die Sekundenangabe.
+Um dies zu ändern muss die Attributtabelle geöffnet und im <span class="guilabel">Bearbeitungsmodus</span> <a class="reference internal" href="_images/Tool_bearbeitungsmodus.png"><img alt="Tool_bearbeitungsmodus" src="_images/Tool_bearbeitungsmodus.png" style="width: 1.25em;" /></a> sein.
+Anschließed sollte das Feld „bearbeitet“ aus der Drop-Down-Liste ausgewählt werden.
+In die Schnellfeldberechnungsleiste sollte nun das Datum in dem benötigten Format 'yyyy-mm-dd hh:mm:ss' (Achtung: einfache Anführungszeichen verwenden!) eingetragen werden.
+Mit „Alle aktualisieren“ kann der Zellinhalt für alle Zellen übernommen werden.
+Es ist zu empfehlne die Eingabe zu kopieren, da dieser Schritt für alle Attributtabellen wiederholt werden muss.</p>
+<img alt="_images/Datum_unbearbeitet_kurz.png" id="datumsformat-vor-bearbeitung" src="_images/Datum_unbearbeitet_kurz.png" />
+<p>Datumsformat <strong>vor</strong> Bearbeitung</p>
+<img alt="_images/Datum_bearbeitet_kurz.png" id="datumsformat-nach-bearbeitung" src="_images/Datum_bearbeitet_kurz.png" />
+<p>Datumsformat <strong>nach</strong> Bearbeitung</p>
+<p>Nun muss das Datum in allen Attributtabellen angepasst werden, die aus Excel übernommen wurden.
+Daten, die das Programm selber erstellt hat, sind automatisch im richtigen Format gespeichert.</p>
+</section>
+<section id="erstellung-einer-vorlagen-datenbank-in-hystem-extran">
+<h2>Erstellung einer Vorlagen-Datenbank in HYSTEM-EXTRAN<a class="headerlink" href="#erstellung-einer-vorlagen-datenbank-in-hystem-extran" title="Permalink to this heading"></a></h2>
+<p>Für den Export der Daten von QKan nach HYSTEM-EXTRAN wird eine Vorlage-Datenbank benötigt.
+Zur Erstellung dieser muss HYSTEM-EXTRAN gestartet werden.
+Über <span class="guilabel">Datei</span> und <span class="guilabel">Neu…</span> kann eine neue Datenbank angelegt werden.
+Für den Export ist es notwenidg, eine Regenreihe mit einem dazugehörigen Regenschreiber anzulegen.
+In dem Dialogfenster des Regenschreibers können die Daten wie unten dargestellt ergänzt werden.
+Wichtig hierbei ist, dass der Regenschreiber den Namen erhält, der auch in den Flächendaten verwendet wurde (hier: „1“).</p>
+<img alt="_images/Regenschreiber.png" src="_images/Regenschreiber.png" />
+<p>Eingabeformular aus dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
+<p>Die Regenreihe kann über <span class="guilabel">Assistenten</span> und <span class="guilabel">Modellregen…</span> hinzugefügt werden.
+In diesem Beispiel wird eine Modellregen des Euler Typ II mit einer Jährlichkeit von drei Jahren erstellt.
+Der Name kann frei gewählt werden (hier: Euler_II_3a).
+Auch das Datum ist frei wählbar.
+Es sollte jedoch darauf geachtet werden, dass die Dauer realistisch ist (hier: 60 Minuten mit einer Intervallbreite von 5 min.).
+Anschließend sollte die Modellregen-Art „Euler Typ II“ mit einer Jährlichkeit von 3 Jahren („a“) festgesetzt werden.
+Die Regenmenge soll nach KOSTRA-DWD ermittelt werden.
+Zum Definieren des KOSTRA-DWD-Datensatzes können die Daten wie unten abgebildet übernommen werden.</p>
+<img alt="_images/Kostra_assistent_modellregen.png" src="_images/Kostra_assistent_modellregen.png" />
+<p>Eingabeformular aus dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
+<p>Diese Daten können aus einem Projekt, welches <a class="reference external" href="https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/kostra_dwd_2010r.zip">hier</a> zum download zur Verfügung steht, übernommen werden.
+Dazu muss das zu bearbeitende Gebiet auf der Karte gesucht werden.
+Im Anschluss können die Daten über <a class="reference internal" href="_images/Tool_info.png"><img alt="Tool_info" src="_images/Tool_info.png" style="width: 1.25em;" /></a> <span class="guilabel">Info-Tool</span> mit einem Klick auf die Karte abgerufen werden.</p>
+<img alt="_images/Koastra_objektattribute.png" src="_images/Koastra_objektattribute.png" />
+<p>Eingabeformular aus dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
+<p>Nun wurden alle nötigen Definitionen getroffen und der Modellregen kann erstellt werden.
+Bei der nun erstellten Regenreihe muss noch der Name der Station mit dem Namen welcher beim Regenschreiber gewählt wurde angepasst werden (hier: „1234“).
+Anschließend kann die Maske geschlossen werden und das Projekt kann gespeichert werden.
+Da das Beispielprojekt keine Sonderbauwerke (z.B. Drosseln, Pumpen oder Wehre) besitzt, müssen diese hier auch nicht angelegt werden.
+So ist die Vorlage-Datenbank nun ausreichend vorbereitet und HYSTEM-EXTRAN muss geschlossen werden.
+(HYSTEM-EXTRAN öffnet eine Datenbank exklusiv, dass heißt, dass es nicht möglich ist, gleichzeitig mit einer anderen Anwendung auf diese Datenbank zuzugreifen.
+Dies würde daher zu einer Fehlermeldung beim QKan Export führen.)</p>
+</section>
+<section id="export-nach-hystem-extran-8">
+<h2>Export nach HYSTEM-EXTRAN 8<a class="headerlink" href="#export-nach-hystem-extran-8" title="Permalink to this heading"></a></h2>
+<p>Jetzt kann das Formular „Export to HE“ mit <a class="reference internal" href="_images/Tool_export_he.png"><img alt="Tool_export" src="_images/Tool_export_he.png" style="width: 1.25em;" /></a> <span class="guilabel">Export nach HE</span> geöffnet werden.
+In dem Formular wird die soeben erstellte Vorlage-Datenbank und ein Datenziel, welches definiert werden muss, ausgewählt.
+Die übrigen Auswahlfelder sollten wie unten dargestellt übernommen werden.
+Dann kann der Export mit <span class="guilabel">OK</span> gestartet werden.</p>
+<img alt="_images/export_he.png" src="_images/export_he.png" />
+<p>Die fertige Export-Datenbank kann nun mit HYSTEM-EXTRAN geöffnet werden.
+Es sollten nur kleinere Fehler in den Meldungen erscheinen (z.B. fehlerhafte Sohlhöhen und zu lange Namen) die zum Teil händisch angepasst bzw. ignoriert werden können.
+Damit ist der Workflow abgeschlossen.</p>
+<img alt="_images/Ergebnis_HE.png" id="ergebnis" src="_images/Ergebnis_HE.png" />
+<p>Ergebnis mit dem Programm <a class="reference external" href="https://itwh.de/de/softwareprodukte/desktop/hystem-extran/">HYSTEM-EXTRAN, ITWH GmbH</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Qkan_flaechen_verknuepfen.html" class="btn btn-neutral float-left" title="Flächen mit Haltungen verknüpfen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="Qkan_Videoanleitungen.html" class="btn btn-neutral float-right" title="Übersicht: Videoanleitungen zum Workflow" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017 - 2022, Hoettges.</p>
+  </div>
+
+  Erstellt mit <a href="https://www.sphinx-doc.org/">Sphinx</a> mit einem
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    bereitgestellt von <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -3,7 +3,6 @@ import sys
 import re
 import xml.etree.ElementTree as ElementTree
 from typing import Dict, Iterator, Tuple, Union
-from lxml import etree
 from fnmatch import fnmatch
 from qgis.core import Qgis
 from qgis.utils import iface

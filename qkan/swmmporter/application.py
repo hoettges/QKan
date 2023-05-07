@@ -32,7 +32,7 @@ import logging
 import qkan.config
 from qkan import QKan, get_default_dir
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import read_qml, fehlermeldung
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
@@ -266,6 +266,7 @@ class SWMMPorter(QKanPlugin):
                 # noinspection PyArgumentList
                 project = QgsProject.instance()
                 project.read(QKan.config.project.file)
+                read_qml({'Haltungen nach Typ': 'haltungen_nach_typ.qml'}, 'qml/he')
                 project.reloadAllLayers()
 
         self.log.debug("Closed DB")

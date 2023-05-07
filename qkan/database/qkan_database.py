@@ -22,8 +22,8 @@
 __author__ = "Joerg Hoettges"
 __date__ = "August 2019"
 __copyright__ = "(C) 2016, Joerg Hoettges"
-__dbVersion__ = "3.2.37"  # Version der QKan-Datenbank
-__qgsVersion__ = "3.2.38"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
+__dbVersion__ = "3.2.39"  # Version der QKan-Datenbank
+__qgsVersion__ = "3.2.39"  # Version des Projektes und der Projektdatei. Kann höher als die der QKan-Datenbank sein
 
 
 import logging
@@ -154,146 +154,6 @@ def createdbtables(
             createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('haltungen','geom',{},'LINESTRING',2)".format(epsg),
         "SELECT CreateSpatialIndex('haltungen','geom')",
-        """ CREATE TRIGGER IF NOT EXISTS trig_new_hal        -- Datenuebernahme aus Schaechten
-            AFTER INSERT ON haltungen
-            BEGIN
-                UPDATE haltungen SET 
-                haltnam = (
-                    SELECT schnam || '.1'
-                    FROM schaechte AS s
-                    WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, 1), 0.1)) = 1
-                    AND s.ROWID IN (
-                        SELECT ROWID
-                        FROM SpatialIndex
-                        WHERE f_table_name = 'schaechte'
-                            AND F_geometry_column = 'geop'
-                            AND search_frame = ST_PointN(new.geom, 1))
-                )
-                WHERE pk = new.pk AND (haltnam = '' OR haltnam IS NULL);
-
-                UPDATE haltungen SET 
-                laenge = round(ST_Length(new.geom), 3)
-                WHERE pk = new.pk AND (laenge = 0 OR laenge IS NULL);
-            
-                UPDATE haltungen SET 
-                schoben = (
-                    SELECT schnam
-                    FROM schaechte AS s
-                    WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, 1), 0.1)) = 1
-                    AND s.ROWID IN (
-                        SELECT ROWID
-                        FROM SpatialIndex
-                        WHERE f_table_name = 'schaechte'
-                            AND F_geometry_column = 'geop'
-                            AND search_frame = ST_PointN(new.geom, 1))
-                )
-                WHERE pk = new.pk AND (schoben = '' OR schoben IS NULL);
-            
-                UPDATE haltungen SET 
-                schunten = (
-                    SELECT schnam
-                    FROM schaechte AS s
-                    WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, -1), 0.1)) = 1
-                    AND s.ROWID IN (
-                        SELECT ROWID
-                        FROM SpatialIndex
-                        WHERE f_table_name = 'schaechte'
-                            AND F_geometry_column = 'geop'
-                            AND search_frame = ST_PointN(new.geom, -1))
-                )
-                WHERE pk = new.pk AND (schunten = '' OR schunten IS NULL);
-            
-                UPDATE haltungen SET 
-                sohleoben = (
-                    SELECT sohlhoehe
-                    FROM schaechte AS s
-                    WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, 1), 0.1)) = 1
-                    AND s.ROWID IN (
-                        SELECT ROWID
-                        FROM SpatialIndex
-                        WHERE f_table_name = 'schaechte'
-                            AND F_geometry_column = 'geop'
-                            AND search_frame = ST_PointN(new.geom, 1))
-                )
-                WHERE pk = new.pk AND sohleoben IS NULL;
-            
-                UPDATE haltungen SET 
-                sohleunten = (
-                    SELECT sohlhoehe
-                    FROM schaechte AS s
-                    WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, -1), 0.1)) = 1
-                    AND s.ROWID IN (
-                        SELECT ROWID
-                        FROM SpatialIndex
-                        WHERE f_table_name = 'schaechte'
-                            AND F_geometry_column = 'geop'
-                            AND search_frame = ST_PointN(new.geom, -1))
-                )
-                WHERE pk = new.pk AND sohleunten IS NULL;
-            END;""",
-        """CREATE TRIGGER IF NOT EXISTS trig_mod_hal        -- Datenuebernahme aus Schaechten 
-            AFTER UPDATE OF geom ON haltungen
-            BEGIN
-                UPDATE haltungen SET 
-                schoben = (
-                    SELECT coalesce(schnam, OLD.schoben)
-                    FROM schaechte AS s
-                    WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, 1), 0.1)) = 1
-                    AND s.ROWID IN (
-                        SELECT ROWID
-                        FROM SpatialIndex
-                        WHERE f_table_name = 'schaechte'
-                            AND F_geometry_column = 'geop'
-                            AND search_frame = ST_PointN(new.geom, 1))
-                )
-                WHERE pk = old.pk;
-
-                UPDATE haltungen SET 
-                laenge = coalesce(round(ST_Length(new.geom), 3), OLD.laenge)
-                WHERE pk = old.pk;
-
-                UPDATE haltungen SET 
-                schunten = (
-                    SELECT coalesce(schnam, OLD.schunten)
-                    FROM schaechte AS s
-                    WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, -1), 0.1)) = 1
-                    AND s.ROWID IN (
-                        SELECT ROWID
-                        FROM SpatialIndex
-                        WHERE f_table_name = 'schaechte'
-                            AND F_geometry_column = 'geop'
-                            AND search_frame = ST_PointN(new.geom, -1))
-                )
-                WHERE pk = old.pk;
-            
-                UPDATE haltungen SET 
-                sohleoben = (
-                    SELECT coalesce(sohlhoehe, OLD.sohleoben)
-                    FROM schaechte AS s
-                    WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, 1), 0.1)) = 1
-                    AND s.ROWID IN (
-                        SELECT ROWID
-                        FROM SpatialIndex
-                        WHERE f_table_name = 'schaechte'
-                            AND F_geometry_column = 'geop'
-                            AND search_frame = ST_PointN(new.geom, 1))
-                )
-                WHERE pk = old.pk;
-            
-                UPDATE haltungen SET 
-                sohleunten = (
-                    SELECT coalesce(sohlhoehe, OLD.sohleunten)
-                    FROM schaechte AS s
-                    WHERE ST_Within(s.geop, buffer(ST_PointN(new.geom, -1), 0.1)) = 1
-                    AND s.ROWID IN (
-                        SELECT ROWID
-                        FROM SpatialIndex
-                        WHERE f_table_name = 'schaechte'
-                            AND F_geometry_column = 'geop'
-                            AND search_frame = ST_PointN(new.geom, -1))
-                )
-                WHERE pk = old.pk;
-            END;""",
     ]
     for sql in sqls:
         try:
@@ -306,75 +166,12 @@ def createdbtables(
             consl.close()
             return False
 
-
-    sql = """CREATE VIEW IF NOT EXISTS haltungen_data AS
-          SELECT 
-            haltnam, schoben, schunten, 
-            hoehe, breite, laenge, 
-            sohleoben, sohleunten, 
-            teilgebiet, profilnam, 
-            entwart, strasse, material, ks,
-            simstatus, kommentar, createdat, 
-            xschob, yschob, xschun, yschun,
-            geom
-          FROM haltungen;"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'View "haltungen_data" konnte nicht erstellt werden.',
-        )
-        consl.close()
-        return False
-
-    sql = f"""CREATE TRIGGER IF NOT EXISTS haltungen_insert_clipboard
-            INSTEAD OF INSERT ON haltungen_data FOR EACH ROW
-          BEGIN
-            INSERT INTO haltungen
-              (haltnam, schoben, schunten,
-               hoehe, breite, laenge,
-               sohleoben, sohleunten,
-               teilgebiet, profilnam, 
-               entwart, strasse, material, ks,
-               simstatus, kommentar, createdat,  
-               geom)
-            SELECT 
-              new.haltnam, new.schoben, new.schunten, 
-              CASE WHEN new.hoehe > 20 THEN new.hoehe/1000 ELSE new.hoehe END, 
-              CASE WHEN new.breite > 20 THEN new.breite/1000 ELSE new.breite END,
-              new.laenge, 
-              new.sohleoben, new.sohleunten,  
-              new.teilgebiet, coalesce(new.profilnam, 'Kreisquerschnitt'), 
-              coalesce(new.entwart, 'Regenwasser'),new.strasse, new.material, coalesce(new.ks, 1.5), 
-              coalesce(new.simstatus, 'vorhanden'), new.kommentar, 
-              coalesce(new.createdat, CURRENT_TIMESTAMP), 
-              coalesce(GeomFromText(new.geom, {epsg}),
-                MakeLine(
-                  coalesce(
-                    MakePoint(new.xschob, new.yschob, {epsg}),
-                    schob.geop
-                  ), 
-                  coalesce(
-                    MakePoint(new.xschun, new.yschun, {epsg}),
-                    schun.geop
-                  )
-                )
-              )
-            FROM
-              schaechte AS schob,
-              schaechte AS schun
-            WHERE schob.schnam = new.schoben AND schun.schnam = new.schunten;
-          END;"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "haltungen_data" konnte ein Trigger nicht angelegt werden.',
-        )
-        consl.close()
-        return False
+    with open(os.path.join(pluginDirectory("qkan"), 'database/triggers', 'haltungen.sql'), 'r') as sql_file:
+        try:
+            cursl.executescript(sql_file.read())
+        except BaseException as err:
+            logger.debug(f"Fehler in {__name__}.trigger haltungen, {sql_file =}")
+            return False
 
     consl.commit()
 
@@ -912,54 +709,6 @@ def createdbtables(
         consl.close()
         return False
 
-    sql = f"""CREATE TRIGGER IF NOT EXISTS schaechte_insert_clipboard
-            INSTEAD OF INSERT ON schaechte_data FOR EACH ROW
-          BEGIN
-            INSERT INTO schaechte
-              (schnam, sohlhoehe, 
-               deckelhoehe, durchm, 
-               druckdicht, ueberstauflaeche, 
-               entwart, strasse, teilgebiet, 
-               knotentyp, auslasstyp, schachttyp, 
-               simstatus, material,
-               kommentar, createdat, 
-               geop, geom)
-            VALUES (
-              new.schnam, new.sohlhoehe,
-              new.deckelhoehe, 
-              CASE WHEN new.durchm > 200 THEN new.durchm/1000 ELSE new.durchm END, 
-              new.druckdicht, coalesce(new.ueberstauflaeche, 0), 
-              coalesce(new.entwart, 'Regenwasser'), new.strasse, new.teilgebiet, 
-              new.knotentyp, new.auslasstyp, coalesce(new.schachttyp, 'Schacht'), 
-              coalesce(new.simstatus, 'vorhanden'), new.material,
-              new.kommentar, coalesce(new.createdat, CURRENT_TIMESTAMP),
-              coalesce(
-                GeomFromText(new.geop, {epsg}), 
-                MakePoint(new.xsch, new.ysch, {epsg})
-              ),
-              coalesce(GeomFromText(new.geom, {epsg}),
-                CastToMultiPolygon(
-                  MakePolygon(
-                    MakeCircle(
-                      new.xsch,
-                      new.ysch,
-                      coalesce(new.durchm/2, 0.5), {epsg}
-                    )
-                  )
-                )
-              )
-            );
-          END"""
-    try:
-        cursl.execute(sql)
-    except BaseException as err:
-        fehlermeldung(
-            "qkan_database.createdbtables: {}".format(err),
-            'In der Tabelle "schaechte_data" konnte ein Trigger nicht angelegt werden.',
-        )
-        consl.close()
-        return False
-
     consl.commit()
 
     # Schaechte_untersucht ----------------------------------------------------------------
@@ -1150,11 +899,16 @@ def createdbtables(
 
     sql = """CREATE TABLE entwaesserungsarten (
             pk INTEGER PRIMARY KEY, 
-            bezeichnung TEXT, 
-            kuerzel TEXT, 
+            bezeichnung TEXT,                   -- eindeutige QKan-Bezeichnung 
+            kuerzel TEXT,                       -- nur für Beschriftung
             bemerkung TEXT, 
-            he_nr INTEGER, 
-            kp_nr INTEGER)"""
+            he_nr INTEGER,                      -- HYSTEM-EXTRAN
+            kp_nr INTEGER,                      -- DYNA / Kanal++
+            m145 TEXT,                          -- DWA M145
+            isybau TEXT,                        -- BFR Abwasser
+            transport INTEGER,                  -- Transporthaltung?
+            druckdicht INTEGER                  -- Druckleitung?
+            )"""
 
     try:
         cursl.execute(sql)
@@ -2022,6 +1776,7 @@ def createdbtables(
     consl.commit()
 
     # Hilfstabelle für den DYNA-Export -----------------------------------------
+    # TODO: als temporäre Tabelle in das Export-Modul verschieben
 
     sql = """
         CREATE TABLE IF NOT EXISTS dynahal (

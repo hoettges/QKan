@@ -19,6 +19,7 @@ class ImportTask:
 
         result = all(
             [
+                self._reftables(),
                 self._abflussparameter(),
                 self._schaechte(),
                 self._profile(),
@@ -31,6 +32,31 @@ class ImportTask:
         )
 
         return result
+
+    def _reftables(self) -> bool:
+        """Referenztabellen mit Datensätzen für MU-Import füllen"""
+
+        # Hinweis: 'None' bewirkt beim Import eine Zuordnung unabhängig vom Wert
+        daten = [
+            ('Regenwasser', 'R', 'Regenwasser', 1, 2, 'R', 'KR', 0, 0),
+            ('Schmutzwasser', 'S', 'Schmutzwasser', 2, 1, 'S', 'KS', 0, 0),
+            ('Mischwasser', 'M', 'Mischwasser', 0, 0, 'M', 'KM', 0, 0),
+            ('RW Druckleitung', 'RD', 'Transporthaltung ohne Anschlüsse', 1, 2, None, 'DR', None, 1),
+            ('SW Druckleitung', 'SD', 'Transporthaltung ohne Anschlüsse', 2, 1, None, 'DS', None, 1),
+            ('MW Druckleitung', 'MD', 'Transporthaltung ohne Anschlüsse', 0, 0, None, 'DW', None, 1),
+            ('RW nicht angeschlossen', 'RT', 'Transporthaltung ohne Anschlüsse', 1, 2, None, None, 1, 0),
+            ('MW nicht angeschlossen', 'MT', 'Transporthaltung ohne Anschlüsse', 0, 0, None, None, 1, 0),
+            ('Rinnen/Gräben', 'GR', 'Rinnen/Gräben', None, None, None, None, 0, None),
+            ('stillgelegt', 'SG', 'stillgelegt', None, None, None, None, 0, None),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for ? after WHERE in SQL
+        sql = """INSERT INTO entwaesserungsarten (
+                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m145, isybau, transport, druckdicht)
+                    SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
+                    WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
+        if not self.db_qkan.sql(sql, "he8_import Referenzliste entwaesserungsarten", daten, many=True):
+            return False
 
     def _schaechte(self) -> bool:
         """Import der Schächte"""

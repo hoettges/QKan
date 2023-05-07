@@ -350,13 +350,37 @@ class ImportTask:
 
         return True
 
+    def _reftables(self) -> bool:
+        """Referenztabellen mit Datensätzen für ISYBAU-Import füllen"""
+
+        daten = [
+            ('Regenwasser', 'R', 'Regenwasser', 1, 2, 'R', 'KR', 0, 0),
+            ('Schmutzwasser', 'S', 'Schmutzwasser', 2, 1, 'S', 'KS', 0, 0),
+            ('Mischwasser', 'M', 'Mischwasser', 0, 0, 'M', 'KM', 0, 0),
+            ('RW Druckleitung', 'RD', 'Transporthaltung ohne Anschlüsse', 1, 2, None, 'DR', None, 1),
+            ('SW Druckleitung', 'SD', 'Transporthaltung ohne Anschlüsse', 2, 1, None, 'DS', None, 1),
+            ('MW Druckleitung', 'MD', 'Transporthaltung ohne Anschlüsse', 0, 0, None, 'DW', None, 1),
+            ('RW nicht angeschlossen', 'RT', 'Transporthaltung ohne Anschlüsse', 1, 2, None, None, 1, 0),
+            ('MW nicht angeschlossen', 'MT', 'Transporthaltung ohne Anschlüsse', 0, 0, None, None, 1, 0),
+            ('Rinnen/Gräben', 'GR', 'Rinnen/Gräben', None, None, None, None, 0, None),
+            ('stillgelegt', 'SG', 'stillgelegt', None, None, None, None, 0, None),
+        ]
+
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for ? after WHERE in SQL
+        sql = """INSERT INTO entwaesserungsarten (
+                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m145, isybau, transport, druckdicht)
+                    SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
+                    WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
+        if not self.db_qkan.sql(sql, "he8_import Referenzliste entwaesserungsarten", daten, many=True):
+            return False
+
     def _init_mappers(self) -> None:
         def consume(target: Dict[str, str]) -> None:
             for row in self.db_qkan.fetchall():
                 target[row[0]] = row[1]
 
         if not self.db_qkan.sql(
-            "SELECT kuerzel, bezeichnung FROM entwaesserungsarten",
+            "SELECT isybau, bezeichnung FROM entwaesserungsarten",
             "xml_import entwaesserungsarten",
         ):
             raise Exception("Failed to init ENTWART mapper")
@@ -489,7 +513,7 @@ class ImportTask:
                             bez = key
 
                 sql = """
-                INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
+                INSERT INTO entwaesserungsarten (isybau, bezeichnung)
                 VALUES ('{e}', '{f}')
                 """.format(
                     e=schacht.entwart, f=bez
@@ -1299,7 +1323,7 @@ class ImportTask:
                                 bez = key
 
                     sql = """
-                                INSERT INTO entwaesserungsarten (kuerzel, bezeichnung)
+                                INSERT INTO entwaesserungsarten (isybau, bezeichnung)
                                 VALUES ('{e}', '{f}')
                                 """.format(
                         e=haltung.entwart, f=bez
@@ -2214,7 +2238,7 @@ class ImportTask:
                 entwart = anschlussleitung.entwart
 
                 if not self.db_qkan.sql(
-                    "INSERT INTO entwaesserungsarten (kuerzel, bezeichnung) VALUES (?, ?)",
+                    "INSERT INTO entwaesserungsarten (isybau, bezeichnung) VALUES (?, ?)",
                     "xml_import anschlussleitung [2]",
                     parameters=(anschlussleitung.entwart, anschlussleitung.entwart),
                 ):

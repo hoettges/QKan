@@ -321,22 +321,4 @@ def qgsadapt(
 
         logger.debug("Projektdatei: {}".format(projectfile))
 
-    # ------------------------------------------------------------------------------
-    # Abschluss: Ggfs. Protokoll schreiben und Datenbankverbindungen schliessen
-
-    iface.mainWindow().statusBar().clearMessage()
-    iface.messageBar().pushMessage(
-    "Information",
-    "Projektdatei ist angepasst und muss neu geladen werden!",
-    level=Qgis.Info,
-    )
-
-    # Importiertes Projekt laden
-    # project = QgsProject.instance()
-    # canvas = QgsMapCanvas(None)
-    # bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(),
-    # canvas)  # synchronise the loaded project with the canvas
-    # project.read(QFileInfo(projectfile))  # read the new project file
-    # logger.debug(u'Geladene Projektdatei: {}   ({})'.format(project.fileName()))
-
     return True

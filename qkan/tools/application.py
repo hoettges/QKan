@@ -7,7 +7,7 @@ Diverse Tools zur QKan-Datenbank
 import os
 from typing import Optional, cast
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject
+from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QListWidgetItem
 
@@ -51,6 +51,7 @@ class QKanTools(QKanPlugin):
         self.dlgrd = ReadData(self, proceed=True)
         self.dlgrc = ReadData(self, proceed=False)
         self.dlgdb = DbAdaptDialog(self)
+        self.iface = iface
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:
@@ -218,6 +219,24 @@ class QKanTools(QKanPlugin):
                     project_template,
                     epsg=epsg,
                 )
+
+            # ------------------------------------------------------------------------------
+            # Abschluss: Ggfs. Protokoll schreiben
+
+            self.iface.mainWindow().statusBar().clearMessage()
+            self.iface.messageBar().pushMessage(
+            "Information",
+            "Projektdatei ist angepasst und muss neu geladen werden!",
+            level=Qgis.Info,
+            )
+
+            # Importiertes Projekt laden
+            # project = QgsProject.instance()
+            # canvas = QgsMapCanvas(None)
+            # bridge = QgsLayerTreeMapCanvasBridge(QgsProject.instance().layerTreeRoot(),
+            # canvas)  # synchronise the loaded project with the canvas
+            # project.read(QFileInfo(projectfile))  # read the new project file
+            # logger.debug(u'Geladene Projektdatei: {}   ({})'.format(project.fileName()))
 
     def run_qkanoptions(self) -> None:
         """Bearbeitung allgemeiner QKan-Optionen"""

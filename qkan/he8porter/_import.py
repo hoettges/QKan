@@ -49,23 +49,24 @@ class ImportTask:
     def _reftables(self) -> bool:
         """Referenztabellen mit Datensätzen für HE-Import füllen"""
 
+        # Hinweis: 'None' bewirkt beim Import eine Zuordnung unabhängig vom Wert
         daten = [
-            ('Mischwasser', 'MW', 'Mischwasser', 0, 0),
-            ('Regenwasser', 'RW', 'Regenwasser', 1, 2),
-            ('Schmutzwasser', 'SW', 'Schmutzwasser', 2, 1),
-            ('MW Druck', 'MD', 'Mischwasserdruckleitung', 0, 0),
-            ('RW Druck', 'RD', 'Regenwasserdruckleitung', 1, 2),
-            ('SW Druck', 'SD', 'Schmutzwasserdruckleitung', 2, 1),
-            ('Rinnen/Gräben', 'GR', 'Rinnen/Gräben', None, None),
-            ('stillgelegt', 'SG', 'stillgelegt', None, None),
-            ('MW nicht angeschlossen', 'MN', 'ohne Mischwasseranschlüsse', None, None),
-            ('RW nicht angeschlossen', 'RN', 'ohne Regenwasseranschlüsse', None, None),
+            ('Regenwasser', 'R', 'Regenwasser', 1, 2, 'R', 'KR', 0, 0),
+            ('Schmutzwasser', 'S', 'Schmutzwasser', 2, 1, 'S', 'KS', 0, 0),
+            ('Mischwasser', 'M', 'Mischwasser', 0, 0, 'M', 'KM', 0, 0),
+            ('RW Druckleitung', 'RD', 'Transporthaltung ohne Anschlüsse', 1, 2, None, 'DR', None, 1),
+            ('SW Druckleitung', 'SD', 'Transporthaltung ohne Anschlüsse', 2, 1, None, 'DS', None, 1),
+            ('MW Druckleitung', 'MD', 'Transporthaltung ohne Anschlüsse', 0, 0, None, 'DW', None, 1),
+            ('RW nicht angeschlossen', 'RT', 'Transporthaltung ohne Anschlüsse', 1, 2, None, None, 1, 0),
+            ('MW nicht angeschlossen', 'MT', 'Transporthaltung ohne Anschlüsse', 0, 0, None, None, 1, 0),
+            ('Rinnen/Gräben', 'GR', 'Rinnen/Gräben', None, None, None, None, 0, None),
+            ('stillgelegt', 'SG', 'stillgelegt', None, None, None, None, 0, None),
         ]
 
-        daten = [el + (el[0],) for el in daten]         # repeat last argument for WHERE statement
+        daten = [el + (el[0],) for el in daten]         # repeat last argument for ? after WHERE in SQL
         sql = """INSERT INTO entwaesserungsarten (
-                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr)
-                    SELECT ?, ?, ?, ?, ?
+                    bezeichnung, kuerzel, bemerkung, he_nr, kp_nr, m145, isybau, transport, druckdicht)
+                    SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
                     WHERE ? NOT IN (SELECT bezeichnung FROM entwaesserungsarten)"""
         if not self.db_qkan.sql(sql, "he8_import Referenzliste entwaesserungsarten", daten, many=True):
             return False
@@ -157,6 +158,16 @@ class ImportTask:
         if QKan.config.check_import.schaechte:
             if self.append:
                 sql = """
+                WITH ea AS (
+                    SELECT 
+                        bezeichnung, 
+                        he_nr, 
+                        CASE WHEN transport IS NULL THEN 0 ELSE transport END AS transport, 
+                        CASE WHEN druckdicht IS NULL THEN 0 ELSE druckdicht END AS druckdicht
+                    FROM entwaesserungsarten 
+                    WHERE he_nr IS NOT NULL
+                    GROUP BY he_nr, transport, druckdicht
+                )
                 INSERT INTO schaechte (
                     schnam, xsch, ysch, 
                     sohlhoehe, deckelhoehe, 
@@ -186,15 +197,10 @@ class ImportTask:
                                        )
                     ) AS geom
                 FROM he.Schacht AS sh
-                LEFT JOIN (
-                    SELECT he_nr, bezeichnung FROM entwaesserungsarten 
-                    WHERE he_nr IS NOT NULL AND bezeichnung IN (
-                        'Mischwasser', 
-                        'Regenwasser', 
-                        'Schmutzwasser')
-                    GROUP BY he_nr, bezeichnung
-                    ) AS ea 
-                ON ea.he_nr = sh.Kanalart
+                LEFT JOIN ea 
+                ON ea.he_nr = sh.Kanalart AND 
+                    sh.DruckdichterDeckel = ea.druckdicht AND
+                    ea.transport = 0 
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = sh.Planungsstatus
                 LEFT JOIN schaechte AS sq
@@ -300,35 +306,6 @@ class ImportTask:
 
         return True
 
-    def _profile(self) -> bool:
-        """Import der Profile"""
-
-        # Profilnummern aller Sonderprofile ergänzen.
-        if QKan.config.check_import.rohrprofile:
-            if self.append:
-                sql = """
-                INSERT INTO profile (
-                    profilnam, he_nr
-                )
-                SELECT 
-                    hh.Sonderprofilbezeichnung, 68
-                FROM he.Rohr AS hh
-                INNER JOIN he.Sonderprofil AS sp
-                ON hh.SonderprofilbezeichnungRef = sp.Id
-                LEFT JOIN profile AS pr
-                ON pr.profilnam = hh.Sonderprofilbezeichnung
-                WHERE pr.pk IS NULL
-                GROUP BY 
-                    Profiltyp, hh.Sonderprofilbezeichnung, hh.SonderprofilbezeichnungRef
-                """
-
-                if not self.db_qkan.sql(sql, "he8_import Sonderprofile"):
-                    return False
-
-                self.db_qkan.commit()
-
-        return True
-
     def _haltungen(self) -> bool:
         """Import der Haltungen"""
 
@@ -336,10 +313,21 @@ class ImportTask:
         if QKan.config.check_import.haltungen:
             if self.append:
                 sql = """
+                WITH ea AS (
+                    SELECT 
+                        bezeichnung, 
+                        he_nr, 
+                        CASE WHEN transport IS NULL THEN 0 ELSE transport END AS transport, 
+                        CASE WHEN druckdicht IS NULL THEN 0 ELSE druckdicht END AS druckdicht
+                    FROM entwaesserungsarten 
+                    WHERE he_nr IS NOT NULL
+                    GROUP BY he_nr, transport, druckdicht
+                )
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten, 
                     hoehe, breite, laenge, 
                     sohleoben, sohleunten,
+                    haltungstyp,
                     profilnam, entwart, 
                     ks, simstatus,  
                     kommentar, createdat, 
@@ -354,6 +342,7 @@ class ImportTask:
                     ro.Laenge AS laenge, 
                     ro.SohlhoeheOben AS sohleoben, 
                     ro.SohlhoeheUnten AS sohleunten, 
+                    'Haltung' AS haltungstyp, 
                     CASE WHEN ro.Profiltyp = 68 
                          THEN ro.Sonderprofilbezeichnung 
                          ELSE pr.profilnam END AS profilnam, 
@@ -366,15 +355,10 @@ class ImportTask:
                 FROM he.Rohr AS ro
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON ro.Profiltyp = pr.he_nr
-                LEFT JOIN (
-                    SELECT he_nr, bezeichnung FROM entwaesserungsarten 
-                    WHERE he_nr IS NOT NULL AND bezeichnung IN (
-                        'Mischwasser', 
-                        'Regenwasser', 
-                        'Schmutzwasser')
-                    GROUP BY he_nr, bezeichnung
-                    ) AS ea 
-                ON ea.he_nr = ro.Kanalart
+                LEFT JOIN ea 
+                ON ea.he_nr = ro.Kanalart AND 
+                    ea.druckdicht = (ro.Abflussart % 2) AND             -- 2 = Abfluss im offenen Profil wird in QKan wie 0 verarbeitet  
+                    ea.transport = ro.Transporthaltung 
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = ro.Planungsstatus
                 LEFT JOIN haltungen AS ha
@@ -638,6 +622,16 @@ class ImportTask:
         if QKan.config.check_import.qregler:
             if self.append:
                 sql = """
+                WITH ea AS (
+                    SELECT 
+                        bezeichnung, 
+                        he_nr, 
+                        CASE WHEN transport IS NULL THEN 0 ELSE transport END AS transport, 
+                        CASE WHEN druckdicht IS NULL THEN 0 ELSE druckdicht END AS druckdicht
+                    FROM entwaesserungsarten 
+                    WHERE he_nr IS NOT NULL
+                    GROUP BY he_nr, transport, druckdicht
+                )
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten, 
                     hoehe, breite, laenge, 
@@ -668,15 +662,10 @@ class ImportTask:
                 FROM he.qRegler AS qr
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON qr.Profiltyp = pr.he_nr
-                LEFT JOIN (
-                    SELECT he_nr, bezeichnung FROM entwaesserungsarten 
-                    WHERE he_nr IS NOT NULL AND bezeichnung IN (
-                        'Mischwasser', 
-                        'Regenwasser', 
-                        'Schmutzwasser')
-                    GROUP BY he_nr, bezeichnung
-                    ) AS ea 
-                ON ea.he_nr = qr.Kanalart
+                LEFT JOIN ea 
+                ON ea.he_nr = qr.Kanalart AND 
+                    ea.druckdicht = (qr.Abflussart % 2) AND             -- 2 = Abfluss im offenen Profil wird in QKan wie 0 verarbeitet  
+                    ea.transport = qr.Transporthaltung 
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = qr.Planungsstatus
                 LEFT JOIN haltungen AS ha
@@ -696,6 +685,16 @@ class ImportTask:
         if QKan.config.check_import.hregler:
             if self.append:
                 sql = """
+                WITH ea AS (
+                    SELECT 
+                        bezeichnung, 
+                        he_nr, 
+                        CASE WHEN transport IS NULL THEN 0 ELSE transport END AS transport, 
+                        CASE WHEN druckdicht IS NULL THEN 0 ELSE druckdicht END AS druckdicht
+                    FROM entwaesserungsarten 
+                    WHERE he_nr IS NOT NULL
+                    GROUP BY he_nr, transport, druckdicht
+                )
                 INSERT INTO haltungen (
                     haltnam, schoben, schunten, 
                     hoehe, breite, laenge, 
@@ -726,15 +725,10 @@ class ImportTask:
                 FROM he.hRegler AS hr
                 LEFT JOIN (SELECT he_nr, profilnam FROM profile WHERE he_nr <> 68 GROUP BY he_nr) AS pr
                 ON hr.Profiltyp = pr.he_nr
-                LEFT JOIN (
-                    SELECT he_nr, bezeichnung FROM entwaesserungsarten 
-                    WHERE he_nr IS NOT NULL AND bezeichnung IN (
-                        'Mischwasser', 
-                        'Regenwasser', 
-                        'Schmutzwasser')
-                    GROUP BY he_nr, bezeichnung
-                    ) AS ea 
-                ON ea.he_nr = hr.Kanalart
+                LEFT JOIN ea 
+                ON ea.he_nr = hr.Kanalart AND 
+                    ea.druckdicht = (hr.Abflussart % 2) AND             -- 2 = Abfluss im offenen Profil wird in QKan wie 0 verarbeitet  
+                    ea.transport = hr.Transporthaltung 
                 LEFT JOIN simulationsstatus AS si 
                 ON si.he_nr = hr.Planungsstatus
                 LEFT JOIN haltungen AS ha
@@ -999,9 +993,14 @@ class ImportTask:
                 LEFT JOIN profile AS pr_qk
                 ON pr_he.Name = pr_qk.profilnam
                 {filter}
-                WHERE pr_he.pk IS NULL
+                WHERE pr_he.Id IS NULL
                 GROUP BY pr_he.Name
                   """
+
+                if not self.db_qkan.sql(sql, "he8_import Sonderprofile"):
+                    return False
+
+                self.db_qkan.commit()
 
     def _aussengebiete(self) -> bool:
         """Import der Aussengebiete"""

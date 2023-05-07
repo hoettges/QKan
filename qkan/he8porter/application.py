@@ -8,7 +8,7 @@ from qgis.utils import pluginDirectory
 
 from qkan import QKan, enums, get_default_dir
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import eval_node_types, fehlermeldung
+from qkan.database.qkan_utils import read_qml, eval_node_types, fehlermeldung
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
@@ -330,6 +330,19 @@ class He8Porter(QKanPlugin):
                 # noinspection PyArgumentList
                 project = QgsProject.instance()
                 project.read(QKan.config.project.file)
+                read_qml(
+                    {
+                        'Drosseln': 'drosseln.qml',
+                        'Schieber': 'schieber.qml',
+                        'Grund-/Seitenauslässe': 'grund_seitenauslaesse.qml',
+                        'H-Regler': 'h_regler.qml',
+                        'Q-Regler': 'q_regler.qml',
+                        'Pumpen': 'pumpen.qml',
+                        'Wehre': 'wehre.qml',
+                        'Abflussparameter': 'abflussparameter.qml',
+                    },
+                    'qml/he'
+                )
                 project.reloadAllLayers()
 
         self.log.debug("Closed DB")

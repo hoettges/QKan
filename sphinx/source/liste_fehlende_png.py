@@ -11,7 +11,9 @@ with open('liste_fehlende_png.log', 'w') as ergdatei:
         if file.is_file() and file.name.endswith('.rst'):
             with open(file) as rstfile:
                 for zeile in rstfile:
-                    if '.. image' in zeile:
-                        file = zeile.replace('.. image:: ', '').strip()
-                        if not os.path.exists(file):
-                            ergdatei.write(f'Bilddatei {file} fehlt.\n')
+                    if zeile.strip().startswith('..'):
+                        pos = zeile.find('image::')
+                        if pos > 0:
+                            datei = zeile[pos:].replace('image:: ', '').strip()
+                            if not os.path.exists(datei):
+                                ergdatei.write(f'Bilddatei {datei} fehlt.\n')

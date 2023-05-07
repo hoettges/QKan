@@ -42,6 +42,7 @@
     Qkan_erstellung_unbef_fl
     Qkan_flaechen_vorbereiten
     Qkan_flaechen_verknuepfen
+    Qkan_export_he
     Qkan_Videoanleitungen
 
 

@@ -20,7 +20,7 @@ class TestMUQKan(QgisTest):
             z.extractall(BASE_WORK)
 
     def test_import(self) -> None:
-        QKan.config.mu.database = str(BASE_WORK / "urban_qk.sqlite")
+        QKan.config.mu.database = str(BASE_WORK / "urban.sqlite")
         QKan.config.mu.import_file = str(BASE_WORK / "Urban flooding.sqlite")
         QKan.config.project.file = str(BASE_WORK / "plan.qgs")
 

@@ -5,7 +5,7 @@ from qgis.gui import QgisInterface
 from qgis.utils import pluginDirectory
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung, get_database_QKan
+from qkan.database.qkan_utils import read_qml, fehlermeldung, get_database_QKan
 from qkan.plugin import QKanPlugin
 from qkan.tools.k_qgsadapt import qgsadapt
 
@@ -197,14 +197,7 @@ class IsyPorter(QKanPlugin):
                 return False
 
             self.log.info("DB creation finished, starting importer")
-            imp = ImportTask(
-                db_qkan,
-                QKan.config.xml.import_file,
-                QKan.config.xml.richt_choice,
-                QKan.config.xml.data_choice,
-                QKan.config.xml.ordner_bild,
-                QKan.config.xml.ordner_video
-            )
+            imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice,QKan.config.xml.data_choice, QKan.config.xml.ordner_bild, QKan.config.xml.ordner_video)
             imp.run()
             del imp
 
@@ -226,6 +219,7 @@ class IsyPorter(QKanPlugin):
                 # noinspection PyArgumentList
                 project = QgsProject.instance()
                 project.read(QKan.config.project.file)
+                read_qml({'Haltungen nach Typ': 'haltungen_nach_typ.qml'}, 'qml/isybau')
                 project.reloadAllLayers()
 
             # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
