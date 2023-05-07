@@ -23,12 +23,9 @@ from qgis.PyQt.QtWidgets import (
     QMessageBox,
     QDialogButtonBox,
     QLabel,
+    QSlider,
 
 )
-
-from matplotlib import pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
 
 logger = logging.getLogger("QKan.laengs.application_dialog")
@@ -67,14 +64,17 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
     lineEdit: QLineEdit
     lineEdit_2: QLineEdit
     label: QLabel
+    label_4: QLabel
     #lineEdit_3: QLineEdit
-    #pushButton_4: QPushButton
+    pushButton_4: QPushButton
     pushButton_5: QPushButton
     lineEdit_4: QLineEdit
     pushButton_6: QPushButton
     pushButton_7: QPushButton
     comboBox: QComboBox
     checkBox: QCheckBox
+    horizontalSlider_3: QSlider
+    geschw_2: QSlider
 
 
     def __init__(
@@ -89,7 +89,6 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
         self.pushButton.clicked.connect(self.export_cad)
         self.pushButton_2.clicked.connect(self.refresh)
         self.pushButton_3.clicked.connect(self.show_selection)
-        #self.pushButton_4.clicked.connect(self.select_erg)
         self.pushButton_5.clicked.connect(self.ganglinie)
         self.pushButton_6.clicked.connect(self.animiert_laengs)
         self.pushButton_7.clicked.connect(self.select_erg)
@@ -110,6 +109,7 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
         self.auswahl = {}
         self.max = False
         self.features = []
+        self.anim = None
         self.point = self.lineEdit.text()
         self.massstab = self.lineEdit_2.text()
         self.db_erg = self.lineEdit_4.text()
@@ -136,26 +136,28 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
     def clicked(self):
         self.max = True
 
+    #einfügen button stop , slider
+
     def export_cad(self):
         self.db_erg = self.lineEdit_4.text()
         self.point = self.lineEdit.text()
         self.massstab = self.lineEdit_2.text()
-        self.export_cad_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
+        self.export_cad_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
 
     def show_selection(self):
         self.db_erg = self.lineEdit_4.text()
-        self.show_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
+        self.show_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
 
     def refresh(self):
         self.db_erg = self.lineEdit_4.text()
-        self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
+        self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
 
-        if self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max) == 'nicht erstellt':
+        if self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2) == 'nicht erstellt':
             self.label.setText('Bitte Elemente vom Schacht- oder Haltungslayer auswählen und den "refresh" Knopf drücken!')
 
         else:
             self.label.setText('')
-            self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
+            self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
 
     def select_erg(self):
         filename, _ = QFileDialog.getOpenFileName(
@@ -171,13 +173,10 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
     def ganglinie(self):
         self.db_erg = self.lineEdit_4.text()
         self.ausgabe = self.comboBox.currentText()
-        self.gang_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
+        self.gang_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
 
     def animiert_laengs(self):
         self.db_erg = self.lineEdit_4.text()
         self.animiert_laengs_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl,
-                           self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max)
-
-
-
+                           self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
 
