@@ -142,7 +142,7 @@ class ExportTask:
 
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
-                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM schaechte"
                 if not self.db_qkan.sql(
                     sql, "db_qkan: export_to_he8.export_schaechte (2)"
                 ):
@@ -243,7 +243,7 @@ class ExportTask:
                 nr0 = self.nextid
 
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
-                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen"
+                sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM schaechte"
                 if not self.db_qkan.sql(
                     sql, "db_qkan: export_to_he8.export_schaechte (2)"
                 ):
@@ -355,7 +355,7 @@ class ExportTask:
 
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 if not self.db_qkan.sql(
-                    "SELECT min(rowid) as idmin, max(rowid) as idmax FROM haltungen",
+                    "SELECT min(rowid) as idmin, max(rowid) as idmax FROM schaechte",
                     "db_qkan: export_to_he8.export_schaechte (2)",
                 ):
                     return False
@@ -531,9 +531,9 @@ class ExportTask:
                       SELECT
                         ha.rowid + {id0} AS Id, 
                         ha.haltnam AS Name, ha.schoben AS SchachtOben, ha.schunten AS SchachtUnten,
-                        coalesce(ha.laenge, glength(ha.geom)) AS Laenge,
-                        coalesce(ha.sohleoben,sob.sohlhoehe) AS SohlhoeheOben,
-                        coalesce(ha.sohleunten,sun.sohlhoehe) AS SohlhoeheUnten,
+                        coalesce(ha.laenge, glength(ha.geom),0) AS Laenge,
+                        coalesce(ha.sohleoben,sob.sohlhoehe,0) AS SohlhoeheOben,
+                        coalesce(ha.sohleunten,sun.sohlhoehe,0) AS SohlhoeheUnten,
                         coalesce(pf.he_nr, 68) AS Profiltyp,
                         CASE WHEN coalesce(pf.he_nr, 68) = 68 THEN ha.profilnam
                         ELSE NULL
@@ -561,8 +561,9 @@ class ExportTask:
                         LEFT JOIN (SELECT bezeichnung, he_nr FROM entwaesserungsarten GROUP BY bezeichnung) AS ea 
                           ON ha.entwart = ea.bezeichnung
                         LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
-                        WHERE ha.haltnam NOT IN (SELECT Name FROM he.Rohr) 
-                        AND (ha.haltungstyp IS NULL OR ha.haltungstyp = 'Haltung'){auswahl};
+                        WHERE 
+                            ha.haltnam NOT IN (SELECT Name FROM he.Rohr) 
+                            AND (ha.haltungstyp IS NULL OR ha.haltungstyp = 'Haltung'){auswahl};
                       """
 
                     if not self.db_qkan.sql(

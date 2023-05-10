@@ -41,13 +41,14 @@ class TestQKanHE8(QgisTest):
         super().setUpClass()
 
         # Extract files
-        with ZipFile(BASE_DATA / "test_he8Export.zip") as z:
+        with ZipFile(BASE_DATA / "test_he8Export_85.zip") as z:
             z.extractall(BASE_WORK)
 
     def test_export(self) -> None:
         QKan.config.database.qkan = str(BASE_WORK / "itwh.sqlite")
         QKan.config.he8.export_file = str(BASE_WORK / "itwh.idbm")
         QKan.config.he8.template = str(BASE_WORK / "muster_vorlage.idbm")
+        QKan.config.project.file = str(BASE_WORK / "plan.qgs")
 
         dbAdapt(
             qkanDB=QKan.config.database.qkan,
