@@ -170,14 +170,14 @@ class ExportTask:
                           Planungsstatus, LastModified, Id, Durchmesser, Geometry)
                         SELECT
                           schaechte.schnam AS name, 
-                          schaechte.deckelhoehe AS deckelhoehe, 
-                          schaechte.sohlhoehe AS sohlhoehe,
-                          schaechte.deckelhoehe AS gelaendehoehe, 
+                          coalesce(schaechte.deckelhoehe, 0.0) AS deckelhoehe, 
+                          coalesce(schaechte.sohlhoehe, 0.0) AS sohlhoehe,
+                          coalesce(schaechte.deckelhoehe, 0.0) AS gelaendehoehe, 
                           1 AS art, 
                           st.he_nr AS planungsstatus, 
                           coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
                           schaechte.rowid + {id0} AS id, 
-                          schaechte.durchm*1000 AS durchmesser,
+                          coalesce(schaechte.durchm, 0.0)*1000 AS durchmesser,
                           SetSrid(schaechte.geop, -1) AS geometry
                         FROM schaechte
                         LEFT JOIN simulationsstatus AS st

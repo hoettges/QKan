@@ -14,7 +14,7 @@ version=3.2.39
 author=Jörg Höttges, Leon Ochsenfeld, Yannick Linke, Nora Blase
 email=hoettges@fh-aachen.de
 
-about=Dieses Plugin enthält die folgenden Module: Database, CreateUnbefFL, LinkFlaechen, ExportDyna, ImportDyna, ExportHE8. Nähere Informationen können Sie der README.md entnehmen.
+about=Dieses Plugin enthält u.a. die folgenden Module: Database, CreateUnbefFL, LinkFlaechen, ExportDyna, ImportDyna, ExportHE8. Nähere Informationen können Sie der README.md entnehmen.
 
 tracker=https://github.com/hoettges/QKan/issues
 repository=https://github.com/hoettges/QKan

@@ -149,13 +149,16 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.count_selection()
 
     def count_selection(self) -> bool:
+        """ Zählung mit Herstellung der Datenbankverbindung
         """
-        Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
-        der betroffenen Flächen und Haltungen
-         """
-        # self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
+        with DBConnection() as db_qkan:
+            self.count(db_qkan)
 
-        if not self.db_qkan.connected:
+    def count(self, db_qkan: DBConnection) -> bool:
+        """ Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
+            der betroffenen Flächen und Haltungen
+        """
+        if not db_qkan.connected:
             logger.error("db_qkan is not initialized.")
             return False
 
@@ -171,9 +174,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
         sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
 
-        if not self.db_qkan.sql(sql, "QKan_ExportSWMM.application.countselection (1)"):
+        if not db_qkan.sql(sql, "QKan_ExportSWMM.application.countselection (1)"):
             return False
-        daten = self.db_qkan.fetchone()
+        daten = db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_flaechen.setText(str(daten[0]))
         else:
@@ -187,9 +190,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
             )
 
         sql = f"SELECT count(*) AS anzahl FROM schaechte {auswahl}"
-        if not self.db_qkan.sql(sql, "QKan_ExportSWMM.application.countselection (2) "):
+        if not db_qkan.sql(sql, "QKan_ExportSWMM.application.countselection (2) "):
             return False
-        daten = self.db_qkan.fetchone()
+        daten = db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_schaechte.setText(str(daten[0]))
         else:
@@ -203,20 +206,18 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
             )
 
         sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
-        if not self.db_qkan.sql(sql, "QKan_ExportSWMM.application.countselection (3) "):
+        if not db_qkan.sql(sql, "QKan_ExportSWMM.application.countselection (3) "):
             return False
-        daten = self.db_qkan.fetchone()
+        daten = db_qkan.fetchone()
         if not (daten is None):
             self.lf_anzahl_haltungen.setText(str(daten[0]))
         else:
             self.lf_anzahl_haltungen.setText("0")
         return True
 
-    def prepareDialog(self, db_qkan) -> bool:
+    def prepareDialog(self, db_qkan: DBConnection) -> bool:
         """Füllt Auswahllisten im Export-Dialog"""
 
-        # self.db_qkan = DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg)
-        self.db_qkan = db_qkan
         # Alle Teilgebiete in Flächen, Schächten und Haltungen, die noch nicht in Tabelle "teilgebiete" enthalten
         # sind, ergänzen
 
@@ -234,10 +235,10 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
                 SELECT teilgebiet FROM tgb
                 WHERE teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
                 GROUP BY teilgebiet"""
-        if not self.db_qkan.sql(sql, "swmmporter.application_dialog.connectQKanDB (1) "):
+        if not db_qkan.sql(sql, "swmmporter.application_dialog.connectQKanDB (1) "):
             return False
 
-        self.db_qkan.commit()
+        db_qkan.commit()
 
         # Anlegen der Tabelle zur Auswahl der Teilgebiete
 
@@ -246,9 +247,9 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
 
         # Abfragen der Tabelle teilgebiete nach Teilgebieten
         sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-        if not self.db_qkan.sql(sql, "swmmporter.application_dialog.connectQKanDB (4) "):
+        if not db_qkan.sql(sql, "swmmporter.application_dialog.connectQKanDB (4) "):
             return False
-        daten = self.db_qkan.fetchall()
+        daten = db_qkan.fetchall()
         self.lw_teilgebiete.clear()
 
         for ielem, elem in enumerate(daten):
@@ -266,7 +267,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
                 )
 
         # Initialisierung der Anzeige der Anzahl zu exportierender Objekte
-        self.count_selection()
+        self.count(db_qkan)
 
         return True
 
