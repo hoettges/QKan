@@ -9,7 +9,7 @@ import win32com.client
 import pythoncom
 from win32com.client import VARIANT
 import pywintypes
-
+from PyQt5 import QtCore
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.dates as mdates
@@ -61,6 +61,7 @@ class LaengsTask:
         self.horizontalSlider_3.sliderPressed.connect(self.stop_slider)
         self.geschw_2.sliderReleased.connect(self.slider_2)
         self.geschw = self.geschw_2.value()*10
+
 
 
     def run(self) -> bool:
@@ -573,7 +574,7 @@ class LaengsTask:
 
                     for wasserstand in wasserstaende:
                         schaechte[schacht] = dict(
-                            wasserstand=wasserstand)
+                            wasserstand=wasserstand[0])
 
                 for s in liste:
                     y_liste.append(schaechte[s]['wasserstand'])
@@ -597,8 +598,7 @@ class LaengsTask:
         new_plot.plot(x_deckel, y_deckel, color="black", label='Deckel')
         new_plot.plot(x_sohle, y_sohle, color=farbe, label='Kanalsohle')
         new_plot.plot(x_sohle2, y_sohle2, color=farbe, label='Kanalscheitel')
-        if len(y_liste) > 0 and table == 'haltungen':
-            new_plot.plot(x_sohle2, y_liste, color="blue", label='maximaler Wasserstand')
+
 
         x_deckel_neu = []
         name_neu = []
@@ -644,6 +644,7 @@ class LaengsTask:
         self.auswahl[figure.number] = self.selected
 
 
+
     def show(self):
         # selektierte elemente anzeigen
         layer = iface.activeLayer()
@@ -658,8 +659,8 @@ class LaengsTask:
         #Koordinaten für Einfügepunkt
         pointx = float(points[0])
         pointy = float(points[1])
-        iface.messageBar().pushMessage("Fehler", str(pointx), level=Qgis.Critical)
-        iface.messageBar().pushMessage("Fehler", str(pointy), level=Qgis.Critical)
+        #iface.messageBar().pushMessage("Fehler", str(pointx), level=Qgis.Critical)
+        #iface.messageBar().pushMessage("Fehler", str(pointy), level=Qgis.Critical)
         # Maßstab
         massstab = float(massstab_liste[1])
 
@@ -860,7 +861,7 @@ class LaengsTask:
 
                     for wasserstand in wasserstaende:
                         schaechte[schacht] = dict(
-                            wasserstand=wasserstand)
+                            wasserstand=wasserstand[0])
 
                 for s in liste:
                     y_liste.append(schaechte[s]['wasserstand'])
@@ -879,6 +880,13 @@ class LaengsTask:
         deckel = "LINIE"
         scheitel = "LINIE"
         sohle = "LINIE"
+        max_wasser = "LINIE"
+
+        x_deckel_neu = []
+
+        for i in x_deckel:
+            if i not in x_deckel_neu:
+                x_deckel_neu.append(i)
 
         #deckelkoordinaten
         for i, j in zip(x_deckel, y_deckel):
@@ -897,6 +905,21 @@ class LaengsTask:
             sohle += " " + str(i) + "," + str(j)
 
         sohle += "\n" "\n"
+
+        #max_wasserstand
+        if len(y_liste) > 0 and table == 'schaechte':
+            for i, j in zip(x_deckel_neu, y_liste):
+                max_wasser += " " + str(i) + "," + str(float(j)+pointy)
+
+        #new_plot.plot(x_deckel_neu, y_liste, color="blue", label='maximaler Wasserstand')
+
+        if len(y_liste) > 0 and table == 'haltungen':
+            for i, j in zip(x_deckel, y_liste):
+                max_wasser += " " + str(i) + "," + str(float(j)+pointy)
+
+        max_wasser += "\n" "\n"
+
+        #new_plot.plot(x_deckel, y_liste, color="blue", label='maximaler Wasserstand')
 
         #CSV-Tabelle erstellen
         #path = Path(__file__).parent.absolute()
@@ -952,6 +975,8 @@ class LaengsTask:
             doc.SendCommand(scheitel)
             doc.SendCommand(farbe)
             doc.SendCommand(sohle)
+            doc.SendCommand("-FARBE" + "\n" + "5\n" "\n")
+            doc.SendCommand(max_wasser)
 
             # schacht linien einzeichnen
             for i, j, z in zip(x_deckel, y_sohle, y_deckel):
@@ -1708,5 +1733,9 @@ class LaengsTask:
                 self.pushButton_4.setText('Stop')
             except AttributeError:
                 pass
+
+        self.pushButton_4.setDefault(True)
+        QtCore.QTimer.singleShot(100, self.pushButton_4.setFocus)
+
 
 
