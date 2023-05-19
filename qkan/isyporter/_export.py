@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union
 from xml.dom import minidom
 from xml.etree.ElementTree import Element, SubElement, tostring
-
+from datetime import date
 from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
 
@@ -96,7 +96,7 @@ class ExportTask:
 
             abw = SubElement(self.stamm, "AbwassertechnischeAnlage")
             SubElementText(abw, "Objektbezeichnung", attr[0])
-            SubElement(abw, "Objektart")
+            SubElement(abw, "Objektart", str(1))
             SubElementText(abw, "Status", self.mapper_simstatus.get(attr[10], -1))
             _create_children_text(
                 SubElement(
@@ -149,8 +149,8 @@ class ExportTask:
                 abw,
                 {
                     "Objektbezeichnung": attr[0],
+                    "Objektart": str(1),
                     "Status": self.mapper_simstatus.get(attr[4], -1),
-                    "Objektart": None,
                 },
             )
             SubElement(SubElement(abw, "Knoten"), "Bauwerk")
@@ -193,8 +193,8 @@ class ExportTask:
             _create_children_text(
                 abw,
                 {
-                    "Objektart": None,
                     "Objektbezeichnung": attr[0],
+                    "Objektart": str(2),
                     "Kommentar": attr[6],
                     "Status": self.mapper_simstatus.get(attr[7], -1),
                     "Entwaesserungsart": attr[9],
@@ -272,8 +272,8 @@ class ExportTask:
             _create_children_text(
                 abw,
                 {
-                    "Objektart": None,
                     "Objektbezeichnung": attr[0],
+                    "Objektart": str(2),
                     "Entwaesserungsart": attr[6],
                     "Kommentar": attr[9],
                     "Status": self.mapper_simstatus.get(attr[10], -1),
@@ -350,8 +350,8 @@ class ExportTask:
             _create_children_text(
                 abw,
                 {
-                    "Objektart": None,
                     "Objektbezeichnung": attr[0],
+                    "Objektart": str(2),
                     "Entwaesserungsart": attr[5],
                     "Kommentar": attr[9],
                     "Status": self.mapper_simstatus.get(attr[10], -1),
@@ -441,8 +441,8 @@ class ExportTask:
             _create_children_text(
                 abw,
                 {
-                    "Objektart": None,
                     "Objektbezeichnung": attr[0],
+                    "Objektart": str(1),
                     "Entwaesserungsart": attr[12],
                     "Status": self.mapper_simstatus.get(attr[14], -1),
                 },
@@ -563,8 +563,8 @@ class ExportTask:
             _create_children_text(
                 abw,
                 {
-                    "Objektart": None,
                     "Objektbezeichnung": attr[0],
+                    "Objektart": str(1),
                     "Entwaesserungsart": attr[13],
                     "Status": self.mapper_simstatus.get(attr[15], -1),
                 },
@@ -651,7 +651,7 @@ class ExportTask:
 
         # region Create XML structure
         root = Element(
-            "Identifikation", {"xmlns": "http://www.ofd-hannover.la/Identifikation"}
+            "Identifikation", {"xmlns": "http://www.ofd-hannover.la/Identifikation", "xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance",}
         )
         SubElementText(root, "Version", "2013-02")
 
@@ -665,24 +665,32 @@ class ExportTask:
         _create_children_text(
             daten_kollektive,
             {
-                "Datenstatus": None,
-                "Erstellungsdatum": None,
+                "Datenstatus": "2",
+                "Erstellungsdatum": str(date.today()),
                 "Kommentar": "Created with QKan's XML export module",
             },
         )
-        SubElement(SubElement(daten_kollektive, "Kennungen"), "Kollektiv")
+        kennungen = SubElement(SubElement(daten_kollektive, "Kennungen"), "Kollektiv")
+        #je ein Kollektiv für Stammdaten und Zustandsdaten, die Kennung muss dort auftauchen
+        _create_children_text(
+            kennungen,
+            {
+                "Kennung": "STA01",
+                "Kollektivart": "1",
+            },
+        )
 
         self.stamm = SubElement(daten_kollektive, "Stammdatenkollektiv")
-        _create_children(self.stamm, ["Kennung", "Beschreibung"])
+        _create_children_text(self.stamm, {"Kennung": "STA01", "Beschreibung": "Stammdaten",},)
 
         hydro_kollektiv = SubElement(daten_kollektive, "Hydraulikdatenkollektiv")
-        _create_children(
+        _create_children_text(
             hydro_kollektiv,
-            ["Kennung", "Beschreibung", "Flaechen", "Systembelastungen"],
+            {"Kennung": "STA01", "Beschreibung": "Hydraulikdaten",},
         )
         rechen = SubElement(hydro_kollektiv, "Rechennetz")
         SubElement(rechen, "Stammdatenkennung")
-        self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekte")
+        self.hydraulik_objekte = SubElement(rechen, "HydraulikObjekt")
         # endregion
 
         # Export
@@ -697,6 +705,9 @@ class ExportTask:
         Path(self.export_file).write_text(
             minidom.parseString(tostring(root)).toprettyxml(indent="  ")
         )
+
+        # Close connection
+        del self.db_qkan
 
         fortschritt("Ende...", 1)
         progress_bar.setValue(100)

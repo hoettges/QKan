@@ -579,6 +579,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
         self.db_qkan.commit()
@@ -694,6 +695,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
 
@@ -894,6 +896,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
         self.db_qkan.commit()
@@ -998,6 +1001,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
         self.db_qkan.commit()
@@ -1111,6 +1115,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
         self.db_qkan.commit()
@@ -1366,6 +1371,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
         self.db_qkan.commit()
@@ -1470,6 +1476,7 @@ class ImportTask:
                     if not self.db_qkan.sql(
                             sql, parameters=(name,)
                     ):
+                        del self.db_qkan
                         return False
 
                     sql = f"""
@@ -1484,6 +1491,7 @@ class ImportTask:
                     if not self.db_qkan.sql(
                             sql, parameters=paralist
                     ):
+                        del self.db_qkan
                         return False
 
                 if npt > 1:
@@ -1498,6 +1506,7 @@ class ImportTask:
                     if not self.db_qkan.sql(
                             sql, parameters=paralist
                     ):
+                        del self.db_qkan
                         return False
 
                 npt+=1
@@ -1737,6 +1746,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
         self.db_qkan.commit()
@@ -2003,6 +2013,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
         self.db_qkan.commit()
@@ -2279,6 +2290,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
 
@@ -2387,6 +2399,7 @@ class ImportTask:
                     if not self.db_qkan.sql(
                             sql, parameters=(name,)
                     ):
+                        del self.db_qkan
                         return False
 
                     sql = f"""
@@ -2401,6 +2414,7 @@ class ImportTask:
                     if not self.db_qkan.sql(
                             sql, parameters=paralist
                     ):
+                        del self.db_qkan
                         return False
 
                 if npt > 1:
@@ -2415,6 +2429,7 @@ class ImportTask:
                     if not self.db_qkan.sql(
                             sql, parameters=paralist
                     ):
+                        del self.db_qkan
                         return False
 
                 npt+=1
@@ -2501,6 +2516,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
         self.db_qkan.commit()
@@ -2600,6 +2616,7 @@ class ImportTask:
                     mute_logger=False,
                     **params
             ):
+                del self.db_qkan
                 return
 
 

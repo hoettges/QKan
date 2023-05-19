@@ -442,6 +442,11 @@ class LaengsTask:
         material_l = []
         strasse_l = []
         haltungstyp_l = []
+        schachttyp_l =[]
+        schaechte_l = []
+        deckel_l = []
+        sohle_l = []
+        entwart_s =[]
         laenge1 = 0
         laenge2 = 0
 
@@ -469,7 +474,11 @@ class LaengsTask:
                         h.strasse,
                         h.haltungstyp,
                         h.sohleoben,
-                        h.sohleunten
+                        h.sohleunten,
+                        schob.knotentyp,
+                        schun.knotentyp,
+                        schob.entwart,
+                        schun.entwart
                     FROM haltungen AS h,
                         schaechte AS schob,
                         schaechte AS schun
@@ -496,6 +505,8 @@ class LaengsTask:
                 material = attr[11]
                 strasse = attr[12]
                 haltungstyp = attr[13]
+                schob_typ = attr[16]
+                schun_typ = attr[17]
 
                 laenge2 += laenge
 
@@ -530,6 +541,16 @@ class LaengsTask:
                 material_l.append(material)
                 strasse_l.append(strasse)
                 haltungstyp_l.append(haltungstyp)
+                schaechte_l.append(schoben)
+                schaechte_l.append(schunten)
+                schachttyp_l.append(schob_typ)
+                schachttyp_l.append(schun_typ)
+                deckel_l.append(deckeloben)
+                deckel_l.append(deckelunten)
+                sohle_l.append(sohleoben)
+                sohle_l.append(sohleunten)
+                entwart_s.append(attr[18])
+                entwart_s.append(attr[19])
 
 
         y_liste = []
@@ -590,10 +611,99 @@ class LaengsTask:
         elif entwart == 'SW' or entwart =='KS' or entwart =='Schmutzwasser':
             farbe = 'red'
 
-        data = [schoben_l, schunten_l, laenge_l, entwart_l, hoehe_l, breite_l, material_l, strasse_l, haltungstyp_l]
+        schaechte_l_neu = []
+        list = []
+        deckel_neu = []
+        sohle_neu = []
+        entwart_s_neu = []
+        list_deckel = []
+        list_sohle = []
+        list_laenge = []
+        list_entwart = []
+        list_hoehe = []
+        list_breite = []
+        list_material = []
+        list_strasse = []
+        list_typ = []
+        s_leer =[]
+        h_leer = []
 
-        columns = tuple(haltnam_l)
-        rows = ('Schacht oben', 'Schacht unten', 'Länge [m]', 'Entwässerungsart', 'Höhe [m]', 'Breite [m]', 'Material', 'Strasse', 'Typ')
+        for i in schaechte_l:
+            s_leer.append('')
+            if i not in schaechte_l_neu:
+                schaechte_l_neu.append(i)
+
+        schachttyp_l_neu = schachttyp_l[::2]
+        schachttyp_l_neu.append(schachttyp_l[-1])
+
+        deckel_neu = deckel_l[::2]
+        deckel_neu.append(deckel_l[-1])
+
+        sohle_neu = sohle_l[::2]
+        sohle_neu.append(sohle_l[-1])
+
+        entwart_s_neu = entwart_s[::2]
+        entwart_s_neu.append(entwart_s[-1])
+
+        for i in haltnam_l:
+            h_leer.append('')
+
+        for x, y in zip(schaechte_l_neu, haltnam_l):
+            list.append(x)
+            list.append(y)
+        list.append(schaechte_l_neu[-1])
+
+        for x, y in zip(s_leer, laenge_l):
+            list_laenge.append(x)
+            list_laenge.append(y)
+        list_laenge.append(s_leer[-1])
+
+        for x, y in zip(entwart_s_neu, entwart_l):
+            list_entwart.append(x)
+            list_entwart.append(y)
+        list_entwart.append(entwart_s_neu[-1])
+
+        for x, y in zip(s_leer, hoehe_l):
+            list_hoehe.append(x)
+            list_hoehe.append(y)
+        list_hoehe.append(s_leer[-1])
+
+        for x, y in zip(s_leer, breite_l):
+            list_breite.append(x)
+            list_breite.append(y)
+        list_breite.append(s_leer[-1])
+
+        for x, y in zip(s_leer, material_l):
+            list_material.append(x)
+            list_material.append(y)
+        list_material.append(s_leer[-1])
+
+        for x, y in zip(s_leer, strasse_l):
+            list_strasse.append(x)
+            list_strasse.append(y)
+        list_strasse.append(s_leer[-1])
+
+        for x, y in zip(schachttyp_l_neu, haltungstyp_l):
+            list_typ.append(x)
+            list_typ.append(y)
+        list_typ.append(schachttyp_l_neu[-1])
+
+        for x, y in zip(deckel_neu, h_leer):
+            list_deckel.append(x)
+            list_deckel.append(y)
+        list_deckel.append(deckel_neu[-1])
+
+        for x, y in zip(sohle_neu, h_leer):
+            list_sohle.append(x)
+            list_sohle.append(y)
+        list_sohle.append(sohle_neu[-1])
+
+        data = [list_deckel, list_sohle, list_laenge, list_entwart, list_hoehe, list_breite, list_material, list_strasse, list_typ]
+
+        #iface.messageBar().pushMessage("Fehler", str(data), level=Qgis.Critical)
+
+        columns = tuple(list)
+        rows = ('Deckelhöhe [m NHN]', 'Sohlhöhe [m NHN]', 'Länge [m]', 'Entwässerungsart', 'Höhe [m]', 'Breite [m]', 'Material', 'Strasse', 'Typ')
 
         new_plot.plot(x_deckel, y_deckel, color="black", label='Deckel')
         new_plot.plot(x_sohle, y_sohle, color=farbe, label='Kanalsohle')
