@@ -10,6 +10,7 @@ from qgis.utils import iface
 from qgis.core import Qgis
 from qgis.utils import pluginDirectory,iface
 from qgis.PyQt import uic
+from PyQt5 import QtCore
 from qgis.PyQt.QtCore import QEvent
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
@@ -133,6 +134,10 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
 
         self.ausgabe = self.comboBox.currentText()
 
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Space:
+            self.pushButton_4.click()
+
     def clicked(self):
         self.max = True
 
@@ -179,4 +184,5 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
         self.db_erg = self.lineEdit_4.text()
         self.animiert_laengs_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl,
                            self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
+
 

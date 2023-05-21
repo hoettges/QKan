@@ -85,21 +85,20 @@ class IsyPorter(QKanPlugin):
 
             QKan.config.save()
 
-            with DBConnection(dbname=self.database_qkan) as db_qkan:
-                if not db_qkan.connected:
-                    fehlermeldung(
-                        "Fehler im XML-Export",
-                        f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
-                    )
-                    self.iface.messageBar().pushMessage(
-                        "Fehler im XML-Export",
-                        f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
-                        level=Qgis.Critical,
-                    )
-                    return
+            db_qkan = DBConnection(dbname=self.database_qkan)
+            if not db_qkan:
+                fehlermeldung(
+                    "Fehler im XML-Export",
+                    f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
+                )
+                self.iface.messageBar().pushMessage(
+                    "Fehler im XML-Export",
+                    f"QKan-Datenbank {self.database_qkan} wurde nicht gefunden!\nAbbruch!",
+                    level=Qgis.Critical,
+                )
 
-                # Run export
-                ExportTask(db_qkan, export_file).run()
+            # Run export
+            ExportTask(db_qkan, export_file).run()
 
     def run_import(self) -> None:
         """Anzeigen des Importformulars ISYBAU-XML und anschließender Start des Import"""
@@ -181,49 +180,51 @@ class IsyPorter(QKanPlugin):
         QKan.config.xml.ordner_video = self.import_dlg.tf_import_3.text()
 
         self.log.info("Creating DB")
-        with DBConnection(
+        db_qkan = DBConnection(
             dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
-        ) as db_qkan:
-            if not db_qkan.connected:
-                fehlermeldung(
-                    "Fehler im XML-Import",
-                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-                )
-                self.iface.messageBar().pushMessage(
-                    "Fehler im XML-Import",
-                    f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
-                    level=Qgis.Critical,
-                )
-                return False
+        )
 
-            self.log.info("DB creation finished, starting importer")
-            imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice,QKan.config.xml.data_choice, QKan.config.xml.ordner_bild, QKan.config.xml.ordner_video)
-            imp.run()
-            del imp
+        if not db_qkan:
+            fehlermeldung(
+                "Fehler im XML-Import",
+                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+            )
+            self.iface.messageBar().pushMessage(
+                "Fehler im XML-Import",
+                f"QKan-Datenbank {QKan.config.database.qkan} wurde nicht gefunden!\nAbbruch!",
+                level=Qgis.Critical,
+            )
+            return False
 
-            # Write and load new project file, only if new project
-            if QgsProject.instance().fileName() == '':
-                QKan.config.project.template = str(
-                    Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
-                )
+        self.log.info("DB creation finished, starting importer")
+        imp = ImportTask(db_qkan, QKan.config.xml.import_file, QKan.config.xml.richt_choice, QKan.config.xml.data_choice, QKan.config.xml.ordner_bild, QKan.config.xml.ordner_video )
+        imp.run()
+        del imp
 
-                qgsadapt(
-                    QKan.config.database.qkan,
-                    db_qkan,
-                    QKan.config.project.file,
-                    QKan.config.project.template,
-                    QKan.config.epsg,
-                )
+        # Write and load new project file, only if new project
+        if QgsProject.instance().fileName() == '':
 
-                # Load generated project
-                # noinspection PyArgumentList
-                project = QgsProject.instance()
-                project.read(QKan.config.project.file)
-                read_qml({'Haltungen nach Typ': 'haltungen_nach_typ.qml'}, 'qml/isybau')
-                project.reloadAllLayers()
+            QKan.config.project.template = str(
+                Path(pluginDirectory("qkan")) / "templates" / "Projekt.qgs"
+            )
+
+            qgsadapt(
+                QKan.config.database.qkan,
+                db_qkan,
+                QKan.config.project.file,
+                QKan.config.project.template,
+                QKan.config.epsg,
+            )
+
+            # Load generated project
+            # noinspection PyArgumentList
+            project = QgsProject.instance()
+            project.read(QKan.config.project.file)
+            project.reloadAllLayers()
 
             # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
 
+        del db_qkan
         self.log.debug("Closed DB")
 
         return True

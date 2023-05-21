@@ -284,6 +284,9 @@
          </item>
          <item>
           <widget class="QSlider" name="geschw_2">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Um die Geschwindigkeit zu verändern muss die Anzeigen neu gestartet werden (&amp;quot;Längsschnitt anzeigen&amp;quot;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="minimum">
             <number>1</number>
            </property>
@@ -329,6 +332,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="pushButton_4">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Anzeige kann mit dem klicken auf den Button oder mit der Leertaste gestartet und gestoppt werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Stop</string>
            </property>
