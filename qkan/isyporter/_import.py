@@ -330,6 +330,7 @@ class ImportTask:
         return name, knoten_typ, xsch, ysch, sohlhoehe
 
     def run(self) -> bool:
+        self._reftables()
         self._init_mappers()
         if getattr(QKan.config.xml, "import_stamm", True):
             self._schaechte()
