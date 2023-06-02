@@ -3,7 +3,7 @@ from qgis.utils import iface, spatialite_connect
 from qgis.core import Qgis
 import csv
 from pathlib import Path
-import datetime
+from datetime import datetime
 
 import win32com.client
 import pythoncom
@@ -420,10 +420,27 @@ class LaengsTask:
                 if x2 not in liste:
                     liste.append(x2)
 
+
+        logger.debug(f'zeichnen.ausgewaehlt:Algorithmus gestartet{datetime.now()}')
         route = find_route(self.db_qkan, liste)
         logger.debug(f'zeichnen.ausgewaehlt: {liste}')
         logger.debug(f'route: {route}')
+        logger.debug(f'zeichnen.ausgewaehlt:Algorithmus beendet{datetime.now()}')
+
         # route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
+        if table == 'schaechte':
+            liste = []
+            for f in route[0]:
+                liste.append(f)
+
+        if table == 'haltungen':
+            liste = []
+            for x in route[0]:
+                liste.append(x)
+            liste2 = []
+            for y in route[1]:
+                liste2.append(y)
+
         x_sohle = []
         y_sohle = []
         x_sohle2 = []
@@ -581,6 +598,7 @@ class LaengsTask:
                     y_liste.append(haltungen[h]['wasserstandunten'])
 
             if table == 'schaechte':
+
                 for schacht in liste:
                     sql = 'SELECT wasserstand FROM lau_max_s WHERE KNOTEN=?'
                     data = (schacht,)
@@ -700,7 +718,6 @@ class LaengsTask:
 
         data = [list_deckel, list_sohle, list_laenge, list_entwart, list_hoehe, list_breite, list_material, list_strasse, list_typ]
 
-        #iface.messageBar().pushMessage("Fehler", str(data), level=Qgis.Critical)
 
         columns = tuple(list)
         rows = ('Deckelhöhe [m NHN]', 'Sohlhöhe [m NHN]', 'Länge [m]', 'Entwässerungsart', 'Höhe [m]', 'Breite [m]', 'Material', 'Strasse', 'Typ')
@@ -809,6 +826,18 @@ class LaengsTask:
                     liste.append(x2)
 
         route = find_route(self.db_qkan, liste)
+        if table == 'schaechte':
+            liste = []
+            for f in route[0]:
+                liste.append(f)
+
+        if table == 'haltungen':
+            liste = []
+            for x in route[0]:
+                liste.append(x)
+            liste2 = []
+            for y in route[1]:
+                liste2.append(y)
 
         x_sohle = []
         y_sohle = []
@@ -1515,6 +1544,19 @@ class LaengsTask:
                     liste.append(x2)
 
         route = find_route(self.db_qkan, liste)
+
+        if table == 'schaechte':
+            liste = []
+            for f in route[0]:
+                liste.append(f)
+
+        if table == 'haltungen':
+            liste = []
+            for x in route[0]:
+                liste.append(x)
+            liste2 = []
+            for y in route[1]:
+                liste2.append(y)
         logger.debug(f'zeichnen.ausgewaehlt: {liste}')
         logger.debug(f'route: {route}')
         # route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
