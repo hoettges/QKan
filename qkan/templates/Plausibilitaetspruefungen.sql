@@ -59,13 +59,13 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
  'Haltungen nach Typ', 'haltnam'),
 ('HYSTEM-EXTRAN', 'Schachtnamen doppelt', 'Fehler', 9,
     'SELECT schnam,
-        printf("Schachtnamen doppelt in Layer ""Schächte"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT schnam, count(*) as anz FROM schaechte GROUP BY schnam HAVING anz > 1))) AS bemerkung
-    FROM (SELECT schnam, count(*) as anz FROM schaechte GROUP BY schnam HAVING anz > 1) LIMIT 5', 
+        printf("Schachtnamen doppelt in Layer ""Schächte"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT schnam FROM schaechte GROUP BY schnam HAVING count(*) > 1))) AS bemerkung
+    FROM (SELECT schnam FROM schaechte GROUP BY schnam HAVING count(*) > 1) LIMIT 5', 
  'Schächte', 'schnam'),
 ('HYSTEM-EXTRAN', 'Haltungsnamen doppelt', 'Fehler', 9,
     'SELECT haltnam,
-        printf("Haltungsnamen doppelt in Layer ""Haltungen nach Typ"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT haltnam, count(*) as anz FROM haltungen GROUP BY haltnam HAVING anz > 1))) AS bemerkung
-    FROM (SELECT haltnam, count(*) as anz FROM haltungen GROUP BY haltnam HAVING anz > 1) LIMIT 5', 
+        printf("Haltungsnamen doppelt in Layer ""Haltungen nach Typ"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1))) AS bemerkung
+    FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1) LIMIT 5', 
  'Haltungen nach Typ', 'haltnam'),
 ('Kreuzende Haltungen', 'Kreuzende Haltungen', 'Warnung', 6, 
     'SELECT
