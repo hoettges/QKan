@@ -155,14 +155,14 @@ class LaengsDialog(_Dialog, LAENGS_CLASS):  # type: ignore
 
     def refresh(self):
         self.db_erg = self.lineEdit_4.text()
-        self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
+        #self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
 
         if self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2) == 'nicht erstellt':
             self.label.setText('Bitte Elemente vom Schacht- oder Haltungslayer auswählen und den "refresh" Knopf drücken!')
 
         else:
             self.label.setText('')
-            self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
+            #self.refresh_function(self.database, self.fig, self.canv, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.selected, self.auswahl, self.point, self.massstab, self.features, self.db_erg, self.ausgabe, self.max, self.label_4, self.pushButton_4, self.horizontalSlider_3, self.geschw_2)
 
     def select_erg(self):
         filename, _ = QFileDialog.getOpenFileName(

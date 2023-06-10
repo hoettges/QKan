@@ -31,7 +31,10 @@ logger = logging.getLogger("QKan.laengs.import")
 
 
 class LaengsTask:
-    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, fig_2: plt.figure, canv_2: FigureCanvas, fig_3: plt.figure, canv_3: FigureCanvas, selected, auswahl, point, massstab, features, db_erg, ausgabe, max, label_4, pushButton_4, horizontalSlider_3, geschw_2):
+    def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, fig_2: plt.figure,
+                 canv_2: FigureCanvas, fig_3: plt.figure, canv_3: FigureCanvas, selected, auswahl, point,
+                 massstab, features, db_erg, ausgabe, max, label_4,
+                 pushButton_4, horizontalSlider_3, geschw_2):
         self.db_qkan = db_qkan
         self.fig = fig
         self.canv = canv
@@ -91,14 +94,14 @@ class LaengsTask:
 
 
     def slider(self):
-        #ändern der frames von der Animation
+        """Ändern der frames der Animation"""
 
         # aktuellen layer auswählen
         layer = iface.activeLayer()
         x = layer.source()
 
         # mit dbfunk layer namen anzeigen lassen (für die information ob haltungen oder schächte ausgewählt wurden)
-        dbname, table, geom, sql = get_qkanlayer_attributes(x)
+        _, table, _, _ = get_qkanlayer_attributes(x)
 
         t = None
 
@@ -132,8 +135,13 @@ class LaengsTask:
                     liste.append(x2)
 
         route = find_route(self.db_qkan, liste)
-        logger.debug(f'zeichnen.ausgewaehlt: {liste}')
+        logger.debug(f'Fehler in slider. liste: {liste}')
         logger.debug(f'route: {route}')
+
+        if route is None:
+            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
+            return 'nicht erstellt'
+
         # route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
         x_sohle = []
         y_sohle = []
@@ -153,94 +161,78 @@ class LaengsTask:
         material_l = []
         strasse_l = []
         haltungstyp_l = []
-        laenge1 = 0
-        laenge2 = 0
 
-        if route is None:
-            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
-            x = 'nicht erstellt'
-            return x
+        sel = '), ('.join([f"'{num}', {el}" for el, num in enumerate(route[1])])         # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
+        sql = f"""
+            SELECT
+                h.schoben,
+                h.hoehe,
+                h.schunten,
+                h.laenge,
+                schob.deckelhoehe,
+                schob.sohlhoehe,            -- hier nicht verwendet
+                schun.deckelhoehe,
+                schun.sohlhoehe,            -- hier nicht verwendet
+                h.entwart,
+                h.haltnam,
+                h.breite,
+                h.material,
+                h.strasse,
+                h.haltungstyp,
+                h.sohleoben,
+                h.sohleunten
+                schob.knotentyp,            -- hier nicht verwendet
+                schun.knotentyp,            -- hier nicht verwendet
+                schob.entwart,              -- hier nicht verwendet
+                schun.entwart,              -- hier nicht verwendet
+                sum(h.laenge) OVER (ORDER BY sel.column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as laenge_sum
+            FROM haltungen AS h
+            INNER JOIN schaechte AS schob ON schob.schnam = h.schoben
+            INNER JOIN schaechte AS schun ON schun.schnam = h.schunten
+            INNER JOIN (VALUES ({sel})) AS sel ON sel.column1 = h.haltnam
+            """
 
-        for i in route[1]:
+        if not self.db_qkan.sql(sql, "laengsschnitt.zeichnen.1"):
+            logger.error(f"{__file__}: Fehler in laengsschnitt.zeichnen.1: Datenbankzugriff nicht möglich")
+            return 'nicht erstellt'
 
-            sql = """
-                            SELECT
-                                h.schoben,
-                                h.hoehe,
-                                h.schunten,
-                                h.laenge,
-                                schob.deckelhoehe,
-                                schob.sohlhoehe,
-                                schun.deckelhoehe,
-                                schun.sohlhoehe,
-                                h.entwart,
-                                h.haltnam,
-                                h.breite,
-                                h.material,
-                                h.strasse,
-                                h.haltungstyp,
-                                h.sohleoben,
-                                h.sohleunten
-                            FROM haltungen AS h,
-                                schaechte AS schob,
-                                schaechte AS schun
-                            WHERE schob.schnam = h.schoben AND schun.schnam = h.schunten AND haltnam = ?
-                            """
+        for attr in self.db_qkan.fetchall():
+            (
+                schoben, hoehe, schunten, laenge, deckeloben, _, deckelunten, _, entwart,
+                haltnam, breite, material, strasse, haltungstyp, sohleoben, sohleunten,
+                _, _, _, _, laenge2
+            ) = attr
 
-            if not self.db_qkan.sql(sql, "laengsschnitt.zeichnen", parameters=(str(i),)):
-                logger.error(f"{__file__}: Fehler beim  in Zeile 137: Datenbankzugriff nicht möglich")
-                x = 'nicht erstellt'
-                return x
+            y_sohle.append(sohleoben)
+            y_sohle.append(sohleunten)
+            x_sohle.append(laenge2 - laenge)
+            x_sohle.append(laenge2)
 
-            for attr in self.db_qkan.fetchall():
-                schoben = attr[0]
-                hoehe = attr[1]
-                schunten = attr[2]
-                laenge = attr[3]
-                deckeloben = attr[4]
-                sohleoben = attr[14]
-                deckelunten = attr[6]
-                sohleunten = attr[15]
-                entwart = attr[8]
-                haltnam = attr[9]
-                breite = attr[10]
-                material = attr[11]
-                strasse = attr[12]
-                haltungstyp = attr[13]
+            y_sohle2.append(sohleoben + hoehe)
+            y_sohle2.append(sohleunten + hoehe)
+            x_sohle2.append(laenge2 - laenge)
+            x_sohle2.append(laenge2)
 
-                laenge2 += laenge
+            y_deckel.append(deckeloben)
+            y_deckel.append(deckelunten)
+            x_deckel.append(laenge2 - laenge)
+            x_deckel.append(laenge2)
 
-                y_sohle.append(sohleoben)
-                y_sohle.append(sohleunten)
-                x_sohle.append(laenge1)
-                x_sohle.append(laenge2)
+            y_label.append((deckeloben + sohleoben - hoehe) / 2)
+            y_label.append((deckelunten + sohleunten - hoehe) / 2)
 
-                y_sohle2.append(sohleoben + hoehe)
-                y_sohle2.append(sohleunten + hoehe)
-                x_sohle2.append(laenge1)
-                x_sohle2.append(laenge2)
-
-                y_deckel.append(deckeloben)
-                y_deckel.append(deckelunten)
-                x_deckel.append(laenge1)
-                x_deckel.append(laenge2)
-
-                y_label.append((deckeloben + sohleoben - hoehe) / 2)
-                y_label.append((deckelunten + sohleunten - hoehe) / 2)
-
-                laenge1 += laenge
-                name.append(schoben)
-                name.append(schunten)
-                haltnam_l.append(haltnam)
-                schoben_l.append(schoben)
-                schunten_l.append(schunten)
-                laenge_l.append(laenge)
-                entwart_l.append(entwart)
-                hoehe_l.append(hoehe)
-                breite_l.append(breite)
-                material_l.append(material)
-                strasse_l.append(strasse)
-                haltungstyp_l.append(haltungstyp)
+            name.append(schoben)
+            name.append(schunten)
+            haltnam_l.append(haltnam)
+            schoben_l.append(schoben)
+            schunten_l.append(schunten)
+            laenge_l.append(laenge)
+            entwart_l.append(entwart)
+            hoehe_l.append(hoehe)
+            breite_l.append(breite)
+            material_l.append(material)
+            strasse_l.append(strasse)
+            haltungstyp_l.append(haltungstyp)
 
         haltungen = {}
         schaechte = {}
@@ -363,7 +355,7 @@ class LaengsTask:
 
 
     def slider_2(self):
-        # Geschwindigkeit der Animation ändern
+        """Geschwindigkeit der Animation ändern"""
 
         self.anim._interval = float(self.geschw)
         #self.anim.event_source.interval = float(self.geschw)
@@ -377,7 +369,7 @@ class LaengsTask:
 
 
     def zeichnen(self):
-        #hier wird der Längsschnitt in das Fenster gezeichnet
+        """Längsschnitt in das Fenster zeichnen"""
         figure = self.fig
         figure.clear()
         plt.figure(figure.number)
@@ -388,7 +380,7 @@ class LaengsTask:
         x = layer.source()
 
         #mit dbfunk layer namen anzeigen lassen (für die information ob haltungen oder schächte ausgewählt wurden)
-        dbname, table, geom, sql = get_qkanlayer_attributes(x)
+        _, table, _, _ = get_qkanlayer_attributes(x)
 
 
         #selektierte elemente anzeigen
@@ -422,8 +414,12 @@ class LaengsTask:
 
 
         route = find_route(self.db_qkan, liste)
-        logger.debug(f'zeichnen.ausgewaehlt: {liste}')
+        logger.debug(f'Fehler in zeichnen. liste: {liste}')
         logger.debug(f'route: {route}')
+
+        if route is None:
+            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
+            return 'nicht erstellt'
 
         # route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
         if table == 'schaechte':
@@ -462,142 +458,117 @@ class LaengsTask:
         deckel_l = []
         sohle_l = []
         entwart_s =[]
-        laenge1 = 0
-        laenge2 = 0
 
-        if route is None:
-            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
-            x = 'nicht erstellt'
-            return x
+        sel = '), ('.join([f"'{num}', {el}" for el, num in enumerate(route[1])])         # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
+        sql = f"""
+            SELECT
+                h.schoben,
+                h.hoehe,
+                h.schunten,
+                h.laenge,
+                schob.deckelhoehe,
+                schob.sohlhoehe,
+                schun.deckelhoehe,
+                schun.sohlhoehe,
+                h.entwart,
+                h.haltnam,
+                h.breite,
+                h.material,
+                h.strasse,
+                h.haltungstyp,
+                h.sohleoben,
+                h.sohleunten,
+                schob.knotentyp,
+                schun.knotentyp,
+                schob.entwart,
+                schun.entwart,
+                sum(h.laenge) OVER (ORDER BY sel.column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as laenge_sum
+            FROM haltungen AS h
+            INNER JOIN schaechte AS schob ON schob.schnam = h.schoben
+            INNER JOIN schaechte AS schun ON schun.schnam = h.schunten
+            INNER JOIN (VALUES ({sel})) AS sel ON sel.column1 = h.haltnam
+            """
 
-        for i in route[1]:
+        if not self.db_qkan.sql(sql, "laengsschnitt.zeichnen.2"):
+            logger.error(f"{__file__}: Fehler in laengsschnitt.zeichnen.2: Datenbankzugriff nicht möglich")
+            return 'nicht erstellt'
 
-            sql = """
-                    SELECT
-                        h.schoben,
-                        h.hoehe,
-                        h.schunten,
-                        h.laenge,
-                        schob.deckelhoehe,
-                        schob.sohlhoehe,
-                        schun.deckelhoehe,
-                        schun.sohlhoehe,
-                        h.entwart,
-                        h.haltnam,
-                        h.breite,
-                        h.material,
-                        h.strasse,
-                        h.haltungstyp,
-                        h.sohleoben,
-                        h.sohleunten,
-                        schob.knotentyp,
-                        schun.knotentyp,
-                        schob.entwart,
-                        schun.entwart
-                    FROM haltungen AS h,
-                        schaechte AS schob,
-                        schaechte AS schun
-                    WHERE schob.schnam = h.schoben AND schun.schnam = h.schunten AND haltnam = ?
-                    """
+        for attr in self.db_qkan.fetchall():
+            (
+                schoben, hoehe, schunten, laenge, deckeloben, sohleoben, deckelunten, sohleunten, entwart,
+                haltnam, breite, material, strasse, haltungstyp, haltung_sohle_o, haltung_sohle_u,
+                schob_typ, schun_typ, entwart_o, entwart_u, laenge2
+            ) = attr
 
-            if not self.db_qkan.sql(sql, "laengsschnitt.zeichnen", parameters=(str(i),)):
-                logger.error(f"{__file__}: Fehler beim  in Zeile 137: Datenbankzugriff nicht möglich")
-                x = 'nicht erstellt'
-                return x
+            if int(haltung_sohle_o) == 0:
+                haltung_sohle_o = sohleoben
+            if int(haltung_sohle_u) == 0:
+                haltung_sohle_u = sohleunten
 
-            for attr in self.db_qkan.fetchall():
-                schoben = attr[0]
-                hoehe = attr[1]
-                schunten = attr[2]
-                laenge = attr[3]
-                deckeloben = attr[4]
-                sohleoben = attr[5]
-                deckelunten = attr[6]
-                sohleunten = attr[7]
-                entwart = attr[8]
-                haltnam = attr[9]
-                breite = attr[10]
-                material = attr[11]
-                strasse = attr[12]
-                haltungstyp = attr[13]
-                schob_typ = attr[16]
-                schun_typ = attr[17]
+            y_sohle.append(sohleoben)
+            y_sohle.append(haltung_sohle_o)
+            y_sohle.append(haltung_sohle_u)
+            y_sohle.append(sohleunten)
+            x_sohle.append(laenge2 - laenge)
+            x_sohle.append(laenge2 - laenge)
+            x_sohle.append(laenge2)
+            x_sohle.append(laenge2)
 
-                haltung_sohle_o = attr[14]
-                if int(haltung_sohle_o) == 0:
-                    haltung_sohle_o = sohleoben
-                haltung_sohle_u = attr[15]
-                if int(haltung_sohle_u) == 0:
-                    haltung_sohle_u = sohleunten
+            if sohleoben > 0:
+                y_sohle2.append(sohleoben + hoehe)
+            else:
+                y_sohle2.append(sohleoben)
+            if haltung_sohle_o > 0:
+                y_sohle2.append(haltung_sohle_o + hoehe)
+            else:
+                y_sohle2.append(haltung_sohle_o)
+            if haltung_sohle_u > 0:
+                y_sohle2.append(haltung_sohle_u + hoehe)
+            else:
+                y_sohle2.append(haltung_sohle_u)
+            if sohleunten > 0:
+                y_sohle2.append(sohleunten + hoehe)
+            else:
+                y_sohle2.append(sohleunten)
+            x_sohle2.append(laenge2 - laenge)
+            x_sohle2.append(laenge2 - laenge)
+            x_sohle2.append(laenge2)
+            x_sohle2.append(laenge2)
 
-                laenge2 += laenge
+            y_deckel.append(deckeloben)
+            y_deckel.append(deckeloben)
+            y_deckel.append(deckelunten)
+            y_deckel.append(deckelunten)
+            x_deckel.append(laenge2 - laenge)
+            x_deckel.append(laenge2 - laenge)
+            x_deckel.append(laenge2)
+            x_deckel.append(laenge2)
 
-                y_sohle.append(sohleoben)
-                y_sohle.append(haltung_sohle_o)
-                y_sohle.append(haltung_sohle_u)
-                y_sohle.append(sohleunten)
-                x_sohle.append(laenge1)
-                x_sohle.append(laenge1)
-                x_sohle.append(laenge2)
-                x_sohle.append(laenge2)
+            y_label.append((deckeloben+sohleoben-hoehe)/2)
+            y_label.append((deckelunten+sohleunten-hoehe)/2)
 
-                if sohleoben > 0:
-                    y_sohle2.append(sohleoben + hoehe)
-                else:
-                    y_sohle2.append(sohleoben)
-                if haltung_sohle_o > 0:
-                    y_sohle2.append(haltung_sohle_o + hoehe)
-                else:
-                    y_sohle2.append(haltung_sohle_o)
-                if haltung_sohle_u > 0:
-                    y_sohle2.append(haltung_sohle_u + hoehe)
-                else:
-                    y_sohle2.append(haltung_sohle_u)
-                if sohleunten > 0:
-                    y_sohle2.append(sohleunten + hoehe)
-                else:
-                    y_sohle2.append(sohleunten)
-                x_sohle2.append(laenge1)
-                x_sohle2.append(laenge1)
-                x_sohle2.append(laenge2)
-                x_sohle2.append(laenge2)
-
-                y_deckel.append(deckeloben)
-                y_deckel.append(deckeloben)
-                y_deckel.append(deckelunten)
-                y_deckel.append(deckelunten)
-                x_deckel.append(laenge1)
-                x_deckel.append(laenge1)
-                x_deckel.append(laenge2)
-                x_deckel.append(laenge2)
-
-                y_label.append((deckeloben+sohleoben-hoehe)/2)
-                y_label.append((deckelunten+sohleunten-hoehe)/2)
-
-                laenge1 += laenge
-                name.append(schoben)
-                name.append(schunten)
-                haltnam_l.append(haltnam)
-                schoben_l.append(schoben)
-                schunten_l.append(schunten)
-                laenge_l.append(laenge)
-                entwart_l.append(entwart)
-                hoehe_l.append(hoehe)
-                breite_l.append(breite)
-                material_l.append(material)
-                strasse_l.append(strasse)
-                haltungstyp_l.append(haltungstyp)
-                schaechte_l.append(schoben)
-                schaechte_l.append(schunten)
-                schachttyp_l.append(schob_typ)
-                schachttyp_l.append(schun_typ)
-                deckel_l.append(deckeloben)
-                deckel_l.append(deckelunten)
-                sohle_l.append(sohleoben)
-                sohle_l.append(sohleunten)
-                entwart_s.append(attr[18])
-                entwart_s.append(attr[19])
-
+            name.append(schoben)
+            name.append(schunten)
+            haltnam_l.append(haltnam)
+            schoben_l.append(schoben)
+            schunten_l.append(schunten)
+            laenge_l.append(laenge)
+            entwart_l.append(entwart)
+            hoehe_l.append(hoehe)
+            breite_l.append(breite)
+            material_l.append(material)
+            strasse_l.append(strasse)
+            haltungstyp_l.append(haltungstyp)
+            schaechte_l.append(schoben)
+            schaechte_l.append(schunten)
+            schachttyp_l.append(schob_typ)
+            schachttyp_l.append(schun_typ)
+            deckel_l.append(deckeloben)
+            deckel_l.append(deckelunten)
+            sohle_l.append(sohleoben)
+            sohle_l.append(sohleunten)
+            entwart_s.append(entwart_o)
+            entwart_s.append(entwart_u)
 
         y_liste = []
 
@@ -869,12 +840,13 @@ class LaengsTask:
 
 
     def show(self):
-        # selektierte elemente anzeigen
+        """selektierte Elemente anzeigen"""
         layer = iface.activeLayer()
         layer.selectByExpression("pk in {}".format(tuple(self.features)))
 
 
     def cad(self):
+        """Längsschnitt in CAD zeichnen"""
         #TODO: max Wasserstand ergänzen
         points = self.point.split(",", 1)
         massstab_liste = self.massstab.split(":", 1)
@@ -891,7 +863,7 @@ class LaengsTask:
         x = layer.source()
 
         # mit dbfunk layer namen anzeigen lassen (für die information ob haltungen oder schächte ausgewählt wurden)
-        dbname, table, geom, sql = get_qkanlayer_attributes(x)
+        _, table, _, _ = get_qkanlayer_attributes(x)
 
         # selektierte elemente anzeigen
 
@@ -922,6 +894,13 @@ class LaengsTask:
                     liste.append(x2)
 
         route = find_route(self.db_qkan, liste)
+        logger.debug(f'Fehler in cad. liste: {liste}')
+        logger.debug(f'route: {route}')
+
+        if route is None:
+            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
+            return
+
         if table == 'schaechte':
             liste = []
             for f in route[0]:
@@ -957,102 +936,89 @@ class LaengsTask:
         material_l = ['Material']
         strasse_l = ['Strasse']
         haltungstyp_l = ['Typ']
-        laenge1 = 0
-        laenge2 = 0
 
+        sel = '), ('.join([f"'{num}', {el}" for el, num in enumerate(route[1])])         # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
+        sql = f"""
+            SELECT
+                h.schoben,
+                h.hoehe,
+                h.schunten,
+                h.laenge,
+                schob.deckelhoehe,
+                schob.sohlhoehe,            -- hier nicht verwendet
+                schun.deckelhoehe,
+                schun.sohlhoehe,            -- hier nicht verwendet
+                h.entwart,
+                h.haltnam,
+                h.breite,
+                h.material,
+                h.strasse,
+                h.haltungstyp,
+                h.sohleoben,
+                h.sohleunten
+                schob.knotentyp,            -- hier nicht verwendet
+                schun.knotentyp,            -- hier nicht verwendet
+                schob.entwart,              -- hier nicht verwendet
+                schun.entwart,              -- hier nicht verwendet
+                sum(h.laenge) OVER (ORDER BY sel.column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as laenge_sum
+            FROM haltungen AS h
+            INNER JOIN schaechte AS schob ON schob.schnam = h.schoben
+            INNER JOIN schaechte AS schun ON schun.schnam = h.schunten
+            INNER JOIN (VALUES ({sel})) AS sel ON sel.column1 = h.haltnam
+            """
 
-        if route is None:
-            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
-            return
+        if not self.db_qkan.sql(sql, "laengsschnitt.3"):
+            logger.error(f"{__file__}: Fehler in laengsschnitt.3: Datenbankzugriff nicht möglich")
+            return 'nicht erstellt'
 
-        for i in route[1]:
+        for attr in self.db_qkan.fetchall():
+            (
+                schoben, hoehe, schunten, laenge, deckeloben, _, deckelunten, _, entwart,
+                haltnam, breite, material, strasse, haltungstyp, sohleoben, sohleunten,
+                _, _, _, _, laenge2
+            ) = attr
 
-            sql = """
-                            SELECT
-                                h.schoben,
-                                h.hoehe,
-                                h.schunten,
-                                h.laenge,
-                                schob.deckelhoehe,
-                                schob.sohlhoehe,
-                                schun.deckelhoehe,
-                                schun.sohlhoehe,
-                                h.entwart,
-                                h.haltnam,
-                                h.breite,
-                                h.material,
-                                h.strasse,
-                                h.haltungstyp,
-                                h.sohleoben,
-                                h.sohleunten
-                            FROM haltungen AS h,
-                                schaechte AS schob,
-                                schaechte AS schun
-                            WHERE schob.schnam = h.schoben AND schun.schnam = h.schunten AND haltnam = {}
-                            """.format("'" + str(i) + "'")
+            hschoben = sohleoben
+            hschunten = sohleunten
 
-            if not self.db_qkan.sql(sql, "laengsschnitt: Datenbankzugriff nicht möglich"):
-                return
+            z_sohle_h.append(hschoben)
+            z_sohle_h.append(hschunten)
 
-            for attr in self.db_qkan.fetchall():
-                schoben = attr[0]
-                hoehe = attr[1]
-                schunten = attr[2]
-                laenge = attr[3]
-                deckeloben = attr[4]
-                sohleoben = attr[14]
-                deckelunten = attr[6]
-                sohleunten = attr[15]
-                entwart = attr[8]
-                haltnam = attr[9]
-                breite = attr[10]
-                material = attr[11]
-                strasse = attr[12]
-                haltungstyp = attr[13]
-                hschoben = attr[14]
-                hschunten = attr[15]
+            y_sohle.append(sohleoben+pointy)
+            y_sohle.append(sohleunten+pointy)
+            x_sohle.append(((laenge2 - laenge)/massstab)+pointx)
+            x_sohle.append((laenge2/massstab)+pointx)
 
-                laenge2 += laenge
+            y_sohle2.append(sohleoben + hoehe+pointy)
+            y_sohle2.append(sohleunten + hoehe+pointy)
+            x_sohle2.append(((laenge2 - laenge)/massstab)+pointx)
+            x_sohle2.append((laenge2/massstab)+pointx)
 
-                z_sohle_h.append(hschoben)
-                z_sohle_h.append(hschunten)
+            y_deckel.append(deckeloben+pointy)
+            y_deckel.append(deckelunten+pointy)
+            x_deckel.append(((laenge2 - laenge)/massstab)+pointx)
+            x_deckel.append((laenge2/massstab)+pointx)
 
-                y_sohle.append(sohleoben+pointy)
-                y_sohle.append(sohleunten+pointy)
-                x_sohle.append((laenge1/massstab)+pointx)
-                x_sohle.append((laenge2/massstab)+pointx)
+            y_label.append(((deckeloben + sohleoben) / 2)+pointy)
+            y_label.append(((deckelunten + sohleunten) / 2)+pointy)
 
-                y_sohle2.append(sohleoben + hoehe+pointy)
-                y_sohle2.append(sohleunten + hoehe+pointy)
-                x_sohle2.append((laenge1/massstab)+pointx)
-                x_sohle2.append((laenge2/massstab)+pointx)
+            name.append(schoben)
+            name.append(schunten)
+            z_deckel.append(deckeloben)
+            z_deckel.append(deckelunten)
+            z_sohle.append(sohleoben)
+            z_sohle.append(sohleunten)
 
-                y_deckel.append(deckeloben+pointy)
-                y_deckel.append(deckelunten+pointy)
-                x_deckel.append((laenge1/massstab)+pointx)
-                x_deckel.append((laenge2/massstab)+pointx)
-
-                y_label.append(((deckeloben + sohleoben) / 2)+pointy)
-                y_label.append(((deckelunten + sohleunten) / 2)+pointy)
-
-                laenge1 += laenge
-                name.append(schoben)
-                name.append(schunten)
-                z_deckel.append(deckeloben)
-                z_deckel.append(deckelunten)
-                z_sohle.append(sohleoben)
-                z_sohle.append(sohleunten)
-
-                haltnam_l.append(haltnam)
-                schoben_l.append(schoben)
-                schunten_l.append(schunten)
-                laenge_l.append(laenge)
-                entwart_l.append(entwart)
-                hoehe_l.append(hoehe)
-                breite_l.append(breite)
-                material_l.append(material)
-                strasse_l.append(strasse)
-                haltungstyp_l.append(haltungstyp)
+            haltnam_l.append(haltnam)
+            schoben_l.append(schoben)
+            schunten_l.append(schunten)
+            laenge_l.append(laenge)
+            entwart_l.append(entwart)
+            hoehe_l.append(hoehe)
+            breite_l.append(breite)
+            material_l.append(material)
+            strasse_l.append(strasse)
+            haltungstyp_l.append(haltungstyp)
 
         y_liste = []
 
@@ -1357,7 +1323,7 @@ class LaengsTask:
         x = layer.source()
 
         # mit dbfunk layer namen anzeigen lassen (für die information ob haltungen oder schächte ausgewählt wurden)
-        dbname, table, geom, sql = get_qkanlayer_attributes(x)
+        _, table, _, _ = get_qkanlayer_attributes(x)
 
         # selektierte elemente anzeigen
         self.selected = layer.selectedFeatures()
@@ -1606,7 +1572,7 @@ class LaengsTask:
         x = layer.source()
 
         #mit dbfunk layer namen anzeigen lassen (für die information ob haltungen oder schächte ausgewählt wurden)
-        dbname, table, geom, sql = get_qkanlayer_attributes(x)
+        _, table, _, _ = get_qkanlayer_attributes(x)
 
         t=None
 
@@ -1640,6 +1606,12 @@ class LaengsTask:
                     liste.append(x2)
 
         route = find_route(self.db_qkan, liste)
+        logger.debug(f'Fehler in laengs. liste: {liste}')
+        logger.debug(f'route: {route}')
+
+        if route is None:
+            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
+            return 'nicht erstellt'
 
         if table == 'schaechte':
             liste = []
@@ -1653,7 +1625,7 @@ class LaengsTask:
             liste2 = []
             for y in route[1]:
                 liste2.append(y)
-        logger.debug(f'zeichnen.ausgewaehlt: {liste}')
+        logger.debug(f'zeichnen.ausgewaehlt.3: {liste}')
         logger.debug(f'route: {route}')
         # route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
         x_sohle = []
@@ -1674,95 +1646,78 @@ class LaengsTask:
         material_l = []
         strasse_l = []
         haltungstyp_l = []
-        laenge1 = 0
-        laenge2 = 0
 
-        if route is None:
-            iface.messageBar().pushMessage("Fehler", 'Es wurden keine Elemente Ausgewählt', level=Qgis.Critical)
-            x = 'nicht erstellt'
-            return x
+        sel = '), ('.join([f"'{num}', {el}" for el, num in enumerate(route[1])])         # sel = ('15600000-45', 0), ('15600000-50', 1), ...)
+        sql = f"""
+            SELECT
+                h.schoben,
+                h.hoehe,
+                h.schunten,
+                h.laenge,
+                schob.deckelhoehe,
+                schob.sohlhoehe,            -- hier nicht verwendet
+                schun.deckelhoehe,
+                schun.sohlhoehe,            -- hier nicht verwendet
+                h.entwart,
+                h.haltnam,
+                h.breite,
+                h.material,
+                h.strasse,
+                h.haltungstyp,
+                h.sohleoben,
+                h.sohleunten
+                schob.knotentyp,            -- hier nicht verwendet
+                schun.knotentyp,            -- hier nicht verwendet
+                schob.entwart,              -- hier nicht verwendet
+                schun.entwart,              -- hier nicht verwendet
+                sum(h.laenge) OVER (ORDER BY sel.column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as laenge_sum
+            FROM haltungen AS h
+            INNER JOIN schaechte AS schob ON schob.schnam = h.schoben
+            INNER JOIN schaechte AS schun ON schun.schnam = h.schunten
+            INNER JOIN (VALUES ({sel})) AS sel ON sel.column1 = h.haltnam
+            """
 
-        for i in route[1]:
+        if not self.db_qkan.sql(sql, "laengsschnitt.zeichnen.4"):
+            logger.error(f"{__file__}: Fehler in laengsschnitt.zeichnen.4: Datenbankzugriff nicht möglich")
+            return 'nicht erstellt'
 
-            sql = """
-                    SELECT
-                        h.schoben,
-                        h.hoehe,
-                        h.schunten,
-                        h.laenge,
-                        schob.deckelhoehe,
-                        schob.sohlhoehe,
-                        schun.deckelhoehe,
-                        schun.sohlhoehe,
-                        h.entwart,
-                        h.haltnam,
-                        h.breite,
-                        h.material,
-                        h.strasse,
-                        h.haltungstyp,
-                        h.sohleoben,
-                        h.sohleunten
-                    FROM haltungen AS h,
-                        schaechte AS schob,
-                        schaechte AS schun
-                    WHERE schob.schnam = h.schoben AND schun.schnam = h.schunten AND haltnam = ?
-                    """
+        for attr in self.db_qkan.fetchall():
+            (
+                schoben, hoehe, schunten, laenge, deckeloben, _, deckelunten, _, entwart, haltnam,
+                breite, material, strasse, haltungstyp, sohleoben, sohleunten,
+                _, _, _, _, laenge2
+            ) = attr
 
-            if not self.db_qkan.sql(sql, "laengsschnitt.zeichnen", parameters=(str(i),)):
-                logger.error(f"{__file__}: Fehler beim  in Zeile 137: Datenbankzugriff nicht möglich")
-                x = 'nicht erstellt'
-                return x
+            y_sohle.append(sohleoben)
+            y_sohle.append(sohleunten)
+            x_sohle.append(laenge2 - laenge)
+            x_sohle.append(laenge2)
 
-            for attr in self.db_qkan.fetchall():
-                schoben = attr[0]
-                hoehe = attr[1]
-                schunten = attr[2]
-                laenge = attr[3]
-                deckeloben = attr[4]
-                sohleoben = attr[14]
-                deckelunten = attr[6]
-                sohleunten = attr[15]
-                entwart = attr[8]
-                haltnam = attr[9]
-                breite = attr[10]
-                material = attr[11]
-                strasse = attr[12]
-                haltungstyp = attr[13]
+            y_sohle2.append(sohleoben + hoehe)
+            y_sohle2.append(sohleunten + hoehe)
+            x_sohle2.append(laenge2 - laenge)
+            x_sohle2.append(laenge2)
 
-                laenge2 += laenge
+            y_deckel.append(deckeloben)
+            y_deckel.append(deckelunten)
+            x_deckel.append(laenge2 - laenge)
+            x_deckel.append(laenge2)
 
-                y_sohle.append(sohleoben)
-                y_sohle.append(sohleunten)
-                x_sohle.append(laenge1)
-                x_sohle.append(laenge2)
+            y_label.append((deckeloben+sohleoben-hoehe)/2)
+            y_label.append((deckelunten+sohleunten-hoehe)/2)
 
-                y_sohle2.append(sohleoben + hoehe)
-                y_sohle2.append(sohleunten + hoehe)
-                x_sohle2.append(laenge1)
-                x_sohle2.append(laenge2)
-
-                y_deckel.append(deckeloben)
-                y_deckel.append(deckelunten)
-                x_deckel.append(laenge1)
-                x_deckel.append(laenge2)
-
-                y_label.append((deckeloben+sohleoben-hoehe)/2)
-                y_label.append((deckelunten+sohleunten-hoehe)/2)
-
-                laenge1 += laenge
-                name.append(schoben)
-                name.append(schunten)
-                haltnam_l.append(haltnam)
-                schoben_l.append(schoben)
-                schunten_l.append(schunten)
-                laenge_l.append(laenge)
-                entwart_l.append(entwart)
-                hoehe_l.append(hoehe)
-                breite_l.append(breite)
-                material_l.append(material)
-                strasse_l.append(strasse)
-                haltungstyp_l.append(haltungstyp)
-
+            name.append(schoben)
+            name.append(schunten)
+            haltnam_l.append(haltnam)
+            schoben_l.append(schoben)
+            schunten_l.append(schunten)
+            laenge_l.append(laenge)
+            entwart_l.append(entwart)
+            hoehe_l.append(hoehe)
+            breite_l.append(breite)
+            material_l.append(material)
+            strasse_l.append(strasse)
+            haltungstyp_l.append(haltungstyp)
 
         haltungen = {}
         schaechte = {}
