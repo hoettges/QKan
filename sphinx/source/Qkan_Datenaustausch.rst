@@ -52,7 +52,7 @@ Beispiel zum Ausprobieren:
 | D110036;388798.8302;5709945.165;79.51;82.56
 | D119801;388784.1633;5709985.519;78.84;81.86
 
-| 3. Haltungsdaten (in Layer "Haltungen nach Typ" einfügen): 
+| 3. Haltungsdaten (in Layer "Haltungen" einfügen):
 |
 | Haltung;Schacht_oben;Schacht_unten;Höhe;Breite;Länge;Sohleoben;Sohleunten;Profilname
 | 410;D110076;D110077;0.3;0.3;12.55;80.5;80.32;Kreisquerschnitt

@@ -831,7 +831,7 @@ class DBConnection:
         elif tabnam == 'tezg':
             parlis = ['flnam', 'regenschreiber', 'schnam', 'befgrad', 'neigung',
                        'createdat', 'haltnam', 'neigkl', 'schwerpunktlaufzeit', 'teilgebiet', 'abflussparameter',
-                      'kommentar', 'geom', 'epsg']
+                      'kommentar', 'geom']
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
@@ -846,6 +846,28 @@ class DBConnection:
                         :abflussparameter, :kommentar,
                     GeomFromText(:geom, :epsg)
                     );"""
+
+        elif tabnam == "flaechen":
+            parlis = ['flnam', 'haltnam', 'schnam', 'neigkl', 'neigung',
+                      'teilgebiet', 'regenschreiber', 'abflussparameter',
+                      'aufteilen', 'kommentar', 'createdat',
+                      'geom']
+            for el in parlis:
+                if not parameters.get(el, None):
+                    parameters[el] = None
+            sql = """
+                    INSERT INTO flaechen
+                      (flnam, haltnam, schnam, neigkl, neigung, 
+                      teilgebiet, regenschreiber, abflussparameter, 
+                      aufteilen, kommentar, createdat, 
+                      geom)
+                    VALUES (
+                    :flnam, :haltnam, :schnam, :neigkl, :neigung, 
+                    :teilgebiet, :regenschreiber, :abflussparameter, 
+                    :aufteilen, :kommentar, :createdat,
+                    GeomFromText(:geom, :epsg)
+                    );"""
+
         elif tabnam == "teilgebiete":
             parlis = ["tgnam", "kommentar", "createdat", "geom"]
             for el in parlis:
@@ -859,6 +881,7 @@ class DBConnection:
                     coalesce(:createdat, CURRENT_TIMESTAMP),
                     GeomFromText(:geom, :epsg)
                 );"""
+
         else:
             warnung(
                 "dbfunc.DBConnection.insertdata:",

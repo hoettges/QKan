@@ -9,13 +9,13 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
     FROM haltungen AS ha
     LEFT JOIN schaechte AS so ON ha.schoben = so.schnam
     WHERE within(so.geop, buffer(pointn(ha.geom,1), 1.0)) <> 1 AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL)',
- 'Haltungen nach Typ', 'haltnam'),
+ 'Haltungen', 'haltnam'),
 ('Netzstruktur', 'Schacht unten mehr als 1.0 m von Haltungsende entfernt', 'Fehler', 9, 
     'SELECT haltnam, ''Schacht unten mehr als 1.0 m von Haltungsende entfernt'' AS bemerkung
     FROM haltungen AS ha
     LEFT JOIN schaechte AS su ON ha.schunten = su.schnam
     WHERE within(su.geop, buffer(pointn(ha.geom,-1), 1.0)) <> 1 AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL)',
- 'Haltungen nach Typ', 'haltnam'),
+ 'Haltungen', 'haltnam'),
 ('HYSTEM-EXTRAN', 'Abflussparameter fehlen', 'Fehler', 9,
     'SELECT f1.flnam,
         printf("Abflussparameter ""%s"" wird in Layer ""Flächen"" verwendet, fehlt aber in Referenztabelle ""Abflussparameter HE"" bzw. ""... KP"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", 
@@ -56,7 +56,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
     ON h.profilnam = p.profilnam
     WHERE p.profilnam IS NULL AND (haltungstyp = ''Haltung'' OR haltungstyp IS NULL)
     GROUP BY h.profilnam',
- 'Haltungen nach Typ', 'haltnam'),
+ 'Haltungen', 'haltnam'),
 ('HYSTEM-EXTRAN', 'Schachtnamen doppelt', 'Fehler', 9,
     'SELECT schnam,
         printf("Schachtnamen doppelt in Layer ""Schächte"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT schnam FROM schaechte GROUP BY schnam HAVING count(*) > 1))) AS bemerkung
@@ -64,9 +64,9 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
  'Schächte', 'schnam'),
 ('HYSTEM-EXTRAN', 'Haltungsnamen doppelt', 'Fehler', 9,
     'SELECT haltnam,
-        printf("Haltungsnamen doppelt in Layer ""Haltungen nach Typ"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1))) AS bemerkung
+        printf("Haltungsnamen doppelt in Layer ""Haltungen"" in %d Datensätzen (nur 5 Datensätze exemplarisch aufgelistet)", (SELECT count(*) FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1))) AS bemerkung
     FROM (SELECT haltnam FROM haltungen GROUP BY haltnam HAVING count(*) > 1) LIMIT 5', 
- 'Haltungen nach Typ', 'haltnam'),
+ 'Haltungen', 'haltnam'),
 ('Kreuzende Haltungen', 'Kreuzende Haltungen', 'Warnung', 6, 
     'SELECT
          haltna1 AS haltnam, 
@@ -167,7 +167,7 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
     WHEN d1 IS NULL AND d3 <= 0
         THEN abstpar <= (hoehob + hoehun) / 2.0 + 0.5
     ELSE FALSE END)',
- 'Haltungen nach Typ', 'haltnam'),
+ 'Haltungen', 'haltnam'),
 ('Zustandsklassen', 'Der Schadenskode hat mehr als 3 Zeichen', 'Fehler', 9,
     'SELECT pk , ''Der Schadenskode hat mehr als 3 Zeichen'' AS bemerkung
     FROM Untersuchdat_haltung

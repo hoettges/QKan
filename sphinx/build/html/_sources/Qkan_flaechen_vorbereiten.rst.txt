@@ -12,7 +12,7 @@ Die Aufteilung der Flächen geschieht erst beim Export in das Simulationsprogram
 Bevor die automatische Flächenzuordnung jedoch durchgeführt werden kann, müssen die Daten noch entsprechend vorbereitet werden. 
 Dafür sollten als erstes die Haltungen markiert werden, an welche kein Regenwasser angeschlossen ist, da sie bei der automatischen Flächenzuordnung ignoriert werden sollen. 
 Diese Markierung geschieht über das Attribut "Entwässerungssysteme" der Haltungsdaten. 
-Hierfür muss der Layer Haltungen → Haltungen nach Typ ausgewählt und im :guilabel:`Bearbeitungsmodus` |Tool_bearbeitungsmodus| sein. 
+Hierfür muss der Layer Haltungen → Haltungen ausgewählt und im :guilabel:`Bearbeitungsmodus` |Tool_bearbeitungsmodus| sein.
 Es sollten nun alle Haltungen ausgewählt werden, an die kein Regenwasser angeschlossen ist (z.B. Haltungen die "nur" zum Auslauf führen; kurze Haltungen in Kreuzungsbereichen etc.). 
 Anschließend können die gewählten Haltungen in der Attributtabelle über den Filter :guilabel:`Alle gewählten Objekte anzeigen` (siehe Bild unten) angezeigt werden. 
 Das Entwässerungssystem muss nun für diese Haltungen von "Mischwasser" auf "MW nicht angeschlossen" geändert werden.

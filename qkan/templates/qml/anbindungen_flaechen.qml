@@ -442,7 +442,7 @@
             <Option name="FilterExpression" type="QString" value=""/>
             <Option name="Key" type="QString" value="haltnam"/>
             <Option name="Layer" type="QString" value="haltungen20161016203756230"/>
-            <Option name="LayerName" type="QString" value="Haltungen nach Typ"/>
+            <Option name="LayerName" type="QString" value="Haltungen"/>
             <Option name="LayerProviderName" type="QString" value="spatialite"/>
             <Option name="LayerSource" type="QString" value="dbname='C:/Users/User/Desktop/Hiwi Höttges/QGIS/muster.sqlite' table=&quot;haltungen&quot; (geom) sql=haltungstyp IS NULL or haltungstyp = 'Haltung'"/>
             <Option name="NofColumns" type="int" value="1"/>

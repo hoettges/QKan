@@ -356,14 +356,9 @@
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::Checked" name="Haltungen">
      <customproperties/>
-     <layer-tree-layer patch_size="0,0" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="Haltungen nach Typ" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;haltungen&quot; (geom)" id="haltungen20161016203756230">
+     <layer-tree-layer patch_size="0,0" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="Haltungen" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;haltungen&quot; (geom)" id="haltungen20161016203756230">
       <customproperties>
-       <property value="Haltungen nach Typ" key="cached_name"/>
-      </customproperties>
-     </layer-tree-layer>
-     <layer-tree-layer patch_size="0,0" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="Haltungslinien" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;haltungen&quot; (geom)" id="haltungen_Kopie20161016203906444">
-      <customproperties>
-       <property value="Haltungslinien" key="cached_name"/>
+       <property value="Haltungen" key="cached_name"/>
       </customproperties>
      </layer-tree-layer>
      <layer-tree-layer patch_size="-1,-1" expanded="1" legend_exp="" checked="Qt::Checked" providerKey="spatialite" legend_split_behavior="0" name="anschlussleitungen" source="dbname='C:/Users/Nora/Desktop/bilder_video_test/test_dwa51.sqlite' table=&quot;anschlussleitungen&quot; (geom)" id="anschlussleitungen_920de3f5_da30_411a_a85a_8f9a25d53312">

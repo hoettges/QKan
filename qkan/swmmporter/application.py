@@ -266,7 +266,7 @@ class SWMMPorter(QKanPlugin):
                 # noinspection PyArgumentList
                 project = QgsProject.instance()
                 project.read(QKan.config.project.file)
-                read_qml({'Haltungen nach Typ': 'haltungen_nach_typ.qml'}, 'qml/he')
+                read_qml({'Haltunge': 'haltungen.qml'}, 'qml/he')
                 project.reloadAllLayers()
 
         self.log.debug("Closed DB")

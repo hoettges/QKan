@@ -244,7 +244,7 @@ def import_kanaldaten(
             project.read(projectfile)  # read the new project file
             read_qml(
                 {
-                    'Haltungen nach Typ': 'haltungen_nach_typ.qml',
+                    'Haltungen': 'haltungen.qml',
                     'Abflussparameter': 'abflussparameter.qml',
                 },
                 'qml/dyna'

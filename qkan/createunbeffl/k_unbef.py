@@ -120,9 +120,9 @@ def create_unpaved_areas(
     if len(selected_abflparam) == 0:
         auswahl = ""
     elif len(selected_abflparam) == 1:
-        auswahl = " AND"
+        auswahl = " WHERE"
     elif len(selected_abflparam) >= 2:
-        auswahl = " AND ("
+        auswahl = " WHERE ("
     else:
         fehlermeldung("Interner Fehler", "Fehler in Fallunterscheidung!")
         return False
@@ -157,7 +157,8 @@ def create_unpaved_areas(
     # 2. Wenn in einer tezg-Fläche keine Fläche liegt, wird einfach die tezg-Fläche übernommen
 
     sql = """WITH flbef AS (
-            SELECT 'fd_' || ltrim(tezg.flnam, 'ft_') AS flnam, 
+            SELECT
+              row_number() OVER (ORDER BY tezg.pk, flaechen.pk) AS num, 
               tezg.haltnam AS haltnam, tezg.neigkl AS neigkl, 
               tezg.regenschreiber AS regenschreiber, tezg.teilgebiet AS teilgebiet,
               tezg.abflussparameter AS abflussparameter,
@@ -166,12 +167,10 @@ def create_unpaved_areas(
               ST_Union(MakeValid(flaechen.geom)) AS geob
             FROM (SELECT * FROM tezg WHERE geom IS NOT NULL) AS tezg
             LEFT JOIN (SELECT * FROM flaechen WHERE geom IS NOT NULL) AS flaechen
-            ON Intersects(tezg.geom, flaechen.geom)
-            WHERE 'fd_' || ltrim(tezg.flnam, 'ft_') not in 
-            (   SELECT flnam FROM flaechen WHERE flnam IS NOT NULL){auswahl}
+            ON Intersects(tezg.geom, flaechen.geom){auswahl}
             GROUP BY tezg.pk)
             INSERT INTO flaechen (flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter, kommentar, geom) 
-             SELECT flnam AS flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter,
+             SELECT printf('fd_%s', num) AS flnam, haltnam, neigkl, regenschreiber, teilgebiet, abflussparameter,
             kommentar, 
             CASE WHEN geob IS NULL  THEN geot ELSE CastToMultiPolygon(Difference(geot,geob)) END AS geof FROM flbef
             WHERE area(geof) > 0.5 AND geof IS NOT NULL""".format(

@@ -383,8 +383,7 @@ class ToolsConfig(ClassObject):
 
         # Layer names with data source table 'haltungen'
         haltung_types = {
-            "Haltungen nach Typ": "Haltung",
-            "Haltungslinien": "Haltung",
+            "Haltungen": "Haltung",
             "Pumpen": "Pumpe",
             "Wehre": "Wehr",
             "Drosseln": "Drossel",

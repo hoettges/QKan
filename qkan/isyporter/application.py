@@ -219,7 +219,7 @@ class IsyPorter(QKanPlugin):
                 # noinspection PyArgumentList
                 project = QgsProject.instance()
                 project.read(QKan.config.project.file)
-                read_qml({'Haltungen nach Typ': 'haltungen_nach_typ.qml'}, 'qml/isybau')
+                read_qml({'Haltunge': 'haltungen'}, 'qml/isybau')
                 project.reloadAllLayers()
 
             # TODO: Some layers don't have a valid EPSG attached or wrong coordinates

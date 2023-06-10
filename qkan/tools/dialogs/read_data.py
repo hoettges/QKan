@@ -95,6 +95,9 @@ class ReadData:  # type: ignore
         if value is None:
             logger.error(f"Zeile {nrow}, Spalte {column}: Feldwert ist leer")
             return None
+        elif value == '':
+            return None
+
         try:
             if isinstance(func(), float) and isinstance(value, str):
                 result = float(value.replace(",", "."))
