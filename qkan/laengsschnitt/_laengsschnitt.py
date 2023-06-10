@@ -3,7 +3,7 @@ from qgis.utils import iface, spatialite_connect
 from qgis.core import Qgis
 import csv
 from pathlib import Path
-from datetime import datetime
+import datetime
 
 import win32com.client
 import pythoncom
@@ -421,11 +421,9 @@ class LaengsTask:
                     liste.append(x2)
 
 
-        logger.debug(f'zeichnen.ausgewaehlt:Algorithmus gestartet{datetime.now()}')
         route = find_route(self.db_qkan, liste)
         logger.debug(f'zeichnen.ausgewaehlt: {liste}')
         logger.debug(f'route: {route}')
-        logger.debug(f'zeichnen.ausgewaehlt:Algorithmus beendet{datetime.now()}')
 
         # route = (['2747.1J55', '2747.1J56', '2747.1J57'], ['M2747.1J55', 'M2747.1J56'])
         if table == 'schaechte':
@@ -513,9 +511,9 @@ class LaengsTask:
                 schunten = attr[2]
                 laenge = attr[3]
                 deckeloben = attr[4]
-                sohleoben = attr[14]
+                sohleoben = attr[5]
                 deckelunten = attr[6]
-                sohleunten = attr[15]
+                sohleunten = attr[7]
                 entwart = attr[8]
                 haltnam = attr[9]
                 breite = attr[10]
@@ -525,21 +523,52 @@ class LaengsTask:
                 schob_typ = attr[16]
                 schun_typ = attr[17]
 
+                haltung_sohle_o = attr[14]
+                if int(haltung_sohle_o) == 0:
+                    haltung_sohle_o = sohleoben
+                haltung_sohle_u = attr[15]
+                if int(haltung_sohle_u) == 0:
+                    haltung_sohle_u = sohleunten
+
                 laenge2 += laenge
 
                 y_sohle.append(sohleoben)
+                y_sohle.append(haltung_sohle_o)
+                y_sohle.append(haltung_sohle_u)
                 y_sohle.append(sohleunten)
                 x_sohle.append(laenge1)
+                x_sohle.append(laenge1)
+                x_sohle.append(laenge2)
                 x_sohle.append(laenge2)
 
-                y_sohle2.append(sohleoben + hoehe)
-                y_sohle2.append(sohleunten + hoehe)
+                if sohleoben > 0:
+                    y_sohle2.append(sohleoben + hoehe)
+                else:
+                    y_sohle2.append(sohleoben)
+                if haltung_sohle_o > 0:
+                    y_sohle2.append(haltung_sohle_o + hoehe)
+                else:
+                    y_sohle2.append(haltung_sohle_o)
+                if haltung_sohle_u > 0:
+                    y_sohle2.append(haltung_sohle_u + hoehe)
+                else:
+                    y_sohle2.append(haltung_sohle_u)
+                if sohleunten > 0:
+                    y_sohle2.append(sohleunten + hoehe)
+                else:
+                    y_sohle2.append(sohleunten)
                 x_sohle2.append(laenge1)
+                x_sohle2.append(laenge1)
+                x_sohle2.append(laenge2)
                 x_sohle2.append(laenge2)
 
                 y_deckel.append(deckeloben)
+                y_deckel.append(deckeloben)
+                y_deckel.append(deckelunten)
                 y_deckel.append(deckelunten)
                 x_deckel.append(laenge1)
+                x_deckel.append(laenge1)
+                x_deckel.append(laenge2)
                 x_deckel.append(laenge2)
 
                 y_label.append((deckeloben+sohleoben-hoehe)/2)
@@ -571,6 +600,13 @@ class LaengsTask:
 
 
         y_liste = []
+
+        #wenn alle höhen null sind dann fehlermeldung an nutzer!
+
+        if all(num == 0 for num in x_deckel) and len(x_deckel) > 0 and all(num == 0 for num in x_sohle) and len(x_sohle) > 0:
+            iface.messageBar().pushMessage("Fehler", 'Es sind keine Höhenangaben vorhanden!', level=Qgis.Critical)
+
+
 
         if self.max == True:
             haltungen = {}
@@ -631,9 +667,6 @@ class LaengsTask:
 
         schaechte_l_neu = []
         list = []
-        deckel_neu = []
-        sohle_neu = []
-        entwart_s_neu = []
         list_deckel = []
         list_sohle = []
         list_laenge = []
@@ -722,10 +755,42 @@ class LaengsTask:
         columns = tuple(list)
         rows = ('Deckelhöhe [m NHN]', 'Sohlhöhe [m NHN]', 'Länge [m]', 'Entwässerungsart', 'Höhe [m]', 'Breite [m]', 'Material', 'Strasse', 'Typ')
 
-        new_plot.plot(x_deckel, y_deckel, color="black", label='Deckel')
-        new_plot.plot(x_sohle, y_sohle, color=farbe, label='Kanalsohle')
-        new_plot.plot(x_sohle2, y_sohle2, color=farbe, label='Kanalscheitel')
+        x = [i for i in y_deckel if i != 0]
+        x2 = [i for i in y_sohle if i != 0]
+        x3 = [i for i in y_sohle2 if i != 0]
 
+        max_deckel = max(x)
+        min_sohle = min(x2)
+        min_sohle2 = min(x3)
+        y_deckel_n = []
+        y_sohle_n = []
+        y_sohle2_n = []
+
+        i = 0
+        for x in y_deckel:
+            if x == 0:
+                y_deckel_n.append(max_deckel)
+            else:
+                y_deckel_n.append(y_deckel[i])
+            i += 1
+        i = 0
+        for x in y_sohle:
+            if x == 0:
+                y_sohle_n.append(min_sohle)
+            else:
+                y_sohle_n.append(y_sohle[i])
+            i += 1
+        i = 0
+        for x in y_sohle2:
+            if x == 0:
+                y_sohle2_n.append(min_sohle2)
+            else:
+                y_sohle2_n.append(y_sohle2[i])
+            i += 1
+
+        new_plot.plot(x_deckel, y_deckel_n, color="black", label='Deckel')
+        new_plot.plot(x_sohle, y_sohle_n, color=farbe, label='Kanalsohle')
+        new_plot.plot(x_sohle2, y_sohle2_n, color=farbe, label='Kanalscheitel')
 
         x_deckel_neu = []
         name_neu = []
@@ -750,13 +815,45 @@ class LaengsTask:
                          rotation=90,
                          ha='center')
 
-        if len(y_liste) > 0 and table == 'schaechte':
-            new_plot.plot(x_deckel_neu, y_liste, color="blue", label='maximaler Wasserstand')
+        if all(num == 0 for num in y_liste) and len(y_liste) > 0:
+            iface.messageBar().pushMessage("Fehler", 'Es sind keine maximalen Wasserstände vorhanden!', level=Qgis.Critical)
+        else:
+            if len(y_liste) > 0 and table == 'schaechte':
+                new_plot.plot(x_deckel_neu, y_liste, color="blue", label='maximaler Wasserstand')
 
-        if len(y_liste) > 0 and table == 'haltungen':
-            new_plot.plot(x_deckel, y_liste, color="blue", label='maximaler Wasserstand')
+            if len(y_liste) > 0 and table == 'haltungen':
 
-        plt.vlines(x_deckel, y_sohle, y_deckel, color="red", linestyles='solid', label='Schacht', linewidth=5)
+                new_plot.plot(x_deckel[::2], y_liste, color="blue", label='maximaler Wasserstand')
+
+        # wenn die höhen null sind schachthöhen =max und min werte setzen und farbe grau
+        y1 = [i for i in y_sohle if i != 0]
+        y2 = [i for i in y_deckel if i != 0]
+
+        min_sohle = min(y1)
+        max_deckel = max(y2)
+
+        y_sohle_2 = []
+        y_deckel_3 = []
+        x_deckel_2 = []
+        delete = []
+
+        i = 0
+        for x, y in zip(y_sohle, y_deckel_n):
+            if y_sohle[i] == 0.0 or y_deckel_n[i] == 0.0:
+                y_sohle_2.append(min_sohle)
+                y_deckel_3.append(max_deckel)
+                x_deckel_2.append(x_deckel[i])
+                delete.append(i)
+            i += 1
+
+        for x in delete[::-1]:
+            y_sohle.pop(x)
+            y_deckel_n.pop(x)
+            x_deckel.pop(x)
+
+        plt.vlines(x_deckel, y_sohle, y_deckel_n, color="red", linestyles='solid', label='Schacht', linewidth=5)
+        plt.vlines(x_deckel_2, y_sohle_2, y_deckel_3, color="gray", linestyles='solid', label='Schacht', linewidth=5)
+
         plt.xlabel('Länge [m]')
         plt.ylabel('Höhe [m NHN]')
         new_plot.legend()
@@ -769,7 +866,6 @@ class LaengsTask:
                             wspace=0.2)
 
         self.auswahl[figure.number] = self.selected
-
 
 
     def show(self):
@@ -1670,6 +1766,7 @@ class LaengsTask:
 
         haltungen = {}
         schaechte = {}
+        zeitpunkt = None
 
         if table == 'haltungen':
             for haltung, xkoordinate_o, xkoordinate_u in zip(liste2, x_sohle2[0::2], x_sohle2[1::2]):
