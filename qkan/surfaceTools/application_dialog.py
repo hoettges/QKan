@@ -86,12 +86,21 @@ VORONOI_CLASS, _ = uic.loadUiType(
 
 
 class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
+    """Erzeugen von Haltungsflächen.
+    Dabei werden in der Tabelle tezg für Haltungen, deren "Entwässerungsart"
+    in der Listebox "lw_hal_entw" ausgewählt wurden, zunächst temporäre
+    Voronoi-Flächen erzeugt und damit anschließend für
+    ausgewählte Flächen (flaechen where aufteilen) die mit diesen überschneidenden
+    Flächen in der Tabelle tezg verschnitten.
+    """
 
     buttonBox: QDialogButtonBox
     label_1: QLabel
     label_2: QLabel
     label_3: QLabel
     lf_anzahl_haltungen: QLabel
+    lf_anzahl_flaechen: QLabel
+    lf_warning: QLabel
     cb_selHalActive: QCheckBox
     lw_hal_entw: QListWidget
 
@@ -109,13 +118,13 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
         self.cb_selHalActive.stateChanged.connect(self.click_hal_selection)
 
     def click_lw_hal_entw(self) -> None:
-        """Reaktion auf Klick in Tabelle"""
+        """Reaktion auf Klick in Listbox"""
 
         self.cb_selHalActive.setChecked(True)
         self.count_selection()
 
     def click_hal_selection(self) -> None:
-        """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
+        """Reagktion auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
         if self.cb_selHalActive.isChecked():
@@ -153,16 +162,37 @@ class VoronoiDialog(_Dialog, VORONOI_CLASS):  # type: ignore
                     " gefunden oder war nicht aktuell!\nAbbruch!", self.database_qkan
                 )
                 return
-            if not db_qkan.sql("SELECT abflussparameter FROM flaechen", mute_logger=True):
+
+            # Anzahl betroffene Flächen abfragen
+            sql = "SELECT count(*) AS anz FROM flaechen WHERE aufteilen"
+            if not db_qkan.sql(sql, mute_logger=True):
                 return
+            anz_flaechen = db_qkan.fetchone()
 
             sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
             if not db_qkan.sql(sql, "count_selection"):
                 return
-            daten = db_qkan.fetchone()
+            anz_haltungen = db_qkan.fetchone()
 
-        if not (daten is None):
-            self.lf_anzahl_haltungen.setText(str(daten[0]))
+        logger.debug(f'{__name__}.count_selection (177): {anz_flaechen[0]}')
+        logger.debug(f'Methoden von lf_warning: {dir(self.lf_warning)}')
+        if not (anz_flaechen is None):
+            self.lf_anzahl_flaechen.setText(str(anz_flaechen[0]))
+            if anz_flaechen[0]==0:
+                self.lf_warning.setText(
+                    "Warnung: Es wurde keine aufzuteilenden Flächen gefunden!"
+                )
+            else:
+                self.lf_warning.setText("")
+        else:
+            self.lf_anzahl_flaechen.clear()
+            self.lf_warning.setText(
+                "Warnung: Es wurde keine aufzuteilenden Flächen gefunden!"
+            )
+        logger.debug(f'lf_warning.text: {self.lf_warning.text()}')
+
+        if not (anz_haltungen is None):
+            self.lf_anzahl_haltungen.setText(str(anz_haltungen[0]))
         else:
             self.lf_anzahl_haltungen.clear()
 

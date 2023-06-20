@@ -873,14 +873,15 @@ class DBConnection:
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None
+            wkt_geom = parameters.get("geom")
             sql = """
                 INSERT INTO teilgebiete
                   (tgnam, kommentar, createdat, geom)
                 VALUES (
                     :tgnam, :kommentar, 
                     coalesce(:createdat, CURRENT_TIMESTAMP),
-                    GeomFromText(:geom, :epsg)
-                );"""
+                    GeomFromWkb(x'{wkt_geom}', :epsg)
+                );""".format(wkt_geom=wkt_geom)
 
         else:
             warnung(

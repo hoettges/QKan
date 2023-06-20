@@ -2,7 +2,7 @@ import logging
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast, Any, Callable
 from fnmatch import fnmatch
 
-from qgis.core import QgsApplication, QgsProject, QgsMessageLog
+from qgis.core import QgsApplication, QgsProject, QgsMessageLog, QgsGeometry
 from qgis.PyQt.QtWidgets import QWidget
 from qkan.database.dbfunc import DBConnection
 from qgis.core import Qgis
@@ -18,6 +18,13 @@ if TYPE_CHECKING:
     from qkan.tools.application import QKanTools
 
 logger = logging.getLogger("QKan.tools.dialogs.read_data")
+
+def wktmod(wkt_geom):
+    """Wandelt einen WKT-Ausdruck in einen WKB-Ausdruck um, um das Dezimaltrennzeichenproblem
+       zu umgehen"""
+    pg = QgsGeometry.fromWkt(wkt_geom)
+    bgeo = QgsGeometry.asWkb(pg).data().hex()
+    return bgeo
 
 
 class ReadData:  # type: ignore
@@ -318,6 +325,10 @@ class ReadData:  # type: ignore
             self.iface.openMessageLog()
             return
 
+        logger.debug(f'Vor Aufruf _parsed_dataset:'
+                     f'\n{qkan_colnames=}'
+                     f'\n{qkan_cols=}'
+                     )
 
         self._parsed_dataset(
             lines,
@@ -367,7 +378,6 @@ class ReadData:  # type: ignore
                     if (
                             (column == "schachttyp" and schtyp_added)
                             or (column == "haltungstyp" and haltyp_added)
-                            or (column == "wkt_geom")
                     ):
                         continue  # Typerkennung überspringen
 
@@ -405,7 +415,11 @@ class ReadData:  # type: ignore
                             "polygon",
                             "multipolygon",
                     ):
-                        field = _value
+                        field = wktmod(_value)
+                        logger.debug(f'\n{__file__}: geom erkannt:'
+                                     f'\n{_value=}'
+                                     f'\n{column=}'
+                                     )
                         # field = f"GeomFromText('{_value}',{self.epsg})"
                     else:
                         fehlermeldung(

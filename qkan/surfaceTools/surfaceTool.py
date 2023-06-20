@@ -223,7 +223,7 @@ class SurfaceTask:
                  }
             )
 
-            progress_bar.setValue(90)
+            progress_bar.setValue(70)
 
             # Erstellen einer temporären Tabelle zur Selektion aller Haltungsflächen, in denen
             # aufzuteilende Flächen liegen
@@ -233,16 +233,16 @@ class SurfaceTask:
 
             db_qkan.commit()
 
-            progress_bar.setValue(95)
+            progress_bar.setValue(80)
 
-            sql = """DELETE FROM tezg WHERE pk IN (SELECT pk FROM tezgsel)"""
-            if not db_qkan.sql(sql, stmt_category="Voronoi_5"):
-                return False
-
-            db_qkan.commit()
-
-            progress_bar.setValue(85)
-
+            # sql = """DELETE FROM tezg WHERE pk IN (SELECT pk FROM tezgsel)"""
+            # if not db_qkan.sql(sql, stmt_category="Voronoi_2"):
+            #     return False
+            #
+            # db_qkan.commit()
+            #
+            # progress_bar.setValue(85)
+            #
             sql = """INSERT INTO tezgsel (pk)
                         SELECT t.pk
                         FROM tezg AS t
