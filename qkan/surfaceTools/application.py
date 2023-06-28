@@ -112,15 +112,21 @@ class SurfaceTools(QKanPlugin):
         if result:
             # Start der Verarbeitung
 
-            liste_entwarten = list_selected_items(self.voronoi_dlg.lw_hal_entw)
-            self.log.debug(f"Modul {__name__}: liste_entwarten = {liste_entwarten}")
+            liste_hal_entw = list_selected_items(self.voronoi_dlg.lw_hal_entw)
+            liste_teilgebiete: List[str] = list_selected_items(
+                self.voronoi_dlg.lw_teilgebiete
+            )
+            self.log.debug(f"Modul {__name__}: liste_hal_entw = {liste_hal_entw}")
 
             # Modulaufruf in Logdatei schreiben
             self.log.debug(f"""QKan-Modul Aufruf SurfaceTask.run_voronoi """)
 
+            QKan.config.selections.hal_entw = liste_hal_entw
+            QKan.config.selections.teilgebiete = liste_teilgebiete
+
             QKan.config.save()
 
             run = SurfaceTask(self.iface, database_qkan, epsg)
-            run.run_voronoi(liste_entwarten)
+            run.run_voronoi(liste_hal_entw, liste_teilgebiete)
             del run
             self.iface.mapCanvas().refreshAllLayers()

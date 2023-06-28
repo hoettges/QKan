@@ -443,8 +443,8 @@ class ExportTask:
                       LEFT JOIN simulationsstatus AS st ON ha.simstatus = st.bezeichnung
                       WHERE (ha.haltungstyp IS NULL or ha.haltungstyp = 'Haltung') AND ha.haltnam = he.Rohr.Name{auswahl})
                   WHERE he.Rohr.Name IN 
-                  ( SELECT haltnam FROM haltungen
-                    WHERE (haltungen.haltungstyp IS NULL OR haltungen.haltungstyp = 'Haltung'){auswahl})
+                  ( SELECT haltnam FROM haltungen AS ha
+                    WHERE (ha.haltungstyp IS NULL OR ha.haltungstyp = 'Haltung'){auswahl})
                   """
 
                 if not self.db_qkan.sql(

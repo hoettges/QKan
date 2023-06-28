@@ -490,7 +490,7 @@ parameter berücksichtigen</string>
     </property>
     <property name="text">
      <string>Nur ausgewählte Entwässe-
-rungssysteme berücksichtigen</string>
+rungsarten berücksichtigen</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cb_selTgbActive">

@@ -245,12 +245,17 @@ class CreatelineflDialog(QKanDialog, FORM_CLASS_createlinefl):  # type: ignore
                 "', '".join(liste_teilgebiete)
             )
 
-        sql = f"""SELECT count(*) AS anzahl FROM flaechen
-                WHERE ((aufteilen <> 'ja' AND not aufteilen) OR aufteilen IS NULL){auswahl}"""
-
         with DBConnection(self.plugin.database_name) as db_qkan:
             if not db_qkan.connected:
+                logger.error(
+                    "Fehler in linkflaechen.applications_dialog.CreatelineflDialog.count_selection:\n"
+                    "QKan-Datenbank %s wurde nicht"
+                    " gefunden oder war nicht aktuell!\nAbbruch!", self.database_qkan
+                )
                 return
+
+            sql = f"""SELECT count(*) AS anzahl FROM flaechen
+                    WHERE ((aufteilen <> 'ja' AND not aufteilen) OR aufteilen IS NULL){auswahl}"""
 
             if not db_qkan.sql(sql, "QKan_LinkFlaechen.countselectionfl (1)"):
                 return
@@ -394,7 +399,7 @@ class CreatelineswDialog(QDialog, FORM_CLASS_createlinesw):  # type: ignore
 
         # Zu berücksichtigende Haltungen zählen
         if len(liste_hal_entw) == 0:
-            auswahl = ""
+            auswahl = ""                    # keine Einschränkung auf Teilgebiete
         else:
             auswahl = " WHERE haltungen.entwart in ('{}')".format(
                 "', '".join(liste_hal_entw)

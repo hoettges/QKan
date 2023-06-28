@@ -315,5 +315,38 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>button_box</sender>
+   <signal>accepted()</signal>
+   <receiver>ConnectDialogBase</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>155</x>
+     <y>490</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_box</sender>
+   <signal>rejected()</signal>
+   <receiver>ConnectDialogBase</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>155</x>
+     <y>490</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

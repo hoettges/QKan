@@ -261,23 +261,23 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND tg.teilgebiet in ('{lis}')"
+                auswahl = f" WHERE teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
             sql = f"""
-                                        SELECT
-                                          tg.flnam AS name,
-                                          tg.regenschreiber AS rain_gage,
-                                          tg.schnam AS outlet,
-                                          area(tg.geom)/10000 AS area,
-                                          pow(area(tg.geom), 0.5)*1.3 AS width,
-                                          tg.befgrad AS imperv,
-                                          tg.neigung AS neigung
-                                          FROM tezg AS tg
-                                        {auswahl}"""
+                SELECT
+                  flnam AS name,
+                  regenschreiber AS rain_gage,
+                  schnam AS outlet,
+                  area(geom)/10000 AS area,
+                  pow(area(geom), 0.5)*1.3 AS width,
+                  befgrad AS imperv,
+                  neigung AS neigung
+                  FROM tezg
+                {auswahl}"""
 
-            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (1)"):
                 return
 
             datasc = ""  # Datenzeilen [subcatchments]
@@ -330,40 +330,40 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND tg.teilgebiet in ('{lis}')"
+                auswahl = f" WHERE tg.teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
             sql = f"""
-                                        SELECT
-                                            tg.flnam AS name,
-                                            tg.regenschreiber AS rain_gage,
-                                            tg.schnam AS outlet,
-                                            area(tg.geom)/10000. AS area,
-                                            pow(area(tg.geom), 0.5)*1.3 AS width,                        -- 1.3: pauschaler Faktor für SWMM
-                                            tg.befgrad AS imperv,
-                                            tg.neigung AS neigung,
-                                            tg.abflussparameter AS abflussparameter, 
-                                            apbef.rauheit_kst AS nImperv, 
-                                            apdur.rauheit_kst AS nPerv,
-                                            apbef.muldenverlust AS sImperv, 
-                                            apdur.muldenverlust AS sPerv,
-                                            apbef.pctZero AS pctZero, 
-                                            bk.infiltrationsrateende*60 AS maxRate,                     -- mm/min -> mm/h
-                                            bk.infiltrationsrateanfang*60 AS minRate,
-                                            bk.rueckgangskonstante/24. AS decay,                        -- 1/d -> 1/h 
-                                            1/(coalesce(bk.regenerationskonstante, 1./7.)) AS dryTime,   -- 1/d -> d , Standardwert aus SWMM-Testdaten
-                                            bk.saettigungswassergehalt AS maxInfil
-                                        FROM tezg AS tg
-                                        LEFT JOIN abflussparameter AS apbef
-                                        ON tg.abflussparameter = apbef.apnam and (apbef.bodenklasse IS NULL OR apbef.bodenklasse = '')
-                                        LEFT JOIN abflussparameter AS apdur
-                                        ON tg.abflussparameter = apdur.apnam and apdur.bodenklasse IS NOT NULL AND apdur.bodenklasse <> ''
-                                        LEFT JOIN bodenklassen AS bk
-                                        ON apdur.bodenklasse = bk.bknam
-                                        {auswahl}"""
+                SELECT
+                    tg.flnam AS name,
+                    tg.regenschreiber AS rain_gage,
+                    tg.schnam AS outlet,
+                    area(tg.geom)/10000. AS area,
+                    pow(area(tg.geom), 0.5)*1.3 AS width,                        -- 1.3: pauschaler Faktor für SWMM
+                    tg.befgrad AS imperv,
+                    tg.neigung AS neigung,
+                    tg.abflussparameter AS abflussparameter, 
+                    apbef.rauheit_kst AS nImperv, 
+                    apdur.rauheit_kst AS nPerv,
+                    apbef.muldenverlust AS sImperv, 
+                    apdur.muldenverlust AS sPerv,
+                    apbef.pctZero AS pctZero, 
+                    bk.infiltrationsrateende*60 AS maxRate,                     -- mm/min -> mm/h
+                    bk.infiltrationsrateanfang*60 AS minRate,
+                    bk.rueckgangskonstante/24. AS decay,                        -- 1/d -> 1/h 
+                    1/(coalesce(bk.regenerationskonstante, 1./7.)) AS dryTime,   -- 1/d -> d , Standardwert aus SWMM-Testdaten
+                    bk.saettigungswassergehalt AS maxInfil
+                FROM tezg AS tg
+                LEFT JOIN abflussparameter AS apbef
+                ON tg.abflussparameter = apbef.apnam and (apbef.bodenklasse IS NULL OR apbef.bodenklasse = '')
+                LEFT JOIN abflussparameter AS apdur
+                ON tg.abflussparameter = apdur.apnam and apdur.bodenklasse IS NOT NULL AND apdur.bodenklasse <> ''
+                LEFT JOIN bodenklassen AS bk
+                ON apdur.bodenklasse = bk.bknam
+                {auswahl}"""
 
-            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (2)"):
                 return
 
             datasa = ""  # Datenzeilen [subareas]
@@ -424,38 +424,38 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND tg.teilgebiet in ('{lis}')"
+                auswahl = f" WHERE tg.teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
             sql = f"""
-                                                SELECT
-                                                    tg.flnam AS name,
-                                                    tg.regenschreiber AS rain_gage,
-                                                    tg.schnam AS outlet,
-                                                    area(tg.geom)/10000. AS area,
-                                                    pow(area(tg.geom), 0.5)*1.3 AS width,                        -- 1.3: pauschaler Faktor für SWMM
-                                                    tg.befgrad AS imperv,
-                                                    tg.neigung AS neigung,
-                                                    tg.abflussparameter AS abflussparameter, 
-                                                    apbef.rauheit_kst AS nImperv, 
-                                                    apdur.rauheit_kst AS nPerv,
-                                                    apbef.muldenverlust AS sImperv, 
-                                                    apdur.muldenverlust AS sPerv,
-                                                    apbef.pctZero AS pctZero, 
-                                                    bk.infiltrationsrateende*60 AS maxRate,                     -- mm/min -> mm/h
-                                                    bk.infiltrationsrateanfang*60 AS minRate,
-                                                    bk.rueckgangskonstante/24. AS decay,                        -- 1/d -> 1/h 
-                                                    1/(coalesce(bk.regenerationskonstante, 1./7.)) AS dryTime,   -- 1/d -> d , Standardwert aus SWMM-Testdaten
-                                                    bk.saettigungswassergehalt AS maxInfil
-                                                FROM tezg AS tg
-                                                LEFT JOIN abflussparameter AS apbef
-                                                ON tg.abflussparameter = apbef.apnam and (apbef.bodenklasse IS NULL OR apbef.bodenklasse = '')
-                                                LEFT JOIN abflussparameter AS apdur
-                                                ON tg.abflussparameter = apdur.apnam and apdur.bodenklasse IS NOT NULL AND apdur.bodenklasse <> ''
-                                                LEFT JOIN bodenklassen AS bk
-                                                ON apdur.bodenklasse = bk.bknam
-                                                {auswahl}"""
+                SELECT
+                    tg.flnam AS name,
+                    tg.regenschreiber AS rain_gage,
+                    tg.schnam AS outlet,
+                    area(tg.geom)/10000. AS area,
+                    pow(area(tg.geom), 0.5)*1.3 AS width,                        -- 1.3: pauschaler Faktor für SWMM
+                    tg.befgrad AS imperv,
+                    tg.neigung AS neigung,
+                    tg.abflussparameter AS abflussparameter, 
+                    apbef.rauheit_kst AS nImperv, 
+                    apdur.rauheit_kst AS nPerv,
+                    apbef.muldenverlust AS sImperv, 
+                    apdur.muldenverlust AS sPerv,
+                    apbef.pctZero AS pctZero, 
+                    bk.infiltrationsrateende*60 AS maxRate,                     -- mm/min -> mm/h
+                    bk.infiltrationsrateanfang*60 AS minRate,
+                    bk.rueckgangskonstante/24. AS decay,                        -- 1/d -> 1/h 
+                    1/(coalesce(bk.regenerationskonstante, 1./7.)) AS dryTime,   -- 1/d -> d , Standardwert aus SWMM-Testdaten
+                    bk.saettigungswassergehalt AS maxInfil
+                FROM tezg AS tg
+                LEFT JOIN abflussparameter AS apbef
+                ON tg.abflussparameter = apbef.apnam and (apbef.bodenklasse IS NULL OR apbef.bodenklasse = '')
+                LEFT JOIN abflussparameter AS apdur
+                ON tg.abflussparameter = apdur.apnam and apdur.bodenklasse IS NOT NULL AND apdur.bodenklasse <> ''
+                LEFT JOIN bodenklassen AS bk
+                ON apdur.bodenklasse = bk.bknam
+                {auswahl}"""
 
             if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
                 return
@@ -515,23 +515,24 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
+                auswahl = f" AND teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
-            sql = f"""SELECT
-                                        s.schnam AS name, 
-                                        s.sohlhoehe AS invertElevation, 
-                                        s.deckelhoehe - s.sohlhoehe AS maxDepth, 
-                                        0 AS initDepth, 
-                                        0 AS surchargeDepth,
-                                        0 AS pondedArea,   
-                                        X(geop) AS xsch, Y(geop) AS ysch 
-                                    FROM schaechte AS s
-                                    WHERE s.schachttyp = 'Schacht'
-                                    {auswahl}"""
+            sql = f"""
+                SELECT
+                    schnam AS name, 
+                    sohlhoehe AS invertElevation, 
+                    deckelhoehe - sohlhoehe AS maxDepth, 
+                    0 AS initDepth, 
+                    0 AS surchargeDepth,
+                    0 AS pondedArea,   
+                    X(geop) AS xsch, Y(geop) AS ysch 
+                FROM schaechte
+                WHERE lower(schachttyp) = 'schacht'
+                {auswahl}"""
 
-            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (4)"):
                 return
 
             dataju = ""  # Datenzeilen [JUNCTIONS]
@@ -584,23 +585,24 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
+                auswahl = f" AND teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
-            sql = f"""SELECT
-                                                s.schnam AS name, 
-                                                s.sohlhoehe AS invertElevation, 
-                                                s.deckelhoehe - s.sohlhoehe AS maxDepth, 
-                                                0 AS initDepth, 
-                                                0 AS surchargeDepth,
-                                                0 AS pondedArea,   
-                                                X(geop) AS xsch, Y(geop) AS ysch 
-                                            FROM schaechte AS s
-                                            WHERE s.schachttyp = 'Auslass'
-                                            {auswahl}"""
+            sql = f"""
+                SELECT
+                    schnam AS name, 
+                    sohlhoehe AS invertElevation, 
+                    deckelhoehe - sohlhoehe AS maxDepth, 
+                    0 AS initDepth, 
+                    0 AS surchargeDepth,
+                    0 AS pondedArea,   
+                    X(geop) AS xsch, Y(geop) AS ysch 
+                FROM schaechte
+                WHERE lower(schachttyp) = 'auslass'
+                {auswahl}"""
 
-            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (5)"):
                 return
             dataou = ""  # Datenzeilen [OUTFALLS]
 
@@ -648,23 +650,24 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
+                auswahl = f" AND teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
-            sql = f"""SELECT
-                                                s.schnam AS name, 
-                                                s.sohlhoehe AS invertElevation, 
-                                                s.deckelhoehe - s.sohlhoehe AS maxDepth, 
-                                                0 AS initDepth, 
-                                                0 AS surchargeDepth,
-                                                0 AS pondedArea,   
-                                                X(geop) AS xsch, Y(geop) AS ysch 
-                                            FROM schaechte AS s
-                                            WHERE s.schachttyp = 'Speicher'
-                                            {auswahl}"""
+            sql = f"""
+                SELECT
+                    schnam AS name, 
+                    sohlhoehe AS invertElevation, 
+                    deckelhoehe - sohlhoehe AS maxDepth, 
+                    0 AS initDepth, 
+                    0 AS surchargeDepth,
+                    0 AS pondedArea,   
+                    X(geop) AS xsch, Y(geop) AS ysch 
+                FROM schaechte
+                WHERE lower(schachttyp) = 'speicher'
+                {auswahl}"""
 
-            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (6)"):
                 return
             dataou = ""  # Datenzeilen [OUTFALLS]
 
@@ -711,17 +714,17 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND haltungen.teilgebiet in ('{lis}')"
+                auswahl = f" AND teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
-            sql = f"""SELECT
-                                        h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, h.haltungstyp
-                                    FROM
-                                        haltungen AS h
-                                    WHERE h.haltungstyp IS 'Haltung'
-                                    {auswahl}"""
-            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
+            sql = f"""
+                SELECT
+                    haltnam AS name, schoben AS schoben, schunten AS schunten, laenge, ks, haltungstyp
+                FROM
+                    haltungen
+                WHERE lower(haltungstyp) = 'haltung'{auswahl}"""
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (7)"):
                 return
 
             datacd = ""  # Datenzeilen
@@ -768,17 +771,18 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND haltungen.teilgebiet in ('{lis}')"
+                auswahl = f" AND teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
-            sql = f"""SELECT
-                                        h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, h.haltungstyp
-                                    FROM
-                                        haltungen AS h
-                                    WHERE h.haltungstyp IS 'Pumpe'
-                                    {auswahl}"""
-            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
+            sql = f"""
+                SELECT
+                    haltnam AS name, schoben AS schoben, schunten AS schunten, laenge, ks, haltungstyp
+                FROM
+                    haltungen
+                WHERE lower(haltungstyp) = 'pumpe'
+                {auswahl}"""
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (8)"):
                 return
 
             datacd = ""  # Datenzeilen
@@ -825,17 +829,18 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
+                auswahl = f" AND teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
-            sql = f"""SELECT
-                                        h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, h.haltungstyp
-                                    FROM
-                                        haltungen AS h
-                                    WHERE h.haltungstyp IS 'Wehr'
-                                    {auswahl}"""
-            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
+            sql = f"""
+                SELECT
+                    haltnam AS name, schoben AS schoben, schunten AS schunten, laenge, ks, haltungstyp
+                FROM
+                    haltungen
+                WHERE lower(haltungstyp) = 'wehr'
+                {auswahl}"""
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (9)"):
                 return
 
             datacd = ""  # Datenzeilen
@@ -881,21 +886,18 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" WHERE h.teilgebiet in ('{lis}')"
+                auswahl = f" AND teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
-            sql = f"""SELECT
-                                        h.haltnam AS name, h.schoben AS schoben, h.schunten AS schunten, h.laenge, h.ks, h.haltungstyp
-                                    FROM
-                                        haltungen AS h
-                                    JOIN
-                                        teilgebiete AS g
-                                    ON 
-                                        Intersects(h.geom,g.geom) and h.haltungstyp IS 'Haltung'
-                                    GROUP BY h.haltnam
-                                    {auswahl}"""
-            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
+            sql = f"""
+                SELECT
+                    haltnam AS name, schoben AS schoben, schunten AS schunten, laenge, ks, haltungstyp
+                FROM
+                    haltungen
+                WHERE lower(haltungstyp) = 'haltung'{auswahl}
+                GROUP BY haltnam"""
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (10)"):
                 return
 
             dataxs = ""  # Datenzeilen
@@ -1048,19 +1050,20 @@ class ExportTask:
             dataco = ""  # Datenzeilen [COORDINATES]
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
+                auswahl = f" AND teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
-            sql = f"""SELECT
-                                        s.schnam AS name,   
-                                        X(s.geop) AS xsch, 
-                                        Y(s.geop) AS ysch 
-                                    FROM schaechte AS s
-                                    WHERE s.schachttyp = 'Schacht'
-                                    {auswahl}"""
+            sql = f"""
+                SELECT
+                    schnam AS name,   
+                    X(geop) AS xsch, 
+                    Y(geop) AS ysch 
+                FROM schaechte
+                WHERE lower(schachttyp) = 'schacht'
+                {auswahl}"""
 
-            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (3)"):
+            if not self.db_qkan.sql(sql, "db_qkan: exportSWMM (11)"):
                 return
 
             for b in self.db_qkan.fetchall():
@@ -1101,15 +1104,15 @@ class ExportTask:
         if QKan.config.check_export.haltungen:
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND haltungen.teilgebiet in ('{lis}')"
+                auswahl = f" AND teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
-            sql = f"""SELECT
-                                    h.haltnam, h.schoben, h.schunten, ST_AsText(h.geom)
-                                    from haltungen AS h
-                                    WHERE h.haltungstyp IS 'Haltung'
-                                    {auswahl}"""
+            sql = f"""
+                SELECT
+                    haltnam, schoben, schunten, ST_AsText(geom)
+                FROM haltungen
+                WHERE lower(haltungstyp) = 'haltung'{auswahl}"""
             self.db_qkan.sql(sql)
 
             dataver = ""
@@ -1189,14 +1192,14 @@ class ExportTask:
 
             if len(self.liste_teilgebiete) != 0:
                 lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" WHERE tg.teilgebiet in ('{lis}')"
+                auswahl = f" WHERE teilgebiet in ('{lis}')"
             else:
                 auswahl = ""
 
-            sql = f"""SELECT
-                                    tg.flnam, tg.schnam, st_astext(tg.geom)
-                                    from tezg AS tg
-                                    {auswahl}"""
+            sql = f"""
+                SELECT
+                    flnam, schnam, st_astext(geom)
+                from tezg{auswahl}"""
             self.db_qkan.sql(sql)
 
             for b in self.db_qkan.fetchall():

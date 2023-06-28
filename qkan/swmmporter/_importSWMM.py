@@ -304,12 +304,9 @@ class ImportTask:
         data = self.data.get("subcatchments", [])
         for line in data:
             # Attribute bitte aus qkan.database.qkan_database.py entnehmen
-            line_tokens = line.split()
-            name = line_tokens[0]
-            regenschreiber = line_tokens[1]
-            schnam = line_tokens[2]
-            befgrad = fzahl(line_tokens[4])
-            neigung = fzahl(line_tokens[6])
+            (name, regenschreiber, schnam, _, befgrad_t, _, neigung_t, *_) = line.split()
+            befgrad = fzahl(befgrad_t)
+            neigung = fzahl(neigung_t)
             abnam = '$Default_Unbef'
 
             params = {'flnam': name, 'regenschreiber': regenschreiber, 'schnam': schnam,
@@ -317,6 +314,7 @@ class ImportTask:
 
             logger.debug(f'mswmmporter.import - insertdata:\ntabnam: tezg\n'
                           f'params: {params}')
+            logger.debug(f'{data=}')
 
             if not self.db_qkan.insertdata(
                      tabnam="tezg",

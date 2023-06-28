@@ -831,7 +831,7 @@ class DBConnection:
         elif tabnam == 'tezg':
             parlis = ['flnam', 'regenschreiber', 'schnam', 'befgrad', 'neigung',
                        'createdat', 'haltnam', 'neigkl', 'schwerpunktlaufzeit', 'teilgebiet', 'abflussparameter',
-                      'kommentar', 'geom']
+                      'kommentar', 'geom', 'epsg']
             for el in parlis:
                 if not parameters.get(el, None):
                     parameters[el] = None

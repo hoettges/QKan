@@ -108,7 +108,7 @@ class SurfaceTask:
 
         return True
 
-    def run_voronoi(self, liste_entwarten: List[str]) -> bool:
+    def run_voronoi(self, liste_hal_entw: List[str], liste_teilgebiete: List[str]) -> bool:
         """Erstellt Voronoi-Gebiete zu ausgewählten Haltungen"""
 
         progress_bar = QProgressBar(self.iface.messageBar())
@@ -131,8 +131,20 @@ class SurfaceTask:
                     ),
                 )
 
-            sql = """WITH flrange AS
-                ( SELECT Extent(geom) AS geom FROM flaechen)
+            # Anzahl betroffene Flächen abfragen
+            if len(liste_teilgebiete) == 0:
+                auswahl_fl = ""                        # keine Einschränkung auf Teilgebiete
+            else:
+                auswahl_fl = " and flaechen.teilgebiet in ('{}')".format(
+                    "', '".join(liste_teilgebiete)
+                )
+
+            sql = f"""
+                WITH flrange AS (
+                    SELECT Extent(geom) AS geom 
+                    FROM flaechen 
+                    WHERE aufteilen{auswahl_fl}
+                )
                 SELECT 
                   MbrMinX(geom) AS xmin,
                   MbrMaxX(geom) AS xmax,
@@ -147,15 +159,25 @@ class SurfaceTask:
             xmin, xmax, ymin, ymax = data[0]
 
             # Haltungslinien in schlanke Polygone umwandeln, da voronoi.skeleton nur Polygone verarbeitet
-            if liste_entwarten and len(liste_entwarten) > 0:
-                selection_entw = " AND entwart IN ('" + "', '".join(liste_entwarten) + "')"
+
+            # Zu berücksichtigende Haltungen zählen
+            if len(liste_hal_entw) == 0:
+                auswahl_hal = ""
             else:
-                selection_entw = ""
+                auswahl_hal = " and haltungen.entwart in ('{}')".format(
+                    "', '".join(liste_hal_entw)
+                )
+
+            if len(liste_teilgebiete) != 0:
+                auswahl_hal += " and haltungen.teilgebiet in ('{}')".format(
+                    "', '".join(liste_teilgebiete)
+                )
 
             p_line2poly = processing.run(
                 "native:geometrybyexpression",
                 {
-                    'INPUT': f'spatialite://dbname=\'{self.database_qkan}\' table="haltungen" (geom) sql=(haltungstyp IS NULL or haltungstyp = \'Haltung\'){selection_entw}',
+                    'INPUT': f'spatialite://dbname=\'{self.database_qkan}\' table="haltungen" (geom) '
+                             f'sql=(haltungstyp IS NULL or haltungstyp = \'Haltung\'){auswahl_hal}',
                     'OUTPUT_GEOMETRY': 0,
                     'WITH_Z': False,
                     'WITH_M': False,
@@ -243,10 +265,15 @@ class SurfaceTask:
             #
             # progress_bar.setValue(85)
             #
-            sql = """INSERT INTO tezgsel (pk)
+
+            sql = f"""INSERT INTO tezgsel (pk)
                         SELECT t.pk
                         FROM tezg AS t
-                        INNER JOIN (SELECT ST_Buffer(geom, -0.05) AS geom FROM flaechen WHERE aufteilen) AS f
+                        INNER JOIN (
+                            SELECT ST_Buffer(geom, -0.05) AS geom 
+                            FROM flaechen 
+                            WHERE aufteilen{auswahl_fl}
+                        ) AS f
                         ON ST_Intersects(t.geom, f.geom)
                         GROUP BY t.pk"""
             if not db_qkan.sql(sql, stmt_category="Voronoi_3"):

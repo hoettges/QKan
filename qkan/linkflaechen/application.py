@@ -1,7 +1,22 @@
 # -*- coding: utf-8 -*-
 """
+  QGIS-Plugin
+  ===========
+
 Flaechenzuordnungen
 Verknüpft Flächen mit nächster Haltung
+
+  | Dateiname            : application.py
+  | Date                 : Mai 2020
+  | Copyright            : (C) 2020 by Joerg Hoettges
+  | Email                : hoettges@fh-aachen.de
+  | git sha              : $Format:%H$
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
 """
 from typing import List, Optional, cast
 import logging
@@ -188,9 +203,7 @@ class LinkFl(QKanPlugin):
                     self.dlg_cl.lw_hal_entw.addItem(QListWidgetItem(elem[0]))
                     if elem[0] in QKan.config.selections.hal_entw:
                         self.dlg_cl.lw_hal_entw.setCurrentRow(ielem)
-                        self.dlg_cl.cb_selHalActive.setChecked(
-                            True
-                        )  # Auswahlcheckbox aktivieren
+                        self.dlg_cl.cb_selHalActive.setChecked(True)  # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
                         # self.dlg_cl.lw_hal_entw.setCurrentRow(0)
 
@@ -205,9 +218,7 @@ class LinkFl(QKanPlugin):
                     self.dlg_cl.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
                     if elem[0] in QKan.config.selections.teilgebiete:
                         self.dlg_cl.lw_teilgebiete.setCurrentRow(ielem)
-                        self.dlg_cl.cb_selTgbActive.setChecked(
-                            True
-                        )  # Auswahlcheckbox aktivieren
+                        self.dlg_cl.cb_selTgbActive.setChecked(True)  # Auswahlcheckbox aktivieren
                         # if len(daten) == 1:
                         # self.dlg_cl.lw_teilgebiete.setCurrentRow(0)
 
@@ -612,6 +623,7 @@ class LinkFl(QKanPlugin):
             # Run the dialog event loop
             result = self.dlg_at.exec_()
             # See if OK was pressed
+            logger.debug(f'{__name__}.LinkFl.run_assigntgeb: {result=}')
             if result:
 
                 # Inhalte aus Formular lesen

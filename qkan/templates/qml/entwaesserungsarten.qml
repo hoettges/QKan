@@ -1,17 +1,11 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis readOnly="0" maxScale="0" minScale="0" styleCategories="AllStyleCategories" version="3.22.16-Białowieża" hasScaleBasedVisibilityFlag="0">
+<qgis maxScale="0" readOnly="0" version="3.22.16-Białowieża" minScale="0" styleCategories="LayerConfiguration|Symbology|Labeling|Fields|Forms|Actions|MapTips|AttributeTable|Rendering|CustomProperties" hasScaleBasedVisibilityFlag="0">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal limitMode="0" enabled="0" accumulate="0" endField="" startField="" startExpression="" durationUnit="min" fixedDuration="0" mode="0" durationField="" endExpression="">
-    <fixedRange>
-      <start></start>
-      <end></end>
-    </fixedRange>
-  </temporal>
   <customproperties>
     <Option type="Map">
       <Option type="List" name="dualview/previewExpressions">
@@ -22,19 +16,13 @@
       <Option name="variableValues"/>
     </Option>
   </customproperties>
-  <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
-    <activeChecks/>
-    <checkConfiguration/>
-  </geometryOptions>
-  <legend showLabelLegend="0" type="default-vector"/>
-  <referencedLayers/>
   <fieldConfiguration>
     <field configurationFlags="None" name="pk">
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" type="QString" name="IsMultiline"/>
-            <Option value="0" type="QString" name="UseHtml"/>
+            <Option value="false" type="bool" name="IsMultiline"/>
+            <Option value="false" type="bool" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
@@ -43,8 +31,8 @@
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" type="QString" name="IsMultiline"/>
-            <Option value="0" type="QString" name="UseHtml"/>
+            <Option value="false" type="bool" name="IsMultiline"/>
+            <Option value="false" type="bool" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
@@ -53,8 +41,8 @@
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" type="QString" name="IsMultiline"/>
-            <Option value="0" type="QString" name="UseHtml"/>
+            <Option value="false" type="bool" name="IsMultiline"/>
+            <Option value="false" type="bool" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
@@ -63,8 +51,8 @@
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" type="QString" name="IsMultiline"/>
-            <Option value="0" type="QString" name="UseHtml"/>
+            <Option value="false" type="bool" name="IsMultiline"/>
+            <Option value="false" type="bool" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
@@ -73,8 +61,8 @@
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" type="QString" name="IsMultiline"/>
-            <Option value="0" type="QString" name="UseHtml"/>
+            <Option value="false" type="bool" name="IsMultiline"/>
+            <Option value="false" type="bool" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
@@ -83,44 +71,100 @@
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="0" type="QString" name="IsMultiline"/>
-            <Option value="0" type="QString" name="UseHtml"/>
+            <Option value="false" type="bool" name="IsMultiline"/>
+            <Option value="false" type="bool" name="UseHtml"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field configurationFlags="None" name="m145">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" type="bool" name="IsMultiline"/>
+            <Option value="false" type="bool" name="UseHtml"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field configurationFlags="None" name="isybau">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" type="bool" name="IsMultiline"/>
+            <Option value="false" type="bool" name="UseHtml"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field configurationFlags="None" name="transport">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" type="bool" name="IsMultiline"/>
+            <Option value="false" type="bool" name="UseHtml"/>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field configurationFlags="None" name="druckdicht">
+      <editWidget type="TextEdit">
+        <config>
+          <Option type="Map">
+            <Option value="false" type="bool" name="IsMultiline"/>
+            <Option value="false" type="bool" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias index="0" field="pk" name=""/>
-    <alias index="1" field="bezeichnung" name="Bezeichnung"/>
-    <alias index="2" field="kuerzel" name="Kürzel"/>
-    <alias index="3" field="bemerkung" name="Bemerkung"/>
-    <alias index="4" field="he_nr" name="NR (HYSTEM-EXTRAN)"/>
-    <alias index="5" field="kp_nr" name="NR (Kanal++)"/>
+    <alias field="pk" index="0" name=""/>
+    <alias field="bezeichnung" index="1" name="Bezeichnung"/>
+    <alias field="kuerzel" index="2" name="Kürzel"/>
+    <alias field="bemerkung" index="3" name="Bemerkung"/>
+    <alias field="he_nr" index="4" name="NR (HYSTEM-EXTRAN)"/>
+    <alias field="kp_nr" index="5" name="NR (Kanal++)"/>
+    <alias field="m145" index="6" name="Nr (DWA-M 145)"/>
+    <alias field="isybau" index="7" name="Nr (ISYBAU)"/>
+    <alias field="transport" index="8" name="Transport"/>
+    <alias field="druckdicht" index="9" name=""/>
   </aliases>
   <defaults>
-    <default applyOnUpdate="0" field="pk" expression=""/>
-    <default applyOnUpdate="0" field="bezeichnung" expression=""/>
-    <default applyOnUpdate="0" field="kuerzel" expression=""/>
-    <default applyOnUpdate="0" field="bemerkung" expression=""/>
-    <default applyOnUpdate="0" field="he_nr" expression=""/>
-    <default applyOnUpdate="0" field="kp_nr" expression=""/>
+    <default field="pk" applyOnUpdate="0" expression=""/>
+    <default field="bezeichnung" applyOnUpdate="0" expression=""/>
+    <default field="kuerzel" applyOnUpdate="0" expression=""/>
+    <default field="bemerkung" applyOnUpdate="0" expression=""/>
+    <default field="he_nr" applyOnUpdate="0" expression=""/>
+    <default field="kp_nr" applyOnUpdate="0" expression=""/>
+    <default field="m145" applyOnUpdate="0" expression=""/>
+    <default field="isybau" applyOnUpdate="0" expression=""/>
+    <default field="transport" applyOnUpdate="0" expression=""/>
+    <default field="druckdicht" applyOnUpdate="0" expression=""/>
   </defaults>
   <constraints>
-    <constraint exp_strength="0" constraints="3" field="pk" notnull_strength="2" unique_strength="2"/>
-    <constraint exp_strength="0" constraints="0" field="bezeichnung" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="kuerzel" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="bemerkung" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="he_nr" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="kp_nr" notnull_strength="0" unique_strength="0"/>
+    <constraint exp_strength="0" field="pk" notnull_strength="2" unique_strength="2" constraints="3"/>
+    <constraint exp_strength="0" field="bezeichnung" notnull_strength="0" unique_strength="0" constraints="0"/>
+    <constraint exp_strength="0" field="kuerzel" notnull_strength="0" unique_strength="0" constraints="0"/>
+    <constraint exp_strength="0" field="bemerkung" notnull_strength="0" unique_strength="0" constraints="0"/>
+    <constraint exp_strength="0" field="he_nr" notnull_strength="0" unique_strength="0" constraints="0"/>
+    <constraint exp_strength="0" field="kp_nr" notnull_strength="0" unique_strength="0" constraints="0"/>
+    <constraint exp_strength="0" field="m145" notnull_strength="0" unique_strength="0" constraints="0"/>
+    <constraint exp_strength="0" field="isybau" notnull_strength="0" unique_strength="0" constraints="0"/>
+    <constraint exp_strength="0" field="transport" notnull_strength="0" unique_strength="0" constraints="0"/>
+    <constraint exp_strength="0" field="druckdicht" notnull_strength="0" unique_strength="0" constraints="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint exp="" desc="" field="pk"/>
-    <constraint exp="" desc="" field="bezeichnung"/>
-    <constraint exp="" desc="" field="kuerzel"/>
-    <constraint exp="" desc="" field="bemerkung"/>
-    <constraint exp="" desc="" field="he_nr"/>
-    <constraint exp="" desc="" field="kp_nr"/>
+    <constraint field="pk" desc="" exp=""/>
+    <constraint field="bezeichnung" desc="" exp=""/>
+    <constraint field="kuerzel" desc="" exp=""/>
+    <constraint field="bemerkung" desc="" exp=""/>
+    <constraint field="he_nr" desc="" exp=""/>
+    <constraint field="kp_nr" desc="" exp=""/>
+    <constraint field="m145" desc="" exp=""/>
+    <constraint field="isybau" desc="" exp=""/>
+    <constraint field="transport" desc="" exp=""/>
+    <constraint field="druckdicht" desc="" exp=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
@@ -128,13 +172,17 @@
   </attributeactions>
   <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
     <columns>
-      <column type="field" width="-1" name="pk" hidden="0"/>
-      <column type="field" width="-1" name="bezeichnung" hidden="0"/>
-      <column type="field" width="-1" name="kuerzel" hidden="0"/>
-      <column type="field" width="-1" name="bemerkung" hidden="0"/>
-      <column type="field" width="-1" name="he_nr" hidden="0"/>
-      <column type="field" width="-1" name="kp_nr" hidden="0"/>
-      <column type="actions" width="-1" hidden="1"/>
+      <column width="-1" type="field" hidden="0" name="pk"/>
+      <column width="-1" type="field" hidden="0" name="bezeichnung"/>
+      <column width="-1" type="field" hidden="0" name="kuerzel"/>
+      <column width="-1" type="field" hidden="0" name="bemerkung"/>
+      <column width="-1" type="field" hidden="0" name="he_nr"/>
+      <column width="-1" type="field" hidden="0" name="kp_nr"/>
+      <column width="-1" type="field" hidden="0" name="m145"/>
+      <column width="-1" type="field" hidden="0" name="isybau"/>
+      <column width="-1" type="field" hidden="0" name="transport"/>
+      <column width="-1" type="field" hidden="0" name="druckdicht"/>
+      <column width="-1" type="actions" hidden="1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -168,26 +216,38 @@ def my_form_open(dialog, layer, feature):
   <editable>
     <field editable="1" name="bemerkung"/>
     <field editable="1" name="bezeichnung"/>
+    <field editable="1" name="druckdicht"/>
     <field editable="1" name="he_nr"/>
+    <field editable="1" name="isybau"/>
     <field editable="1" name="kp_nr"/>
     <field editable="1" name="kuerzel"/>
+    <field editable="1" name="m145"/>
     <field editable="1" name="pk"/>
+    <field editable="1" name="transport"/>
   </editable>
   <labelOnTop>
     <field labelOnTop="0" name="bemerkung"/>
     <field labelOnTop="0" name="bezeichnung"/>
+    <field labelOnTop="0" name="druckdicht"/>
     <field labelOnTop="0" name="he_nr"/>
+    <field labelOnTop="0" name="isybau"/>
     <field labelOnTop="0" name="kp_nr"/>
     <field labelOnTop="0" name="kuerzel"/>
+    <field labelOnTop="0" name="m145"/>
     <field labelOnTop="0" name="pk"/>
+    <field labelOnTop="0" name="transport"/>
   </labelOnTop>
   <reuseLastValue>
     <field reuseLastValue="0" name="bemerkung"/>
     <field reuseLastValue="0" name="bezeichnung"/>
+    <field reuseLastValue="0" name="druckdicht"/>
     <field reuseLastValue="0" name="he_nr"/>
+    <field reuseLastValue="0" name="isybau"/>
     <field reuseLastValue="0" name="kp_nr"/>
     <field reuseLastValue="0" name="kuerzel"/>
+    <field reuseLastValue="0" name="m145"/>
     <field reuseLastValue="0" name="pk"/>
+    <field reuseLastValue="0" name="transport"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>
