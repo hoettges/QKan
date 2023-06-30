@@ -231,6 +231,10 @@ class ExportTask:
                 f2.write(allgemein)
 
         elif self.status == 'append' or self.status == 'update':
+            if self.template == "":
+                temp = os.path.join(os.path.dirname(__file__), "vorlage_swmm.inp")
+                self.template = temp
+
             with open(self.template) as f:
                 lines = [line for line in f.readlines()]
                 with open(self.ergfileSwmm, "w") as f2:
