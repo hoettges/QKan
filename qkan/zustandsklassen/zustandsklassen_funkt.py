@@ -1227,11 +1227,6 @@ class Zustandsklassen_funkt:
             except:
                 pass
 
-        try:
-            db.commit
-        except:
-            pass
-
         sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
         data = (crs,)
         try:
@@ -1306,8 +1301,6 @@ class Zustandsklassen_funkt:
                                            level=Qgis.Critical)
 
         for attr in curs.fetchall():
-            sql = ""
-            data = ()
             try:
                 curs.execute("""ALTER TABLE Untersuchdat_schacht_bewertung ADD COLUMN Beschreibung TEXT ;""")
             except:
@@ -1315,1006 +1308,1006 @@ class Zustandsklassen_funkt:
 
             if attr[5] == "DAA":
                 z = 'Verformung'
-                sql += f"""
+                sql = f"""
                       UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAB":
                 z = 'Rissbildung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAC":
                 z = 'Bruch/Einsturz'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAD":
                 z = 'Defektes Mauerwerk'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAE":
-                z = 'FEhlender Moertel'
-                sql += f"""
+                z = 'Fehlender Moertel'
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAF":
                 z = 'Oberflaechenschaden'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAG":
                 z = 'Einragender Anschluss'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAH":
                 z = 'Schadhafter Anschluss'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAI":
                 z = 'Einragendes Dichtungsmaterial'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAJ":
                 z = 'Verschobene Verbindung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "A":
                 z = 'Feststellung der Innenauskleidung: Innenauskleidung abgeloest'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "B":
                 z = 'Feststellung der Innenauskleidung: Innenauskleidung verfaerbt'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "C":
                 z = 'Feststellung der Innenauskleidung: Endstelle der Auskleidung schadhaft'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "D":
                 z = 'Feststellung der Innenauskleidung: Falten in der Innenauskleidung'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "E":
                 z = 'Feststellung der Innenauskleidung: Blasen oder Beulen in der Auskleidung innen'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "F":
                 z = 'Feststellung der Innenauskleidung: Beulen aussen'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "G":
                 z = 'Feststellung der Innenauskleidung: Abloesen der Innenhaut/Beschichtung'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "H":
                 z = 'Feststellung der Innenauskleidung: Abloesen der Abdeckung der Verbindungsnaht'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "I":
                 z = 'Feststellung der Innenauskleidung: Riss oder Spalt (einschliesslich schadhafter Schweissnaht)'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "J":
                 z = 'Feststellung der Innenauskleidung: Loch in der Auskleidung'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "K":
                 z = 'Feststellung der Innenauskleidung: Auskleidungsverbindung defekt'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "L":
                 z = 'Feststellung der Innenauskleidung: Auskleidungswerkstoff erscheint weich'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "M":
                 z = 'Feststellung der Innenauskleidung: Harz fehlt im Laminat'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "N":
                 z = 'Feststellung der Innenauskleidung: Ende der Auskleidung ist nicht abgedichtet, um das Rohr oder den Schacht aufzunehmen'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAK" and attr[6] == "Z":
                 z = 'Feststellung der Innenauskleidung: Anderer Auskleidungsschaden'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAL" and attr[6] == "A":
                 z = 'Schadhafte Reperatur: Wand fehlt teilweise'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAL" and attr[6] == "B":
                 z = 'Schadhafte Reperatur: Reperatur zur Abdichtung eines Lochs ist schadhaft'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAL" and attr[6] == "C":
                 z = 'Schadhafte Reperatur: Abloesen des Reperaturwerkstoffs vom Basisrohr'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAL" and attr[6] == "D":
                 z = 'Schadhafte Reperatur: fehlender Reperaturwerkstoff an der Kontaktflaeche'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAL" and attr[6] == "E":
                 z = 'Schadhafte Reperatur: ueberschuessiger Reperaturwerkstof, der ein Hindernis darstellt'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAL" and attr[6] == "F":
                 z = 'Schadhafte Reperatur: Loch im Reperaturwerkstoff'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAL" and attr[6] == "G":
                 z = 'Schadhafte Reperatur: Riss im Reperaturwerkstoff'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAL" and attr[6] == "Z":
                 z = 'Schadhafte Reperatur: Andere'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAM":
                 z = 'Schadhafte Schweissnaht'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAN":
                 z = 'Poroese Wand'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAO":
                 z = 'Boden sichtbar'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAP":
                 z = 'Hohlraum sichtbar'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAQ":
                 z = 'Schadhafte Steighilfen'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DAR":
                 z = 'Schaeden an Abdeckung oder Rahmen'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                             SET Beschreibung = ?
                             WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                             """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DBA":
                 z = 'Wurzeln'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DBB":
                 z = 'Anaftene Stoffe'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DBC":
                 z = 'Ablagerungen'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DBD":
                 z = 'Eindringen von Bodenmaterial'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DBE":
                 z = 'Andere Hindernisse'
-                sql += f"""
+                sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                         SET Beschreibung = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                         """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DBF":
                 z = 'Infiltration'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DBG":
                 z = 'Exfiltration'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DBH":
                 z = 'Ungeziefer'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCA":
                 z = 'Anschluss'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCB" and attr[6] == "A":
                 z = 'Punktuelle Reperatur: Reperatur mit Injektionstechnik'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCB" and attr[6] == "B":
                 z = 'Punktuelle Reperatur: Reperatur Bauteilwandung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCB" and attr[6] == "C":
                 z = 'Punktuelle Reperatur: Reperatur Bauteilverbindung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCB" and attr[6] == "D":
                 z = 'Punktuelle Reperatur: Ringsplat-/-raumabdichtung(Auskleidung in Kanaelen/Leitungen) zum Anschuss an Schacht/Inspektionsoeffnung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCB" and attr[6] == "E":
                 z = 'Punktuelle Reperatur: Anschlusseinbindung manuell'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCB" and attr[6] == "F":
                 z = 'Punktuelle Reperatur: Anschlusseoeffnung ohne Einbindung(Auskleidung)'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCB" and attr[6] == "G":
                 z = 'Punktuelle Reperatur: Schachtbauteil ausgetauscht'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCB" and attr[6] == "Z":
                 z = 'Punktuelle Reperatur: Reperatur sonstige Technik'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCG":
                 z = 'Anschlussleitung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCH":
                 z = 'Auftritt'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCI":
                 z = 'Gerinne'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCJ":
                 z = 'Sicherheitsketten/-balken'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCK":
                 z = 'Abflussregulierung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCL":
                 z = 'Rohrdurchfuehrung durch andere Abwasserleitung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCM":
                 z = 'Schmutzfaenger unter der Abdeckung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCN":
                 z = 'Schlammfang in der Sohle'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DCO":
                 z = 'Querschnitt'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DDA":
                 z = 'Allgemeines Foto'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DDB":
                 z = 'Allgemeine Anmerkung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DDC":
                 z = 'Inspektion nicht vollstaendig durchgefuehrt'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DDD":
                 z = 'Wasserspiegel'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ?; 
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DDE":
                 z = 'Zufluss aus einem Anschluss'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DDF":
                 z = 'Atmosphäre im Schacht oder in der Inspektionsoeffnung'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
-                # try:
-                #     curs.execute(sql, data)
-                #     db.commit()
-                #     continue
-                # except:
-                #     pass
+                data = (z, attr[0])
+                try:
+                    curs.execute(sql, data)
+                    #db.commit()
+                    continue
+                except:
+                    pass
             if attr[5] == "DDG":
                 z = 'Keine Sicht'
-                sql += f"""
+                sql = f"""
                     UPDATE Untersuchdat_schacht_bewertung
                     SET Beschreibung = ?
                     WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                     """
-                data += (z, attr[0])
+                data = (z, attr[0])
             try:
                 curs.execute(sql, data)
                 #db.commit()
@@ -2445,7 +2438,7 @@ class Zustandsklassen_funkt:
                                 FROM untersuchdat_haltung_bewertung
                                 WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_D <> '-'
                                 GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
-            db.commit()
+            #db.commit()
         except:
             pass
 
@@ -2456,7 +2449,7 @@ class Zustandsklassen_funkt:
                                 FROM untersuchdat_haltung_bewertung
                                 WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_S <> '-'
                                 GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
-            db.commit()
+            #db.commit()
         except:
             pass
 
@@ -2467,7 +2460,7 @@ class Zustandsklassen_funkt:
                                 FROM untersuchdat_haltung_bewertung
                                 WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_B <> '-'
                                 GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
-            db.commit()
+            #db.commit()
         except:
             pass
 
@@ -2475,7 +2468,7 @@ class Zustandsklassen_funkt:
             curs.execute("""update haltungen_untersucht_bewertung 
                                 set objektklasse_standsicherheit = '-'
                                 WHERE objektklasse_betriebssicherheit IS NULL;""")
-            db.commit()
+            #db.commit()
         except:
             pass
 
@@ -2483,7 +2476,7 @@ class Zustandsklassen_funkt:
             curs.execute("""update haltungen_untersucht_bewertung 
                                 set objektklasse_dichtheit = '-'
                                 WHERE objektklasse_betriebssicherheit IS NULL;""")
-            db.commit()
+            #db.commit()
         except:
             pass
 
@@ -2491,7 +2484,7 @@ class Zustandsklassen_funkt:
             curs.execute("""update haltungen_untersucht_bewertung 
                                 set objektklasse_betriebssicherheit = '-'
                                 WHERE objektklasse_betriebssicherheit IS NULL;""")
-            db.commit()
+            #db.commit()
         except:
             pass
 
@@ -2507,7 +2500,7 @@ class Zustandsklassen_funkt:
                                  Else NULL
                                  END
                                  );""")
-            #db.commit()
+            db.commit()
         except:
             pass
 
@@ -2515,7 +2508,7 @@ class Zustandsklassen_funkt:
         data = (crs,)
         try:
             curs.execute(sql, data)
-            #db.commit()
+            db.commit()
         except:
             pass
 
@@ -2667,7 +2660,7 @@ class Zustandsklassen_funkt:
                                      Else NULL
                                      END
                                      );""")
-            #db.commit()
+            db.commit()
         except:
             pass
 
@@ -2675,7 +2668,7 @@ class Zustandsklassen_funkt:
         data = (crs,)
         try:
             curs.execute(sql, data)
-            #db.commit()
+            db.commit()
         except:
             pass
 
@@ -2741,7 +2734,6 @@ class Zustandsklassen_funkt:
         # nach DWA
 
         sql = """CREATE TABLE IF NOT EXISTS untersuchdat_haltung_bewertung AS SELECT * FROM untersuchdat_haltung"""
-        #TODO: alle spalten aufführen und alle zusätzlichen spalten direkt mit einfügen
         curs1.execute(sql)
 
         if haltung == True:
@@ -2899,13 +2891,13 @@ class Zustandsklassen_funkt:
             except:
                 pass
             try:
-                curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_S TEXT ;""")
+               curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_S TEXT ;""")
             except:
-                pass
+               pass
             try:
-                curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_B TEXT ;""")
+               curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_B TEXT ;""")
             except:
-                pass
+               pass
 
             # Tab A.2
             if (attr[21] == "biegessteif" and attr[10] == "BAA" and attr[11] == "A") or (
@@ -5232,7 +5224,10 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-
+            try:
+                db.commit()
+            except:
+                pass
 
             z = '-'
             sql = f"""
@@ -5303,19 +5298,16 @@ class Zustandsklassen_funkt:
             except:
                 pass
 
-
-       # try:
-        #    curs.execute(sql, data)
-         #   #db.commit()
-        #except:
-         #   pass
+            try:
+                db.commit()
+            except:
+                pass
 
 
         sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
         curs1.execute(sql)
         try:
             curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN objektklasse_dichtheit INTEGER ;""")
-            #db.commit()
         except:
             pass
         try:
@@ -5426,7 +5418,7 @@ class Zustandsklassen_funkt:
                              Else NULL
                              END
                              );""")
-            #db.commit()
+            db.commit()
         except:
             pass
 
@@ -5434,7 +5426,7 @@ class Zustandsklassen_funkt:
         data = (crs,)
         try:
             curs.execute(sql, data)
-            #db.commit()
+            db.commit()
         except:
             pass
 
@@ -5601,8 +5593,6 @@ class Zustandsklassen_funkt:
             except:
                 pass
 
-            sql = ""
-            data = ()
 
             if attr[5] == "DAA" and (attr[6] == "A" or attr[6] == "B"):
                 if attr[8] >= 40:
@@ -7117,6 +7107,7 @@ class Zustandsklassen_funkt:
                             continue
                         except:
                             pass
+                    continue
                 if attr[6] == "J":
                     if (attr[13] == "C" or attr[13] == "D" or attr[13] == "E" or attr[13] == "F"):
                         z = '2'
@@ -8469,13 +8460,23 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[7] == "B":
                     z = '2'
-                    sql += f"""
+                    sql = f"""
                         UPDATE Untersuchdat_schacht_bewertung
                         SET Zustandsklasse_B = ?
                         WHERE Untersuchdat_schacht_bewertung.pk = ? ;
                         """
-                    data += (z, attr[0])
+                    data = (z, attr[0])
+                    try:
+                        curs.execute(sql, data)
+                        #db.commit()
+                        continue
+                    except:
+                        pass
 
+            try:
+                db.commit()
+            except:
+                pass
 
             z = '-'
             sql = f"""
@@ -8546,11 +8547,10 @@ class Zustandsklassen_funkt:
             except:
                 pass
 
-        try:
-            curs.execute(sql, data)
-            #db.commit()
-        except:
-            pass
+            try:
+                db.commit()
+            except:
+                pass
 
 
 
@@ -8673,7 +8673,7 @@ class Zustandsklassen_funkt:
                                      Else NULL
                                      END
                                      );""")
-            #db.commit()
+            db.commit()
         except:
             pass
 
@@ -8681,7 +8681,7 @@ class Zustandsklassen_funkt:
         data = (crs,)
         try:
             curs.execute(sql, data)
-            #db.commit()
+            db.commit()
         except:
             pass
 
@@ -9404,8 +9404,7 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[11] == "C" and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
-                        attr[
-                            12] == "Z"):
+                        attr[12] == "Z"):
                     z = '2'
                     sql = f"""
                           UPDATE untersuchdat_haltung_bewertung
@@ -9433,8 +9432,7 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[11] == "D" and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
-                        attr[
-                            12] == "Z"):
+                        attr[12] == "Z"):
                     z = '3'
                     sql = f"""
                           UPDATE untersuchdat_haltung_bewertung
@@ -9462,8 +9460,7 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[11] == "E" and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
-                        attr[
-                            12] == "Z"):
+                        attr[12] == "Z"):
                     z = '4'
                     sql = f"""
                           UPDATE untersuchdat_haltung_bewertung
@@ -9491,8 +9488,7 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[11] == "F" and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
-                        attr[
-                            12] == "Z"):
+                        attr[12] == "Z"):
                     z = '2'
                     sql = f"""
                           UPDATE untersuchdat_haltung_bewertung
@@ -9520,8 +9516,7 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[11] == "G" and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
-                        attr[
-                            12] == "Z"):
+                        attr[12] == "Z"):
                     z = '3'
                     sql = f"""
                           UPDATE untersuchdat_haltung_bewertung
@@ -9549,8 +9544,7 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[11] == "H" and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
-                        attr[
-                            12] == "Z"):
+                        attr[12] == "Z"):
                     z = '4'
                     sql = f"""
                           UPDATE untersuchdat_haltung_bewertung
@@ -9578,8 +9572,7 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[11] == "I" and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
-                        attr[
-                            12] == "Z"):
+                        attr[12] == "Z"):
                     z = '5'
                     sql = f"""
                           UPDATE untersuchdat_haltung_bewertung
@@ -9646,8 +9639,7 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[11] == "K" and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
-                        attr[
-                            12] == "Z"):
+                        attr[12] == "Z"):
                     z = '2'
                     sql = f"""
                           UPDATE untersuchdat_haltung_bewertung
@@ -9663,8 +9655,7 @@ class Zustandsklassen_funkt:
                         pass
                 if attr[11] == "Z" and (
                         attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E" or
-                        attr[
-                            12] == "Z"):
+                        attr[12] == "Z"):
                     z = '1'
                     sql = f"""
                           UPDATE untersuchdat_haltung_bewertung
@@ -10920,8 +10911,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BDE" and (attr[11] == "A" and attr[11] == "C" and attr[11] == "D" and attr[11] == "E") and \
-                    attr[
-                        12] == "A":
+                    attr[12] == "A":
                 z = '4'
                 sql = f"""
                         UPDATE untersuchdat_haltung_bewertung
@@ -10936,8 +10926,7 @@ class Zustandsklassen_funkt:
                 except:
                     pass
             if attr[10] == "BDE" and (attr[11] == "A" and attr[11] == "C" and attr[11] == "D" and attr[11] == "E") and \
-                    attr[
-                        12] == "B":
+                    attr[12] == "B":
                 z = '3'
                 sql = f"""
                         UPDATE untersuchdat_haltung_bewertung
@@ -10951,6 +10940,12 @@ class Zustandsklassen_funkt:
                     continue
                 except:
                     pass
+
+            try:
+                curs.execute(sql, data)
+                db.commit()
+            except:
+                pass
 
             z = '-'
             sql = f"""
@@ -11115,37 +11110,37 @@ class Zustandsklassen_funkt:
 
         try:
             curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Entwaesserungssystem TEXT ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Abwasserart TEXT ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Wasserschutzzone TEXT ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Grundwasserabstand INTEGER ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Bodenart TEXT ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Lage_am_Umfang TEXT ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN Lage_an_Bauteilverbindung TEXT ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
 
@@ -13910,6 +13905,11 @@ class Zustandsklassen_funkt:
                         continue
                     except:
                         pass
+            try:
+                curs.execute(sql, data)
+                db.commit()
+            except:
+                pass
 
             z = '-'
             sql = f"""
@@ -14074,32 +14074,31 @@ class Zustandsklassen_funkt:
 
         try:
             curs.execute("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Entwaesserungssystem TEXT ;""")
-            db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Abwasserart TEXT ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Wasserschutzzone TEXT ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Grundwasserabstand INTEGER ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Bodenart TEXT ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
         try:
             curs.execute("""ALTER TABLE schaechte_untersucht_bewertung ADD COLUMN Lage_an_Bauteilverbindung TEXT ;""")
-            db.commit()
+            #db.commit()
         except:
             pass
 

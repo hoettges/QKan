@@ -45,23 +45,4 @@ THREADS              1
 CONSTANT         0.0
 DRY_ONLY         NO
 
-[REPORT]
-;;Reporting Options
-SUBCATCHMENTS ALL
-NODES ALL
-LINKS ALL
-
-[TAGS]
-
-[MAP]
-DIMENSIONS 0.000 0.000 10000.000 10000.000
-Units      None
-
-[COORDINATES]
-;;Node           X-Coord            Y-Coord           
-;;-------------- ------------------ ------------------
-
-[VERTICES]
-;;Link           X-Coord            Y-Coord           
-;;-------------- ------------------ ------------------
 
