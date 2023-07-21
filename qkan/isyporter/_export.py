@@ -8,6 +8,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from datetime import date
 from qgis.core import Qgis
 from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.utils import iface
 
 from qkan import QKan
 from qkan.database.dbfunc import DBConnection
@@ -207,17 +208,25 @@ class ExportTask:
             _create_children(
                 SubElement(knoten, "Bauwerk"), ["Bauwerktyp", "Auslaufbauwerk"]
             )
+            # geom_knoten = SubElement(
+            #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
+            # )
+            # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
+            geo = SubElement(abw, "Geometrie")
+            _create_children_text(
+                geo,
+                {
+                    "CRSLage": iface.activeLayer().crs().authid(),
+                }, )
 
-            geom_knoten = SubElement(
-                SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
-            )
+            geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
                     "PunktattributAbwasser": "DMP",
                     "Punkthoehe": attr[1],
-                    "Rechtswert": attr[4],
-                    "Hochwert": attr[5],
+                    "Rechtswert": attr[7],
+                    "Hochwert": attr[8],
                 },
             )
             _create_children_text(
@@ -285,19 +294,28 @@ class ExportTask:
             _create_children(
                 SubElement(knoten, "Schacht"), ["Schachttiefe", "AnzahlAnschluesse"]
             )
+            # geom_knoten = SubElement(
+            #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
+            # )
+            # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
+            geo = SubElement(abw, "Geometrie")
+            _create_children_text(
+                geo,
+                {
+                    "CRSLage": iface.activeLayer().crs().authid(),
+                }, )
 
-            geom_knoten = SubElement(
-                SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
-            )
+            geom_knoten = SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
                     "PunktattributAbwasser": "DMP",
                     "Punkthoehe": attr[1],
-                    "Rechtswert": attr[11],
-                    "Hochwert": attr[12],
+                    "Rechtswert": attr[7],
+                    "Hochwert": attr[8],
                 },
             )
+
             #_create_children_text(
             #    SubElement(geom_knoten, "Punkt"),
             #    {"PunktattributAbwasser": "HP", "Punkthoehe": attr[2]},
@@ -366,9 +384,18 @@ class ExportTask:
                 SubElement(bauwerk, "Becken"), ["AnzahlZulaeufe", "AnzahlAblaeufe"]
             )
 
-            geom_knoten = SubElement(
-                SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
-            )
+            #geom_knoten = SubElement(
+            #    SubElement(SubElement(abw, "Geometrie"), "Geometriedaten"), "Knoten"
+            #)
+            # TODO: Geometrie/CRSLage mit Koordinatesystem ergänzen (qgis.utils.iface.activeLayer().crs().authid())
+            geo = SubElement(abw, "Geometrie")
+            _create_children_text(
+                geo,
+                {
+                    "CRSLage": iface.activeLayer().crs().authid(),
+                },)
+
+            geom_knoten= SubElement(SubElement(geo, "Geometriedaten"), "Knoten")
             _create_children_text(
                 SubElement(geom_knoten, "Punkt"),
                 {
@@ -486,6 +513,13 @@ class ExportTask:
             SubElementText(SubElement(kante, "Haltung"), "DMPLaenge", attr[5])
 
             geom = SubElement(abw, "Geometrie")
+
+            _create_children_text(
+                geom,
+                {
+                    "CRSLage": iface.activeLayer().crs().authid(),
+                }, )
+
             _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
 
             kante = SubElement(
@@ -600,6 +634,11 @@ class ExportTask:
             SubElementText(SubElement(kante, "Leitung"), "DMPLaenge", attr[5])
 
             geom = SubElement(abw, "Geometrie")
+            _create_children_text(
+                geom,
+                {
+                    "CRSLage": iface.activeLayer().crs().authid(),
+                }, )
             _create_children(geom, ["GeoObjektart", "GeoObjekttyp"])
 
             kante = SubElement(
