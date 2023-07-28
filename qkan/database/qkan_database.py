@@ -187,7 +187,7 @@ def createdbtables(
             breite REAL,                                    -- Profilbreite (m)
             laenge REAL,                                    -- abweichende Haltungslänge (m)
             baujahr INTEGER,
-            untersuchtag TEXT,
+            untersuchtag timestamp,
             untersucher TEXT,
             wetter INTEGER DEFAULT 0,
             bewertungsart INTEGER DEFAULT 0,
@@ -720,7 +720,7 @@ def createdbtables(
             schnam TEXT, 
             durchm REAL,
             baujahr INTEGER,
-            untersuchtag TEXT, 
+            untersuchtag timestamp, 
             untersucher TEXT, 
             wetter INTEGER DEFAULT 0, 
             strasse TEXT,
