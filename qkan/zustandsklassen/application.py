@@ -62,6 +62,9 @@ class zustandsklassen(QKanPlugin):
             check_cb['cb13'] = self.import_dlg.checkBox_13.isChecked()
             check_cb['cb14'] = self.import_dlg.checkBox_14.isChecked()
             check_cb['cb15'] = self.import_dlg.checkBox_15.isChecked()
+            check_cb['cb16'] = self.import_dlg.checkBox_16.isChecked()
+            check_cb['cb17'] = self.import_dlg.checkBox_17.isChecked()
+            check_cb['cb18'] = self.import_dlg.checkBox_18.isChecked()
 
             QKan.config.save()
 
@@ -127,6 +130,9 @@ class zustandsklassen(QKanPlugin):
         check_cb['cb13'] = self.import_dlg.checkBox_13.isChecked()
         check_cb['cb14'] = self.import_dlg.checkBox_14.isChecked()
         check_cb['cb15'] = self.import_dlg.checkBox_15.isChecked()
+        check_cb['cb16'] = self.import_dlg.checkBox_16.isChecked()
+        check_cb['cb17'] = self.import_dlg.checkBox_17.isChecked()
+        check_cb['cb18'] = self.import_dlg.checkBox_18.isChecked()
 
         self.log.info("Creating DB")
         with DBConnection(

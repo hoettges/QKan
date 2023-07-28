@@ -58,6 +58,7 @@ class ZustandDialog(_Dialog, ZUSTAND_CLASS):  # type: ignore
     checkBox_15: QCheckBox
     checkBox_16: QCheckBox
     checkBox_17: QCheckBox
+    checkBox_18: QCheckBox
 
 
     def __init__(

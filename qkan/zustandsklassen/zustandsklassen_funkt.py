@@ -101,6 +101,10 @@ class Zustandsklassen_funkt:
             self.einzelfallbetrachtung_schacht()
             self.bewertung_dwa_neu_schaechte()
 
+        if check_cb['cb18']:
+            self.einzelfallbetrachtung_haltung()
+            self.bewertung_dwa_neu_haltung()
+
     def bewertungstexte_haltung(self):
         date = self.date
         db = self.db
@@ -14156,7 +14160,7 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(data)
         curs = db.cursor()
 
-        if self.check_cb['cb16'] and haltung == True:
+        if self.check_cb['cb16']:
             sql = """SELECT
                         untersuchdat_haltung_bewertung.pk,
                         untersuchdat_haltung_bewertung.untersuchhal,
@@ -14200,7 +14204,7 @@ class Zustandsklassen_funkt:
             data = (date,)
             curs.execute(sql, data)
 
-        if self.check_cb['cb16'] and leitung == True:
+        if self.check_cb['cb18']:
             sql = """SELECT
                         untersuchdat_haltung_bewertung.pk,
                         untersuchdat_haltung_bewertung.untersuchhal,

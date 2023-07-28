@@ -191,7 +191,7 @@ def createdbtables(
             untersucher TEXT,
             wetter INTEGER DEFAULT 0,
             bewertungsart INTEGER DEFAULT 0,
-            bewertungstag TEXT,
+            bewertungstag timestamp,
          strasse TEXT,
          datenart TEXT,
          max_ZD INTEGER,
@@ -202,7 +202,7 @@ def createdbtables(
             xschun REAL,
             yschun REAL,
             kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP)""",
+            createdat timestamp DEFAULT CURRENT_TIMESTAMP)""",
         "SELECT AddGeometryColumn('haltungen_untersucht','geom',{},'LINESTRING',2)".format(epsg),
         "SELECT CreateSpatialIndex('haltungen_untersucht','geom')"
     ]
@@ -725,13 +725,13 @@ def createdbtables(
             wetter INTEGER DEFAULT 0, 
             strasse TEXT,
             bewertungsart INTEGER DEFAULT 0, 
-            bewertungstag TEXT,
+            bewertungstag timestamp,
             datenart TEXT,
             max_ZD INTEGER,
             max_ZB INTEGER,
             max_ZS INTEGER, 
             kommentar TEXT,
-            createdat TEXT DEFAULT CURRENT_TIMESTAMP
+            createdat timestamp DEFAULT CURRENT_TIMESTAMP
             )""",
         """SELECT AddGeometryColumn('schaechte_untersucht','geop',{},'POINT',2);""".format(epsg),
         """SELECT CreateSpatialIndex('schaechte_untersucht','geop')""",
